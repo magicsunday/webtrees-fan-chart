@@ -1,0 +1,13 @@
+#ancestral-fan-chart h1 {
+    text-align: center;
+}
+
+#ancestral-fan-chart svg {
+    display: block;
+    margin: auto;
+}
+
+#ancestral-fan-chart text {
+    font-family: Verdana, Arial;
+    font-weight: bold;
+}
