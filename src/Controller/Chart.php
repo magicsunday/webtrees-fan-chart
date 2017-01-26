@@ -31,7 +31,7 @@ class Chart extends \Fisharebest\Webtrees\Controller\ChartController
      *
      * @var int
      */
-    public $generations = 7;
+    protected $generations = 7;
 
     /**
      * Constructor.
