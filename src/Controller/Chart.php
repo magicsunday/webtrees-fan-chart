@@ -31,7 +31,7 @@ class Chart extends \Fisharebest\Webtrees\Controller\ChartController
      *
      * @var int
      */
-    public $generations = 8;
+    public $generations = 7;
 
     /**
      * Constructor.
@@ -124,7 +124,7 @@ class Chart extends \Fisharebest\Webtrees\Controller\ChartController
         \Fisharebest\Webtrees\Individual $person = null, $generation = 1
     ) {
         // Maximum generation reached
-        if ($generation === $this->generations) {
+        if ($generation > $this->generations) {
             return array();
         }
 
