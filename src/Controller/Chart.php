@@ -170,10 +170,23 @@ class Chart extends \Fisharebest\Webtrees\Controller\ChartController
             $this->buildJsonTree($this->root)
         );
 
-        // Add the json right before any module included js
         $this->addInlineJavascript(
-            'var chartData = ' . $json . ';',
-            self::JS_PRIORITY_HIGH
+<<<JS
+/**
+ * Init widget
+ */
+$(function () {
+    'use strict';
+
+    var fanChart = $('#fan-chart');
+
+    if (typeof $().ancestralFanChart === 'function') {
+        fanChart.ancestralFanChart({
+            data : {$json}
+        });
+    }
+});
+JS
         );
 
         $title = 'Ancestral fan chart for '

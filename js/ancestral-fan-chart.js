@@ -1,481 +1,568 @@
+/** global: window */
+/** global: console */
+/** global: Math */
+/** global: d3 */
+/** global: jQuery */
+/** global: $ */
 
-var nameSwitchTreshold = 5;
-var baseMod = 2; // 2 = full circle, 3 = fan, 4 = half circle
+(function ($) {
+    'use strict';
 
-var startPi = -Math.PI * 2 / baseMod;
-var endPi   =  Math.PI * 2 / baseMod;
+    $.widget('rso.ancestralFanChart', {
+        options: {
+            nameSwitchTreshold: 5,
 
-var width = 800;
-if (width > $(window).width() - 25) {
-    width = $(window).width() - 25;
-}
-var height   = width,
-    radius   = width >> 1,
-    x        = d3.scale.linear().range([startPi, endPi]),
-    padding  = 5,
-    duration = 1000;
+            // 2 = full circle, 3 = fan, 4 = half circle
+            baseMod: 2,
 
-var div = d3.select('#fan-chart');
+            startPi: -Math.PI,
+            endPi: Math.PI,
 
-var svg = div.append('svg')
-    .attr('width', width + (padding << 1))
-    .attr('height', height + (padding << 1))
-    .attr('text-rendering', 'geometricPrecision')
-    .attr('text-anchor', 'middle')
-    .append('g')
-    .attr('class', 'group');
+            width: 800,
+            height: 800,
+            radius: 0,
+            padding: 5,
 
+            x: null
+        },
 
-function getMinWidth()
-{
-    return 375 * 2;
-}
+        /**
+         * Initialize the tool.
+         *
+         * @returns void
+         * @constructs ancestralFanChart
+         */
+        _create: function () {
+            // Check dependencies
+            this.checkDependencies();
 
-/**
- *
- */
-var startAngle = function(d)
-{
-    return Math.max(startPi, Math.min(2 * endPi, x(d.x)));
-};
+            this.options.startPi = -Math.PI * 2 / this.options.baseMod;
+            this.options.endPi = Math.PI * 2 / this.options.baseMod;
 
-/**
- *
- */
-var endAngle = function(d)
-{
-    return Math.max(startPi, Math.min(2 * endPi, x(d.x + d.dx)));
-};
-
-/**
- *
- */
-var innerRadius = function(d)
-{
-    return [0, 65, 130, 195, 260, 325, 440, 555, 670][d.depth];
-};
-
-/**
- *
- */
-var outerRadius = function(d)
-{
-    return [65, 130, 195, 260, 325, 440, 555, 670, 775][d.depth];
-};
-
-/**
- *
- * @param d
- * @returns {Number}
- */
-function centerRadius(d)
-{
-    return (innerRadius(d) + outerRadius(d)) >> 1;
-}
-
-
-var partition = d3.layout.partition()
-    .sort(null)
-    .value(function(d) {
-        return d.depth;
-    });
-
-var arc = d3.svg.arc()
-    .startAngle(startAngle)
-    .endAngle(endAngle)
-    .innerRadius(innerRadius)
-    .outerRadius(outerRadius);
-
-var nodes = partition.nodes(chartData);
-
-
-drawBorderCenterCircle();
-drawBorderArcs()
-setArcLabels();
-setLabels();
-
-
-/**
- * Draws the center circle of the fan chart.
- *
- * @return void
- */
-function drawBorderCenterCircle()
-{
-    var arcGenerator = d3.svg.arc()
-        .startAngle(0)
-        .endAngle(Math.PI * 2)
-        .innerRadius(innerRadius)
-        .outerRadius(outerRadius);
-
-    var borderArcs = svg
-        .append('g')
-        .attr('class', 'border-arcs')
-        .selectAll('g.border-arc')
-        .data(
-            nodes.filter(function(d) {
-                return d.depth === 0;
-            })
-        )
-        .enter()
-        .append('g')
-        .attr('class', 'border-arc');
-
-    drawBorders(borderArcs, arcGenerator);
-}
-
-/**
- * Draws the borders of the single arcs.
- *
- * @return void
- */
-function drawBorderArcs()
-{
-    var arcGenerator = d3.svg.arc()
-        .startAngle(startAngle)
-        .endAngle(endAngle)
-        .innerRadius(innerRadius)
-        .outerRadius(outerRadius);
-
-    var borderArcs = svg
-        .append('g')
-        .attr('class', 'border-arcs')
-        .selectAll('g.border-arc')
-        .data(
-            nodes.filter(function(d) {
-                return d.depth > 0;
-            })
-        )
-        .enter()
-        .append('g')
-        .attr('class', 'border-arc');
-
-    // Add title element containing the full name of the individual
-    borderArcs.append('title')
-        .text(function(d, i) {
-            return d.name;
-        });
-
-    drawBorders(borderArcs, arcGenerator);
-}
-
-/**
- * Draws the borders using the given arc generator.
- *
- * @param borderArcs   Elements selected
- * @param arcGenerator Arc generator
- *
- * @return void
- */
-function drawBorders(borderArcs, arcGenerator)
-{
-    borderArcs.append('path')
-        .attr('fill', function(d) { return d.color; })
-        .attr('d', arcGenerator)
-        .style('stroke', '#ebebeb')
-        .style('stroke-width', 3);
-}
-
-function getFirstNames(d)
-{
-    var name = d.name.substr(0, d.name.lastIndexOf(' '));
-
-    if ((d.generation <= 5) && (name.length > 14)) {
-        return name.substr(0, 14) + '...';
-    }
-
-    if (name.length > 18) {
-        return name.substr(0, 18) + '...';
-    }
-
-    return name;
-}
-
-function getLastName(d)
-{
-    return d.name.substr(d.name.lastIndexOf(' ') + 1);
-}
-
-/**
- *
- */
-function setArcLabels()
-{
-    var entry = svg
-        .append('g')
-        .attr('class', 'labels')
-        .selectAll('g.arc-labels')
-        .data(
-            nodes.filter(function(d) {
-                return d.depth > 0 && d.depth < nameSwitchTreshold;
-            })
-        )
-        .enter()
-        .append('g')
-        .attr('class', 'arc-labels');
-
-    // Add title element containing the full name of the individual
-    entry.append('title')
-        .text(function(d, i) {
-            return d.name;
-        });
-
-    var labelArc = d3.svg.arc()
-        .startAngle(function(d) {
-            var sAngle = startAngle(d);
-
-            if ((baseMod !== 2) || (d.generation <= 2)) {
-                return sAngle;
+            if (this.options.width > $(window).width() - 25) {
+                this.options.width = $(window).width() - 25;
             }
 
-            var eAngle = endAngle(d);
+            this.options.radius = this.options.width >> 1;
+            this.options.x = d3.scale.linear().range([this.options.startPi, this.options.endPi]);
 
-            // Flip names for better readability depending on position in chart
-            if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180)))
-                || ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
-            ) {
-                return eAngle;
+            // Start bootstrapping
+            this.bootstrap();
+            this.initChart(this.options.data);
+            this.placeArcs();
+
+
+            // Adjust size of svg
+            var bbox = this.config.visual.node().getBBox();
+            var radius = bbox.width >> 1;
+
+            d3.select(this.config.visual.node().parentNode)
+                .attr('width', bbox.width + (this.options.padding << 1))
+                .attr('height', bbox.height + (this.options.padding << 1));
+
+            this.config.visual.attr(
+                'transform',
+                'translate(' + [radius + this.options.padding, radius + this.options.padding] + ')'
+            );
+        },
+
+        /**
+         * Check widget dependencies
+         *
+         * @returns {boolean}
+         * @private
+         */
+        checkDependencies: function () {
+            // Confirm d3 is available [check minimum version]
+            if (typeof d3 !== 'object' || !d3.hasOwnProperty('version')) {
+                console.error('d3 error: d3 is not available');
+                console.info(typeof d3);
+                return false;
             }
 
-            return sAngle;
-        })
-        .endAngle(function(d) {
-            var eAngle = endAngle(d);
+            return true;
+        },
 
-            if ((baseMod !== 2) || (d.generation <= 2)) {
-                return eAngle;
-            }
+        /**
+         * Bootstrap all requirement for all charts
+         *
+         * @return void
+         * @private
+         */
+        bootstrap: function () {
 
-            var sAngle = startAngle(d);
+            // Default configuration
+            this.config = {
+                elements: {
+                    chart: this.element.find('#fan-chart')
+                }
+            };
+        },
 
-            // Flip names depending on position in chart
-            if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180)))
-                || ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
-            ) {
-                return sAngle;
-            }
+        /**
+         * Initialize the chart.
+         *
+         * @return void
+         * @private
+         */
+        initChart: function (data) {
+            this.config.visual = d3
+                .select('#fan-chart')
+                .append('svg:svg')
+                .attr('width', this.options.width) // + (padding << 1))
+                .attr('height', this.options.height) //+ (padding << 1))
+                .attr('text-rendering', 'geometricPrecision')
+                .attr('text-anchor', 'middle')
 
-            return eAngle;
-        })
-        .innerRadius(centerRadius)
-        .outerRadius(centerRadius);
+                .append('g')
+                .attr('class', 'group');
 
-    entry.append('path')
-        .attr('d', labelArc)
-        .attr('id', function (d, i) {
-            return 'arc-label-' + i;
-        });
+            this.config.nodes = d3.layout.partition()
+                .sort(null)
+                .value(function (d) {
+                    return d.depth;
+                })
+                .nodes(data);
+        },
 
-    var label = entry.append('text')
-        .attr('dominant-baseline', 'middle')
-        .style('font-size', function(d) {
-            return '' + (14 - d.depth) + 'px';
-        });
+        placeArcs: function () {
+            this.drawBorderCenterCircle();
+            this.drawBorderArcs();
+            this.setArcLabels();
+            this.setLabels();
+        },
 
-    // First names
-    var textPath = label.append('textPath');
+        /**
+         *
+         */
+        startAngle: function (d) {
+            return Math.max(this.options.startPi, Math.min(2 * this.options.endPi, this.options.x(d.x)));
+        },
 
-    textPath.attr('startOffset', '25%')
-        .attr('xlink:href', function(d, i) {
-            return '#arc-label-' + i;
-        })
-        .style('fill', '#000');
+        /**
+         *
+         */
+        endAngle: function (d) {
+            return Math.max(this.options.startPi, Math.min(2 * this.options.endPi, this.options.x(d.x + d.dx)));
+        },
 
-    textPath.append('tspan')
-        .attr('dy', '-1.1em')
-        .text(function(d) {
-            return getFirstNames(d);
-        });
+        /**
+         *
+         */
+        innerRadius: function (d) {
+            return [0, 65, 130, 195, 260, 325, 440, 555, 670][d.depth];
+        },
 
-    // Last name
-    var textPath = label.append('textPath');
+        /**
+         *
+         */
+        outerRadius: function (d) {
+            return [65, 130, 195, 260, 325, 440, 555, 670, 775][d.depth];
+        },
 
-    textPath.attr('startOffset', '25%')
-        .attr('xlink:href', function(d, i) {
-            return '#arc-label-' + i;
-        })
-        .style('fill', '#000');
+        /**
+         *
+         * @param d
+         * @returns {Number}
+         */
+        centerRadius: function (d) {
+            return (this.innerRadius(d) + this.outerRadius(d)) >> 1;
+        },
 
-    textPath.append('tspan')
-        .attr('dy', '0em')
-        .text(function(d) {
-            return getLastName(d);
-        });
+        /**
+         * Draws the center circle of the fan chart.
+         *
+         * @return void
+         */
+        drawBorderCenterCircle: function () {
+            var that = this;
 
-
-    // Date
-    var textPath = label.append('textPath');
-
-    textPath.attr('startOffset', '25%')
-        .attr('xlink:href', function(d, i) {
-            return '#arc-label-' + i;
-        })
-        .style('fill', '#7f7f7f');
-
-    textPath.append('tspan')
-        .attr('dy', '1.6em')
-        .style('font-size', function(d) {
-            return '' + (13 - d.depth) + 'px';
-        })
-
-        .style('font-weight', 'normal')
-        .text(function(d) {
-            if (d.born || d.died) {
-                return d.born + '-' + d.died;
-            }
-
-            // Remove empty element
-            return this.remove();
-        });
-}
-
-/**
- *
- * @param text
- *
- * @returns
- */
-function getText(text)
-{
-    var textEnter = text
-        .append('text')
-        .attr('dominant-baseline', 'middle')
-        .style('font-size', function(d) {
-            if (d.depth >= (nameSwitchTreshold + 1)) {
-                return '8px';
-            }
-
-            return '' + (13 - d.depth) + 'px';
-        });
-
-    return textEnter;
-}
-
-/**
- *
- * @param group
- */
-function transformText(group)
-{
-    group.each(function(d) {
-        var textElements  = d3.select(this).selectAll('text');
-        var countElements = textElements.size();
-
-        textElements.each(function(d, i) {
-            if (countElements === 1) {
-                offset = 0;
-            }
-
-            if (countElements === 2) {
-                offset = 0.5;
-            }
-
-            if (countElements === 3) {
-                offset = 1;
-            }
-
-            var mapIndexToOffset = d3.scale
-                .linear()
-                .domain([0, countElements - 1])
-                .range([-offset, offset]);
-
-            var text = d3.select(this);
-
-            var offsetRotate = i === 0 ? 1.1 : (i === 1 ? 1.1 : 1.6);
-
-            if (d.generation === 9) {
-                offsetRotate = 0.5;
-            }
-
-            // Name of center person should not be rotated in any way
-            if (d.depth === 0) {
-                text.attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
-            }
-
-            if (d.depth > 0) {
-                text.attr('transform', function(d) {
-                    var multangle = d.depth == 1 ? 90 : 180,
-                        angle = x(d.x + d.dx / 2) * multangle / Math.PI - 90,
-                        rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > -90 ? -1 : 1));
-
-                    var transX = (innerRadius(d) + outerRadius(d)) / 2;
-
-                    return 'rotate(' + rotate + ')translate(' + transX + ')rotate(' +
-                        (angle > -90 ? 0 : -180) + ')';
+            var arcGenerator = d3.svg.arc()
+                .startAngle(0)
+                .endAngle(Math.PI * 2)
+                .innerRadius(function (d) {
+                    return that.innerRadius(d);
+                })
+                .outerRadius(function (d) {
+                    return that.outerRadius(d);
                 });
+
+            var borderArcs = this.config
+                .visual
+                .append('g')
+                .attr('class', 'border-arcs')
+                .selectAll('g.border-arc')
+                .data(
+                    this.config.nodes.filter(function (d) {
+                        return d.depth === 0;
+                    })
+                )
+                .enter()
+                .append('g')
+                .attr('class', 'border-arc');
+
+            this.drawBorders(borderArcs, arcGenerator);
+        },
+
+        /**
+         * Draws the borders of the single arcs.
+         *
+         * @return void
+         */
+        drawBorderArcs: function () {
+            var that = this;
+
+            var arcGenerator = d3.svg.arc()
+                .startAngle(function (d) {
+                    return that.startAngle(d);
+                })
+                .endAngle(function (d) {
+                    return that.endAngle(d);
+                })
+                .innerRadius(function (d) {
+                    return that.innerRadius(d);
+                })
+                .outerRadius(function (d) {
+                    return that.outerRadius(d);
+                });
+
+            var borderArcs = this.config.visual
+                .append('g')
+                .attr('class', 'border-arcs')
+                .selectAll('g.border-arc')
+                .data(
+                    this.config.nodes.filter(function (d) {
+                        return d.depth > 0;
+                    })
+                )
+                .enter()
+                .append('g')
+                .attr('class', 'border-arc');
+
+            // Add title element containing the full name of the individual
+            borderArcs.append('title')
+                .text(function (d) {
+                    return d.name;
+                });
+
+            this.drawBorders(borderArcs, arcGenerator);
+        },
+
+        /**
+         * Draws the borders using the given arc generator.
+         *
+         * @param borderArcs   Elements selected
+         * @param arcGenerator Arc generator
+         *
+         * @return void
+         */
+        drawBorders: function (borderArcs, arcGenerator) {
+            borderArcs.append('path')
+                .attr('fill', function (d) {
+                    return d.color;
+                })
+                .attr('d', arcGenerator)
+                .style('stroke', '#ebebeb')
+                .style('stroke-width', 3);
+        },
+
+        getFirstNames: function (d) {
+            var name = d.name.substr(0, d.name.lastIndexOf(' '));
+
+            if ((d.generation <= 5) && (name.length > 14)) {
+                return name.substr(0, 14) + '...';
             }
-        });
+
+            if (name.length > 18) {
+                return name.substr(0, 18) + '...';
+            }
+
+            return name;
+        },
+
+        getLastName: function (d) {
+            return d.name.substr(d.name.lastIndexOf(' ') + 1);
+        },
+
+        /**
+         *
+         */
+        setArcLabels: function () {
+            var that = this;
+
+            var entry = this.config.visual
+                .append('g')
+                .attr('class', 'labels')
+                .selectAll('g.arc-labels')
+                .data(
+                    this.config.nodes.filter(function (d) {
+                        return d.depth > 0 && d.depth < that.options.nameSwitchTreshold;
+                    })
+                )
+                .enter()
+                .append('g')
+                .attr('class', 'arc-labels');
+
+            // Add title element containing the full name of the individual
+            entry.append('title')
+                .text(function (d) {
+                    return d.name;
+                });
+
+            var labelArc = d3.svg.arc()
+                .startAngle(function (d) {
+                    var sAngle = that.startAngle(d);
+
+                    if ((that.options.baseMod !== 2) || (d.generation <= 2)) {
+                        return sAngle;
+                    }
+
+                    var eAngle = that.endAngle(d);
+
+                    // Flip names for better readability depending on position in chart
+                    if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180))) ||
+                        ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
+                    ) {
+                        return eAngle;
+                    }
+
+                    return sAngle;
+                })
+                .endAngle(function (d) {
+                    var eAngle = that.endAngle(d);
+
+                    if ((that.options.baseMod !== 2) || (d.generation <= 2)) {
+                        return eAngle;
+                    }
+
+                    var sAngle = that.startAngle(d);
+
+                    // Flip names depending on position in chart
+                    if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180))) ||
+                        ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
+                    ) {
+                        return sAngle;
+                    }
+
+                    return eAngle;
+                })
+                .innerRadius(function (d) {
+                    return that.centerRadius(d);
+                })
+                .outerRadius(function (d) {
+                    return that.centerRadius(d);
+                });
+
+            entry.append('path')
+                .attr('d', labelArc)
+                .attr('id', function (ignore, i) {
+                    return 'arc-label-' + i;
+                });
+
+            var label = entry.append('text')
+                .attr('dominant-baseline', 'middle')
+                .style('font-size', function (d) {
+                    return '' + (14 - d.depth) + 'px';
+                });
+
+            // First names
+            var textPath1 = label.append('textPath');
+
+            textPath1.attr('startOffset', '25%')
+                .attr('xlink:href', function (ignore, i) {
+                    return '#arc-label-' + i;
+                })
+                .style('fill', '#000');
+
+            textPath1.append('tspan')
+                .attr('dy', '-1.1em')
+                .text(function (d) {
+                    return that.getFirstNames(d);
+                });
+
+            // Last name
+            var textPath2 = label.append('textPath');
+
+            textPath2.attr('startOffset', '25%')
+                .attr('xlink:href', function (ignore, i) {
+                    return '#arc-label-' + i;
+                })
+                .style('fill', '#000');
+
+            textPath2.append('tspan')
+                .attr('dy', '0em')
+                .text(function (d) {
+                    return that.getLastName(d);
+                });
+
+
+            // Date
+            var textPath3 = label.append('textPath');
+
+            textPath3.attr('startOffset', '25%')
+                .attr('xlink:href', function (ignore, i) {
+                    return '#arc-label-' + i;
+                })
+                .style('fill', '#7f7f7f');
+
+            textPath3.append('tspan')
+                .attr('dy', '1.6em')
+                .style('font-size', function (d) {
+                    return '' + (13 - d.depth) + 'px';
+                })
+
+                .style('font-weight', 'normal')
+                .text(function (d) {
+                    if (d.born || d.died) {
+                        return d.born + '-' + d.died;
+                    }
+
+                    // Remove empty element
+                    return this.remove();
+                });
+        },
+
+        /**
+         *
+         * @param text
+         *
+         * @returns
+         */
+        getText: function (text) {
+            var that = this;
+            var textEnter = text
+                .append('text')
+                .attr('dominant-baseline', 'middle')
+                .style('font-size', function (d) {
+                    if (d.depth >= (that.options.nameSwitchTreshold + 1)) {
+                        return '8px';
+                    }
+
+                    return '' + (13 - d.depth) + 'px';
+                });
+
+            return textEnter;
+        },
+
+        /**
+         *
+         * @param group
+         */
+        transformText: function (group) {
+            var that = this;
+
+            group.each(function () {
+                var textElements = d3.select(this).selectAll('text');
+                var countElements = textElements.size();
+                var offset = 0;
+
+                textElements.each(function (d, i) {
+                    if (countElements === 1) {
+                        offset = 0;
+                    }
+
+                    if (countElements === 2) {
+                        offset = 0.5;
+                    }
+
+                    if (countElements === 3) {
+                        offset = 1;
+                    }
+
+                    var mapIndexToOffset = d3.scale
+                        .linear()
+                        .domain([0, countElements - 1])
+                        .range([-offset, offset]);
+
+                    var text = d3.select(this);
+
+                    var offsetRotate = i === 0 ? 1.1 : (i === 1 ? 1.1 : 1.6);
+
+                    if (d.generation === 9) {
+                        offsetRotate = 0.5;
+                    }
+
+                    // Name of center person should not be rotated in any way
+                    if (d.depth === 0) {
+                        text.attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
+                    }
+
+                    if (d.depth > 0) {
+                        text.attr('transform', function (d) {
+                            var multangle = d.depth === 1 ? 90 : 180,
+                                angle = that.options.x(d.x + d.dx / 2) * multangle / Math.PI - 90,
+                                rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > -90 ? -1 : 1));
+
+                            var transX = (that.innerRadius(d) + that.outerRadius(d)) / 2;
+
+                            return 'rotate(' + rotate + ')'
+                                + 'translate(' + transX + ')'
+                                + 'rotate(' + (angle > -90 ? 0 : -180) + ')';
+                        });
+                    }
+                });
+            });
+        },
+
+        /**
+         *
+         */
+        setLabels: function () {
+            var that = this;
+            var text = this.config.visual
+                .append('g')
+                .attr('class', 'labels')
+                .selectAll('g.simple-labels')
+                .data(
+                    that.config.nodes.filter(function (d) {
+                        return d.depth < 1 || d.depth >= that.options.nameSwitchTreshold;
+                    })
+                )
+                .enter()
+                .append('g')
+                .attr('class', 'simple-labels');
+
+            // Add title element containing the full name of the individual
+            text.append('title')
+                .text(function (d) {
+                    return d.name;
+                });
+
+            var textEnter1 = this.getText(text);
+            var textEnter2 = this.getText(text);
+            var textEnter3 = this.getText(text);
+
+            textEnter1
+                .text(function (d) {
+                    return that.getFirstNames(d);
+                });
+
+            textEnter2
+                .text(function (d) {
+                    return that.getLastName(d);
+                });
+
+            textEnter3
+                .style('font-size', function (d) {
+                    return '' + (13 - d.depth) + 'px';
+                })
+                .style('font-weight', 'normal')
+                .style('fill', '#7f7f7f')
+                .text(function (d) {
+                    // Remove empty element
+                    if (d.depth >= 6) {
+                        return this.remove();
+                    }
+
+                    if (d.born || d.died) {
+                        return d.born + '-' + d.died;
+                    }
+
+                    // Remove empty element
+                    return this.remove();
+                });
+
+            this.transformText(text);
+        }
     });
-}
-
-/**
- *
- */
-function setLabels()
-{
-    var text = svg
-        .append('g')
-        .attr('class', 'labels')
-        .selectAll('g.simple-labels')
-        .data(
-            nodes.filter(function(d) {
-                return d.depth < 1 || d.depth >= nameSwitchTreshold;
-            })
-        )
-        .enter()
-        .append('g')
-        .attr('class', 'simple-labels');
-
-    // Add title element containing the full name of the individual
-    text.append('title')
-        .text(function(d, i) {
-            return d.name;
-        });
-
-    var textEnter1 = getText(text);
-    var textEnter2 = getText(text);
-    var textEnter3 = getText(text);
-
-    textEnter1
-        .text(function(d) {
-            return getFirstNames(d);
-        });
-
-    textEnter2
-        .text(function(d) {
-            return getLastName(d)
-        });
-
-    textEnter3
-        .style('font-size', function(d) {
-            return '' + (13 - d.depth) + 'px';
-        })
-        .style('font-weight', 'normal')
-        .style('fill', '#7f7f7f')
-        .text(function(d) {
-            // Remove empty element
-            if (d.depth >= 6) {
-                return this.remove();
-            }
-
-            if (d.born || d.died) {
-                return d.born + '-' + d.died;
-            }
-
-            // Remove empty element
-            return this.remove();
-        });
-
-    transformText(text);
-}
-
-
-// Adjust size of svg
-var bbox   = svg.node().getBBox(),
-    radius = bbox.width >> 1;
-
-d3.select(svg.node().parentNode)
-    .attr('width', bbox.width + (padding << 1))
-    .attr('height', bbox.height + (padding << 1))
-
-svg.attr('transform', 'translate(' + [radius + padding, radius + padding] + ')');
+}(jQuery));
