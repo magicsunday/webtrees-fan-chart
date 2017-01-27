@@ -46,8 +46,6 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     {
         parent::__construct($directory);
 
-        //$this->action = Filter::get('mod_action');
-
         // Register the namespace
         $loader = new ClassLoader();
         $loader->addPsr4(
@@ -164,4 +162,3 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
 }
 
 return new AncestralFanChartModule(__DIR__);
-?>

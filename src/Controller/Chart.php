@@ -14,6 +14,11 @@
 
 namespace RSO\WebtreesModule\AncestralFanChart\Controller;
 
+use Fisharebest\Webtrees\Controller\ChartController;
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Individual;
+use Fisharebest\Webtrees\Family;
+
 /**
  * Fan chart controller class.
  *
@@ -24,7 +29,7 @@ namespace RSO\WebtreesModule\AncestralFanChart\Controller;
  * @license    TBD
  * @link       https://github.com/magicsunday/ancestral-fan-chart/
  */
-class Chart extends \Fisharebest\Webtrees\Controller\ChartController
+class Chart extends ChartController
 {
     /**
      * Number of generations to display.
@@ -42,13 +47,13 @@ class Chart extends \Fisharebest\Webtrees\Controller\ChartController
 
          if ($this->root && $this->root->canShowName()) {
              $this->setPageTitle(
-                 \Fisharebest\Webtrees\I18N::translate(
+                 I18N::translate(
                     'Ancestral fan chart of %s', $this->root->getFullName()
                  )
              );
          } else {
              $this->setPageTitle(
-                 \Fisharebest\Webtrees\I18N::translate('Ancestral fan chart')
+                 I18N::translate('Ancestral fan chart')
              );
          }
     }
@@ -56,13 +61,13 @@ class Chart extends \Fisharebest\Webtrees\Controller\ChartController
     /**
      * Get the default colors based on the gender of an individual.
      *
-     * @param \Fisharebest\Webtrees\Individual $person Individual instance
+     * @param Individual $person Individual instance
      *
      * @return string HTML color code
      */
-    protected function getColor(\Fisharebest\Webtrees\Individual $person = null)
+    protected function getColor(Individual $person = null)
     {
-        if (!($person instanceof \Fisharebest\Webtrees\Individual)) {
+        if (!($person instanceof Individual)) {
             return '#fff';
         }
 
@@ -78,16 +83,16 @@ class Chart extends \Fisharebest\Webtrees\Controller\ChartController
     /**
      * Get the individual data required for display the chart.
      *
-     * @param int                              $generation Current generation
-     * @param \Fisharebest\Webtrees\Individual $person     Start person
+     * @param Individual $person     Start person
+     * @param int        $generation Current generation
      *
      * @return array
      */
     protected function getIndividualData(
-        \Fisharebest\Webtrees\Individual $person = null, $generation = 1
+        Individual $person = null, $generation = 1
     ) {
         // We need always two individuals, so we fake the missing ones
-        if (!($person instanceof \Fisharebest\Webtrees\Individual)) {
+        if (!($person instanceof Individual)) {
             return array(
                 'id'         => '',
                 'generation' => $generation,
@@ -113,15 +118,15 @@ class Chart extends \Fisharebest\Webtrees\Controller\ChartController
     /**
      * Recursively build the data array of the individual ancestors.
      *
-     * @param \Fisharebest\Webtrees\Individual $person     Start person
-     * @param int                              $generation Current generation
+     * @param Individual $person     Start person
+     * @param int        $generation Current generation
      *
      * @return array
      *
      * @todo Rebuild this to a iterative method
      */
     protected function buildJsonTree(
-        \Fisharebest\Webtrees\Individual $person = null, $generation = 1
+        Individual $person = null, $generation = 1
     ) {
         // Maximum generation reached
         if ($generation > $this->generations) {
@@ -131,11 +136,11 @@ class Chart extends \Fisharebest\Webtrees\Controller\ChartController
         $json   = $this->getIndividualData($person, $generation);
         $family = null;
 
-        if ($person instanceof \Fisharebest\Webtrees\Individual) {
+        if ($person instanceof Individual) {
             $family = $person->getPrimaryChildFamily();
         }
 
-        if ($family instanceof \Fisharebest\Webtrees\Family) {
+        if ($family instanceof Family) {
             $father = $family->getHusband();
             $mother = $family->getWife();
         } else {
@@ -202,4 +207,3 @@ JS
 HTML;
     }
 }
-?>
