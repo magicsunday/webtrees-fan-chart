@@ -18,9 +18,9 @@
             startPi: -Math.PI,
             endPi: Math.PI,
 
-            width: 800,
-            height: 800,
-            radius: 0,
+            width: 1200,
+            height: 1200,
+            radius: 600,
             padding: 5,
 
             x: null
@@ -50,7 +50,6 @@
             this.bootstrap();
             this.initChart(this.options.data);
             this.placeArcs();
-
 
             // Adjust size of svg
             var bbox = this.config.visual.node().getBBox();
@@ -256,7 +255,7 @@
          *
          * @return void
          */
-        drawBorders: function (borderArcs, arcGenerator) {
+        drawBorders : function (borderArcs, arcGenerator) {
             borderArcs.append('path')
                 .attr('fill', function (d) {
                     return d.color;
@@ -266,20 +265,16 @@
                 .style('stroke-width', 3);
         },
 
+        /**
+         *
+         */
         getFirstNames: function (d) {
-            var name = d.name.substr(0, d.name.lastIndexOf(' '));
-
-            if ((d.generation <= 5) && (name.length > 14)) {
-                return name.substr(0, 14) + '...';
-            }
-
-            if (name.length > 18) {
-                return name.substr(0, 18) + '...';
-            }
-
-            return name;
+            return d.name.substr(0, d.name.lastIndexOf(' '));
         },
 
+        /**
+         *
+         */
         getLastName: function (d) {
             return d.name.substr(d.name.lastIndexOf(' ') + 1);
         },
@@ -378,7 +373,8 @@
                 .attr('dy', '-1.1em')
                 .text(function (d) {
                     return that.getFirstNames(d);
-                });
+                })
+                .each(that.truncate(5));
 
             // Last name
             var textPath2 = label.append('textPath');
@@ -393,7 +389,8 @@
                 .attr('dy', '0em')
                 .text(function (d) {
                     return that.getLastName(d);
-                });
+                })
+                .each(that.truncate(5));
 
 
             // Date
@@ -505,6 +502,41 @@
         },
 
         /**
+         * Truncate the text of the current element.
+         *
+         * @param {int} padding Left/Right padding of text
+         *
+         * @returns {string} Truncated text
+         */
+        truncate : function (padding) {
+            return function (d) {
+                var width = 110;
+
+                if (d.generation === 2) {
+                    width = 280;
+                }
+
+                if (d.generation === 3) {
+                    width = 230;
+                }
+
+                if (d.generation === 4) {
+                    width = 160;
+                }
+
+                var self = d3.select(this),
+                    textLength = self.node().getComputedTextLength(),
+                    text = self.text();
+
+                while ((textLength > (width - (padding << 1))) && (text.length > 0)) {
+                    text = text.slice(0, -1);
+                    self.text(text + '...');
+                    textLength = self.node().getComputedTextLength();
+                }
+            }
+        },
+
+        /**
          *
          */
         setLabels: function () {
@@ -533,14 +565,16 @@
             var textEnter3 = this.getText(text);
 
             textEnter1
-                .text(function (d) {
+                .text(function(d) {
                     return that.getFirstNames(d);
-                });
+                })
+                .each(that.truncate(5));
 
             textEnter2
                 .text(function (d) {
                     return that.getLastName(d);
-                });
+                })
+                .each(that.truncate(5));
 
             textEnter3
                 .style('font-size', function (d) {

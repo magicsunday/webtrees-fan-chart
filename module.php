@@ -117,7 +117,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
         return new Menu(
             $this->getTitle(),
             $link,
-            'menu-chart-ancestral-fan-chart',
+            'menu-chart-fanchart',
             array(
                 'rel' => 'nofollow',
             )
