@@ -80,7 +80,8 @@ class Chart extends ChartController
         if ($this->root && $this->root->canShowName()) {
             $this->setPageTitle(
                 I18N::translate(
-                    'Ancestral fan chart of %s', $this->root->getFullName()
+                    'Ancestral fan chart of %s',
+                    $this->root->getFullName()
                 )
             );
         } else {
@@ -207,6 +208,7 @@ class Chart extends ChartController
     }
 
     /**
+     * Translate a string, and then substitute placeholders
      *
      * @param string $value String to translate
      *
@@ -262,7 +264,7 @@ class Chart extends ChartController
     }
 
     /**
-     * Render the fan chart HTML and JSON data.
+     * Render the fan chart form HTML and JSON data.
      *
      * @return string HTML snippet to include in page HTML
      */
@@ -273,7 +275,8 @@ class Chart extends ChartController
             $this->buildJsonTree($this->root)
         );
 
-        $this->addInlineJavascript(
+        $this->addInlineJavascript('autocomplete();')
+            ->addInlineJavascript(
 <<<JS
 /**
  * Init widget
@@ -292,8 +295,6 @@ $(function () {
 });
 JS
         );
-
-        $this->addInlineJavascript('autocomplete();');
 
         return <<<HTML
 <div id="ancestral-fan-chart">
