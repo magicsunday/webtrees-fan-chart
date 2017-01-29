@@ -1,7 +1,21 @@
-#ancestral-fan-chart h2 {
-/*
-    text-align: center;
-*/
+#ancestral-fan-chart form label {
+    margin: 0 5px;
+}
+
+#ancestral-fan-chart form input[type="text"] {
+    margin: 0 7px;
+}
+
+#ancestral-fan-chart .list_table {
+    margin: 0;
+}
+
+#ancestral-fan-chart table td {
+    vertical-align: middle;
+}
+
+#ancestral-fan-chart #fan-chart {
+    z-index: 2;
 }
 
 #ancestral-fan-chart svg {

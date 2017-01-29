@@ -64,38 +64,41 @@ class Chart extends ChartController
     protected $fanStyle = 3;
 
     /**
-     * Width of fanchart (a percentage).
-     *
-     * @var int
-     */
-    protected $fanWidth;
-
-    /**
      * Constructor.
      */
     public function __construct()
     {
-         parent::__construct();
+        parent::__construct();
 
+        // Get default number of generations to display
+        $defaultGenerations = $this->getTree()->getPreference('DEFAULT_PEDIGREE_GENERATIONS');
 
-         $defaultGenerations = $this->getTree()->getPreference('DEFAULT_PEDIGREE_GENERATIONS');
+        // Extract the request parameters
+        $this->fanStyle    = Filter::getInteger('fanStyle', 2, 4, 3);
+        $this->generations = Filter::getInteger('generations', 2, 9, $defaultGenerations);
 
-         // Extract the request parameters
-         $this->fanStyle    = Filter::getInteger('fanStyle', 2, 4, 3);
-//          $this->fanWidth    = Filter::getInteger('fanWidth', 50, 500, 100);
-         $this->generations = Filter::getInteger('generations', 2, 9, $defaultGenerations);
+        if ($this->root && $this->root->canShowName()) {
+            $this->setPageTitle(
+                I18N::translate(
+                   'Ancestral fan chart of %s', $this->root->getFullName()
+                )
+            );
+        } else {
+            $this->setPageTitle(
+                I18N::translate('Ancestral fan chart')
+            );
+        }
+    }
 
-         if ($this->root && $this->root->canShowName()) {
-             $this->setPageTitle(
-                 I18N::translate(
-                    'Ancestral fan chart of %s', $this->root->getFullName()
-                 )
-             );
-         } else {
-             $this->setPageTitle(
-                 I18N::translate('Ancestral fan chart')
-             );
-         }
+    /**
+     * Get tree instance.
+     *
+     * @return Tree
+     */
+    protected function getTree()
+    {
+        global $WT_TREE;
+        return $WT_TREE;
     }
 
     /**
@@ -205,16 +208,6 @@ class Chart extends ChartController
 
     /**
      *
-     * @return Tree
-     */
-    protected function getTree()
-    {
-        global $WT_TREE;
-        return $WT_TREE;
-    }
-
-    /**
-     *
      * @param string $value String to translate
      *
      * @return string
@@ -224,17 +217,32 @@ class Chart extends ChartController
         return I18N::translate($value);
     }
 
+    /**
+     * Get the HTML link to find an individual.
+     *
+     * @return string
+     */
     protected function printFindIndividualLink()
     {
         return FunctionsPrint::printFindIndividualLink('rootid');
     }
 
-    protected function selectEditControl($name, $values, $empty, $selected, $extra = '')
+    /**
+     * Get the HTML for the "fanStyle" selection form control element.
+     *
+     * @return string
+     */
+    protected function getFanStyleSelectControl()
     {
         return FunctionsEdit::selectEditControl('fanStyle', $this->getFanStyles(), null, $this->fanStyle);
     }
 
-    protected function editFieldInteger($name, $selected = '', $min, $max, $extra = '')
+    /**
+     * Get the HTML for the "generations" input form control element.
+     *
+     * @return string
+     */
+    protected function getGenerationsInputControl()
     {
         return FunctionsEdit::editFieldInteger('generations', $this->generations, 2, 9);
     }
@@ -301,36 +309,22 @@ JS
                     </td>
                     <td class="optionbox">
                         <input class="pedigree_form" data-autocomplete-type="INDI" type="text" name="rootid" id="rootid" size="3" value="{$this->root->getXref()}">
-                        {$this->printFindIndividualLink('rootid')}
+                        {$this->printFindIndividualLink()}
                     </td>
                     <td class="descriptionbox">
-                        <label for="fanStyle">
-                            {$this->translate('Layout')}
-                            </label>
+                        <label for="generations">{$this->translate('Generations')}</label>
                     </td>
                     <td class="optionbox">
-                        {$this->selectEditControl('fanStyle', $this->getFanStyles(), null, $this->fanStyle)}
+                        {$this->getGenerationsInputControl()}
+                    </td>
+                    <td class="descriptionbox">
+                        <label for="fanStyle">{$this->translate('Layout')}</label>
+                    </td>
+                    <td class="optionbox">
+                        {$this->getFanStyleSelectControl()}
                     </td>
                     <td rowspan="2" class="topbottombar vmiddle">
                         <input type="submit" value="{$this->translate('view')}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="descriptionbox">
-                        <label for="generations">
-                            {$this->translate('Generations')}
-                        </label>
-                    </td>
-                    <td class="optionbox">
-                        {$this->editFieldInteger('generations', $this->generations, 2, 9)}
-                    </td>
-                    <td class="descriptionbox">
-                        <label for="fanWidth">
-                            {$this->translate('Zoom')}
-                        </label>
-                    </td>
-                    <td class="optionbox">
-                        <input type="text" size="3" id="fanWidth" name="fanWidth" value="{$this->fanWidth}"> %
                     </td>
                 </tr>
             </tbody>
