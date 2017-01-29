@@ -13,7 +13,7 @@
             nameSwitchTreshold: 5,
 
             // 2 = full circle, 3 = fan, 4 = half circle
-            baseMod: 2,
+            fanStyle: 2,
 
             startPi: -Math.PI,
             endPi: Math.PI,
@@ -36,8 +36,8 @@
             // Check dependencies
             this.checkDependencies();
 
-            this.options.startPi = -Math.PI * 2 / this.options.baseMod;
-            this.options.endPi = Math.PI * 2 / this.options.baseMod;
+            this.options.startPi = -Math.PI * 2 / this.options.fanStyle;
+            this.options.endPi = Math.PI * 2 / this.options.fanStyle;
 
             if (this.options.width > $(window).width() - 25) {
                 this.options.width = $(window).width() - 25;
@@ -308,7 +308,7 @@
                 .startAngle(function (d) {
                     var sAngle = that.startAngle(d);
 
-                    if ((that.options.baseMod !== 2) || (d.generation <= 2)) {
+                    if ((that.options.fanStyle !== 2) || (d.generation <= 2)) {
                         return sAngle;
                     }
 
@@ -326,7 +326,7 @@
                 .endAngle(function (d) {
                     var eAngle = that.endAngle(d);
 
-                    if ((that.options.baseMod !== 2) || (d.generation <= 2)) {
+                    if ((that.options.fanStyle !== 2) || (d.generation <= 2)) {
                         return eAngle;
                     }
 
@@ -509,20 +509,29 @@
          * @returns {string} Truncated text
          */
         truncate : function (padding) {
+            var that = this;
+
             return function (d) {
+                // Modifier of available width depending on fan style
+                var widthMod = 2.0 / that.options.fanStyle;
+
                 // Depending on the depth of an entry in the chart the available width differs
                 var availableWidth = 110;
 
                 if (d.depth === 1) {
-                    availableWidth = 280;
+                    availableWidth = 280 * widthMod;
                 }
 
                 if (d.depth === 2) {
-                    availableWidth = 230;
+                    availableWidth = 230 * widthMod;
                 }
 
                 if (d.depth === 3) {
-                    availableWidth = 160;
+                    availableWidth = 160 * widthMod;
+                }
+
+                if (d.depth === 4) {
+                    availableWidth = 110 * widthMod;
                 }
 
                 var self       = d3.select(this),
