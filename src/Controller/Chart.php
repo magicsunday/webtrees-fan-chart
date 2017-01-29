@@ -285,6 +285,8 @@ $(function () {
 JS
         );
 
+        $this->addInlineJavascript('autocomplete();');
+
         return <<<HTML
 <div id="ancestral-fan-chart">
     <h2>{$this->getPageTitle()}</h2>
