@@ -149,11 +149,11 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      * This is a general purpose hook, allowing modules to respond to routes
      * of the form module.php?mod=FOO&mod_action=BAR
      *
-     * @param string $mod_action
+     * @param string $modAction Module action
      *
      * @return void
      */
-    public function modAction($mod_action)
+    public function modAction($modAction)
     {
         global $controller;
         global $WT_TREE;

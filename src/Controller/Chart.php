@@ -127,14 +127,12 @@ class Chart extends ChartController
     /**
      * Get the individual data required for display the chart.
      *
-     * @param Individual $person     Start person
-     * @param int        $generation Current generation
+     * @param Individual $person Start person
      *
      * @return array
      */
-    protected function getIndividualData(
-        Individual $person = null, $generation = 1
-    ) {
+    protected function getIndividualData(Individual $person = null)
+    {
         // We need always two individuals, so we fake the missing ones
         if (!($person instanceof Individual)) {
             return array(
@@ -175,19 +173,19 @@ class Chart extends ChartController
             return array();
         }
 
-        $json   = $this->getIndividualData($person, $generation);
+        $json   = $this->getIndividualData($person);
         $family = null;
 
         if ($person instanceof Individual) {
             $family = $person->getPrimaryChildFamily();
         }
 
+        $father = null;
+        $mother = null;
+
         if ($family instanceof Family) {
             $father = $family->getHusband();
             $mother = $family->getWife();
-        } else {
-            $father = null;
-            $mother = null;
         }
 
         // Recursively call the method for the parents of the individual
