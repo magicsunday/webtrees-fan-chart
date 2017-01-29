@@ -308,7 +308,7 @@
                 .startAngle(function (d) {
                     var sAngle = that.startAngle(d);
 
-                    if ((that.options.fanStyle !== 2) || (d.generation <= 2)) {
+                    if ((that.options.fanStyle !== 2) || (d.depth <= 1)) {
                         return sAngle;
                     }
 
@@ -326,7 +326,7 @@
                 .endAngle(function (d) {
                     var eAngle = that.endAngle(d);
 
-                    if ((that.options.fanStyle !== 2) || (d.generation <= 2)) {
+                    if ((that.options.fanStyle !== 2) || (d.depth <= 1)) {
                         return eAngle;
                     }
 
@@ -475,7 +475,7 @@
 
                     var offsetRotate = i === 0 ? 1.1 : (i === 1 ? 1.1 : 1.6);
 
-                    if (d.generation === 9) {
+                    if (d.depth === 8) {
                         offsetRotate = 0.5;
                     }
 

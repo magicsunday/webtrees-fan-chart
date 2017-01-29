@@ -134,24 +134,22 @@ class Chart extends ChartController
         // We need always two individuals, so we fake the missing ones
         if (!($person instanceof Individual)) {
             return array(
-                'id'         => '',
-                'generation' => $generation,
-                'name'       => '',
-                'born'       => '',
-                'died'       => '',
-                'color'      => $this->getColor(),
-                'children'   => array(),
+                'id'       => '',
+                'name'     => '',
+                'born'     => '',
+                'died'     => '',
+                'color'    => $this->getColor(),
+                'children' => array(),
             );
         }
 
         return array(
-            'id'         => $person->getXref(),
-            'generation' => $generation,
-            'name'       => strip_tags($person->getFullName()),
-            'born'       => $person->getBirthYear(),
-            'died'       => $person->getDeathYear(),
-            'color'      => $this->getColor($person),
-            'children'   => array(),
+            'id'       => $person->getXref(),
+            'name'     => strip_tags($person->getFullName()),
+            'born'     => $person->getBirthYear(),
+            'died'     => $person->getDeathYear(),
+            'color'    => $this->getColor($person),
+            'children' => array(),
         );
     }
 
@@ -192,6 +190,8 @@ class Chart extends ChartController
         $fatherTree = $this->buildJsonTree($father, $generation + 1);
         $motherTree = $this->buildJsonTree($mother, $generation + 1);
 
+        // Add array of child nodes, or empty array for leaf nodes
+        // @see D3 partition layout
         if ($fatherTree) {
             $json['children'][] = $fatherTree;
         }
