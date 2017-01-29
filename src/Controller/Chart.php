@@ -80,7 +80,7 @@ class Chart extends ChartController
         if ($this->root && $this->root->canShowName()) {
             $this->setPageTitle(
                 I18N::translate(
-                   'Ancestral fan chart of %s', $this->root->getFullName()
+                    'Ancestral fan chart of %s', $this->root->getFullName()
                 )
             );
         } else {
