@@ -32,6 +32,12 @@
         options: {
             nameSwitchTreshold: 5,
 
+            // Default font size
+            fontSize: 14,
+
+            // Default font scaling factor
+            fontScale: 100,
+
             // Degrees of the fan chart
             fanDegree: 360,
 
@@ -391,6 +397,18 @@
         },
 
         /**
+         * Get the scaled font size.
+         *
+         * @param {number} fontSize Base font size used to calculate scaled one
+         *
+         * @return {string}
+         */
+        getFontSize: function (fontSize) {
+            var fontSize = fontSize || this.options.fontSize;
+            return (fontSize * this.options.fontScale / 100) + 'px';
+        },
+
+        /**
          * Set the arc labels.
          */
         setArcLabels: function () {
@@ -470,7 +488,7 @@
             var text = entry.append('text')
                 .attr('dominant-baseline', 'middle')
                 .style('font-size', function (d) {
-                    return '' + (14 - d.depth) + 'px';
+                    return that.getFontSize(14 - d.depth);
                 });
 
             // First names
@@ -500,7 +518,7 @@
             textPath3.append('tspan')
                 .attr('dy', '1.6em')
                 .style('font-size', function (d) {
-                    return '' + (13 - d.depth) + 'px';
+                    return that.getFontSize(13 - d.depth);
                 })
                 .style('font-weight', 'normal')
                 .text(function (d) {
@@ -528,10 +546,10 @@
                 .attr('dominant-baseline', 'middle')
                 .style('font-size', function (d) {
                     if (d.depth >= (that.options.nameSwitchTreshold + 1)) {
-                        return '8px';
+                        return that.getFontSize(8);
                     }
 
-                    return '' + (13 - d.depth) + 'px';
+                    return that.getFontSize(13 - d.depth);
                 });
         },
 
@@ -573,6 +591,8 @@
                     if (d.depth === 8) {
                         offsetRotate = 0.5;
                     }
+
+                    offsetRotate *= that.options.fontScale / 100;
 
                     var text = d3.select(this);
 
@@ -639,7 +659,7 @@
 
             textEnter3
                 .style('font-size', function (d) {
-                    return '' + (13 - d.depth) + 'px';
+                    return that.getFontSize(13 - d.depth);
                 })
                 .style('font-weight', 'normal')
                 .style('fill', '#7f7f7f')

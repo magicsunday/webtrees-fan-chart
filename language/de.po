@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ancestral fan chart\n"
 "POT-Creation-Date: 2017-01-30 12:53+0100\n"
-"PO-Revision-Date: 2017-01-30 20:14+0100\n"
+"PO-Revision-Date: 2017-01-30 20:28+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -77,6 +77,11 @@ msgstr "Generationen"
 #: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:320
 msgid "Degrees"
 msgstr "Winkel"
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:339
+msgid "Font size"
+msgstr "Schriftgröße"
 
 #. I18N:
 #: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:326

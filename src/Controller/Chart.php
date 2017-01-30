@@ -64,6 +64,13 @@ class Chart extends ChartController
     protected $fanDegree = 210;
 
     /**
+     * Font size scaling factor in percent.
+     *
+     * @var int
+     */
+    protected $fontScale = 100;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -76,6 +83,7 @@ class Chart extends ChartController
         // Extract the request parameters
         $this->fanDegree   = Filter::getInteger('fanDegree', 180, 360, 210);
         $this->generations = Filter::getInteger('generations', 2, 9, $defaultGenerations);
+        $this->fontScale   = Filter::getInteger('fontScale', 0, 100, 100);
 
         if ($this->root && $this->root->canShowName()) {
             $this->setPageTitle(
@@ -291,6 +299,7 @@ $(function () {
     if (typeof $().ancestralFanChart === 'function') {
         fanChart.ancestralFanChart({
             fanDegree : {$this->fanDegree},
+            fontScale : {$this->fontScale},
             data : {$json}
         });
     }
@@ -325,6 +334,13 @@ JS
                     </td>
                     <td class="optionbox">
                         {$this->getFanStyleSelectControl()}
+                    </td>
+                    <td class="descriptionbox">
+                        <label for="rootId">{$this->translate('Font size')}</label>
+                    </td>
+                    <td class="optionbox">
+                        <input class="fontScale" type="text" name="fontScale" id="fontScale" size="3" value="{$this->fontScale}">
+                        {$this->translate('%')}
                     </td>
                     <td rowspan="2" class="topbottombar vmiddle">
                         <input type="submit" value="{$this->translate('view')}">
