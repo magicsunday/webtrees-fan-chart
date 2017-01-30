@@ -1,10 +1,30 @@
-/** global: window */
-/** global: console */
-/** global: Math */
-/** global: d3 */
-/** global: jQuery */
-/** global: $ */
+/*global
+    window, console, Math, d3, jQuery, $
+*/
 
+/**
+ * Webtrees module.
+ *
+ * Copyright (C) 2017  Rico Sonntag
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ */
+
+/**
+ * jQuery widget "rso.ancestralFanChart"
+ */
 (function ($) {
     'use strict';
 
@@ -29,7 +49,6 @@
         /**
          * Initialize the tool.
          *
-         * @returns void
          * @constructs ancestralFanChart
          */
         _create: function () {
@@ -44,6 +63,8 @@
             }
 
             this.options.radius = this.options.width >> 1;
+
+            // Scale the angles linear across the circle
             this.options.x = d3.scale.linear().range([this.options.startPi, this.options.endPi]);
 
             // Start bootstrapping
@@ -85,7 +106,6 @@
         /**
          * Bootstrap all requirement for all charts
          *
-         * @return void
          * @private
          */
         bootstrap: function () {
@@ -101,29 +121,30 @@
         /**
          * Initialize the chart.
          *
-         * @return void
          * @private
          */
         initChart: function (data) {
             this.config.visual = d3
                 .select('#fan-chart')
-                .append('svg:svg')
-                .attr('width', this.options.width) // + (padding << 1))
-                .attr('height', this.options.height) //+ (padding << 1))
+                .append('svg')
+                .attr('width', this.options.width + (this.options.padding << 1))
+                .attr('height', this.options.height + (this.options.padding << 1))
                 .attr('text-rendering', 'geometricPrecision')
                 .attr('text-anchor', 'middle')
-
                 .append('g')
                 .attr('class', 'group');
 
             this.config.nodes = d3.layout.partition()
-                .sort(null)
+                .sort(null) // prevent reordering of data
                 .value(function (d) {
                     return d.depth;
                 })
                 .nodes(data);
         },
 
+        /**
+         * Call all the methods required to draw the arcs and labels.
+         */
         placeArcs: function () {
             this.drawBorderCenterCircle();
             this.drawBorderArcs();
@@ -132,37 +153,55 @@
         },
 
         /**
+         * Get the start angle.
          *
+         * @param {object} d D3 data object
+         *
+         * @returns {number}
          */
         startAngle: function (d) {
             return Math.max(this.options.startPi, Math.min(2 * this.options.endPi, this.options.x(d.x)));
         },
 
         /**
+         * Get the end angle.
          *
+         * @param {object} d D3 data object
+         *
+         * @returns {number}
          */
         endAngle: function (d) {
             return Math.max(this.options.startPi, Math.min(2 * this.options.endPi, this.options.x(d.x + d.dx)));
         },
 
         /**
+         * Get the inner radius depending on the depth of an element.
          *
+         * @param {object} d D3 data object
+         *
+         * @returns {number}
          */
         innerRadius: function (d) {
             return [0, 65, 130, 195, 260, 325, 440, 555, 670][d.depth];
         },
 
         /**
+         * Get the outer radius depending on the depth of an element.
          *
+         * @param {object} d D3 data object
+         *
+         * @returns {number}
          */
         outerRadius: function (d) {
             return [65, 130, 195, 260, 325, 440, 555, 670, 775][d.depth];
         },
 
         /**
+         * Get the center radius.
          *
-         * @param d
-         * @returns {Number}
+         * @param {object} d D3 data object
+         *
+         * @returns {number}
          */
         centerRadius: function (d) {
             return (this.innerRadius(d) + this.outerRadius(d)) >> 1;
@@ -170,8 +209,6 @@
 
         /**
          * Draws the center circle of the fan chart.
-         *
-         * @return void
          */
         drawBorderCenterCircle: function () {
             var that = this;
@@ -192,6 +229,7 @@
                 .attr('class', 'border-arcs')
                 .selectAll('g.border-arc')
                 .data(
+                    // Remove all not required data
                     this.config.nodes.filter(function (d) {
                         return d.depth === 0;
                     })
@@ -205,8 +243,6 @@
 
         /**
          * Draws the borders of the single arcs.
-         *
-         * @return void
          */
         drawBorderArcs: function () {
             var that = this;
@@ -230,6 +266,7 @@
                 .attr('class', 'border-arcs')
                 .selectAll('g.border-arc')
                 .data(
+                    // Remove all not required data
                     this.config.nodes.filter(function (d) {
                         return d.depth > 0;
                     })
@@ -250,12 +287,10 @@
         /**
          * Draws the borders using the given arc generator.
          *
-         * @param borderArcs   Elements selected
-         * @param arcGenerator Arc generator
-         *
-         * @return void
+         * @param {object}   borderArcs   Elements selected
+         * @param {function} arcGenerator Arc generator
          */
-        drawBorders : function (borderArcs, arcGenerator) {
+        drawBorders: function (borderArcs, arcGenerator) {
             borderArcs.append('path')
                 .attr('fill', function (d) {
                     return d.color;
@@ -266,21 +301,97 @@
         },
 
         /**
+         * Truncates the text of the current element depending on its depth
+         * in the chart.
          *
+         * @param {int} padding Left/Right padding of text
+         *
+         * @returns {string} Truncated text
+         */
+        truncate: function (padding) {
+            var that = this;
+
+            return function (d) {
+                // Modifier of available width depending on fan style
+                var widthMod = 2.0 / that.options.fanStyle;
+
+                // Depending on the depth of an entry in the chart the available width differs
+                var availableWidth = 110;
+
+                if (d.depth === 1) {
+                    availableWidth = 280 * widthMod;
+                }
+
+                if (d.depth === 2) {
+                    availableWidth = 230 * widthMod;
+                }
+
+                if (d.depth === 3) {
+                    availableWidth = 160 * widthMod;
+                }
+
+                if (d.depth === 4) {
+                    availableWidth = 110 * widthMod;
+                }
+
+                var self = d3.select(this),
+                    textLength = self.node().getComputedTextLength(),
+                    text = self.text();
+
+                while ((textLength > (availableWidth - (padding << 1))) && (text.length > 0)) {
+                    // Remove last char
+                    text = text.slice(0, -1);
+
+                    // Recalculate the text width
+                    textLength = self
+                        .text(text + '...')
+                        .node()
+                        .getComputedTextLength();
+                }
+            };
+        },
+
+        /**
+         * Get the first names of an person.
+         *
+         * @param {object} d D3 data object
+         *
+         * @return {string}
          */
         getFirstNames: function (d) {
             return d.name.substr(0, d.name.lastIndexOf(' '));
         },
 
         /**
+         * Get the last name of an person.
          *
+         * @param {object} d D3 data object
+         *
+         * @return {string}
          */
         getLastName: function (d) {
             return d.name.substr(d.name.lastIndexOf(' ') + 1);
         },
 
         /**
+         * Append a new "textPath" element to the given "text" element.
          *
+         * @param {object} text D3 text object
+         *
+         * @return {object} D3 textPath object
+         */
+        appendTextPath: function (text) {
+
+            return text.append('textPath')
+                .attr('startOffset', '25%')
+                .attr('xlink:href', function (ignore, i) {
+                    return '#arc-label-' + i;
+                })
+                .style('fill', '#000');
+        },
+
+        /**
+         * Set the arc labels.
          */
         setArcLabels: function () {
             var that = this;
@@ -290,6 +401,7 @@
                 .attr('class', 'labels')
                 .selectAll('g.arc-labels')
                 .data(
+                    // Remove all not required data
                     this.config.nodes.filter(function (d) {
                         return d.depth > 0 && d.depth < that.options.nameSwitchTreshold;
                     })
@@ -348,26 +460,21 @@
                     return that.centerRadius(d);
                 });
 
+            // Append a path so we could use it to write the label along it
             entry.append('path')
                 .attr('d', labelArc)
                 .attr('id', function (ignore, i) {
                     return 'arc-label-' + i;
                 });
 
-            var label = entry.append('text')
+            var text = entry.append('text')
                 .attr('dominant-baseline', 'middle')
                 .style('font-size', function (d) {
                     return '' + (14 - d.depth) + 'px';
                 });
 
             // First names
-            var textPath1 = label.append('textPath');
-
-            textPath1.attr('startOffset', '25%')
-                .attr('xlink:href', function (ignore, i) {
-                    return '#arc-label-' + i;
-                })
-                .style('fill', '#000');
+            var textPath1 = this.appendTextPath(text);
 
             textPath1.append('tspan')
                 .attr('dy', '-1.1em')
@@ -377,13 +484,7 @@
                 .each(that.truncate(5));
 
             // Last name
-            var textPath2 = label.append('textPath');
-
-            textPath2.attr('startOffset', '25%')
-                .attr('xlink:href', function (ignore, i) {
-                    return '#arc-label-' + i;
-                })
-                .style('fill', '#000');
+            var textPath2 = this.appendTextPath(text);
 
             textPath2.append('tspan')
                 .attr('dy', '0em')
@@ -392,14 +493,8 @@
                 })
                 .each(that.truncate(5));
 
-
-            // Date
-            var textPath3 = label.append('textPath');
-
-            textPath3.attr('startOffset', '25%')
-                .attr('xlink:href', function (ignore, i) {
-                    return '#arc-label-' + i;
-                })
+            // Dates
+            var textPath3 = this.appendTextPath(text)
                 .style('fill', '#7f7f7f');
 
             textPath3.append('tspan')
@@ -407,7 +502,6 @@
                 .style('font-size', function (d) {
                     return '' + (13 - d.depth) + 'px';
                 })
-
                 .style('font-weight', 'normal')
                 .text(function (d) {
                     if (d.born || d.died) {
@@ -420,14 +514,16 @@
         },
 
         /**
+         * Get new D3 text element.
          *
-         * @param text
+         * @param {object} group D3 group (g) object
          *
-         * @returns
+         * @return {object} D3 text object
          */
-        getText: function (text) {
+        getText: function (group) {
             var that = this;
-            var textEnter = text
+
+            return group
                 .append('text')
                 .attr('dominant-baseline', 'middle')
                 .style('font-size', function (d) {
@@ -437,13 +533,14 @@
 
                     return '' + (13 - d.depth) + 'px';
                 });
-
-            return textEnter;
         },
 
         /**
+         * Transform the D3 text elements in the group. Rotate each text element
+         * depending on its offset, so that they are equally positioned inside
+         * the arc.
          *
-         * @param group
+         * @param {object} group D3 group object
          */
         transformText: function (group) {
             var that = this;
@@ -471,25 +568,22 @@
                         .domain([0, countElements - 1])
                         .range([-offset, offset]);
 
-                    var text = d3.select(this);
-
                     var offsetRotate = i === 0 ? 1.1 : (i === 1 ? 1.1 : 1.6);
 
                     if (d.depth === 8) {
                         offsetRotate = 0.5;
                     }
 
+                    var text = d3.select(this);
+
                     // Name of center person should not be rotated in any way
                     if (d.depth === 0) {
                         text.attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
-                    }
-
-                    if (d.depth > 0) {
+                    } else {
                         text.attr('transform', function (d) {
-                            var multangle = d.depth === 1 ? 90 : 180,
-                                angle = that.options.x(d.x + d.dx / 2) * multangle / Math.PI - 90,
-                                rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > -90 ? -1 : 1));
-
+                            var multangle = d.depth === 1 ? 90 : 180;
+                            var angle = that.options.x(d.x + d.dx / 2) * multangle / Math.PI - 90;
+                            var rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > -90 ? -1 : 1));
                             var transX = (that.innerRadius(d) + that.outerRadius(d)) / 2;
 
                             return 'rotate(' + rotate + ')'
@@ -502,65 +596,16 @@
         },
 
         /**
-         * Truncate the text of the current element.
-         *
-         * @param {int} padding Left/Right padding of text
-         *
-         * @returns {string} Truncated text
-         */
-        truncate : function (padding) {
-            var that = this;
-
-            return function (d) {
-                // Modifier of available width depending on fan style
-                var widthMod = 2.0 / that.options.fanStyle;
-
-                // Depending on the depth of an entry in the chart the available width differs
-                var availableWidth = 110;
-
-                if (d.depth === 1) {
-                    availableWidth = 280 * widthMod;
-                }
-
-                if (d.depth === 2) {
-                    availableWidth = 230 * widthMod;
-                }
-
-                if (d.depth === 3) {
-                    availableWidth = 160 * widthMod;
-                }
-
-                if (d.depth === 4) {
-                    availableWidth = 110 * widthMod;
-                }
-
-                var self       = d3.select(this),
-                    textLength = self.node().getComputedTextLength(),
-                    text       = self.text();
-
-                while ((textLength > (availableWidth - (padding << 1))) && (text.length > 0)) {
-                    // Remove last char
-                    text = text.slice(0, -1);
-
-                    // Recalculate the text width
-                    textLength = self
-                        .text(text + '...')
-                        .node()
-                        .getComputedTextLength();
-                }
-            }
-        },
-
-        /**
-         *
+         * Set the labels of the outer arc of the chart.
          */
         setLabels: function () {
             var that = this;
-            var text = this.config.visual
+            var group = this.config.visual
                 .append('g')
                 .attr('class', 'labels')
                 .selectAll('g.simple-labels')
                 .data(
+                    // Remove all not required data
                     that.config.nodes.filter(function (d) {
                         return d.depth < 1 || d.depth >= that.options.nameSwitchTreshold;
                     })
@@ -570,17 +615,18 @@
                 .attr('class', 'simple-labels');
 
             // Add title element containing the full name of the individual
-            text.append('title')
+            group.append('title')
                 .text(function (d) {
                     return d.name;
                 });
 
-            var textEnter1 = this.getText(text);
-            var textEnter2 = this.getText(text);
-            var textEnter3 = this.getText(text);
+            // Create a text element for first name, last name and the dates
+            var textEnter1 = this.getText(group);
+            var textEnter2 = this.getText(group);
+            var textEnter3 = this.getText(group);
 
             textEnter1
-                .text(function(d) {
+                .text(function (d) {
                     return that.getFirstNames(d);
                 })
                 .each(that.truncate(5));
@@ -611,7 +657,7 @@
                     return this.remove();
                 });
 
-            this.transformText(text);
+            this.transformText(group);
         }
     });
 }(jQuery));
