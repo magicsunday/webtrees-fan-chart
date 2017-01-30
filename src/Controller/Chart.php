@@ -232,7 +232,7 @@ class Chart extends ChartController
      */
     protected function printFindIndividualLink()
     {
-        return FunctionsPrint::printFindIndividualLink('rootId');
+        return FunctionsPrint::printFindIndividualLink('rootid');
     }
 
     /**
@@ -317,10 +317,10 @@ JS
             <tbody>
                 <tr>
                     <td class="descriptionbox">
-                        <label for="rootId">{$this->translate('Individual')}</label>
+                        <label for="rootid">{$this->translate('Individual')}</label>
                     </td>
                     <td class="optionbox">
-                        <input class="pedigree_form" data-autocomplete-type="INDI" type="text" name="rootId" id="rootId" size="3" value="{$this->root->getXref()}">
+                        <input class="pedigree_form" data-autocomplete-type="INDI" type="text" name="rootid" id="rootid" size="3" value="{$this->root->getXref()}">
                         {$this->printFindIndividualLink()}
                     </td>
                     <td class="descriptionbox">
@@ -336,7 +336,7 @@ JS
                         {$this->getFanStyleSelectControl()}
                     </td>
                     <td class="descriptionbox">
-                        <label for="rootId">{$this->translate('Font size')}</label>
+                        <label for="fontScale">{$this->translate('Font size')}</label>
                     </td>
                     <td class="optionbox">
                         <input class="fontScale" type="text" name="fontScale" id="fontScale" size="3" value="{$this->fontScale}">

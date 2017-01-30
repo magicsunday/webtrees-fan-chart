@@ -110,7 +110,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     public function getChartMenu(Individual $individual)
     {
         $link = 'module.php?mod=' . $this->getName()
-            . '&amp;rootId=' . $individual->getXref()
+            . '&amp;rootid=' . $individual->getXref()
             . '&amp;ged=' . $individual->getTree()->getNameUrl();
 
         return new Menu(
