@@ -35,6 +35,8 @@
             // Default font size
             fontSize: 14,
 
+            hideEmptyCells : false,
+
             // Default font scaling factor
             fontScale: 100,
 
@@ -214,6 +216,17 @@
         },
 
         /**
+         * Whether to show empty cell of the chart or not.
+         *
+         * @param {object} d D3 data object
+         *
+         * @return {boolean}
+         */
+        hideEmptyCells: function (d) {
+            return !this.options.hideEmptyCells || (d.id !== '');
+        },
+
+        /**
          * Draws the center circle of the fan chart.
          */
         drawBorderCenterCircle: function () {
@@ -274,7 +287,7 @@
                 .data(
                     // Remove all not required data
                     this.config.nodes.filter(function (d) {
-                        return d.depth > 0;
+                        return (d.depth > 0) && that.hideEmptyCells(d);
                     })
                 )
                 .enter()
@@ -284,7 +297,8 @@
             // Add title element containing the full name of the individual
             borderArcs.append('title')
                 .text(function (d) {
-                    return d.name;
+                    // Return name or remove empty element
+                    return (d.id !== '') ? d.name : this.remove();
                 });
 
             this.drawBorders(borderArcs, arcGenerator);
@@ -421,7 +435,7 @@
                 .data(
                     // Remove all not required data
                     this.config.nodes.filter(function (d) {
-                        return d.depth > 0 && d.depth < that.options.nameSwitchTreshold;
+                        return (d.id !== '') && (d.depth > 0) && (d.depth < that.options.nameSwitchTreshold);
                     })
                 )
                 .enter()
@@ -431,7 +445,8 @@
             // Add title element containing the full name of the individual
             entry.append('title')
                 .text(function (d) {
-                    return d.name;
+                    // Return name or remove empty element
+                    return (d.id !== '') ? d.name : this.remove();
                 });
 
             var labelArc = d3.svg.arc()
@@ -627,7 +642,7 @@
                 .data(
                     // Remove all not required data
                     that.config.nodes.filter(function (d) {
-                        return d.depth < 1 || d.depth >= that.options.nameSwitchTreshold;
+                        return (d.id !== '') && (d.depth < 1 || d.depth >= that.options.nameSwitchTreshold);
                     })
                 )
                 .enter()
@@ -637,7 +652,8 @@
             // Add title element containing the full name of the individual
             group.append('title')
                 .text(function (d) {
-                    return d.name;
+                    // Return name or remove empty element
+                    return (d.id !== '') ? d.name : this.remove();
                 });
 
             // Create a text element for first name, last name and the dates
