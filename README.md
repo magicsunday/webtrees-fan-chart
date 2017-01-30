@@ -11,7 +11,8 @@ This modules provides an SVG ancestral fan chart for the [webtrees](https://www.
 1. Download the [latest release](https://github.com/magicsunday/ancestral-fan-chart/releases/latest).
 2. Upload the downloaded file to your webserver.
 3. Unzip the package into your `webtrees/modules_v3` directory.
-4. Go to the contral panel (admin section) => Module administration => Enable the `Ancestral fan chart` module and save your settings.
+4. Rename the folder to `ancestral-fan-chart`
+5. Go to the contral panel (admin section) => Module administration => Enable the `Ancestral fan chart` module and save your settings.
 
 ![Control panel - Module administration](/assets/control-panel-modules.png)
 
