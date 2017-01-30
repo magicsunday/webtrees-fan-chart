@@ -1,0 +1,64 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Ancestral fan chart\n"
+"POT-Creation-Date: 2017-01-30 12:53+0100\n"
+"PO-Revision-Date: 2017-01-30 13:12+0100\n"
+"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.11\n"
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/module.php:88
+msgid "A fan chart of an individual’s ancestors."
+msgstr ""
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:89
+msgid "Ancestral fan chart"
+msgstr ""
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:83
+#, php-format
+msgid "Ancestral fan chart of %s"
+msgstr ""
+
+#. I18N: layout option for the fan chart
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:258
+msgid "half circle"
+msgstr ""
+
+#. I18N: layout option for the fan chart
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:259
+msgid "three-quarter circle"
+msgstr ""
+
+#. I18N: layout option for the fan chart
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:260
+msgid "full circle"
+msgstr ""
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:307
+msgid "Individual"
+msgstr ""
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:314
+msgid "Generations"
+msgstr ""
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:320
+msgid "Layout"
+msgstr ""
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:326
+msgid "view"
+msgstr ""

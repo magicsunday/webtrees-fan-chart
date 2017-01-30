@@ -1,0 +1,64 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Ancestral fan chart\n"
+"POT-Creation-Date: 2017-01-30 12:53+0100\n"
+"PO-Revision-Date: 2017-01-30 13:07+0100\n"
+"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.11\n"
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/module.php:88
+msgid "A fan chart of an individual’s ancestors."
+msgstr "Ein Fächerdiagramm der Vorfahren einer Person."
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:89
+msgid "Ancestral fan chart"
+msgstr "Fächerdiagramm der Vorfahren"
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:83
+#, php-format
+msgid "Ancestral fan chart of %s"
+msgstr "Fächerdiagramm der Vorfahren von %s"
+
+#. I18N: layout option for the fan chart
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:258
+msgid "half circle"
+msgstr "Halbkreis"
+
+#. I18N: layout option for the fan chart
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:259
+msgid "three-quarter circle"
+msgstr "Dreiviertelkreis"
+
+#. I18N: layout option for the fan chart
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:260
+msgid "full circle"
+msgstr "Vollkreis"
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:307
+msgid "Individual"
+msgstr "Person"
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:314
+msgid "Generations"
+msgstr "Generationen"
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:320
+msgid "Layout"
+msgstr "Ansicht"
+
+#. I18N:
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:326
+msgid "view"
+msgstr "zeige"
