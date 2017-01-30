@@ -61,7 +61,7 @@ class Chart extends ChartController
      *
      * @var int
      */
-    protected $fanStyle = 3;
+    protected $fanDegree = 210;
 
     /**
      * Constructor.
@@ -74,7 +74,7 @@ class Chart extends ChartController
         $defaultGenerations = $this->getTree()->getPreference('DEFAULT_PEDIGREE_GENERATIONS');
 
         // Extract the request parameters
-        $this->fanStyle    = Filter::getInteger('fanStyle', 2, 4, 3);
+        $this->fanDegree   = Filter::getInteger('fanDegree', 180, 360, 210);
         $this->generations = Filter::getInteger('generations', 2, 9, $defaultGenerations);
 
         if ($this->root && $this->root->canShowName()) {
@@ -224,17 +224,17 @@ class Chart extends ChartController
      */
     protected function printFindIndividualLink()
     {
-        return FunctionsPrint::printFindIndividualLink('rootid');
+        return FunctionsPrint::printFindIndividualLink('rootId');
     }
 
     /**
-     * Get the HTML for the "fanStyle" selection form control element.
+     * Get the HTML for the "fanDegree" selection form control element.
      *
      * @return string
      */
     protected function getFanStyleSelectControl()
     {
-        return FunctionsEdit::selectEditControl('fanStyle', $this->getFanStyles(), null, $this->fanStyle);
+        return FunctionsEdit::selectEditControl('fanDegree', $this->getFanStyles(), null, $this->fanDegree);
     }
 
     /**
@@ -255,9 +255,13 @@ class Chart extends ChartController
     protected function getFanStyles()
     {
         return [
-            4 => $this->translate('half circle'),
-            3 => $this->translate('three-quarter circle'),
-            2 => $this->translate('full circle'),
+            180 => $this->translate('180 degree'),
+            210 => $this->translate('210 degree'),
+            240 => $this->translate('240 degree'),
+            270 => $this->translate('270 degree'),
+            300 => $this->translate('300 degree'),
+            330 => $this->translate('330 degree'),
+            360 => $this->translate('360 degree'),
         ];
     }
 
@@ -286,7 +290,7 @@ $(function () {
 
     if (typeof $().ancestralFanChart === 'function') {
         fanChart.ancestralFanChart({
-            fanStyle : {$this->fanStyle},
+            fanDegree : {$this->fanDegree},
             data : {$json}
         });
     }
@@ -304,10 +308,10 @@ JS
             <tbody>
                 <tr>
                     <td class="descriptionbox">
-                        <label for="rootid">{$this->translate('Individual')}</label>
+                        <label for="rootId">{$this->translate('Individual')}</label>
                     </td>
                     <td class="optionbox">
-                        <input class="pedigree_form" data-autocomplete-type="INDI" type="text" name="rootid" id="rootid" size="3" value="{$this->root->getXref()}">
+                        <input class="pedigree_form" data-autocomplete-type="INDI" type="text" name="rootId" id="rootId" size="3" value="{$this->root->getXref()}">
                         {$this->printFindIndividualLink()}
                     </td>
                     <td class="descriptionbox">
@@ -317,7 +321,7 @@ JS
                         {$this->getGenerationsInputControl()}
                     </td>
                     <td class="descriptionbox">
-                        <label for="fanStyle">{$this->translate('Layout')}</label>
+                        <label for="fanDegree">{$this->translate('Degrees')}</label>
                     </td>
                     <td class="optionbox">
                         {$this->getFanStyleSelectControl()}

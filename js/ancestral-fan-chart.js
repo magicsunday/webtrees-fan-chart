@@ -32,8 +32,8 @@
         options: {
             nameSwitchTreshold: 5,
 
-            // 2 = full circle, 3 = fan, 4 = half circle
-            fanStyle: 2,
+            // Degrees of the fan chart
+            fanDegree: 360,
 
             startPi: -Math.PI,
             endPi: Math.PI,
@@ -55,8 +55,8 @@
             // Check dependencies
             this.checkDependencies();
 
-            this.options.startPi = -Math.PI * 2 / this.options.fanStyle;
-            this.options.endPi = Math.PI * 2 / this.options.fanStyle;
+            this.options.startPi = -(this.options.fanDegree / 360 * Math.PI);
+            this.options.endPi = (this.options.fanDegree / 360 * Math.PI);
 
             if (this.options.width > $(window).width() - 25) {
                 this.options.width = $(window).width() - 25;
@@ -312,8 +312,8 @@
             var that = this;
 
             return function (d) {
-                // Modifier of available width depending on fan style
-                var widthMod = 2.0 / that.options.fanStyle;
+                // Modifier of available width depending on fan degrees
+                var widthMod = that.options.fanDegree / 360;
 
                 // Depending on the depth of an entry in the chart the available width differs
                 var availableWidth = 110;
@@ -420,7 +420,7 @@
                 .startAngle(function (d) {
                     var sAngle = that.startAngle(d);
 
-                    if ((that.options.fanStyle !== 2) || (d.depth <= 1)) {
+                    if ((that.options.fanDegree !== 360) || (d.depth <= 1)) {
                         return sAngle;
                     }
 
@@ -438,7 +438,7 @@
                 .endAngle(function (d) {
                     var eAngle = that.endAngle(d);
 
-                    if ((that.options.fanStyle !== 2) || (d.depth <= 1)) {
+                    if ((that.options.fanDegree !== 360) || (d.depth <= 1)) {
                         return eAngle;
                     }
 

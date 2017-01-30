@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ancestral fan chart\n"
 "POT-Creation-Date: 2017-01-30 12:53+0100\n"
-"PO-Revision-Date: 2017-01-30 13:07+0100\n"
+"PO-Revision-Date: 2017-01-30 20:14+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -30,18 +30,38 @@ msgstr "Fächerdiagramm der Vorfahren von %s"
 
 #. I18N: layout option for the fan chart
 #: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:258
-msgid "half circle"
-msgstr "Halbkreis"
+msgid "180 degree"
+msgstr "180 Grad"
 
 #. I18N: layout option for the fan chart
 #: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:259
-msgid "three-quarter circle"
-msgstr "Dreiviertelkreis"
+msgid "210 degree"
+msgstr "210 Grad"
 
 #. I18N: layout option for the fan chart
 #: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:260
-msgid "full circle"
-msgstr "Vollkreis"
+msgid "240 degree"
+msgstr "240 Grad"
+
+#. I18N: layout option for the fan chart
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:260
+msgid "270 degree"
+msgstr "270 Grad"
+
+#. I18N: layout option for the fan chart
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:260
+msgid "300 degree"
+msgstr "300 Grad"
+
+#. I18N: layout option for the fan chart
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:260
+msgid "330 degree"
+msgstr "330 Grad"
+
+#. I18N: layout option for the fan chart
+#: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:260
+msgid "360 degree"
+msgstr "360 Grad"
 
 #. I18N:
 #: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:307
@@ -55,8 +75,8 @@ msgstr "Generationen"
 
 #. I18N:
 #: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:320
-msgid "Layout"
-msgstr "Ansicht"
+msgid "Degrees"
+msgstr "Winkel"
 
 #. I18N:
 #: modules_v3/ancestral-fan-chart/src/Controller/Chart.php:326
