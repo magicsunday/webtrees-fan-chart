@@ -388,6 +388,22 @@
         },
 
         /**
+         * Get the last name of an person.
+         *
+         * @param {object} d D3 data object
+         *
+         * @return {string}
+         */
+        getTimespan: function (d) {
+            if (d.born || d.died) {
+                return d.born + '-' + d.died;
+            }
+
+            // Remove empty element
+            return null;
+        },
+
+        /**
          * Append a new "textPath" element to the given "text" element.
          *
          * @param {object} text D3 text object
@@ -395,7 +411,6 @@
          * @return {object} D3 textPath object
          */
         appendTextPath: function (text) {
-
             return text.append('textPath')
                 .attr('startOffset', '25%')
                 .attr('xlink:href', function (ignore, i) {
@@ -415,32 +430,10 @@
             return (fontSize * this.options.fontScale / 100) + 'px';
         },
 
-        /**
-         * Set the arc labels.
-         */
-        setArcLabels: function () {
+        appendPathToArc: function (index, entry, label, position, textPathClass) {
+            textPathClass = textPathClass || null;
+
             var that = this;
-
-            var entry = this.config.visual
-                .append('g')
-                .attr('class', 'labels')
-                .selectAll('g.label')
-                .data(
-                    // Remove all not required data
-                    this.config.nodes.filter(function (d) {
-                        return (d.id !== '') && (d.depth > 0) && (d.depth < that.options.nameSwitchTreshold);
-                    })
-                )
-                .enter()
-                .append('g')
-                .attr('class', 'label');
-
-            // Add title element containing the full name of the individual
-            entry.append('title')
-                .text(function (d) {
-                    // Return name or remove empty element
-                    return (d.id !== '') ? d.name : this.remove();
-                });
 
             var labelArc = d3.svg.arc()
                 .startAngle(function (d) {
@@ -480,62 +473,211 @@
                     return eAngle;
                 })
                 .innerRadius(function (d) {
-                    return that.centerRadius(d);
+                    var arcRadius = that.outerRadius(d) - that.innerRadius(d);
+                    var radius    = that.outerRadius(d) - ((100 - position) * arcRadius / 100);
+
+                    return radius;
                 })
                 .outerRadius(function (d) {
-                    return that.centerRadius(d);
+                    var arcRadius = that.outerRadius(d) - that.innerRadius(d);
+                    var radius    = that.outerRadius(d) - ((100 - position) * arcRadius / 100);
+
+                    return radius;
                 });
 
             // Append a path so we could use it to write the label along it
             entry.append('path')
                 .attr('d', labelArc)
-                .attr('id', function (ignore, i) {
-                    return 'label-' + i;
-                });
+                .attr('id', function (d, i) {
+                    return 'label-' + index + '-' + d.id;
+                })
+//                .style('stroke', 'red')
+//                .style('stroke-width', 1)
+                ;
 
             var text = entry.append('text')
-                .attr('dominant-baseline', 'middle')
                 .style('font-size', function (d) {
                     return that.getFontSize(13 - d.depth);
                 });
 
             // First names
-            var textPath1 = this.appendTextPath(text);
-
-            textPath1.append('tspan')
-                .attr('dy', '-1.1em')
-                .text(function (d) {
-                    return that.getFirstNames(d);
-                })
-                .each(that.truncate(5));
-
-            // Last name
-            var textPath2 = this.appendTextPath(text);
-
-            textPath2.append('tspan')
-                .attr('dy', '0em')
-                .text(function (d) {
-                    return that.getLastName(d);
-                })
-                .each(that.truncate(5));
-
-            // Dates
-            var textPath3 = this.appendTextPath(text)
-                .attr('class', 'date');
-
-            textPath3.append('tspan')
-                .attr('dy', '1.6em')
-                .style('font-size', function (d) {
-                    return that.getFontSize(13 - d.depth);
-                })
-                .text(function (d) {
-                    if (d.born || d.died) {
-                        return d.born + '-' + d.died;
-                    }
-
-                    // Remove empty element
-                    return this.remove();
+            var textPath = text.append('textPath')
+                .attr('class', textPathClass)
+                .attr('startOffset', '25%')
+                .attr('xlink:href', function (d, i) {
+                    return '#label-' + index + '-' + d.id;
                 });
+
+            textPath.append('tspan')
+                .attr('dominant-baseline', 'middle')
+//                .attr('dy', '0.25em')
+                .text(label)
+                .each(that.truncate(5));
+        },
+
+        /**
+         * Set the arc labels.
+         */
+        setArcLabels: function () {
+            var that = this;
+
+            var entry = this.config.visual
+                .append('g')
+                .attr('class', 'labels')
+                .selectAll('g.label')
+                .data(
+                    // Remove all not required data
+                    this.config.nodes.filter(function (d) {
+                        return (d.id !== '') && (d.depth > 0) && (d.depth < that.options.nameSwitchTreshold);
+                    })
+                )
+                .enter()
+                .append('g')
+                .attr('class', 'label');
+
+            // Add title element containing the full name of the individual
+            entry.append('title')
+                .text(function (d) {
+                    // Return name or remove empty element
+                    return (d.id !== '') ? d.name : this.remove();
+                });
+
+            entry.each(function (d) {
+console.log(d);
+                that.appendPathToArc(0, d3.select(this), that.getFirstNames(d), 70);
+                that.appendPathToArc(1, d3.select(this), that.getLastName(d), 52);
+
+                var timespan = that.getTimespan(d);
+
+                if (timespan) {
+                    that.appendPathToArc(2, d3.select(this), timespan, 25, 'date');
+                }
+            });
+
+//            var labelArc = d3.svg.arc()
+//                .startAngle(function (d) {
+//                    var sAngle = that.startAngle(d);
+//
+//                    if ((that.options.fanDegree !== 360) || (d.depth <= 1)) {
+//                        return sAngle;
+//                    }
+//
+//                    var eAngle = that.endAngle(d);
+//
+//                    // Flip names for better readability depending on position in chart
+//                    if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180))) ||
+//                        ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
+//                    ) {
+//                        return eAngle;
+//                    }
+//
+//                    return sAngle;
+//                })
+//                .endAngle(function (d) {
+//                    var eAngle = that.endAngle(d);
+//
+//                    if ((that.options.fanDegree !== 360) || (d.depth <= 1)) {
+//                        return eAngle;
+//                    }
+//
+//                    var sAngle = that.startAngle(d);
+//
+//                    // Flip names depending on position in chart
+//                    if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180))) ||
+//                        ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
+//                    ) {
+//                        return sAngle;
+//                    }
+//
+//                    return eAngle;
+//                })
+//                .innerRadius(function (d) {
+//                    var arcRadius    = (that.outerRadius(d) - that.innerRadius(d)) >> 1;
+//                    var centerRadius = that.innerRadius(d) + (arcRadius >> 1);
+//
+//                    return centerRadius;
+//                })
+//                .outerRadius(function (d) {
+//                    var arcRadius    = (that.outerRadius(d) - that.innerRadius(d)) >> 1;
+//                    var centerRadius = that.innerRadius(d) + (arcRadius >> 1);
+//
+//                    return centerRadius;
+//                });
+//
+//            // Append a path so we could use it to write the label along it
+//            entry.append('path')
+//                .attr('d', labelArc)
+//                .attr('id', function (ignore, i) {
+//                    return 'label-' + i;
+//                })
+//                .style('stroke', 'red')
+//                .style('stroke-width', 1);
+//
+//            var text = entry.append('text')
+//                .style('font-size', function (d) {
+//                    return that.getFontSize(13 - d.depth);
+//                });
+//
+//            // First names
+//            var textPath1 = text.append('textPath')
+//                .attr('startOffset', '25%')
+//                .attr('xlink:href', function (ignore, i) {
+//                    return '#label-' + i;
+//                });
+//
+//            textPath1.append('tspan')
+//                .attr('dominant-baseline', 'middle')
+////                .attr('dy', '0.25em')
+//                .text(function (d) {
+//                    return that.getFirstNames(d);
+//                })
+//                .each(that.truncate(5));
+
+
+//            // Append a path so we could use it to write the label along it
+//            entry.append('path')
+//                .attr('d', labelArc2)
+//                .attr('id', function (ignore, i) {
+//                    return 'label-2' + i;
+//                })
+//                .style('stroke', 'red')
+//                .style('stroke-width', 1);
+
+//            var text = entry.append('text')
+//                .style('font-size', function (d) {
+//                    return that.getFontSize(13 - d.depth);
+//                });
+//
+//            // Last name
+//            var textPath2 = text.append('textPath')
+//                .attr('startOffset', '25%')
+//                .attr('xlink:href', function (ignore, i) {
+//                    return '#label-2' + i;
+//                });
+//
+//            textPath2.append('tspan')
+//                .attr('dominant-baseline', 'middle')
+////                .attr('dy', '1.25em')
+//                .text(function (d) {
+//                    return that.getLastName(d);
+//                })
+//                .each(that.truncate(5));
+
+//            // Dates
+//            var textPath3 = this.appendTextPath(text)
+//                .attr('class', 'date');
+//
+//            textPath3.append('tspan')
+//                .attr('dominant-baseline', 'middle')
+////                .attr('dy', '1.25em')
+//                .text(function (d) {
+//                    if (d.born || d.died) {
+//                        return d.born + '-' + d.died;
+//                    }
+//
+//                    // Remove empty element
+//                    return this.remove();
+//                });
         },
 
         /**
