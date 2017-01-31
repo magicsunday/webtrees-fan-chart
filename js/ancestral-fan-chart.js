@@ -242,20 +242,17 @@
                     return that.outerRadius(d);
                 });
 
-            var borderArcs = this.config
-                .visual
+            var borderArcs = this.config.visual
                 .append('g')
-                .attr('class', 'border-arcs')
-                .selectAll('g.border-arc')
+                .attr('class', 'arcs')
                 .data(
                     // Remove all not required data
                     this.config.nodes.filter(function (d) {
                         return d.depth === 0;
                     })
                 )
-                .enter()
                 .append('g')
-                .attr('class', 'border-arc');
+                .attr('class', 'arc');
 
             this.drawBorders(borderArcs, arcGenerator);
         },
@@ -281,18 +278,17 @@
                 });
 
             var borderArcs = this.config.visual
-                .append('g')
-                .attr('class', 'border-arcs')
-                .selectAll('g.border-arc')
+                .select('g.arcs')
+                .selectAll('g.arc')
                 .data(
                     // Remove all not required data
                     this.config.nodes.filter(function (d) {
-                        return (d.depth > 0) && that.hideEmptyCells(d);
+                        return that.hideEmptyCells(d);
                     })
                 )
                 .enter()
                 .append('g')
-                .attr('class', 'border-arc');
+                .attr('class', 'arc');
 
             // Add title element containing the full name of the individual
             borderArcs.append('title')
@@ -315,9 +311,7 @@
                 .attr('fill', function (d) {
                     return d.color;
                 })
-                .attr('d', arcGenerator)
-                .style('stroke', '#ebebeb')
-                .style('stroke-width', 3);
+                .attr('d', arcGenerator);
         },
 
         /**
@@ -405,9 +399,8 @@
             return text.append('textPath')
                 .attr('startOffset', '25%')
                 .attr('xlink:href', function (ignore, i) {
-                    return '#arc-label-' + i;
-                })
-                .style('fill', '#000');
+                    return '#label-' + i;
+                });
         },
 
         /**
@@ -431,7 +424,7 @@
             var entry = this.config.visual
                 .append('g')
                 .attr('class', 'labels')
-                .selectAll('g.arc-labels')
+                .selectAll('g.label')
                 .data(
                     // Remove all not required data
                     this.config.nodes.filter(function (d) {
@@ -440,7 +433,7 @@
                 )
                 .enter()
                 .append('g')
-                .attr('class', 'arc-labels');
+                .attr('class', 'label');
 
             // Add title element containing the full name of the individual
             entry.append('title')
@@ -497,7 +490,7 @@
             entry.append('path')
                 .attr('d', labelArc)
                 .attr('id', function (ignore, i) {
-                    return 'arc-label-' + i;
+                    return 'label-' + i;
                 });
 
             var text = entry.append('text')
@@ -528,14 +521,13 @@
 
             // Dates
             var textPath3 = this.appendTextPath(text)
-                .style('fill', '#7f7f7f');
+                .attr('class', 'date');
 
             textPath3.append('tspan')
                 .attr('dy', '1.6em')
                 .style('font-size', function (d) {
                     return that.getFontSize(13 - d.depth);
                 })
-                .style('font-weight', 'normal')
                 .text(function (d) {
                     if (d.born || d.died) {
                         return d.born + '-' + d.died;
@@ -629,8 +621,8 @@
                             var rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > -90 ? -1 : 1));
                             var transX = (that.innerRadius(d) + that.outerRadius(d)) / 2;
 
-                            return 'rotate(' + rotate + ')'
-                                + 'translate(' + transX + ')'
+                            return 'rotate(' + rotate + ') '
+                                + 'translate(' + transX + ') '
                                 + 'rotate(' + (angle > -90 ? 0 : -180) + ')';
                         });
                     }
@@ -646,7 +638,7 @@
             var group = this.config.visual
                 .append('g')
                 .attr('class', 'labels')
-                .selectAll('g.simple-labels')
+                .selectAll('g.label')
                 .data(
                     // Remove all not required data
                     that.config.nodes.filter(function (d) {
@@ -655,7 +647,7 @@
                 )
                 .enter()
                 .append('g')
-                .attr('class', 'simple-labels');
+                .attr('class', 'label');
 
             // Add title element containing the full name of the individual
             group.append('title')
@@ -682,11 +674,10 @@
                 .each(that.truncate(5));
 
             textEnter3
+                .attr('class', 'date')
                 .style('font-size', function (d) {
                     return that.getFontSize(13 - d.depth);
                 })
-                .style('font-weight', 'normal')
-                .style('fill', '#7f7f7f')
                 .text(function (d) {
                     // Do not show dates in the outer circles, not enough space
                     if (d.depth >= 6) {

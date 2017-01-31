@@ -25,6 +25,20 @@
     margin: auto;
 }
 
+#ancestral-fan-chart svg g.arc path {
+    stroke: #ebebeb;
+    stroke-width: 3px;
+}
+
+#ancestral-fan-chart svg g.label text {
+    fill: #000;
+}
+
+#ancestral-fan-chart svg g.label .date {
+    fill: #7f7f7f;
+    font-weight: normal;
+}
+
 #ancestral-fan-chart text {
     font-family: Verdana, Arial;
     font-weight: bold;
