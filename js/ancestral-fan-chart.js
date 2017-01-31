@@ -503,7 +503,7 @@
             var text = entry.append('text')
                 .attr('dominant-baseline', 'middle')
                 .style('font-size', function (d) {
-                    return that.getFontSize(14 - d.depth);
+                    return that.getFontSize(13 - d.depth);
                 });
 
             // First names
@@ -561,7 +561,7 @@
                 .attr('dominant-baseline', 'middle')
                 .style('font-size', function (d) {
                     if (d.depth >= (that.options.nameSwitchTreshold + 1)) {
-                        return that.getFontSize(8);
+                        return that.getFontSize(14 - d.depth);
                     }
 
                     return that.getFontSize(13 - d.depth);
@@ -601,7 +601,15 @@
                         .domain([0, countElements - 1])
                         .range([-offset, offset]);
 
-                    var offsetRotate = i === 0 ? 1.1 : (i === 1 ? 1.1 : 1.6);
+                    var offsetRotate = (i <= 1 ? 1.25 : 1.75);
+
+                    if (d.depth === 6) {
+                        offsetRotate = 1.00;
+                    }
+
+                    if (d.depth === 7) {
+                        offsetRotate = 0.75;
+                    }
 
                     if (d.depth === 8) {
                         offsetRotate = 0.5;
@@ -680,7 +688,7 @@
                 .style('font-weight', 'normal')
                 .style('fill', '#7f7f7f')
                 .text(function (d) {
-                    // Remove empty element
+                    // Do not show dates in the outer circles, not enough space
                     if (d.depth >= 6) {
                         return this.remove();
                     }
