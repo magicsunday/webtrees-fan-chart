@@ -8,7 +8,7 @@
 }
 
 #ancestral-fan-chart .list_table {
-    margin: 0;
+    margin: 0 auto;
 }
 
 #ancestral-fan-chart table td {
@@ -26,11 +26,7 @@
     stroke-width: 3px;
 }
 
-#ancestral-fan-chart svg g.label text {
-    fill: #000;
-}
-
-#ancestral-fan-chart svg g.label .date {
+#ancestral-fan-chart svg g.label .chart-date {
     fill: #7f7f7f;
     font-weight: normal;
 }

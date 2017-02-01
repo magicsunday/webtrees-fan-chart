@@ -34,6 +34,7 @@
 
             // Default font size
             fontSize: 13,
+            fontColor: '#000',
 
             hideEmptyCells: false,
 
@@ -121,7 +122,7 @@
             // Default configuration
             this.config = {
                 elements: {
-                    chart: this.element.find('#fan-chart')
+                    chart: this.element.find('#fan_chart')
                 }
             };
         },
@@ -133,7 +134,7 @@
          */
         initChart: function (data) {
             this.config.visual = d3
-                .select('#fan-chart')
+                .select('#fan_chart')
                 .append('svg')
                 .attr('width', this.options.width + (this.options.padding << 1))
                 .attr('height', this.options.height + (this.options.padding << 1))
@@ -567,14 +568,15 @@
                 var text = parent
                     .append('text')
                     .attr('dominant-baseline', 'middle')
-                    .style('font-size', that.getFontSize(d));
+                    .style('font-size', that.getFontSize(d))
+                    .style('fill', that.options.fontColor);
 
                 // Append textPath elements along to create paths
                 that.appendTextPath(text, 0, that.getFirstNames(d));
                 that.appendTextPath(text, 1, that.getLastName(d));
 
                 if (timespan) {
-                    that.appendTextPath(text, 2, timespan, 'date');
+                    that.appendTextPath(text, 2, timespan, 'chart-date');
                 }
             });
         },
@@ -671,6 +673,7 @@
                 .style('font-size', function (d) {
                     return that.getFontSize(d);
                 })
+                .style('fill', that.options.fontColor)
                 .text(label)
                 .each(that.truncate(5));
         },
@@ -724,8 +727,8 @@
                     that.appendOuterArcText(parent, that.getLastName(d));
 
                     // Add dates
-                    if (d.depth < 6) {
-                        that.appendOuterArcText(parent, timespan, 'date');
+                    if ((d.depth < 6) && timespan) {
+                        that.appendOuterArcText(parent, timespan, 'chart-date');
                     }
                 }
             });

@@ -28,14 +28,15 @@
 
 namespace RSO\WebtreesModule\AncestralFanChart\Controller;
 
-use Fisharebest\Webtrees\Controller\ChartController;
-use Fisharebest\Webtrees\I18N;
-use Fisharebest\Webtrees\Individual;
-use Fisharebest\Webtrees\Family;
-use Fisharebest\Webtrees\Tree;
-use Fisharebest\Webtrees\Filter;
 use Fisharebest\Webtrees\Functions\FunctionsEdit;
 use Fisharebest\Webtrees\Functions\FunctionsPrint;
+use Fisharebest\Webtrees\Controller\ChartController;
+use Fisharebest\Webtrees\Family;
+use Fisharebest\Webtrees\Filter;
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Individual;
+use Fisharebest\Webtrees\Theme;
+use Fisharebest\Webtrees\Tree;
 
 /**
  * Fan chart controller class.
@@ -83,7 +84,7 @@ class Chart extends ChartController
         // Extract the request parameters
         $this->fanDegree   = Filter::getInteger('fanDegree', 180, 360, 210);
         $this->generations = Filter::getInteger('generations', 2, 9, $defaultGenerations);
-        $this->fontScale   = Filter::getInteger('fontScale', 0, 100, 100);
+        $this->fontScale   = Filter::getInteger('fontScale', 0, 200, 100);
 
         if ($this->root && $this->root->canShowName()) {
             $this->setPageTitle(
@@ -120,16 +121,16 @@ class Chart extends ChartController
     protected function getColor(Individual $person = null)
     {
         if (!($person instanceof Individual)) {
-            return '#fff';
+            return '#' . Theme::theme()->parameter('chart-background-u');
         }
 
         if ($person->getSex() === 'M') {
-            return '#b1cff0';
+            return '#' . Theme::theme()->parameter('chart-background-m');
         } elseif ($person->getSex() === 'F') {
-            return '#e9daf1';
+            return '#' . Theme::theme()->parameter('chart-background-f');
         }
 
-        return '#fff';
+        return '#' . Theme::theme()->parameter('chart-background-u');
     }
 
     /**
@@ -285,6 +286,8 @@ class Chart extends ChartController
             $this->buildJsonTree($this->root)
         );
 
+        $theme = Theme::theme();
+
         $this->addInlineJavascript('autocomplete();')
             ->addInlineJavascript(
 <<<JS
@@ -294,12 +297,13 @@ class Chart extends ChartController
 $(function () {
     'use strict';
 
-    var fanChart = $('#fan-chart');
+    var fanChart = $('#fan_chart');
 
     if (typeof $().ancestralFanChart === 'function') {
         fanChart.ancestralFanChart({
             fanDegree : {$this->fanDegree},
             fontScale : {$this->fontScale},
+            fontColor : '#{$theme->parameter('chart-font-color')}',
             data : {$json}
         });
     }
@@ -349,7 +353,7 @@ JS
             </tbody>
         </table>
     </form>
-    <div id="fan-chart"></div>
+    <div id="fan_chart"></div>
 </div>
 HTML;
     }
