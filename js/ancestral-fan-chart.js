@@ -33,7 +33,7 @@
             nameSwitchTreshold: 5,
 
             // Default font size
-            fontSize: 14,
+            fontSize: 13,
 
             hideEmptyCells: false,
 
@@ -190,7 +190,8 @@
          * @returns {number}
          */
         innerRadius: function (d) {
-            return [0, 65, 130, 195, 260, 325, 440, 555, 670][d.depth];
+            var data = [0, 65, 130, 195, 260, 325, 440, 555, 670];
+            return data[d.depth];
         },
 
         /**
@@ -201,7 +202,8 @@
          * @returns {number}
          */
         outerRadius: function (d) {
-            return [65, 130, 195, 260, 325, 440, 555, 670, 775][d.depth];
+            var data = [65, 130, 195, 260, 325, 440, 555, 670, 775];
+            return data[d.depth];
         },
 
         /**
@@ -410,11 +412,24 @@
          *
          * @return {string}
          */
-        getFontSize: function (fontSize) {
-            var fontSize = fontSize || this.options.fontSize;
-            return (fontSize * this.options.fontScale / 100) + 'px';
+        getFontSize: function (d) {
+            var fontSize = this.options.fontSize;
+
+            if (d.depth >= (this.options.nameSwitchTreshold + 1)) {
+                fontSize += 1;
+            }
+
+            return ((fontSize - d.depth) * this.options.fontScale / 100) + 'px';
         },
 
+        /**
+         * Check for the 360 degree chart if the current arc labels
+         * should be flipped for easier reading.
+         *
+         * @param {object} d D3 data object
+         *
+         * @return {boolean}
+         */
         isPositionFlipped: function (d) {
             if ((this.options.fanDegree !== 360) || (d.depth <= 1)) {
                 return false;
@@ -552,9 +567,7 @@
                 var text = parent
                     .append('text')
                     .attr('dominant-baseline', 'middle')
-                    .style('font-size', function (d) {
-                        return that.getFontSize(13 - d.depth);
-                    });
+                    .style('font-size', that.getFontSize(d));
 
                 // Append textPath elements along to create paths
                 that.appendTextPath(text, 0, that.getFirstNames(d));
@@ -564,28 +577,6 @@
                     that.appendTextPath(text, 2, timespan, 'date');
                 }
             });
-        },
-
-        /**
-         * Get new D3 text element.
-         *
-         * @param {object} group D3 group (g) object
-         *
-         * @return {object} D3 text object
-         */
-        getText: function (group) {
-            var that = this;
-
-            return group
-                .append('text')
-                .attr('dominant-baseline', 'middle')
-                .style('font-size', function (d) {
-                    if (d.depth >= (that.options.nameSwitchTreshold + 1)) {
-                        return that.getFontSize(14 - d.depth);
-                    }
-
-                    return that.getFontSize(13 - d.depth);
-                });
         },
 
         /**
@@ -613,7 +604,7 @@
                     }
 
                     if (countElements === 3) {
-                        offset = 1;
+                        offset = 1.25;
                     }
 
                     var mapIndexToOffset = d3.scale
@@ -622,6 +613,10 @@
                         .range([-offset, offset]);
 
                     var offsetRotate = (i <= 1 ? 1.25 : 1.75);
+
+                    if (d.depth === 0) {
+                        offsetRotate = 1.00;
+                    }
 
                     if (d.depth === 6) {
                         offsetRotate = 1.00;
@@ -659,18 +654,43 @@
         },
 
         /**
+         * Append text element to the given group element.
+         *
+         * @param {object} group     D3 group (g) object
+         * @param {string} label     Label to display
+         * @param {string} textClass Optional class to set to the D3 text element
+         *
+         * @return {object} D3 text object
+         */
+        appendOuterArcText: function (group, label, textClass) {
+            var that = this;
+
+            group.append('text')
+                .attr('class', textClass || null)
+                .attr('dominant-baseline', 'middle')
+                .style('font-size', function (d) {
+                    return that.getFontSize(d);
+                })
+                .text(label)
+                .each(that.truncate(5));
+        },
+
+        /**
          * Create the labels of the outer arcs of the chart.
          */
         createOuterArcLabels: function () {
             var that = this;
+
             var group = this.config.visual
                 .append('g')
                 .attr('class', 'labels')
                 .selectAll('g.label')
                 .data(
-                    // Remove all not required data
-                    that.config.nodes.filter(function (d) {
-                        return (d.id !== '') && (d.depth < 1 || d.depth >= that.options.nameSwitchTreshold);
+                    // Remove all not required or empty data records
+                    this.config.nodes.filter(function (d) {
+                        return (d.id !== '')
+                            && ((d.depth === 0)
+                            || (d.depth >= that.options.nameSwitchTreshold));
                     })
                 )
                 .enter()
@@ -684,41 +704,31 @@
                     return (d.id !== '') ? d.name : this.remove();
                 });
 
-            // Create a text element for first name, last name and the dates
-            var textEnter1 = this.getText(group);
-            var textEnter2 = this.getText(group);
-            var textEnter3 = this.getText(group);
+            // Create the text elements for first name, last name and
+            // the birth/death dates
+            group.each(function (d) {
+                var parent   = d3.select(this);
+                var name     = d.name;
+                var timespan = that.getTimespan(d);
 
-            textEnter1
-                .text(function (d) {
-                    return that.getFirstNames(d);
-                })
-                .each(that.truncate(5));
+                // Return first name for inner circles
+                if (d.depth < 7) {
+                    name = that.getFirstNames(d);
+                }
 
-            textEnter2
-                .text(function (d) {
-                    return that.getLastName(d);
-                })
-                .each(that.truncate(5));
+                that.appendOuterArcText(parent, name);
 
-            textEnter3
-                .attr('class', 'date')
-                .style('font-size', function (d) {
-                    return that.getFontSize(13 - d.depth);
-                })
-                .text(function (d) {
-                    // Do not show dates in the outer circles, not enough space
-                    if (d.depth >= 6) {
-                        return this.remove();
+                // Outer circles only show the names
+                if (d.depth < 7) {
+                    // Add last name
+                    that.appendOuterArcText(parent, that.getLastName(d));
+
+                    // Add dates
+                    if (d.depth < 6) {
+                        that.appendOuterArcText(parent, timespan, 'date');
                     }
-
-                    if (d.born || d.died) {
-                        return d.born + '-' + d.died;
-                    }
-
-                    // Remove empty element
-                    return this.remove();
-                });
+                }
+            });
 
             this.transformText(group);
         }
