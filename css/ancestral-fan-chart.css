@@ -16,10 +16,6 @@
     padding: 3px 5px;
 }
 
-#ancestral-fan-chart #fan-chart {
-    z-index: 2;
-}
-
 #ancestral-fan-chart svg {
     display: block;
     margin: auto;

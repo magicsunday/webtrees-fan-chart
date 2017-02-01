@@ -35,7 +35,7 @@
             // Default font size
             fontSize: 14,
 
-            hideEmptyCells : false,
+            hideEmptyCells: false,
 
             // Default font scaling factor
             fontScale: 100,
@@ -156,8 +156,8 @@
         placeArcs: function () {
             this.drawBorderCenterCircle();
             this.drawBorderArcs();
-            this.setArcLabels();
-            this.setLabels();
+            this.createInnerArcLabels();
+            this.createOuterArcLabels();
         },
 
         /**
@@ -404,21 +404,6 @@
         },
 
         /**
-         * Append a new "textPath" element to the given "text" element.
-         *
-         * @param {object} text D3 text object
-         *
-         * @return {object} D3 textPath object
-         */
-        appendTextPath: function (text) {
-            return text.append('textPath')
-                .attr('startOffset', '25%')
-                .attr('xlink:href', function (ignore, i) {
-                    return '#label-' + i;
-                });
-        },
-
-        /**
          * Get the scaled font size.
          *
          * @param {number} fontSize Base font size used to calculate scaled one
@@ -430,95 +415,93 @@
             return (fontSize * this.options.fontScale / 100) + 'px';
         },
 
-        appendPathToArc: function (index, entry, label, position, textPathClass) {
-            textPathClass = textPathClass || null;
+        isPositionFlipped: function (d) {
+            if ((this.options.fanDegree !== 360) || (d.depth <= 1)) {
+                return false;
+            }
 
-            var that = this;
+            var sAngle = this.startAngle(d);
+            var eAngle = this.endAngle(d);
 
-            var labelArc = d3.svg.arc()
-                .startAngle(function (d) {
-                    var sAngle = that.startAngle(d);
+            // Flip names for better readability depending on position in chart
+            if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180))) ||
+                ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
+            ) {
+                return true;
+            }
 
-                    if ((that.options.fanDegree !== 360) || (d.depth <= 1)) {
-                        return sAngle;
-                    }
-
-                    var eAngle = that.endAngle(d);
-
-                    // Flip names for better readability depending on position in chart
-                    if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180))) ||
-                        ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
-                    ) {
-                        return eAngle;
-                    }
-
-                    return sAngle;
-                })
-                .endAngle(function (d) {
-                    var eAngle = that.endAngle(d);
-
-                    if ((that.options.fanDegree !== 360) || (d.depth <= 1)) {
-                        return eAngle;
-                    }
-
-                    var sAngle = that.startAngle(d);
-
-                    // Flip names depending on position in chart
-                    if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180))) ||
-                        ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
-                    ) {
-                        return sAngle;
-                    }
-
-                    return eAngle;
-                })
-                .innerRadius(function (d) {
-                    var arcRadius = that.outerRadius(d) - that.innerRadius(d);
-                    var radius    = that.outerRadius(d) - ((100 - position) * arcRadius / 100);
-
-                    return radius;
-                })
-                .outerRadius(function (d) {
-                    var arcRadius = that.outerRadius(d) - that.innerRadius(d);
-                    var radius    = that.outerRadius(d) - ((100 - position) * arcRadius / 100);
-
-                    return radius;
-                });
-
-            // Append a path so we could use it to write the label along it
-            entry.append('path')
-                .attr('d', labelArc)
-                .attr('id', function (d, i) {
-                    return 'label-' + index + '-' + d.id;
-                })
-//                .style('stroke', 'red')
-//                .style('stroke-width', 1)
-                ;
-
-            var text = entry.append('text')
-                .style('font-size', function (d) {
-                    return that.getFontSize(13 - d.depth);
-                });
-
-            // First names
-            var textPath = text.append('textPath')
-                .attr('class', textPathClass)
-                .attr('startOffset', '25%')
-                .attr('xlink:href', function (d, i) {
-                    return '#label-' + index + '-' + d.id;
-                });
-
-            textPath.append('tspan')
-                .attr('dominant-baseline', 'middle')
-//                .attr('dy', '0.25em')
-                .text(label)
-                .each(that.truncate(5));
+            return false;
         },
 
         /**
-         * Set the arc labels.
+         * Append a path element to the given parent group element.
+         *
+         * @param {object} parent   Parent container element, D3 group element
+         * @param {int}    index    Index position of element in parent container.
+         *                          Required to create a unique path id.
+         * @param {int}    position Relative position offset for path
+         *                          (0 = inner radius, 100 = outer radius)
          */
-        setArcLabels: function () {
+        appendArcPath: function (parent, index, position) {
+            var that = this;
+
+            // Create arc generator for path segments
+            var arcGen = d3.svg
+                .arc()
+                .startAngle(function (d) {
+                    return that.isPositionFlipped(d)
+                        ? that.endAngle(d)
+                        : that.startAngle(d);
+                })
+                .endAngle(function (d) {
+                    return that.isPositionFlipped(d)
+                        ? that.startAngle(d)
+                        : that.endAngle(d);
+                })
+                .innerRadius(function (d) {
+                    var outerRadius = that.outerRadius(d);
+
+                    // Position of the path radius is relative to the outer radius
+                    return outerRadius - ((100 - position) * (outerRadius - that.innerRadius(d)) / 100);
+                })
+                .outerRadius(function (d) {
+                    var outerRadius = that.outerRadius(d);
+
+                    // Position of the path radius is relative to the outer radius
+                    return outerRadius - ((100 - position) * (outerRadius - that.innerRadius(d)) / 100);
+                });
+
+            // Append a path so we could use it to write the label along it
+            parent.append('path')
+                .attr('d', arcGen)
+                .attr('id', function (d) {
+                    return 'label-' + d.id + '-' + index;
+                });
+        },
+
+        /**
+         * Append textPath element with label along the referenced path.
+         *
+         * @param {object} parent        Parent container element, D3 text element
+         * @param {int}    index         Index position of element in parent container
+         * @param {string} label         Label to display
+         * @param {string} textPathClass Optional class to set to the D3 textPath element
+         */
+        appendTextPath: function (parent, index, label, textPathClass) {
+            parent.append('textPath')
+                .attr('class', textPathClass || null)
+                .attr('startOffset', '25%')
+                .attr('xlink:href', function (d) {
+                    return '#label-' + d.id + '-' + index;
+                })
+                .text(label)
+                .each(this.truncate(5));
+        },
+
+        /**
+         * Create the labels of the inner arcs of the chart.
+         */
+        createInnerArcLabels: function () {
             var that = this;
 
             var entry = this.config.visual
@@ -526,9 +509,11 @@
                 .attr('class', 'labels')
                 .selectAll('g.label')
                 .data(
-                    // Remove all not required data
+                    // Remove all not required or empty data records
                     this.config.nodes.filter(function (d) {
-                        return (d.id !== '') && (d.depth > 0) && (d.depth < that.options.nameSwitchTreshold);
+                        return (d.id !== '')
+                            && (d.depth > 0)
+                            && (d.depth < that.options.nameSwitchTreshold);
                     })
                 )
                 .enter()
@@ -542,142 +527,43 @@
                     return (d.id !== '') ? d.name : this.remove();
                 });
 
+            // Create a path for each line of text as mobile devices
+            // won't display <tspan> elements in the right position
             entry.each(function (d) {
-console.log(d);
-                that.appendPathToArc(0, d3.select(this), that.getFirstNames(d), 70);
-                that.appendPathToArc(1, d3.select(this), that.getLastName(d), 52);
-
+                var parent   = d3.select(this);
                 var timespan = that.getTimespan(d);
 
+                // Relative positon offsets in percent (0 = inner radius, 100 = outer radius)
+                var positions = [70, 52, 25];
+
+                // Flip label positions for 360 degree chart
+                if (that.isPositionFlipped(d)) {
+                    positions = [30, 48, 75];
+                }
+
+                that.appendArcPath(parent, 0, positions[0]);
+                that.appendArcPath(parent, 1, positions[1]);
+
                 if (timespan) {
-                    that.appendPathToArc(2, d3.select(this), timespan, 25, 'date');
+                    that.appendArcPath(parent, 2, positions[2]);
+                }
+
+                // Append text element
+                var text = parent
+                    .append('text')
+                    .attr('dominant-baseline', 'middle')
+                    .style('font-size', function (d) {
+                        return that.getFontSize(13 - d.depth);
+                    });
+
+                // Append textPath elements along to create paths
+                that.appendTextPath(text, 0, that.getFirstNames(d));
+                that.appendTextPath(text, 1, that.getLastName(d));
+
+                if (timespan) {
+                    that.appendTextPath(text, 2, timespan, 'date');
                 }
             });
-
-//            var labelArc = d3.svg.arc()
-//                .startAngle(function (d) {
-//                    var sAngle = that.startAngle(d);
-//
-//                    if ((that.options.fanDegree !== 360) || (d.depth <= 1)) {
-//                        return sAngle;
-//                    }
-//
-//                    var eAngle = that.endAngle(d);
-//
-//                    // Flip names for better readability depending on position in chart
-//                    if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180))) ||
-//                        ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
-//                    ) {
-//                        return eAngle;
-//                    }
-//
-//                    return sAngle;
-//                })
-//                .endAngle(function (d) {
-//                    var eAngle = that.endAngle(d);
-//
-//                    if ((that.options.fanDegree !== 360) || (d.depth <= 1)) {
-//                        return eAngle;
-//                    }
-//
-//                    var sAngle = that.startAngle(d);
-//
-//                    // Flip names depending on position in chart
-//                    if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180))) ||
-//                        ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
-//                    ) {
-//                        return sAngle;
-//                    }
-//
-//                    return eAngle;
-//                })
-//                .innerRadius(function (d) {
-//                    var arcRadius    = (that.outerRadius(d) - that.innerRadius(d)) >> 1;
-//                    var centerRadius = that.innerRadius(d) + (arcRadius >> 1);
-//
-//                    return centerRadius;
-//                })
-//                .outerRadius(function (d) {
-//                    var arcRadius    = (that.outerRadius(d) - that.innerRadius(d)) >> 1;
-//                    var centerRadius = that.innerRadius(d) + (arcRadius >> 1);
-//
-//                    return centerRadius;
-//                });
-//
-//            // Append a path so we could use it to write the label along it
-//            entry.append('path')
-//                .attr('d', labelArc)
-//                .attr('id', function (ignore, i) {
-//                    return 'label-' + i;
-//                })
-//                .style('stroke', 'red')
-//                .style('stroke-width', 1);
-//
-//            var text = entry.append('text')
-//                .style('font-size', function (d) {
-//                    return that.getFontSize(13 - d.depth);
-//                });
-//
-//            // First names
-//            var textPath1 = text.append('textPath')
-//                .attr('startOffset', '25%')
-//                .attr('xlink:href', function (ignore, i) {
-//                    return '#label-' + i;
-//                });
-//
-//            textPath1.append('tspan')
-//                .attr('dominant-baseline', 'middle')
-////                .attr('dy', '0.25em')
-//                .text(function (d) {
-//                    return that.getFirstNames(d);
-//                })
-//                .each(that.truncate(5));
-
-
-//            // Append a path so we could use it to write the label along it
-//            entry.append('path')
-//                .attr('d', labelArc2)
-//                .attr('id', function (ignore, i) {
-//                    return 'label-2' + i;
-//                })
-//                .style('stroke', 'red')
-//                .style('stroke-width', 1);
-
-//            var text = entry.append('text')
-//                .style('font-size', function (d) {
-//                    return that.getFontSize(13 - d.depth);
-//                });
-//
-//            // Last name
-//            var textPath2 = text.append('textPath')
-//                .attr('startOffset', '25%')
-//                .attr('xlink:href', function (ignore, i) {
-//                    return '#label-2' + i;
-//                });
-//
-//            textPath2.append('tspan')
-//                .attr('dominant-baseline', 'middle')
-////                .attr('dy', '1.25em')
-//                .text(function (d) {
-//                    return that.getLastName(d);
-//                })
-//                .each(that.truncate(5));
-
-//            // Dates
-//            var textPath3 = this.appendTextPath(text)
-//                .attr('class', 'date');
-//
-//            textPath3.append('tspan')
-//                .attr('dominant-baseline', 'middle')
-////                .attr('dy', '1.25em')
-//                .text(function (d) {
-//                    if (d.born || d.died) {
-//                        return d.born + '-' + d.died;
-//                    }
-//
-//                    // Remove empty element
-//                    return this.remove();
-//                });
         },
 
         /**
@@ -773,9 +659,9 @@ console.log(d);
         },
 
         /**
-         * Set the labels of the outer arc of the chart.
+         * Create the labels of the outer arcs of the chart.
          */
-        setLabels: function () {
+        createOuterArcLabels: function () {
             var that = this;
             var group = this.config.visual
                 .append('g')
