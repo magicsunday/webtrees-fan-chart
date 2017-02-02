@@ -33,7 +33,6 @@ use Fisharebest\Webtrees\Functions\FunctionsPrint;
 use Fisharebest\Webtrees\Controller\ChartController;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\Filter;
-use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Theme;
 use Fisharebest\Webtrees\Tree;
@@ -88,14 +87,11 @@ class Chart extends ChartController
 
         if ($this->root && $this->root->canShowName()) {
             $this->setPageTitle(
-                I18N::translate(
-                    'Ancestral fan chart of %s',
-                    $this->root->getFullName()
-                )
+                $this->translate('Ancestral fan chart of %s', $this->root->getFullName())
             );
         } else {
             $this->setPageTitle(
-                I18N::translate('Ancestral fan chart')
+                $this->translate('Ancestral fan chart')
             );
         }
     }
@@ -112,6 +108,30 @@ class Chart extends ChartController
     }
 
     /**
+     * Get the theme instance.
+     *
+     * @return ThemeInterface
+     */
+    protected function getTheme()
+    {
+        return Theme::theme();
+    }
+
+    /**
+     * Translate a string, and then substitute placeholders.
+     *
+     * @return string
+     */
+    protected function translate(/* var_args */)
+    {
+        // Damn ugly static methods all around :(
+        return call_user_func_array(
+            '\\Fisharebest\\Webtrees\\I18N::translate',
+            func_get_args()
+        );
+    }
+
+    /**
      * Get the default colors based on the gender of an individual.
      *
      * @param Individual $person Individual instance
@@ -120,17 +140,15 @@ class Chart extends ChartController
      */
     protected function getColor(Individual $person = null)
     {
-        if (!($person instanceof Individual)) {
-            return '#' . Theme::theme()->parameter('chart-background-u');
+        if ($person instanceof Individual) {
+            if ($person->getSex() === 'M') {
+                return '#' . $this->getTheme()->parameter('chart-background-m');
+            } elseif ($person->getSex() === 'F') {
+                return '#' . $this->getTheme()->parameter('chart-background-f');
+            }
         }
 
-        if ($person->getSex() === 'M') {
-            return '#' . Theme::theme()->parameter('chart-background-m');
-        } elseif ($person->getSex() === 'F') {
-            return '#' . Theme::theme()->parameter('chart-background-f');
-        }
-
-        return '#' . Theme::theme()->parameter('chart-background-u');
+        return '#' . $this->getTheme()->parameter('chart-background-u');
     }
 
     /**
@@ -145,22 +163,20 @@ class Chart extends ChartController
         // We need always two individuals, so we fake the missing ones
         if (!($person instanceof Individual)) {
             return array(
-                'id'       => '',
-                'name'     => '',
-                'born'     => '',
-                'died'     => '',
-                'color'    => $this->getColor(),
-                'children' => array(),
+                'id'    => '',
+                'name'  => '',
+                'born'  => '',
+                'died'  => '',
+                'color' => $this->getColor(),
             );
         }
 
         return array(
-            'id'       => $person->getXref(),
-            'name'     => strip_tags($person->getFullName()),
-            'born'     => $person->getBirthYear(),
-            'died'     => $person->getDeathYear(),
-            'color'    => $this->getColor($person),
-            'children' => array(),
+            'id'    => $person->getXref(),
+            'name'  => strip_tags($person->getFullName()),
+            'born'  => $person->getBirthYear(),
+            'died'  => $person->getDeathYear(),
+            'color' => $this->getColor($person),
         );
     }
 
@@ -182,19 +198,18 @@ class Chart extends ChartController
             return array();
         }
 
-        $json   = $this->getIndividualData($person);
+        $data   = $this->getIndividualData($person);
+        $father = null;
+        $mother = null;
         $family = null;
 
         if ($person instanceof Individual) {
             $family = $person->getPrimaryChildFamily();
-        }
 
-        $father = null;
-        $mother = null;
-
-        if ($family instanceof Family) {
-            $father = $family->getHusband();
-            $mother = $family->getWife();
+            if ($family instanceof Family) {
+                $father = $family->getHusband();
+                $mother = $family->getWife();
+            }
         }
 
         // Recursively call the method for the parents of the individual
@@ -204,26 +219,14 @@ class Chart extends ChartController
         // Add array of child nodes, or empty array for leaf nodes
         // @see D3 partition layout
         if ($fatherTree) {
-            $json['children'][] = $fatherTree;
+            $data['children'][] = $fatherTree;
         }
 
         if ($motherTree) {
-            $json['children'][] = $motherTree;
+            $data['children'][] = $motherTree;
         }
 
-        return $json;
-    }
-
-    /**
-     * Translate a string, and then substitute placeholders
-     *
-     * @param string $value String to translate
-     *
-     * @return string
-     */
-    protected function translate($value)
-    {
-        return I18N::translate($value);
+        return $data;
     }
 
     /**
@@ -243,7 +246,9 @@ class Chart extends ChartController
      */
     protected function getFanStyleSelectControl()
     {
-        return FunctionsEdit::selectEditControl('fanDegree', $this->getFanStyles(), null, $this->fanDegree);
+        return FunctionsEdit::selectEditControl(
+            'fanDegree', $this->getFanStyles(), null, $this->fanDegree
+        );
     }
 
     /**
@@ -275,18 +280,31 @@ class Chart extends ChartController
     }
 
     /**
+     * Get the theme defined chart font color.
+     *
+     * @return string HTML color code
+     */
+    protected function getChartFontColor()
+    {
+        return '#' . $this->getTheme()->parameter('chart-font-color');
+    }
+
+    /**
      * Render the fan chart form HTML and JSON data.
      *
      * @return string HTML snippet to include in page HTML
      */
     public function render()
     {
-        // Encode data to json string
-        $json = json_encode(
-            $this->buildJsonTree($this->root)
+        // Encode chart parameters to json string
+        $chartParams = json_encode(
+            array(
+                'fanDegree' => $this->fanDegree,
+                'fontScale' => $this->fontScale,
+                'fontColor' => $this->getChartFontColor(),
+                'data'      => $this->buildJsonTree($this->root),
+            )
         );
-
-        $theme = Theme::theme();
 
         $this->addInlineJavascript('autocomplete();')
             ->addInlineJavascript(
@@ -300,12 +318,7 @@ $(function () {
     var fanChart = $('#fan_chart');
 
     if (typeof $().ancestralFanChart === 'function') {
-        fanChart.ancestralFanChart({
-            fanDegree : {$this->fanDegree},
-            fontScale : {$this->fontScale},
-            fontColor : '#{$theme->parameter('chart-font-color')}',
-            data : {$json}
-        });
+        fanChart.ancestralFanChart({$chartParams});
     }
 });
 JS
