@@ -418,7 +418,7 @@
         /**
          * Get the scaled font size.
          *
-         * @param {number} fontSize Base font size used to calculate scaled one
+         * @param {object} d D3 data object
          *
          * @return {string}
          */
