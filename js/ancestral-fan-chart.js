@@ -30,7 +30,7 @@
 
     $.widget('rso.ancestralFanChart', {
         options: {
-            nameSwitchTreshold: 5,
+            nameSwitchThreshold: 5,
 
             // Default font size
             fontSize: 13,
@@ -425,7 +425,7 @@
         getFontSize: function (d) {
             var fontSize = this.options.fontSize;
 
-            if (d.depth >= (this.options.nameSwitchTreshold + 1)) {
+            if (d.depth >= (this.options.nameSwitchThreshold + 1)) {
                 fontSize += 1;
             }
 
@@ -538,7 +538,7 @@
                     this.config.nodes.filter(function (d) {
                         return (d.id !== '')
                             && (d.depth > 0)
-                            && (d.depth < that.options.nameSwitchTreshold);
+                            && (d.depth < that.options.nameSwitchThreshold);
                     })
                 )
                 .enter()
@@ -697,7 +697,7 @@
                     this.config.nodes.filter(function (d) {
                         return (d.id !== '')
                             && ((d.depth === 0)
-                            || (d.depth >= that.options.nameSwitchTreshold));
+                            || (d.depth >= that.options.nameSwitchThreshold));
                     })
                 )
                 .enter()
