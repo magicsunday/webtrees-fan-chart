@@ -646,14 +646,13 @@
                         text.attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
                     } else {
                         text.attr('transform', function (d) {
-                            var multangle = d.depth === 1 ? 90 : 180;
-                            var angle = that.options.x(d.x + d.dx / 2) * multangle / Math.PI - 90;
-                            var rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > -90 ? -1 : 1));
-                            var transX = (that.innerRadius(d) + that.outerRadius(d)) / 2;
+                            var angle  = (that.options.x(d.x + d.dx / 2) * 180 / Math.PI);
+                            var rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > 0 ? -1 : 1)) - 90;
+                            var transX = (that.innerRadius(d) + that.outerRadius(d)) >> 1;
 
                             return 'rotate(' + rotate + ') '
                                 + 'translate(' + transX + ') '
-                                + 'rotate(' + (angle > -90 ? 0 : -180) + ')';
+                                + 'rotate(' + (angle > 0 ? 0 : 180) + ')';
                         });
                     }
                 });
