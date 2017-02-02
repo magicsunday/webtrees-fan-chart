@@ -28,14 +28,14 @@
 
 namespace RSO\WebtreesModule\AncestralFanChart\Controller;
 
-use Fisharebest\Webtrees\Functions\FunctionsEdit;
-use Fisharebest\Webtrees\Functions\FunctionsPrint;
-use Fisharebest\Webtrees\Controller\ChartController;
-use Fisharebest\Webtrees\Family;
-use Fisharebest\Webtrees\Filter;
-use Fisharebest\Webtrees\Individual;
-use Fisharebest\Webtrees\Theme;
-use Fisharebest\Webtrees\Tree;
+use \Fisharebest\Webtrees\Functions\FunctionsEdit;
+use \Fisharebest\Webtrees\Functions\FunctionsPrint;
+use \Fisharebest\Webtrees\Controller\ChartController;
+use \Fisharebest\Webtrees\Family;
+use \Fisharebest\Webtrees\Filter;
+use \Fisharebest\Webtrees\Individual;
+use \Fisharebest\Webtrees\Theme;
+use \Fisharebest\Webtrees\Tree;
 
 /**
  * Fan chart controller class.
