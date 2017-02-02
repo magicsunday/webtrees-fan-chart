@@ -85,15 +85,15 @@ class Chart extends ChartController
         $this->generations = Filter::getInteger('generations', 2, 9, $defaultGenerations);
         $this->fontScale   = Filter::getInteger('fontScale', 0, 200, 100);
 
+        // Create page title
+        $title = 'Ancestral fan chart';
         if ($this->root && $this->root->canShowName()) {
-            $this->setPageTitle(
-                $this->translate('Ancestral fan chart of %s', $this->root->getFullName())
-            );
-        } else {
-            $this->setPageTitle(
-                $this->translate('Ancestral fan chart')
-            );
+            $title = 'Ancestral fan chart of %s';
         }
+
+        $this->setPageTitle(
+            $this->translate($title, $this->root->getFullName())
+        );
     }
 
     /**
