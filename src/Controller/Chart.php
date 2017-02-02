@@ -290,40 +290,12 @@ class Chart extends ChartController
     }
 
     /**
-     * Render the fan chart form HTML and JSON data.
+     * Returns the content HTML, including form and chart placeholder.
      *
-     * @return string HTML snippet to include in page HTML
+     * @return string
      */
-    public function render()
+    protected function getContentHtml()
     {
-        // Encode chart parameters to json string
-        $chartParams = json_encode(
-            array(
-                'fanDegree' => $this->fanDegree,
-                'fontScale' => $this->fontScale,
-                'fontColor' => $this->getChartFontColor(),
-                'data'      => $this->buildJsonTree($this->root),
-            )
-        );
-
-        $this->addInlineJavascript('autocomplete();')
-            ->addInlineJavascript(
-<<<JS
-/**
- * Init widget
- */
-$(function () {
-    'use strict';
-
-    var fanChart = $('#fan_chart');
-
-    if (typeof $().ancestralFanChart === 'function') {
-        fanChart.ancestralFanChart({$chartParams});
-    }
-});
-JS
-        );
-
         return <<<HTML
 <div id="ancestral-fan-chart">
     <h2>{$this->getPageTitle()}</h2>
@@ -369,5 +341,35 @@ JS
     <div id="fan_chart"></div>
 </div>
 HTML;
+    }
+
+    /**
+     * Render the fan chart form HTML and JSON data.
+     *
+     * @return string HTML snippet to include in page HTML
+     */
+    public function render()
+    {
+        // Encode chart parameters to json string
+        $chartParams = json_encode(
+            array(
+                'fanDegree' => $this->fanDegree,
+                'fontScale' => $this->fontScale,
+                'fontColor' => $this->getChartFontColor(),
+                'data'      => $this->buildJsonTree($this->root),
+            )
+        );
+
+        $this->addInlineJavascript('autocomplete();')
+            ->addInlineJavascript(
+<<<JS
+// Init widget
+if (typeof $().ancestralFanChart === 'function') {
+    $('#fan_chart').ancestralFanChart({$chartParams});
+}
+JS
+        );
+
+        return $this->getContentHtml();
     }
 }
