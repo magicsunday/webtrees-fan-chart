@@ -82,12 +82,12 @@
             this.placeArcs();
 
             // Adjust size of svg
-            var bbox = this.config.visual.node().getBBox();
-            var radius = bbox.width >> 1;
+            var boundingBox = this.config.visual.node().getBBox();
+            var radius      = boundingBox.width >> 1;
 
             d3.select(this.config.visual.node().parentNode)
-                .attr('width', bbox.width + (this.options.padding << 1))
-                .attr('height', bbox.height + (this.options.padding << 1));
+                .attr('width', boundingBox.width + (this.options.padding << 1))
+                .attr('height', boundingBox.height + (this.options.padding << 1));
 
             this.config.visual.attr(
                 'transform',
@@ -400,18 +400,18 @@
         },
 
         /**
-         * Get the last name of an person.
+         * Get the time span label of an person. Returns null if label
+         * should not be displayed due empty data.
          *
          * @param {object} d D3 data object
          *
          * @return {string}
          */
-        getTimespan: function (d) {
+        getTimeSpan: function (d) {
             if (d.born || d.died) {
                 return d.born + '-' + d.died;
             }
 
-            // Remove empty element
             return null;
         },
 
@@ -552,9 +552,9 @@
             // won't display <tspan> elements in the right position
             group.each(function (d) {
                 var parent   = d3.select(this);
-                var timespan = that.getTimespan(d);
+                var timeSpan = that.getTimeSpan(d);
 
-                // Relative positon offsets in percent (0 = inner radius, 100 = outer radius)
+                // Relative position offsets in percent (0 = inner radius, 100 = outer radius)
                 var positions = [70, 52, 25];
 
                 // Flip label positions for 360 degree chart
@@ -565,7 +565,7 @@
                 that.appendArcPath(parent, 0, positions[0]);
                 that.appendArcPath(parent, 1, positions[1]);
 
-                if (timespan) {
+                if (timeSpan) {
                     that.appendArcPath(parent, 2, positions[2]);
                 }
 
@@ -580,8 +580,8 @@
                 that.appendTextPath(text, 0, that.getFirstNames(d));
                 that.appendTextPath(text, 1, that.getLastName(d));
 
-                if (timespan) {
-                    that.appendTextPath(text, 2, timespan, 'chart-date');
+                if (timeSpan) {
+                    that.appendTextPath(text, 2, timeSpan, 'chart-date');
                 }
             });
         },
@@ -713,7 +713,7 @@
             group.each(function (d) {
                 var parent   = d3.select(this);
                 var name     = d.name;
-                var timespan = that.getTimespan(d);
+                var timeSpan = that.getTimeSpan(d);
 
                 // Return first name for inner circles
                 if (d.depth < 7) {
@@ -728,8 +728,8 @@
                     that.appendOuterArcText(parent, that.getLastName(d));
 
                     // Add dates
-                    if ((d.depth < 6) && timespan) {
-                        that.appendOuterArcText(parent, timespan, 'chart-date');
+                    if ((d.depth < 6) && timeSpan) {
+                        that.appendOuterArcText(parent, timeSpan, 'chart-date');
                     }
                 }
             });
