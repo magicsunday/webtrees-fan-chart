@@ -26,8 +26,9 @@
  * @license    http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace RSO\WebtreesModule\AncestralFanChart\Controller;
+namespace RSO\WebtreesModule\AncestralFanChart;
 
+use \RSO\WebtreesModule\AncestralFanChart\Controller\Chart;
 use \Composer\Autoload\ClassLoader;
 use \Fisharebest\Webtrees\Auth;
 use \Fisharebest\Webtrees\I18N;

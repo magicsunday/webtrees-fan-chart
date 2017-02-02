@@ -28,5 +28,5 @@
 
 namespace RSO\WebtreesModule\AncestralFanChart;
 
-include_once __DIR__ . '/src/Controller/Module.php';
-return new \RSO\WebtreesModule\AncestralFanChart\Controller\Module(__DIR__);
+include_once __DIR__ . '/src/Module.php';
+return new Module(__DIR__);
