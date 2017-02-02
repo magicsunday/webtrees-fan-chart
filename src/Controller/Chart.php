@@ -201,7 +201,6 @@ class Chart extends ChartController
         $data   = $this->getIndividualData($person);
         $father = null;
         $mother = null;
-        $family = null;
 
         if ($person instanceof Individual) {
             $family = $person->getPrimaryChildFamily();
