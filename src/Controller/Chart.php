@@ -174,7 +174,7 @@ class Chart extends ChartController
 
         return array(
             'id'    => $person->getXref(),
-            'name'  => strip_tags($person->getFullName()),
+            'name'  => html_entity_decode(strip_tags($person->getFullName())),
             'born'  => $person->getBirthYear(),
             'died'  => $person->getDeathYear(),
             'color' => $this->getColor($person),
