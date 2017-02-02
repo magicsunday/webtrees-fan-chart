@@ -677,7 +677,6 @@
                 .style('font-size', function (d) {
                     return that.getFontSize(d);
                 })
-                .style('fill', that.options.fontColor)
                 .text(label)
                 .each(that.truncate(5));
         },
@@ -702,7 +701,8 @@
                 )
                 .enter()
                 .append('g')
-                .attr('class', 'label');
+                .attr('class', 'label')
+                .style('fill', that.options.fontColor);
 
             // Add title element containing the full name of the individual
             this.appendTitle(group);
