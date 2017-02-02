@@ -529,7 +529,7 @@
         createInnerArcLabels: function () {
             var that = this;
 
-            var entry = this.config.visual
+            var group = this.config.visual
                 .append('g')
                 .attr('class', 'labels')
                 .selectAll('g.label')
@@ -546,11 +546,11 @@
                 .attr('class', 'label');
 
             // Add title element containing the full name of the individual
-            this.appendTitle(entry);
+            this.appendTitle(group);
 
             // Create a path for each line of text as mobile devices
             // won't display <tspan> elements in the right position
-            entry.each(function (d) {
+            group.each(function (d) {
                 var parent   = d3.select(this);
                 var timespan = that.getTimespan(d);
 

@@ -2,7 +2,7 @@
     margin: 0;
 }
 
-#ancestral-fan-chart form input.fontScale {
+#ancestral-fan-chart form .fontScale {
     width: 35px;
     text-align: right;
 }
@@ -21,12 +21,12 @@
     margin: auto;
 }
 
-#ancestral-fan-chart svg g.arc path {
+#ancestral-fan-chart svg .arc path {
     stroke: #e1e1e1;
     stroke-width: 3px;
 }
 
-#ancestral-fan-chart svg g.label .chart-date {
+#ancestral-fan-chart svg .label .chart-date {
     fill: #7f7f7f;
     font-weight: normal;
 }
