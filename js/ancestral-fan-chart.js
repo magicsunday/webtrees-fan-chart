@@ -230,6 +230,20 @@
         },
 
         /**
+         * Add title element containing the full name of the individual.
+         *
+         * @param {object} parent D3 parent element to append the title to
+         */
+        appendTitle: function (parent) {
+            // Add title element containing the full name of the individual
+            parent.append('title')
+                .text(function (d) {
+                    // Return name or remove empty element
+                    return (d.id !== '') ? d.name : this.remove();
+                });
+        },
+
+        /**
          * Draws the center circle of the fan chart.
          */
         drawBorderCenterCircle: function () {
@@ -257,6 +271,7 @@
                 .append('g')
                 .attr('class', 'arc');
 
+            this.appendTitle(borderArcs);
             this.drawBorders(borderArcs, arcGenerator);
         },
 
@@ -293,13 +308,7 @@
                 .append('g')
                 .attr('class', 'arc');
 
-            // Add title element containing the full name of the individual
-            borderArcs.append('title')
-                .text(function (d) {
-                    // Return name or remove empty element
-                    return (d.id !== '') ? d.name : this.remove();
-                });
-
+            this.appendTitle(borderArcs);
             this.drawBorders(borderArcs, arcGenerator);
         },
 
@@ -462,7 +471,7 @@
             var that = this;
 
             // Create arc generator for path segments
-            var arcGen = d3.svg
+            var arcGenerator = d3.svg
                 .arc()
                 .startAngle(function (d) {
                     return that.isPositionFlipped(d)
@@ -489,7 +498,7 @@
 
             // Append a path so we could use it to write the label along it
             parent.append('path')
-                .attr('d', arcGen)
+                .attr('d', arcGenerator)
                 .attr('id', function (d) {
                     return 'label-' + d.id + '-' + index;
                 });
@@ -537,11 +546,7 @@
                 .attr('class', 'label');
 
             // Add title element containing the full name of the individual
-            entry.append('title')
-                .text(function (d) {
-                    // Return name or remove empty element
-                    return (d.id !== '') ? d.name : this.remove();
-                });
+            this.appendTitle(entry);
 
             // Create a path for each line of text as mobile devices
             // won't display <tspan> elements in the right position
@@ -701,11 +706,7 @@
                 .attr('class', 'label');
 
             // Add title element containing the full name of the individual
-            group.append('title')
-                .text(function (d) {
-                    // Return name or remove empty element
-                    return (d.id !== '') ? d.name : this.remove();
-                });
+            this.appendTitle(group);
 
             // Create the text elements for first name, last name and
             // the birth/death dates
