@@ -455,13 +455,8 @@
             var eAngle = this.endAngle(d);
 
             // Flip names for better readability depending on position in chart
-            if (((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180))) ||
-                ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)))
-            ) {
-                return true;
-            }
-
-            return false;
+            return ((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180)))
+                || ((sAngle >= (-180 * Math.PI / 180)) && (eAngle <= (-90 * Math.PI / 180)));
         },
 
         /**
