@@ -169,7 +169,10 @@
          * @returns {number}
          */
         startAngle: function (d) {
-            return Math.max(this.options.startPi, Math.min(2 * this.options.endPi, this.options.x(d.x)));
+            return Math.max(
+                this.options.startPi,
+                Math.min(2 * this.options.endPi, this.options.x(d.x))
+            );
         },
 
         /**
@@ -180,7 +183,10 @@
          * @returns {number}
          */
         endAngle: function (d) {
-            return Math.max(this.options.startPi, Math.min(2 * this.options.endPi, this.options.x(d.x + d.dx)));
+            return Math.max(
+                this.options.startPi,
+                Math.min(2 * this.options.endPi, this.options.x(d.x + d.dx))
+            );
         },
 
         /**
