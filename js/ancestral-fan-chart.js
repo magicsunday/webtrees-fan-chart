@@ -71,10 +71,10 @@
                 this.options.width = $(window).width() - 25;
             }
 
-            this.options.radius = this.options.width >> 1;
+            this.options.radius = this.options.width / 2;
 
             // Scale the angles linear across the circle
-            this.options.x = d3.scale.linear().range([this.options.startPi, this.options.endPi]);
+            this.options.x = d3.scaleLinear().range([this.options.startPi, this.options.endPi]);
 
             // Start bootstrapping
             this.bootstrap();
@@ -83,7 +83,7 @@
 
             // Adjust size of svg
             var boundingBox = this.config.visual.node().getBBox();
-            var radius      = boundingBox.width >> 1;
+            var radius      = boundingBox.width / 2;
 
             d3.select(this.config.visual.node().parentNode)
                 .attr('width', boundingBox.width + (this.options.padding << 1))
@@ -143,12 +143,10 @@
                 .append('g')
                 .attr('class', 'group');
 
-            this.config.nodes = d3.layout.partition()
-                .sort(null) // prevent reordering of data
-                .value(function (d) {
-                    return d.depth;
-                })
-                .nodes(data);
+            var partition = d3.partition();
+            var root      = d3.hierarchy(data).count();
+
+            this.config.nodes = partition(root).descendants();
         },
 
         /**
@@ -171,7 +169,7 @@
         startAngle: function (d) {
             return Math.max(
                 this.options.startPi,
-                Math.min(2 * this.options.endPi, this.options.x(d.x))
+                Math.min(this.options.endPi, this.options.x(d.x0))
             );
         },
 
@@ -185,7 +183,7 @@
         endAngle: function (d) {
             return Math.max(
                 this.options.startPi,
-                Math.min(2 * this.options.endPi, this.options.x(d.x + d.dx))
+                Math.min(this.options.endPi, this.options.x(d.x1))
             );
         },
 
@@ -221,7 +219,7 @@
          * @returns {number}
          */
         centerRadius: function (d) {
-            return (this.innerRadius(d) + this.outerRadius(d)) >> 1;
+            return (this.innerRadius(d) + this.outerRadius(d)) / 2;
         },
 
         /**
@@ -232,7 +230,7 @@
          * @return {boolean}
          */
         hideEmptyCells: function (d) {
-            return !this.options.hideEmptyCells || (d.id !== '');
+            return !this.options.hideEmptyCells || (d.data.id !== '');
         },
 
         /**
@@ -245,7 +243,7 @@
             parent.append('title')
                 .text(function (d) {
                     // Return name or remove empty element
-                    return (d.id !== '') ? d.name : this.remove();
+                    return (d.data.id !== '') ? d.data.name : this.remove();
                 });
         },
 
@@ -255,7 +253,7 @@
         drawBorderCenterCircle: function () {
             var that = this;
 
-            var arcGenerator = d3.svg.arc()
+            var arcGenerator = d3.arc()
                 .startAngle(0)
                 .endAngle(Math.PI * 2)
                 .innerRadius(function (d) {
@@ -287,7 +285,7 @@
         drawBorderArcs: function () {
             var that = this;
 
-            var arcGenerator = d3.svg.arc()
+            var arcGenerator = d3.arc()
                 .startAngle(function (d) {
                     return that.startAngle(d);
                 })
@@ -327,7 +325,7 @@
         drawBorders: function (borderArcs, arcGenerator) {
             borderArcs.append('path')
                 .attr('fill', function (d) {
-                    return d.color;
+                    return d.data.color;
                 })
                 .attr('d', arcGenerator);
         },
@@ -391,7 +389,7 @@
          * @return {string}
          */
         getFirstNames: function (d) {
-            return d.name.substr(0, d.name.lastIndexOf(' '));
+            return d.data.name.substr(0, d.data.name.lastIndexOf(' '));
         },
 
         /**
@@ -402,7 +400,7 @@
          * @return {string}
          */
         getLastName: function (d) {
-            return d.name.substr(d.name.lastIndexOf(' ') + 1);
+            return d.data.name.substr(d.data.name.lastIndexOf(' ') + 1);
         },
 
         /**
@@ -414,8 +412,8 @@
          * @return {string}
          */
         getTimeSpan: function (d) {
-            if (d.born || d.died) {
-                return d.born + '-' + d.died;
+            if (d.data.born || d.data.died) {
+                return d.data.born + '-' + d.data.died;
             }
 
             return null;
@@ -472,8 +470,7 @@
             var that = this;
 
             // Create arc generator for path segments
-            var arcGenerator = d3.svg
-                .arc()
+            var arcGenerator = d3.arc()
                 .startAngle(function (d) {
                     return that.isPositionFlipped(d)
                         ? that.endAngle(d)
@@ -501,7 +498,7 @@
             parent.append('path')
                 .attr('d', arcGenerator)
                 .attr('id', function (d) {
-                    return 'label-' + d.id + '-' + index;
+                    return 'label-' + d.data.id + '-' + index;
                 });
         },
 
@@ -518,7 +515,7 @@
                 .attr('class', textPathClass || null)
                 .attr('startOffset', '25%')
                 .attr('xlink:href', function (d) {
-                    return '#label-' + d.id + '-' + index;
+                    return '#label-' + d.data.id + '-' + index;
                 })
                 .text(label)
                 .each(this.truncate(5));
@@ -537,7 +534,7 @@
                 .data(
                     // Remove all not required or empty data records
                     this.config.nodes.filter(function (d) {
-                        return (d.id !== '')
+                        return (d.data.id !== '')
                             && (d.depth > 0)
                             && (d.depth < that.options.nameSwitchThreshold);
                     })
@@ -615,8 +612,7 @@
                         offset = 1.25;
                     }
 
-                    var mapIndexToOffset = d3.scale
-                        .linear()
+                    var mapIndexToOffset = d3.scaleLinear()
                         .domain([0, countElements - 1])
                         .range([-offset, offset]);
 
@@ -647,7 +643,8 @@
                         text.attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
                     } else {
                         text.attr('transform', function (d) {
-                            var angle  = (that.options.x(d.x + d.dx / 2) * 180 / Math.PI);
+                            var dx     = d.x1 - d.x0;
+                            var angle  = that.options.x(d.x0 + (dx / 2)) * 180 / Math.PI;
                             var rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > 0 ? -1 : 1)) - 90;
 
                             return 'rotate(' + rotate + ') '
@@ -694,7 +691,7 @@
                 .data(
                     // Remove all not required or empty data records
                     this.config.nodes.filter(function (d) {
-                        return (d.id !== '')
+                        return (d.data.id !== '')
                             && ((d.depth === 0)
                             || (d.depth >= that.options.nameSwitchThreshold));
                     })
@@ -711,7 +708,7 @@
             // the birth/death dates
             group.each(function (d) {
                 var parent   = d3.select(this);
-                var name     = d.name;
+                var name     = d.data.name;
                 var timeSpan = that.getTimeSpan(d);
 
                 // Return first name for inner circles

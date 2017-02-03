@@ -165,7 +165,7 @@ class Module extends AbstractModule implements ModuleChartInterface
             ->restrictAccess(WebtreesModule::isActiveChart($WT_TREE, 'ancestral-fan-chart'))
             ->pageHeader()
             ->addExternalJavascript(WT_AUTOCOMPLETE_JS_URL)
-            ->addExternalJavascript($urlPath . '/js/packages/d3-3.5.17/d3.min.js')
+            ->addExternalJavascript($urlPath . '/js/packages/d3-4.5/d3.min.js')
             ->addExternalJavascript($urlPath . '/js/ancestral-fan-chart.js');
 
         echo '<link rel="stylesheet" type="text/css" href="'
