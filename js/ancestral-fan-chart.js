@@ -32,13 +32,9 @@
         options: {
             nameSwitchThreshold: 5,
 
-            // Default font size
+            // Default font size, color and scaling
             fontSize: 13,
             fontColor: '#000',
-
-            hideEmptyCells: false,
-
-            // Default font scaling factor
             fontScale: 100,
 
             // Degrees of the fan chart
@@ -49,10 +45,12 @@
 
             width: 1200,
             height: 1200,
-            radius: 600,
             padding: 5,
 
             x: null
+        },
+
+        config: {
         },
 
         /**
@@ -67,17 +65,10 @@
             this.options.startPi = -(this.options.fanDegree / 360 * Math.PI);
             this.options.endPi = (this.options.fanDegree / 360 * Math.PI);
 
-            if (this.options.width > $(window).width() - 25) {
-                this.options.width = $(window).width() - 25;
-            }
-
-            this.options.radius = this.options.width / 2;
-
             // Scale the angles linear across the circle
             this.options.x = d3.scaleLinear().range([this.options.startPi, this.options.endPi]);
 
             // Start bootstrapping
-            this.bootstrap();
             this.initChart(this.options.data);
             this.placeArcs();
 
@@ -110,21 +101,6 @@
             }
 
             return true;
-        },
-
-        /**
-         * Bootstrap all requirement for all charts
-         *
-         * @private
-         */
-        bootstrap: function () {
-
-            // Default configuration
-            this.config = {
-                elements: {
-                    chart: this.element.find('#fan_chart')
-                }
-            };
         },
 
         /**
@@ -223,14 +199,17 @@
         },
 
         /**
-         * Whether to show empty cell of the chart or not.
+         * Get an radius relative to the outer radius adjusted by the given
+         * position in percent.
          *
-         * @param {object} d D3 data object
+         * @param {object} d        D3 data object
+         * @param {number} position Percent offset (0 = inner radius, 100 = outer radius)
          *
-         * @return {boolean}
+         * @returns {number}
          */
-        hideEmptyCells: function (d) {
-            return !this.options.hideEmptyCells || (d.data.id !== '');
+        relativeRadius: function (d, position) {
+            var outerRadius = this.outerRadius(d);
+            return outerRadius - ((100 - position) * (outerRadius - this.innerRadius(d)) / 100);
         },
 
         /**
@@ -251,17 +230,11 @@
          * Draws the center circle of the fan chart.
          */
         drawBorderCenterCircle: function () {
-            var that = this;
-
             var arcGenerator = d3.arc()
                 .startAngle(0)
                 .endAngle(Math.PI * 2)
-                .innerRadius(function (d) {
-                    return that.innerRadius(d);
-                })
-                .outerRadius(function (d) {
-                    return that.outerRadius(d);
-                });
+                .innerRadius(this.innerRadius)
+                .outerRadius(this.outerRadius);
 
             var borderArcs = this.config.visual
                 .append('g')
@@ -292,22 +265,13 @@
                 .endAngle(function (d) {
                     return that.endAngle(d);
                 })
-                .innerRadius(function (d) {
-                    return that.innerRadius(d);
-                })
-                .outerRadius(function (d) {
-                    return that.outerRadius(d);
-                });
+                .innerRadius(this.innerRadius)
+                .outerRadius(this.outerRadius);
 
             var borderArcs = this.config.visual
                 .select('g.arcs')
                 .selectAll('g.arc')
-                .data(
-                    // Remove all not required data
-                    this.config.nodes.filter(function (d) {
-                        return that.hideEmptyCells(d);
-                    })
-                )
+                .data(this.config.nodes)
                 .enter()
                 .append('g')
                 .attr('class', 'arc');
@@ -458,6 +422,25 @@
         },
 
         /**
+         * Create the group element for the labels.
+         *
+         * @param {string}   groupClass CSS class to assign to the group
+         * @param {function} filterFunc Filter function to apply to the data nodes
+         *
+         * @return {object} D3 group element
+         */
+        createLabelGroup: function (groupClass, filterFunc) {
+            return this.config.visual
+                .append('g')
+                .attr('class', groupClass)
+                .selectAll('g.label')
+                .data(this.config.nodes.filter(filterFunc))
+                .enter()
+                .append('g')
+                .attr('class', 'label');
+        },
+
+        /**
          * Append a path element to the given parent group element.
          *
          * @param {object} parent   Parent container element, D3 group element
@@ -482,16 +465,10 @@
                         : that.endAngle(d);
                 })
                 .innerRadius(function (d) {
-                    var outerRadius = that.outerRadius(d);
-
-                    // Position of the path radius is relative to the outer radius
-                    return outerRadius - ((100 - position) * (outerRadius - that.innerRadius(d)) / 100);
+                    return that.relativeRadius(d, position);
                 })
                 .outerRadius(function (d) {
-                    var outerRadius = that.outerRadius(d);
-
-                    // Position of the path radius is relative to the outer radius
-                    return outerRadius - ((100 - position) * (outerRadius - that.innerRadius(d)) / 100);
+                    return that.relativeRadius(d, position);
                 });
 
             // Append a path so we could use it to write the label along it
@@ -527,21 +504,14 @@
         createInnerArcLabels: function () {
             var that = this;
 
-            var group = this.config.visual
-                .append('g')
-                .attr('class', 'labels')
-                .selectAll('g.label')
-                .data(
+            var group = this.createLabelGroup(
+                'inner-labels',
+                function (d) {
                     // Remove all not required or empty data records
-                    this.config.nodes.filter(function (d) {
-                        return (d.data.id !== '')
-                            && (d.depth > 0)
-                            && (d.depth < that.options.nameSwitchThreshold);
-                    })
-                )
-                .enter()
-                .append('g')
-                .attr('class', 'label');
+                    return (d.data.id !== '')
+                        && (d.depth > 0)
+                        && (d.depth < that.options.nameSwitchThreshold);
+                });
 
             // Add title element containing the full name of the individual
             this.appendTitle(group);
@@ -571,7 +541,9 @@
                 var text = parent
                     .append('text')
                     .attr('dominant-baseline', 'middle')
-                    .style('font-size', that.getFontSize(d))
+                    .style('font-size', function (d) {
+                        return that.getFontSize(d);
+                    })
                     .style('fill', that.options.fontColor);
 
                 // Append textPath elements along to create paths
@@ -675,7 +647,7 @@
                     return that.getFontSize(d);
                 })
                 .text(label)
-                .each(that.truncate(5));
+                .each(this.truncate(5));
         },
 
         /**
@@ -684,22 +656,15 @@
         createOuterArcLabels: function () {
             var that = this;
 
-            var group = this.config.visual
-                .append('g')
-                .attr('class', 'labels')
-                .selectAll('g.label')
-                .data(
+            var group = this.createLabelGroup(
+                'outer-labels',
+                function (d) {
                     // Remove all not required or empty data records
-                    this.config.nodes.filter(function (d) {
-                        return (d.data.id !== '')
-                            && ((d.depth === 0)
-                            || (d.depth >= that.options.nameSwitchThreshold));
-                    })
-                )
-                .enter()
-                .append('g')
-                .attr('class', 'label')
-                .style('fill', that.options.fontColor);
+                    return (d.data.id !== '')
+                        && ((d.depth === 0)
+                        || (d.depth >= that.options.nameSwitchThreshold));
+                })
+                .style('fill', this.options.fontColor);
 
             // Add title element containing the full name of the individual
             this.appendTitle(group);
