@@ -244,10 +244,10 @@ class Chart extends ChartController
      *
      * @return string
      */
-    protected function getFanStyleSelectControl()
+    protected function getFanDegreeSelectControl()
     {
         return FunctionsEdit::selectEditControl(
-            'fanDegree', $this->getFanStyles(), null, $this->fanDegree
+            'fanDegree', $this->getFanDegrees(), null, $this->fanDegree
         );
     }
 
@@ -262,11 +262,11 @@ class Chart extends ChartController
     }
 
     /**
-     * A list of options for the chart style.
+     * A list of options for the chart degrees.
      *
      * @return string[]
      */
-    protected function getFanStyles()
+    protected function getFanDegrees()
     {
         return [
             180 => $this->translate('180 degree'),
@@ -297,7 +297,7 @@ class Chart extends ChartController
     protected function getContentHtml()
     {
         return <<<HTML
-<div id="ancestral-fan-chart">
+<div id="page-fan">
     <h2>{$this->getPageTitle()}</h2>
     <form name="people" method="get" action="?">
         <input type="hidden" name="ged" value="{$this->getTree()->getNameHtml()}">
@@ -313,16 +313,21 @@ class Chart extends ChartController
                         {$this->printFindIndividualLink()}
                     </td>
                     <td class="descriptionbox">
+                        <label for="fanDegree">{$this->translate('Degrees')}</label>
+                    </td>
+                    <td class="optionbox">
+                        {$this->getFanDegreeSelectControl()}
+                    </td>
+                    <td rowspan="2" class="topbottombar vmiddle">
+                        <input type="submit" value="{$this->translate('view')}">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="descriptionbox">
                         <label for="generations">{$this->translate('Generations')}</label>
                     </td>
                     <td class="optionbox">
                         {$this->getGenerationsInputControl()}
-                    </td>
-                    <td class="descriptionbox">
-                        <label for="fanDegree">{$this->translate('Degrees')}</label>
-                    </td>
-                    <td class="optionbox">
-                        {$this->getFanStyleSelectControl()}
                     </td>
                     <td class="descriptionbox">
                         <label for="fontScale">{$this->translate('Font size')}</label>
@@ -330,9 +335,6 @@ class Chart extends ChartController
                     <td class="optionbox">
                         <input class="fontScale" type="text" name="fontScale" id="fontScale" size="3" value="{$this->fontScale}">
                         {$this->translate('%')}
-                    </td>
-                    <td rowspan="2" class="topbottombar vmiddle">
-                        <input type="submit" value="{$this->translate('view')}">
                     </td>
                 </tr>
             </tbody>

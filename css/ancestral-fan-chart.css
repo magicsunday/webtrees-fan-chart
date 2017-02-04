@@ -1,32 +1,22 @@
-#ancestral-fan-chart form label, input, select {
-    margin: 0;
-}
-
-#ancestral-fan-chart form .fontScale {
-    width: 35px;
-    text-align: right;
-}
-
-#ancestral-fan-chart table td {
+#page-fan table td {
     vertical-align: middle;
-    padding: 3px 5px;
 }
 
-#ancestral-fan-chart svg {
+#page-fan svg {
     display: block;
     margin: auto;
 }
 
-#ancestral-fan-chart svg .arc path {
+#page-fan svg .arc path {
     stroke: #e1e1e1;
     stroke-width: 3px;
 }
 
-#ancestral-fan-chart svg .label .chart-date {
+#page-fan svg .label .chart-date {
     fill: #7f7f7f;
     font-weight: normal;
 }
 
-#ancestral-fan-chart text {
+#page-fan svg text {
     font-weight: bold;
 }
