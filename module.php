@@ -28,5 +28,13 @@
 
 namespace RSO\WebtreesModule\AncestralFanChart;
 
-include_once __DIR__ . '/src/Module.php';
+// Register our namespace
+$loader = new \Composer\Autoload\ClassLoader();
+$loader->addPsr4(
+    'RSO\\WebtreesModule\\AncestralFanChart\\',
+    __DIR__ . '/src'
+);
+$loader->register();
+
+// Create and return instance of the module
 return new Module(__DIR__);

@@ -29,7 +29,6 @@
 namespace RSO\WebtreesModule\AncestralFanChart;
 
 use \RSO\WebtreesModule\AncestralFanChart\Controller\Chart;
-use \Composer\Autoload\ClassLoader;
 use \Fisharebest\Webtrees\Auth;
 use \Fisharebest\Webtrees\I18N;
 use \Fisharebest\Webtrees\Individual;
@@ -51,21 +50,38 @@ use \Fisharebest\Webtrees\Module\ModuleChartInterface;
 class Module extends AbstractModule implements ModuleChartInterface
 {
     /**
-     * Create a new module.
+     * Returns whether the chart module is active or not.
      *
-     * @param string $directory Where is this module installed
+     * @return boolean
      */
-    public function __construct($directory)
+    protected function isActive()
     {
-        parent::__construct($directory);
+        return WebtreesModule::isActiveChart($this->getTree(), 'ancestral-fan-chart');
+    }
 
-        // Register the namespace
-        $loader = new ClassLoader();
-        $loader->addPsr4(
-            'RSO\\WebtreesModule\\AncestralFanChart\\',
-            WT_MODULES_DIR . $this->getName() . '/src'
+    /**
+     * Get tree instance.
+     *
+     * @return Tree
+     */
+    protected function getTree()
+    {
+        global $WT_TREE;
+        return $WT_TREE;
+    }
+
+    /**
+     * Translate a string, and then substitute placeholders.
+     *
+     * @return string
+     */
+    protected function translate(/* var_args */)
+    {
+        // Damn ugly static methods all around :(
+        return call_user_func_array(
+            '\\Fisharebest\\Webtrees\\I18N::translate',
+            func_get_args()
         );
-        $loader->register();
     }
 
     /**
@@ -75,7 +91,7 @@ class Module extends AbstractModule implements ModuleChartInterface
      */
     public function getTitle()
     {
-        return I18N::translate('Ancestral fan chart');
+        return $this->translate('Ancestral fan chart');
     }
 
     /**
@@ -85,7 +101,7 @@ class Module extends AbstractModule implements ModuleChartInterface
      */
     public function getDescription()
     {
-        return I18N::translate('A fan chart of an individual’s ancestors.');
+        return $this->translate('A fan chart of an individual’s ancestors.');
     }
 
     /**
@@ -156,13 +172,12 @@ class Module extends AbstractModule implements ModuleChartInterface
     public function modAction($modAction)
     {
         global $controller;
-        global $WT_TREE;
 
         $urlPath = $this->getModuleUrlPath();
 
         $controller = new Chart();
         $controller
-            ->restrictAccess(WebtreesModule::isActiveChart($WT_TREE, 'ancestral-fan-chart'))
+            ->restrictAccess($this->isActive())
             ->pageHeader()
             ->addExternalJavascript(WT_AUTOCOMPLETE_JS_URL)
             ->addExternalJavascript($urlPath . '/js/packages/d3-4.5/d3.min.js')
