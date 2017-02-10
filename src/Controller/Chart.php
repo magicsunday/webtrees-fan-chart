@@ -165,7 +165,7 @@ class Chart extends ChartController
         return array(
             'id'         => $person->getXref(),
             'generation' => $generation,
-            'name'       => html_entity_decode(strip_tags($person->getFullName())),
+            'name'       => Filter::unescapeHtml($person->getFullName()),
             'sex'        => $person->getSex(),
             'born'       => $person->getBirthYear(),
             'died'       => $person->getDeathYear(),
