@@ -155,29 +155,21 @@ class Chart extends ChartController
     /**
      * Get the individual data required for display the chart.
      *
-     * @param Individual $person Start person
+     * @param Individual $person     Start person
+     * @param int        $generation Generation the person belongs to
      *
      * @return array
      */
-    protected function getIndividualData(Individual $person = null)
+    protected function getIndividualData(Individual $person, $generation)
     {
-        // We need always two individuals, so we fake the missing ones
-        if (!($person instanceof Individual)) {
-            return array(
-                'id'    => '',
-                'name'  => '',
-                'born'  => '',
-                'died'  => '',
-                'color' => $this->getColor(),
-            );
-        }
-
         return array(
-            'id'    => $person->getXref(),
-            'name'  => html_entity_decode(strip_tags($person->getFullName())),
-            'born'  => $person->getBirthYear(),
-            'died'  => $person->getDeathYear(),
-            'color' => $this->getColor($person),
+            'id'         => $person->getXref(),
+            'generation' => $generation,
+            'name'       => html_entity_decode(strip_tags($person->getFullName())),
+            'sex'        => $person->getSex(),
+            'born'       => $person->getBirthYear(),
+            'died'       => $person->getDeathYear(),
+            'color'      => $this->getColor($person),
         );
     }
 
@@ -195,29 +187,24 @@ class Chart extends ChartController
         Individual $person = null, $generation = 1
     ) {
         // Maximum generation reached
-        if ($generation > $this->generations) {
+        if (($generation > $this->generations)
+            || !($person instanceof Individual)
+        ) {
             return array();
         }
 
-        $data   = $this->getIndividualData($person);
-        $father = null;
-        $mother = null;
+        $data   = $this->getIndividualData($person, $generation);
+        $family = $person->getPrimaryChildFamily();
 
-        if ($person instanceof Individual) {
-            $family = $person->getPrimaryChildFamily();
-
-            if ($family instanceof Family) {
-                $father = $family->getHusband();
-                $mother = $family->getWife();
-            }
+        if (!($family instanceof Family)) {
+            return $data;
         }
 
         // Recursively call the method for the parents of the individual
-        $fatherTree = $this->buildJsonTree($father, $generation + 1);
-        $motherTree = $this->buildJsonTree($mother, $generation + 1);
+        $fatherTree = $this->buildJsonTree($family->getHusband(), $generation + 1);
+        $motherTree = $this->buildJsonTree($family->getWife(), $generation + 1);
 
-        // Add array of child nodes, or empty array for leaf nodes
-        // @see D3 partition layout
+        // Add array of child nodes
         if ($fatherTree) {
             $data['children'][] = $fatherTree;
         }
@@ -355,10 +342,12 @@ HTML;
         // Encode chart parameters to json string
         $chartParams = json_encode(
             array(
-                'fanDegree' => $this->fanDegree,
-                'fontScale' => $this->fontScale,
-                'fontColor' => $this->getChartFontColor(),
-                'data'      => $this->buildJsonTree($this->root),
+                'fanDegree'    => $this->fanDegree,
+                'generations'  => $this->generations,
+                'defaultColor' => $this->getColor(),
+                'fontScale'    => $this->fontScale,
+                'fontColor'    => $this->getChartFontColor(),
+                'data'         => $this->buildJsonTree($this->root),
             )
         );
 

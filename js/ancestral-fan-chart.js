@@ -30,6 +30,12 @@
 
     $.widget('rso.ancestralFanChart', {
         options: {
+            // Number of generations to display
+            generations: 5,
+
+            // Default background color of an arc
+            defaultColor: '#eee',
+
             nameSwitchThreshold: 5,
 
             // Default font size, color and scaling
@@ -104,11 +110,29 @@
         },
 
         /**
+         * Create an empty child node object.
+         *
+         * @param {number} generation Generation of the node
+         *
+         * @return {object}
+         */
+        createEmptyNode: function (generation) {
+            return {
+                id: '',
+                name: '',
+                generation: generation,
+                color: this.options.defaultColor
+            }
+        },
+
+        /**
          * Initialize the chart.
          *
          * @private
          */
         initChart: function (data) {
+            var that = this;
+
             this.config.visual = d3
                 .select('#fan_chart')
                 .append('svg')
@@ -119,9 +143,37 @@
                 .append('g')
                 .attr('class', 'group');
 
-            var partition = d3.partition();
-            var root      = d3.hierarchy(data).count();
+            // Construct root node
+            var root = d3.hierarchy(
+                data,
+                function (d) {
+                    // Fill up the missing children to the requested number of generations
+                    if (!d.children && (d.generation < that.options.generations)) {
+                        return [
+                            that.createEmptyNode(d.generation + 1),
+                            that.createEmptyNode(d.generation + 1)
+                        ];
+                    }
 
+                    // Add missing parent record if we got only one
+                    if (d.children && (d.children.length < 2)) {
+                        if (d.children[0].sex === 'M') {
+                            // Append empty node if we got an father
+                            d.children
+                                .push(that.createEmptyNode(d.generation + 1));
+                        } else {
+                            // Else prepend empty node
+                            d.children
+                                .unshift(that.createEmptyNode(d.generation + 1));
+                        }
+                    }
+
+                    return d.children;
+                })
+                // Calculate number of leaves
+                .count();
+
+            var partition = d3.partition();
             this.config.nodes = partition(root).descendants();
         },
 
