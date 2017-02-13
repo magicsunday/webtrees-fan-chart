@@ -83,7 +83,7 @@ class Chart extends ChartController
 
         // Extract the request parameters
         $this->fanDegree   = Filter::getInteger('fanDegree', 180, 360, 210);
-        $this->generations = Filter::getInteger('generations', 2, 9, $defaultGenerations);
+        $this->generations = Filter::getInteger('generations', 2, 10, $defaultGenerations);
         $this->fontScale   = Filter::getInteger('fontScale', 0, 200, 100);
 
         // Create page title
@@ -245,7 +245,7 @@ class Chart extends ChartController
      */
     protected function getGenerationsInputControl()
     {
-        return FunctionsEdit::editFieldInteger('generations', $this->generations, 2, 9);
+        return FunctionsEdit::editFieldInteger('generations', $this->generations, 2, 10);
     }
 
     /**

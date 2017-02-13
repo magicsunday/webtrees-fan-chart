@@ -223,7 +223,7 @@
          * @returns {number}
          */
         innerRadius: function (d) {
-            var data = [0, 65, 130, 195, 260, 325, 440, 555, 670];
+            var data = [0, 65, 130, 195, 260, 325, 440, 555, 670, 785];
             return data[d.depth];
         },
 
@@ -235,7 +235,7 @@
          * @returns {number}
          */
         outerRadius: function (d) {
-            var data = [65, 130, 195, 260, 325, 440, 555, 670, 775];
+            var data = [65, 130, 195, 260, 325, 440, 555, 670, 785, 900];
             return data[d.depth];
         },
 
