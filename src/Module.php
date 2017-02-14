@@ -30,6 +30,7 @@ namespace RSO\WebtreesModule\AncestralFanChart;
 
 use \RSO\WebtreesModule\AncestralFanChart\Controller\Chart;
 use \Fisharebest\Webtrees\Auth;
+use \Fisharebest\Webtrees\Filter;
 use \Fisharebest\Webtrees\I18N;
 use \Fisharebest\Webtrees\Individual;
 use \Fisharebest\Webtrees\Menu;
@@ -171,6 +172,17 @@ class Module extends AbstractModule implements ModuleChartInterface
      */
     public function modAction($modAction)
     {
+        if ($modAction === 'update') {
+            header('Content-Type', 'application/json;charset=UTF-8');
+
+            $rootId = Filter::get('rootid', WT_REGEX_XREF);
+            $person = Individual::getInstance($rootId, $this->getTree());
+            $chart  = new Chart();
+
+            echo json_encode($chart->buildJsonTree($person));
+            exit;
+        }
+
         global $controller;
 
         $urlPath = $this->getModuleUrlPath();

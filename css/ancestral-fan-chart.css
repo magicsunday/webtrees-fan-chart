@@ -10,6 +10,7 @@
 #page-fan svg .arc path {
     stroke: #e1e1e1;
     stroke-width: 3px;
+    cursor: pointer;
 }
 
 #page-fan svg .label .chart-date {
@@ -19,4 +20,5 @@
 
 #page-fan svg text {
     font-weight: bold;
+    cursor: pointer;
 }

@@ -75,21 +75,10 @@
             this.options.x = d3.scaleLinear().range([this.options.startPi, this.options.endPi]);
 
             // Start bootstrapping
-            this.initChart(this.options.data);
+            this.initChart();
+            this.initData(this.options.data);
             this.placeArcs();
-
-            // Adjust size of svg
-            var boundingBox = this.config.visual.node().getBBox();
-            var radius      = boundingBox.width / 2;
-
-            d3.select(this.config.visual.node().parentNode)
-                .attr('width', boundingBox.width + (this.options.padding << 1))
-                .attr('height', boundingBox.height + (this.options.padding << 1));
-
-            this.config.visual.attr(
-                'transform',
-                'translate(' + [radius + this.options.padding, radius + this.options.padding] + ')'
-            );
+            this.updateViewBox();
         },
 
         /**
@@ -130,9 +119,7 @@
          *
          * @private
          */
-        initChart: function (data) {
-            var that = this;
-
+        initChart: function () {
             this.config.visual = d3
                 .select('#fan_chart')
                 .append('svg')
@@ -142,6 +129,17 @@
                 .attr('text-anchor', 'middle')
                 .append('g')
                 .attr('class', 'group');
+        },
+
+        /**
+         * Initialize the chart data.
+         *
+         * @param {object} data JSON encoded data
+         *
+         * @private
+         */
+        initData: function (data) {
+            var that = this;
 
             // Construct root node
             var root = d3.hierarchy(
@@ -185,6 +183,24 @@
             this.drawBorderArcs();
             this.createInnerArcLabels();
             this.createOuterArcLabels();
+        },
+
+        /**
+         * Update the viewBox attribute of the SVG element.
+         */
+        updateViewBox: function () {
+            // Adjust size of svg
+            var boundingBox = this.config.visual.node().getBBox();
+            var radius      = boundingBox.width / 2;
+
+            d3.select(this.config.visual.node().parentNode)
+                .attr('width', boundingBox.width + (this.options.padding << 1))
+                .attr('height', boundingBox.height + (this.options.padding << 1));
+
+            this.config.visual.attr(
+                'transform',
+                'translate(' + [radius + this.options.padding, radius + this.options.padding] + ')'
+            );
         },
 
         /**
@@ -343,7 +359,29 @@
                 .attr('fill', function (d) {
                     return d.data.color;
                 })
-                .attr('d', arcGenerator);
+                .attr('d', arcGenerator)
+                .on('click', $.proxy(this.update, this));
+        },
+
+        /**
+         * Update the chart with data loaded from AJAX.
+         *
+         * @param {object} d D3 data object
+         */
+        update: function (d) {
+            var that = this;
+
+            d3.json(
+                'module.php?ged=Sonntag&mod=ancestral-fan-chart&mod_action=update&rootid=' + d.data.id + '&generations=' + that.options.generations,
+                function (data) {
+                    d3.select('#fan_chart').select('svg').remove();
+
+                    that.initChart();
+                    that.initData(data);
+                    that.placeArcs();
+                    that.updateViewBox();
+                }
+            );
         },
 
         /**
@@ -596,7 +634,8 @@
                     .style('font-size', function (d) {
                         return that.getFontSize(d);
                     })
-                    .style('fill', that.options.fontColor);
+                    .style('fill', that.options.fontColor)
+                    .on('click', $.proxy(that.update, that));
 
                 // Append textPath elements along to create paths
                 that.appendTextPath(text, 0, that.getFirstNames(d));
@@ -699,7 +738,8 @@
                     return that.getFontSize(d);
                 })
                 .text(label)
-                .each(this.truncate(5));
+                .each(this.truncate(5))
+                .on('click', $.proxy(this.update, this));
         },
 
         /**

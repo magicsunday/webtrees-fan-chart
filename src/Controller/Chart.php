@@ -183,7 +183,7 @@ class Chart extends ChartController
      *
      * @todo Rebuild this to a iterative method
      */
-    protected function buildJsonTree(
+    public function buildJsonTree(
         Individual $person = null, $generation = 1
     ) {
         // Maximum generation reached
