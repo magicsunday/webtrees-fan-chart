@@ -293,6 +293,12 @@
                 .append('g')
                 .attr('class', 'person');
 
+            // Append click event only to existing elements
+            personGroup.filter(function (d) {
+                    return (d.data.id !== '');
+                })
+                .on('click', $.proxy(this.update, this));
+
             this.appendTitle(personGroup);
             this.appendArc(personGroup, arcGenerator);
             this.appendLabels(personGroup);
@@ -326,8 +332,7 @@
                 .attr('fill', function (d) {
                     return d.data.color;
                 })
-                .attr('d', arcGenerator)
-                .on('click', $.proxy(this.update, this));
+                .attr('d', arcGenerator);
         },
 
         /**
@@ -379,8 +384,7 @@
                     .style('font-size', function (d) {
                         return that.getFontSize(d);
                     })
-                    .style('fill', that.options.fontColor)
-                    .on('click', $.proxy(that.update, that));
+                    .style('fill', that.options.fontColor);
 
                 // Append textPath elements along to create paths
                 that.appendInnerArcTextPath(text, 0, that.getFirstNames(d));
@@ -656,8 +660,7 @@
                     return that.getFontSize(d);
                 })
                 .text(label)
-                .each(this.truncate(5))
-                .on('click', $.proxy(this.update, this));
+                .each(this.truncate(5));
         },
 
         /**

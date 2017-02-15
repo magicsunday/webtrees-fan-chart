@@ -7,18 +7,20 @@
     margin: auto;
 }
 
+#page-fan svg text {
+    font-weight: bold;
+}
+
+#page-fan svg .person {
+    cursor: pointer;
+}
+
 #page-fan svg .arc path {
     stroke: #e1e1e1;
     stroke-width: 3px;
-    cursor: pointer;
 }
 
 #page-fan svg .label .chart-date {
     fill: #7f7f7f;
     font-weight: normal;
-}
-
-#page-fan svg text {
-    font-weight: bold;
-    cursor: pointer;
 }
