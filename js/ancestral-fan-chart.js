@@ -198,6 +198,20 @@
         },
 
         /**
+         * Calculate the angle.
+         *
+         * @param {number} value Value
+         *
+         * @returns {number}
+         */
+        calcAngle: function (value) {
+            return Math.max(
+                this.options.startPi,
+                Math.min(this.options.endPi, this.options.x(value))
+            );
+        },
+
+        /**
          * Get the start angle.
          *
          * @param {object} d D3 data object
@@ -205,10 +219,7 @@
          * @returns {number}
          */
         startAngle: function (d) {
-            return Math.max(
-                this.options.startPi,
-                Math.min(this.options.endPi, this.options.x(d.x0))
-            );
+            return this.calcAngle(d.x0);
         },
 
         /**
@@ -219,10 +230,7 @@
          * @returns {number}
          */
         endAngle: function (d) {
-            return Math.max(
-                this.options.startPi,
-                Math.min(this.options.endPi, this.options.x(d.x1))
-            );
+            return this.calcAngle(d.x1);
         },
 
         /**
@@ -352,6 +360,20 @@
         },
 
         /**
+         * Returns TRUE if the depth of the element is in the inner range. So labels should
+         * be rendered along an arc path. Otherwise returns FALSE to indicate the element
+         * is either the center one or on the outer arcs.
+         *
+         * @param {object} d D3 data object
+         *
+         * @return {bool}
+         */
+        isInnerLabel: function (d) {
+            return ((d.depth > 0)
+                && (d.depth < this.options.nameSwitchThreshold));
+        },
+
+        /**
          * Append the labels for an arc.
          *
          * @param {object} parent Parent element used to append the labels
@@ -372,8 +394,7 @@
             // Inner labels (initial hidden)
             var innerLabels = group
                 .filter(function (d) {
-                    return ((d.depth > 0)
-                        && (d.depth < that.options.nameSwitchThreshold));
+                    return that.isInnerLabel(d);
                 })
                 .attr('opacity', 0);
 
@@ -419,8 +440,7 @@
             // Outer labels (initial hidden)
             var outerLabels = group
                 .filter(function (d) {
-                    return ((d.depth === 0)
-                        || (d.depth >= that.options.nameSwitchThreshold));
+                    return !that.isInnerLabel(d);
                 })
                 .attr('opacity', 0);
 
