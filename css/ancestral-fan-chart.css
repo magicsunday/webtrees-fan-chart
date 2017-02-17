@@ -11,10 +11,6 @@
     font-weight: bold;
 }
 
-#page-fan svg .person {
-    cursor: pointer;
-}
-
 #page-fan svg .arc path {
     stroke: #e1e1e1;
     stroke-width: 3px;

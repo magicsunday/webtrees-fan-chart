@@ -276,16 +276,6 @@
         createArcElements: function () {
             var that = this;
 
-            var arcGenerator = d3.arc()
-                .startAngle(function (d) {
-                    return (d.depth === 0) ? 0 : that.startAngle(d);
-                })
-                .endAngle(function (d) {
-                    return (d.depth === 0) ? (Math.PI * 2) : that.endAngle(d);
-                })
-                .innerRadius(this.innerRadius)
-                .outerRadius(this.outerRadius);
-
             var personGroup = this.config.visual
                 .selectAll('g.person')
                 .data(this.config.nodes)
@@ -295,13 +285,18 @@
 
             // Append click event only to existing elements
             personGroup.filter(function (d) {
-                    return (d.data.id !== '');
+                    return (d.data.id !== '') && (d.depth !== 0);
                 })
+                .style('cursor', 'pointer')
                 .on('click', $.proxy(this.update, this));
 
             this.appendTitle(personGroup);
-            this.appendArc(personGroup, arcGenerator);
+            this.appendArc(personGroup);
             this.appendLabels(personGroup);
+
+            // Show labels
+            personGroup.selectAll('g.label')
+                .attr('opacity', 1);
         },
 
         /**
@@ -312,7 +307,8 @@
          */
         appendTitle: function (parent) {
             // Add title element containing the full name of the individual
-            parent.append('title')
+            parent.insert('title', ':first-child')
+                .data(this.config.nodes)
                 .text(function (d) {
                     // Return name or remove empty element
                     return (d.data.id !== '') ? d.data.name : this.remove();
@@ -320,19 +316,37 @@
         },
 
         /**
+         * Create an arc generator.
+         *
+         * @return {object}
+         */
+        createArcGenerator: function () {
+            var that = this;
+
+            return d3.arc()
+                .startAngle(function (d) {
+                    return (d.depth === 0) ? 0 : that.startAngle(d);
+                })
+                .endAngle(function (d) {
+                    return (d.depth === 0) ? (Math.PI * 2) : that.endAngle(d);
+                })
+                .innerRadius(this.innerRadius)
+                .outerRadius(this.outerRadius);
+        },
+
+        /**
          * Append a path element using the given arc generator.
          *
-         * @param {object}   parent       Parent element used to append the new path
-         * @param {function} arcGenerator Arc generator
+         * @param {object} parent Parent element used to append the new path
          */
-        appendArc: function (parent, arcGenerator) {
+        appendArc: function (parent) {
             parent.append('g')
                 .attr('class', 'arc')
                 .append('path')
                 .attr('fill', function (d) {
                     return d.data.color;
                 })
-                .attr('d', arcGenerator);
+                .attr('d', this.createArcGenerator());
         },
 
         /**
@@ -344,17 +358,22 @@
             var that = this;
 
             var group = parent
+                .data(this.config.nodes)
+                .filter(function (d) {
+                    // Do not add emtpy elements
+                    return (d.data.id !== '');
+                })
                 .append('g')
                 .style('fill', this.options.fontColor)
                 .attr('class', 'label');
 
-            // Inner labels
+            // Inner labels (initial hidden)
             var innerLabels = group
                 .filter(function (d) {
-                    return ((d.data.id !== '')
-                        && (d.depth > 0)
+                    return ((d.depth > 0)
                         && (d.depth < that.options.nameSwitchThreshold));
-                });
+                })
+                .attr('opacity', 0);
 
             innerLabels.each(function (d) {
                 var parent   = d3.select(this);
@@ -395,13 +414,13 @@
                 }
             });
 
-            // Outer labels
+            // Outer labels (initial hidden)
             var outerLabels = group
                 .filter(function (d) {
-                    return ((d.data.id !== '')
-                        && (d.depth === 0)
+                    return ((d.depth === 0)
                         || (d.depth >= that.options.nameSwitchThreshold));
-                });
+                })
+                .attr('opacity', 0);
 
             outerLabels.each(function (d) {
                 var parent   = d3.select(this);
@@ -443,14 +462,90 @@
             d3.json(
                 'module.php?ged=Sonntag&mod=ancestral-fan-chart&mod_action=update&rootid=' + d.data.id + '&generations=' + that.options.generations,
                 function (data) {
-                    d3.select('#fan_chart').select('svg').remove();
-
-                    that.initChart();
+                    // Initialize the new loaded data
                     that.initData(data);
-                    that.createArcElements();
-                    that.updateViewBox();
+
+                    // Update the click event listeners
+                    d3.selectAll('g.person')
+                        .style('cursor', 'default')
+                        .on('click', null);
+
+                    d3.selectAll('g.person')
+                        .data(that.config.nodes)
+                        .filter(function (d) {
+                            return (d.data.id !== '') && (d.depth !== 0);
+                        })
+                        .style('cursor', 'pointer')
+                        .on('click', $.proxy(that.update, that));
+
+                    // Update the title
+                    d3.selectAll('g.person')
+                        .select('title').remove();
+
+                    that.appendTitle(d3.selectAll('g.person'));
+
+                    // Update arc and labels
+                    that.updateArcPath();
+                    that.updateArcLabel();
                 }
             );
+        },
+
+        /**
+         * Method performs and update of the path values with an
+         * animated transition.
+         */
+        updateArcPath: function () {
+            // Select all path elements and assign the data
+            var path = d3.selectAll('g.arc')
+                .select('path')
+                .data(this.config.nodes);
+
+            // Create path transition
+            var pathTransition = path
+                .transition()
+                .attr('fill', function (d) {
+                    return d.data.color;
+                })
+                .duration(1000);
+        },
+
+        /**
+         * Method performs and update of the path values with an
+         * animated transition.
+         */
+        updateArcLabel: function () {
+            var that = this;
+
+            // Active transition counter
+            var count = 0;
+
+            // Fade out existing labels
+            d3.selectAll('g.label')
+                .transition()
+                .duration(500)
+                .attr('opacity', 0)
+                .on('start', function () {
+                    ++count;
+                })
+                .on('end', function () {
+                    --count;
+
+                    // Wait till all transitions finished
+                    if (count === 0) {
+                        // Remove all label groups once they are faded out
+                        d3.selectAll('g.label').remove();
+
+                        // Append new labels
+                        that.appendLabels(d3.selectAll('g.person'));
+
+                        // Fade in
+                        d3.selectAll('g.label')
+                            .transition()
+                            .duration(500)
+                            .attr('opacity', 1);
+                    }
+                });
         },
 
         /**
@@ -651,9 +746,6 @@
             var that = this;
 
             group.append('text')
-                .filter(function (d) {
-                    return (d.data.id !== '') ? true : this.remove();
-                })
                 .attr('class', textClass || null)
                 .attr('dominant-baseline', 'middle')
                 .style('font-size', function (d) {
