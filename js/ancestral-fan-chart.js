@@ -123,8 +123,8 @@
             this.config.visual = d3
                 .select('#fan_chart')
                 .append('svg')
-                .attr('width', this.options.width + (this.options.padding << 1))
-                .attr('height', this.options.height + (this.options.padding << 1))
+                .attr('width', '100%')
+                .attr('height', '100%')
                 .attr('text-rendering', 'geometricPrecision')
                 .attr('text-anchor', 'middle')
                 .append('g')
@@ -181,16 +181,20 @@
         updateViewBox: function () {
             // Adjust size of svg
             var boundingBox = this.config.visual.node().getBBox();
-            var radius      = boundingBox.width / 2;
+            var width       = boundingBox.width;
+            var height      = boundingBox.height;
+            var transX      = Math.round(width + (this.options.padding * 2));
+            var transY      = Math.round(height + (this.options.padding * 2));
 
-            d3.select(this.config.visual.node().parentNode)
-                .attr('width', boundingBox.width + (this.options.padding << 1))
-                .attr('height', boundingBox.height + (this.options.padding << 1));
-
-            this.config.visual.attr(
-                'transform',
-                'translate(' + [radius + this.options.padding, radius + this.options.padding] + ')'
-            );
+            // Set view box to actual width and height of svg
+            d3.select('#fan_chart svg')
+                .attr('viewBox', [
+                    boundingBox.x - this.options.padding,
+                    boundingBox.y - this.options.padding,
+                    transX,
+                    transY
+                ])
+                .style('max-width', transX + 'px');
         },
 
         /**
