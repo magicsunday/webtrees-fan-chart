@@ -274,8 +274,6 @@
          * Draws the borders of the single arcs.
          */
         createArcElements: function () {
-            var that = this;
-
             var personGroup = this.config.visual
                 .selectAll('g.person')
                 .data(this.config.nodes)
@@ -502,8 +500,7 @@
                 .data(this.config.nodes);
 
             // Create path transition
-            var pathTransition = path
-                .transition()
+            path.transition()
                 .attr('fill', function (d) {
                     return d.data.color;
                 })
