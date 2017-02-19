@@ -332,6 +332,19 @@ class Chart extends ChartController
 HTML;
     }
 
+    protected function getUpdateUrl()
+    {
+        $queryData = array(
+            'mod'         => 'ancestral-fan-chart',
+            'mod_action'  => 'update',
+            'ged'         => $this->getTree()->getNameHtml(),
+            'generations' => $this->generations,
+            'rootid'      => '',
+        );
+
+        return 'module.php?' . http_build_query($queryData);
+    }
+
     /**
      * Render the fan chart form HTML and JSON data.
      *
@@ -348,6 +361,7 @@ HTML;
                 'fontScale'    => $this->fontScale,
                 'fontColor'    => $this->getChartFontColor(),
                 'data'         => $this->buildJsonTree($this->root),
+                'updateUrl'    => $this->getUpdateUrl(),
             )
         );
 

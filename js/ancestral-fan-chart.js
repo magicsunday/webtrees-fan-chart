@@ -53,7 +53,9 @@
             height: 1200,
             padding: 5,
 
-            x: null
+            x: null,
+
+            updateUrl : ''
         },
 
         config: {
@@ -482,7 +484,7 @@
             var that = this;
 
             d3.json(
-                'module.php?ged=Sonntag&mod=ancestral-fan-chart&mod_action=update&rootid=' + d.data.id + '&generations=' + that.options.generations,
+                this.options.updateUrl + d.data.id,
                 function (data) {
                     // Initialize the new loaded data
                     that.initData(data);
