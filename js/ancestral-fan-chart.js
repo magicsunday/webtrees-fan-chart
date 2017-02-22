@@ -55,7 +55,8 @@
 
             x: null,
 
-            updateUrl : ''
+            updateUrl: '',
+            individualUrl: ''
         },
 
         config: {
@@ -295,13 +296,7 @@
                 .append('g')
                 .attr('class', 'person');
 
-            // Append click event only to existing elements
-            personGroup.filter(function (d) {
-                    return (d.data.id !== '') && (d.depth !== 0);
-                })
-                .style('cursor', 'pointer')
-                .on('click', $.proxy(this.update, this));
-
+            this.bindClickEventListener();
             this.appendTitle(personGroup);
             this.appendArc(personGroup);
             this.appendLabels(personGroup);
@@ -309,6 +304,29 @@
             // Show labels
             personGroup.selectAll('g.label')
                 .attr('opacity', 1);
+        },
+
+        /**
+         * This method bind the "click" event listeners to a "person" element.
+         */
+        bindClickEventListener: function () {
+            // Remove any existing listener
+            this.config.visual
+                .selectAll('g.person')
+                .style('cursor', 'default')
+                .on('click', null);
+
+            var personGroup = this.config.visual
+                .selectAll('g.person')
+                .data(this.config.nodes)
+                .filter(function (d) {
+                    return (d.data.id !== '');
+                })
+                .style('cursor', 'pointer');
+
+            // Trigger method on click
+            personGroup
+                .on('click', $.proxy(this.personClick, this));
         },
 
         /**
@@ -476,6 +494,16 @@
         },
 
         /**
+         * Method triggers either the "update" or "individual" method on the click on an person.
+         *
+         * @param {object} d D3 data object
+         */
+        personClick: function (d) {
+            // Trigger either "update" or "individual" method on click depending on person in chart
+            (d.depth === 0) ? this.individual(d) : this.update(d);
+        },
+
+        /**
          * Update the chart with data loaded from AJAX.
          *
          * @param {object} d D3 data object
@@ -490,23 +518,16 @@
                     that.initData(data);
 
                     // Update the click event listeners
-                    d3.selectAll('g.person')
-                        .style('cursor', 'default')
-                        .on('click', null);
+                    that.bindClickEventListener();
 
-                    d3.selectAll('g.person')
-                        .data(that.config.nodes)
-                        .filter(function (d) {
-                            return (d.data.id !== '') && (d.depth !== 0);
-                        })
-                        .style('cursor', 'pointer')
-                        .on('click', $.proxy(that.update, that));
+                    var personGroup = that.config.visual
+                        .selectAll('g.person');
 
                     // Update the title
-                    d3.selectAll('g.person')
-                        .select('title').remove();
+                    personGroup.select('title')
+                        .remove();
 
-                    that.appendTitle(d3.selectAll('g.person'));
+                    that.appendTitle(personGroup);
 
                     // Update arc and labels
                     that.updateArcPath();
@@ -569,6 +590,15 @@
                             .attr('opacity', 1);
                     }
                 });
+        },
+
+        /**
+         * Redirect the current page the the individual page.
+         *
+         * @param {object} d D3 data object
+         */
+        individual: function (d) {
+            window.location = this.options.individualUrl + d.data.id;
         },
 
         /**

@@ -332,6 +332,13 @@ class Chart extends ChartController
 HTML;
     }
 
+    /**
+     * Get the raw update url. The "rootid" parameter must be the last one as
+     * the url gets appended with the clicked individual id in order to load
+     * the required chart data.
+     *
+     * @return string
+     */
     protected function getUpdateUrl()
     {
         $queryData = array(
@@ -346,6 +353,23 @@ HTML;
     }
 
     /**
+     * Get the raw individual url. The "pid" parameter must be the last one as
+     * the url gets appended with the clicked individual id in order to link
+     * to the right individual page.
+     *
+     * @return string
+     */
+    protected function getIndividualUrl()
+    {
+        $queryData = array(
+            'ged' => $this->getTree()->getNameHtml(),
+            'pid' => '',
+        );
+
+        return 'individual.php?' . http_build_query($queryData);
+    }
+
+    /**
      * Render the fan chart form HTML and JSON data.
      *
      * @return string HTML snippet to include in page HTML
@@ -355,13 +379,14 @@ HTML;
         // Encode chart parameters to json string
         $chartParams = json_encode(
             array(
-                'fanDegree'    => $this->fanDegree,
-                'generations'  => $this->generations,
-                'defaultColor' => $this->getColor(),
-                'fontScale'    => $this->fontScale,
-                'fontColor'    => $this->getChartFontColor(),
-                'data'         => $this->buildJsonTree($this->root),
-                'updateUrl'    => $this->getUpdateUrl(),
+                'fanDegree'     => $this->fanDegree,
+                'generations'   => $this->generations,
+                'defaultColor'  => $this->getColor(),
+                'fontScale'     => $this->fontScale,
+                'fontColor'     => $this->getChartFontColor(),
+                'updateUrl'     => $this->getUpdateUrl(),
+                'individualUrl' => $this->getIndividualUrl(),
+                'data'          => $this->buildJsonTree($this->root),
             )
         );
 
