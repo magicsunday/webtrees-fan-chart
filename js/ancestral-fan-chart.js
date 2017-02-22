@@ -113,7 +113,7 @@
                 name: '',
                 generation: generation,
                 color: this.options.defaultColor
-            }
+            };
         },
 
         /**
@@ -401,7 +401,7 @@
                 .attr('opacity', 0);
 
             innerLabels.each(function (d) {
-                var parent   = d3.select(this);
+                var label    = d3.select(this);
                 var timeSpan = that.getTimeSpan(d);
 
                 // Relative position offsets in percent (0 = inner radius, 100 = outer radius)
@@ -414,15 +414,15 @@
 
                 // Create a path for each line of text as mobile devices
                 // won't display <tspan> elements in the right position
-                that.appendArcPath(parent, 0, positions[0]);
-                that.appendArcPath(parent, 1, positions[1]);
+                that.appendArcPath(label, 0, positions[0]);
+                that.appendArcPath(label, 1, positions[1]);
 
                 if (timeSpan) {
-                    that.appendArcPath(parent, 2, positions[2]);
+                    that.appendArcPath(label, 2, positions[2]);
                 }
 
                 // Append text element
-                var text = parent
+                var text = label
                     .append('text')
                     .attr('dominant-baseline', 'middle')
                     .style('font-size', function (d) {
@@ -447,7 +447,7 @@
                 .attr('opacity', 0);
 
             outerLabels.each(function (d) {
-                var parent   = d3.select(this);
+                var label    = d3.select(this);
                 var name     = d.data.name;
                 var timeSpan = that.getTimeSpan(d);
 
@@ -458,16 +458,16 @@
 
                 // Create the text elements for first name, last name and
                 // the birth/death dates
-                that.appendOuterArcText(parent, name);
+                that.appendOuterArcText(label, name);
 
                 // Outer circles only show the names
                 if (d.depth < 7) {
                     // Add last name
-                    that.appendOuterArcText(parent, that.getLastName(d));
+                    that.appendOuterArcText(label, that.getLastName(d));
 
                     // Add dates
                     if ((d.depth < 6) && timeSpan) {
-                        that.appendOuterArcText(parent, timeSpan, 'chart-date');
+                        that.appendOuterArcText(label, timeSpan, 'chart-date');
                     }
                 }
             });
@@ -549,10 +549,10 @@
                 .duration(500)
                 .attr('opacity', 0)
                 .on('start', function () {
-                    ++count;
+                    count += 1;
                 })
                 .on('end', function () {
-                    --count;
+                    count -= 1;
 
                     // Wait till all transitions finished
                     if (count === 0) {
@@ -609,7 +609,7 @@
                     textLength = self.node().getComputedTextLength(),
                     text = self.text();
 
-                while ((textLength > (availableWidth - (padding << 1))) && (text.length > 0)) {
+                while ((textLength > (availableWidth - (padding * 2))) && (text.length > 0)) {
                     // Remove last char
                     text = text.slice(0, -1);
 
@@ -788,7 +788,7 @@
         transformText: function (group) {
             var that = this;
 
-            group.each(function (d) {
+            group.each(function () {
                 var textElements = d3.select(this).selectAll('text');
                 var countElements = textElements.size();
                 var offset = 0;
