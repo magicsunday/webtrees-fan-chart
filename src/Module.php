@@ -23,154 +23,168 @@ use MagicSunday\Webtrees\AncestralFanChart\Controller\Chart;
  */
 class Module extends AbstractModule implements ModuleChartInterface
 {
-    /**
-     * Returns whether the chart module is active or not.
-     *
-     * @return boolean
-     */
-    private function isActive()
-    {
-        return WebtreesModule::isActiveChart($this->getTree(), 'ancestral-fan-chart');
-    }
+	/**
+	 * For custom modules - optional (recommended) version number
+	 *
+	 * @var string
+	 */
+	const CUSTOM_VERSION = '1.3.2';
 
-    /**
-     * Get tree instance.
-     *
-     * @return Tree
-     */
-    private function getTree()
-    {
-        global $WT_TREE;
-        return $WT_TREE;
-    }
+	/**
+	 * For custom modules - link for support, upgrades, etc.
+	 *
+	 * @var string
+	 */
+	const CUSTOM_WEBSITE = 'https://github.com/magicsunday/ancestral-fan-chart';
 
-    /**
-     * Translate a string, and then substitute placeholders.
-     *
-     * @return string
-     */
-    private function translate(/* var_args */)
-    {
-        // Damn ugly static methods all around :(
-        return call_user_func_array(
-            '\\Fisharebest\\Webtrees\\I18N::translate',
-            func_get_args()
-        );
-    }
+	/**
+	 * Returns whether the chart module is active or not.
+	 *
+	 * @return boolean
+	 */
+	private function isActive()
+	{
+		return WebtreesModule::isActiveChart($this->getTree(), 'ancestral-fan-chart');
+	}
 
-    /**
-     * Get the modules static url path.
-     *
-     * @return string
-     */
-    private function getModuleUrlPath()
-    {
-        return WT_STATIC_URL . WT_MODULES_DIR . $this->getName();
-    }
+	/**
+	 * Get tree instance.
+	 *
+	 * @return Tree
+	 */
+	private function getTree()
+	{
+		global $WT_TREE;
+		return $WT_TREE;
+	}
 
-    /**
-     * How should this module be labelled on tabs, menus, etc.?
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->translate('Ancestral fan chart');
-    }
+	/**
+	 * Translate a string, and then substitute placeholders.
+	 *
+	 * @return string
+	 */
+	private function translate(/* var_args */)
+	{
+		// Damn ugly static methods all around :(
+		return call_user_func_array(
+			'\\Fisharebest\\Webtrees\\I18N::translate',
+			func_get_args()
+		);
+	}
 
-    /**
-     * A sentence describing what this module does.
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->translate('A fan chart of an individual’s ancestors.');
-    }
+	/**
+	 * Get the modules static url path.
+	 *
+	 * @return string
+	 */
+	private function getModuleUrlPath()
+	{
+		return WT_MODULES_DIR . $this->getName();
+	}
 
-    /**
-     * What is the default access level for this module?
-     *
-     * Some modules are aimed at admins or managers, and are not generally shown to users.
-     *
-     * @return int
-     */
-    public function defaultAccessLevel()
-    {
-        return Auth::PRIV_PRIVATE;
-    }
+	/**
+	 * How should this module be labelled on tabs, menus, etc.?
+	 *
+	 * @return string
+	 */
+	public function getTitle()
+	{
+		return $this->translate('Ancestral fan chart');
+	}
 
-    /**
-     * Return a menu item for this chart.
-     *
-     * @param Individual $individual Current individual instance
-     *
-     * @return Menu
-     */
-    public function getChartMenu(Individual $individual)
-    {
-        $link = 'module.php?mod=' . $this->getName()
-            . '&amp;rootid=' . $individual->getXref()
-            . '&amp;ged=' . $individual->getTree()->getNameUrl();
+	/**
+	 * A sentence describing what this module does.
+	 *
+	 * @return string
+	 */
+	public function getDescription()
+	{
+		return $this->translate('A fan chart of an individual’s ancestors.');
+	}
 
-        return new Menu(
-            $this->getTitle(),
-            $link,
-            'menu-chart-fanchart',
-            array(
-                'rel' => 'nofollow',
-            )
-        );
-    }
+	/**
+	 * What is the default access level for this module?
+	 *
+	 * Some modules are aimed at admins or managers, and are not generally shown to users.
+	 *
+	 * @return int
+	 */
+	public function defaultAccessLevel()
+	{
+		return Auth::PRIV_PRIVATE;
+	}
 
-    /**
-     * Return a menu item for this chart - for use in individual boxes.
-     *
-     * @param Individual $individual Current individual instance
-     *
-     * @return Menu
-     */
-    public function getBoxChartMenu(Individual $individual)
-    {
-        return $this->getChartMenu($individual);
-    }
+	/**
+	 * Return a menu item for this chart.
+	 *
+	 * @param Individual $individual Current individual instance
+	 *
+	 * @return Menu
+	 */
+	public function getChartMenu(Individual $individual)
+	{
+		$link = 'module.php?mod=' . $this->getName()
+			. '&amp;rootid=' . $individual->getXref()
+			. '&amp;ged=' . $individual->getTree()->getNameUrl();
 
-    /**
-     * This is a general purpose hook, allowing modules to respond to routes
-     * of the form module.php?mod=FOO&mod_action=BAR
-     *
-     * @param string $modAction Module action
-     *
-     * @return void
-     */
-    public function modAction($modAction)
-    {
-        if ($modAction === 'update') {
-            $rootId = Filter::get('rootid', WT_REGEX_XREF);
-            $person = Individual::getInstance($rootId, $this->getTree());
-            $chart  = new Chart();
+		return new Menu(
+			$this->getTitle(),
+			$link,
+			'menu-chart-fanchart',
+			array(
+				'rel' => 'nofollow',
+			)
+		);
+	}
 
-            header('Content-Type: application/json;charset=UTF-8');
+	/**
+	 * Return a menu item for this chart - for use in individual boxes.
+	 *
+	 * @param Individual $individual Current individual instance
+	 *
+	 * @return Menu
+	 */
+	public function getBoxChartMenu(Individual $individual)
+	{
+		return $this->getChartMenu($individual);
+	}
 
-            echo json_encode($chart->buildJsonTree($person));
-            exit;
-        }
+	/**
+	 * This is a general purpose hook, allowing modules to respond to routes
+	 * of the form module.php?mod=FOO&mod_action=BAR
+	 *
+	 * @param string $modAction Module action
+	 *
+	 * @return void
+	 */
+	public function modAction($modAction)
+	{
+		if ($modAction === 'update') {
+			$rootId = Filter::get('rootid', WT_REGEX_XREF);
+			$person = Individual::getInstance($rootId, $this->getTree());
+			$chart  = new Chart();
 
-        global $controller;
+			header('Content-Type: application/json;charset=UTF-8');
 
-        $urlPath = $this->getModuleUrlPath();
+			echo json_encode($chart->buildJsonTree($person));
+			exit;
+		}
 
-        $controller = new Chart();
-        $controller
-            ->restrictAccess($this->isActive())
-            ->pageHeader()
-            ->addExternalJavascript(WT_AUTOCOMPLETE_JS_URL)
-            ->addExternalJavascript($urlPath . '/js/packages/d3.v4.custom.min.js')
-            ->addExternalJavascript($urlPath . '/js/ancestral-fan-chart.js');
+		global $controller;
 
-        echo '<link rel="stylesheet" type="text/css" href="'
-            . $urlPath . '/css/ancestral-fan-chart.css">';
+		$urlPath = $this->getModuleUrlPath();
 
-        echo $controller->render();
-    }
+		$controller = new Chart();
+		$controller
+			->restrictAccess($this->isActive())
+			->pageHeader()
+			->addExternalJavascript($urlPath . '/js/packages/jquery-ui-1.11.4/js/jquery-ui.min.js')
+			->addExternalJavascript($urlPath . '/js/packages/d3.v4.custom.min.js')
+			->addExternalJavascript($urlPath . '/js/ancestral-fan-chart.js');
+
+		echo '<link rel="stylesheet" type="text/css" href="'
+			. $urlPath . '/css/ancestral-fan-chart.css">';
+
+		echo $controller->render();
+	}
 }

@@ -7,69 +7,83 @@ use \Fisharebest\Webtrees\Theme;
 ?>
 
 <div id="page-fan">
-    <h2><?php echo $this->getPageTitle() ?></h2>
-    <form name="people" method="get" action="?">
-        <input type="hidden" name="ged" value="<?php echo $this->getTree()->getNameHtml() ?>">
-        <input type="hidden" name="mod" value="ancestral-fan-chart">
-        <table class="list_table">
-            <tbody>
-                <tr>
-                    <td class="descriptionbox">
-                        <label for="rootid"><?php echo $this->translate('Individual') ?></label>
-                    </td>
-                    <td class="optionbox">
-                        <input class="pedigree_form" data-autocomplete-type="INDI" type="text" name="rootid" id="rootid" size="3" value="<?php echo $this->root->getXref() ?>">
-                        <?php echo $this->printFindIndividualLink() ?>
-                    </td>
-                    <td class="descriptionbox">
-                        <label for="generations"><?php echo $this->translate('Generations') ?></label>
-                    </td>
-                    <td class="optionbox">
-                        <?php echo $this->getGenerationsInputControl() ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="descriptionbox">
-                        <label for="fanDegree"><?php echo $this->translate('Degrees') ?></label>
-                    </td>
-                    <td class="optionbox">
-                        <?php echo $this->getFanDegreeSelectControl() ?>
-                    </td>
-                    <td class="descriptionbox">
-                        <label for="fontScale"><?php echo $this->translate('Font size') ?></label>
-                    </td>
-                    <td class="optionbox">
-                        <input class="fontScale" type="text" name="fontScale" id="fontScale" size="3" value="<?php echo $this->fontScale ?>">%
-                    </td>
-                </tr>
+	<h2 class="wt-page-title"><?php echo $this->getPageTitle() ?></h2>
 
-                <tr>
-                    <td class="descriptionbox" rowspan="2">
-                        <?php echo $this->translate('Layout') ?>
-                    </td>
-                    <td class="optionbox">
-                        <label>
-                            <?php echo $this->getHideEmptySegmentsCheckbox() ?>
-                            <?php echo $this->translate('Hide empty segments') ?>
-                        </label>
-                    </td>
-                    <td class="topbottombar vmiddle" colspan="2">
-                        <input type="submit" value="<?php echo $this->translate('view') ?>">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="optionbox">
-                        <label>
-                            <?php echo $this->getShowColorGradientsCheckbox() ?>
-                            <?php echo $this->translate('Show color gradients') ?>
-                        </label>
-                    </td>
-                    <td class="topbottombar vmiddle" colspan="2">
-                        <input type="reset" value="<?php echo $this->translate('reset') ?>">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
-    <div id="fan_chart"></div>
+	<form class="wt-page-options d-print-none" method="get" action="?">
+		<input type="hidden" name="ged" value="<?php echo $this->getTree()->getNameHtml() ?>">
+		<input type="hidden" name="mod" value="ancestral-fan-chart">
+
+		<fieldset class="form-group">
+			<div class="row">
+				<label class="col-sm-3 col-form-label wt-page-options-label" for="rootid">
+					<?php echo $this->translate('Individual') ?>
+				</label>
+				<div class="col-sm-9 wt-page-options-value">
+					<?php echo $this->printFindIndividualLink() ?>
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset class="form-group">
+			<div class="row">
+				<label class="col-sm-3 col-form-label wt-page-options-label" for="fanDegree">
+					<?php echo $this->translate('Layout'); ?>
+				</label>
+				<div class="col-sm-9 wt-page-options-value">
+					<?php echo $this->getFanDegreeSelectControl(); ?>
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset class="form-group">
+			<div class="row">
+				<label class="col-sm-3 col-form-label wt-page-options-label" for="generations">
+					<?php echo $this->translate('Generations'); ?>
+				</label>
+				<div class="col-sm-9 wt-page-options-value">
+					<?php echo $this->getGenerationsInputControl(); ?>
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset class="form-group">
+			<div class="row">
+				<label class="col-sm-3 col-form-label wt-page-options-label" for="fontScale">
+					<?php echo $this->translate('Font size'); ?>
+				</label>
+				<div class="col-sm-9 wt-page-options-value">
+					<div class="input-group">
+						<input class="form-control" type="text" name="fontScale" id="fontScale" size="3" value="<?php echo $this->fontScale; ?>">
+						<span class="input-group-addon">%</span>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset class="form-group">
+			<div class="row">
+				<legend class="col-form-label col-sm-3 wt-page-options-label">
+					<?php echo $this->translate('Layout'); ?>
+				</legend>
+				<div class="col-sm-9 wt-page-options-value">
+					<?php echo $this->getHideEmptySegmentsCheckbox(); ?>
+					<?php echo $this->getShowColorGradientsCheckbox(); ?>
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset class="form-group">
+			<div class="row">
+				<div class="col-sm-3 wt-page-options-label"></div>
+				<div class="col-sm-9 wt-page-options-value">
+					<input class="btn btn-primary" type="submit" value="<?php echo $this->translate('view') ?>">
+					<input class="btn btn-primary" type="reset" value="<?php echo $this->translate('reset') ?>">
+				</div>
+			</div>
+		</fieldset>
+	</form>
+
+	<div class="row">
+		<div id="fan_chart" class="wt-ajax-load wt-page-content wt-chart wt-fan-chart"></div>
+	</div>
 </div>

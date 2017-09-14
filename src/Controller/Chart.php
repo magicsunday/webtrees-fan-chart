@@ -4,11 +4,12 @@
  */
 namespace MagicSunday\Webtrees\AncestralFanChart\Controller;
 
+
+use Fisharebest\Webtrees\Bootstrap4;
 use Fisharebest\Webtrees\Controller\ChartController;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\Filter;
 use Fisharebest\Webtrees\Functions\FunctionsEdit;
-use Fisharebest\Webtrees\Functions\FunctionsPrint;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Theme;
@@ -155,6 +156,27 @@ class Chart extends ChartController
         return '#' . $this->getTheme()->parameter('chart-background-u');
     }
 
+    /**
+     * Unescape an HTML string, giving just the literal text
+     *
+     * @param string $value Value to unescape
+     *
+     * @return string
+     *
+     * @deprecated
+     */
+    protected function unescapeHtml($value)
+    {
+        return html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Returns whether the given text is in RTL style or not.
+     *
+     * @param string $text The text to check
+     *
+     * @return bool
+     */
     private function isRtl($text)
     {
         return I18N::scriptDirection(I18N::textScript($text)) === 'rtl';
@@ -170,10 +192,10 @@ class Chart extends ChartController
      */
     private function getIndividualData(Individual $person, $generation)
     {
-        $fullName        = Filter::unescapeHtml($person->getFullName());
-        $alternativeName = Filter::unescapeHtml($person->getAddName());
+        $fullName        = $this->unescapeHtml($person->getFullName());
+        $alternativeName = $this->unescapeHtml($person->getAddName());
 
-        return array(
+        return [
             'id'              => 0,
             'xref'            => $person->getXref(),
             'generation'      => $generation,
@@ -185,7 +207,7 @@ class Chart extends ChartController
             'died'            => $person->getDeathYear(),
             'color'           => $this->getColor($person),
             'colors'          => [[], []],
-        );
+        ];
     }
 
     /**
@@ -195,6 +217,8 @@ class Chart extends ChartController
      * @param int        $generation Current generation
      *
      * @return array
+     *
+     * @todo Rebuild this to a iterative method
      */
     public function buildJsonTree(
         Individual $person = null, $generation = 1
@@ -203,7 +227,7 @@ class Chart extends ChartController
         if (($generation > $this->generations)
             || !($person instanceof Individual)
         ) {
-            return array();
+            return [];
         }
 
         $data   = $this->getIndividualData($person, $generation);
@@ -236,7 +260,7 @@ class Chart extends ChartController
      */
     private function printFindIndividualLink()
     {
-        return FunctionsPrint::printFindIndividualLink('rootid');
+        return FunctionsEdit::formControlIndividual($this->root, ['id' => 'rootid', 'name' => 'rootid']);
     }
 
     /**
@@ -246,7 +270,15 @@ class Chart extends ChartController
      */
     private function getHideEmptySegmentsCheckbox()
     {
-        return FunctionsEdit::twoStateCheckbox('hideEmptySegments', $this->hideEmptySegments);
+        return Bootstrap4::checkbox(
+            $this->translate('Hide empty segments'),
+            false,
+            [
+                'id'      => 'hideEmptySegments',
+                'name'    => 'hideEmptySegments',
+                'checked' => $this->hideEmptySegments,
+            ]
+        );
     }
 
     /**
@@ -256,7 +288,15 @@ class Chart extends ChartController
      */
     private function getShowColorGradientsCheckbox()
     {
-        return FunctionsEdit::twoStateCheckbox('showColorGradients', $this->showColorGradients);
+        return Bootstrap4::checkbox(
+            $this->translate('Show color gradients'),
+            false,
+            [
+                'id'      => 'showColorGradients',
+                'name'    => 'showColorGradients',
+                'checked' => $this->showColorGradients,
+            ]
+        );
     }
 
     /**
@@ -266,8 +306,13 @@ class Chart extends ChartController
      */
     private function getFanDegreeSelectControl()
     {
-        return FunctionsEdit::selectEditControl(
-            'fanDegree', $this->getFanDegrees(), null, $this->fanDegree
+        return Bootstrap4::select(
+            $this->getFanDegrees(),
+            $this->fanDegree,
+            [
+                'id'   => 'fanDegree',
+                'name' => 'fanDegree',
+            ]
         );
     }
 
@@ -278,7 +323,14 @@ class Chart extends ChartController
      */
     private function getGenerationsInputControl()
     {
-        return FunctionsEdit::editFieldInteger('generations', $this->generations, self::MIN_GENERATIONS, self::MAX_GENERATIONS);
+        return Bootstrap4::select(
+            FunctionsEdit::numericOptions(range(self::MIN_GENERATIONS, self::MAX_GENERATIONS)),
+            $this->generations,
+            [
+                'id'   => 'generations',
+                'name' => 'generations',
+            ]
+        );
     }
 
     /**
@@ -289,13 +341,13 @@ class Chart extends ChartController
     private function getFanDegrees()
     {
         return [
-            180 => $this->translate('180 degrees'),
-            210 => $this->translate('210 degrees'),
-            240 => $this->translate('240 degrees'),
-            270 => $this->translate('270 degrees'),
-            300 => $this->translate('300 degrees'),
-            330 => $this->translate('330 degrees'),
-            360 => $this->translate('360 degrees'),
+            180 => $this->translate('180 degree'),
+            210 => $this->translate('210 degree'),
+            240 => $this->translate('240 degree'),
+            270 => $this->translate('270 degree'),
+            300 => $this->translate('300 degree'),
+            330 => $this->translate('330 degree'),
+            360 => $this->translate('360 degree'),
         ];
     }
 
@@ -336,13 +388,13 @@ class Chart extends ChartController
      */
     private function getUpdateUrl()
     {
-        $queryData = array(
+        $queryData = [
             'mod'         => 'ancestral-fan-chart',
             'mod_action'  => 'update',
             'ged'         => $this->getTree()->getNameHtml(),
             'generations' => $this->generations,
             'rootid'      => '',
-        );
+        ];
 
         return 'module.php?' . http_build_query($queryData);
     }
@@ -356,10 +408,10 @@ class Chart extends ChartController
      */
     private function getIndividualUrl()
     {
-        $queryData = array(
+        $queryData = [
             'ged' => $this->getTree()->getNameHtml(),
             'pid' => '',
-        );
+        ];
 
         return 'individual.php?' . http_build_query($queryData);
     }
@@ -373,7 +425,7 @@ class Chart extends ChartController
     {
         // Encode chart parameters to json string
         $chartParams = json_encode(
-            array(
+            [
                 'rtl'                => I18N::direction() === 'rtl',
                 'fanDegree'          => $this->fanDegree,
                 'generations'        => $this->generations,
@@ -385,15 +437,14 @@ class Chart extends ChartController
                 'updateUrl'          => $this->getUpdateUrl(),
                 'individualUrl'      => $this->getIndividualUrl(),
                 'data'               => $this->buildJsonTree($this->root),
-                'labels'             => array(
+                'labels'             => [
                     'zoom' => $this->translate('Use Ctrl + scroll to zoom in the view'),
                     'move' => $this->translate('Move the view with two fingers'),
-                ),
-            )
+                ],
+            ]
         );
 
-        $this->addInlineJavascript('autocomplete();')
-            ->addInlineJavascript(
+        $this->addInlineJavascript(
 <<<JS
 // Init widget
 if (typeof $().ancestralFanChart === 'function') {

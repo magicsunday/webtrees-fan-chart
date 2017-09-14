@@ -235,6 +235,7 @@
 
             // Bind click event on reset button
             var $resetButton = $(this.config.parent.node())
+                .parent()
                 .siblings('form')
                 .find('input[type=reset]');
 
