@@ -127,7 +127,7 @@
             this.config.active = d3.select(null);
 
             this.config.zoom = d3.zoom()
-                .scaleExtent([1, 5])
+                .scaleExtent([1, 10])
                 .on('zoom', $.proxy(this.doZoom, this));
 
             // Parent container
