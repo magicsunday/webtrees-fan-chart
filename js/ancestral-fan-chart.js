@@ -124,8 +124,6 @@
         initChart: function () {
             var that = this;
 
-            this.config.active = d3.select(null);
-
             this.config.zoom = d3.zoom()
                 .scaleExtent([1, 10])
                 .on('zoom', $.proxy(this.doZoom, this));
@@ -158,6 +156,7 @@
             d3.select($resetButton.get(0))
                 .on('click', $.proxy(this.doReset, this));
 
+            // Add group
             this.config.visual = this.config.svg
                 .append('g')
                 .attr('class', 'group');
@@ -180,10 +179,7 @@
          * @private
          */
         doReset: function () {
-            this.config.active.classed('active', false);
-            this.config.active = d3.select(null);
-
-            this.config.visual
+            this.config.svg
                 .transition()
                 .duration(750)
                 .call(this.config.zoom.transform, d3.zoomIdentity);
