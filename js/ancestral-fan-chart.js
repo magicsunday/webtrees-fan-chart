@@ -150,6 +150,14 @@
                 .attr('width', '100%')
                 .attr('height', '100%');
 
+            // Bind click event on reset button
+            var $resetButton = $(this.config.parent.node())
+                .siblings('form')
+                .find('input[type=reset]');
+
+            d3.select($resetButton.get(0))
+                .on('click', $.proxy(this.doReset, this));
+
             this.config.visual = this.config.svg
                 .append('g')
                 .attr('class', 'group');
@@ -164,6 +172,21 @@
             if (d3.event.defaultPrevented) {
                 d3.event.stopPropagation();
             }
+        },
+
+        /**
+         * Reset chart to initial zoom level and position.
+         *
+         * @private
+         */
+        doReset: function () {
+            this.config.active.classed('active', false);
+            this.config.active = d3.select(null);
+
+            this.config.visual
+                .transition()
+                .duration(750)
+                .call(this.config.zoom.transform, d3.zoomIdentity);
         },
 
         /**

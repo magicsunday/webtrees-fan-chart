@@ -305,7 +305,7 @@ class Chart extends ChartController
                     <td class="optionbox">
                         {$this->getFanDegreeSelectControl()}
                     </td>
-                    <td rowspan="2" class="topbottombar vmiddle">
+                    <td class="topbottombar vmiddle">
                         <input type="submit" value="{$this->translate('view')}">
                     </td>
                 </tr>
@@ -322,6 +322,9 @@ class Chart extends ChartController
                     <td class="optionbox">
                         <input class="fontScale" type="text" name="fontScale" id="fontScale" size="3" value="{$this->fontScale}">
                         {$this->translate('%')}
+                    </td>
+                    <td class="topbottombar vmiddle">
+                        <input type="reset" value="reset">
                     </td>
                 </tr>
             </tbody>
