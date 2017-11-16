@@ -178,7 +178,7 @@ class Module extends AbstractModule implements ModuleChartInterface
 		$controller
 			->restrictAccess($this->isActive())
 			->pageHeader()
-			->addExternalJavascript($urlPath . '/js/packages/jquery-ui-1.11.4/js/jquery-ui.min.js')
+			->addExternalJavascript($urlPath . '/js/packages/jquery-ui-1.12.1.custom/jquery-ui.min.js')
 			->addExternalJavascript($urlPath . '/js/packages/d3.v4.custom.min.js')
 			->addExternalJavascript($urlPath . '/js/ancestral-fan-chart.js');
 
