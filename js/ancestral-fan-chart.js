@@ -1,5 +1,5 @@
 /*global
-    window, console, Math, d3, jQuery, $
+    window, console, Math, d3, jQuery
 */
 
 /**
@@ -49,8 +49,7 @@
             startPi: -Math.PI,
             endPi: Math.PI,
 
-            width: 1200,
-            height: 1200,
+            minHeight: 500,
             padding: 5,
 
             x: null,
@@ -123,15 +122,57 @@
          * @private
          */
         initChart: function () {
-            this.config.visual = d3
-                .select('#fan_chart')
+            var that = this;
+
+            this.config.active = d3.select(null);
+
+            this.config.zoom = d3.zoom()
+                .scaleExtent([1, 5])
+                .on('zoom', $.proxy(this.doZoom, this));
+
+            // Parent container
+            this.config.parent = d3
+                .select('#fan_chart');
+
+            // Add SVG element
+            this.config.svg = this.config.parent
                 .append('svg')
                 .attr('width', '100%')
                 .attr('height', '100%')
                 .attr('text-rendering', 'geometricPrecision')
                 .attr('text-anchor', 'middle')
+                .on('click', $.proxy(this.doStopPropagation, this), true);
+
+            // Add rectangle element
+            this.config.svg
+                .append('rect')
+                .attr('class', 'background')
+                .attr('width', '100%')
+                .attr('height', '100%');
+
+            this.config.visual = this.config.svg
                 .append('g')
                 .attr('class', 'group');
+
+            this.config.svg.call(this.config.zoom);
+        },
+
+        /**
+         * Prevent default click and stop propagation.
+         */
+        doStopPropagation: function () {
+            if (d3.event.defaultPrevented) {
+                d3.event.stopPropagation();
+            }
+        },
+
+        /**
+         * Zoom chart.
+         *
+         * @private
+         */
+        doZoom: function () {
+            this.config.visual.attr('transform', d3.event.transform);
         },
 
         /**
@@ -182,22 +223,31 @@
          * Update the viewBox attribute of the SVG element.
          */
         updateViewBox: function () {
-            // Adjust size of svg
-            var boundingBox = this.config.visual.node().getBBox();
-            var width       = boundingBox.width;
-            var height      = boundingBox.height;
-            var transX      = Math.round(width + (this.options.padding * 2));
-            var transY      = Math.round(height + (this.options.padding * 2));
+            var svgBoundingBox    = this.config.visual.node().getBBox();
+            var clientBoundingBox = this.config.parent.node().getBoundingClientRect();
+
+            // View box should have at least the same width/height as the parent element
+            var width       = Math.max(clientBoundingBox.width, svgBoundingBox.width);
+            var height      = Math.max(clientBoundingBox.height, svgBoundingBox.height, this.options.minHeight);
+
+            var viewBoxLeft   = -Math.round((width / 2) + this.options.padding);
+            var viewBoxTop    = Math.round(svgBoundingBox.y - this.options.padding);
+            var viewBoxWidth  = Math.round(width + (this.options.padding * 2));
+            var viewBoxHeight = Math.round(height + (this.options.padding * 2));
 
             // Set view box to actual width and height of svg
-            d3.select('#fan_chart svg')
+            this.config.svg
                 .attr('viewBox', [
-                    boundingBox.x - this.options.padding,
-                    boundingBox.y - this.options.padding,
-                    transX,
-                    transY
-                ])
-                .style('max-width', transX + 'px');
+                    viewBoxLeft,
+                    viewBoxTop,
+                    viewBoxWidth,
+                    viewBoxHeight
+                ]);
+
+            this.config.svg
+                .select('rect')
+                .attr('x', viewBoxLeft)
+                .attr('y', viewBoxTop);
         },
 
         /**

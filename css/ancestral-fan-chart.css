@@ -20,3 +20,8 @@
     fill: #7f7f7f;
     font-weight: normal;
 }
+
+#page-fan svg rect.background {
+    fill: none;
+    pointer-events: all;
+}
