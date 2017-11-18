@@ -28,7 +28,7 @@ class Module extends AbstractModule implements ModuleChartInterface
 	 *
 	 * @var string
 	 */
-	const CUSTOM_VERSION = '1.3.2';
+	const CUSTOM_VERSION = '1.4';
 
 	/**
 	 * For custom modules - link for support, upgrades, etc.
