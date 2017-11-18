@@ -51,23 +51,25 @@ use \Fisharebest\Webtrees\Tree;
 class Chart extends ChartController
 {
     /**
-     * Maximum number of displayable generations.
-     * @var integer
+     * Minimum number of displayable generations.
+     *
+     * @var int
      */
     const MIN_GENERATIONS = 2;
 
     /**
      * Maximum number of displayable generations.
-     * @var integer
+     *
+     * @var int
      */
-    const MAX_GENERATIONS = 10;
+    const MAX_GENERATIONS = 11;
 
     /**
      * Number of generations to display.
      *
      * @var int
      */
-    private $generations = 5;
+    private $generations = 6;
 
 
     /**

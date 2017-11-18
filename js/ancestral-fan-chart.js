@@ -313,7 +313,7 @@
          * @returns {number}
          */
         innerRadius: function (d) {
-            var data = [0, 65, 130, 195, 260, 325, 440, 555, 670, 785];
+            var data = [0, 65, 130, 195, 260, 325, 440, 555, 670, 785, 900];
             return data[d.depth];
         },
 
@@ -325,7 +325,7 @@
          * @returns {number}
          */
         outerRadius: function (d) {
-            var data = [65, 130, 195, 260, 325, 440, 555, 670, 785, 900];
+            var data = [65, 130, 195, 260, 325, 440, 555, 670, 785, 900, 1015];
             return data[d.depth];
         },
 
@@ -894,7 +894,7 @@
 
                 textElements.each(function (d, i) {
                     if (countElements === 1) {
-                        offset = 0;
+                        offset = -0.025;
                     }
 
                     if (countElements === 2) {
@@ -909,6 +909,7 @@
                         .domain([0, countElements - 1])
                         .range([-offset, offset]);
 
+                    // Slight increase in the y axis' value so the texts may not overlay
                     var offsetRotate = (i <= 1 ? 1.25 : 1.75);
 
                     if (d.depth === 0) {
