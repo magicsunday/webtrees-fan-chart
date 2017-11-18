@@ -37,7 +37,7 @@
             defaultColor: '#eee',
 
             // Default font size, color and scaling
-            fontSize: 13,
+            fontSize: 14,
             fontColor: '#000',
             fontScale: 100,
 
@@ -872,12 +872,12 @@
                 })
                 .append('path')
                 .attr('fill', function (d) {
-                    if (that.options.showColorGradients) {
-                        // Innermost circle (first generation) or undefined gender
-                        if (!d.depth) {
-                            return 'rgb(225, 225, 225)';
-                        }
+                    // Innermost circle (first generation) or undefined gender
+                    if (!d.depth) {
+                        return 'rgb(225, 225, 225)';
+                    }
 
+                    if (that.options.showColorGradients) {
                         return 'url(#grad-' + d.data.id + ')';
                     }
 
@@ -1346,6 +1346,7 @@
             var textElement = group.append('text');
 
             textElement.attr('class', textClass || null)
+                .attr('class', textClass || null)
                 .attr('dominant-baseline', 'middle')
                 .style('font-size', function () {
                     return that.getFontSize(d);
