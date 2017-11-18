@@ -51,25 +51,38 @@ use \Fisharebest\Webtrees\Tree;
 class Chart extends ChartController
 {
     /**
+     * Maximum number of displayable generations.
+     * @var integer
+     */
+    const MIN_GENERATIONS = 2;
+
+    /**
+     * Maximum number of displayable generations.
+     * @var integer
+     */
+    const MAX_GENERATIONS = 10;
+
+    /**
      * Number of generations to display.
      *
      * @var int
      */
-    protected $generations = 5;
+    private $generations = 5;
+
 
     /**
      * Style of fan chart. (2 = full circle, 3, three-quarter circle, 4 = half circle)
      *
      * @var int
      */
-    protected $fanDegree = 210;
+    private $fanDegree = 210;
 
     /**
      * Font size scaling factor in percent.
      *
      * @var int
      */
-    protected $fontScale = 100;
+    private $fontScale = 100;
 
     /**
      * Constructor.
@@ -83,7 +96,7 @@ class Chart extends ChartController
 
         // Extract the request parameters
         $this->fanDegree   = Filter::getInteger('fanDegree', 180, 360, 210);
-        $this->generations = Filter::getInteger('generations', 2, 10, $defaultGenerations);
+        $this->generations = Filter::getInteger('generations', self::MIN_GENERATIONS, self::MAX_GENERATIONS, $defaultGenerations);
         $this->fontScale   = Filter::getInteger('fontScale', 0, 200, 100);
 
         // Create page title
@@ -102,7 +115,7 @@ class Chart extends ChartController
      *
      * @return Tree
      */
-    protected function getTree()
+    private function getTree()
     {
         global $WT_TREE;
         return $WT_TREE;
@@ -113,7 +126,7 @@ class Chart extends ChartController
      *
      * @return ThemeInterface
      */
-    protected function getTheme()
+    private function getTheme()
     {
         return Theme::theme();
     }
@@ -123,7 +136,7 @@ class Chart extends ChartController
      *
      * @return string
      */
-    protected function translate(/* var_args */)
+    private function translate(/* var_args */)
     {
         // Damn ugly static methods all around :(
         return call_user_func_array(
@@ -139,7 +152,7 @@ class Chart extends ChartController
      *
      * @return string HTML color code
      */
-    protected function getColor(Individual $person = null)
+    private function getColor(Individual $person = null)
     {
         if ($person instanceof Individual) {
             if ($person->getSex() === 'M') {
@@ -160,7 +173,7 @@ class Chart extends ChartController
      *
      * @return array
      */
-    protected function getIndividualData(Individual $person, $generation)
+    private function getIndividualData(Individual $person, $generation)
     {
         return array(
             'id'         => $person->getXref(),
@@ -221,7 +234,7 @@ class Chart extends ChartController
      *
      * @return string
      */
-    protected function printFindIndividualLink()
+    private function printFindIndividualLink()
     {
         return FunctionsPrint::printFindIndividualLink('rootid');
     }
@@ -231,7 +244,7 @@ class Chart extends ChartController
      *
      * @return string
      */
-    protected function getFanDegreeSelectControl()
+    private function getFanDegreeSelectControl()
     {
         return FunctionsEdit::selectEditControl(
             'fanDegree', $this->getFanDegrees(), null, $this->fanDegree
@@ -243,9 +256,9 @@ class Chart extends ChartController
      *
      * @return string
      */
-    protected function getGenerationsInputControl()
+    private function getGenerationsInputControl()
     {
-        return FunctionsEdit::editFieldInteger('generations', $this->generations, 2, 10);
+        return FunctionsEdit::editFieldInteger('generations', $this->generations, self::MIN_GENERATIONS, self::MAX_GENERATIONS);
     }
 
     /**
@@ -253,7 +266,7 @@ class Chart extends ChartController
      *
      * @return string[]
      */
-    protected function getFanDegrees()
+    private function getFanDegrees()
     {
         return [
             180 => $this->translate('180 degree'),
@@ -271,7 +284,7 @@ class Chart extends ChartController
      *
      * @return string HTML color code
      */
-    protected function getChartFontColor()
+    private function getChartFontColor()
     {
         return '#' . $this->getTheme()->parameter('chart-font-color');
     }
@@ -281,7 +294,7 @@ class Chart extends ChartController
      *
      * @return string
      */
-    protected function getContentHtml()
+    private function getContentHtml()
     {
         return <<<HTML
 <div id="page-fan">
@@ -342,7 +355,7 @@ HTML;
      *
      * @return string
      */
-    protected function getUpdateUrl()
+    private function getUpdateUrl()
     {
         $queryData = array(
             'mod'         => 'ancestral-fan-chart',
@@ -362,7 +375,7 @@ HTML;
      *
      * @return string
      */
-    protected function getIndividualUrl()
+    private function getIndividualUrl()
     {
         $queryData = array(
             'ged' => $this->getTree()->getNameHtml(),

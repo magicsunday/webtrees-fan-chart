@@ -37,6 +37,7 @@ use \Fisharebest\Webtrees\Menu;
 use \Fisharebest\Webtrees\Module as WebtreesModule;
 use \Fisharebest\Webtrees\Module\AbstractModule;
 use \Fisharebest\Webtrees\Module\ModuleChartInterface;
+use \Fisharebest\Webtrees\Tree;
 
 /**
  * Ancestral fan chart module class.
@@ -55,7 +56,7 @@ class Module extends AbstractModule implements ModuleChartInterface
      *
      * @return boolean
      */
-    protected function isActive()
+    private function isActive()
     {
         return WebtreesModule::isActiveChart($this->getTree(), 'ancestral-fan-chart');
     }
@@ -65,7 +66,7 @@ class Module extends AbstractModule implements ModuleChartInterface
      *
      * @return Tree
      */
-    protected function getTree()
+    private function getTree()
     {
         global $WT_TREE;
         return $WT_TREE;
@@ -76,13 +77,23 @@ class Module extends AbstractModule implements ModuleChartInterface
      *
      * @return string
      */
-    protected function translate(/* var_args */)
+    private function translate(/* var_args */)
     {
         // Damn ugly static methods all around :(
         return call_user_func_array(
             '\\Fisharebest\\Webtrees\\I18N::translate',
             func_get_args()
         );
+    }
+
+    /**
+     * Get the modules static url path.
+     *
+     * @return string
+     */
+    private function getModuleUrlPath()
+    {
+        return WT_STATIC_URL . WT_MODULES_DIR . $this->getName();
     }
 
     /**
@@ -150,16 +161,6 @@ class Module extends AbstractModule implements ModuleChartInterface
     public function getBoxChartMenu(Individual $individual)
     {
         return $this->getChartMenu($individual);
-    }
-
-    /**
-     * Get the modules static url path.
-     *
-     * @return string
-     */
-    protected function getModuleUrlPath()
-    {
-        return WT_STATIC_URL . WT_MODULES_DIR . $this->getName();
     }
 
     /**
