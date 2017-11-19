@@ -52,6 +52,12 @@
             minHeight: 500,
             padding: 5,
 
+            // Left/Right padding of text
+            textPadding: 2,
+
+            // Relative position offsets in percent (0 = inner radius, 100 = outer radius)
+            positions: [70, 52, 25],
+
             x: null,
 
             updateUrl: '',
@@ -270,7 +276,7 @@
         },
 
         /**
-         * Calculate the angle.
+         * Calculate the angle in radians.
          *
          * @param {number} value Value
          *
@@ -284,7 +290,7 @@
         },
 
         /**
-         * Get the start angle.
+         * Get the start angle in radians.
          *
          * @param {object} d D3 data object
          *
@@ -295,7 +301,7 @@
         },
 
         /**
-         * Get the end angle.
+         * Get the end angle in radians.
          *
          * @param {object} d D3 data object
          *
@@ -352,6 +358,19 @@
         relativeRadius: function (d, position) {
             var outerRadius = this.outerRadius(d);
             return outerRadius - ((100 - position) * (outerRadius - this.innerRadius(d)) / 100);
+        },
+
+        /**
+         * Get an radius relative to the outer radius adjusted by the given
+         * position in percent.
+         *
+         * @param {object} d        D3 data object
+         * @param {number} position Percent offset (0 = inner radius, 100 = outer radius)
+         *
+         * @returns {number}
+         */
+        arcLength: function (d, position) {
+            return (this.endAngle(d) - this.startAngle(d)) * this.relativeRadius(d, position);
         },
 
         /**
@@ -491,21 +510,13 @@
                 var label    = d3.select(this);
                 var timeSpan = that.getTimeSpan(d);
 
-                // Relative position offsets in percent (0 = inner radius, 100 = outer radius)
-                var positions = [70, 52, 25];
-
-                // Flip label positions for 360 degree chart
-                if (that.isPositionFlipped(d)) {
-                    positions = [30, 48, 75];
-                }
-
                 // Create a path for each line of text as mobile devices
                 // won't display <tspan> elements in the right position
-                that.appendArcPath(label, 0, positions[0]);
-                that.appendArcPath(label, 1, positions[1]);
+                that.appendArcPath(label, 0);
+                that.appendArcPath(label, 1);
 
                 if (timeSpan) {
-                    that.appendArcPath(label, 2, positions[2]);
+                    that.appendArcPath(label, 2);
                 }
 
                 // Append text element
@@ -671,44 +682,45 @@
         },
 
         /**
+         * Get the relative text offset for the labels.
+         *
+         * @param {int}    index Index position of element in parent container. Required to create a unique path id.
+         * @param {object} d     D3 data object
+         *
+         * @return {int}
+         */
+        getTextOffset: function(index, d) {
+            return this.isPositionFlipped(d)
+                ? (100 - this.options.positions[index])
+                : this.options.positions[index];
+        },
+
+        /**
          * Truncates the text of the current element depending on its depth
          * in the chart.
          *
-         * @param {int} padding Left/Right padding of text
+         * @param {int} index Index position of element in parent container. Required to create a unique path id.
          *
          * @returns {string} Truncated text
          */
-        truncate: function (padding) {
+        truncate: function (index) {
             var that = this;
 
             return function (d) {
-                // Modifier of available width depending on fan degrees
-                var widthMod = that.options.fanDegree / 360;
-
                 // Depending on the depth of an entry in the chart the available width differs
                 var availableWidth = 110;
+                var posOffset      = that.getTextOffset(index || 1, d);
 
-                if (d.depth === 1) {
-                    availableWidth = 280 * widthMod;
-                }
-
-                if (d.depth === 2) {
-                    availableWidth = 230 * widthMod;
-                }
-
-                if (d.depth === 3) {
-                    availableWidth = 160 * widthMod;
-                }
-
-                if (d.depth === 4) {
-                    availableWidth = 110 * widthMod;
+                // Calc length of the arc
+                if (d.depth >= 1 && d.depth < 5) {
+                    availableWidth = that.arcLength(d, posOffset);
                 }
 
                 var self = d3.select(this),
                     textLength = self.node().getComputedTextLength(),
                     text = self.text();
 
-                while ((textLength > (availableWidth - (padding * 2))) && (text.length > 0)) {
+                while ((textLength > (availableWidth - (that.options.textPadding * 2))) && (text.length > 0)) {
                     // Remove last char
                     text = text.slice(0, -1);
 
@@ -801,12 +813,9 @@
          * Append a path element to the given parent group element.
          *
          * @param {object} parent   Parent container element, D3 group element
-         * @param {int}    index    Index position of element in parent container.
-         *                          Required to create a unique path id.
-         * @param {int}    position Relative position offset for path
-         *                          (0 = inner radius, 100 = outer radius)
+         * @param {int}    index    Index position of element in parent container. Required to create a unique path id.
          */
-        appendArcPath: function (parent, index, position) {
+        appendArcPath: function (parent, index) {
             var that = this;
 
             // Create arc generator for path segments
@@ -822,10 +831,10 @@
                         : that.endAngle(d);
                 })
                 .innerRadius(function (d) {
-                    return that.relativeRadius(d, position);
+                    return that.relativeRadius(d, that.getTextOffset(index, d));
                 })
                 .outerRadius(function (d) {
-                    return that.relativeRadius(d, position);
+                    return that.relativeRadius(d, that.getTextOffset(index, d));
                 });
 
             // Append a path so we could use it to write the label along it
@@ -852,7 +861,7 @@
                     return '#label-' + d.data.id + '-' + index;
                 })
                 .text(label)
-                .each(this.truncate(5));
+                .each(this.truncate(index));
         },
 
         /**
