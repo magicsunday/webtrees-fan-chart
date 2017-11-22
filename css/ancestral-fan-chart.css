@@ -1,3 +1,7 @@
+#page-fan #fan_chart {
+    position: relative;
+}
+
 #page-fan table td {
     vertical-align: middle;
 }
@@ -5,6 +9,7 @@
 #page-fan svg {
     display: block;
     margin: auto;
+    cursor: grab;
 }
 
 #page-fan svg text {
@@ -24,4 +29,32 @@
 #page-fan svg rect.background {
     fill: none;
     pointer-events: all;
+}
+
+#page-fan div.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: 10px sans-serif;
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    transition: opacity ease-in-out;
+    transition-duration: 0s;
+}
+
+#page-fan div.overlay .tooltip {
+    font-size: 22px;
+    color: white;
+    position: relative;
+    margin: 0;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
 }

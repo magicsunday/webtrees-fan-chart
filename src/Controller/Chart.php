@@ -71,7 +71,6 @@ class Chart extends ChartController
      */
     private $generations = 6;
 
-
     /**
      * Style of fan chart. (2 = full circle, 3, three-quarter circle, 4 = half circle)
      *

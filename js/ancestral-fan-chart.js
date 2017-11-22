@@ -134,6 +134,14 @@
                 .scaleExtent([1, 10])
                 .on('zoom', $.proxy(this.doZoom, this));
 
+            this.config.zoom.filter(function () {
+                if (d3.event.type === 'wheel') {
+                    return d3.event.ctrlKey;
+                }
+
+                return true;
+            });
+
             // Parent container
             this.config.parent = d3
                 .select('#fan_chart');
@@ -145,7 +153,19 @@
                 .attr('height', '100%')
                 .attr('text-rendering', 'geometricPrecision')
                 .attr('text-anchor', 'middle')
+                .on('wheel', $.proxy(this.doShowTooltipOverlay, this))
                 .on('click', $.proxy(this.doStopPropagation, this), true);
+
+            // Add an overlay with tooltip
+            this.config.overlay = this.config.parent
+                .append('div')
+                .attr('class', 'overlay')
+                .style('opacity', 1e-6);
+
+            this.config.overlay
+                .append('p')
+                .attr('class', 'tooltip')
+                .text('Verwende Strg+Scrollen zum Zoomen der Karte');
 
             // Add rectangle element
             this.config.svg
@@ -171,7 +191,30 @@
         },
 
         /**
+         * Perform the overlay show and hide animation.
+         *
+         * @private
+         */
+        doShowTooltipOverlay: function () {
+            var that = this;
+
+            this.config.overlay
+                .transition()
+                .duration(500)
+                .style('opacity', 1)
+                .on('end', function() {
+                    that.config.overlay
+                        .transition()
+                        .delay(2000)
+                        .duration(1000)
+                        .style('opacity', 1e-6);
+                });
+        },
+
+        /**
          * Prevent default click and stop propagation.
+         *
+         * @private
          */
         doStopPropagation: function () {
             if (d3.event.defaultPrevented) {
@@ -197,6 +240,11 @@
          * @private
          */
         doZoom: function () {
+            // Stop any pending transition and hide overlay immediately
+            this.config.overlay
+                .transition()
+                .style('opacity', 1e-6);
+
             this.config.visual.attr('transform', d3.event.transform);
         },
 
@@ -401,7 +449,7 @@
             // Remove any existing listener
             this.config.visual
                 .selectAll('g.person')
-                .style('cursor', 'default')
+                .style('cursor', 'grab')
                 .on('click', null);
 
             var personGroup = this.config.visual
