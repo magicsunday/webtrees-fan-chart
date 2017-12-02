@@ -131,10 +131,11 @@
             var that = this;
 
             this.config.zoom = d3.zoom()
-                .scaleExtent([1, 10])
+                .scaleExtent([.5, 5])
                 .on('zoom', $.proxy(this.doZoom, this));
 
             this.config.zoom.filter(function () {
+                // Allow "wheel" event only while control key is pressed
                 if (d3.event.type === 'wheel') {
                     return d3.event.ctrlKey;
                 }
@@ -153,7 +154,14 @@
                 .attr('height', '100%')
                 .attr('text-rendering', 'geometricPrecision')
                 .attr('text-anchor', 'middle')
-                .on('wheel', $.proxy(this.doShowTooltipOverlay, this))
+                .on('contextmenu', function () {
+                    d3.event.preventDefault();
+                })
+                .on('wheel', $.proxy(function () {
+                    d3.event.preventDefault();
+
+                    that.doShowTooltipOverlay('Verwende Strg+Scrollen zum Zoomen der Ansicht');
+                }, this))
                 .on('click', $.proxy(this.doStopPropagation, this), true);
 
             // Add an overlay with tooltip
@@ -161,11 +169,6 @@
                 .append('div')
                 .attr('class', 'overlay')
                 .style('opacity', 1e-6);
-
-            this.config.overlay
-                .append('p')
-                .attr('class', 'tooltip')
-                .text('Verwende Strg+Scrollen zum Zoomen der Karte');
 
             // Add rectangle element
             this.config.svg
@@ -195,18 +198,27 @@
          *
          * @private
          */
-        doShowTooltipOverlay: function () {
+        doShowTooltipOverlay: function (text) {
             var that = this;
 
             this.config.overlay
+                .select('p')
+                .remove();
+
+            this.config.overlay
+                .append('p')
+                .attr('class', 'tooltip')
+                .text(text);
+
+            this.config.overlay
                 .transition()
-                .duration(500)
+                .duration(300)
                 .style('opacity', 1)
                 .on('end', function() {
                     that.config.overlay
                         .transition()
-                        .delay(2000)
-                        .duration(1000)
+                        .delay(1500)
+                        .duration(800)
                         .style('opacity', 1e-6);
                 });
         },
