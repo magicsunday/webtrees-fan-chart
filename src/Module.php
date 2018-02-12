@@ -193,7 +193,7 @@ class Module extends AbstractModule implements ModuleChartInterface
             ->restrictAccess($this->isActive())
             ->pageHeader()
             ->addExternalJavascript(WT_AUTOCOMPLETE_JS_URL)
-            ->addExternalJavascript($urlPath . '/js/packages/d3-4.11.0/d3.min.js')
+            ->addExternalJavascript($urlPath . '/js/packages/d3-4.13.0/d3.v4.min.js')
             ->addExternalJavascript($urlPath . '/js/ancestral-fan-chart.js');
 
         echo '<link rel="stylesheet" type="text/css" href="'
