@@ -1,0 +1,61 @@
+<?php
+
+/** @var \RSO\WebtreesModule\AncestralFanChart\Controller\Chart $this */
+
+?>
+
+<div id="page-fan">
+    <h2><?php echo $this->getPageTitle() ?></h2>
+    <form name="people" method="get" action="?">
+        <input type="hidden" name="ged" value="<?php echo $this->getTree()->getNameHtml() ?>">
+        <input type="hidden" name="mod" value="ancestral-fan-chart">
+        <table class="list_table">
+            <tbody>
+                <tr>
+                    <td class="descriptionbox">
+                        <label for="rootid"><?php echo $this->translate('Individual') ?></label>
+                    </td>
+                    <td class="optionbox">
+                        <input class="pedigree_form" data-autocomplete-type="INDI" type="text" name="rootid" id="rootid" size="3" value="<?php echo $this->root->getXref() ?>">
+                        <?php echo $this->printFindIndividualLink() ?>
+                    </td>
+                    <td class="descriptionbox">
+                        <label for="fanDegree"><?php echo $this->translate('Degrees') ?></label>
+                    </td>
+                    <td class="optionbox">
+                        <?php echo $this->getFanDegreeSelectControl() ?>
+                    </td>
+                    <td class="optionbox">
+                    </td>
+                    <td class="topbottombar vmiddle">
+                        <input type="submit" value="<?php echo $this->translate('view') ?>">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="descriptionbox">
+                        <label for="generations"><?php echo $this->translate('Generations') ?></label>
+                    </td>
+                    <td class="optionbox">
+                        <?php echo $this->getGenerationsInputControl() ?>
+                    </td>
+                    <td class="descriptionbox">
+                        <label for="fontScale"><?php echo $this->translate('Font size') ?></label>
+                    </td>
+                    <td class="optionbox">
+                        <input class="fontScale" type="text" name="fontScale" id="fontScale" size="3" value="<?php echo $this->fontScale ?>">%
+                    </td>
+                    <td class="optionbox">
+                        <label>
+                            <?php echo $this->getHideEmptySegmentsCheckbox() ?>
+                            <?php echo $this->translate('Hide empty segments') ?>
+                        </label>
+                    </td>
+                    <td class="topbottombar vmiddle">
+                        <input type="reset" value="<?php echo $this->translate('reset') ?>">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+    <div id="fan_chart"></div>
+</div>

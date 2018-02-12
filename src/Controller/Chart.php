@@ -296,56 +296,15 @@ class Chart extends ChartController
      */
     private function getContentHtml()
     {
-        return <<<HTML
-<div id="page-fan">
-    <h2>{$this->getPageTitle()}</h2>
-    <form name="people" method="get" action="?">
-        <input type="hidden" name="ged" value="{$this->getTree()->getNameHtml()}">
-        <input type="hidden" name="mod" value="ancestral-fan-chart">
-        <table class="list_table">
-            <tbody>
-                <tr>
-                    <td class="descriptionbox">
-                        <label for="rootid">{$this->translate('Individual')}</label>
-                    </td>
-                    <td class="optionbox">
-                        <input class="pedigree_form" data-autocomplete-type="INDI" type="text" name="rootid" id="rootid" size="3" value="{$this->root->getXref()}">
-                        {$this->printFindIndividualLink()}
-                    </td>
-                    <td class="descriptionbox">
-                        <label for="fanDegree">{$this->translate('Degrees')}</label>
-                    </td>
-                    <td class="optionbox">
-                        {$this->getFanDegreeSelectControl()}
-                    </td>
-                    <td class="topbottombar vmiddle">
-                        <input type="submit" value="{$this->translate('view')}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="descriptionbox">
-                        <label for="generations">{$this->translate('Generations')}</label>
-                    </td>
-                    <td class="optionbox">
-                        {$this->getGenerationsInputControl()}
-                    </td>
-                    <td class="descriptionbox">
-                        <label for="fontScale">{$this->translate('Font size')}</label>
-                    </td>
-                    <td class="optionbox">
-                        <input class="fontScale" type="text" name="fontScale" id="fontScale" size="3" value="{$this->fontScale}">
-                        {$this->translate('%')}
-                    </td>
-                    <td class="topbottombar vmiddle">
-                        <input type="reset" value="reset">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
-    <div id="fan_chart"></div>
-</div>
-HTML;
+        $viewFile = __DIR__ . '/../View/form.phtml';
+
+        if (is_file($viewFile)) {
+            ob_start();
+            include $viewFile;
+            return ob_get_clean();
+        }
+
+        return false;
     }
 
     /**
