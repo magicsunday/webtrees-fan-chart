@@ -154,6 +154,11 @@
                     return d3.event.ctrlKey;
                 }
 
+                // Allow "touchstart" event only with two fingers
+                if (!d3.event.button && (d3.event.type === 'touchstart')) {
+                    return d3.event.touches.length === 2;
+                }
+
                 return true;
             });
 
@@ -172,7 +177,33 @@
                     d3.event.preventDefault();
                 })
                 .on('wheel', $.proxy(function () {
-                    that.doShowTooltipOverlay(this.options.labels.zoom);
+                    if (!d3.event.ctrlKey) {
+                        that.showTooltipOverlay(this.options.labels.zoom, 300, function () {
+                            that.hideTooltipOverlay(700, 800);
+                        })
+                    }
+                }, this))
+                .on('touchstart', $.proxy(function () {
+                    // Show tooltip if less than 2 fingers are used
+                    if (d3.event.touches.length < 2) {
+                        that.showTooltipOverlay(this.options.labels.move, 300);
+                    }
+                }, this))
+                .on('touchend', $.proxy(function () {
+                    if (d3.event.touches.length < 2) {
+                        that.hideTooltipOverlay(0, 800);
+                    }
+                }, this))
+                .on('touchmove', $.proxy(function () {
+                    // Hide tooltip on more than 2 fingers
+                    if (d3.event.touches.length >= 2) {
+                        that.hideTooltipOverlay();
+                    } else {
+                        // Show tooltip if less than 2 fingers are used
+                        if (d3.event.touches.length < 2) {
+                            that.showTooltipOverlay(this.options.labels.move);
+                        }
+                    }
                 }, this))
                 .on('click', $.proxy(this.doStopPropagation, this), true);
 
@@ -206,12 +237,16 @@
         },
 
         /**
-         * Perform the overlay show and hide animation.
+         * Stop any pending transition and hide overlay immediately.
+         *
+         * @param {string}  text     Text to display in overlay
+         * @param {int}     duration Duration of transition in msec
+         * @param {closure} callback Callback method to execute on end of transition
          *
          * @private
          */
-        doShowTooltipOverlay: function (text) {
-            var that = this;
+        showTooltipOverlay: function (text, duration, callback) {
+            duration = duration || 0;
 
             this.config.overlay
                 .select('p')
@@ -224,15 +259,32 @@
 
             this.config.overlay
                 .transition()
-                .duration(300)
+                .duration(duration)
                 .style('opacity', 1)
                 .on('end', function() {
-                    that.config.overlay
-                        .transition()
-                        .delay(700)
-                        .duration(800)
-                        .style('opacity', 1e-6);
-                });
+                    if (callback) {
+                        callback();
+                    }
+                });;
+        },
+
+        /**
+         * Stop any pending transition and hide overlay immediately.
+         *
+         * @param {int} delay    Delay in msec to wait before transition should start
+         * @param {int} duration Duration of transition in msec
+         *
+         * @private
+         */
+        hideTooltipOverlay: function (delay, duration) {
+            delay = delay || 0;
+            duration = duration || 0;
+
+            this.config.overlay
+                .transition()
+                .delay(delay)
+                .duration(duration)
+                .style('opacity', 1e-6);
         },
 
         /**
@@ -264,14 +316,31 @@
          * @private
          */
         doZoom: function () {
+            // Abort any action if only on finger is used
+            if (d3.event.sourceEvent
+                && (d3.event.sourceEvent.type === 'touchmove')
+                && (d3.event.sourceEvent.touches.length < 2)
+            ) {
+                return;
+            }
+
             this.config.zoomLevel = d3.event.transform.k;
 
-            // Stop any pending transition and hide overlay immediately
-            this.config.overlay
-                .transition()
-                .style('opacity', 1e-6);
+            // Event scale value (mouse wheel)
+            var scale = d3.event.transform.k;
 
-            this.config.visual.attr('transform', d3.event.transform);
+            // Use scale value from touch event
+            if (d3.event.sourceEvent
+                && (d3.event.sourceEvent.type === 'touchmove')
+                && d3.event.sourceEvent.scale
+            ) {
+                scale = d3.event.sourceEvent.scale;
+            }
+
+            this.config.visual.attr(
+                'transform',
+                'translate(' + d3.event.transform.x + ',' + d3.event.transform.y + ')scale(' + scale + ')'
+            );
         },
 
         /**
