@@ -58,6 +58,9 @@
             // Relative position offsets in percent (0 = inner radius, 100 = outer radius)
             positions: [70, 52, 25],
 
+            // Whether to hide empty segments of chart or not
+            hideEmptySegments: false,
+
             x: null,
 
             updateUrl: '',
@@ -571,11 +574,23 @@
          * @param {object} parent Parent element used to append the new path
          */
         appendArc: function (parent) {
+            var that = this;
+
             parent.append('g')
                 .attr('class', 'arc')
                 .append('path')
                 .attr('fill', function (d) {
+                    if (that.options.hideEmptySegments && (d.data.id === '')) {
+                        return 'transparent';
+                    }
                     return d.data.color;
+                })
+                .attr('stroke-width', '1px')
+                .attr('stroke', function (d) {
+                    if (that.options.hideEmptySegments && (d.data.id === '')) {
+                        return 'transparent';
+                    }
+                    return 'rgba(49, 50, 57, 0.15)';
                 })
                 .attr('d', this.createArcGenerator());
         },
@@ -743,7 +758,16 @@
 
             // Create path transition
             path.transition()
+                .attr('stroke', function (d) {
+                    if (that.options.hideEmptySegments && (d.data.id === '')) {
+                        return 'transparent';
+                    }
+                    return 'rgba(49, 50, 57, 0.15)';
+                })
                 .attr('fill', function (d) {
+                    if (that.options.hideEmptySegments && (d.data.id === '')) {
+                        return 'transparent';
+                    }
                     return d.data.color;
                 })
                 .duration(1000);

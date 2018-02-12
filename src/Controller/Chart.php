@@ -86,6 +86,13 @@ class Chart extends ChartController
     private $fontScale = 100;
 
     /**
+     * Whether to hide empty segments of chart or not.
+     *
+     * @var bool
+     */
+    private $hideEmptySegments = false;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -96,9 +103,10 @@ class Chart extends ChartController
         $defaultGenerations = $this->getTree()->getPreference('DEFAULT_PEDIGREE_GENERATIONS');
 
         // Extract the request parameters
-        $this->fanDegree   = Filter::getInteger('fanDegree', 180, 360, 210);
-        $this->generations = Filter::getInteger('generations', self::MIN_GENERATIONS, self::MAX_GENERATIONS, $defaultGenerations);
-        $this->fontScale   = Filter::getInteger('fontScale', 0, 200, 100);
+        $this->fanDegree         = Filter::getInteger('fanDegree', 180, 360, 210);
+        $this->generations       = Filter::getInteger('generations', self::MIN_GENERATIONS, self::MAX_GENERATIONS, $defaultGenerations);
+        $this->fontScale         = Filter::getInteger('fontScale', 0, 200, 100);
+        $this->hideEmptySegments = Filter::getBool('hideEmptySegments');
 
         // Create page title
         $title = $this->translate('Ancestral fan chart');
@@ -240,6 +248,16 @@ class Chart extends ChartController
     }
 
     /**
+     * Get the HTML for the "hideEmptySegments" checkbox element.
+     *
+     * @return string
+     */
+    private function getHideEmptySegmentsCheckbox()
+    {
+        return FunctionsEdit::twoStateCheckbox('hideEmptySegments', $this->hideEmptySegments);
+    }
+
+    /**
      * Get the HTML for the "fanDegree" selection form control element.
      *
      * @return string
@@ -359,6 +377,7 @@ class Chart extends ChartController
                 'defaultColor'      => $this->getColor(),
                 'fontScale'         => $this->fontScale,
                 'fontColor'         => $this->getChartFontColor(),
+                'hideEmptySegments' => $this->hideEmptySegments,
                 'updateUrl'         => $this->getUpdateUrl(),
                 'individualUrl'     => $this->getIndividualUrl(),
                 'data'              => $this->buildJsonTree($this->root),

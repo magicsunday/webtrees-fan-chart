@@ -22,17 +22,12 @@
     font-weight: bold;
 }
 
-#page-fan svg .arc path {
-    stroke: rgba(49, 50, 57, 0.15);
-    stroke-width: 1px;
-}
-
 #page-fan svg .person:hover .arc {
     opacity: 0.75;
 }
 
 #page-fan svg .person:hover .arc path {
-    stroke: rgba(49, 50, 57, 0.55);
+    stroke-opacity: 0.55;
 }
 
 #page-fan svg .label .chart-date {
