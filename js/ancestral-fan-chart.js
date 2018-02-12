@@ -137,6 +137,20 @@
             this.config.zoom.filter(function () {
                 // Allow "wheel" event only while control key is pressed
                 if (d3.event.type === 'wheel') {
+                    if (that.config.zoomLevel && d3.event.ctrlKey) {
+                        // Prevent zooming below lowest level
+                        if ((that.config.zoomLevel <= 0.5) && (d3.event.deltaY > 0)) {
+                            d3.event.preventDefault();
+                            return false;
+                        }
+
+                        // Prevent zooming above highest level
+                        if ((that.config.zoomLevel >= 5.0) && (d3.event.deltaY < 0)) {
+                            d3.event.preventDefault();
+                            return false;
+                        }
+                    }
+
                     return d3.event.ctrlKey;
                 }
 
@@ -158,9 +172,7 @@
                     d3.event.preventDefault();
                 })
                 .on('wheel', $.proxy(function () {
-                    d3.event.preventDefault();
-
-                    that.doShowTooltipOverlay('Verwende Strg+Scrollen zum Zoomen der Ansicht');
+                    that.doShowTooltipOverlay(this.options.labels.zoom);
                 }, this))
                 .on('click', $.proxy(this.doStopPropagation, this), true);
 
@@ -217,7 +229,7 @@
                 .on('end', function() {
                     that.config.overlay
                         .transition()
-                        .delay(1500)
+                        .delay(700)
                         .duration(800)
                         .style('opacity', 1e-6);
                 });
@@ -252,6 +264,8 @@
          * @private
          */
         doZoom: function () {
+            this.config.zoomLevel = d3.event.transform.k;
+
             // Stop any pending transition and hide overlay immediately
             this.config.overlay
                 .transition()
@@ -681,6 +695,8 @@
          * animated transition.
          */
         updateArcPath: function () {
+            var that = this;
+
             // Select all path elements and assign the data
             var path = d3.selectAll('g.arc')
                 .select('path')

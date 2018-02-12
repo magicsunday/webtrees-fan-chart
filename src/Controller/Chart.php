@@ -354,14 +354,18 @@ class Chart extends ChartController
         // Encode chart parameters to json string
         $chartParams = json_encode(
             array(
-                'fanDegree'     => $this->fanDegree,
-                'generations'   => $this->generations,
-                'defaultColor'  => $this->getColor(),
-                'fontScale'     => $this->fontScale,
-                'fontColor'     => $this->getChartFontColor(),
-                'updateUrl'     => $this->getUpdateUrl(),
-                'individualUrl' => $this->getIndividualUrl(),
-                'data'          => $this->buildJsonTree($this->root),
+                'fanDegree'         => $this->fanDegree,
+                'generations'       => $this->generations,
+                'defaultColor'      => $this->getColor(),
+                'fontScale'         => $this->fontScale,
+                'fontColor'         => $this->getChartFontColor(),
+                'updateUrl'         => $this->getUpdateUrl(),
+                'individualUrl'     => $this->getIndividualUrl(),
+                'data'              => $this->buildJsonTree($this->root),
+                'labels'            => array(
+                    'zoom' => $this->translate('Use Ctrl + scroll to zoom in the view'),
+                    'move' => $this->translate('Move the view with two fingers'),
+                ),
             )
         );
 
