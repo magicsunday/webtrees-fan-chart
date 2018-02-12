@@ -101,14 +101,13 @@ class Chart extends ChartController
         $this->fontScale   = Filter::getInteger('fontScale', 0, 200, 100);
 
         // Create page title
-        $title = 'Ancestral fan chart';
+        $title = $this->translate('Ancestral fan chart');
+
         if ($this->root && $this->root->canShowName()) {
-            $title = 'Ancestral fan chart of %s';
+            $title = $this->translate('Ancestral fan chart of %s', $this->root->getFullName());
         }
 
-        $this->setPageTitle(
-            $this->translate($title, $this->root->getFullName())
-        );
+        $this->setPageTitle($title);
     }
 
     /**
