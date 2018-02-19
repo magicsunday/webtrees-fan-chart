@@ -1,3 +1,5 @@
 .buildpath
 .project
 .settings/
+js/packages/node_modules/
+js/packages/d3.v4.custom.js

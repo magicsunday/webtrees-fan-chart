@@ -1,0 +1,19 @@
+{
+    "name": "d3.v4-custom",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "prepare": "rollup -c && uglifyjs d3.v4.custom.js -c -m -o d3.v4.custom.min.js"
+    },
+    "devDependencies": {
+        "d3-selection": "1",
+        "d3-scale": "2",
+        "d3-zoom": "1",
+        "d3-hierarchy": "1",
+        "d3-shape": "1",
+        "d3-request": "1",
+        "rollup": "0",
+        "rollup-plugin-node-resolve": "3",
+        "uglify-js": "3"
+    }
+}

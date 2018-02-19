@@ -22,3 +22,10 @@ If you are using ``git``, you could also clone the current master into your `web
 
 ## Usage
 At the charts menu, you will find a new link called `Ancestral fan chart`.
+
+## Development
+
+To build custom d3 version, run the following commands inside /js/packages
+
+    npm install
+    npm run prepare

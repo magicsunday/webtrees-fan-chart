@@ -73,9 +73,6 @@
          * @constructs ancestralFanChart
          */
         _create: function () {
-            // Check dependencies
-            this.checkDependencies();
-
             this.options.startPi = -(this.options.fanDegree / 360 * Math.PI);
             this.options.endPi = (this.options.fanDegree / 360 * Math.PI);
 
@@ -87,23 +84,6 @@
             this.initData(this.options.data);
             this.createArcElements();
             this.updateViewBox();
-        },
-
-        /**
-         * Check widget dependencies
-         *
-         * @returns {boolean}
-         * @private
-         */
-        checkDependencies: function () {
-            // Confirm d3 is available [check minimum version]
-            if (typeof d3 !== 'object' || !d3.hasOwnProperty('version')) {
-                console.error('d3 error: d3 is not available');
-                console.info(typeof d3);
-                return false;
-            }
-
-            return true;
         },
 
         /**
