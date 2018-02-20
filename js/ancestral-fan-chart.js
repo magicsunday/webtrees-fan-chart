@@ -134,8 +134,8 @@
                     return d3.event.ctrlKey;
                 }
 
-                // Allow "touchstart" event only with two fingers
-                if (!d3.event.button && (d3.event.type === 'touchstart')) {
+                // Allow "touchmove" event only with two fingers
+                if (!d3.event.button && (d3.event.type === 'touchmove')) {
                     return d3.event.touches.length === 2;
                 }
 
@@ -296,7 +296,7 @@
          * @private
          */
         doZoom: function () {
-            // Abort any action if only on finger is used
+            // Abort any action if only one finger is used on "touchmove" events
             if (d3.event.sourceEvent
                 && (d3.event.sourceEvent.type === 'touchmove')
                 && (d3.event.sourceEvent.touches.length < 2)
@@ -306,20 +306,9 @@
 
             this.config.zoomLevel = d3.event.transform.k;
 
-            // Event scale value (mouse wheel)
-            var scale = d3.event.transform.k;
-
-            // Use scale value from touch event
-            if (d3.event.sourceEvent
-                && (d3.event.sourceEvent.type === 'touchmove')
-                && d3.event.sourceEvent.scale
-            ) {
-                scale = d3.event.sourceEvent.scale;
-            }
-
             this.config.visual.attr(
                 'transform',
-                'translate(' + d3.event.transform.x + ',' + d3.event.transform.y + ')scale(' + scale + ')'
+                d3.event.transform
             );
         },
 
