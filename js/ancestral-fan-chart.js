@@ -50,7 +50,7 @@
             endPi: Math.PI,
 
             minHeight: 500,
-            padding: 5,
+            padding: 20,
 
             // Left/Right padding of text
             textPadding: 2,
