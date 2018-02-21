@@ -50,7 +50,7 @@
             endPi: Math.PI,
 
             minHeight: 500,
-            padding: 20,
+            padding: 10,
 
             // Left/Right padding of text
             textPadding: 2,
@@ -357,22 +357,30 @@
         },
 
         /**
-         * Update the viewBox attribute of the SVG element.
+         * Update/Calculate the viewBox attribute of the SVG element.
          */
         updateViewBox: function () {
+            // Get bounding boxes
             var svgBoundingBox    = this.config.visual.node().getBBox();
             var clientBoundingBox = this.config.parent.node().getBoundingClientRect();
 
             // View box should have at least the same width/height as the parent element
-            var width       = Math.max(clientBoundingBox.width, svgBoundingBox.width);
-            var height      = Math.max(clientBoundingBox.height, svgBoundingBox.height, this.options.minHeight);
+            var viewBoxWidth  = Math.max(clientBoundingBox.width, svgBoundingBox.width);
+            var viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height, this.options.minHeight);
 
-            var viewBoxLeft   = -Math.round((width / 2) + this.options.padding);
-            var viewBoxTop    = Math.round(svgBoundingBox.y - this.options.padding);
-            var viewBoxWidth  = Math.round(width + (this.options.padding * 2));
-            var viewBoxHeight = Math.round(height + (this.options.padding * 2));
+            // Calculate offset to center chart inside svg
+            var offsetX = (viewBoxWidth - svgBoundingBox.width) / 2;
+            var offsetY = (viewBoxHeight - svgBoundingBox.height) / 2;
 
-            // Set view box to actual width and height of svg
+            // Adjust view box dimensions by padding and offset
+            var viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - this.options.padding);
+            var viewBoxTop  = Math.ceil(svgBoundingBox.y - offsetY - this.options.padding);
+
+            // Final width/height of view box
+            viewBoxWidth  = Math.ceil(viewBoxWidth + (this.options.padding * 2));
+            viewBoxHeight = Math.ceil(viewBoxHeight + (this.options.padding * 2));
+
+            // Set view box attribute
             this.config.svg
                 .attr('viewBox', [
                     viewBoxLeft,
@@ -381,6 +389,7 @@
                     viewBoxHeight
                 ]);
 
+            // Adjust rectangle position
             this.config.svg
                 .select('rect')
                 .attr('x', viewBoxLeft)
