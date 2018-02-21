@@ -111,7 +111,7 @@
             var that = this;
 
             this.config.zoom = d3.zoom()
-                .scaleExtent([.5, 5])
+                .scaleExtent([0.5, 5.0])
                 .on('zoom', $.proxy(this.doZoom, this));
 
             this.config.zoom.filter(function () {
@@ -160,7 +160,7 @@
                     if (!d3.event.ctrlKey) {
                         that.showTooltipOverlay(this.options.labels.zoom, 300, function () {
                             that.hideTooltipOverlay(700, 800);
-                        })
+                        });
                     }
                 }, this))
                 .on('touchstart', $.proxy(function () {
@@ -245,7 +245,7 @@
                     if (callback) {
                         callback();
                     }
-                });;
+                });
         },
 
         /**
@@ -839,9 +839,9 @@
                     availableWidth = that.arcLength(d, posOffset);
                 }
 
-                var self = d3.select(this),
-                    textLength = self.node().getComputedTextLength(),
-                    text = self.text();
+                var self       = d3.select(this);
+                var textLength = self.node().getComputedTextLength();
+                var text       = self.text();
 
                 while ((textLength > (availableWidth - (that.options.textPadding * 2))) && (text.length > 0)) {
                     // Remove last char
