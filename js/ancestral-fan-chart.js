@@ -163,26 +163,18 @@
                         });
                     }
                 }, this))
-                .on('touchstart', $.proxy(function () {
-                    // Show tooltip if less than 2 fingers are used
-                    if (d3.event.touches.length < 2) {
-                        that.showTooltipOverlay(this.options.labels.move, 300);
-                    }
-                }, this))
                 .on('touchend', $.proxy(function () {
                     if (d3.event.touches.length < 2) {
                         that.hideTooltipOverlay(0, 800);
                     }
                 }, this))
                 .on('touchmove', $.proxy(function () {
-                    // Hide tooltip on more than 2 fingers
                     if (d3.event.touches.length >= 2) {
+                        // Hide tooltip on more than 2 fingers
                         that.hideTooltipOverlay();
                     } else {
                         // Show tooltip if less than 2 fingers are used
-                        if (d3.event.touches.length < 2) {
-                            that.showTooltipOverlay(this.options.labels.move);
-                        }
+                        that.showTooltipOverlay(this.options.labels.move);
                     }
                 }, this))
                 .on('click', $.proxy(this.doStopPropagation, this), true);
