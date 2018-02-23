@@ -21,6 +21,14 @@
     stroke-width: 1px;
 }
 
+#page-fan svg .person:hover .arc {
+    opacity: 0.75;
+}
+
+#page-fan svg .person:hover .arc path {
+    stroke: rgba(49, 50, 57, 0.55);
+}
+
 #page-fan svg .label .chart-date {
     fill: #7f7f7f;
     font-weight: normal;
