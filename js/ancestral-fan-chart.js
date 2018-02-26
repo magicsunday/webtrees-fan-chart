@@ -61,6 +61,9 @@
             // Whether to hide empty segments of chart or not
             hideEmptySegments: false,
 
+            // Duration of update animation if clicked on a person
+            updateDuration: 1500,
+
             x: null,
 
             updateUrl: '',
@@ -78,6 +81,9 @@
         _create: function () {
             this.options.startPi = -(this.options.fanDegree / 360 * Math.PI);
             this.options.endPi = (this.options.fanDegree / 360 * Math.PI);
+
+            // Helper method to create a ongoing id
+            this.options.id = (function () { var i = 1; return function () { return i++; }})();
 
             // Scale the angles linear across the circle
             this.options.x = d3.scaleLinear().range([this.options.startPi, this.options.endPi]);
@@ -98,7 +104,7 @@
          */
         createEmptyNode: function (generation) {
             return {
-                id: '',
+                xref: '',
                 name: '',
                 generation: generation,
                 color: this.options.defaultColor
@@ -490,109 +496,225 @@
         },
 
         /**
-         * Draws the borders of the single arcs.
+         * Add title element to the person element containing the full name of the individual.
+         *
+         * @param {object} person Parent element used to append the title too
+         * @param {object} d      D3 data object
+         *
+         * @return {void}
+         */
+        addTitleToPerson: function (person, d) {
+            person
+                .insert('title', ':first-child')
+                .text(function () {
+                    // Return name or remove empty title element
+                    return (d.data.xref !== '') ? d.data.name : this.remove();
+                });
+        },
+
+        /**
+         * Append arc element to the person element.
+         *
+         * @param {object} person Parent element used to append the arc too
+         * @param {object} d      D3 data object
+         *
+         * @param {void}
+         */
+        addArcToPerson: function (person, d) {
+            var that = this;
+
+            // Arc generator
+            var arcGen = d3.arc()
+                .startAngle(function () {
+                    return (d.depth === 0) ? 0 : that.startAngle(d);
+                })
+                .endAngle(function () {
+                    return (d.depth === 0) ? (Math.PI * 2) : that.endAngle(d);
+                })
+                .innerRadius(that.innerRadius(d))
+                .outerRadius(that.outerRadius(d));
+
+            // Append arc
+            person.append('g')
+                .attr('class', 'arc')
+                .append('path')
+                .style('fill', function () {
+                    return d.data.color;
+                })
+                .style('stroke-width', '1px')
+                .style('stroke', function () {
+                    return 'rgba(49, 50, 57, 0.15)';
+                })
+                .attr('d', arcGen);
+        },
+
+        /**
+         * Append labels (initial hidden).
+         *
+         * @param {object} parent Parent element used to append the label element too
+         *
+         * @param {object} Newly added label element
+         */
+        addLabelToPerson: function (parent) {
+            return parent
+                .append('g')
+                .attr('class', 'label')
+                .style('fill', this.options.fontColor);
+        },
+
+        /**
+         * Add "text" element to given parent element.
+         *
+         * @param {object} parent Parent element used to append the "text" element
+         *
+         * @param {object} Newly added label element
+         */
+        appendTextToLabel: function (parent, d) {
+            return parent
+                .append('text')
+                .attr('dominant-baseline', 'middle')
+                .style('font-size', this.getFontSize(d));
+        },
+
+        /**
+         * Append "textPath" element.
+         *
+         * @param {object} parent Parent element used to append the "textPath" element
+         * @param {string} refId  Id of reference element
+         *
+         * @return {object} D3 textPath object
+         */
+        appendTextPath: function (parent, refId) {
+            return parent.append('textPath')
+                .attr('xlink:href', function () {
+                    return '#' + refId;
+                })
+                .attr('startOffset', '25%');
+        },
+
+        /**
+         * Append the arc paths to the label element.
+         *
+         * @param {object} label Label element used to append the arc path
+         * @param {object} d     D3 data object
+         *
+         * @param {void}
+         */
+        addArcPathToLabel: function (label, d) {
+            var that = this;
+
+            // Inner labels
+            if (this.isInnerLabel(d)) {
+                var text     = this.appendTextToLabel(label, d);
+                var timeSpan = this.getTimeSpan(d);
+
+                // Create a path for each line of text as mobile devices
+                // won't display <tspan> elements in the right position
+                var path1 = this.appendPathToLabel(label, 0, d);
+                var path2 = this.appendPathToLabel(label, 1, d);
+
+                this.appendTextPath(text, path1.attr('id'))
+                    .text(this.getFirstNames(d))
+                    .each(this.truncate(d, 0));
+
+                this.appendTextPath(text, path2.attr('id'))
+                    .text(this.getLastName(d))
+                    .each(this.truncate(d, 1));
+
+                if (timeSpan) {
+                    var path3 = this.appendPathToLabel(label, 2, d);
+
+                    this.appendTextPath(text, path3.attr('id'))
+                        .attr('class', 'chart-date')
+                        .text(timeSpan)
+                        .each(this.truncate(d, 2));
+                }
+
+            // Outer labels
+            } else {
+                var name     = d.data.name;
+                var timeSpan = that.getTimeSpan(d);
+
+                // Return first name for inner circles
+                if (d.depth < 7) {
+                    name = that.getFirstNames(d);
+                }
+
+                // Create the text elements for first name, last name and
+                // the birth/death dates
+                that.appendOuterArcText(d, label, name);
+
+                // The outer most circles show the name and do not distinguish between first name, last name and dates
+                if (d.depth < 7) {
+                    // Add last name
+                    that.appendOuterArcText(d, label, that.getLastName(d));
+
+                    // Add dates
+                    if ((d.depth < 6) && timeSpan) {
+                        that.appendOuterArcText(d, label, timeSpan, 'chart-date');
+                    }
+                }
+
+                // Rotate outer labels in right position
+                that.transformText(label, d);
+            }
+        },
+
+        addPersonData: function (person, d) {
+            if (!this.options.hideEmptySegments || (d.data.xref !== '')) {
+                this.addArcToPerson(person, d);
+            }
+
+            if (d.data.xref !== '') {
+                this.addTitleToPerson(person, d);
+
+                // Append labels (initial hidden)
+                var label = this.addLabelToPerson(person);
+
+                this.addArcPathToLabel(label, d);
+            }
+        },
+
+        /**
+         * Create the arc elements for each individual in the data list.
+         *
+         * @return {void}
          */
         createArcElements: function () {
-            var personGroup = this.config.visual
+            var that = this;
+
+            this.config.visual
                 .selectAll('g.person')
                 .data(this.config.nodes)
                 .enter()
-                .append('g')
-                .attr('class', 'person');
+                .each(function (entry) {
+                    var person = that.config.visual
+                        .append('g')
+                        .attr('class', 'person')
+                        .attr('id', 'person-' + that.options.id())
+                        .on('click', null);
 
-            this.bindClickEventListener();
-            this.appendTitle(personGroup);
-            this.appendArc(personGroup);
-            this.appendLabels(personGroup);
+                    that.addPersonData(person, entry);
+                });
 
-            // Show labels
-            personGroup.selectAll('g.label')
-                .attr('opacity', 1);
+            that.bindClickEventListener();
         },
 
         /**
          * This method bind the "click" event listeners to a "person" element.
          */
         bindClickEventListener: function () {
-            // Remove any existing listener
-            this.config.visual
-                .selectAll('g.person')
-                .style('cursor', 'grab')
-                .on('click', null);
-
             var personGroup = this.config.visual
                 .selectAll('g.person')
                 .data(this.config.nodes)
                 .filter(function (d) {
-                    return (d.data.id !== '');
+                    return (d.data.xref !== '');
                 })
-                .style('cursor', 'pointer');
+                .classed('clickable', true);
 
             // Trigger method on click
             personGroup
                 .on('click', $.proxy(this.personClick, this));
-        },
-
-        /**
-         * Append a title element containing the full name of the individual
-         * to the person group.
-         *
-         * @param {object} parent Parent element used to append the title
-         */
-        appendTitle: function (parent) {
-            // Add title element containing the full name of the individual
-            parent.insert('title', ':first-child')
-                .data(this.config.nodes)
-                .text(function (d) {
-                    // Return name or remove empty element
-                    return (d.data.id !== '') ? d.data.name : this.remove();
-                });
-        },
-
-        /**
-         * Create an arc generator.
-         *
-         * @return {object}
-         */
-        createArcGenerator: function () {
-            var that = this;
-
-            return d3.arc()
-                .startAngle(function (d) {
-                    return (d.depth === 0) ? 0 : that.startAngle(d);
-                })
-                .endAngle(function (d) {
-                    return (d.depth === 0) ? (Math.PI * 2) : that.endAngle(d);
-                })
-                .innerRadius(this.innerRadius)
-                .outerRadius(this.outerRadius);
-        },
-
-        /**
-         * Append a path element using the given arc generator.
-         *
-         * @param {object} parent Parent element used to append the new path
-         */
-        appendArc: function (parent) {
-            var that = this;
-
-            parent.append('g')
-                .attr('class', 'arc')
-                .append('path')
-                .attr('fill', function (d) {
-                    if (that.options.hideEmptySegments && (d.data.id === '')) {
-                        return 'transparent';
-                    }
-                    return d.data.color;
-                })
-                .attr('stroke-width', '1px')
-                .attr('stroke', function (d) {
-                    if (that.options.hideEmptySegments && (d.data.id === '')) {
-                        return 'transparent';
-                    }
-                    return 'rgba(49, 50, 57, 0.15)';
-                })
-                .attr('d', this.createArcGenerator());
         },
 
         /**
@@ -610,98 +732,6 @@
         },
 
         /**
-         * Append the labels for an arc.
-         *
-         * @param {object} parent Parent element used to append the labels
-         */
-        appendLabels: function (parent) {
-            var that = this;
-
-            var group = parent
-                .data(this.config.nodes)
-                .filter(function (d) {
-                    // Do not add emtpy elements
-                    return (d.data.id !== '');
-                })
-                .append('g')
-                .style('fill', this.options.fontColor)
-                .attr('class', 'label');
-
-            // Inner labels (initial hidden)
-            var innerLabels = group
-                .filter(function (d) {
-                    return that.isInnerLabel(d);
-                })
-                .attr('opacity', 0);
-
-            innerLabels.each(function (d) {
-                var label    = d3.select(this);
-                var timeSpan = that.getTimeSpan(d);
-
-                // Create a path for each line of text as mobile devices
-                // won't display <tspan> elements in the right position
-                that.appendArcPath(label, 0);
-                that.appendArcPath(label, 1);
-
-                if (timeSpan) {
-                    that.appendArcPath(label, 2);
-                }
-
-                // Append text element
-                var text = label
-                    .append('text')
-                    .attr('dominant-baseline', 'middle')
-                    .style('font-size', function (d) {
-                        return that.getFontSize(d);
-                    })
-                    .style('fill', that.options.fontColor);
-
-                // Append textPath elements along to create paths
-                that.appendInnerArcTextPath(text, 0, that.getFirstNames(d));
-                that.appendInnerArcTextPath(text, 1, that.getLastName(d));
-
-                if (timeSpan) {
-                    that.appendInnerArcTextPath(text, 2, timeSpan, 'chart-date');
-                }
-            });
-
-            // Outer labels (initial hidden)
-            var outerLabels = group
-                .filter(function (d) {
-                    return !that.isInnerLabel(d);
-                })
-                .attr('opacity', 0);
-
-            outerLabels.each(function (d) {
-                var label    = d3.select(this);
-                var name     = d.data.name;
-                var timeSpan = that.getTimeSpan(d);
-
-                // Return first name for inner circles
-                if (d.depth < 7) {
-                    name = that.getFirstNames(d);
-                }
-
-                // Create the text elements for first name, last name and
-                // the birth/death dates
-                that.appendOuterArcText(label, name);
-
-                // Outer circles only show the names
-                if (d.depth < 7) {
-                    // Add last name
-                    that.appendOuterArcText(label, that.getLastName(d));
-
-                    // Add dates
-                    if ((d.depth < 6) && timeSpan) {
-                        that.appendOuterArcText(label, timeSpan, 'chart-date');
-                    }
-                }
-            });
-
-            this.transformText(outerLabels);
-        },
-
-        /**
          * Method triggers either the "update" or "individual" method on the click on an person.
          *
          * @param {object} d D3 data object
@@ -712,6 +742,25 @@
         },
 
         /**
+         * Helper method to execute callback method after all transitions are done
+         * of a selection.
+         *
+         * @param {object}   transition D3 transition object
+         * @param {function} callback   Callback method
+         */
+        endall: function (transition, callback) {
+            var n = 0;
+
+            transition
+                .on('start', function() { ++n; })
+                .on('end', function() {
+                    if (!--n) {
+                        callback.apply(transition);
+                    }
+                });
+        },
+
+        /**
          * Update the chart with data loaded from AJAX.
          *
          * @param {object} d D3 data object
@@ -719,96 +768,60 @@
         update: function (d) {
             var that = this;
 
+            that.config.visual
+                .selectAll('g.person')
+                .on('click', null);
+
             d3.json(
-                this.options.updateUrl + d.data.id,
+                this.options.updateUrl + d.data.xref,
                 function (data) {
                     // Initialize the new loaded data
                     that.initData(data);
 
-                    // Update the click event listeners
-                    that.bindClickEventListener();
+                    // Clone all elements (only the container)
+                    that.config.visual
+                        .selectAll('g.person')
+                        .clone()
+                        .classed('clickable', false)
+                        .classed('new', true)
+                        .style('opacity', 0);
 
-                    var personGroup = that.config.visual
-                        .selectAll('g.person');
+                    that.config.visual
+                        .selectAll('g.person.new')
+                        .data(that.config.nodes)
+                        .each(function (entry) {
+                            that.addPersonData(d3.select(this), entry);
+                        });
 
-                    // Update the title
-                    personGroup.select('title')
-                        .remove();
+                    // Fade out all old elements
+                    that.config.visual
+                        .selectAll('g.person:not(.new)')
+                        .transition()
+                        .duration(that.options.updateDuration)
+                        .style('opacity', 0)
+                        .call(that.endall, function () {
+                            that.config.visual
+                                .selectAll('g.person:not(.new)')
+                                .remove();
+                        });
 
-                    that.appendTitle(personGroup);
+                    // Fade out all new elements
+                    that.config.visual
+                        .selectAll('g.person.new')
+                        .transition()
+                        .duration(that.options.updateDuration)
+                        .style('opacity', 1)
+                        .call(that.endall, function () {
+                            that.config.visual
+                                .selectAll('g.person.new')
+                                .classed('new', false)
+                                .attr('style', null);
 
-                    // Update arc and labels
-                    that.updateArcPath();
-                    that.updateArcLabel();
+                            // Add click handler after all transitions are done
+                            that.bindClickEventListener();
+                        });
                 }
             );
-        },
-
-        /**
-         * Method performs and update of the path values with an
-         * animated transition.
-         */
-        updateArcPath: function () {
-            var that = this;
-
-            // Select all path elements and assign the data
-            var path = d3.selectAll('g.arc')
-                .select('path')
-                .data(this.config.nodes);
-
-            // Create path transition
-            path.transition()
-                .attr('stroke', function (d) {
-                    if (that.options.hideEmptySegments && (d.data.id === '')) {
-                        return 'transparent';
-                    }
-                    return 'rgba(49, 50, 57, 0.15)';
-                })
-                .attr('fill', function (d) {
-                    if (that.options.hideEmptySegments && (d.data.id === '')) {
-                        return 'transparent';
-                    }
-                    return d.data.color;
-                })
-                .duration(1000);
-        },
-
-        /**
-         * Method performs and update of the path values with an
-         * animated transition.
-         */
-        updateArcLabel: function () {
-            var that = this;
-
-            // Active transition counter
-            var count = 0;
-
-            // Fade out existing labels
-            d3.selectAll('g.label')
-                .transition()
-                .duration(500)
-                .attr('opacity', 0)
-                .on('start', function () {
-                    count += 1;
-                })
-                .on('end', function () {
-                    count -= 1;
-
-                    // Wait till all transitions finished
-                    if (count === 0) {
-                        // Remove all label groups once they are faded out
-                        d3.selectAll('g.label').remove();
-
-                        // Append new labels
-                        that.appendLabels(d3.selectAll('g.person'));
-
-                        // Fade in
-                        d3.selectAll('g.label')
-                            .transition()
-                            .duration(500)
-                            .attr('opacity', 1);
-                    }
-                });
         },
 
         /**
@@ -817,7 +830,7 @@
          * @param {object} d D3 data object
          */
         individual: function (d) {
-            window.location = this.options.individualUrl + d.data.id;
+            window.location = this.options.individualUrl + d.data.xref;
         },
 
         /**
@@ -838,23 +851,17 @@
          * Truncates the text of the current element depending on its depth
          * in the chart.
          *
-         * @param {int} index Index position of element in parent container. Required to create a unique path id.
+         * @param {object} d     D3 data object
+         * @param {int}    index Index position of element in parent container.
          *
          * @returns {string} Truncated text
          */
-        truncate: function (index) {
-            var that = this;
+        truncate: function (d, index) {
+            var that           = this;
+            var availableWidth = this.getAvailableWidth(d, index);
 
-            return function (d) {
+            return function () {
                 // Depending on the depth of an entry in the chart the available width differs
-                var availableWidth = 110;
-                var posOffset      = that.getTextOffset(index || 1, d);
-
-                // Calc length of the arc
-                if (d.depth >= 1 && d.depth < 5) {
-                    availableWidth = that.arcLength(d, posOffset);
-                }
-
                 var self       = d3.select(this);
                 var textLength = self.node().getComputedTextLength();
                 var text       = self.text();
@@ -870,6 +877,25 @@
                         .getComputedTextLength();
                 }
             };
+        },
+
+        /**
+         * Calculate the available text width. Depending on the depth of an entry in
+         * the chart the available width differs.
+         *
+         * @param {object} d     D3 data object
+         * @param {int}    index Index position of element in parent container.
+         *
+         * @returns {int} Calculated available width
+         */
+        getAvailableWidth: function (d, index) {
+            // Calc length of the arc
+            if (d.depth >= 1 && d.depth < 5) {
+                return this.arcLength(d, this.getTextOffset(index || 1, d));
+            }
+
+            // Depending on the depth of an entry in the chart the available width differs
+            return 110;
         },
 
         /**
@@ -951,56 +977,57 @@
         /**
          * Append a path element to the given parent group element.
          *
-         * @param {object} parent   Parent container element, D3 group element
-         * @param {int}    index    Index position of element in parent container. Required to create a unique path id.
+         * @param {object} label Parent container element, D3 group element
+         * @param {int}    index Index position of element in parent container. Required to create a unique path id.
+         * @param {object} d     D3 data object
+         *
+         * @return {object} D3 path object
          */
-        appendArcPath: function (parent, index) {
-            var that = this;
+        appendPathToLabel: function (label, index, d) {
+            var that     = this;
+            var personId = d3.select(label.node().parentNode).attr('id');
 
             // Create arc generator for path segments
             var arcGenerator = d3.arc()
-                .startAngle(function (d) {
+                .startAngle(function () {
                     return that.isPositionFlipped(d)
                         ? that.endAngle(d)
                         : that.startAngle(d);
                 })
-                .endAngle(function (d) {
+                .endAngle(function () {
                     return that.isPositionFlipped(d)
                         ? that.startAngle(d)
                         : that.endAngle(d);
                 })
-                .innerRadius(function (d) {
+                .innerRadius(function () {
                     return that.relativeRadius(d, that.getTextOffset(index, d));
                 })
-                .outerRadius(function (d) {
+                .outerRadius(function () {
                     return that.relativeRadius(d, that.getTextOffset(index, d));
                 });
 
             // Append a path so we could use it to write the label along it
-            parent.append('path')
-                .attr('d', arcGenerator)
-                .attr('id', function (d) {
-                    return 'label-' + d.data.id + '-' + index;
-                });
+            return label.append('path')
+                .attr('id', personId + '-' + index)
+                .attr('d', arcGenerator);
         },
 
         /**
-         * Append textPath element with label along the referenced path.
+         * Append "textPath" element.
          *
-         * @param {object} parent        Parent container element, D3 text element
-         * @param {int}    index         Index position of element in parent container
-         * @param {string} label         Label to display
-         * @param {string} textPathClass Optional class to set to the D3 textPath element
+         * @param {object} parent  Parent element used to append the "textPath" element
+         * @param {string} refId  Id of reference element
+         * @param {string} text   Text to display
+         *
+         * @return {object} D3 textPath object
          */
-        appendInnerArcTextPath: function (parent, index, label, textPathClass) {
-            parent.append('textPath')
-                .attr('class', textPathClass || null)
-                .attr('startOffset', '25%')
-                .attr('xlink:href', function (d) {
-                    return '#label-' + d.data.id + '-' + index;
+        appendTextPathToText: function (parent, refId, text) {
+            return parent.append('textPath')
+                .attr('xlink:href', function () {
+                    return '#' + refId;
                 })
-                .text(label)
-                .each(this.truncate(index));
+                .attr('startOffset', '25%')
+                .text(text);
         },
 
         /**
@@ -1012,17 +1039,17 @@
          *
          * @return {object} D3 text object
          */
-        appendOuterArcText: function (group, label, textClass) {
+        appendOuterArcText: function (d, group, label, textClass) {
             var that = this;
 
             group.append('text')
                 .attr('class', textClass || null)
                 .attr('dominant-baseline', 'middle')
-                .style('font-size', function (d) {
+                .style('font-size', function () {
                     return that.getFontSize(d);
                 })
                 .text(label)
-                .each(this.truncate(5));
+                .each(this.truncate(d));
         },
 
         /**
@@ -1030,71 +1057,71 @@
          * depending on its offset, so that they are equally positioned inside
          * the arc.
          *
-         * @param {object} group D3 group object
+         * @param {object} label D3 label group object
+         * @param {object} d     D3 data object
+         *
+         * @return {void}
          */
-        transformText: function (group) {
-            var that = this;
+        transformText: function (label, d) {
+            var that          = this;
+            var textElements  = label.selectAll('text');
+            var countElements = textElements.size();
+            var offset        = 0;
 
-            group.each(function () {
-                var textElements = d3.select(this).selectAll('text');
-                var countElements = textElements.size();
-                var offset = 0;
+            textElements.each(function (ignore, i) {
+                if (countElements === 1) {
+                    offset = -0.025;
+                }
 
-                textElements.each(function (d, i) {
-                    if (countElements === 1) {
-                        offset = -0.025;
-                    }
+                if (countElements === 2) {
+                    offset = 0.5;
+                }
 
-                    if (countElements === 2) {
-                        offset = 0.5;
-                    }
+                if (countElements === 3) {
+                    offset = 1.25;
+                }
 
-                    if (countElements === 3) {
-                        offset = 1.25;
-                    }
+                var mapIndexToOffset = d3.scaleLinear()
+                    .domain([0, countElements - 1])
+                    .range([-offset, offset]);
 
-                    var mapIndexToOffset = d3.scaleLinear()
-                        .domain([0, countElements - 1])
-                        .range([-offset, offset]);
+                // Slight increase in the y axis' value so the texts may not overlay
+                var offsetRotate = (i <= 1 ? 1.25 : 1.75);
 
-                    // Slight increase in the y axis' value so the texts may not overlay
-                    var offsetRotate = (i <= 1 ? 1.25 : 1.75);
+                if (d.depth === 0) {
+                    offsetRotate = 1.00;
+                }
 
-                    if (d.depth === 0) {
-                        offsetRotate = 1.00;
-                    }
+                if (d.depth === 6) {
+                    offsetRotate = 1.00;
+                }
 
-                    if (d.depth === 6) {
-                        offsetRotate = 1.00;
-                    }
+                if (d.depth === 7) {
+                    offsetRotate = 0.75;
+                }
 
-                    if (d.depth === 7) {
-                        offsetRotate = 0.75;
-                    }
+                if (d.depth === 8) {
+                    offsetRotate = 0.5;
+                }
 
-                    if (d.depth === 8) {
-                        offsetRotate = 0.5;
-                    }
+                offsetRotate *= that.options.fontScale / 100;
 
-                    offsetRotate *= that.options.fontScale / 100;
+                var text = d3.select(this);
 
-                    var text = d3.select(this);
+                // Name of center person should not be rotated in any way
+                if (d.depth === 0) {
+                    text.attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
+                } else {
+                    text.attr('transform', function () {
+                        var dx     = d.x1 - d.x0;
+                        var angle  = that.options.x(d.x0 + (dx / 2)) * 180 / Math.PI;
+                        var rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > 0 ? -1 : 1)) - 90;
 
-                    // Name of center person should not be rotated in any way
-                    if (d.depth === 0) {
-                        text.attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
-                    } else {
-                        text.attr('transform', function (d) {
-                            var dx     = d.x1 - d.x0;
-                            var angle  = that.options.x(d.x0 + (dx / 2)) * 180 / Math.PI;
-                            var rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > 0 ? -1 : 1)) - 90;
-
-                            return 'rotate(' + rotate + ') '
-                                + 'translate(' + that.centerRadius(d) + ') '
-                                + 'rotate(' + (angle > 0 ? 0 : 180) + ')';
-                        });
-                    }
-                });
+                        return 'rotate(' + rotate + ') '
+                            + 'translate(' + that.centerRadius(d) + ') '
+                            + 'rotate(' + (angle > 0 ? 0 : 180) + ')';
+                    });
+                }
             });
         }
     });

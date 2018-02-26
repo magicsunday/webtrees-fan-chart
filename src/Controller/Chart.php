@@ -184,7 +184,7 @@ class Chart extends ChartController
     private function getIndividualData(Individual $person, $generation)
     {
         return array(
-            'id'         => $person->getXref(),
+            'xref'       => $person->getXref(),
             'generation' => $generation,
             'name'       => Filter::unescapeHtml($person->getFullName()),
             'sex'        => $person->getSex(),

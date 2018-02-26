@@ -22,6 +22,10 @@
     font-weight: bold;
 }
 
+#page-fan svg .person.clickable {
+    cursor: pointer;
+}
+
 #page-fan svg .person:hover .arc {
     opacity: 0.75;
 }
