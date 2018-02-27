@@ -10,6 +10,12 @@
     display: block;
     margin: auto;
     cursor: grab;
+    cursor: -webkit-grab;
+}
+
+#page-fan svg:active {
+    cursor: grabbing;
+    cursor: -webkit-grabbing;
 }
 
 #page-fan svg text {
