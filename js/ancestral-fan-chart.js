@@ -62,7 +62,7 @@
             hideEmptySegments: false,
 
             // Duration of update animation if clicked on a person
-            updateDuration: 1500,
+            updateDuration: 1250,
 
             x: null,
 
@@ -158,6 +158,9 @@
             // Add SVG element
             this.config.svg = this.config.parent
                 .append('svg')
+                .attr('version', '1.1')
+                .attr('xmlns', 'http://www.w3.org/2000/svg')
+                .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
                 .attr('width', '100%')
                 .attr('height', '100%')
                 .attr('text-rendering', 'geometricPrecision')
@@ -188,11 +191,44 @@
                 }, this))
                 .on('click', $.proxy(this.doStopPropagation, this), true);
 
+            // filter stuff
+            var defs = this.config.svg
+                .append('defs');
+
+            // append filter element
+            var filter = defs.append('filter')
+                .attr('id', 'dropshadow');
+
+            // append gaussian blur to filter
+            filter.append('feGaussianBlur')
+                .attr('in', 'SourceAlpha')
+                .attr('stdDeviation', 3)
+                .attr('result', 'blur');
+
+            // append offset filter to result of gaussion blur filter
+            filter.append('feOffset')
+                .attr( 'in', 'blur' )
+                .attr('dx', 2)
+                .attr('dy', 2)
+                .attr('result', 'offsetBlur');
+
+            // merge result with original image
+            var feMerge = filter.append('feMerge');
+
+            // first layer result of blur and offset
+            feMerge.append('feMergeNode')
+                .attr('in', 'offsetBlur');
+
+            // original image on top
+            feMerge.append('feMergeNode')
+                .attr('in', 'SourceGraphic');
+            // end filter stuff
+
             // Add an overlay with tooltip
             this.config.overlay = this.config.parent
                 .append('div')
                 .attr('class', 'overlay')
-                .style('opacity', 1e-6);
+                .style('opacity', 0);
 
             // Add rectangle element
             this.config.svg
@@ -212,7 +248,7 @@
             // Add group
             this.config.visual = this.config.svg
                 .append('g')
-                .attr('class', 'group');
+                .attr('filter', 'url(#dropshadow)');
 
             this.config.svg.call(this.config.zoom);
         },
@@ -265,7 +301,7 @@
                 .transition()
                 .delay(delay)
                 .duration(duration)
-                .style('opacity', 1e-6);
+                .style('opacity', 0);
         },
 
         /**
@@ -311,6 +347,13 @@
                 'transform',
                 d3.event.transform
             );
+
+            this.config.svg
+                .select('g.colorGroup')
+                .attr(
+                    'transform',
+                    d3.event.transform
+                );
         },
 
         /**
@@ -535,17 +578,33 @@
                 .outerRadius(that.outerRadius(d));
 
             // Append arc
-            person.append('g')
-                .attr('class', 'arc')
+            var arcGroup = person.append('g')
+                .attr('class', 'arc');
+
+            var path = arcGroup
                 .append('path')
                 .style('fill', function () {
-                    return d.data.color;
+                    return 'rgb(245, 245, 245)';
                 })
-                .style('stroke-width', '1px')
+                .style('stroke-width', function () {
+                    return '2px';
+                    return (d.depth >= 9) ? '1px' : '5px';
+                })
                 .style('stroke', function () {
-                    return 'rgba(49, 50, 57, 0.15)';
+                    return 'rgb(225, 225, 225)';
                 })
                 .attr('d', arcGen);
+
+//console.log(that.startAngle(d) * 180 / Math.PI * 2);
+
+//            var dg = that.startAngle(d) * 180 / Math.PI * 2;
+
+//            if (dg === 210.0 || dg === -210.0) {
+//                path
+//                    .style('stroke-dasharray', function () {
+//                        return '0, ' + ((that.endAngle(d) - that.startAngle(d)) * that.outerRadius(d)) + ', ' + (that.outerRadius(d) - that.innerRadius(d)) + ', 1000'
+//                    });
+//            }
         },
 
         /**
@@ -656,7 +715,7 @@
                 }
 
                 // Rotate outer labels in right position
-                that.transformText(label, d);
+                that.transformOuterText(label, d);
             }
         },
 
@@ -673,6 +732,59 @@
 
                 this.addArcPathToLabel(label, d);
             }
+
+            // Hovering
+            person
+                .on('mouseover', function () {
+                    d3.select(this).classed('hover', true);
+                })
+                .on('mouseout', function () {
+                    d3.select(this).classed('hover', false);
+                });
+        },
+
+        /**
+         * Adds an color overlay for each arc.
+         *
+         * @return {object} Color group object
+         */
+        addColorGroup: function () {
+            var that = this;
+
+            // Arc generator
+            var arcGen = d3.arc()
+                .startAngle(function (d) {
+                    return (d.depth === 0) ? 0 : that.startAngle(d);
+                })
+                .endAngle(function (d) {
+                    return (d.depth === 0) ? (Math.PI * 2) : that.endAngle(d);
+                })
+                .innerRadius(function (d) {
+                    return that.outerRadius(d) - 3;
+                })
+                .outerRadius(function (d) {
+                    return that.outerRadius(d) + 2;
+                });
+
+            var colorGroup = this.config.svg
+                .append('g')
+                .attr('class', 'colorGroup')
+                .style('opacity', 0);
+
+            colorGroup
+                .selectAll('g.colorGroup')
+                .data(this.config.nodes)
+                .enter()
+                .filter(function (d) {
+                    return (d.data.xref !== '');
+                })
+                .append('path')
+                .style('fill', function (d) {
+                    return d.data.color;
+                })
+                .attr('d', arcGen);
+
+            return colorGroup;
         },
 
         /**
@@ -697,7 +809,9 @@
                     that.addPersonData(person, entry);
                 });
 
-            that.bindClickEventListener();
+            this.bindClickEventListener();
+            this.addColorGroup()
+                .style('opacity', 1);
         },
 
         /**
@@ -710,7 +824,7 @@
                 .filter(function (d) {
                     return (d.data.xref !== '');
                 })
-                .classed('clickable', true);
+                .classed('available', true);
 
             // Trigger method on click
             personGroup
@@ -768,7 +882,7 @@
         update: function (d) {
             var that = this;
 
-            that.config.visual
+            that.config.svg
                 .selectAll('g.person')
                 .on('click', null);
 
@@ -779,42 +893,76 @@
                     that.initData(data);
 
                     // Clone all elements (only the container)
-                    that.config.visual
+                    that.config.svg
                         .selectAll('g.person')
                         .clone()
-                        .classed('clickable', false)
                         .classed('new', true)
                         .style('opacity', 0);
 
-                    that.config.visual
+                    // Flag all old elements which are subject to change
+                    that.config.svg
+                        .selectAll('g.person:not(.new)')
+                        .data(that.config.nodes)
+                        .each(function (entry) {
+                            var person = d3.select(this);
+
+                            person.classed(
+                                'changed',
+                                person.classed('available') | (entry.data.xref !== '')
+                            );
+                        });
+
+                    // Flag all new elements which are subject to change
+                    that.config.svg
                         .selectAll('g.person.new')
                         .data(that.config.nodes)
                         .each(function (entry) {
-                            that.addPersonData(d3.select(this), entry);
+                            var person = d3.select(this);
+
+                            person.classed(
+                                'changed',
+                                person.classed('available') | (entry.data.xref !== '')
+                            );
+
+                            person.classed(
+                                'available',
+                                (entry.data.xref !== '')
+                            );
+
+                            that.addPersonData(person, entry);
                         });
 
-                    // Fade out all old elements
-                    that.config.visual
-                        .selectAll('g.person:not(.new)')
+                    // Remove all cloned but not changed elements
+                    that.config.svg
+                        .selectAll('g.person.new:not(.changed)')
+                        .remove();
+
+                    that.addColorGroup()
+                        .classed('new', true);
+
+                    // Fade out all old elements which will change
+                    that.config.svg
+                        .selectAll('g.person:not(.new).changed, g.colorGroup:not(.new)')
                         .transition()
                         .duration(that.options.updateDuration)
                         .style('opacity', 0)
                         .call(that.endall, function () {
-                            that.config.visual
-                                .selectAll('g.person:not(.new)')
+                            that.config.svg
+                                .selectAll('g.person:not(.new).changed, g.colorGroup:not(.new)')
                                 .remove();
                         });
 
-                    // Fade out all new elements
-                    that.config.visual
-                        .selectAll('g.person.new')
+                    // Fade in all new changed elements
+                    that.config.svg
+                        .selectAll('g.person.new.changed, g.colorGroup.new')
                         .transition()
                         .duration(that.options.updateDuration)
                         .style('opacity', 1)
                         .call(that.endall, function () {
-                            that.config.visual
-                                .selectAll('g.person.new')
+                            that.config.svg
+                                .selectAll('g.person.new.changed, g.colorGroup.new')
                                 .classed('new', false)
+                                .classed('changed', false)
                                 .attr('style', null);
 
                             // Add click handler after all transitions are done
@@ -1062,24 +1210,14 @@
          *
          * @return {void}
          */
-        transformText: function (label, d) {
+        transformOuterText: function (label, d) {
             var that          = this;
             var textElements  = label.selectAll('text');
             var countElements = textElements.size();
-            var offset        = 0;
 
             textElements.each(function (ignore, i) {
-                if (countElements === 1) {
-                    offset = -0.025;
-                }
-
-                if (countElements === 2) {
-                    offset = 0.5;
-                }
-
-                if (countElements === 3) {
-                    offset = 1.25;
-                }
+                var offsets = [0, -0.025, 0.5, 1.15];
+                var offset  = offsets[countElements];
 
                 var mapIndexToOffset = d3.scaleLinear()
                     .domain([0, countElements - 1])
@@ -1089,11 +1227,11 @@
                 var offsetRotate = (i <= 1 ? 1.25 : 1.75);
 
                 if (d.depth === 0) {
-                    offsetRotate = 1.00;
+                    offsetRotate = 1.0;
                 }
 
                 if (d.depth === 6) {
-                    offsetRotate = 1.00;
+                    offsetRotate = 1.0;
                 }
 
                 if (d.depth === 7) {

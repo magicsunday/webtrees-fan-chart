@@ -1,5 +1,8 @@
 #page-fan #fan_chart {
     position: relative;
+/*
+    font-family: Verdana,sans-serif;
+*/
 }
 
 #page-fan table td {
@@ -22,16 +25,28 @@
     font-weight: bold;
 }
 
-#page-fan svg .person.clickable {
+#page-fan svg .person.available {
     cursor: pointer;
 }
 
-#page-fan svg .person:hover .arc {
-    opacity: 0.75;
+#page-fan svg .person .arc path {
+    fill: rgb(240, 240, 240) !important;
 }
 
-#page-fan svg .person:hover .arc path {
-    stroke-opacity: 0.55;
+#page-fan svg .person.hover .arc path {
+    fill: rgb(250, 250, 250) !important;
+}
+
+#page-fan svg .person.available .arc path {
+    fill: rgb(250, 250, 250) !important;
+}
+
+#page-fan svg .person.available.hover .arc path {
+    fill: rgb(240, 240, 240) !important;
+}
+
+#page-fan svg .label {
+    font-weight: normal;
 }
 
 #page-fan svg .label .chart-date {
