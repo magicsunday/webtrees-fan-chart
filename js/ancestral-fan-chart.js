@@ -1207,13 +1207,19 @@
                     text.attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
                 } else {
                     text.attr('transform', function () {
-                        var dx     = d.x1 - d.x0;
-                        var angle  = that.options.x(d.x0 + (dx / 2)) * 180 / Math.PI;
-                        var rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > 0 ? -1 : 1)) - 90;
+                        var dx        = d.x1 - d.x0;
+                        var angle     = that.options.x(d.x0 + (dx / 2)) * 180 / Math.PI;
+                        var rotate    = angle - (mapIndexToOffset(i) * offsetRotate * (angle > 0 ? -1 : 1));
+                        var translate = (that.centerRadius(d) - (that.options.colorArcWidth / 2.0));
 
-                        return 'rotate(' + rotate + ') '
-                            + 'translate(' + (that.centerRadius(d) - (that.options.colorArcWidth / 2.0)) + ') '
-                            + 'rotate(' + (angle > 0 ? 0 : 180) + ')';
+                        if (angle > 0) {
+                            rotate -= 90;
+                        } else {
+                            translate = -translate;
+                            rotate += 90;
+                        }
+
+                        return 'rotate(' + rotate + ') translate(' + translate + ')';
                     });
                 }
             });
