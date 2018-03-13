@@ -14,6 +14,8 @@
     margin: auto;
     cursor: grab;
     cursor: -webkit-grab;
+   -webkit-filter: drop-shadow(3px 1px 3px rgba(0, 0, 0, 0.4)));
+    filter: drop-shadow(3px 1px 3px rgba(0, 0, 0, 0.4));
 }
 
 #page-fan svg:active {

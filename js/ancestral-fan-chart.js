@@ -191,35 +191,6 @@
                 }, this))
                 .on('click', $.proxy(this.doStopPropagation, this), true);
 
-            // Filter stuff
-            var defs = this.config.svg
-                .append('defs');
-
-            // Append filter element
-            var filter = defs.append('filter')
-                .attr('id', 'dropshadow');
-
-            // Append gaussian blur to filter
-            filter.append('feGaussianBlur')
-                .attr('in', 'SourceAlpha')
-                .attr('stdDeviation', 3);
-
-            // Append offset filter to result of gaussion blur filter
-            filter.append('feOffset')
-                .attr('dx', 3)
-                .attr('dy', 1);
-
-            // Merge result with original image
-            var feMerge = filter.append('feMerge');
-
-            // First layer result of blur and offset
-            feMerge.append('feMergeNode');
-
-            // Original image on top
-            feMerge.append('feMergeNode')
-                .attr('in', 'SourceGraphic');
-            // End filter stuff
-
             // Add an overlay with tooltip
             this.config.overlay = this.config.parent
                 .append('div')
@@ -247,8 +218,7 @@
 
             this.config.visual
                 .append('g')
-                .attr('class', 'personGroup')
-                .attr('filter', 'url(#dropshadow)');
+                .attr('class', 'personGroup');
 
             this.config.svg.call(this.config.zoom);
         },
@@ -949,13 +919,13 @@
 
                     // Fade in all new changed elements
                     that.config.svg
-                        .selectAll('g.person.new.changed, g.colorGroup.new')
+                        .selectAll('g.person.new, g.colorGroup.new')
                         .transition()
                         .duration(that.options.updateDuration)
                         .style('opacity', 1)
                         .call(that.endall, function () {
                             that.config.svg
-                                .selectAll('g.person.new.changed, g.colorGroup.new')
+                                .selectAll('g.person.new, g.colorGroup.new')
                                 .classed('new', false)
                                 .classed('changed', false)
                                 .attr('style', null);
