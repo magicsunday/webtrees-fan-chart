@@ -52,6 +52,9 @@
             minHeight: 500,
             padding: 10,
 
+            // Width of the colored arc above each person arc
+            colorArcWidth: 5,
+
             // Left/Right padding of text
             textPadding: 2,
 
@@ -551,23 +554,11 @@
                 })
                 .style('stroke-width', function () {
                     return '2px';
-                    return (d.depth >= 9) ? '1px' : '5px';
                 })
                 .style('stroke', function () {
                     return 'rgb(225, 225, 225)';
                 })
                 .attr('d', arcGen);
-
-//console.log(that.startAngle(d) * 180 / Math.PI * 2);
-
-//            var dg = that.startAngle(d) * 180 / Math.PI * 2;
-
-//            if (dg === 210.0 || dg === -210.0) {
-//                path
-//                    .style('stroke-dasharray', function () {
-//                        return '0, ' + ((that.endAngle(d) - that.startAngle(d)) * that.outerRadius(d)) + ', ' + (that.outerRadius(d) - that.innerRadius(d)) + ', 1000'
-//                    });
-//            }
         },
 
         /**
@@ -723,10 +714,10 @@
                     return (d.depth === 0) ? (Math.PI * 2) : that.endAngle(d);
                 })
                 .innerRadius(function (d) {
-                    return that.outerRadius(d) - 3;
+                    return that.outerRadius(d) - that.options.colorArcWidth;
                 })
                 .outerRadius(function (d) {
-                    return that.outerRadius(d) + 2;
+                    return that.outerRadius(d) + 1;
                 });
 
             var colorGroup = this.config.svg
@@ -1221,7 +1212,7 @@
                         var rotate = angle - (mapIndexToOffset(i) * offsetRotate * (angle > 0 ? -1 : 1)) - 90;
 
                         return 'rotate(' + rotate + ') '
-                            + 'translate(' + that.centerRadius(d) + ') '
+                            + 'translate(' + (that.centerRadius(d) - (that.options.colorArcWidth / 2.0)) + ') '
                             + 'rotate(' + (angle > 0 ? 0 : 180) + ')';
                     });
                 }
