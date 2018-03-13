@@ -31,7 +31,7 @@
     $.widget('rso.ancestralFanChart', {
         options: {
             // Number of generations to display
-            generations: 5,
+            generations: 6,
 
             // Default background color of an arc
             defaultColor: '#eee',
@@ -191,38 +191,34 @@
                 }, this))
                 .on('click', $.proxy(this.doStopPropagation, this), true);
 
-            // filter stuff
+            // Filter stuff
             var defs = this.config.svg
                 .append('defs');
 
-            // append filter element
+            // Append filter element
             var filter = defs.append('filter')
                 .attr('id', 'dropshadow');
 
-            // append gaussian blur to filter
+            // Append gaussian blur to filter
             filter.append('feGaussianBlur')
                 .attr('in', 'SourceAlpha')
-                .attr('stdDeviation', 3)
-                .attr('result', 'blur');
+                .attr('stdDeviation', 3);
 
-            // append offset filter to result of gaussion blur filter
+            // Append offset filter to result of gaussion blur filter
             filter.append('feOffset')
-                .attr( 'in', 'blur' )
-                .attr('dx', 2)
-                .attr('dy', 2)
-                .attr('result', 'offsetBlur');
+                .attr('dx', 3)
+                .attr('dy', 1);
 
-            // merge result with original image
+            // Merge result with original image
             var feMerge = filter.append('feMerge');
 
-            // first layer result of blur and offset
-            feMerge.append('feMergeNode')
-                .attr('in', 'offsetBlur');
+            // First layer result of blur and offset
+            feMerge.append('feMergeNode');
 
-            // original image on top
+            // Original image on top
             feMerge.append('feMergeNode')
                 .attr('in', 'SourceGraphic');
-            // end filter stuff
+            // End filter stuff
 
             // Add an overlay with tooltip
             this.config.overlay = this.config.parent
@@ -247,7 +243,11 @@
 
             // Add group
             this.config.visual = this.config.svg
+                .append('g');
+
+            this.config.visual
                 .append('g')
+                .attr('class', 'personGroup')
                 .attr('filter', 'url(#dropshadow)');
 
             this.config.svg.call(this.config.zoom);
@@ -347,13 +347,6 @@
                 'transform',
                 d3.event.transform
             );
-
-            this.config.svg
-                .select('g.colorGroup')
-                .attr(
-                    'transform',
-                    d3.event.transform
-                );
         },
 
         /**
@@ -767,6 +760,7 @@
                 });
 
             var colorGroup = this.config.svg
+                .select('g')
                 .append('g')
                 .attr('class', 'colorGroup')
                 .style('opacity', 0);
@@ -793,14 +787,14 @@
          * @return {void}
          */
         createArcElements: function () {
-            var that = this;
+            var that        = this;
+            var personGroup = this.config.svg.select('g.personGroup');
 
-            this.config.visual
-                .selectAll('g.person')
+            personGroup.selectAll('g.person')
                 .data(this.config.nodes)
                 .enter()
                 .each(function (entry) {
-                    var person = that.config.visual
+                    var person = personGroup
                         .append('g')
                         .attr('class', 'person')
                         .attr('id', 'person-' + that.options.id())
@@ -818,7 +812,8 @@
          * This method bind the "click" event listeners to a "person" element.
          */
         bindClickEventListener: function () {
-            var personGroup = this.config.visual
+            var personGroup = this.config.svg
+                .select('g.personGroup')
                 .selectAll('g.person')
                 .data(this.config.nodes)
                 .filter(function (d) {

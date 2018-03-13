@@ -62,7 +62,7 @@ class Chart extends ChartController
      *
      * @var int
      */
-    const MAX_GENERATIONS = 11;
+    const MAX_GENERATIONS = 10;
 
     /**
      * Number of generations to display.
