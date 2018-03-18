@@ -673,10 +673,12 @@
             if (person.classed('new') && this.options.hideEmptySegments) {
                 this.addArcToPerson(person, d);
             } else {
-                if (!person.classed('new') && !person.classed('update') && !person.classed('remove')) {
-                    if ((d.data.xref !== '') || !this.options.hideEmptySegments) {
-                        this.addArcToPerson(person, d);
-                    }
+                if (!person.classed('new')
+                    && !person.classed('update')
+                    && !person.classed('remove')
+                    && ((d.data.xref !== '') || !this.options.hideEmptySegments)
+                ) {
+                    this.addArcToPerson(person, d);
                 }
             }
 
