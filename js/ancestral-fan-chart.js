@@ -550,15 +550,6 @@
 
             var path = arcGroup
                 .append('path')
-//                .style('fill', function () {
-//                    return 'rgb(245, 245, 245)';
-//                })
-//                .style('stroke-width', function () {
-//                    return '2px';
-//                })
-//                .style('stroke', function () {
-//                    return 'rgb(225, 225, 225)';
-//                })
                 .attr('d', arcGen);
 
             // Hide arc initially if its new during chart update
@@ -572,7 +563,7 @@
          *
          * @param {object} parent Parent element used to append the label element too
          *
-         * @param {object} Newly added label element
+         * @return {object} Newly added label element
          */
         addLabelToPerson: function (parent) {
             return parent
@@ -586,7 +577,7 @@
          *
          * @param {object} parent Parent element used to append the "text" element
          *
-         * @param {object} Newly added label element
+         * @return {object} Newly added label element
          */
         appendTextToLabel: function (parent, d) {
             return parent
@@ -622,15 +613,15 @@
         addArcPathToLabel: function (label, d) {
             var that = this;
 
-            // Inner labels
             if (this.isInnerLabel(d)) {
-                var text     = this.appendTextToLabel(label, d);
-                var timeSpan = this.getTimeSpan(d);
+                // Inner labels
+                let text     = this.appendTextToLabel(label, d);
+                let timeSpan = this.getTimeSpan(d);
 
                 // Create a path for each line of text as mobile devices
                 // won't display <tspan> elements in the right position
-                var path1 = this.appendPathToLabel(label, 0, d);
-                var path2 = this.appendPathToLabel(label, 1, d);
+                let path1 = this.appendPathToLabel(label, 0, d);
+                let path2 = this.appendPathToLabel(label, 1, d);
 
                 this.appendTextPath(text, path1.attr('id'))
                     .text(this.getFirstNames(d))
@@ -641,18 +632,17 @@
                     .each(this.truncate(d, 1));
 
                 if (timeSpan) {
-                    var path3 = this.appendPathToLabel(label, 2, d);
+                    let path3 = this.appendPathToLabel(label, 2, d);
 
                     this.appendTextPath(text, path3.attr('id'))
                         .attr('class', 'chart-date')
                         .text(timeSpan)
                         .each(this.truncate(d, 2));
                 }
-
-            // Outer labels
             } else {
-                var name     = d.data.name;
-                var timeSpan = that.getTimeSpan(d);
+                // Outer labels
+                let name     = d.data.name;
+                let timeSpan = that.getTimeSpan(d);
 
                 // Return first name for inner circles
                 if (d.depth < 7) {
@@ -858,7 +848,7 @@
 
             // Remove styles so CSS classes may work correct, Uses a small timer as animation seems not
             // to be done already if the point is reached
-            var t = d3.timer(function (elapsed) {
+            var t = d3.timer(function () {
                 that.config.svg
                     .selectAll('g.person g.arc path')
                     .attr('style', null);
@@ -1234,11 +1224,7 @@
                 // Slight increase in the y axis' value so the texts may not overlay
                 var offsetRotate = (i <= 1 ? 1.25 : 1.75);
 
-                if (d.depth === 0) {
-                    offsetRotate = 1.0;
-                }
-
-                if (d.depth === 6) {
+                if ((d.depth === 0) || (d.depth === 6)) {
                     offsetRotate = 1.0;
                 }
 
@@ -1252,13 +1238,11 @@
 
                 offsetRotate *= that.options.fontScale / 100;
 
-                var text = d3.select(this);
-
                 // Name of center person should not be rotated in any way
                 if (d.depth === 0) {
-                    text.attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
+                    d3.select(this).attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
                 } else {
-                    text.attr('transform', function () {
+                    d3.select(this).attr('transform', function () {
                         var dx        = d.x1 - d.x0;
                         var angle     = that.options.x(d.x0 + (dx / 2)) * 180 / Math.PI;
                         var rotate    = angle - (mapIndexToOffset(i) * offsetRotate * (angle > 0 ? -1 : 1));
