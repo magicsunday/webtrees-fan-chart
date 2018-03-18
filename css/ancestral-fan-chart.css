@@ -32,19 +32,21 @@
 }
 
 #page-fan svg .person .arc path {
-    fill: rgb(240, 240, 240) !important;
+    fill: rgb(240, 240, 240);
+    stroke: rgb(225, 225, 225);
+    stroke-width: 2px;
 }
 
 #page-fan svg .person.hover .arc path {
-    fill: rgb(250, 250, 250) !important;
+    fill: rgb(250, 250, 250);
 }
 
 #page-fan svg .person.available .arc path {
-    fill: rgb(250, 250, 250) !important;
+    fill: rgb(250, 250, 250);
 }
 
 #page-fan svg .person.available.hover .arc path {
-    fill: rgb(240, 240, 240) !important;
+    fill: rgb(240, 240, 240);
 }
 
 #page-fan svg .label {

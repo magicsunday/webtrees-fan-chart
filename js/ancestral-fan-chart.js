@@ -59,7 +59,7 @@
             textPadding: 2,
 
             // Relative position offsets in percent (0 = inner radius, 100 = outer radius)
-            positions: [70, 52, 25],
+            positions: [66, 48, 20],
 
             // Whether to hide empty segments of chart or not
             hideEmptySegments: false,
@@ -544,21 +544,27 @@
                 .outerRadius(that.outerRadius(d));
 
             // Append arc
-            var arcGroup = person.append('g')
+            var arcGroup = person
+                .append('g')
                 .attr('class', 'arc');
 
             var path = arcGroup
                 .append('path')
-                .style('fill', function () {
-                    return 'rgb(245, 245, 245)';
-                })
-                .style('stroke-width', function () {
-                    return '2px';
-                })
-                .style('stroke', function () {
-                    return 'rgb(225, 225, 225)';
-                })
+//                .style('fill', function () {
+//                    return 'rgb(245, 245, 245)';
+//                })
+//                .style('stroke-width', function () {
+//                    return '2px';
+//                })
+//                .style('stroke', function () {
+//                    return 'rgb(225, 225, 225)';
+//                })
                 .attr('d', arcGen);
+
+            // Hide arc initially if its new during chart update
+            if (person.classed('new')) {
+                path.style('opacity', 0);
+            }
         },
 
         /**
@@ -674,8 +680,14 @@
         },
 
         addPersonData: function (person, d) {
-            if (!this.options.hideEmptySegments || (d.data.xref !== '')) {
+            if (person.classed('new') && this.options.hideEmptySegments) {
                 this.addArcToPerson(person, d);
+            } else {
+                if (!person.classed('new') && !person.classed('update') && !person.classed('remove')) {
+                    if ((d.data.xref !== '') || !this.options.hideEmptySegments) {
+                        this.addArcToPerson(person, d);
+                    }
+                }
             }
 
             if (d.data.xref !== '') {
@@ -831,6 +843,58 @@
         },
 
         /**
+         * Function is executed as callback after all transitions are done in update method.
+         */
+        updateDone: function () {
+            // Remove arc if segments should be hidden
+            if (this.options.hideEmptySegments) {
+                this.config.svg
+                    .selectAll('g.person.remove')
+                    .selectAll('g.arc')
+                    .remove();
+            }
+
+            var that = this;
+
+            // Remove styles so CSS classes may work correct, Uses a small timer as animation seems not
+            // to be done already if the point is reached
+            var t = d3.timer(function (elapsed) {
+                that.config.svg
+                    .selectAll('g.person g.arc path')
+                    .attr('style', null);
+
+                that.config.svg
+                    .selectAll('g.person g.label')
+                    .style('opacity', null);
+
+                t.stop();
+            }, 10);
+
+            this.config.svg
+                .selectAll('g.person.new, g.person.update, g.person.remove')
+                .classed('new', false)
+                .classed('update', false)
+                .classed('remove', false)
+                .selectAll('g.label.old, title.old')
+                .remove();
+
+            this.config.svg
+                .selectAll('g.colorGroup:not(.new)')
+                .remove();
+
+            this.config.svg
+                .selectAll('g.colorGroup.new')
+                .classed('new', false);
+
+            this.config.svg
+                .selectAll('g.person.available')
+                .classed('available', false);
+
+            // Add click handler after all transitions are done
+            this.bindClickEventListener();
+        },
+
+        /**
          * Update the chart with data loaded from AJAX.
          *
          * @param {object} d D3 data object
@@ -848,82 +912,70 @@
                     // Initialize the new loaded data
                     that.initData(data);
 
-                    // Clone all elements (only the container)
+                    // Flag all elements which are subject to change
                     that.config.svg
                         .selectAll('g.person')
-                        .clone()
-                        .classed('new', true)
-                        .style('opacity', 0);
-
-                    // Flag all old elements which are subject to change
-                    that.config.svg
-                        .selectAll('g.person:not(.new)')
                         .data(that.config.nodes)
                         .each(function (entry) {
                             var person = d3.select(this);
 
-                            person.classed(
-                                'changed',
-                                person.classed('available') | (entry.data.xref !== '')
-                            );
-                        });
+                            person.classed('remove', entry.data.xref === '')
+                                .classed('update', (entry.data.xref !== '') && person.classed('available'))
+                                .classed('new', (entry.data.xref !== '') && !person.classed('available'));
 
-                    // Flag all new elements which are subject to change
-                    that.config.svg
-                        .selectAll('g.person.new')
-                        .data(that.config.nodes)
-                        .each(function (entry) {
-                            var person = d3.select(this);
-
-                            person.classed(
-                                'changed',
-                                person.classed('available') | (entry.data.xref !== '')
-                            );
-
-                            person.classed(
-                                'available',
-                                (entry.data.xref !== '')
-                            );
+                            if (!person.classed('new')) {
+                                person.selectAll('g.label, title')
+                                    .classed('old', true);
+                            }
 
                             that.addPersonData(person, entry);
                         });
 
-                    // Remove all cloned but not changed elements
+                    // Hide all new labels of not removed elements
                     that.config.svg
-                        .selectAll('g.person.new:not(.changed)')
-                        .remove();
+                        .selectAll('g.person:not(.remove)')
+                        .selectAll('g.label:not(.old)')
+                        .style('opacity', 0);
 
                     that.addColorGroup()
                         .classed('new', true);
 
-                    // Fade out all old elements which will change
-                    that.config.svg
-                        .selectAll('g.person:not(.new).changed, g.colorGroup:not(.new)')
-                        .transition()
+                    // Create transition instance
+                    var t = d3.transition()
                         .duration(that.options.updateDuration)
-                        .style('opacity', 0)
-                        .call(that.endall, function () {
-                            that.config.svg
-                                .selectAll('g.person:not(.new).changed, g.colorGroup:not(.new)')
-                                .remove();
+                        .call(that.endall, function () { that.updateDone(); });
+
+                    // Fade out old arc
+                    that.config.svg
+                        .selectAll('g.person.remove g.arc path')
+                        .transition(t)
+                        .style('fill', function () {
+                            return that.options.hideEmptySegments ? null : 'rgb(240, 240, 240)';
+                        })
+                        .style('opacity', function () {
+                            return that.options.hideEmptySegments ? 0 : null;
                         });
 
-                    // Fade in all new changed elements
+                    // Fade in new arcs
                     that.config.svg
-                        .selectAll('g.person.new, g.colorGroup.new')
-                        .transition()
-                        .duration(that.options.updateDuration)
-                        .style('opacity', 1)
-                        .call(that.endall, function () {
-                            that.config.svg
-                                .selectAll('g.person.new, g.colorGroup.new')
-                                .classed('new', false)
-                                .classed('changed', false)
-                                .attr('style', null);
-
-                            // Add click handler after all transitions are done
-                            that.bindClickEventListener();
+                        .selectAll('g.person.new g.arc path')
+                        .transition(t)
+                        .style('fill', 'rgb(250, 250, 250)')
+                        .style('opacity', function () {
+                            return that.options.hideEmptySegments ? 1 : null;
                         });
+
+                    // Fade out all old labels and color group
+                    that.config.svg
+                        .selectAll('g.person.update g.label.old, g.person.remove g.label.old, g.colorGroup:not(.new)')
+                        .transition(t)
+                        .style('opacity', 0);
+
+                    // Fade in all new labels and color group
+                    that.config.svg
+                        .selectAll('g.person:not(.remove) g.label:not(.old), g.colorGroup.new')
+                        .transition(t)
+                        .style('opacity', 1);
                 }
             );
         },
