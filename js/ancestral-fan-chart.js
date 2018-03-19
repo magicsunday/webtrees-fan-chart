@@ -36,8 +36,6 @@
             // Default background color of an arc
             defaultColor: '#eee',
 
-            nameSwitchThreshold: 5,
-
             // Default font size, color and scaling
             fontSize: 13,
             fontColor: '#000',
@@ -51,6 +49,12 @@
 
             minHeight: 500,
             padding: 10,
+
+            // Arc dimensions
+            circlePadding: 0,        // Padding in pixel between each generation circle
+            numberOfInnerCircles: 5, // Number of circles large enough to print text along arc path
+            innerArcHeight: 65,      // Height of each inner circle arc
+            outerArcHeight: 115,     // Height of each outer circle arc
 
             // Width of the colored arc above each person arc
             colorArcWidth: 5,
@@ -450,8 +454,12 @@
          * @returns {number}
          */
         innerRadius: function (d) {
-            var data = [0, 65, 130, 195, 260, 325, 440, 555, 670, 785, 900];
-            return data[d.depth];
+            if (d.depth < this.options.numberOfInnerCircles) {
+                return (d.depth * (this.options.innerArcHeight + this.options.circlePadding));
+            }
+
+            return (this.options.numberOfInnerCircles * (this.options.innerArcHeight - this.options.outerArcHeight))
+                + (d.depth * (this.options.outerArcHeight + this.options.circlePadding));
         },
 
         /**
@@ -462,8 +470,12 @@
          * @returns {number}
          */
         outerRadius: function (d) {
-            var data = [65, 130, 195, 260, 325, 440, 555, 670, 785, 900, 1015];
-            return data[d.depth];
+            if (d.depth <  this.options.numberOfInnerCircles) {
+                return (d.depth * (this.options.innerArcHeight + this.options.circlePadding)) + this.options.innerArcHeight;
+            }
+
+            return (this.options.numberOfInnerCircles * (this.options.innerArcHeight - this.options.outerArcHeight))
+                + (d.depth * (this.options.outerArcHeight + this.options.circlePadding)) + this.options.outerArcHeight;
         },
 
         /**
@@ -802,7 +814,7 @@
          */
         isInnerLabel: function (d) {
             return ((d.depth > 0)
-                && (d.depth < this.options.nameSwitchThreshold));
+                && (d.depth < this.options.numberOfInnerCircles));
         },
 
         /**
@@ -1038,7 +1050,7 @@
          */
         getAvailableWidth: function (d, index) {
             // Calc length of the arc
-            if (d.depth >= 1 && d.depth < 5) {
+            if ((d.depth >= 1) && (d.depth < this.options.numberOfInnerCircles)) {
                 return this.arcLength(d, this.getTextOffset(index || 1, d));
             }
 
@@ -1094,7 +1106,7 @@
         getFontSize: function (d) {
             var fontSize = this.options.fontSize;
 
-            if (d.depth >= (this.options.nameSwitchThreshold + 1)) {
+            if (d.depth >= (this.options.numberOfInnerCircles + 1)) {
                 fontSize += 1;
             }
 
