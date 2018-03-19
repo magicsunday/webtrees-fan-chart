@@ -53,6 +53,7 @@
             // Arc dimensions
             circlePadding: 0,        // Padding in pixel between each generation circle
             numberOfInnerCircles: 5, // Number of circles large enough to print text along arc path
+            centerCircleRadius: 65,  // Radius of the inner most circle
             innerArcHeight: 65,      // Height of each inner circle arc
             outerArcHeight: 115,     // Height of each outer circle arc
 
@@ -454,12 +455,18 @@
          * @returns {number}
          */
         innerRadius: function (d) {
-            if (d.depth < this.options.numberOfInnerCircles) {
-                return (d.depth * (this.options.innerArcHeight + this.options.circlePadding));
+            if (d.depth === 0) {
+                return 0;
             }
 
-            return (this.options.numberOfInnerCircles * (this.options.innerArcHeight - this.options.outerArcHeight))
-                + (d.depth * (this.options.outerArcHeight + this.options.circlePadding));
+            if (d.depth < this.options.numberOfInnerCircles) {
+                return ((d.depth - 1) * (this.options.innerArcHeight + this.options.circlePadding))
+                    + this.options.centerCircleRadius;
+            }
+
+            return ((this.options.numberOfInnerCircles - 1) * (this.options.innerArcHeight + this.options.circlePadding))
+                + ((d.depth - this.options.numberOfInnerCircles) * (this.options.outerArcHeight + this.options.circlePadding))
+                + this.options.centerCircleRadius;
         },
 
         /**
@@ -470,12 +477,18 @@
          * @returns {number}
          */
         outerRadius: function (d) {
-            if (d.depth <  this.options.numberOfInnerCircles) {
-                return (d.depth * (this.options.innerArcHeight + this.options.circlePadding)) + this.options.innerArcHeight;
+            if (d.depth === 0) {
+                return this.options.centerCircleRadius;
             }
 
-            return (this.options.numberOfInnerCircles * (this.options.innerArcHeight - this.options.outerArcHeight))
-                + (d.depth * (this.options.outerArcHeight + this.options.circlePadding)) + this.options.outerArcHeight;
+            if (d.depth <  this.options.numberOfInnerCircles) {
+                return ((d.depth - 1) * (this.options.innerArcHeight + this.options.circlePadding))
+                    + this.options.innerArcHeight + this.options.centerCircleRadius;
+            }
+
+            return ((this.options.numberOfInnerCircles - 1) * (this.options.innerArcHeight + this.options.circlePadding))
+                + ((d.depth - this.options.numberOfInnerCircles) * (this.options.outerArcHeight + this.options.circlePadding))
+                + this.options.outerArcHeight + this.options.centerCircleRadius;
         },
 
         /**
