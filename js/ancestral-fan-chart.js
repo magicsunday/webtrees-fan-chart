@@ -60,10 +60,6 @@
             colorArcWidth: 5,        // Width of the colored arc above each single person arc
             textPadding: 3,          // Left/Right padding of text (used with truncation)
 
-            // Relative position offsets in percent for different text lines (givenname, surname, dates)
-            // (0 = inner radius, 100 = outer radius)
-            positions: [66, 48, 20],
-
             // Whether to hide empty segments of chart or not
             hideEmptySegments: false,
 
@@ -1005,7 +1001,8 @@
         },
 
         /**
-         * Get the relative text offset for the labels.
+         * Get the relative position offsets in percent for different text lines (givenname, surname, dates).
+         *   => (0 = inner radius, 100 = outer radius)
          *
          * @param {int}    index Index position of element in parent container. Required to create a unique path id.
          * @param {object} d     D3 data object
@@ -1013,9 +1010,7 @@
          * @return {int}
          */
         getTextOffset: function(index, d) {
-            return this.isPositionFlipped(d)
-                ? (100 - this.options.positions[index])
-                : this.options.positions[index];
+            return this.isPositionFlipped(d) ? [25, 43, 71][index] : [66, 48, 20][index];
         },
 
         /**
