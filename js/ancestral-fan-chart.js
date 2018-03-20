@@ -30,7 +30,7 @@
 
     $.widget('rso.ancestralFanChart', {
         options: {
-            // Number of generations to display
+            // Default number of generations to display
             generations: 6,
 
             // Default background color of an arc
@@ -41,8 +41,8 @@
             fontColor: '#000',
             fontScale: 100,
 
-            // Degrees of the fan chart
-            fanDegree: 360,
+            // Default degrees of the fan chart
+            fanDegree: 210,
 
             startPi: -Math.PI,
             endPi: Math.PI,
@@ -52,18 +52,19 @@
 
             // Arc dimensions
             circlePadding: 0,        // Padding in pixel between each generation circle
-            numberOfInnerCircles: 5, // Number of circles large enough to print text along arc path
-            centerCircleRadius: 65,  // Radius of the inner most circle
+            numberOfInnerCircles: 5, // Number of circles, large enough to print text along arc path
+            centerCircleRadius: 65,  // Radius of the innermost circle
             innerArcHeight: 65,      // Height of each inner circle arc
             outerArcHeight: 115,     // Height of each outer circle arc
 
-            // Width of the colored arc above each person arc
+            // Width of the colored arc above each single person arc
             colorArcWidth: 5,
 
-            // Left/Right padding of text
+            // Left/Right padding of text (used with truncation)
             textPadding: 2,
 
-            // Relative position offsets in percent (0 = inner radius, 100 = outer radius)
+            // Relative position offsets in percent for different text lines (givenname, surname, dates)
+            // (0 = inner radius, 100 = outer radius)
             positions: [66, 48, 20],
 
             // Whether to hide empty segments of chart or not
@@ -88,7 +89,7 @@
          */
         _create: function () {
             this.options.startPi = -(this.options.fanDegree / 360 * Math.PI);
-            this.options.endPi = (this.options.fanDegree / 360 * Math.PI);
+            this.options.endPi   = (this.options.fanDegree / 360 * Math.PI);
 
             // Helper method to create a ongoing id
             this.options.id = (function () { var i = 1; return function () { return i++; }})();
