@@ -48,7 +48,7 @@
             endPi: Math.PI,
 
             minHeight: 500,
-            padding: 10,
+            padding: 10,             // Padding around view box
 
             // Arc dimensions
             circlePadding: 0,        // Padding in pixel between each generation circle
@@ -57,11 +57,8 @@
             innerArcHeight: 65,      // Height of each inner circle arc
             outerArcHeight: 115,     // Height of each outer circle arc
 
-            // Width of the colored arc above each single person arc
-            colorArcWidth: 5,
-
-            // Left/Right padding of text (used with truncation)
-            textPadding: 2,
+            colorArcWidth: 5,        // Width of the colored arc above each single person arc
+            textPadding: 3,          // Left/Right padding of text (used with truncation)
 
             // Relative position offsets in percent for different text lines (givenname, surname, dates)
             // (0 = inner radius, 100 = outer radius)
@@ -679,7 +676,8 @@
                 // the birth/death dates
                 that.appendOuterArcText(d, label, name);
 
-                // The outer most circles show the name and do not distinguish between first name, last name and dates
+                // The outer most circles show the complete name and do not distinguish between
+                // first name, last name and dates
                 if (d.depth < 7) {
                     // Add last name
                     that.appendOuterArcText(d, label, that.getLastName(d));
@@ -820,15 +818,14 @@
         /**
          * Returns TRUE if the depth of the element is in the inner range. So labels should
          * be rendered along an arc path. Otherwise returns FALSE to indicate the element
-         * is either the center one or on the outer arcs.
+         * is either the center one or an outer arc.
          *
          * @param {object} d D3 data object
          *
          * @return {bool}
          */
         isInnerLabel: function (d) {
-            return ((d.depth > 0)
-                && (d.depth < this.options.numberOfInnerCircles));
+            return ((d.depth > 0) && (d.depth < this.options.numberOfInnerCircles));
         },
 
         /**
@@ -1040,7 +1037,7 @@
                 var textLength = self.node().getComputedTextLength();
                 var text       = self.text();
 
-                while ((textLength > (availableWidth - (that.options.textPadding * 2))) && (text.length > 0)) {
+                while ((textLength > availableWidth) && (text.length > 0)) {
                     // Remove last char
                     text = text.slice(0, -1);
 
@@ -1063,13 +1060,20 @@
          * @returns {int} Calculated available width
          */
         getAvailableWidth: function (d, index) {
-            // Calc length of the arc
+            // Innermost circle (Reducing the width slightly, avoiding the text is sticking too close to the edge)
+            let availableWidth = (this.options.centerCircleRadius * 2) - (this.options.centerCircleRadius * 0.15);
+
             if ((d.depth >= 1) && (d.depth < this.options.numberOfInnerCircles)) {
-                return this.arcLength(d, this.getTextOffset(index || 1, d));
+                // Calculate length of the arc
+                availableWidth = this.arcLength(d, this.getTextOffset(index || 1, d));
+            } else {
+                // Outer arcs
+                if (d.depth >= this.options.numberOfInnerCircles) {
+                    availableWidth = this.options.outerArcHeight;
+                }
             }
 
-            // Depending on the depth of an entry in the chart the available width differs
-            return 110;
+            return availableWidth - (this.options.textPadding * 2);
         },
 
         /**
@@ -1124,7 +1128,7 @@
                 fontSize += 1;
             }
 
-            return ((fontSize - d.depth) * this.options.fontScale / 100) + 'px';
+            return ((fontSize - d.depth) * this.options.fontScale / 100.0) + 'px';
         },
 
         /**
@@ -1245,11 +1249,15 @@
                 var offsets = [0, -0.025, 0.5, 1.15];
                 var offset  = offsets[countElements];
 
+//                var availableWidth = that.arcLength(d, 50);
+//                var position       = that.getTextOffset(i, d);
+//                var offsetRotate   = availableWidth - ((100 - position) * availableWidth / 100);
+
                 var mapIndexToOffset = d3.scaleLinear()
                     .domain([0, countElements - 1])
                     .range([-offset, offset]);
 
-                // Slight increase in the y axis' value so the texts may not overlay
+                // Slightly increase in the y axis' value so the texts may not overlay
                 var offsetRotate = (i <= 1 ? 1.25 : 1.75);
 
                 if ((d.depth === 0) || (d.depth === 6)) {
@@ -1264,7 +1272,7 @@
                     offsetRotate = 0.5;
                 }
 
-                offsetRotate *= that.options.fontScale / 100;
+                offsetRotate *= that.options.fontScale / 100.0;
 
                 // Name of center person should not be rotated in any way
                 if (d.depth === 0) {
