@@ -86,11 +86,18 @@ class Chart extends ChartController
     private $fontScale = 100;
 
     /**
-     * Whether to hide empty segments of chart or not.
+     * Whether to show empty segments of chart or not.
      *
      * @var bool
      */
-    private $hideEmptySegments = false;
+    private $showEmptySegments = true;
+
+    /**
+     * Whether to show gradient colors or not.
+     *
+     * @var bool
+     */
+    private $showColorGradients = false;
 
     /**
      * Constructor.
@@ -103,10 +110,11 @@ class Chart extends ChartController
         $defaultGenerations = $this->getTree()->getPreference('DEFAULT_PEDIGREE_GENERATIONS');
 
         // Extract the request parameters
-        $this->fanDegree         = Filter::getInteger('fanDegree', 180, 360, 210);
-        $this->generations       = Filter::getInteger('generations', self::MIN_GENERATIONS, self::MAX_GENERATIONS, $defaultGenerations);
-        $this->fontScale         = Filter::getInteger('fontScale', 0, 200, 100);
-        $this->hideEmptySegments = Filter::getBool('hideEmptySegments');
+        $this->fanDegree          = Filter::getInteger('fanDegree', 180, 360, 210);
+        $this->generations        = Filter::getInteger('generations', self::MIN_GENERATIONS, self::MAX_GENERATIONS, $defaultGenerations);
+        $this->fontScale          = Filter::getInteger('fontScale', 0, 200, 100);
+        $this->showEmptySegments  = (bool) Filter::getInteger('showEmptySegments', 0, 1, true);
+        $this->showColorGradients = (bool) Filter::getInteger('showColorGradients', 0, 1, false);
 
         // Create page title
         $title = $this->translate('Ancestral fan chart');
@@ -184,6 +192,7 @@ class Chart extends ChartController
     private function getIndividualData(Individual $person, $generation)
     {
         return array(
+            'id'         => 0,
             'xref'       => $person->getXref(),
             'generation' => $generation,
             'name'       => Filter::unescapeHtml($person->getFullName()),
@@ -191,6 +200,7 @@ class Chart extends ChartController
             'born'       => $person->getBirthYear(),
             'died'       => $person->getDeathYear(),
             'color'      => $this->getColor($person),
+            'colors'     => [[], []],
         );
     }
 
@@ -201,8 +211,6 @@ class Chart extends ChartController
      * @param int        $generation Current generation
      *
      * @return array
-     *
-     * @todo Rebuild this to a iterative method
      */
     public function buildJsonTree(
         Individual $person = null, $generation = 1
@@ -248,13 +256,23 @@ class Chart extends ChartController
     }
 
     /**
-     * Get the HTML for the "hideEmptySegments" checkbox element.
+     * Get the HTML for the "showEmptySegments" checkbox element.
      *
      * @return string
      */
-    private function getHideEmptySegmentsCheckbox()
+    private function getShowEmptySegmentsCheckbox()
     {
-        return FunctionsEdit::twoStateCheckbox('hideEmptySegments', $this->hideEmptySegments);
+        return FunctionsEdit::twoStateCheckbox('showEmptySegments', $this->showEmptySegments);
+    }
+
+    /**
+     * Get the HTML for the "showColorGradients" checkbox element.
+     *
+     * @return string
+     */
+    private function getShowColorGradientsCheckbox()
+    {
+        return FunctionsEdit::twoStateCheckbox('showColorGradients', $this->showColorGradients);
     }
 
     /**
@@ -372,16 +390,17 @@ class Chart extends ChartController
         // Encode chart parameters to json string
         $chartParams = json_encode(
             array(
-                'fanDegree'         => $this->fanDegree,
-                'generations'       => $this->generations,
-                'defaultColor'      => $this->getColor(),
-                'fontScale'         => $this->fontScale,
-                'fontColor'         => $this->getChartFontColor(),
-                'hideEmptySegments' => $this->hideEmptySegments,
-                'updateUrl'         => $this->getUpdateUrl(),
-                'individualUrl'     => $this->getIndividualUrl(),
-                'data'              => $this->buildJsonTree($this->root),
-                'labels'            => array(
+                'fanDegree'          => $this->fanDegree,
+                'generations'        => $this->generations,
+                'defaultColor'       => $this->getColor(),
+                'fontScale'          => $this->fontScale,
+                'fontColor'          => $this->getChartFontColor(),
+                'showEmptySegments'  => $this->showEmptySegments,
+                'showColorGradients' => $this->showColorGradients,
+                'updateUrl'          => $this->getUpdateUrl(),
+                'individualUrl'      => $this->getIndividualUrl(),
+                'data'               => $this->buildJsonTree($this->root),
+                'labels'             => array(
                     'zoom' => $this->translate('Use Ctrl + scroll to zoom in the view'),
                     'move' => $this->translate('Move the view with two fingers'),
                 ),
