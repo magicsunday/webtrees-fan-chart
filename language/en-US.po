@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ancestral fan chart\n"
 "POT-Creation-Date: 2018-02-12 10:56+0100\n"
-"PO-Revision-Date: 2018-02-12 11:06+0100\n"
+"PO-Revision-Date: 2018-03-26 10:54+0200\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: en_US\n"
@@ -74,10 +74,6 @@ msgstr ""
 msgid "Degrees"
 msgstr ""
 
-#: src/View/form.phtml:31
-msgid "view"
-msgstr ""
-
 #: src/View/form.phtml:36
 msgid "Generations"
 msgstr ""
@@ -86,10 +82,22 @@ msgstr ""
 msgid "Font size"
 msgstr ""
 
-#: src/View/form.phtml:50
-msgid "Hide empty segments"
+#: src/View/form.phtml:48
+msgid "Layout"
 msgstr ""
 
-#: src/View/form.phtml:54
+#: src/View/form.phtml:53
+msgid "Show color gradients"
+msgstr ""
+
+#: src/View/form.phtml:57
+msgid "view"
+msgstr ""
+
+#: src/View/form.phtml:64
+msgid "Show empty segments"
+msgstr ""
+
+#: src/View/form.phtml:68
 msgid "reset"
 msgstr ""

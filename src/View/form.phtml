@@ -1,5 +1,7 @@
 <?php
 
+use \Fisharebest\Webtrees\Theme;
+
 /** @var \RSO\WebtreesModule\AncestralFanChart\Controller\Chart $this */
 
 ?>
@@ -20,23 +22,18 @@
                         <?php echo $this->printFindIndividualLink() ?>
                     </td>
                     <td class="descriptionbox">
-                        <label for="fanDegree"><?php echo $this->translate('Degrees') ?></label>
-                    </td>
-                    <td class="optionbox">
-                        <?php echo $this->getFanDegreeSelectControl() ?>
-                    </td>
-                    <td class="optionbox">
-                    </td>
-                    <td class="topbottombar vmiddle">
-                        <input type="submit" value="<?php echo $this->translate('view') ?>">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="descriptionbox">
                         <label for="generations"><?php echo $this->translate('Generations') ?></label>
                     </td>
                     <td class="optionbox">
                         <?php echo $this->getGenerationsInputControl() ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="descriptionbox">
+                        <label for="fanDegree"><?php echo $this->translate('Degrees') ?></label>
+                    </td>
+                    <td class="optionbox">
+                        <?php echo $this->getFanDegreeSelectControl() ?>
                     </td>
                     <td class="descriptionbox">
                         <label for="fontScale"><?php echo $this->translate('Font size') ?></label>
@@ -44,13 +41,30 @@
                     <td class="optionbox">
                         <input class="fontScale" type="text" name="fontScale" id="fontScale" size="3" value="<?php echo $this->fontScale ?>">%
                     </td>
+                </tr>
+
+                <tr>
+                    <td class="descriptionbox" rowspan="2">
+                        <?php echo $this->translate('Layout') ?>
+                    </td>
                     <td class="optionbox">
                         <label>
-                            <?php echo $this->getHideEmptySegmentsCheckbox() ?>
-                            <?php echo $this->translate('Hide empty segments') ?>
+                            <?php echo $this->getShowColorGradientsCheckbox() ?>
+                            <?php echo $this->translate('Show color gradients') ?>
                         </label>
                     </td>
-                    <td class="topbottombar vmiddle">
+                    <td class="topbottombar vmiddle" colspan="2">
+                        <input type="submit" value="<?php echo $this->translate('view') ?>">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="optionbox">
+                        <label>
+                            <?php echo $this->getShowEmptySegmentsCheckbox() ?>
+                            <?php echo $this->translate('Show empty segments') ?>
+                        </label>
+                    </td>
+                    <td class="topbottombar vmiddle" colspan="2">
                         <input type="reset" value="<?php echo $this->translate('reset') ?>">
                     </td>
                 </tr>

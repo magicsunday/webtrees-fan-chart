@@ -60,8 +60,11 @@
             colorArcWidth: 5,        // Width of the colored arc above each single person arc
             textPadding: 3,          // Left/Right padding of text (used with truncation)
 
-            // Whether to hide empty segments of chart or not
-            hideEmptySegments: false,
+            // Whether to show empty segments of chart or not
+            showEmptySegments: true,
+
+            // Whether to show color gradients or not
+            showColorGradients: false,
 
             // Duration of update animation if clicked on a person
             updateDuration: 1250,
@@ -85,7 +88,18 @@
             this.options.endPi   = (this.options.fanDegree / 360 * Math.PI);
 
             // Helper method to create a ongoing id
-            this.options.id = (function () { var i = 1; return function () { return i++; }})();
+            this.options.id = (function (reset) {
+                let i = 1;
+                let r = reset || false;
+
+                return function (r) {
+                    if (r) {
+                        i = 0;
+                    }
+
+                    return i++;
+                }
+            })();
 
             // Scale the angles linear across the circle
             this.options.x = d3.scaleLinear().range([this.options.startPi, this.options.endPi]);
@@ -104,12 +118,15 @@
          *
          * @return {object}
          */
-        createEmptyNode: function (generation) {
+        createEmptyNode: function (generation, sex) {
             return {
+                id: 0,
                 xref: '',
+                sex: sex,
                 name: '',
                 generation: generation,
-                color: this.options.defaultColor
+                color: this.options.defaultColor,
+                colors: [[], []]
             };
         },
 
@@ -192,6 +209,12 @@
                     }
                 }, this))
                 .on('click', $.proxy(this.doStopPropagation, this), true);
+
+            if (that.options.showColorGradients) {
+                // Create the svg:defs element
+                this.config.svgDefs = this.config.svg
+                    .append('defs');
+            }
 
             // Add an overlay with tooltip
             this.config.overlay = this.config.parent
@@ -338,8 +361,8 @@
                     // Fill up the missing children to the requested number of generations
                     if (!d.children && (d.generation < that.options.generations)) {
                         return [
-                            that.createEmptyNode(d.generation + 1),
-                            that.createEmptyNode(d.generation + 1)
+                            that.createEmptyNode(d.generation + 1, 'M'),
+                            that.createEmptyNode(d.generation + 1, 'F')
                         ];
                     }
 
@@ -347,12 +370,10 @@
                     if (d.children && (d.children.length < 2)) {
                         if (d.children[0].sex === 'M') {
                             // Append empty node if we got an father
-                            d.children
-                                .push(that.createEmptyNode(d.generation + 1));
+                            d.children.push(that.createEmptyNode(d.generation + 1, 'F'));
                         } else {
                             // Else prepend empty node
-                            d.children
-                                .unshift(that.createEmptyNode(d.generation + 1));
+                            d.children.unshift(that.createEmptyNode(d.generation + 1, 'M'));
                         }
                     }
 
@@ -363,6 +384,13 @@
 
             var partition = d3.partition();
             this.config.nodes = partition(root).descendants();
+
+            // Create unique id for each element
+            this.config.nodes.forEach(function (entry) {
+                entry.data.id = that.options.id();
+            });
+
+            that.options.id(true);
         },
 
         /**
@@ -690,13 +718,13 @@
         },
 
         addPersonData: function (person, d) {
-            if (person.classed('new') && this.options.hideEmptySegments) {
+            if (person.classed('new') && !this.options.showEmptySegments) {
                 this.addArcToPerson(person, d);
             } else {
                 if (!person.classed('new')
                     && !person.classed('update')
                     && !person.classed('remove')
-                    && ((d.data.xref !== '') || !this.options.hideEmptySegments)
+                    && ((d.data.xref !== '') || this.options.showEmptySegments)
                 ) {
                     this.addArcToPerson(person, d);
                 }
@@ -719,6 +747,68 @@
                 .on('mouseout', function () {
                     d3.select(this).classed('hover', false);
                 });
+        },
+
+        /**
+         * Create an gradient fill and return unique identifier.
+         *
+         * @param {object} d D3 data object
+         *
+         * @return {void}
+         */
+        addGradientColor: function (d) {
+            var that = this;
+
+            if (d.depth < 1) {
+                return;
+            }
+
+            // Define initial gradient colors starting with second generation
+            if (d.depth === 1) {
+                let color1 = [64, 143, 222];
+                let color2 = [161, 219, 117];
+
+                if (d.data.sex === 'F') {
+                    color1 = [218, 102, 13],
+                    color2 = [235, 201, 33];
+                }
+
+                d.data.colors = [color1, color2];
+
+            // Calculate subsequent gradient colors
+            } else {
+                var c = [
+                    Math.ceil((d.parent.data.colors[0][0] + d.parent.data.colors[1][0]) / 2.0),
+                    Math.ceil((d.parent.data.colors[0][1] + d.parent.data.colors[1][1]) / 2.0),
+                    Math.ceil((d.parent.data.colors[0][2] + d.parent.data.colors[1][2]) / 2.0),
+                ];
+
+                if (d.data.sex === 'M') {
+                    d.data.colors[0] = d.parent.data.colors[0];
+                    d.data.colors[1] = c;
+                }
+
+                if (d.data.sex === 'F') {
+                    d.data.colors[0] = c;
+                    d.data.colors[1] = d.parent.data.colors[1];
+                }
+            }
+
+            // Add a new radial gradient
+            var newGrad = this.config.svgDefs
+                .append('svg:linearGradient')
+                .attr('id', function () {
+                    return 'grad-' + d.data.id;
+                });
+
+            // Define start and stop colors of gradient
+            newGrad.append('svg:stop')
+                .attr('offset', '0%')
+                .attr('stop-color', 'rgb(' + d.data.colors[0].join(',') + ')');
+
+            newGrad.append('svg:stop')
+                .attr('offset', '100%')
+                .attr('stop-color', 'rgb(' + d.data.colors[1].join(',') + ')');
         },
 
         /**
@@ -758,7 +848,16 @@
                     return (d.data.xref !== '');
                 })
                 .append('path')
-                .style('fill', function (d) {
+                .attr('fill', function (d) {
+                    // Innermost circle (first generation) or undefined gender
+                    if (!d.depth) {
+                        return 'rgb(225, 225, 225)';
+                    }
+
+                    if (that.options.showColorGradients) {
+                        return 'url(#grad-' + d.data.id + ')';
+                    }
+
                     return d.data.color;
                 })
                 .attr('d', arcGen);
@@ -782,10 +881,14 @@
                     var person = personGroup
                         .append('g')
                         .attr('class', 'person')
-                        .attr('id', 'person-' + that.options.id())
+                        .attr('id', 'person-' + entry.data.id)
                         .on('click', null);
 
                     that.addPersonData(person, entry);
+
+                    if (that.options.showColorGradients) {
+                        that.addGradientColor(entry);
+                    }
                 });
 
             this.bindClickEventListener();
@@ -858,7 +961,7 @@
          */
         updateDone: function () {
             // Remove arc if segments should be hidden
-            if (this.options.hideEmptySegments) {
+            if (!this.options.showEmptySegments) {
                 this.config.svg
                     .selectAll('g.person.remove')
                     .selectAll('g.arc')
@@ -961,10 +1064,10 @@
                         .selectAll('g.person.remove g.arc path')
                         .transition(t)
                         .style('fill', function () {
-                            return that.options.hideEmptySegments ? null : 'rgb(240, 240, 240)';
+                            return !that.options.showEmptySegments ? null : 'rgb(240, 240, 240)';
                         })
                         .style('opacity', function () {
-                            return that.options.hideEmptySegments ? 0 : null;
+                            return !that.options.showEmptySegments ? 0 : null;
                         });
 
                     // Fade in new arcs
@@ -973,7 +1076,7 @@
                         .transition(t)
                         .style('fill', 'rgb(250, 250, 250)')
                         .style('opacity', function () {
-                            return that.options.hideEmptySegments ? 1 : null;
+                            return !that.options.showEmptySegments ? 1 : null;
                         });
 
                     // Fade out all old labels and color group
@@ -1243,10 +1346,6 @@
             textElements.each(function (ignore, i) {
                 var offsets = [0, -0.025, 0.5, 1.15];
                 var offset  = offsets[countElements];
-
-//                var availableWidth = that.arcLength(d, 50);
-//                var position       = that.getTextOffset(i, d);
-//                var offsetRotate   = availableWidth - ((100 - position) * availableWidth / 100);
 
                 var mapIndexToOffset = d3.scaleLinear()
                     .domain([0, countElements - 1])
