@@ -60,8 +60,8 @@
             colorArcWidth: 5,        // Width of the colored arc above each single person arc
             textPadding: 3,          // Left/Right padding of text (used with truncation)
 
-            // Whether to show empty segments of chart or not
-            showEmptySegments: true,
+            // Whether to hide empty segments of chart or not
+            hideEmptySegments: false,
 
             // Whether to show color gradients or not
             showColorGradients: false,
@@ -718,13 +718,13 @@
         },
 
         addPersonData: function (person, d) {
-            if (person.classed('new') && !this.options.showEmptySegments) {
+            if (person.classed('new') && this.options.hideEmptySegments) {
                 this.addArcToPerson(person, d);
             } else {
                 if (!person.classed('new')
                     && !person.classed('update')
                     && !person.classed('remove')
-                    && ((d.data.xref !== '') || this.options.showEmptySegments)
+                    && ((d.data.xref !== '') || !this.options.hideEmptySegments)
                 ) {
                     this.addArcToPerson(person, d);
                 }
@@ -961,7 +961,7 @@
          */
         updateDone: function () {
             // Remove arc if segments should be hidden
-            if (!this.options.showEmptySegments) {
+            if (this.options.hideEmptySegments) {
                 this.config.svg
                     .selectAll('g.person.remove')
                     .selectAll('g.arc')
@@ -1064,10 +1064,10 @@
                         .selectAll('g.person.remove g.arc path')
                         .transition(t)
                         .style('fill', function () {
-                            return !that.options.showEmptySegments ? null : 'rgb(240, 240, 240)';
+                            return that.options.hideEmptySegments ? null : 'rgb(240, 240, 240)';
                         })
                         .style('opacity', function () {
-                            return !that.options.showEmptySegments ? 0 : null;
+                            return that.options.hideEmptySegments ? 0 : null;
                         });
 
                     // Fade in new arcs
@@ -1076,7 +1076,7 @@
                         .transition(t)
                         .style('fill', 'rgb(250, 250, 250)')
                         .style('opacity', function () {
-                            return !that.options.showEmptySegments ? 1 : null;
+                            return that.options.hideEmptySegments ? 1 : null;
                         });
 
                     // Fade out all old labels and color group

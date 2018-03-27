@@ -86,11 +86,11 @@ class Chart extends ChartController
     private $fontScale = 100;
 
     /**
-     * Whether to show empty segments of chart or not.
+     * Whether to hide empty segments of chart or not.
      *
      * @var bool
      */
-    private $showEmptySegments = true;
+    private $hideEmptySegments = false;
 
     /**
      * Whether to show gradient colors or not.
@@ -113,8 +113,8 @@ class Chart extends ChartController
         $this->fanDegree          = Filter::getInteger('fanDegree', 180, 360, 210);
         $this->generations        = Filter::getInteger('generations', self::MIN_GENERATIONS, self::MAX_GENERATIONS, $defaultGenerations);
         $this->fontScale          = Filter::getInteger('fontScale', 0, 200, 100);
-        $this->showEmptySegments  = (bool) Filter::getInteger('showEmptySegments', 0, 1, true);
-        $this->showColorGradients = (bool) Filter::getInteger('showColorGradients', 0, 1, false);
+        $this->hideEmptySegments  = Filter::getBool('hideEmptySegments');
+        $this->showColorGradients = Filter::getBool('showColorGradients');
 
         // Create page title
         $title = $this->translate('Ancestral fan chart');
@@ -256,13 +256,13 @@ class Chart extends ChartController
     }
 
     /**
-     * Get the HTML for the "showEmptySegments" checkbox element.
+     * Get the HTML for the "hideEmptySegments" checkbox element.
      *
      * @return string
      */
-    private function getShowEmptySegmentsCheckbox()
+    private function getHideEmptySegmentsCheckbox()
     {
-        return FunctionsEdit::twoStateCheckbox('showEmptySegments', $this->showEmptySegments);
+        return FunctionsEdit::twoStateCheckbox('hideEmptySegments', $this->hideEmptySegments);
     }
 
     /**
@@ -395,7 +395,7 @@ class Chart extends ChartController
                 'defaultColor'       => $this->getColor(),
                 'fontScale'          => $this->fontScale,
                 'fontColor'          => $this->getChartFontColor(),
-                'showEmptySegments'  => $this->showEmptySegments,
+                'hideEmptySegments'  => $this->hideEmptySegments,
                 'showColorGradients' => $this->showColorGradients,
                 'updateUrl'          => $this->getUpdateUrl(),
                 'individualUrl'      => $this->getIndividualUrl(),
