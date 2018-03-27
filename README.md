@@ -7,6 +7,10 @@
 # Ancestral fan chart
 This modules provides an SVG ancestral fan chart for the [webtrees](https://www.webtrees.net) genealogy application.
 
+![210 Degree chart](/assets/fan-chart-210.png)
+![210 Degree chart with color gradients and hidden empty segments](/assets/fan-chart-210-gradient.png)
+
+
 ## Installation
 1. Download the [latest release](https://github.com/magicsunday/ancestral-fan-chart/releases/latest).
 2. Upload the downloaded file to your webserver.
@@ -20,11 +24,12 @@ If you are using ``git``, you could also clone the current master into your `web
 
     git clone https://github.com/magicsunday/ancestral-fan-chart.git
 
+
 ## Usage
 At the charts menu, you will find a new link called `Ancestral fan chart`.
 
-## Development
 
+## Development
 To build custom d3 version, run the following commands inside /js/packages
 
     npm install
