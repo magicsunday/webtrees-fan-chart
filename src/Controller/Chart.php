@@ -305,13 +305,13 @@ class Chart extends ChartController
     private function getFanDegrees()
     {
         return [
-            180 => $this->translate('180 degree'),
-            210 => $this->translate('210 degree'),
-            240 => $this->translate('240 degree'),
-            270 => $this->translate('270 degree'),
-            300 => $this->translate('300 degree'),
-            330 => $this->translate('330 degree'),
-            360 => $this->translate('360 degree'),
+            180 => $this->translate('180 degrees'),
+            210 => $this->translate('210 degrees'),
+            240 => $this->translate('240 degrees'),
+            270 => $this->translate('270 degrees'),
+            300 => $this->translate('300 degrees'),
+            330 => $this->translate('330 degrees'),
+            360 => $this->translate('360 degrees'),
         ];
     }
 

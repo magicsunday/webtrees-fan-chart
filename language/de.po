@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ancestral fan chart\n"
 "POT-Creation-Date: 2018-02-12 10:56+0100\n"
-"PO-Revision-Date: 2018-03-27 08:50+0200\n"
+"PO-Revision-Date: 2018-03-29 21:28+0200\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.0.5\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: translate;doShowTooltipOverlay\n"
 "X-Poedit-SearchPath-0: js/ancestral-fan-chart.js\n"
@@ -35,31 +35,31 @@ msgid "Ancestral fan chart of %s"
 msgstr "Fächerdiagramm der Vorfahren von %s"
 
 #: src/Controller/Chart.php:290
-msgid "180 degree"
+msgid "180 degrees"
 msgstr "180 Grad"
 
 #: src/Controller/Chart.php:291
-msgid "210 degree"
+msgid "210 degrees"
 msgstr "210 Grad"
 
 #: src/Controller/Chart.php:292
-msgid "240 degree"
+msgid "240 degrees"
 msgstr "240 Grad"
 
 #: src/Controller/Chart.php:293
-msgid "270 degree"
+msgid "270 degrees"
 msgstr "270 Grad"
 
 #: src/Controller/Chart.php:294
-msgid "300 degree"
+msgid "300 degrees"
 msgstr "300 Grad"
 
 #: src/Controller/Chart.php:295
-msgid "330 degree"
+msgid "330 degrees"
 msgstr "330 Grad"
 
 #: src/Controller/Chart.php:296
-msgid "360 degree"
+msgid "360 degrees"
 msgstr "360 Grad"
 
 #: src/Module.php:116
