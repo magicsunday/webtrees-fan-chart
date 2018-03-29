@@ -849,12 +849,12 @@
                 })
                 .append('path')
                 .attr('fill', function (d) {
-                    // Innermost circle (first generation) or undefined gender
-                    if (!d.depth) {
-                        return 'rgb(225, 225, 225)';
-                    }
-
                     if (that.options.showColorGradients) {
+                        // Innermost circle (first generation) or undefined gender
+                        if (!d.depth) {
+                            return 'rgb(225, 225, 225)';
+                        }
+
                         return 'url(#grad-' + d.data.id + ')';
                     }
 
