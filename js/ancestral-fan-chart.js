@@ -53,12 +53,12 @@
             // Arc dimensions
             circlePadding: 0,        // Padding in pixel between each generation circle
             numberOfInnerCircles: 5, // Number of circles, large enough to print text along arc path
-            centerCircleRadius: 65,  // Radius of the innermost circle
-            innerArcHeight: 65,      // Height of each inner circle arc
+            centerCircleRadius: 85,  // Radius of the innermost circle
+            innerArcHeight: 85,      // Height of each inner circle arc
             outerArcHeight: 115,     // Height of each outer circle arc
 
             colorArcWidth: 5,        // Width of the colored arc above each single person arc
-            textPadding: 3,          // Left/Right padding of text (used with truncation)
+            textPadding: 8,          // Left/Right padding of text (used with truncation)
 
             // Whether to hide empty segments of chart or not
             hideEmptySegments: false,
@@ -210,7 +210,11 @@
                 }, this))
                 .on('click', $.proxy(this.doStopPropagation, this), true);
 
-            if (that.options.showColorGradients) {
+            if (this.options.rtl) {
+                this.config.svg.classed('rtl', true);
+            }
+
+            if (this.options.showColorGradients) {
                 // Create the svg:defs element
                 this.config.svgDefs = this.config.svg
                     .append('defs');
@@ -678,13 +682,23 @@
                     .text(this.getLastName(d))
                     .each(this.truncate(d, 1));
 
-                if (timeSpan) {
+                if (d.data.alternativeName) {
                     let path3 = this.appendPathToLabel(label, 2, d);
 
                     this.appendTextPath(text, path3.attr('id'))
-                        .attr('class', 'chart-date')
-                        .text(timeSpan)
+                        .attr('class', 'alternativeName')
+                        .classed('rtl', d.data.isAltRtl)
+                        .text(d.data.alternativeName)
                         .each(this.truncate(d, 2));
+                }
+
+                if (timeSpan) {
+                    let path4 = this.appendPathToLabel(label, 3, d);
+
+                    this.appendTextPath(text, path4.attr('id'))
+                        .attr('class', 'date')
+                        .text(timeSpan)
+                        .each(this.truncate(d, 3));
                 }
             } else {
                 // Outer labels
@@ -698,17 +712,25 @@
 
                 // Create the text elements for first name, last name and
                 // the birth/death dates
-                that.appendOuterArcText(d, label, name);
+                that.appendOuterArcText(d, 0, label, name);
 
                 // The outer most circles show the complete name and do not distinguish between
                 // first name, last name and dates
                 if (d.depth < 7) {
                     // Add last name
-                    that.appendOuterArcText(d, label, that.getLastName(d));
+                    that.appendOuterArcText(d, 1, label, that.getLastName(d));
+
+                    if ((d.depth < 5) && d.data.alternativeName) {
+                        let textElement = that.appendOuterArcText(d, 2, label, d.data.alternativeName, 'alternativeName');
+
+                        if (d.data.isAltRtl) {
+                            textElement.classed('rtl', true);
+                        }
+                    }
 
                     // Add dates
                     if ((d.depth < 6) && timeSpan) {
-                        that.appendOuterArcText(d, label, timeSpan, 'chart-date');
+                        that.appendOuterArcText(d, 3, label, timeSpan, 'date');
                     }
                 }
 
@@ -1113,7 +1135,8 @@
          * @return {int}
          */
         getTextOffset: function(index, d) {
-            return this.isPositionFlipped(d) ? [25, 43, 71][index] : [66, 48, 20][index];
+            // TODO
+            return this.isPositionFlipped(d) ? [20, 35, 58, 81][index] : [75, 60, 37, 14][index];
         },
 
         /**
@@ -1121,7 +1144,7 @@
          * in the chart.
          *
          * @param {object} d     D3 data object
-         * @param {int}    index Index position of element in parent container.
+         * @param {int}    index Index position of element in parent container
          *
          * @returns {string} Truncated text
          */
@@ -1163,7 +1186,7 @@
 
             if ((d.depth >= 1) && (d.depth < this.options.numberOfInnerCircles)) {
                 // Calculate length of the arc
-                availableWidth = this.arcLength(d, this.getTextOffset(index || 1, d));
+                availableWidth = this.arcLength(d, this.getTextOffset(index, d));
             } else {
                 // Outer arcs
                 if (d.depth >= this.options.numberOfInnerCircles) {
@@ -1309,23 +1332,27 @@
         /**
          * Append text element to the given group element.
          *
+         * @param {object} d         D3 data object
+         * @param {int}    index     Index position of element in parent container
          * @param {object} group     D3 group (g) object
          * @param {string} label     Label to display
          * @param {string} textClass Optional class to set to the D3 text element
          *
          * @return {object} D3 text object
          */
-        appendOuterArcText: function (d, group, label, textClass) {
-            var that = this;
+        appendOuterArcText: function (d, index, group, label, textClass) {
+            var that        = this;
+            var textElement = group.append('text');
 
-            group.append('text')
-                .attr('class', textClass || null)
+            textElement.attr('class', textClass || null)
                 .attr('dominant-baseline', 'middle')
                 .style('font-size', function () {
                     return that.getFontSize(d);
                 })
                 .text(label)
-                .each(this.truncate(d));
+                .each(this.truncate(d, index));
+
+            return textElement;
         },
 
         /**
@@ -1344,7 +1371,7 @@
             var countElements = textElements.size();
 
             textElements.each(function (ignore, i) {
-                var offsets = [0, -0.025, 0.5, 1.15];
+                var offsets = [0, -0.025, 0.5, 1.15, 2.0];
                 var offset  = offsets[countElements];
 
                 var mapIndexToOffset = d3.scaleLinear()

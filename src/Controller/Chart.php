@@ -33,6 +33,7 @@ use \Fisharebest\Webtrees\Family;
 use \Fisharebest\Webtrees\Filter;
 use \Fisharebest\Webtrees\Functions\FunctionsEdit;
 use \Fisharebest\Webtrees\Functions\FunctionsPrint;
+use \Fisharebest\Webtrees\I18N;
 use \Fisharebest\Webtrees\Individual;
 use \Fisharebest\Webtrees\Theme;
 use \Fisharebest\Webtrees\Theme\ThemeInterface;
@@ -181,6 +182,11 @@ class Chart extends ChartController
         return '#' . $this->getTheme()->parameter('chart-background-u');
     }
 
+    private function isRtl($text)
+    {
+        return I18N::scriptDirection(I18N::textScript($text)) === 'rtl';
+    }
+
     /**
      * Get the individual data required for display the chart.
      *
@@ -191,16 +197,21 @@ class Chart extends ChartController
      */
     private function getIndividualData(Individual $person, $generation)
     {
+        $fullName        = Filter::unescapeHtml($person->getFullName());
+        $alternativeName = Filter::unescapeHtml($person->getAddName());
+
         return array(
-            'id'         => 0,
-            'xref'       => $person->getXref(),
-            'generation' => $generation,
-            'name'       => Filter::unescapeHtml($person->getFullName()),
-            'sex'        => $person->getSex(),
-            'born'       => $person->getBirthYear(),
-            'died'       => $person->getDeathYear(),
-            'color'      => $this->getColor($person),
-            'colors'     => [[], []],
+            'id'              => 0,
+            'xref'            => $person->getXref(),
+            'generation'      => $generation,
+            'name'            => $fullName,
+            'alternativeName' => $alternativeName,
+            'isAltRtl'        => $this->isRtl($alternativeName),
+            'sex'             => $person->getSex(),
+            'born'            => $person->getBirthYear(),
+            'died'            => $person->getDeathYear(),
+            'color'           => $this->getColor($person),
+            'colors'          => [[], []],
         );
     }
 
@@ -390,6 +401,7 @@ class Chart extends ChartController
         // Encode chart parameters to json string
         $chartParams = json_encode(
             array(
+                'rtl'                => I18N::direction() === 'rtl',
                 'fanDegree'          => $this->fanDegree,
                 'generations'        => $this->generations,
                 'defaultColor'       => $this->getColor(),

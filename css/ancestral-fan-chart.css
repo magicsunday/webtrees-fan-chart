@@ -18,6 +18,11 @@
     filter: drop-shadow(3px 1px 3px rgba(0, 0, 0, 0.4));
 }
 
+#page-fan .rtl {
+    direction: rtl !important;
+    unicode-bidi: bidi-override !important;
+}
+
 #page-fan svg:active {
     cursor: grabbing;
     cursor: -webkit-grabbing;
@@ -53,9 +58,18 @@
     font-weight: normal;
 }
 
-#page-fan svg .label .chart-date {
+#page-fan svg .label .alternativeName {
     fill: #7f7f7f;
     font-weight: normal;
+    direction: ltr;
+    unicode-bidi: normal;
+}
+
+#page-fan svg .label .date {
+    fill: #7f7f7f;
+    font-weight: normal;
+    direction: ltr;
+    unicode-bidi: plaintext;
 }
 
 #page-fan svg rect.background {
