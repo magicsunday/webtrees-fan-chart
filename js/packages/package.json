@@ -12,7 +12,7 @@
         "d3-zoom": "^1",
         "d3-hierarchy": "^1",
         "d3-shape": "^1",
-        "d3-request": "^1",
+        "d3-fetch": "^1",
         "d3-timer": "^1",
         "rollup": "^0",
         "rollup-plugin-node-resolve": "^3",

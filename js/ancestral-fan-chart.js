@@ -1044,77 +1044,76 @@
                 .on('click', null);
 
             d3.json(
-                this.options.updateUrl + d.data.xref,
-                function (data) {
-                    // Initialize the new loaded data
-                    that.initData(data);
+                this.options.updateUrl + d.data.xref
+            ).then(function (data) {
+                // Initialize the new loaded data
+                that.initData(data);
 
-                    // Flag all elements which are subject to change
-                    that.config.svg
-                        .selectAll('g.person')
-                        .data(that.config.nodes)
-                        .each(function (entry) {
-                            var person = d3.select(this);
+                // Flag all elements which are subject to change
+                that.config.svg
+                    .selectAll('g.person')
+                    .data(that.config.nodes)
+                    .each(function (entry) {
+                        var person = d3.select(this);
 
-                            person.classed('remove', entry.data.xref === '')
-                                .classed('update', (entry.data.xref !== '') && person.classed('available'))
-                                .classed('new', (entry.data.xref !== '') && !person.classed('available'));
+                        person.classed('remove', entry.data.xref === '')
+                            .classed('update', (entry.data.xref !== '') && person.classed('available'))
+                            .classed('new', (entry.data.xref !== '') && !person.classed('available'));
 
-                            if (!person.classed('new')) {
-                                person.selectAll('g.label, title')
-                                    .classed('old', true);
-                            }
+                        if (!person.classed('new')) {
+                            person.selectAll('g.label, title')
+                                .classed('old', true);
+                        }
 
-                            that.addPersonData(person, entry);
-                        });
+                        that.addPersonData(person, entry);
+                    });
 
-                    // Hide all new labels of not removed elements
-                    that.config.svg
-                        .selectAll('g.person:not(.remove)')
-                        .selectAll('g.label:not(.old)')
-                        .style('opacity', 0);
+                // Hide all new labels of not removed elements
+                that.config.svg
+                    .selectAll('g.person:not(.remove)')
+                    .selectAll('g.label:not(.old)')
+                    .style('opacity', 0);
 
-                    that.addColorGroup()
-                        .classed('new', true);
+                that.addColorGroup()
+                    .classed('new', true);
 
-                    // Create transition instance
-                    var t = d3.transition()
-                        .duration(that.options.updateDuration)
-                        .call(that.endall, function () { that.updateDone(); });
+                // Create transition instance
+                var t = d3.transition()
+                    .duration(that.options.updateDuration)
+                    .call(that.endall, function () { that.updateDone(); });
 
-                    // Fade out old arc
-                    that.config.svg
-                        .selectAll('g.person.remove g.arc path')
-                        .transition(t)
-                        .style('fill', function () {
-                            return that.options.hideEmptySegments ? null : 'rgb(240, 240, 240)';
-                        })
-                        .style('opacity', function () {
-                            return that.options.hideEmptySegments ? 0 : null;
-                        });
+                // Fade out old arc
+                that.config.svg
+                    .selectAll('g.person.remove g.arc path')
+                    .transition(t)
+                    .style('fill', function () {
+                        return that.options.hideEmptySegments ? null : 'rgb(240, 240, 240)';
+                    })
+                    .style('opacity', function () {
+                        return that.options.hideEmptySegments ? 0 : null;
+                    });
 
-                    // Fade in new arcs
-                    that.config.svg
-                        .selectAll('g.person.new g.arc path')
-                        .transition(t)
-                        .style('fill', 'rgb(250, 250, 250)')
-                        .style('opacity', function () {
-                            return that.options.hideEmptySegments ? 1 : null;
-                        });
+                // Fade in new arcs
+                that.config.svg
+                    .selectAll('g.person.new g.arc path')
+                    .transition(t)
+                    .style('fill', 'rgb(250, 250, 250)')
+                    .style('opacity', function () {
+                        return that.options.hideEmptySegments ? 1 : null;
+                    });
 
-                    // Fade out all old labels and color group
-                    that.config.svg
-                        .selectAll('g.person.update g.label.old, g.person.remove g.label.old, g.colorGroup:not(.new)')
-                        .transition(t)
-                        .style('opacity', 0);
+                // Fade out all old labels and color group
+                that.config.svg
+                    .selectAll('g.person.update g.label.old, g.person.remove g.label.old, g.colorGroup:not(.new)')
+                    .transition(t)
+                    .style('opacity', 0);
 
-                    // Fade in all new labels and color group
-                    that.config.svg
-                        .selectAll('g.person:not(.remove) g.label:not(.old), g.colorGroup.new')
-                        .transition(t)
-                        .style('opacity', 1);
-                }
-            );
+                // Fade in all new labels and color group
+                that.config.svg
+                    .selectAll('g.person:not(.remove) g.label:not(.old), g.colorGroup.new')
+                    .transition(t)
+                    .style('opacity', 1);
+            });
         },
 
         /**
