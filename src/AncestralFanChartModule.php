@@ -2,12 +2,11 @@
 /**
  * See LICENSE.md file for further details.
  */
-namespace RSO\WebtreesModule\AncestralFanChart;
+namespace MagicSunday\Webtrees;
 
 use Fisharebest\Webtrees\Exceptions\IndividualAccessDeniedException;
 use Fisharebest\Webtrees\Exceptions\IndividualNotFoundException;
 use Fisharebest\Webtrees\Family;
-use Fisharebest\Webtrees\Filter;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Menu;
@@ -22,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Ancestral fan chart module class.
  *
- * @package RSO\WebtreesModule\AncestralFanChart
+ * @package MagicSunday\WebtreesModule\AncestralFanChart
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/ancestral-fan-chart/
@@ -200,11 +199,20 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
         $defaultGenerations = $this->tree->getPreference('DEFAULT_PEDIGREE_GENERATIONS');
 
         // Extract the request parameters
-        $this->fanDegree          = Filter::getInteger('fanDegree', 180, 360, 210);
-        $this->generations        = Filter::getInteger('generations', self::MIN_GENERATIONS, self::MAX_GENERATIONS, $defaultGenerations);
-        $this->fontScale          = Filter::getInteger('fontScale', 0, 200, 100);
-        $this->hideEmptySegments  = Filter::getBool('hideEmptySegments');
-        $this->showColorGradients = Filter::getBool('showColorGradients');
+        $this->hideEmptySegments  = (bool) $request->get('hideEmptySegments');
+        $this->showColorGradients = (bool) $request->get('showColorGradients');
+
+        $this->fanDegree = (int) $request->get('fanDegree', 210);
+        $this->fanDegree = min($this->fanDegree, 360);
+        $this->fanDegree = max($this->fanDegree, 180);
+
+        $this->fontScale = (int) $request->get('fontScale', 100);
+        $this->fontScale = min($this->fontScale, 200);
+        $this->fontScale = max($this->fontScale, 0);
+
+        $this->generations = (int) $request->get('generations', $defaultGenerations);
+        $this->generations = min($this->generations, self::MAX_GENERATIONS);
+        $this->generations = max($this->generations, self::MIN_GENERATIONS);
 
         $chartParams = [
             'rtl'                => I18N::direction() === 'rtl',

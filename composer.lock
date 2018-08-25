@@ -4,28 +4,28 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b0d27b5e6872bc077818a2385c48ba0c",
+    "content-hash": "4a851baab11cc3213a8e3629a080ee56",
     "packages": [
         {
             "name": "magicsunday/webtrees-module-installer-plugin",
-            "version": "v1.0",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/magicsunday/webtrees-module-installer-plugin.git",
-                "reference": "60eac2733ff79a9414d60437f45c84d29a0c278b"
+                "reference": "11705122a02ff9cc2c9ec0b978455c3fa42c3c25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magicsunday/webtrees-module-installer-plugin/zipball/60eac2733ff79a9414d60437f45c84d29a0c278b",
-                "reference": "60eac2733ff79a9414d60437f45c84d29a0c278b",
+                "url": "https://api.github.com/repos/magicsunday/webtrees-module-installer-plugin/zipball/11705122a02ff9cc2c9ec0b978455c3fa42c3c25",
+                "reference": "11705122a02ff9cc2c9ec0b978455c3fa42c3c25",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "*",
-                "php": ">=5.3.3 <7.0"
+                "php": ">=7.0"
             },
             "require-dev": {
-                "composer/composer": "1.2.4"
+                "composer/composer": "1.7.2"
             },
             "type": "composer-plugin",
             "extra": {
@@ -54,7 +54,7 @@
                 "modules",
                 "webtrees"
             ],
-            "time": "2018-09-08T12:01:36+00:00"
+            "time": "2018-09-08T12:11:58+00:00"
         }
     ],
     "packages-dev": [
@@ -239,7 +239,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3.3 <7.0",
+        "php": ">=7.0",
         "ext-json": "*"
     },
     "platform-dev": []

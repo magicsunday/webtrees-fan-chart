@@ -4,7 +4,7 @@ use Fisharebest\Webtrees\Bootstrap4;
 use Fisharebest\Webtrees\Functions\FunctionsEdit;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\View;
-use RSO\WebtreesModule\AncestralFanChart\AncestralFanChartModule;
+use MagicSunday\Webtrees\AncestralFanChartModule;
 
 ?>
 
@@ -152,4 +152,3 @@ if (typeof $().ancestralFanChart === 'function') {
 </script>
 
 <?php View::endpush(); ?>
-
