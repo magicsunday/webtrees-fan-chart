@@ -115,6 +115,7 @@
          * Create an empty child node object.
          *
          * @param {number} generation Generation of the node
+         * @param {string} sex
          *
          * @return {object}
          */
@@ -136,7 +137,7 @@
          * @private
          */
         initChart: function () {
-            var that = this;
+            let that = this;
 
             this.config.zoom = d3.zoom()
                 .scaleExtent([0.5, 5.0])
@@ -234,7 +235,7 @@
                 .attr('height', '100%');
 
             // Bind click event on reset button
-            var $resetButton = $(this.config.parent.node())
+            let $resetButton = $(this.config.parent.node())
                 .parent()
                 .siblings('form')
                 .find('input[type=reset]');
@@ -256,9 +257,9 @@
         /**
          * Stop any pending transition and hide overlay immediately.
          *
-         * @param {string}  text     Text to display in overlay
-         * @param {int}     duration Duration of transition in msec
-         * @param {closure} callback Callback method to execute on end of transition
+         * @param {string}   text     Text to display in overlay
+         * @param {int}      duration Duration of transition in msec
+         * @param {callback} callback Callback method to execute on end of transition
          *
          * @private
          */
@@ -294,7 +295,7 @@
          * @private
          */
         hideTooltipOverlay: function (delay, duration) {
-            delay = delay || 0;
+            delay    = delay    || 0;
             duration = duration || 0;
 
             this.config.overlay
@@ -357,10 +358,10 @@
          * @private
          */
         initData: function (data) {
-            var that = this;
+            let that = this;
 
             // Construct root node
-            var root = d3.hierarchy(
+            let root = d3.hierarchy(
                 data,
                 function (d) {
                     // Fill up the missing children to the requested number of generations
@@ -387,7 +388,7 @@
                 // Calculate number of leaves
                 .count();
 
-            var partition = d3.partition();
+            let partition = d3.partition();
             this.config.nodes = partition(root).descendants();
 
             // Create unique id for each element
@@ -403,20 +404,20 @@
          */
         updateViewBox: function () {
             // Get bounding boxes
-            var svgBoundingBox    = this.config.visual.node().getBBox();
-            var clientBoundingBox = this.config.parent.node().getBoundingClientRect();
+            let svgBoundingBox    = this.config.visual.node().getBBox();
+            let clientBoundingBox = this.config.parent.node().getBoundingClientRect();
 
             // View box should have at least the same width/height as the parent element
-            var viewBoxWidth  = Math.max(clientBoundingBox.width, svgBoundingBox.width);
-            var viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height, this.options.minHeight);
+            let viewBoxWidth  = Math.max(clientBoundingBox.width, svgBoundingBox.width);
+            let viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height, this.options.minHeight);
 
             // Calculate offset to center chart inside svg
-            var offsetX = (viewBoxWidth - svgBoundingBox.width) / 2;
-            var offsetY = (viewBoxHeight - svgBoundingBox.height) / 2;
+            let offsetX = (viewBoxWidth - svgBoundingBox.width) / 2;
+            let offsetY = (viewBoxHeight - svgBoundingBox.height) / 2;
 
             // Adjust view box dimensions by padding and offset
-            var viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - this.options.padding);
-            var viewBoxTop  = Math.ceil(svgBoundingBox.y - offsetY - this.options.padding);
+            let viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - this.options.padding);
+            let viewBoxTop  = Math.ceil(svgBoundingBox.y - offsetY - this.options.padding);
 
             // Final width/height of view box
             viewBoxWidth  = Math.ceil(viewBoxWidth + (this.options.padding * 2));
@@ -539,7 +540,7 @@
          * @returns {number}
          */
         relativeRadius: function (d, position) {
-            var outerRadius = this.outerRadius(d);
+            let outerRadius = this.outerRadius(d);
             return outerRadius - ((100 - position) * (outerRadius - this.innerRadius(d)) / 100);
         },
 
@@ -579,13 +580,13 @@
          * @param {object} person Parent element used to append the arc too
          * @param {object} d      D3 data object
          *
-         * @param {void}
+         * @return {void}
          */
         addArcToPerson: function (person, d) {
-            var that = this;
+            let that = this;
 
             // Arc generator
-            var arcGen = d3.arc()
+            let arcGen = d3.arc()
                 .startAngle(function () {
                     return (d.depth === 0) ? 0 : that.startAngle(d);
                 })
@@ -596,11 +597,11 @@
                 .outerRadius(that.outerRadius(d));
 
             // Append arc
-            var arcGroup = person
+            let arcGroup = person
                 .append('g')
                 .attr('class', 'arc');
 
-            var path = arcGroup
+            let path = arcGroup
                 .append('path')
                 .attr('d', arcGen);
 
@@ -628,6 +629,7 @@
          * Add "text" element to given parent element.
          *
          * @param {object} parent Parent element used to append the "text" element
+         * @param {object} d
          *
          * @return {object} Newly added label element
          */
@@ -660,10 +662,10 @@
          * @param {object} label Label element used to append the arc path
          * @param {object} d     D3 data object
          *
-         * @param {void}
+         * @return {void}
          */
         addArcPathToLabel: function (label, d) {
-            var that = this;
+            let that = this;
 
             if (this.isInnerLabel(d)) {
                 // Inner labels
@@ -757,7 +759,7 @@
                 this.addTitleToPerson(person, d);
 
                 // Append labels (initial hidden)
-                var label = this.addLabelToPerson(person);
+                let label = this.addLabelToPerson(person);
 
                 this.addArcPathToLabel(label, d);
             }
@@ -780,8 +782,6 @@
          * @return {void}
          */
         addGradientColor: function (d) {
-            var that = this;
-
             if (d.depth < 1) {
                 return;
             }
@@ -792,7 +792,7 @@
                 let color2 = [161, 219, 117];
 
                 if (d.data.sex === 'F') {
-                    color1 = [218, 102, 13],
+                    color1 = [218, 102, 13];
                     color2 = [235, 201, 33];
                 }
 
@@ -800,7 +800,7 @@
 
             // Calculate subsequent gradient colors
             } else {
-                var c = [
+                let c = [
                     Math.ceil((d.parent.data.colors[0][0] + d.parent.data.colors[1][0]) / 2.0),
                     Math.ceil((d.parent.data.colors[0][1] + d.parent.data.colors[1][1]) / 2.0),
                     Math.ceil((d.parent.data.colors[0][2] + d.parent.data.colors[1][2]) / 2.0),
@@ -818,7 +818,7 @@
             }
 
             // Add a new radial gradient
-            var newGrad = this.config.svgDefs
+            let newGrad = this.config.svgDefs
                 .append('svg:linearGradient')
                 .attr('id', function () {
                     return 'grad-' + d.data.id;
@@ -840,10 +840,10 @@
          * @return {object} Color group object
          */
         addColorGroup: function () {
-            var that = this;
+            let that = this;
 
             // Arc generator
-            var arcGen = d3.arc()
+            let arcGen = d3.arc()
                 .startAngle(function (d) {
                     return (d.depth === 0) ? 0 : that.startAngle(d);
                 })
@@ -857,7 +857,7 @@
                     return that.outerRadius(d) + 1;
                 });
 
-            var colorGroup = this.config.svg
+            let colorGroup = this.config.svg
                 .select('g')
                 .append('g')
                 .attr('class', 'colorGroup')
@@ -894,14 +894,14 @@
          * @return {void}
          */
         createArcElements: function () {
-            var that        = this;
-            var personGroup = this.config.svg.select('g.personGroup');
+            let that        = this;
+            let personGroup = this.config.svg.select('g.personGroup');
 
             personGroup.selectAll('g.person')
                 .data(this.config.nodes)
                 .enter()
                 .each(function (entry) {
-                    var person = personGroup
+                    let person = personGroup
                         .append('g')
                         .attr('class', 'person')
                         .attr('id', 'person-' + entry.data.id)
@@ -923,7 +923,7 @@
          * This method bind the "click" event listeners to a "person" element.
          */
         bindClickEventListener: function () {
-            var personGroup = this.config.svg
+            let personGroup = this.config.svg
                 .select('g.personGroup')
                 .selectAll('g.person')
                 .data(this.config.nodes)
@@ -968,7 +968,7 @@
          * @param {function} callback   Callback method
          */
         endall: function (transition, callback) {
-            var n = 0;
+            let n = 0;
 
             transition
                 .on('start', function() { ++n; })
@@ -991,11 +991,11 @@
                     .remove();
             }
 
-            var that = this;
+            let that = this;
 
             // Remove styles so CSS classes may work correct, Uses a small timer as animation seems not
             // to be done already if the point is reached
-            var t = d3.timer(function () {
+            let t = d3.timer(function () {
                 that.config.svg
                     .selectAll('g.person g.arc path')
                     .attr('style', null);
@@ -1037,7 +1037,7 @@
          * @param {object} d D3 data object
          */
         update: function (d) {
-            var that = this;
+            let that = this;
 
             that.config.svg
                 .selectAll('g.person')
@@ -1054,7 +1054,7 @@
                     .selectAll('g.person')
                     .data(that.config.nodes)
                     .each(function (entry) {
-                        var person = d3.select(this);
+                        let person = d3.select(this);
 
                         person.classed('remove', entry.data.xref === '')
                             .classed('update', (entry.data.xref !== '') && person.classed('available'))
@@ -1078,7 +1078,7 @@
                     .classed('new', true);
 
                 // Create transition instance
-                var t = d3.transition()
+                let t = d3.transition()
                     .duration(that.options.updateDuration)
                     .call(that.endall, function () { that.updateDone(); });
 
@@ -1149,14 +1149,13 @@
          * @returns {string} Truncated text
          */
         truncate: function (d, index) {
-            var that           = this;
-            var availableWidth = this.getAvailableWidth(d, index);
+            let availableWidth = this.getAvailableWidth(d, index);
 
             return function () {
                 // Depending on the depth of an entry in the chart the available width differs
-                var self       = d3.select(this);
-                var textLength = self.node().getComputedTextLength();
-                var text       = self.text();
+                let self       = d3.select(this);
+                let textLength = self.node().getComputedTextLength();
+                let text       = self.text();
 
                 while ((textLength > availableWidth) && (text.length > 0)) {
                     // Remove last char
@@ -1225,7 +1224,7 @@
          *
          * @param {object} d D3 data object
          *
-         * @return {string}
+         * @return {null|string}
          */
         getTimeSpan: function (d) {
             if (d.data.born || d.data.died) {
@@ -1243,7 +1242,7 @@
          * @return {string}
          */
         getFontSize: function (d) {
-            var fontSize = this.options.fontSize;
+            let fontSize = this.options.fontSize;
 
             if (d.depth >= (this.options.numberOfInnerCircles + 1)) {
                 fontSize += 1;
@@ -1265,8 +1264,8 @@
                 return false;
             }
 
-            var sAngle = this.startAngle(d);
-            var eAngle = this.endAngle(d);
+            let sAngle = this.startAngle(d);
+            let eAngle = this.endAngle(d);
 
             // Flip names for better readability depending on position in chart
             return ((sAngle >= (90 * Math.PI / 180)) && (eAngle <= (180 * Math.PI / 180)))
@@ -1283,11 +1282,11 @@
          * @return {object} D3 path object
          */
         appendPathToLabel: function (label, index, d) {
-            var that     = this;
-            var personId = d3.select(label.node().parentNode).attr('id');
+            let that     = this;
+            let personId = d3.select(label.node().parentNode).attr('id');
 
             // Create arc generator for path segments
-            var arcGenerator = d3.arc()
+            let arcGenerator = d3.arc()
                 .startAngle(function () {
                     return that.isPositionFlipped(d)
                         ? that.endAngle(d)
@@ -1309,24 +1308,6 @@
             return label.append('path')
                 .attr('id', personId + '-' + index)
                 .attr('d', arcGenerator);
-        },
-
-        /**
-         * Append "textPath" element.
-         *
-         * @param {object} parent  Parent element used to append the "textPath" element
-         * @param {string} refId  Id of reference element
-         * @param {string} text   Text to display
-         *
-         * @return {object} D3 textPath object
-         */
-        appendTextPathToText: function (parent, refId, text) {
-            return parent.append('textPath')
-                .attr('xlink:href', function () {
-                    return '#' + refId;
-                })
-                .attr('startOffset', '25%')
-                .text(text);
         },
 
         /**
@@ -1367,20 +1348,20 @@
          * @return {void}
          */
         transformOuterText: function (label, d) {
-            var that          = this;
-            var textElements  = label.selectAll('text');
-            var countElements = textElements.size();
+            let that          = this;
+            let textElements  = label.selectAll('text');
+            let countElements = textElements.size();
 
             textElements.each(function (ignore, i) {
                 var offsets = [0, -0.025, 0.5, 1.15, 2.0];
                 var offset  = offsets[countElements];
 
-                var mapIndexToOffset = d3.scaleLinear()
+                let mapIndexToOffset = d3.scaleLinear()
                     .domain([0, countElements - 1])
                     .range([-offset, offset]);
 
                 // Slightly increase in the y axis' value so the texts may not overlay
-                var offsetRotate = (i <= 1 ? 1.25 : 1.75);
+                let offsetRotate = (i <= 1 ? 1.25 : 1.75);
 
                 if ((d.depth === 0) || (d.depth === 6)) {
                     offsetRotate = 1.0;
@@ -1401,10 +1382,10 @@
                     d3.select(this).attr('dy', (mapIndexToOffset(i) * offsetRotate) + 'em');
                 } else {
                     d3.select(this).attr('transform', function () {
-                        var dx        = d.x1 - d.x0;
-                        var angle     = that.options.x(d.x0 + (dx / 2)) * 180 / Math.PI;
-                        var rotate    = angle - (mapIndexToOffset(i) * offsetRotate * (angle > 0 ? -1 : 1));
-                        var translate = (that.centerRadius(d) - (that.options.colorArcWidth / 2.0));
+                        let dx        = d.x1 - d.x0;
+                        let angle     = that.options.x(d.x0 + (dx / 2)) * 180 / Math.PI;
+                        let rotate    = angle - (mapIndexToOffset(i) * offsetRotate * (angle > 0 ? -1 : 1));
+                        let translate = (that.centerRadius(d) - (that.options.colorArcWidth / 2.0));
 
                         if (angle > 0) {
                             rotate -= 90;

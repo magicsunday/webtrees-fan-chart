@@ -13,4 +13,4 @@ $loader->addPsr4(
 $loader->register();
 
 // Create and return instance of the module
-return new Module(__DIR__);
+return new AncestralFanChartModule(__DIR__);
