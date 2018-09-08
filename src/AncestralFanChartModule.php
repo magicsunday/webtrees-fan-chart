@@ -287,13 +287,13 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     private function getFanDegrees(): array
     {
         return [
-            180 => __('180 degrees'),
-            210 => __('210 degrees'),
-            240 => __('240 degrees'),
-            270 => __('270 degrees'),
-            300 => __('300 degrees'),
-            330 => __('330 degrees'),
-            360 => __('360 degrees'),
+            180 => I18N::translate('180 degrees'),
+            210 => I18N::translate('210 degrees'),
+            240 => I18N::translate('240 degrees'),
+            270 => I18N::translate('270 degrees'),
+            300 => I18N::translate('300 degrees'),
+            330 => I18N::translate('330 degrees'),
+            360 => I18N::translate('360 degrees'),
         ];
     }
 
@@ -302,10 +302,14 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      *
      * @param string $value The value to strip the HTML tags from
      *
-     * @return string
+     * @return null|string
      */
-    private function unescapedHtml(string $value): string
+    private function unescapedHtml(string $value = null)
     {
+        if ($value === null) {
+            return $value;
+        }
+
         return html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
     }
 
