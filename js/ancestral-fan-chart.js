@@ -1322,8 +1322,8 @@
          * @return {object} D3 text object
          */
         appendOuterArcText: function (d, index, group, label, textClass) {
-            var that        = this;
-            var textElement = group.append('text');
+            let that        = this;
+            let textElement = group.append('text');
 
             textElement.attr('class', textClass || null)
                 .attr('class', textClass || null)
@@ -1353,8 +1353,8 @@
             let countElements = textElements.size();
 
             textElements.each(function (ignore, i) {
-                var offsets = [0, -0.025, 0.5, 1.15, 2.0];
-                var offset  = offsets[countElements];
+                let offsets = [0, -0.025, 0.5, 1.15, 2.0];
+                let offset  = offsets[countElements];
 
                 let mapIndexToOffset = d3.scaleLinear()
                     .domain([0, countElements - 1])

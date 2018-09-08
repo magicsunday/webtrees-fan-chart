@@ -319,7 +319,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      *
      * @return bool
      */
-    private function isRtl($text)
+    private function isRtl($text): bool
     {
         return I18N::scriptDirection(I18N::textScript($text)) === 'rtl';
     }
