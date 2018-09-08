@@ -1,53 +1,26 @@
 <?php
 /**
- * Webtrees module.
- *
- * Copyright (C) 2017  Rico Sonntag
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
- *
- * @category   Webtrees
- * @package    Module
- * @subpackage Controller
- * @author     Rico Sonntag <mail@ricosonntag.de>
- * @link       https://github.com/magicsunday/ancestral-fan-chart/
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License
+ * See LICENSE.md file for further details.
  */
+namespace MagicSunday\Webtrees\AncestralFanChart\Controller;
 
-namespace RSO\WebtreesModule\AncestralFanChart\Controller;
-
-use \Fisharebest\Webtrees\Controller\ChartController;
-use \Fisharebest\Webtrees\Family;
-use \Fisharebest\Webtrees\Filter;
-use \Fisharebest\Webtrees\Functions\FunctionsEdit;
-use \Fisharebest\Webtrees\Functions\FunctionsPrint;
-use \Fisharebest\Webtrees\I18N;
-use \Fisharebest\Webtrees\Individual;
-use \Fisharebest\Webtrees\Theme;
-use \Fisharebest\Webtrees\Theme\ThemeInterface;
-use \Fisharebest\Webtrees\Tree;
+use Fisharebest\Webtrees\Controller\ChartController;
+use Fisharebest\Webtrees\Family;
+use Fisharebest\Webtrees\Filter;
+use Fisharebest\Webtrees\Functions\FunctionsEdit;
+use Fisharebest\Webtrees\Functions\FunctionsPrint;
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Individual;
+use Fisharebest\Webtrees\Theme;
+use Fisharebest\Webtrees\Theme\ThemeInterface;
+use Fisharebest\Webtrees\Tree;
 
 /**
- * Fan chart controller class.
+ * Chart controller class.
  *
- * @category   Webtrees
- * @package    Module
- * @subpackage Controller
- * @author     Rico Sonntag <mail@ricosonntag.de>
- * @license    TBD
- * @link       https://github.com/magicsunday/ancestral-fan-chart/
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/ancestral-fan-chart/
  */
 class Chart extends ChartController
 {
