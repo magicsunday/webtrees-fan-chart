@@ -24,6 +24,7 @@
     "require": {
         "php": ">=7.0",
         "ext-json": "*",
+        "fisharebest/webtrees": "^2.0 || dev-master",
         "magicsunday/webtrees-module-installer-plugin": "*"
     },
     "require-dev": {
