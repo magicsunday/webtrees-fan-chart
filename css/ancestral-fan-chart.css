@@ -28,6 +28,14 @@
 	font-weight: bold;
 }
 
+/* Unset any style from our transition helper classes */
+#page-fan svg .new,
+#page-fan svg .remove,
+#page-fan svg .update,
+#page-fan svg .old {
+	all: unset;
+}
+
 #page-fan svg .person.available {
 	cursor: pointer;
 }

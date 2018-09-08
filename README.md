@@ -55,7 +55,7 @@ At the charts menu, you will find a new link called `Ancestral fan chart`.
 
 
 ## Development
-To build/update the custom d3 version, run the following commands inside the ``/js/packages`` directory:
+To build/update the javascript, run the following commands:
 
 ```
 npm install

@@ -6,7 +6,6 @@ namespace MagicSunday\Webtrees;
 
 use Fisharebest\Webtrees\Exceptions\IndividualAccessDeniedException;
 use Fisharebest\Webtrees\Exceptions\IndividualNotFoundException;
-use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Menu;
@@ -297,7 +296,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     }
 
     /**
-     * Unescape an HTML string, giving just the literal text
+     * Returns the unescaped HTML string.
      *
      * @param string $value The value to strip the HTML tags from
      *
@@ -363,16 +362,14 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     private function buildJsonTree(Individual $individual = null, int $generation = 1): array
     {
         // Maximum generation reached
-        if (($generation > $this->generations)
-            || !($individual instanceof Individual)
-        ) {
+        if (($generation > $this->generations) || ($individual === null)) {
             return [];
         }
 
         $data   = $this->getIndividualData($individual, $generation);
         $family = $individual->getPrimaryChildFamily();
 
-        if (!($family instanceof Family)) {
+        if ($family === null) {
             return $data;
         }
 
@@ -417,7 +414,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      */
     private function getIndividualRoute(): string
     {
-        return route('individual', [ 'xref' => '' ]);
+        return route('individual', ['xref' => '']);
     }
 
     /**
@@ -429,7 +426,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      */
     private function getColor(Individual $individual = null): string
     {
-        if ($individual instanceof Individual) {
+        if ($individual !== null) {
             if ($individual->getSex() === 'M') {
                 return '#' . $this->theme->parameter('chart-background-m');
             }
