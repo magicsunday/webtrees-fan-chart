@@ -1,0 +1,33 @@
+{
+    "name": "magicsunday/ancestral-fan-chart",
+    "description": "This modules provides an SVG ancestral fan chart for the [webtrees](https://www.webtrees.net) genealogy application.",
+    "license": "GPL-3.0-or-later",
+    "type": "webtrees-module",
+    "keywords": [
+        "webtrees",
+        "module",
+        "fan-chart"
+    ],
+    "authors": [
+        {
+            "name": "Rico Sonntag",
+            "email": "mail@ricosonntag.de",
+            "homepage": "https://ricosonntag.de",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "MagicSunday\\Webtrees\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.3.3 <7.0",
+        "ext-json": "*",
+        "fisharebest/webtrees": ">=1.7 <2.0",
+        "magicsunday/webtrees-module-installer-plugin": "*"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master"
+    }
+}

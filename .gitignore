@@ -1,5 +1,4 @@
-.buildpath
-.project
-.settings/
+.idea/
+vendor/
 js/packages/node_modules/
 js/packages/d3.v4.custom.js
