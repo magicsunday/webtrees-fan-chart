@@ -1,3 +1,6 @@
+/*jslint es6: true */
+/*jshint esversion: 6 */
+
 /*
 https://github.com/d3/d3-selection
 https://github.com/d3/d3-transition
@@ -18,7 +21,7 @@ export {
 } from "d3-transition";
 
 export {
-    scaleLinear,
+    scaleLinear
 } from "d3-scale";
 
 export * from "d3-zoom";

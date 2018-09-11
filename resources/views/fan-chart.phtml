@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * See LICENSE.md file for further details.
+ */
 use Fisharebest\Webtrees\Bootstrap4;
 use Fisharebest\Webtrees\Functions\FunctionsEdit;
 use Fisharebest\Webtrees\I18N;
@@ -156,8 +158,6 @@ function AncestralFanChart(data)
         data.showColorGradients,
         data.rtl
     );
-
-// console.log(rso.options);
 
     rso.options = Object.assign({}, rso.options, data);
 

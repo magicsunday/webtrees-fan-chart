@@ -1,3 +1,9 @@
+/*jslint es6: true */
+/*jshint esversion: 6 */
+
+/**
+ * See LICENSE.md file for further details.
+ */
 import { config } from "./config";
 
 const minHeight = 500;
@@ -5,6 +11,8 @@ const padding   = 10;   // Padding around view box
 
 /**
  * Update/Calculate the viewBox attribute of the SVG element.
+ *
+ * @public
  */
 export function updateViewBox() {
     // Get bounding boxes
@@ -29,7 +37,7 @@ export function updateViewBox() {
 
     // Set view box attribute
     config.svg
-        .attr('viewBox', [
+        .attr("viewBox", [
             viewBoxLeft,
             viewBoxTop,
             viewBoxWidth,
@@ -38,7 +46,7 @@ export function updateViewBox() {
 
     // Adjust rectangle position
     config.svg
-        .select('rect')
-        .attr('x', viewBoxLeft)
-        .attr('y', viewBoxTop);
+        .select("rect")
+        .attr("x", viewBoxLeft)
+        .attr("y", viewBoxTop);
 }

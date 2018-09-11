@@ -1,3 +1,9 @@
+/*jslint es6: true */
+/*jshint esversion: 6 */
+
+/**
+ * See LICENSE.md file for further details.
+ */
 
 export let config = {
     zoom: null,

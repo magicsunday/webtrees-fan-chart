@@ -1,3 +1,6 @@
+/*jslint es6: true */
+/*jshint esversion: 6 */
+
 /**
  * See LICENSE.md file for further details.
  */
@@ -5,7 +8,7 @@
 export * from "./d3";
 
 export {
-    deg2rad, rad2deg
+    MATH_DEG2RAD, MATH_RAD2DEG, MATH_PI2
 } from "./math";
 
 export {
@@ -17,23 +20,23 @@ export {
 } from "./config";
 
 export {
-    doZoom, doStopPropagation, hideTooltipOverlay, initChart, showTooltipOverlay
+    initChart
 } from "./chart";
 
 export {
     initData
-} from "./data";
+} from "./hierarchy";
 
 export {
     updateViewBox
 } from "./view-box";
 
 export {
-    innerRadius, outerRadius, centerRadius, relativeRadius
+    innerRadius, outerRadius, centerRadius, relativeRadius, startAngle, endAngle, arcLength
 } from "./radius";
 
 export {
-    addArcToPerson, calcAngle, endAngle, startAngle
+    addArcToPerson
 } from "./arc-person";
 
 export * from "./transform-outer-text";

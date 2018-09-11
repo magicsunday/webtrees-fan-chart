@@ -1,17 +1,19 @@
 #page-fan #fan_chart {
-	position: relative;
+    position: relative;
 /*
-	font-family: Verdana,sans-serif;
+    font-family: Verdana,sans-serif;
 */
 }
 
 #page-fan svg {
-	display: block;
-	margin: auto;
-	cursor: grab;
-	cursor: -webkit-grab;
-	-webkit-filter: drop-shadow(3px 1px 3px rgba(0, 0, 0, 0.4));
-	filter: drop-shadow(3px 1px 3px rgba(0, 0, 0, 0.4));
+    display: block;
+    margin: auto;
+    cursor: move;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+    cursor: grab;
+    -webkit-filter: drop-shadow(3px 1px 3px rgba(0, 0, 0, 0.4));
+    filter: drop-shadow(3px 1px 3px rgba(0, 0, 0, 0.4));
 }
 
 #page-fan .rtl {
@@ -20,12 +22,13 @@
 }
 
 #page-fan svg:active {
-	cursor: grabbing;
-	cursor: -webkit-grabbing;
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+    cursor: grabbing;
 }
 
 #page-fan svg text {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 /* Unset any style from our transition helper classes */
@@ -33,37 +36,37 @@
 #page-fan svg .remove,
 #page-fan svg .update,
 #page-fan svg .old {
-	all: unset;
+    all: unset;
 }
 
 #page-fan svg .person.available {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 #page-fan svg .person .arc path {
-	fill: rgb(240, 240, 240);
-	stroke: rgb(225, 225, 225);
-	stroke-width: 2px;
+    fill: rgb(240, 240, 240);
+    stroke: rgb(225, 225, 225);
+    stroke-width: 2px;
 }
 
 #page-fan svg .person.hover .arc path {
-	fill: rgb(250, 250, 250);
+    fill: rgb(250, 250, 250);
 }
 
 #page-fan svg .person.available .arc path {
-	fill: rgb(250, 250, 250);
+    fill: rgb(250, 250, 250);
 }
 
 #page-fan svg .person.available.hover .arc path {
-	fill: rgb(240, 240, 240);
+    fill: rgb(240, 240, 240);
 }
 
 #page-fan svg .label {
-	font-weight: normal;
+    font-weight: normal;
 }
 
 #page-fan svg .label .alternativeName {
-    fill: #7f7f7f;
+    fill: rgb(127, 127, 127);
     font-weight: normal;
     direction: ltr;
     unicode-bidi: normal;
@@ -77,36 +80,36 @@
 }
 
 #page-fan svg rect.background {
-	fill: none;
-	pointer-events: all;
+    fill: none;
+    pointer-events: all;
 }
 
 #page-fan div.overlay {
-	position: absolute;
-	top: 0;
-	left: 0;
-	text-align: center;
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font: 10px sans-serif;
-	background: rgba(0, 0, 0, 0.5);
-	pointer-events: none;
-	transition: opacity ease-in-out;
-	transition-duration: 0s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: 10px sans-serif;
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    transition: opacity ease-in-out;
+    transition-duration: 0s;
 }
 
 #page-fan div.overlay .tooltip {
-	font-size: 22px;
-	color: white;
-	position: relative;
-	margin: 0;
-	top: 50%;
-	-webkit-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	transform: translateY(-50%);
-	opacity: 1;
-	text-align: center;
+    font-size: 22px;
+    color: white;
+    position: relative;
+    margin: 0;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    opacity: 1;
+    text-align: center;
 }

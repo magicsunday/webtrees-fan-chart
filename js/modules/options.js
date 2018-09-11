@@ -1,4 +1,11 @@
-import * as d3 from './d3'
+/*jslint es6: true */
+/*jshint esversion: 6 */
+
+/**
+ * See LICENSE.md file for further details.
+ */
+import * as d3 from "./d3";
+import { MATH_DEG2RAD } from "./math";
 
 export class Options {
     constructor(
@@ -7,9 +14,9 @@ export class Options {
         labels,
         generations        = 6,
         fanDegree          = 210,
-        defaultColor       = '#eee',
+        defaultColor       = "#eee",
         fontScale          = 100,
-        fontColor          = '#000',
+        fontColor          = "#000",
         hideEmptySegments  = false,
         showColorGradients = false,
         rtl                = false
@@ -40,14 +47,8 @@ export class Options {
         // Left/Right padding of text (used with truncation)
         this.textPadding = 8;
 
-        // Default degrees of the fan chart
-        this.fanDegree = fanDegree;
-
         // Default background color of an arc
         this.defaultColor = defaultColor;
-
-        this.individualUrl = individualUrl;
-        this.updateUrl     = updateUrl;
 
         // Default font size, color and scaling
         this.fontSize  = 14;
@@ -60,8 +61,14 @@ export class Options {
         // Duration of update animation if clicked on a person
         this.updateDuration = 1250;
 
-        this.startPi = -(this.fanDegree / 360 * Math.PI);
-        this.endPi   =  (this.fanDegree / 360 * Math.PI);
+        this.individualUrl = individualUrl;
+        this.updateUrl     = updateUrl;
+
+        // Default degrees of the fan chart
+        this.fanDegree = fanDegree;
+
+        this.startPi = -(this.fanDegree / 2 * MATH_DEG2RAD);
+        this.endPi   =  (this.fanDegree / 2 * MATH_DEG2RAD);
 
         // Scale the angles linear across the circle
         this.x = d3.scaleLinear().range([this.startPi, this.endPi]);
@@ -79,7 +86,7 @@ export class Options {
                 }
 
                 return i++;
-            }
+            };
         })();
     }
 }

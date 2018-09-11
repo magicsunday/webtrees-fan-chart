@@ -22,12 +22,9 @@
         }
     },
     "require": {
-        "php": ">=7.0",
+        "php": "~7.0",
         "ext-json": "*",
-        "fisharebest/webtrees": "^2.0 || dev-master",
-        "magicsunday/webtrees-module-installer-plugin": "*"
-    },
-    "require-dev": {
-        "roave/security-advisories": "dev-master"
+        "fisharebest/webtrees": "~2.0 || dev-master",
+        "magicsunday/webtrees-module-installer-plugin": "~1.0"
     }
 }

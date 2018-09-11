@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * See LICENSE.md file for further details.
  */
@@ -304,11 +306,9 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      */
     private function unescapedHtml(string $value = null)
     {
-        if ($value === null) {
-            return $value;
-        }
-
-        return html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
+        return ($value === null)
+            ? $value
+            : html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
     }
 
     /**
@@ -318,9 +318,9 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      *
      * @return bool
      */
-    private function isRtl($text): bool
+    private function isRtl(string $text = null): bool
     {
-        return I18N::scriptDirection(I18N::textScript($text)) === 'rtl';
+        return $text ? I18N::scriptDirection(I18N::textScript($text)) === 'rtl' : false;
     }
 
     /**
@@ -426,17 +426,8 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      */
     private function getColor(Individual $individual = null): string
     {
-        if ($individual !== null) {
-            if ($individual->getSex() === 'M') {
-                return '#' . $this->theme->parameter('chart-background-m');
-            }
-
-            if ($individual->getSex() === 'F') {
-                return '#' . $this->theme->parameter('chart-background-f');
-            }
-        }
-
-        return '#' . $this->theme->parameter('chart-background-u');
+        $genderLower = ($individual === null) ? 'u' : strtolower($individual->getSex());
+        return '#' . $this->theme->parameter('chart-background-' . $genderLower);
     }
 
     /**

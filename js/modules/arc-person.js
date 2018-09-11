@@ -1,73 +1,44 @@
-import * as d3 from './d3'
-import {innerRadius, outerRadius} from "./radius";
+/*jslint es6: true */
+/*jshint esversion: 6 */
 
 /**
- * Calculate the angle in radians.
- *
- * @param {number} value Value
- *
- * @returns {number}
+ * See LICENSE.md file for further details.
  */
-export function calcAngle(value) {
-    return Math.max(
-        rso.options.startPi,
-        Math.min(rso.options.endPi, rso.options.x(value))
-    );
-}
+import * as d3 from "./d3";
+import {innerRadius, outerRadius, endAngle, startAngle} from "./radius";
+import {MATH_PI2} from "./math";
 
 /**
- * Get the start angle in radians.
+ * Appends the arc element to the person element.
  *
- * @param {object} d D3 data object
+ * @param {Object} person The parent element used to append the arc too
+ * @param {Object} data   The D3 data object
  *
- * @returns {number}
+ * @public
  */
-export function startAngle(d) {
-    return calcAngle(d.x0);
-}
-
-/**
- * Get the end angle in radians.
- *
- * @param {object} d D3 data object
- *
- * @returns {number}
- */
-export function endAngle(d) {
-    return calcAngle(d.x1);
-}
-
-/**
- * Append arc element to the person element.
- *
- * @param {object} person Parent element used to append the arc too
- * @param {object} d      D3 data object
- *
- * @return {void}
- */
-export function addArcToPerson(person, d) {
+export function addArcToPerson(person, data) {
     // Arc generator
     let arcGen = d3.arc()
         .startAngle(function () {
-            return (d.depth === 0) ? 0 : startAngle(d);
+            return (data.depth === 0) ? 0 : startAngle(data);
         })
         .endAngle(function () {
-            return (d.depth === 0) ? (Math.PI * 2) : endAngle(d);
+            return (data.depth === 0) ? MATH_PI2 : endAngle(data);
         })
-        .innerRadius(innerRadius(d))
-        .outerRadius(outerRadius(d));
+        .innerRadius(innerRadius(data))
+        .outerRadius(outerRadius(data));
 
     // Append arc
     let arcGroup = person
-        .append('g')
-        .attr('class', 'arc');
+        .append("g")
+        .attr("class", "arc");
 
     let path = arcGroup
-        .append('path')
-        .attr('d', arcGen);
+        .append("path")
+        .attr("d", arcGen);
 
     // Hide arc initially if its new during chart update
-    if (person.classed('new')) {
-        path.style('opacity', 0);
+    if (person.classed("new")) {
+        path.style("opacity", 0);
     }
 }
