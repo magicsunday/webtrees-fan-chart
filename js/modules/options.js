@@ -5,9 +5,10 @@
  * See LICENSE.md file for further details.
  */
 import * as d3 from "./d3";
-import { MATH_DEG2RAD } from "./math";
+import { MATH_DEG2RAD } from "./geometry";
 
-export class Options {
+export class Options
+{
     constructor(
         individualUrl,
         updateUrl,

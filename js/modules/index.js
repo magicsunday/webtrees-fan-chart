@@ -8,8 +8,8 @@
 export * from "./d3";
 
 export {
-    MATH_DEG2RAD, MATH_RAD2DEG, MATH_PI2
-} from "./math";
+    Geometry, MATH_DEG2RAD, MATH_PI2, MATH_RAD2DEG
+} from "./geometry";
 
 export {
     Options
@@ -24,20 +24,9 @@ export {
 } from "./chart";
 
 export {
-    initData
+    Hierarchy
 } from "./hierarchy";
 
 export {
     updateViewBox
 } from "./view-box";
-
-export {
-    innerRadius, outerRadius, centerRadius, relativeRadius, startAngle, endAngle, arcLength
-} from "./radius";
-
-export {
-    addArcToPerson
-} from "./arc-person";
-
-export * from "./transform-outer-text";
-

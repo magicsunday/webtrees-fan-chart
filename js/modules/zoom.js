@@ -43,13 +43,13 @@ export default function initZoom()
         if (d3.event.type === "wheel") {
             if (config.zoomLevel && d3.event.ctrlKey) {
                 // Prevent zooming below lowest level
-                if ((config.zoomLevel <= 0.5) && (d3.event.deltaY > 0)) {
+                if ((config.zoomLevel <= MIN_ZOOM) && (d3.event.deltaY > 0)) {
                     d3.event.preventDefault();
                     return false;
                 }
 
                 // Prevent zooming above highest level
-                if ((config.zoomLevel >= 5.0) && (d3.event.deltaY < 0)) {
+                if ((config.zoomLevel >= MAX_ZOOM) && (d3.event.deltaY < 0)) {
                     d3.event.preventDefault();
                     return false;
                 }

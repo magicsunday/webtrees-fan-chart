@@ -7,13 +7,16 @@
 import { config } from "./config";
 import * as d3 from "./d3";
 import initZoom from "./zoom";
+import { Hierarchy } from "./hierarchy";
+import {updateViewBox} from "./view-box";
+import {Arc} from "./arc";
 
 /**
  * Initialize the chart.
  *
  * @public
  */
-export function initChart()
+export function initChart(options)
 {
     // Parent container
     config.parent = d3
@@ -35,7 +38,7 @@ export function initChart()
         .on("wheel", function () {
             if (!d3.event.ctrlKey) {
                 showTooltipOverlay(
-                    rso.options.labels.zoom,
+                    options.labels.zoom,
                     300,
                     function () {
                         hideTooltipOverlay(700, 800);
@@ -54,16 +57,16 @@ export function initChart()
                 hideTooltipOverlay();
             } else {
                 // Show tooltip if less than 2 fingers are used
-                showTooltipOverlay(rso.options.labels.move);
+                showTooltipOverlay(options.labels.move);
             }
         })
         .on("click", doStopPropagation, true);
 
-    if (rso.options.rtl) {
+    if (options.rtl) {
         config.svg.classed("rtl", true);
     }
 
-    if (rso.options.showColorGradients) {
+    if (options.showColorGradients) {
         // Create the svg:defs element
         config.svgDefs = config.svg
             .append("defs");
@@ -96,6 +99,15 @@ export function initChart()
 
     config.zoom = initZoom();
     config.svg.call(config.zoom);
+
+    // Create hierarchical data
+    let hierarchy = new Hierarchy(options);
+    hierarchy.init(options.data);
+
+    let arc = new Arc(config, options, hierarchy);
+    arc.createArcElements();
+
+    updateViewBox();
 }
 
 /**

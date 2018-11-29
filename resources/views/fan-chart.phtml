@@ -140,7 +140,7 @@ use MagicSunday\Webtrees\AncestralFanChartModule;
 
 <?php View::push('javascript'); ?>
 
-<script type="text/javascript" src="modules_v3/ancestral-fan-chart/js/ancestral-fan-chart.min.js"></script>
+<script type="text/javascript" src="modules_v3/ancestral-fan-chart/js/ancestral-fan-chart.js"></script>
 <script type="text/javascript">
 
 function AncestralFanChart(data)
@@ -161,10 +161,10 @@ function AncestralFanChart(data)
 
     rso.options = Object.assign({}, rso.options, data);
 
-    rso.initChart();
-    rso.initData(rso.options.data);
-    rso.createArcElements();
-    rso.updateViewBox();
+    rso.initChart(rso.options);
+    // rso.initData(rso.options.data);
+    // rso.createArcElements();
+    // rso.updateViewBox();
 }
 
 new AncestralFanChart(<?= $chartParams ?>);
