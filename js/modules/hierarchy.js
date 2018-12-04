@@ -32,39 +32,42 @@ export class Hierarchy
     /**
      *
      * @param {Array} data
+     *
+     * @public
      */
     init(data)
     {
-        let self = this;
-
         // Get the greatest depth
-        const getDepth       = ({children}) => 1 + (children ? Math.max(...children.map(getDepth)) : 0);
-        const maxGenerations = getDepth(data);
+        // const getDepth       = ({children}) => 1 + (children ? Math.max(...children.map(getDepth)) : 0);
+        // const maxGenerations = getDepth(data);
 
         // Construct root node from the hierarchical data
         let root = d3.hierarchy(
             data,
-            d => {
+            data => {
                 // Fill up the missing children to the requested number of generations
-                if (!d.children && (d.generation < maxGenerations)) {
-                    return [
-                        self.createEmptyNode(d.generation + 1, SEX_MALE),
-                        self.createEmptyNode(d.generation + 1, SEX_FEMALE)
+                // if (!data.children && (data.generation < maxGenerations)) {
+                if (!data.children && (data.generation < this.options.generations)) {
+                    data.children = [
+                        this.createEmptyNode(data.generation + 1, SEX_MALE),
+                        this.createEmptyNode(data.generation + 1, SEX_FEMALE)
                     ];
                 }
 
                 // Add missing parent record if we got only one
-                if (d.children && (d.children.length < 2)) {
-                    if (d.children[0].sex === SEX_MALE) {
-                        // Append empty node if we got an father
-                        d.children.push(self.createEmptyNode(d.generation + 1, SEX_FEMALE));
+                if (data.children && (data.children.length < 2)) {
+                    if (data.children[0].sex === SEX_MALE) {
+                        data.children.push(
+                            this.createEmptyNode(data.generation + 1, SEX_FEMALE)
+                        );
                     } else {
-                        // Else prepend empty node
-                        d.children.unshift(self.createEmptyNode(d.generation + 1, SEX_MALE));
+                        data.children.unshift(
+                            this.createEmptyNode(data.generation + 1, SEX_MALE)
+                        );
                     }
                 }
 
-                return d.children;
+                return data.children;
             })
             // Calculate number of leaves
             .count();
@@ -87,6 +90,8 @@ export class Hierarchy
      * Returns the nodes.
      *
      * @returns {Array|*}
+     *
+     * @public
      */
     getNodes()
     {
@@ -97,7 +102,7 @@ export class Hierarchy
      * Create an empty child node object.
      *
      * @param {Number} generation Generation of the node
-     * @param {String} sex
+     * @param {String} sex        The sex of the individual
      *
      * @return {Object}
      *

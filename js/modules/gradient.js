@@ -92,14 +92,12 @@ export class Gradient
      */
     addColorGroup(hierarchy)
     {
-        let self = this;
-
         // Arc generator
         let arcGen = d3.arc()
-            .startAngle((d) => (d.depth === 0) ? 0 : self.geometry.startAngle(d))
-            .endAngle((d) => (d.depth === 0) ? MATH_PI2 : self.geometry.endAngle(d))
-            .innerRadius((d) => self.geometry.outerRadius(d) - self.options.colorArcWidth)
-            .outerRadius((d) => self.geometry.outerRadius(d) + 1);
+            .startAngle((d) => (d.depth === 0) ? 0 : this.geometry.startAngle(d))
+            .endAngle((d) => (d.depth === 0) ? MATH_PI2 : this.geometry.endAngle(d))
+            .innerRadius((d) => this.geometry.outerRadius(d) - this.options.colorArcWidth)
+            .outerRadius((d) => this.geometry.outerRadius(d) + 1);
 
         let colorGroup = this.config.svg
             .select("g")
@@ -113,8 +111,8 @@ export class Gradient
             .enter()
             .filter((d) => (d.data.xref !== ""))
             .append("path")
-            .attr("fill", function (d) {
-                if (self.options.showColorGradients) {
+            .attr("fill", (d) => {
+                if (this.options.showColorGradients) {
                     // Innermost circle (first generation)
                     if (!d.depth) {
                         return "rgb(225, 225, 225)";

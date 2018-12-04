@@ -4,7 +4,6 @@
 /**
  * See LICENSE.md file for further details.
  */
-
 import {Geometry, MATH_DEG2RAD, MATH_RAD2DEG} from "../geometry";
 import * as d3 from "../d3";
 
@@ -167,27 +166,20 @@ export default class Text
      */
     appendPathToLabel(label, index, d)
     {
-        let self     = this;
         let personId = d3.select(label.node().parentNode).attr("id");
 
         // Create arc generator for path segments
         let arcGenerator = d3.arc()
-            .startAngle(function () {
-                return self.isPositionFlipped(d)
-                    ? self.geometry.endAngle(d)
-                    : self.geometry.startAngle(d);
-            })
-            .endAngle(function () {
-                return self.isPositionFlipped(d)
-                    ? self.geometry.startAngle(d)
-                    : self.geometry.endAngle(d);
-            })
-            .innerRadius(function () {
-                return self.geometry.relativeRadius(d, self.getTextOffset(index, d));
-            })
-            .outerRadius(function () {
-                return self.geometry.relativeRadius(d, self.getTextOffset(index, d));
-            });
+            .startAngle(() => this.isPositionFlipped(d)
+                ? this.geometry.endAngle(d)
+                : this.geometry.startAngle(d)
+            )
+            .endAngle(() => this.isPositionFlipped(d)
+                ? this.geometry.startAngle(d)
+                : this.geometry.endAngle(d)
+            )
+            .innerRadius(() => this.geometry.relativeRadius(d, this.getTextOffset(index, d)))
+            .outerRadius(() => this.geometry.relativeRadius(d, this.getTextOffset(index, d)));
 
         // Append a path so we could use it to write the label along it
         return label.append("path")
@@ -344,13 +336,12 @@ export default class Text
      */
     appendOuterArcText(d, index, group, label, textClass)
     {
-        let self        = this;
         let textElement = group.append("text");
 
         textElement.attr("class", textClass || null)
             .attr("class", textClass || null)
             .attr("dominant-baseline", "middle")
-            .style("font-size", () => self.getFontSize(d))
+            .style("font-size", this.getFontSize(d))
             .text(label)
             .each(this.truncate(d, index));
 

@@ -26,7 +26,3 @@ export {
 export {
     Hierarchy
 } from "./hierarchy";
-
-export {
-    updateViewBox
-} from "./view-box";

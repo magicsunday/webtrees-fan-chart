@@ -78,7 +78,7 @@ export class Options
         this.labels = labels;
 
         // Helper method to create a ongoing id
-        this.id = (function () {
+        this.id = (() => {
             let i = 1;
 
             return function (reset = false) {

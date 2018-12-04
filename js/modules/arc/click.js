@@ -6,13 +6,12 @@
  */
 import {Hierarchy} from "../hierarchy";
 import {Options} from "../options";
-import {config} from "../config";
 import Update from "../update";
 
 /**
  *
  */
-export class Click
+export default class Click
 {
     /**
      * Constructor.
@@ -34,17 +33,15 @@ export class Click
      */
     bindClickEventListener()
     {
-        let self = this;
-
         let personGroup = this.svg
             .select("g.personGroup")
             .selectAll("g.person")
             .data(this.hierarchy.getNodes())
-            .filter((d) => (d.data.xref !== ""))
+            .filter(d => (d.data.xref !== ""))
             .classed("available", true);
 
         // Trigger method on click
-        personGroup.on("click", self.personClick.bind(this));
+        personGroup.on("click", this.personClick.bind(this));
     }
 
     /**
@@ -55,7 +52,7 @@ export class Click
     personClick(data)
     {
         // Trigger either "update" or "individual" method on click depending on person in chart
-        (data.depth === 0) ? individual(data) : this.update(data);
+        (data.depth === 0) ? this.individual(data) : this.update(data);
     }
 
     /**

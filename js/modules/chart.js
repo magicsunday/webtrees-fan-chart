@@ -7,8 +7,8 @@
 import { config } from "./config";
 import * as d3 from "./d3";
 import initZoom from "./zoom";
+import updateViewBox from "./view-box";
 import { Hierarchy } from "./hierarchy";
-import {updateViewBox} from "./view-box";
 import {Arc} from "./arc";
 
 /**
@@ -97,7 +97,7 @@ export function initChart(options)
         .append("g")
         .attr("class", "personGroup");
 
-    config.zoom = initZoom();
+    config.zoom = initZoom(config);
     config.svg.call(config.zoom);
 
     // Create hierarchical data
@@ -107,7 +107,7 @@ export function initChart(options)
     let arc = new Arc(config, options, hierarchy);
     arc.createArcElements();
 
-    updateViewBox();
+    updateViewBox(config);
 }
 
 /**

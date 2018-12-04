@@ -4,17 +4,18 @@
 /**
  * See LICENSE.md file for further details.
  */
-import { config } from "./config";
-
 const minHeight = 500;
 const padding   = 10;   // Padding around view box
 
 /**
  * Update/Calculate the viewBox attribute of the SVG element.
  *
+ * @param {Config} config
+ *
  * @public
  */
-export function updateViewBox() {
+export default function updateViewBox(config)
+{
     // Get bounding boxes
     let svgBoundingBox    = config.visual.node().getBBox();
     let clientBoundingBox = config.parent.node().getBoundingClientRect();

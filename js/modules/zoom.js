@@ -4,7 +4,6 @@
 /**
  * See LICENSE.md file for further details.
  */
-import { config } from "./config";
 import * as d3 from "./d3";
 
 /**
@@ -14,7 +13,7 @@ import * as d3 from "./d3";
  *
  * @public
  */
-export default function initZoom()
+export default function initZoom(config)
 {
     const MIN_ZOOM = 0.5;
     const MAX_ZOOM = 5.0;
