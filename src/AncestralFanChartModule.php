@@ -137,8 +137,8 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
         $link = route('module', [
             'module' => $this->getName(),
             'action' => 'FanChart',
-            'xref'   => $individual->getXref(),
-            'ged'    => $individual->getTree()->getName(),
+            'xref'   => $individual->xref(),
+            'ged'    => $individual->tree()->name(),
         ]);
 
         return new Menu(
@@ -338,7 +338,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
 
         return [
             'id'              => 0,
-            'xref'            => $individual->getXref(),
+            'xref'            => $individual->xref(),
             'generation'      => $generation,
             'name'            => $fullName,
             'alternativeName' => $alternativeName,
@@ -400,7 +400,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
         return route('module', [
             'module'      => $this->getName(),
             'action'      => 'Update',
-            'ged'         => $this->tree->getName(),
+            'ged'         => $this->tree->name(),
             'generations' => $this->generations,
             'xref'        => '',
         ]);
