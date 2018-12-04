@@ -4,7 +4,6 @@
 /**
  * See LICENSE.md file for further details.
  */
-// import { config } from "./config";
 import * as d3 from "./d3";
 
 export const SEX_MALE   = "M";

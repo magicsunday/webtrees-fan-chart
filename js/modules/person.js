@@ -6,12 +6,9 @@
  */
 import {Hierarchy} from "./hierarchy";
 import {Options} from "./options";
-// import {config} from "./config";
-// import {Gradient} from "./gradient";
 import * as d3 from "./d3";
 import {Geometry, MATH_PI2} from "./geometry";
 import {default as Text} from "./arc/text";
-// import Click from "./arc/click";
 
 /**
  *

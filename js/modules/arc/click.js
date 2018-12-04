@@ -30,6 +30,8 @@ export default class Click
 
     /**
      * This method bind the "click" event listeners to a "person" element.
+     *
+     * @public
      */
     bindClickEventListener()
     {
@@ -48,6 +50,8 @@ export default class Click
      * Method triggers either the "update" or "individual" method on the click on an person.
      *
      * @param {Object} data The D3 data object
+     *
+     * @private
      */
     personClick(data)
     {
@@ -59,6 +63,8 @@ export default class Click
      * Redirect the current page the the individual page.
      *
      * @param {Object} d D3 data object
+     *
+     * @private
      */
     individual(d)
     {
@@ -69,6 +75,8 @@ export default class Click
      * Redirect the current page the the individual page.
      *
      * @param {Object} d D3 data object
+     *
+     * @private
      */
     update(d)
     {

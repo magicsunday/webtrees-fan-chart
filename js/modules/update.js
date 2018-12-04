@@ -7,6 +7,7 @@
 import * as d3 from "./d3";
 import {Gradient} from "./gradient";
 import {Hierarchy} from "./hierarchy";
+import {Options} from "./options";
 import Click from "./arc/click";
 import {Person} from "./person";
 

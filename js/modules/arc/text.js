@@ -411,7 +411,7 @@ export default class Text
             } else {
                 d3.select(this).attr("transform", function () {
                     let dx        = data.x1 - data.x0;
-                    let angle     = self.options.x(data.x0 + (dx / 2)) * MATH_RAD2DEG;
+                    let angle     = self.geometry.x(data.x0 + (dx / 2)) * MATH_RAD2DEG;
                     let rotate    = angle - (offsetRotate * (angle > 0 ? -1 : 1));
                     let translate = (self.geometry.centerRadius(data) - (self.options.colorArcWidth / 2.0));
 

@@ -4,9 +4,10 @@
 /**
  * See LICENSE.md file for further details.
  */
-import * as d3 from "./d3";
-import { MATH_DEG2RAD } from "./geometry";
 
+/**
+ * Class Options
+ */
 export class Options
 {
     constructor(
@@ -67,12 +68,6 @@ export class Options
 
         // Default degrees of the fan chart
         this.fanDegree = fanDegree;
-
-        this.startPi = -(this.fanDegree / 2 * MATH_DEG2RAD);
-        this.endPi   =  (this.fanDegree / 2 * MATH_DEG2RAD);
-
-        // Scale the angles linear across the circle
-        this.x = d3.scaleLinear().range([this.startPi, this.endPi]);
 
         this.rtl    = rtl;
         this.labels = labels;

@@ -5,7 +5,7 @@
  * See LICENSE.md file for further details.
  */
 import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
-import {config} from "./config";
+import {Options} from "./options";
 import * as d3 from "./d3";
 import {Geometry,MATH_PI2} from "./geometry";
 

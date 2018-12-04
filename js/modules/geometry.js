@@ -4,6 +4,9 @@
 /**
  * See LICENSE.md file for further details.
  */
+import {Options} from "./options";
+import * as d3 from "./d3";
+
 export const MATH_DEG2RAD = Math.PI / 180;
 export const MATH_RAD2DEG = 180 / Math.PI;
 export const MATH_PI2     = Math.PI * 2;
@@ -15,10 +18,28 @@ export class Geometry
 {
     /**
      * Constructor.
+     *
+     * @param {Options} options
      */
     constructor(options)
     {
         this.options = options;
+    }
+
+    get startPi()
+    {
+        return -(this.options.fanDegree / 2 * MATH_DEG2RAD);
+    }
+
+    get endPi()
+    {
+        return (this.options.fanDegree / 2 * MATH_DEG2RAD);
+    }
+
+    // Scale the angles linear across the circle
+    get x()
+    {
+        return d3.scaleLinear().range([this.startPi, this.endPi]);
     }
 
     /**
@@ -114,8 +135,8 @@ export class Geometry
     calcAngle(value)
     {
         return Math.max(
-            this.options.startPi,
-            Math.min(this.options.endPi, this.options.x(value))
+            this.startPi,
+            Math.min(this.endPi, this.x(value))
         );
     }
 
