@@ -167,10 +167,7 @@ function AncestralFanChart(data)
 
     rso.options = Object.assign({}, rso.options, data);
 
-    rso.initChart(rso.options);
-    // rso.initData(rso.options.data);
-    // rso.createArcElements();
-    // rso.updateViewBox();
+    new rso.Chart("#fan_chart", rso.options, rso.config);
 }
 
 new AncestralFanChart(<?= $chartParams ?>);

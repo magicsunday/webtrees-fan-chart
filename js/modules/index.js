@@ -19,9 +19,7 @@ export {
     config
 } from "./config";
 
-export {
-    initChart
-} from "./chart";
+export {default as Chart} from "./chart";
 
 export {
     Hierarchy
