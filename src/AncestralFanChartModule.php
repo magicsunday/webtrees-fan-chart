@@ -164,6 +164,101 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     }
 
     /**
+     * Returns the default number of generations to display.
+
+     * @return int
+     */
+    private function getDefaultGenerations(): int
+    {
+        return (int) $this->tree->getPreference('DEFAULT_PEDIGREE_GENERATIONS');
+    }
+
+    /**
+     * Returns the number of generations to display.
+     *
+     * @param Request $request The current HTTP request
+     *
+     * @return int
+     */
+    private function getGenerations(Request $request): int
+    {
+        $generations = (int) $request->get('generations', $this->getDefaultGenerations());
+        $generations = min($generations, self::MAX_GENERATIONS);
+
+        return max($generations, self::MIN_GENERATIONS);
+    }
+
+    /**
+     * Returns the font scale to use.
+     *
+     * @param Request $request The current HTTP request
+     *
+     * @return int
+     */
+    private function getFontScale(Request $request): int
+    {
+        $this->fontScale = (int) $request->get('fontScale', 100);
+        $this->fontScale = min($this->fontScale, 200);
+
+        return max($this->fontScale, 0);
+    }
+
+    /**
+     * Returns the fan degree to use.
+     *
+     * @param Request $request The current HTTP request
+     *
+     * @return int
+     */
+    private function getFanDegree(Request $request): int
+    {
+        $this->fanDegree = (int) $request->get('fanDegree', 210);
+        $this->fanDegree = min($this->fanDegree, 360);
+
+        return max($this->fanDegree, 180);
+    }
+
+    /**
+     * Returns whether to hide empty segments or not.
+     *
+     * @param Request $request The current HTTP request
+     *
+     * @return bool
+     */
+    private function getHideEmptySegments(Request $request): bool
+    {
+        return (bool) $request->get('hideEmptySegments');
+    }
+
+    /**
+     * Returns whether to show color gradients or not.
+     *
+     * @param Request $request The current HTTP request
+     *
+     * @return bool
+     */
+    private function getShowColorGradients(Request $request): bool
+    {
+        return (bool) $request->get('showColorGradients');
+    }
+
+    /**
+     * Initializes the required action parameters.
+     *
+     * @param Request $request
+     */
+    private function initAction(Request $request)
+    {
+        // Extract the request parameters
+        $this->hideEmptySegments  = $this->getHideEmptySegments($request);
+        $this->showColorGradients = $this->getShowColorGradients($request);
+
+        $this->fanDegree   = $this->getFanDegree($request);
+        $this->fontScale   = $this->getFontScale($request);
+        $this->generations = $this->getGenerations($request);
+    }
+
+    /**
      * Entry point action. Creates the form to configure the chart.
      *
      * @param Request $request The current HTTP request
@@ -171,7 +266,8 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      *
      * @return Response
      *
-     * @throws \Exception
+     * @throws IndividualNotFoundException
+     * @throws IndividualAccessDeniedException
      */
     public function getFanChartAction(Request $request, Tree $tree): Response
     {
@@ -189,30 +285,13 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
             throw new IndividualAccessDeniedException();
         }
 
+        $this->initAction($request);
+
         $title = I18N::translate('Ancestral fan chart');
 
         if ($individual->canShowName()) {
             $title = I18N::translate('Ancestral fan chart of %s', $individual->getFullName());
         }
-
-        // Get default number of generations to display
-        $defaultGenerations = $this->tree->getPreference('DEFAULT_PEDIGREE_GENERATIONS');
-
-        // Extract the request parameters
-        $this->hideEmptySegments  = (bool) $request->get('hideEmptySegments');
-        $this->showColorGradients = (bool) $request->get('showColorGradients');
-
-        $this->fanDegree = (int) $request->get('fanDegree', 210);
-        $this->fanDegree = min($this->fanDegree, 360);
-        $this->fanDegree = max($this->fanDegree, 180);
-
-        $this->fontScale = (int) $request->get('fontScale', 100);
-        $this->fontScale = min($this->fontScale, 200);
-        $this->fontScale = max($this->fontScale, 0);
-
-        $this->generations = (int) $request->get('generations', $defaultGenerations);
-        $this->generations = min($this->generations, self::MAX_GENERATIONS);
-        $this->generations = max($this->generations, self::MIN_GENERATIONS);
 
         $chartParams = [
             'rtl'                => I18N::direction() === 'rtl',
@@ -258,7 +337,8 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      *
      * @return Response
      *
-     * @throws \Exception
+     * @throws IndividualNotFoundException
+     * @throws IndividualAccessDeniedException
      */
     public function getUpdateAction(Request $request, Tree $tree): Response
     {
@@ -267,6 +347,16 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
 
         $xref       = $request->get('xref');
         $individual = Individual::getInstance($xref, $tree);
+
+        if ($individual === null) {
+            throw new IndividualNotFoundException();
+        }
+
+        if (!$individual->canShow()) {
+            throw new IndividualAccessDeniedException();
+        }
+
+        $this->initAction($request);
 
         return new Response(
             json_encode(
