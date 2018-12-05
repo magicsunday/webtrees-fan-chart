@@ -22,7 +22,7 @@
         }
     },
     "require": {
-        "php": "~7.0",
+        "php": "~7.1",
         "ext-json": "*",
         "fisharebest/webtrees": "~2.0 || dev-master",
         "magicsunday/webtrees-module-installer-plugin": "~1.0"
