@@ -26,18 +26,32 @@ export class Geometry
         this.options = options;
     }
 
+    /**
+     * @return {Number}
+     *
+     * @private
+     */
     get startPi()
     {
         return -(this.options.fanDegree / 2 * MATH_DEG2RAD);
     }
 
+    /**
+     * @return {Number}
+     *
+     * @private
+     */
     get endPi()
     {
         return (this.options.fanDegree / 2 * MATH_DEG2RAD);
     }
 
-    // Scale the angles linear across the circle
-    get x()
+    /**
+     * Scale the angles linear across the circle
+     *
+     * @return {Number}
+     */
+    get scale()
     {
         return d3.scaleLinear().range([this.startPi, this.endPi]);
     }
@@ -62,8 +76,11 @@ export class Geometry
                 + this.options.centerCircleRadius;
         }
 
-        return ((this.options.numberOfInnerCircles - 1) * (this.options.innerArcHeight + this.options.circlePadding))
-            + ((data.depth - this.options.numberOfInnerCircles) * (this.options.outerArcHeight + this.options.circlePadding))
+        const innerWithPadding = this.options.innerArcHeight + this.options.circlePadding;
+        const outerWithPadding = this.options.outerArcHeight + this.options.circlePadding;
+
+        return ((this.options.numberOfInnerCircles - 1) * innerWithPadding)
+            + ((data.depth - this.options.numberOfInnerCircles) * outerWithPadding)
             + this.options.centerCircleRadius;
     }
 
@@ -84,12 +101,17 @@ export class Geometry
 
         if (data.depth <  this.options.numberOfInnerCircles) {
             return ((data.depth - 1) * (this.options.innerArcHeight + this.options.circlePadding))
-                + this.options.innerArcHeight + this.options.centerCircleRadius;
+                + this.options.innerArcHeight
+                + this.options.centerCircleRadius;
         }
 
-        return ((this.options.numberOfInnerCircles - 1) * (this.options.innerArcHeight + this.options.circlePadding))
-            + ((data.depth - this.options.numberOfInnerCircles) * (this.options.outerArcHeight + this.options.circlePadding))
-            + this.options.outerArcHeight + this.options.centerCircleRadius;
+        const innerWithPadding = this.options.innerArcHeight + this.options.circlePadding;
+        const outerWithPadding = this.options.outerArcHeight + this.options.circlePadding;
+
+        return ((this.options.numberOfInnerCircles - 1) * innerWithPadding)
+            + ((data.depth - this.options.numberOfInnerCircles) * outerWithPadding)
+            + this.options.outerArcHeight
+            + this.options.centerCircleRadius;
     }
 
     /**
@@ -136,7 +158,7 @@ export class Geometry
     {
         return Math.max(
             this.startPi,
-            Math.min(this.endPi, this.x(value))
+            Math.min(this.endPi, this.scale(value))
         );
     }
 

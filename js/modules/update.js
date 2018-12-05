@@ -8,7 +8,6 @@ import * as d3 from "./d3";
 import {Gradient} from "./gradient";
 import {Hierarchy} from "./hierarchy";
 import {Options} from "./options";
-import Click from "./arc/click";
 import {Person} from "./person";
 
 /**
@@ -36,11 +35,12 @@ export default class Update
     /**
      * Update the chart with data loaded from AJAX.
      *
-     * @param {Object} d D3 data object
+     * @param {Object}   d        The D3 data object
+     * @param {Function} callback The callback method to execute after the update
      *
      * @public
      */
-    update(d)
+    update(d, callback)
     {
         let that = this;
 
@@ -87,7 +87,7 @@ export default class Update
             // Create transition instance
             let t = d3.transition()
                 .duration(this.options.updateDuration)
-                .call(this.endall, () => this.updateDone());
+                .call(this.endall, () => this.updateDone(callback));
 
             // Fade out old arc
             this.svg
@@ -120,9 +120,11 @@ export default class Update
     /**
      * Function is executed as callback after all transitions are done in update method.
      *
+     * @param {Function} callback The callback method to execute after the update
+     *
      * @private
      */
-    updateDone()
+    updateDone(callback)
     {
         // Remove arc if segments should be hidden
         if (this.options.hideEmptySegments) {
@@ -166,9 +168,8 @@ export default class Update
             .selectAll("g.person.available")
             .classed("available", false);
 
-        // Add click handler after all transitions are done
-        let click = new Click(this.config, this.options, this.hierarchy);
-        click.bindClickEventListener();
+        // Execute callback function after everything is done
+        callback();
     }
 
     /**

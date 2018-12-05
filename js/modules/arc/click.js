@@ -81,6 +81,7 @@ export default class Click
     update(d)
     {
         let update = new Update(this.config, this.options, this.hierarchy);
-        update.update(d);
+
+        update.update(d, () => this.bindClickEventListener());
     }
 }

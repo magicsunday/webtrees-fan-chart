@@ -52,7 +52,7 @@ export class Person
         }
 
         if (d.data.xref !== "") {
-            this.addTitleToPerson(person, d);
+            this.addTitleToPerson(person, d.data.name);
 
             // Append labels (initial hidden)
             let label = this.addLabelToPerson(person);
@@ -74,16 +74,16 @@ export class Person
     /**
      * Add title element to the person element containing the full name of the individual.
      *
-     * @param {Object} person Parent element used to append the title too
-     * @param {Object} data   The D3 data object
+     * @param {Object} person The parent element used to append the title too
+     * @param {String} value  The value to assign to the title
      *
      * @private
      */
-    addTitleToPerson(person, data)
+    addTitleToPerson(person, value)
     {
         person
             .insert("title", ":first-child")
-            .text(data.data.name);
+            .text(value);
     }
 
     /**
