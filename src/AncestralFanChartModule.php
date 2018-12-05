@@ -329,11 +329,11 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
         $motherTree = $this->buildJsonTree($family->getWife(), $generation + 1);
 
         // Add array of child nodes
-        if ($fatherTree) {
+        if (!empty($fatherTree)) {
             $data['children'][] = $fatherTree;
         }
 
-        if ($motherTree) {
+        if (!empty($motherTree)) {
             $data['children'][] = $motherTree;
         }
 

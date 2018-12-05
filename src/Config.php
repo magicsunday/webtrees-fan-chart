@@ -70,7 +70,7 @@ class Config
 
     /**
      * Returns the default number of generations to display.
-
+     *
      * @return int
      */
     private function getDefaultGenerations(): int
