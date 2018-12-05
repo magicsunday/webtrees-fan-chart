@@ -6,8 +6,9 @@ use Fisharebest\Webtrees\Bootstrap4;
 use Fisharebest\Webtrees\Functions\FunctionsEdit;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\View;
-use MagicSunday\Webtrees\AncestralFanChartModule;
+use MagicSunday\Webtrees\Config;
 
+/** @var Config $config */
 ?>
 
 <div id="page-fan">
@@ -39,7 +40,7 @@ use MagicSunday\Webtrees\AncestralFanChartModule;
                     <?=
                         Bootstrap4::select(
                             $fanDegrees,
-                            $fanDegree,
+                            $config->getFanDegree(),
                             [
                                 'id'   => 'fanDegree',
                                 'name' => 'fanDegree',
@@ -58,8 +59,13 @@ use MagicSunday\Webtrees\AncestralFanChartModule;
                 <div class="col-sm-9 wt-page-options-value">
                     <?=
                         Bootstrap4::select(
-                            FunctionsEdit::numericOptions(range(AncestralFanChartModule::MIN_GENERATIONS, AncestralFanChartModule::MAX_GENERATIONS)),
-                            $generations,
+                            FunctionsEdit::numericOptions(
+                                range(
+                                    Config::MIN_GENERATIONS,
+                                    Config::MAX_GENERATIONS
+                                )
+                            ),
+                            $config->getGenerations(),
                             [
                                 'id'   => 'generations',
                                 'name' => 'generations',
@@ -77,7 +83,7 @@ use MagicSunday\Webtrees\AncestralFanChartModule;
                 </label>
                 <div class="col-sm-9 wt-page-options-value">
                     <div class="input-group">
-                        <input class="form-control" type="text" name="fontScale" id="fontScale" size="3" value="<?= $fontScale; ?>">
+                        <input class="form-control" type="text" name="fontScale" id="fontScale" size="3" value="<?= $config->getFontScale(); ?>">
                         <span class="input-group-addon">%</span>
                     </div>
                 </div>
@@ -97,7 +103,7 @@ use MagicSunday\Webtrees\AncestralFanChartModule;
                             [
                                 'id'      => 'hideEmptySegments',
                                 'name'    => 'hideEmptySegments',
-                                'checked' => $hideEmptySegments,
+                                'checked' => $config->getHideEmptySegments(),
                             ]
                         );
                     ?>
@@ -108,7 +114,7 @@ use MagicSunday\Webtrees\AncestralFanChartModule;
                             [
                                 'id'      => 'showColorGradients',
                                 'name'    => 'showColorGradients',
-                                'checked' => $showColorGradients,
+                                'checked' => $config->getShowColorGradients(),
                             ]
                         );
                     ?>

@@ -43,20 +43,6 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     const CUSTOM_WEBSITE = 'https://github.com/magicsunday/ancestral-fan-chart';
 
     /**
-     * Minimum number of displayable generations.
-     *
-     * @var int
-     */
-    const MIN_GENERATIONS = 2;
-
-    /**
-     * Maximum number of displayable generations.
-     *
-     * @var int
-     */
-    const MAX_GENERATIONS = 10;
-
-    /**
      * The current theme instance.
      *
      * @var ThemeInterface
@@ -71,39 +57,11 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     private $tree;
 
     /**
-     * Number of generations to display.
+     * The configuration instance.
      *
-     * @var int
+     * @var Config
      */
-    private $generations = 6;
-
-    /**
-     * Fan chart degree.
-     *
-     * @var int
-     */
-    private $fanDegree = 210;
-
-    /**
-     * Font size scaling factor in percent.
-     *
-     * @var int
-     */
-    private $fontScale = 100;
-
-    /**
-     * Whether to hide empty segments of chart or not.
-     *
-     * @var bool
-     */
-    private $hideEmptySegments = false;
-
-    /**
-     * Whether to show gradient colors or not.
-     *
-     * @var bool
-     */
-    private $showColorGradients = false;
+    private $config;
 
     /**
      * How should this module be labelled on tabs, menus, etc.?
@@ -126,9 +84,9 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     }
 
     /**
-     * Return a menu item for this chart.
+     * Returns a menu item for this chart.
      *
-     * @param Individual $individual Current individual instance
+     * @param Individual $individual The current individual
      *
      * @return Menu
      */
@@ -152,9 +110,9 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     }
 
     /**
-     * Return a menu item for this chart - for use in individual boxes.
+     * Returns a menu item for this chart - for use in individual boxes.
      *
-     * @param Individual $individual Current individual instance
+     * @param Individual $individual The current individual
      *
      * @return Menu
      */
@@ -164,113 +122,21 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     }
 
     /**
-     * Returns the default number of generations to display.
-
-     * @return int
-     */
-    private function getDefaultGenerations(): int
-    {
-        return (int) $this->tree->getPreference('DEFAULT_PEDIGREE_GENERATIONS');
-    }
-
-    /**
-     * Returns the number of generations to display.
-     *
-     * @param Request $request The current HTTP request
-     *
-     * @return int
-     */
-    private function getGenerations(Request $request): int
-    {
-        $generations = (int) $request->get('generations', $this->getDefaultGenerations());
-        $generations = min($generations, self::MAX_GENERATIONS);
-
-        return max($generations, self::MIN_GENERATIONS);
-    }
-
-    /**
-     * Returns the font scale to use.
-     *
-     * @param Request $request The current HTTP request
-     *
-     * @return int
-     */
-    private function getFontScale(Request $request): int
-    {
-        $this->fontScale = (int) $request->get('fontScale', 100);
-        $this->fontScale = min($this->fontScale, 200);
-
-        return max($this->fontScale, 0);
-    }
-
-    /**
-     * Returns the fan degree to use.
-     *
-     * @param Request $request The current HTTP request
-     *
-     * @return int
-     */
-    private function getFanDegree(Request $request): int
-    {
-        $this->fanDegree = (int) $request->get('fanDegree', 210);
-        $this->fanDegree = min($this->fanDegree, 360);
-
-        return max($this->fanDegree, 180);
-    }
-
-    /**
-     * Returns whether to hide empty segments or not.
-     *
-     * @param Request $request The current HTTP request
-     *
-     * @return bool
-     */
-    private function getHideEmptySegments(Request $request): bool
-    {
-        return (bool) $request->get('hideEmptySegments');
-    }
-
-    /**
-     * Returns whether to show color gradients or not.
-     *
-     * @param Request $request The current HTTP request
-     *
-     * @return bool
-     */
-    private function getShowColorGradients(Request $request): bool
-    {
-        return (bool) $request->get('showColorGradients');
-    }
-
-    /**
-     * Initializes the required action parameters.
-     *
-     * @param Request $request
-     */
-    private function initAction(Request $request)
-    {
-        // Extract the request parameters
-        $this->hideEmptySegments  = $this->getHideEmptySegments($request);
-        $this->showColorGradients = $this->getShowColorGradients($request);
-
-        $this->fanDegree   = $this->getFanDegree($request);
-        $this->fontScale   = $this->getFontScale($request);
-        $this->generations = $this->getGenerations($request);
-    }
-
-    /**
      * Entry point action. Creates the form to configure the chart.
      *
      * @param Request $request The current HTTP request
      * @param Tree    $tree    The current tree
+     * @param Config  $config  The module configuration
      *
      * @return Response
      *
      * @throws IndividualNotFoundException
      * @throws IndividualAccessDeniedException
      */
-    public function getFanChartAction(Request $request, Tree $tree): Response
+    public function getFanChartAction(Request $request, Tree $tree, Config $config): Response
     {
+        $this->config = $config;
+
         $this->theme = Theme::theme();
         $this->tree  = $tree;
 
@@ -285,8 +151,6 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
             throw new IndividualAccessDeniedException();
         }
 
-        $this->initAction($request);
-
         $title = I18N::translate('Ancestral fan chart');
 
         if ($individual->canShowName()) {
@@ -295,13 +159,13 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
 
         $chartParams = [
             'rtl'                => I18N::direction() === 'rtl',
-            'fanDegree'          => $this->fanDegree,
-            'generations'        => $this->generations,
             'defaultColor'       => $this->getColor(),
-            'fontScale'          => $this->fontScale,
             'fontColor'          => $this->getChartFontColor(),
-            'hideEmptySegments'  => $this->hideEmptySegments,
-            'showColorGradients' => $this->showColorGradients,
+            'fanDegree'          => $this->config->getFanDegree(),
+            'generations'        => $this->config->getGenerations(),
+            'fontScale'          => $this->config->getFontScale(),
+            'hideEmptySegments'  => $this->config->getHideEmptySegments(),
+            'showColorGradients' => $this->config->getShowColorGradients(),
             'updateUrl'          => $this->getUpdateRoute(),
             'individualUrl'      => $this->getIndividualRoute(),
             'data'               => $this->buildJsonTree($individual),
@@ -314,17 +178,13 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
         return $this->viewResponse(
             'fan-chart',
             [
-                'rtl'                => I18N::direction() === 'rtl',
-                'title'              => $title,
-                'individual'         => $individual,
-                'tree'               => $this->tree,
-                'fanDegree'          => $this->fanDegree,
-                'fanDegrees'         => $this->getFanDegrees(),
-                'generations'        => $this->generations,
-                'fontScale'          => $this->fontScale,
-                'hideEmptySegments'  => $this->hideEmptySegments,
-                'showColorGradients' => $this->showColorGradients,
-                'chartParams'        => json_encode($chartParams),
+                'rtl'         => I18N::direction() === 'rtl',
+                'title'       => $title,
+                'individual'  => $individual,
+                'tree'        => $this->tree,
+                'fanDegrees'  => $this->getFanDegrees(),
+                'config'      => $this->config,
+                'chartParams' => json_encode($chartParams),
             ]
         );
     }
@@ -334,14 +194,17 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
      *
      * @param Request $request The current HTTP request
      * @param Tree    $tree    The current tree
+     * @param Config  $config  The module configuration
      *
      * @return Response
      *
      * @throws IndividualNotFoundException
      * @throws IndividualAccessDeniedException
      */
-    public function getUpdateAction(Request $request, Tree $tree): Response
+    public function getUpdateAction(Request $request, Tree $tree, Config $config): Response
     {
+        $this->config = $config;
+
         $this->theme = Theme::theme();
         $this->tree  = $tree;
 
@@ -355,8 +218,6 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
         if (!$individual->canShow()) {
             throw new IndividualAccessDeniedException();
         }
-
-        $this->initAction($request);
 
         return new Response(
             json_encode(
@@ -452,7 +313,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     private function buildJsonTree(Individual $individual = null, int $generation = 1): array
     {
         // Maximum generation reached
-        if (($generation > $this->generations) || ($individual === null)) {
+        if (($individual === null) || ($generation > $this->config->getGenerations())) {
             return [];
         }
 
@@ -491,7 +352,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
             'module'      => $this->getName(),
             'action'      => 'Update',
             'ged'         => $this->tree->name(),
-            'generations' => $this->generations,
+            'generations' => $this->config->getGenerations(),
             'xref'        => '',
         ]);
     }
