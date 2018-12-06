@@ -5,16 +5,14 @@
 */
 }
 
-#page-fan table td {
-    vertical-align: middle;
-}
-
 #page-fan svg {
     display: block;
     margin: auto;
-    cursor: grab;
+    cursor: move;
     cursor: -webkit-grab;
-   -webkit-filter: drop-shadow(3px 1px 3px rgba(0, 0, 0, 0.4)));
+    cursor: -moz-grab;
+    cursor: grab;
+    -webkit-filter: drop-shadow(3px 1px 3px rgba(0, 0, 0, 0.4));
     filter: drop-shadow(3px 1px 3px rgba(0, 0, 0, 0.4));
 }
 
@@ -24,12 +22,21 @@
 }
 
 #page-fan svg:active {
-    cursor: grabbing;
     cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+    cursor: grabbing;
 }
 
 #page-fan svg text {
     font-weight: bold;
+}
+
+/* Unset any style from our transition helper classes */
+#page-fan svg .new,
+#page-fan svg .remove,
+#page-fan svg .update,
+#page-fan svg .old {
+    all: unset;
 }
 
 #page-fan svg .person.available {
@@ -59,7 +66,7 @@
 }
 
 #page-fan svg .label .alternativeName {
-    fill: #7f7f7f;
+    fill: rgb(127, 127, 127);
     font-weight: normal;
     direction: ltr;
     unicode-bidi: normal;
@@ -103,4 +110,6 @@
     -webkit-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
+    opacity: 1;
+    text-align: center;
 }

@@ -1,11 +1,11 @@
 import node from "rollup-plugin-node-resolve";
 
 export default {
-    input: "index.js",
+    input: "js/modules/index.js",
     output: {
-        name: "d3",
+        name: "rso",
         format: "umd",
-        file: "d3.v4.custom.js"
+        file: "js/ancestral-fan-chart.js"
     },
     plugins: [node()],
 };

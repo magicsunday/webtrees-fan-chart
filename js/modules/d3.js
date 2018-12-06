@@ -1,3 +1,7 @@
+/**
+ * See LICENSE.md file for further details.
+ */
+
 /*
 https://github.com/d3/d3-selection
 https://github.com/d3/d3-transition
@@ -5,7 +9,7 @@ https://github.com/d3/d3-scale
 https://github.com/d3/d3-zoom
 https://github.com/d3/d3-hierarchy
 https://github.com/d3/d3-shape
-https://github.com/d3/d3-request
+https://github.com/d3/d3-fetch
 https://github.com/d3/d3-timer
 */
 
@@ -18,7 +22,7 @@ export {
 } from "d3-transition";
 
 export {
-    scaleLinear,
+    scaleLinear
 } from "d3-scale";
 
 export * from "d3-zoom";
@@ -33,7 +37,7 @@ export {
 
 export {
     json
-} from "d3-request";
+} from "d3-fetch";
 
 export {
     timer

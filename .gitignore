@@ -1,4 +1,4 @@
 .idea/
 vendor/
-js/packages/node_modules/
-js/packages/d3.v4.custom.js
+node_modules/
+js/ancestral-fan-chart.js
