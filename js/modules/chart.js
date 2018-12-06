@@ -1,24 +1,40 @@
-/*jslint es6: true */
-/*jshint esversion: 6 */
-
 /**
  * See LICENSE.md file for further details.
  */
 import * as d3 from "./d3";
-import initZoom from "./zoom";
-import updateViewBox from "./view-box";
-import {Hierarchy} from "./hierarchy";
-import {Arc} from "./arc";
+import Arc from "./arc";
+import Config from "./config";
+import Overlay from "./chart/overlay";
+import Zoom from "./chart/zoom";
+import Hierarchy from "./hierarchy";
 
+const MIN_HEIGHT  = 500;
+const MIN_PADDING = 10;   // Minimum padding around view box
+
+/**
+ * This class handles the overall chart creation.
+ *
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/ancestral-fan-chart/
+ */
 export default class Chart
 {
-    constructor(selector, options, config)
+    /**
+     * Constructor.
+     *
+     * @param {String}  selector
+     * @param {Options} options
+     */
+    constructor(selector, options)
     {
-        this.options = options;
-        this.config  = config;
+        this._options = options;
+        this._config  = new Config();
+        this._overlay = null;
+        this._zoom    = null;
 
         // Parent container
-        this.config.parent = d3.select(selector);
+        this._config.parent = d3.select(selector);
 
         this.createSvg()
         this.init();
@@ -30,7 +46,7 @@ export default class Chart
     createSvg()
     {
         // Add SVG element
-        this.config.svg = this.config.parent
+        this._config.svg = this._config.parent
             .append("svg")
             .attr("version", "1.1")
             .attr("xmlns", "http://www.w3.org/2000/svg")
@@ -39,32 +55,30 @@ export default class Chart
             .attr("height", "100%")
             .attr("text-rendering", "geometricPrecision")
             .attr("text-anchor", "middle")
-            .on("contextmenu", () => {
-                d3.event.preventDefault();
-            })
+            .on("contextmenu", () => d3.event.preventDefault())
             .on("wheel", () => {
                 if (!d3.event.ctrlKey) {
-                    this.showTooltipOverlay(
-                        this.options.labels.zoom,
+                    this.overlay.show(
+                        this._options.labels.zoom,
                         300,
                         () => {
-                            this.hideTooltipOverlay(700, 800);
+                            this.overlay.hide(700, 800);
                         }
                     );
                 }
             })
             .on("touchend", () => {
                 if (d3.event.touches.length < 2) {
-                    this.hideTooltipOverlay(0, 800);
+                    this.overlay.hide(0, 800);
                 }
             })
             .on("touchmove", () => {
                 if (d3.event.touches.length >= 2) {
                     // Hide tooltip on more than 2 fingers
-                    this.hideTooltipOverlay();
+                    this.overlay.hide();
                 } else {
                     // Show tooltip if less than 2 fingers are used
-                    this.showTooltipOverlay(this.options.labels.move);
+                    this.overlay.show(this._options.labels.move);
                 }
             })
             .on("click", () => this.doStopPropagation(), true);
@@ -75,100 +89,108 @@ export default class Chart
      */
     init()
     {
-        if (this.options.rtl) {
-            this.config.svg.classed("rtl", true);
+        if (this._options.rtl) {
+            this._config.svg.classed("rtl", true);
         }
 
-        if (this.options.showColorGradients) {
+        if (this._options.showColorGradients) {
             // Create the svg:defs element
-            this.config.svgDefs = this.config.svg
+            this._config.svgDefs = this._config.svg
                 .append("defs");
         }
 
-        // Add an overlay with tooltip
-        this.config.overlay = this.config.parent
-            .append("div")
-            .attr("class", "overlay")
-            .style("opacity", 0);
-
-        // Add rectangle element
-        this.config.svg
-            .append("rect")
-            .attr("class", "background")
-            .attr("width", "100%")
-            .attr("height", "100%");
+        this.overlay = new Overlay(this._config);
 
         // Bind click event on reset button
         d3.select("#resetButton")
             .on("click", () => this.doReset());
 
         // Add group
-        this.config.visual = this.config.svg
+        this._config.visual = this._config.svg
             .append("g");
 
-        this.config.visual
+        this._config.visual
             .append("g")
             .attr("class", "personGroup");
 
-        this.config.zoom = initZoom(this.config);
-        this.config.svg.call(this.config.zoom);
+        this._zoom = new Zoom(this._config);
+        this._config.svg.call(this._zoom.get());
 
         // Create hierarchical data
-        let hierarchy = new Hierarchy(this.options);
-        hierarchy.init(this.options.data);
+        let hierarchy = new Hierarchy(this._options.data, this._options);
+        let arc       = new Arc(this._config, this._options, hierarchy);
 
-        let arc = new Arc(this.config, this.options, hierarchy);
-        arc.createArcElements();
-
-        updateViewBox(this.config);
+        this.updateViewBox();
     }
 
     /**
-     * Stop any pending transition and hide overlay immediately.
-     *
-     * @param {String}   text     Text to display in overlay
-     * @param {Number}   duration Duration of transition in msec
-     * @param {Function} callback Callback method to execute on end of transition
+     * Update/Calculate the viewBox attribute of the SVG element.
      *
      * @private
      */
-    showTooltipOverlay(text, duration = 0, callback = null)
+    updateViewBox()
     {
-        this.config.overlay
-            .select("p")
-            .remove();
+        // Get bounding boxes
+        let svgBoundingBox    = this._config.visual.node().getBBox();
+        let clientBoundingBox = this._config.parent.node().getBoundingClientRect();
 
-        this.config.overlay
-            .append("p")
-            .attr("class", "tooltip")
-            .text(text);
+        // View box should have at least the same width/height as the parent element
+        let viewBoxWidth  = Math.max(clientBoundingBox.width, svgBoundingBox.width);
+        let viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height, MIN_HEIGHT);
 
-        this.config.overlay
-            .transition()
-            .duration(duration)
-            .style("opacity", 1)
-            .on("end", () => {
-                if (typeof callback === "function") {
-                    callback();
-                }
-            });
+        // Calculate offset to center chart inside svg
+        let offsetX = (viewBoxWidth - svgBoundingBox.width) / 2;
+        let offsetY = (viewBoxHeight - svgBoundingBox.height) / 2;
+
+        // Adjust view box dimensions by padding and offset
+        let viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - MIN_PADDING);
+        let viewBoxTop  = Math.ceil(svgBoundingBox.y - offsetY - MIN_PADDING);
+
+        // Final width/height of view box
+        viewBoxWidth  = Math.ceil(viewBoxWidth + (MIN_PADDING * 2));
+        viewBoxHeight = Math.ceil(viewBoxHeight + (MIN_PADDING * 2));
+
+        // Set view box attribute
+        this._config.svg
+            .attr("viewBox", [
+                viewBoxLeft,
+                viewBoxTop,
+                viewBoxWidth,
+                viewBoxHeight
+            ]);
+
+        // Add rectangle element
+        // this._config.svg
+        //     .append("rect")
+        //     .attr("class", "background")
+        //     .attr("width", "100%")
+        //     .attr("height", "100%");
+        //
+        // // Adjust rectangle position
+        // this._config.svg
+        //     .select("rect")
+        //     .attr("x", viewBoxLeft)
+        //     .attr("y", viewBoxTop);
     }
 
     /**
-     * Stop any pending transition and hide overlay immediately.
+     * Returns the overlay container.
      *
-     * @param {Number} delay    Delay in milliseconds to wait before transition should start
-     * @param {Number} duration Duration of transition in milliseconds
-     *
-     * @private
+     * @return {Overlay}
      */
-    hideTooltipOverlay(delay = 0, duration = 0)
+    get overlay()
     {
-        this.config.overlay
-            .transition()
-            .delay(delay)
-            .duration(duration)
-            .style("opacity", 0);
+        return this._overlay;
+    }
+
+    /**
+     * Sets parent overlay container.
+     *
+     * @param {Overlay} value The overlay container
+     */
+    set overlay(value)
+    {
+        this._overlay = value;
     }
 
     /**
@@ -190,9 +212,9 @@ export default class Chart
      */
     doReset()
     {
-        this.config.svg
+        this._config.svg
             .transition()
             .duration(750)
-            .call(this.config.zoom.transform, d3.zoomIdentity);
+            .call(this._zoom.get().transform, d3.zoomIdentity);
     }
 }

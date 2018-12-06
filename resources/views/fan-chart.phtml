@@ -146,12 +146,12 @@ use MagicSunday\Webtrees\Config;
 
 <?php View::push('javascript'); ?>
 
-<script type="text/javascript" src="modules_v3/ancestral-fan-chart/js/ancestral-fan-chart.js"></script>
+<script type="text/javascript" src="modules_v3/ancestral-fan-chart/js/ancestral-fan-chart.min.js"></script>
 <script type="text/javascript">
 
 function AncestralFanChart(data)
 {
-    rso.options = new rso.Options(
+    let options = new rso.Options(
         data.individualUrl,
         data.updateUrl,
         data.labels,
@@ -165,9 +165,9 @@ function AncestralFanChart(data)
         data.rtl
     );
 
-    rso.options = Object.assign({}, rso.options, data);
+    options = Object.assign({}, options, data);
 
-    new rso.Chart("#fan_chart", rso.options, rso.config);
+    new rso.Chart("#fan_chart", options);
 }
 
 new AncestralFanChart(<?= $chartParams ?>);

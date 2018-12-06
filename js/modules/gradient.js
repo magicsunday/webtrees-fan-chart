@@ -1,28 +1,30 @@
-/*jslint es6: true */
-/*jshint esversion: 6 */
-
 /**
  * See LICENSE.md file for further details.
  */
-import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
-import {Options} from "./options";
 import * as d3 from "./d3";
-import {Geometry,MATH_PI2} from "./geometry";
+import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
+import Geometry, {MATH_PI2} from "./geometry";
 
-export class Gradient
+/**
+ * This class handles the gradient coloring.
+ *
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/ancestral-fan-chart/
+ */
+export default class Gradient
 {
     /**
      * Constructor.
      *
-     * @param {Config}  config
+     * @param {Config}  config  The configuration
      * @param {Options} options
      */
     constructor(config, options)
     {
-        this.config   = config;
-        this.options  = options;
-        this.geometry = new Geometry(options);
-        this.svgDefs  = config.svgDefs;
+        this._config   = config;
+        this._options  = options;
+        this._geometry = new Geometry(options);
     }
 
     /**
@@ -69,7 +71,7 @@ export class Gradient
         }
 
         // Add a new radial gradient
-        let newGrad = this.svgDefs
+        let newGrad = this._config.svgDefs
             .append("svg:linearGradient")
             .attr("id", "grad-" + d.data.id);
 
@@ -94,12 +96,12 @@ export class Gradient
     {
         // Arc generator
         let arcGen = d3.arc()
-            .startAngle((d) => (d.depth === 0) ? 0 : this.geometry.startAngle(d))
-            .endAngle((d) => (d.depth === 0) ? MATH_PI2 : this.geometry.endAngle(d))
-            .innerRadius((d) => this.geometry.outerRadius(d) - this.options.colorArcWidth)
-            .outerRadius((d) => this.geometry.outerRadius(d) + 1);
+            .startAngle((d) => (d.depth === 0) ? 0 : this._geometry.startAngle(d))
+            .endAngle((d) => (d.depth === 0) ? MATH_PI2 : this._geometry.endAngle(d))
+            .innerRadius((d) => this._geometry.outerRadius(d) - this._options.colorArcWidth)
+            .outerRadius((d) => this._geometry.outerRadius(d) + 1);
 
-        let colorGroup = this.config.svg
+        let colorGroup = this._config.svg
             .select("g")
             .append("g")
             .attr("class", "colorGroup")
@@ -107,12 +109,12 @@ export class Gradient
 
         colorGroup
             .selectAll("g.colorGroup")
-            .data(hierarchy.getNodes())
+            .data(hierarchy.nodes)
             .enter()
             .filter((d) => (d.data.xref !== ""))
             .append("path")
             .attr("fill", (d) => {
-                if (this.options.showColorGradients) {
+                if (this._options.showColorGradients) {
                     // Innermost circle (first generation)
                     if (!d.depth) {
                         return "rgb(225, 225, 225)";

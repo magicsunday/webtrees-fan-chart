@@ -1,5 +1,6 @@
-/*jslint es6: true */
-/*jshint esversion: 6 */
+/**
+ * See LICENSE.md file for further details.
+ */
 
 /*
 https://github.com/d3/d3-selection

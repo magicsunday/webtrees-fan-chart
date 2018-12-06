@@ -1,6 +1,3 @@
-/*jslint es6: true */
-/*jshint esversion: 6 */
-
 /**
  * See LICENSE.md file for further details.
  */
@@ -10,27 +7,32 @@ export const SEX_MALE   = "M";
 export const SEX_FEMALE = "F";
 
 /**
- * Initialize the hierarchical chart data.
+ * This class handles the hierarchical data.
  *
- * @param {Object} data JSON encoded data
- *
- * @public
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/ancestral-fan-chart/
  */
-export class Hierarchy
+export default class Hierarchy
 {
     /**
      * Constructor.
      *
+     * @param {Array}  data    The tree data
      * @param {Object} options
      */
-    constructor(options)
+    constructor(data, options)
     {
-        this.options = options;
+        this._options = options;
+        this._nodes   = null;
+
+        this.init(data);
     }
 
     /**
+     * Initialize the hierarchical chart data.
      *
-     * @param {Array} data
+     * @param {Object} data JSON encoded data
      *
      * @public
      */
@@ -46,7 +48,7 @@ export class Hierarchy
             data => {
                 // Fill up the missing children to the requested number of generations
                 // if (!data.children && (data.generation < maxGenerations)) {
-                if (!data.children && (data.generation < this.options.generations)) {
+                if (!data.children && (data.generation < this._options.generations)) {
                     data.children = [
                         this.createEmptyNode(data.generation + 1, SEX_MALE),
                         this.createEmptyNode(data.generation + 1, SEX_FEMALE)
@@ -75,26 +77,26 @@ export class Hierarchy
         let partitionLayout = d3.partition();
 
         // Map the node data to the partition layout
-        this.nodes = partitionLayout(root).descendants();
+        this._nodes = partitionLayout(root).descendants();
 
         // Create unique ids for each element
-        this.nodes.forEach(entry => {
-            entry.data.id = this.options.id();
+        this._nodes.forEach(entry => {
+            entry.data.id = this._options.id();
         });
 
-        this.options.id(true);
+        this._options.id(true);
     }
 
     /**
      * Returns the nodes.
      *
-     * @returns {Array|*}
+     * @returns {Array}
      *
      * @public
      */
-    getNodes()
+    get nodes()
     {
-        return this.nodes;
+        return this._nodes;
     }
 
     /**
@@ -115,7 +117,7 @@ export class Hierarchy
             sex        : sex,
             name       : "",
             generation : generation,
-            color      : this.options.defaultColor,
+            color      : this._options.defaultColor,
             colors     : [[], []]
         };
     }

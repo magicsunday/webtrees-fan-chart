@@ -1,51 +1,55 @@
-/*jslint es6: true */
-/*jshint esversion: 6 */
-
 /**
  * See LICENSE.md file for further details.
  */
-import {Hierarchy} from "./hierarchy";
-import {Options} from "./options";
 import * as d3 from "./d3";
-import {Geometry, MATH_PI2} from "./geometry";
-import {default as Text} from "./arc/text";
+import Text from "./arc/text";
+import Geometry, {MATH_PI2} from "./geometry";
 
 /**
+ * This class handles the creation of the person elements of the chart.
  *
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/ancestral-fan-chart/
  */
-export class Person
+export default class Person
 {
     /**
      * Constructor.
      *
-     * @param {Config}    config
+     * @param {Config}    config    The configuration
      * @param {Options}   options
      * @param {Hierarchy} hierarchy
+     * @param {Object}    person
+     * @param {Object}    d
      */
-    constructor(config, options, hierarchy)
+    constructor(config, options, hierarchy, person, d)
     {
-        this.config    = config;
-        this.options   = options;
-        this.hierarchy = hierarchy;
-        this.geometry  = new Geometry(options);
+        this._config    = config;
+        this._options   = options;
+        this._hierarchy = hierarchy;
+        this._geometry  = new Geometry(options);
+
+        this.init(person, d);
     }
 
     /**
+     * Initialize the required elements.
      *
-     * @param person
-     * @param d
+     * @param {Object} person
+     * @param {Object} d
      *
      * @public
      */
-    addPersonData(person, d)
+    init(person, d)
     {
-        if (person.classed("new") && this.options.hideEmptySegments) {
+        if (person.classed("new") && this._options.hideEmptySegments) {
             this.addArcToPerson(person, d);
         } else {
             if (!person.classed("new")
                 && !person.classed("update")
                 && !person.classed("remove")
-                && ((d.data.xref !== "") || !this.options.hideEmptySegments)
+                && ((d.data.xref !== "") || !this._options.hideEmptySegments)
             ) {
                 this.addArcToPerson(person, d);
             }
@@ -57,7 +61,7 @@ export class Person
             // Append labels (initial hidden)
             let label = this.addLabelToPerson(person);
 
-            let text = new Text(this.config, this.options);
+            let text = new Text(this._config, this._options);
             text.addLabel(label, d);
         }
 
@@ -69,6 +73,38 @@ export class Person
             .on("mouseout", function () {
                 d3.select(this).classed("hover", false);
             });
+    }
+
+    /**
+     * Appends the arc element to the person element.
+     *
+     * @param {Object} person The parent element used to append the arc too
+     * @param {Object} data   The D3 data object
+     *
+     * @private
+     */
+    addArcToPerson(person, data)
+    {
+        // Arc generator
+        let arcGen = d3.arc()
+            .startAngle(() => (data.depth === 0) ? 0 : this._geometry.startAngle(data))
+            .endAngle(() => (data.depth === 0) ? MATH_PI2 : this._geometry.endAngle(data))
+            .innerRadius(this._geometry.innerRadius(data))
+            .outerRadius(this._geometry.outerRadius(data));
+
+        // Append arc
+        let arcGroup = person
+            .append("g")
+            .attr("class", "arc");
+
+        let path = arcGroup
+            .append("path")
+            .attr("d", arcGen);
+
+        // Hide arc initially if its new during chart update
+        if (person.classed("new")) {
+            path.style("opacity", 0);
+        }
     }
 
     /**
@@ -100,38 +136,6 @@ export class Person
         return parent
             .append("g")
             .attr("class", "label")
-            .style("fill", this.options.fontColor);
-    }
-
-    /**
-     * Appends the arc element to the person element.
-     *
-     * @param {Object} person The parent element used to append the arc too
-     * @param {Object} data   The D3 data object
-     *
-     * @private
-     */
-    addArcToPerson(person, data)
-    {
-        // Arc generator
-        let arcGen = d3.arc()
-            .startAngle(() => (data.depth === 0) ? 0 : this.geometry.startAngle(data))
-            .endAngle(() => (data.depth === 0) ? MATH_PI2 : this.geometry.endAngle(data))
-            .innerRadius(this.geometry.innerRadius(data))
-            .outerRadius(this.geometry.outerRadius(data));
-
-        // Append arc
-        let arcGroup = person
-            .append("g")
-            .attr("class", "arc");
-
-        let path = arcGroup
-            .append("path")
-            .attr("d", arcGen);
-
-        // Hide arc initially if its new during chart update
-        if (person.classed("new")) {
-            path.style("opacity", 0);
-        }
+            .style("fill", this._options.fontColor);
     }
 }

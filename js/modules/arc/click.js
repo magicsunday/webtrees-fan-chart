@@ -1,31 +1,29 @@
-/*jslint es6: true */
-/*jshint esversion: 6 */
-
 /**
  * See LICENSE.md file for further details.
  */
-import {Hierarchy} from "../hierarchy";
-import {Options} from "../options";
 import Update from "../update";
 
 /**
+ * This class handles the click events.
  *
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/ancestral-fan-chart/
  */
 export default class Click
 {
     /**
      * Constructor.
      *
-     * @param {Config}    config
+     * @param {Config}    config    The configuration
      * @param {Options}   options
      * @param {Hierarchy} hierarchy
      */
     constructor(config, options, hierarchy)
     {
-        this.config    = config;
-        this.options   = options;
-        this.hierarchy = hierarchy;
-        this.svg       = config.svg;
+        this._config    = config;
+        this._options   = options;
+        this._hierarchy = hierarchy;
     }
 
     /**
@@ -35,10 +33,10 @@ export default class Click
      */
     bindClickEventListener()
     {
-        let personGroup = this.svg
+        let personGroup = this._config.svg
             .select("g.personGroup")
             .selectAll("g.person")
-            .data(this.hierarchy.getNodes())
+            .data(this._hierarchy.nodes)
             .filter(d => (d.data.xref !== ""))
             .classed("available", true);
 
@@ -68,7 +66,7 @@ export default class Click
      */
     individual(d)
     {
-        window.location = this.options.individualUrl + d.data.xref;
+        window.location = this._options.individualUrl + d.data.xref;
     }
 
     /**
@@ -80,7 +78,7 @@ export default class Click
      */
     update(d)
     {
-        let update = new Update(this.config, this.options, this.hierarchy);
+        let update = new Update(this._config, this._options, this._hierarchy);
 
         update.update(d, () => this.bindClickEventListener());
     }

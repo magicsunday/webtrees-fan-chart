@@ -1,25 +1,24 @@
-/*jslint es6: true */
-/*jshint esversion: 6 */
-
 /**
  * See LICENSE.md file for further details.
  */
-import {Hierarchy} from "./hierarchy";
-import {Options} from "./options";
-import {Gradient} from "./gradient";
-import {Geometry} from "./geometry";
+import Gradient from "./gradient";
 import Click from "./arc/click";
-import {Person} from "./person";
+import Person from "./person";
 
 /**
+ * The class handles the creation of the person group and the person elements of the chart. It assignes
+ * the click handler and the color group on to of each person.
  *
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/ancestral-fan-chart/
  */
-export class Arc
+export default class Arc
 {
     /**
      * Constructor.
      *
-     * @param {Config}    config
+     * @param {Config}    config    The configuration
      * @param {Options}   options
      * @param {Hierarchy} hierarchy
      */
@@ -28,7 +27,8 @@ export class Arc
         this.config    = config;
         this.options   = options;
         this.hierarchy = hierarchy;
-        this.geometry  = new Geometry(options);
+
+        this.init();
     }
 
     /**
@@ -38,15 +38,13 @@ export class Arc
      *
      * @public
      */
-    createArcElements()
+    init()
     {
-        let self        = this;
         let personGroup = this.config.svg.select("g.personGroup");
-
         let gradient    = new Gradient(this.config, this.options);
 
         personGroup.selectAll("g.person")
-            .data(this.hierarchy.getNodes())
+            .data(this.hierarchy.nodes)
             .enter()
             .each(entry => {
                 let person = personGroup
@@ -55,17 +53,15 @@ export class Arc
                     .attr("id", "person-" + entry.data.id)
                     .on("click", null);
 
-                let p = new Person(self.config, self.options, self.hierarchy);
-                p.addPersonData(person, entry);
+                new Person(this.config, this.options, this.hierarchy, person, entry);
 
-                if (self.options.showColorGradients) {
+                if (this.options.showColorGradients) {
                     gradient.init(entry);
                 }
             });
 
         let click = new Click(this.config, this.options, this.hierarchy);
         click.bindClickEventListener();
-        // this.bindClickEventListener();
 
         gradient.addColorGroup(this.hierarchy)
             .style("opacity", 1);

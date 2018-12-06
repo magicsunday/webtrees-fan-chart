@@ -1,10 +1,6 @@
-/*jslint es6: true */
-/*jshint esversion: 6 */
-
 /**
  * See LICENSE.md file for further details.
  */
-import {Options} from "./options";
 import * as d3 from "./d3";
 
 export const MATH_DEG2RAD = Math.PI / 180;
@@ -12,9 +8,13 @@ export const MATH_RAD2DEG = 180 / Math.PI;
 export const MATH_PI2     = Math.PI * 2;
 
 /**
+ * This class handles the geometric methods.
  *
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/ancestral-fan-chart/
  */
-export class Geometry
+export default class Geometry
 {
     /**
      * Constructor.
@@ -23,7 +23,7 @@ export class Geometry
      */
     constructor(options)
     {
-        this.options = options;
+        this._options = options;
     }
 
     /**
@@ -33,7 +33,7 @@ export class Geometry
      */
     get startPi()
     {
-        return -(this.options.fanDegree / 2 * MATH_DEG2RAD);
+        return -(this._options.fanDegree / 2 * MATH_DEG2RAD);
     }
 
     /**
@@ -43,7 +43,7 @@ export class Geometry
      */
     get endPi()
     {
-        return (this.options.fanDegree / 2 * MATH_DEG2RAD);
+        return (this._options.fanDegree / 2 * MATH_DEG2RAD);
     }
 
     /**
@@ -71,17 +71,17 @@ export class Geometry
             return 0;
         }
 
-        if (data.depth < this.options.numberOfInnerCircles) {
-            return ((data.depth - 1) * (this.options.innerArcHeight + this.options.circlePadding))
-                + this.options.centerCircleRadius;
+        if (data.depth < this._options.numberOfInnerCircles) {
+            return ((data.depth - 1) * (this._options.innerArcHeight + this._options.circlePadding))
+                + this._options.centerCircleRadius;
         }
 
-        const innerWithPadding = this.options.innerArcHeight + this.options.circlePadding;
-        const outerWithPadding = this.options.outerArcHeight + this.options.circlePadding;
+        const innerWithPadding = this._options.innerArcHeight + this._options.circlePadding;
+        const outerWithPadding = this._options.outerArcHeight + this._options.circlePadding;
 
-        return ((this.options.numberOfInnerCircles - 1) * innerWithPadding)
-            + ((data.depth - this.options.numberOfInnerCircles) * outerWithPadding)
-            + this.options.centerCircleRadius;
+        return ((this._options.numberOfInnerCircles - 1) * innerWithPadding)
+            + ((data.depth - this._options.numberOfInnerCircles) * outerWithPadding)
+            + this._options.centerCircleRadius;
     }
 
     /**
@@ -96,22 +96,22 @@ export class Geometry
     outerRadius(data)
     {
         if (data.depth === 0) {
-            return this.options.centerCircleRadius;
+            return this._options.centerCircleRadius;
         }
 
-        if (data.depth <  this.options.numberOfInnerCircles) {
-            return ((data.depth - 1) * (this.options.innerArcHeight + this.options.circlePadding))
-                + this.options.innerArcHeight
-                + this.options.centerCircleRadius;
+        if (data.depth <  this._options.numberOfInnerCircles) {
+            return ((data.depth - 1) * (this._options.innerArcHeight + this._options.circlePadding))
+                + this._options.innerArcHeight
+                + this._options.centerCircleRadius;
         }
 
-        const innerWithPadding = this.options.innerArcHeight + this.options.circlePadding;
-        const outerWithPadding = this.options.outerArcHeight + this.options.circlePadding;
+        const innerWithPadding = this._options.innerArcHeight + this._options.circlePadding;
+        const outerWithPadding = this._options.outerArcHeight + this._options.circlePadding;
 
-        return ((this.options.numberOfInnerCircles - 1) * innerWithPadding)
-            + ((data.depth - this.options.numberOfInnerCircles) * outerWithPadding)
-            + this.options.outerArcHeight
-            + this.options.centerCircleRadius;
+        return ((this._options.numberOfInnerCircles - 1) * innerWithPadding)
+            + ((data.depth - this._options.numberOfInnerCircles) * outerWithPadding)
+            + this._options.outerArcHeight
+            + this._options.centerCircleRadius;
     }
 
     /**

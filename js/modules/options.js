@@ -1,14 +1,15 @@
-/*jslint es6: true */
-/*jshint esversion: 6 */
-
 /**
  * See LICENSE.md file for further details.
  */
 
 /**
- * Class Options
+ * This class handles the options passed from outside to the application.
+ *
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/ancestral-fan-chart/
  */
-export class Options
+export default class Options
 {
     constructor(
         individualUrl,

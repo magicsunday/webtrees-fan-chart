@@ -1,28 +1,29 @@
-/*jslint es6: true */
-/*jshint esversion: 6 */
-
 /**
  * See LICENSE.md file for further details.
  */
-import {Geometry, MATH_DEG2RAD, MATH_RAD2DEG} from "../geometry";
 import * as d3 from "../d3";
+import Geometry, {MATH_DEG2RAD, MATH_RAD2DEG} from "../geometry";
 
 /**
- * Class handling all the text and path elements.
+ * The class handles all the text and path elements.
+ *
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/ancestral-fan-chart/
  */
 export default class Text
 {
     /**
      * Constructor.
      *
-     * @param {Config}  config
+     * @param {Config}  config  The configuration
      * @param {Options} options
      */
     constructor(config, options)
     {
-        this.config   = config;
-        this.options  = options;
-        this.geometry = new Geometry(options);
+        this._config   = config;
+        this._options  = options;
+        this._geometry = new Geometry(options);
     }
 
     /**
@@ -119,7 +120,7 @@ export default class Text
      */
     isInnerLabel(d)
     {
-        return ((d.depth > 0) && (d.depth < this.options.numberOfInnerCircles));
+        return ((d.depth > 0) && (d.depth < this._options.numberOfInnerCircles));
     }
 
     /**
@@ -171,15 +172,15 @@ export default class Text
         // Create arc generator for path segments
         let arcGenerator = d3.arc()
             .startAngle(() => this.isPositionFlipped(d)
-                ? this.geometry.endAngle(d)
-                : this.geometry.startAngle(d)
+                ? this._geometry.endAngle(d)
+                : this._geometry.startAngle(d)
             )
             .endAngle(() => this.isPositionFlipped(d)
-                ? this.geometry.startAngle(d)
-                : this.geometry.endAngle(d)
+                ? this._geometry.startAngle(d)
+                : this._geometry.endAngle(d)
             )
-            .innerRadius(() => this.geometry.relativeRadius(d, this.getTextOffset(index, d)))
-            .outerRadius(() => this.geometry.relativeRadius(d, this.getTextOffset(index, d)));
+            .innerRadius(() => this._geometry.relativeRadius(d, this.getTextOffset(index, d)))
+            .outerRadius(() => this._geometry.relativeRadius(d, this.getTextOffset(index, d)));
 
         // Append a path so we could use it to write the label along it
         return label.append("path")
@@ -197,12 +198,12 @@ export default class Text
      */
     isPositionFlipped(d)
     {
-        if ((this.options.fanDegree !== 360) || (d.depth <= 1)) {
+        if ((this._options.fanDegree !== 360) || (d.depth <= 1)) {
             return false;
         }
 
-        let sAngle = this.geometry.startAngle(d);
-        let eAngle = this.geometry.endAngle(d);
+        let sAngle = this._geometry.startAngle(d);
+        let eAngle = this._geometry.endAngle(d);
 
         // Flip names for better readability depending on position in chart
         return ((sAngle >= (90 * MATH_DEG2RAD)) && (eAngle <= (180 * MATH_DEG2RAD)))
@@ -308,19 +309,19 @@ export default class Text
     getAvailableWidth(d, index)
     {
         // Innermost circle (Reducing the width slightly, avoiding the text is sticking too close to the edge)
-        let availableWidth = (this.options.centerCircleRadius * 2) - (this.options.centerCircleRadius * 0.15);
+        let availableWidth = (this._options.centerCircleRadius * 2) - (this._options.centerCircleRadius * 0.15);
 
-        if ((d.depth >= 1) && (d.depth < this.options.numberOfInnerCircles)) {
+        if ((d.depth >= 1) && (d.depth < this._options.numberOfInnerCircles)) {
             // Calculate length of the arc
-            availableWidth = this.geometry.arcLength(d, this.getTextOffset(index, d));
+            availableWidth = this._geometry.arcLength(d, this.getTextOffset(index, d));
         } else {
             // Outer arcs
-            if (d.depth >= this.options.numberOfInnerCircles) {
-                availableWidth = this.options.outerArcHeight;
+            if (d.depth >= this._options.numberOfInnerCircles) {
+                availableWidth = this._options.outerArcHeight;
             }
         }
 
-        return availableWidth - (this.options.textPadding * 2);
+        return availableWidth - (this._options.textPadding * 2);
     }
 
     /**
@@ -357,13 +358,13 @@ export default class Text
      */
     getFontSize(data)
     {
-        let fontSize = this.options.fontSize;
+        let fontSize = this._options.fontSize;
 
-        if (data.depth >= (this.options.numberOfInnerCircles + 1)) {
+        if (data.depth >= (this._options.numberOfInnerCircles + 1)) {
             fontSize += 1;
         }
 
-        return ((fontSize - data.depth) * this.options.fontScale / 100.0) + "px";
+        return ((fontSize - data.depth) * this._options.fontScale / 100.0) + "px";
     }
 
     /**
@@ -377,7 +378,7 @@ export default class Text
      */
     transformOuterText(label, data)
     {
-        let self          = this;
+        let that          = this;
         let textElements  = label.selectAll("text");
         let countElements = textElements.size();
         let offsets       = [0, -0.025, 0.5, 1.15, 2.0];
@@ -403,7 +404,7 @@ export default class Text
                 offsetRotate = 0.5;
             }
 
-            offsetRotate *= mapIndexToOffset(i) * self.options.fontScale / 100.0;
+            offsetRotate *= mapIndexToOffset(i) * that._options.fontScale / 100.0;
 
             // Name of center person should not be rotated in any way
             if (data.depth === 0) {
@@ -411,9 +412,9 @@ export default class Text
             } else {
                 d3.select(this).attr("transform", function () {
                     let dx        = data.x1 - data.x0;
-                    let angle     = self.geometry.scale(data.x0 + (dx / 2)) * MATH_RAD2DEG;
+                    let angle     = that._geometry.scale(data.x0 + (dx / 2)) * MATH_RAD2DEG;
                     let rotate    = angle - (offsetRotate * (angle > 0 ? -1 : 1));
-                    let translate = (self.geometry.centerRadius(data) - (self.options.colorArcWidth / 2.0));
+                    let translate = (that._geometry.centerRadius(data) - (that._options.colorArcWidth / 2.0));
 
                     if (angle > 0) {
                         rotate -= 90;
