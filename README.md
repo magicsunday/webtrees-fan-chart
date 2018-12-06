@@ -12,6 +12,8 @@ This modules provides an SVG ancestral fan chart for the [webtrees](https://www.
 
 
 ## Installation
+Requires webtrees 2.0.
+
 ### Using Composer
 To install using [composer](https://getcomposer.org/), just run the following command from the command line 
 at the root directory of your webtrees installation.
