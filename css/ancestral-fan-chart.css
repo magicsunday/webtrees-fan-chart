@@ -3,6 +3,8 @@
 /*
     font-family: Verdana,sans-serif;
 */
+    display: flex;
+    flex: auto;
 }
 
 #page-fan svg {

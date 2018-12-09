@@ -197,7 +197,9 @@ export default class Geometry
      * @param {Object} data     The D3 data object
      * @param {Number} position The percent offset (0 = inner radius, 100 = outer radius)
      *
-     * @returns {Number}
+     * @return {Number}
+     *
+     * @public
      */
     arcLength(data, position)
     {
