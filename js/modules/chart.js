@@ -36,7 +36,7 @@ export default class Chart
         // Parent container
         this._config.parent = d3.select(selector);
 
-        this.createSvg()
+        this.createSvg();
         this.init();
     }
 
