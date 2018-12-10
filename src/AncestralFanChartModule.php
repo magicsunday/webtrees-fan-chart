@@ -176,7 +176,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
         ];
 
         return $this->viewResponse(
-            'fan-chart',
+            'ancestral-fan-chart',
             [
                 'rtl'         => I18N::direction() === 'rtl',
                 'title'       => $title,
