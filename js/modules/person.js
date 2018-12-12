@@ -66,13 +66,38 @@ export default class Person
         }
 
         // Hovering
-        person
-            .on("mouseover", function () {
-                d3.select(this).classed("hover", true);
-            })
-            .on("mouseout", function () {
-                d3.select(this).classed("hover", false);
-            });
+        person.on("mouseover", this.mouseover.bind(this))
+            .on("mouseout", this.mouseout.bind(this));
+    }
+
+    /**
+     * Handles the event when a pointing device is moved onto an element.
+     *
+     * @param {Object} datum
+     * @param {Number} index
+     * @param {Array}  nodes
+     *
+     * @private
+     */
+    mouseover(datum, index, nodes)
+    {
+        d3.select(nodes[index])
+            .classed("hover", true);
+    }
+
+    /**
+     * Handles the event when a pointing device is moved off an element.
+     *
+     * @param {Object} datum
+     * @param {Number} index
+     * @param {Array}  nodes
+     *
+     * @private
+     */
+    mouseout(datum, index, nodes)
+    {
+        d3.select(nodes[index])
+            .classed("hover", false);
     }
 
     /**

@@ -90,7 +90,7 @@ export default class Update
                 .selectAll("g.person.remove g.arc path")
                 .transition(t)
                 .style("fill", () => this._options.hideEmptySegments ? null : "rgb(240, 240, 240)")
-                .style("opacity", () => this._options.hideEmptySegments ? 0 : null);
+                .style("opacity", () => this._options.hideEmptySegments ? 1e-6 : null);
 
             // Fade in new arcs
             this._config.svg

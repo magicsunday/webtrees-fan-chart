@@ -161,7 +161,7 @@ export default class Chart
 
         // Add rectangle element
         // this._config.svg
-        //     .append("rect")
+        //     .insert("rect", ":first-child")
         //     .attr("class", "background")
         //     .attr("width", "100%")
         //     .attr("height", "100%");
