@@ -34,11 +34,9 @@ export default class Zoom
     }
 
     /**
-     * Initialize the zoom and returns a new D3 zoom behavior.
+     * Initializes a new D3 zoom behavior.
      *
      * @param {Config} config The configuration
-     *
-     * @return {Object} D3 zoom behavior
      *
      * @private
      */
