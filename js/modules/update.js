@@ -75,7 +75,7 @@ export default class Update
             this._config.svg
                 .selectAll("g.person:not(.remove)")
                 .selectAll("g.label:not(.old)")
-                .style("opacity", 0);
+                .style("opacity", 1e-6);
 
             this._gradient.addColorGroup(this._hierarchy)
                 .classed("new", true);
@@ -103,7 +103,7 @@ export default class Update
             this._config.svg
                 .selectAll("g.person.update g.label.old, g.person.remove g.label.old, g.colorGroup:not(.new)")
                 .transition(t)
-                .style("opacity", 0);
+                .style("opacity", 1e-6);
 
             // Fade in all new labels and color group
             this._config.svg

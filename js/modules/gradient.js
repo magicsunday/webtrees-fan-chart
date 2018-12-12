@@ -105,7 +105,7 @@ export default class Gradient
             .select("g")
             .append("g")
             .attr("class", "colorGroup")
-            .style("opacity", 0);
+            .style("opacity", 1e-6);
 
         colorGroup
             .selectAll("g.colorGroup")

@@ -22,7 +22,7 @@ export default class Overlay
         this._overlay = config.parent
             .append("div")
             .attr("class", "overlay")
-            .style("opacity", 0);
+            .style("opacity", 1e-6);
     }
 
     /**
@@ -70,6 +70,6 @@ export default class Overlay
             .transition()
             .delay(delay)
             .duration(duration)
-            .style("opacity", 0);
+            .style("opacity", 1e-6);
     }
 }

@@ -103,7 +103,7 @@ export default class Person
 
         // Hide arc initially if its new during chart update
         if (person.classed("new")) {
-            path.style("opacity", 0);
+            path.style("opacity", 1e-6);
         }
     }
 
