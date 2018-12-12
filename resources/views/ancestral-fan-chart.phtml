@@ -26,7 +26,17 @@ use MagicSunday\Webtrees\Config;
                     <?= I18N::translate('Individual') ?>
                 </label>
                 <div class="col-sm-9 wt-page-options-value">
-                    <?= FunctionsEdit::formControlIndividual($tree, $individual, ['id' => 'xref', 'name' => 'xref']) ?>
+                    <?=
+                        FunctionsEdit::formControlIndividual(
+                            $tree,
+                            $individual,
+                            [
+                                'id'    => 'xref',
+                                'name'  => 'xref',
+                                'class' => 'form-control-sm',
+                            ]
+                        );
+                    ?>
                 </div>
             </div>
         </fieldset>
@@ -42,8 +52,9 @@ use MagicSunday\Webtrees\Config;
                             $fanDegrees,
                             $config->getFanDegree(),
                             [
-                                'id'   => 'fanDegree',
-                                'name' => 'fanDegree',
+                                'id'    => 'fanDegree',
+                                'name'  => 'fanDegree',
+                                'class' => 'form-control-sm',
                             ]
                         );
                     ?>
@@ -67,8 +78,9 @@ use MagicSunday\Webtrees\Config;
                             ),
                             $config->getGenerations(),
                             [
-                                'id'   => 'generations',
-                                'name' => 'generations',
+                                'id'    => 'generations',
+                                'name'  => 'generations',
+                                'class' => 'form-control-sm',
                             ]
                         );
                     ?>
@@ -83,8 +95,10 @@ use MagicSunday\Webtrees\Config;
                 </label>
                 <div class="col-sm-9 wt-page-options-value">
                     <div class="input-group">
-                        <input class="form-control" type="text" name="fontScale" id="fontScale" size="3" value="<?= $config->getFontScale(); ?>">
-                        <span class="input-group-addon">%</span>
+                        <input class="form-control form-control-sm" type="text" name="fontScale" id="fontScale" size="3" value="<?= $config->getFontScale(); ?>">
+                        <div class="input-group-append">
+                            <span class="input-group-text form-control-sm">%</span>
+                        </div>
                     </div>
                 </div>
             </div>

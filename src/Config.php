@@ -33,6 +33,16 @@ class Config
     const MAX_GENERATIONS = 10;
 
     /**
+     * The defaut fan chart degree.
+     */
+    const FAN_DEGREE_DEFAULT = 210;
+
+    /**
+     * The default font size scaling factor in percent.
+     */
+    const FONT_SCALE_DEFAULT = 100;
+
+    /**
      * The current request instance.
      *
      * @var Request
@@ -45,16 +55,6 @@ class Config
      * @var Tree
      */
     private $tree;
-
-    /**
-     * The defaut fan chart degree.
-     */
-    const FAN_DEGREE_DEFAULT = 210;
-
-    /**
-     * The default font size scaling factor in percent.
-     */
-    const FONT_SCALE_DEFAULT = 100;
 
     /**
      * Config constructor.
@@ -101,7 +101,7 @@ class Config
         $fontScale = (int) $this->request->get('fontScale', self::FONT_SCALE_DEFAULT);
         $fontScale = min($fontScale, 200);
 
-        return max($fontScale, 0);
+        return max($fontScale, 10);
     }
 
     /**
