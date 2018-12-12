@@ -20,131 +20,119 @@ use MagicSunday\Webtrees\Config;
         <input type="hidden" name="ged" value="<?= e($tree->name()) ?>">
         <input type="hidden" name="action" value="FanChart">
 
-        <fieldset class="form-group">
-            <div class="row">
-                <label class="col-sm-3 col-form-label wt-page-options-label" for="xref">
-                    <?= I18N::translate('Individual') ?>
-                </label>
-                <div class="col-sm-9 wt-page-options-value">
-                    <?=
-                        FunctionsEdit::formControlIndividual(
-                            $tree,
-                            $individual,
-                            [
-                                'id'    => 'xref',
-                                'name'  => 'xref',
-                                'class' => 'form-control-sm',
-                            ]
-                        );
-                    ?>
-                </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label wt-page-options-label" for="xref">
+                <?= I18N::translate('Individual') ?>
+            </label>
+            <div class="col-sm-9 wt-page-options-value">
+                <?=
+                    FunctionsEdit::formControlIndividual(
+                        $tree,
+                        $individual,
+                        [
+                            'id'    => 'xref',
+                            'name'  => 'xref',
+                            'class' => 'form-control-sm',
+                        ]
+                    );
+                ?>
             </div>
-        </fieldset>
+        </div>
 
-        <fieldset class="form-group">
-            <div class="row">
-                <label class="col-sm-3 col-form-label wt-page-options-label" for="fanDegree">
-                    <?= I18N::translate('Layout'); ?>
-                </label>
-                <div class="col-sm-9 wt-page-options-value">
-                    <?=
-                        Bootstrap4::select(
-                            $fanDegrees,
-                            $config->getFanDegree(),
-                            [
-                                'id'    => 'fanDegree',
-                                'name'  => 'fanDegree',
-                                'class' => 'form-control-sm',
-                            ]
-                        );
-                    ?>
-                </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label wt-page-options-label" for="fanDegree">
+                <?= I18N::translate('Layout'); ?>
+            </label>
+            <div class="col-sm-9 wt-page-options-value">
+                <?=
+                    Bootstrap4::select(
+                        $fanDegrees,
+                        $config->getFanDegree(),
+                        [
+                            'id'    => 'fanDegree',
+                            'name'  => 'fanDegree',
+                            'class' => 'form-control-sm',
+                        ]
+                    );
+                ?>
             </div>
-        </fieldset>
+        </div>
 
-        <fieldset class="form-group">
-            <div class="row">
-                <label class="col-sm-3 col-form-label wt-page-options-label" for="generations">
-                    <?= I18N::translate('Generations'); ?>
-                </label>
-                <div class="col-sm-9 wt-page-options-value">
-                    <?=
-                        Bootstrap4::select(
-                            FunctionsEdit::numericOptions(
-                                range(
-                                    Config::MIN_GENERATIONS,
-                                    Config::MAX_GENERATIONS
-                                )
-                            ),
-                            $config->getGenerations(),
-                            [
-                                'id'    => 'generations',
-                                'name'  => 'generations',
-                                'class' => 'form-control-sm',
-                            ]
-                        );
-                    ?>
-                </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label wt-page-options-label" for="generations">
+                <?= I18N::translate('Generations'); ?>
+            </label>
+            <div class="col-sm-9 wt-page-options-value">
+                <?=
+                    Bootstrap4::select(
+                        FunctionsEdit::numericOptions(
+                            range(
+                                Config::MIN_GENERATIONS,
+                                Config::MAX_GENERATIONS
+                            )
+                        ),
+                        $config->getGenerations(),
+                        [
+                            'id'    => 'generations',
+                            'name'  => 'generations',
+                            'class' => 'form-control-sm',
+                        ]
+                    );
+                ?>
             </div>
-        </fieldset>
+        </div>
 
-        <fieldset class="form-group">
-            <div class="row">
-                <label class="col-sm-3 col-form-label wt-page-options-label" for="fontScale">
-                    <?= I18N::translate('Font size'); ?>
-                </label>
-                <div class="col-sm-9 wt-page-options-value">
-                    <div class="input-group">
-                        <input class="form-control form-control-sm" type="text" name="fontScale" id="fontScale" size="3" value="<?= $config->getFontScale(); ?>">
-                        <div class="input-group-append">
-                            <span class="input-group-text form-control-sm">%</span>
-                        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label wt-page-options-label" for="fontScale">
+                <?= I18N::translate('Font size'); ?>
+            </label>
+            <div class="col-sm-9 wt-page-options-value">
+                <div class="input-group">
+                    <input class="form-control form-control-sm" type="text" name="fontScale" id="fontScale"
+                           maxlength="3" placeholder="100" value="<?= $config->getFontScale(); ?>">
+                    <div class="input-group-append">
+                        <span class="input-group-text form-control-sm">%</span>
                     </div>
                 </div>
             </div>
-        </fieldset>
+        </div>
 
-        <fieldset class="form-group">
-            <div class="row">
-                <label class="col-form-label col-sm-3 wt-page-options-label">
-                    <?= I18N::translate('Layout'); ?>
-                </label>
-                <div class="col-sm-9 wt-page-options-value">
-                    <?=
-                        Bootstrap4::checkbox(
-                            I18N::translate('Hide empty segments'),
-                            false,
-                            [
-                                'id'      => 'hideEmptySegments',
-                                'name'    => 'hideEmptySegments',
-                                'checked' => $config->getHideEmptySegments(),
-                            ]
-                        );
-                    ?>
-                    <?=
-                        Bootstrap4::checkbox(
-                            I18N::translate('Show color gradients'),
-                            false,
-                            [
-                                'id'      => 'showColorGradients',
-                                'name'    => 'showColorGradients',
-                                'checked' => $config->getShowColorGradients(),
-                            ]
-                        );
-                    ?>
-                </div>
+        <div class="form-group row">
+            <label class="col-form-label col-sm-3 wt-page-options-label">
+                <?= I18N::translate('Layout'); ?>
+            </label>
+            <div class="col-sm-9 wt-page-options-value">
+                <?=
+                    Bootstrap4::checkbox(
+                        I18N::translate('Hide empty segments'),
+                        false,
+                        [
+                            'id'      => 'hideEmptySegments',
+                            'name'    => 'hideEmptySegments',
+                            'checked' => $config->getHideEmptySegments(),
+                        ]
+                    );
+                ?>
+                <?=
+                    Bootstrap4::checkbox(
+                        I18N::translate('Show color gradients'),
+                        false,
+                        [
+                            'id'      => 'showColorGradients',
+                            'name'    => 'showColorGradients',
+                            'checked' => $config->getShowColorGradients(),
+                        ]
+                    );
+                ?>
             </div>
-        </fieldset>
+        </div>
 
-        <fieldset class="form-group">
-            <div class="row">
-                <div class="col-sm-3 wt-page-options-label"></div>
-                <div class="col-sm-9 wt-page-options-value">
-                    <input class="btn btn-primary" type="submit" value="<?= I18N::translate('view') ?>">
-                    <input class="btn btn-primary" type="reset" value="<?= I18N::translate('reset') ?>" id="resetButton">
-                </div>
+        <div class="form-group row">
+            <div class="col-sm-12 wt-page-options-value btn-group-sm text-center">
+                <input class="btn btn-primary" type="submit" value="<?= I18N::translate('view') ?>">
+                <input class="btn btn-primary" type="reset" value="<?= I18N::translate('reset') ?>" id="resetButton">
             </div>
-        </fieldset>
+        </div>
     </form>
 
     <div class="row">
