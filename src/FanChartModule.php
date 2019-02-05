@@ -6,46 +6,43 @@ declare(strict_types=1);
  */
 namespace MagicSunday\Webtrees;
 
+use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Exceptions\IndividualAccessDeniedException;
 use Fisharebest\Webtrees\Exceptions\IndividualNotFoundException;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
-use Fisharebest\Webtrees\Menu;
-use Fisharebest\Webtrees\Module\AbstractModule;
-use Fisharebest\Webtrees\Module\ModuleChartInterface;
-use Fisharebest\Webtrees\Theme;
-use Fisharebest\Webtrees\Theme\ThemeInterface;
+use Fisharebest\Webtrees\Module\FanChartModule as WebtreesFanChartModule;
+use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Fisharebest\Webtrees\Module\ModuleThemeInterface;
+use Fisharebest\Webtrees\Services\ChartService;
 use Fisharebest\Webtrees\Tree;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Ancestral fan chart module class.
+ * Fan chart module class.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/ancestral-fan-chart/
  */
-class AncestralFanChartModule extends AbstractModule implements ModuleChartInterface
+class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInterface
 {
     /**
-     * For custom modules - optional (recommended) version number
-     *
      * @var string
      */
-    const CUSTOM_VERSION = '2.0';
+    public const CUSTOM_VERSION = '2.0';
 
     /**
-     * For custom modules - link for support, upgrades, etc.
-     *
      * @var string
      */
-    const CUSTOM_WEBSITE = 'https://github.com/magicsunday/ancestral-fan-chart';
+    public const CUSTOM_WEBSITE = 'https://github.com/magicsunday/ancestral-fan-chart';
 
     /**
      * The current theme instance.
      *
-     * @var ThemeInterface
+     * @var ModuleThemeInterface
      */
     private $theme;
 
@@ -64,96 +61,63 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     private $config;
 
     /**
-     * How should this module be labelled on tabs, menus, etc.?
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getTitle(): string
+    public function customModuleAuthorName(): string
     {
-        return I18N::translate('Ancestral fan chart');
+        return 'Rico Sonntag';
     }
 
     /**
-     * A sentence describing what this module does.
-     *
-     * @return string
+     * @inheritDoc
      */
-    public function getDescription(): string
+    public function customModuleVersion(): string
     {
-        return I18N::translate('A fan chart of an individual’s ancestors.');
+        return self::CUSTOM_VERSION;
     }
 
     /**
-     * Returns a menu item for this chart.
-     *
-     * @param Individual $individual The current individual
-     *
-     * @return Menu
+     * @inheritDoc
      */
-    public function getChartMenu(Individual $individual): Menu
+    public function customModuleLatestVersionUrl(): string
     {
-        $link = route('module', [
-            'module' => $this->getName(),
-            'action' => 'FanChart',
-            'xref'   => $individual->xref(),
-            'ged'    => $individual->tree()->name(),
-        ]);
-
-        return new Menu(
-            $this->getTitle(),
-            $link,
-            'menu-chart-fanchart',
-            [
-                'rel' => 'nofollow',
-            ]
-        );
+        return self::CUSTOM_WEBSITE;
     }
 
     /**
-     * Returns a menu item for this chart - for use in individual boxes.
-     *
-     * @param Individual $individual The current individual
-     *
-     * @return Menu
+     * @inheritDoc
      */
-    public function getBoxChartMenu(Individual $individual): Menu
+    public function customModuleSupportUrl(): string
     {
-        return $this->getChartMenu($individual);
+        return self::CUSTOM_WEBSITE;
     }
 
     /**
-     * Entry point action. Creates the form to configure the chart.
-     *
-     * @param Request $request The current HTTP request
-     * @param Tree    $tree    The current tree
-     * @param Config  $config  The module configuration
-     *
-     * @return Response
+     * @inheritDoc
      *
      * @throws IndividualNotFoundException
      * @throws IndividualAccessDeniedException
      */
-    public function getFanChartAction(Request $request, Tree $tree, Config $config): Response
-    {
-        $this->config = $config;
+    public function getChartAction(
+        Request $request,
+        Tree $tree,
+        UserInterface $user,
+        ChartService $chart_service
+    ): Response {
+        $this->config = new Config($request, $tree);
 
-        $this->theme = Theme::theme();
+        $this->theme = app()->make(ModuleThemeInterface::class);
         $this->tree  = $tree;
 
         $xref       = $request->get('xref');
         $individual = Individual::getInstance($xref, $this->tree);
 
-        if ($individual === null) {
-            throw new IndividualNotFoundException();
-        }
-
-        if (!$individual->canShow()) {
-            throw new IndividualAccessDeniedException();
-        }
+        Auth::checkIndividualAccess($individual);
+        Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
         $title = I18N::translate('Ancestral fan chart');
 
-        if ($individual->canShowName()) {
+        if ($individual && $individual->canShowName()) {
             $title = I18N::translate('Ancestral fan chart of %s', $individual->getFullName());
         }
 
@@ -180,6 +144,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
             [
                 'rtl'         => I18N::direction() === 'rtl',
                 'title'       => $title,
+                'moduleName'  => $this->name(),
                 'individual'  => $individual,
                 'tree'        => $this->tree,
                 'fanDegrees'  => $this->getFanDegrees(),
@@ -190,34 +155,29 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     }
 
     /**
-     * Entry point action. Creates the form to configure the chart.
+     * Update action.
      *
-     * @param Request $request The current HTTP request
-     * @param Tree    $tree    The current tree
-     * @param Config  $config  The module configuration
+     * @param Request       $request The current HTTP request
+     * @param Tree          $tree    The current tree
+     * @param UserInterface $user    The current user
+     * @param Config        $config  The module configuration
      *
      * @return Response
      *
      * @throws IndividualNotFoundException
      * @throws IndividualAccessDeniedException
      */
-    public function getUpdateAction(Request $request, Tree $tree, Config $config): Response
+    public function getUpdateAction(Request $request, Tree $tree, UserInterface $user, Config $config): Response
     {
         $this->config = $config;
-
-        $this->theme = Theme::theme();
-        $this->tree  = $tree;
+        $this->theme  = app()->make(ModuleThemeInterface::class);
+        $this->tree   = $tree;
 
         $xref       = $request->get('xref');
         $individual = Individual::getInstance($xref, $tree);
 
-        if ($individual === null) {
-            throw new IndividualNotFoundException();
-        }
-
-        if (!$individual->canShow()) {
-            throw new IndividualAccessDeniedException();
-        }
+        Auth::checkIndividualAccess($individual);
+        Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
         return new Response(
             json_encode(
@@ -349,7 +309,7 @@ class AncestralFanChartModule extends AbstractModule implements ModuleChartInter
     private function getUpdateRoute(): string
     {
         return route('module', [
-            'module'      => $this->getName(),
+            'module'      => $this->name(),
             'action'      => 'Update',
             'ged'         => $this->tree->name(),
             'generations' => $this->config->getGenerations(),

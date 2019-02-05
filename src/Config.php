@@ -23,24 +23,24 @@ class Config
      *
      * @var int
      */
-    const MIN_GENERATIONS = 2;
+    public const MIN_GENERATIONS = 2;
 
     /**
      * Maximum number of displayable generations.
      *
      * @var int
      */
-    const MAX_GENERATIONS = 10;
+    public const MAX_GENERATIONS = 10;
 
     /**
      * The defaut fan chart degree.
      */
-    const FAN_DEGREE_DEFAULT = 210;
+    public const FAN_DEGREE_DEFAULT = 210;
 
     /**
      * The default font size scaling factor in percent.
      */
-    const FONT_SCALE_DEFAULT = 100;
+    public const FONT_SCALE_DEFAULT = 100;
 
     /**
      * The current request instance.

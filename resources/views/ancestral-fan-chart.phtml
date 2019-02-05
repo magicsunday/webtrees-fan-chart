@@ -16,9 +16,9 @@ use MagicSunday\Webtrees\Config;
 
     <form class="wt-page-options wt-page-options-fan-chart d-print-none">
         <input type="hidden" name="route" value="module">
-        <input type="hidden" name="module" value="ancestral-fan-chart">
+        <input type="hidden" name="module" value="<?= e($moduleName) ?>">
         <input type="hidden" name="ged" value="<?= e($tree->name()) ?>">
-        <input type="hidden" name="action" value="FanChart">
+        <input type="hidden" name="action" value="Chart">
 
         <div class="form-group row">
             <label class="col-sm-3 col-form-label wt-page-options-label" for="xref">
@@ -142,13 +142,13 @@ use MagicSunday\Webtrees\Config;
 
 <?php View::push('styles') ?>
 
-<link rel="stylesheet" type="text/css" href="modules_v3/ancestral-fan-chart/css/ancestral-fan-chart.css">
+<link rel="stylesheet" type="text/css" href="modules_v4/ancestral-fan-chart/css/ancestral-fan-chart.css">
 
 <?php View::endpush(); ?>
 
 <?php View::push('javascript'); ?>
 
-<script type="text/javascript" src="modules_v3/ancestral-fan-chart/js/ancestral-fan-chart.min.js"></script>
+<script type="text/javascript" src="modules_v4/ancestral-fan-chart/js/ancestral-fan-chart.min.js"></script>
 <script type="text/javascript">
 
 function AncestralFanChart(data)
