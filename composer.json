@@ -7,7 +7,8 @@
     "keywords": [
         "webtrees",
         "module",
-        "fan-chart"
+        "fan",
+        "chart"
     ],
     "authors": [
         {
@@ -26,6 +27,6 @@
         "php": "~7.1",
         "ext-json": "*",
         "fisharebest/webtrees": "~2.0 || dev-master",
-        "magicsunday/webtrees-module-installer-plugin": "~1.0"
+        "magicsunday/webtrees-module-installer-plugin": "~1.2"
     }
 }
