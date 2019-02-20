@@ -4,9 +4,9 @@
 import * as d3 from "./d3";
 import Arc from "./arc";
 import Config from "./config";
+import Hierarchy from "./hierarchy";
 import Overlay from "./chart/overlay";
 import Zoom from "./chart/zoom";
-import Hierarchy from "./hierarchy";
 
 const MIN_HEIGHT  = 500;
 const MIN_PADDING = 10;   // Minimum padding around view box

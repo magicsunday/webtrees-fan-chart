@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * See LICENSE.md file for further details.
  */
-namespace MagicSunday\Webtrees;
+namespace MagicSunday\Webtrees\FanChart;
 
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Contracts\UserInterface;
@@ -17,6 +17,7 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Services\ChartService;
 use Fisharebest\Webtrees\Tree;
+use Fisharebest\Webtrees\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -59,6 +60,42 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
      * @var Config
      */
     private $config;
+
+    /**
+     * The module base directory.
+     *
+     * @var string
+     */
+    private $moduleDirecotry;
+
+    /**
+     * Constructor.
+     *
+     * @param string $moduleDirectory The module base directory
+     */
+    public function __construct(string $moduleDirectory)
+    {
+        $this->moduleDirecotry = $moduleDirectory;
+    }
+
+    /**
+     * Boostrap.
+     *
+     * @param UserInterface $user A user (or visitor) object.
+     * @param Tree|null     $tree Note that $tree can be null (if all trees are private).
+     */
+    public function boot(UserInterface $user, ?Tree $tree): void
+    {
+        // The boot() function is called after the framework has been booted.
+        if (($tree !== null) && !Auth::isAdmin($user)) {
+            return;
+        }
+
+        // Here is also a good place to register any views (templates) used by the module.
+        // This command allows the module to use: view($this->name() . '::', 'fish')
+        // to access the file ./resources/views/fish.phtml
+        View::registerNamespace($this->name(), $this->moduleDirecotry . '/resources/views/');
+    }
 
     /**
      * @inheritDoc
@@ -105,9 +142,8 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
         ChartService $chart_service
     ): Response {
         $this->config = new Config($request, $tree);
-
-        $this->theme = app()->make(ModuleThemeInterface::class);
-        $this->tree  = $tree;
+        $this->theme  = app()->make(ModuleThemeInterface::class);
+        $this->tree   = $tree;
 
         $xref       = $request->get('xref');
         $individual = Individual::getInstance($xref, $this->tree);
@@ -118,7 +154,7 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
         $title = I18N::translate('Ancestral fan chart');
 
         if ($individual && $individual->canShowName()) {
-            $title = I18N::translate('Ancestral fan chart of %s', $individual->getFullName());
+            $title = I18N::translate('Ancestral fan chart of %s', $individual->fullName());
         }
 
         $chartParams = [
@@ -140,7 +176,7 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
         ];
 
         return $this->viewResponse(
-            'ancestral-fan-chart',
+            $this->name() . '::chart',
             [
                 'rtl'         => I18N::direction() === 'rtl',
                 'title'       => $title,
@@ -215,11 +251,9 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
      *
      * @return null|string
      */
-    private function unescapedHtml(string $value = null)
+    private function unescapedHtml(string $value = null): ?string
     {
-        return ($value === null)
-            ? $value
-            : html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
+        return ($value === null) ? $value : html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
     }
 
     /**
@@ -244,8 +278,8 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
      */
     private function getIndividualData(Individual $individual, int $generation): array
     {
-        $fullName        = $this->unescapedHtml($individual->getFullName());
-        $alternativeName = $this->unescapedHtml($individual->getAddName());
+        $fullName        = $this->unescapedHtml($individual->fullName());
+        $alternativeName = $this->unescapedHtml($individual->alternateName());
 
         return [
             'id'              => 0,
@@ -254,7 +288,7 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
             'name'            => $fullName,
             'alternativeName' => $alternativeName,
             'isAltRtl'        => $this->isRtl($alternativeName),
-            'sex'             => $individual->getSex(),
+            'sex'             => $individual->sex(),
             'born'            => $individual->getBirthYear(),
             'died'            => $individual->getDeathYear(),
             'color'           => $this->getColor($individual),
@@ -278,15 +312,15 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
         }
 
         $data   = $this->getIndividualData($individual, $generation);
-        $family = $individual->getPrimaryChildFamily();
+        $family = $individual->primaryChildFamily();
 
         if ($family === null) {
             return $data;
         }
 
         // Recursively call the method for the parents of the individual
-        $fatherTree = $this->buildJsonTree($family->getHusband(), $generation + 1);
-        $motherTree = $this->buildJsonTree($family->getWife(), $generation + 1);
+        $fatherTree = $this->buildJsonTree($family->husband(), $generation + 1);
+        $motherTree = $this->buildJsonTree($family->wife(), $generation + 1);
 
         // Add array of child nodes
         if (!empty($fatherTree)) {
@@ -337,7 +371,7 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
      */
     private function getColor(Individual $individual = null): string
     {
-        $genderLower = ($individual === null) ? 'u' : strtolower($individual->getSex());
+        $genderLower = ($individual === null) ? 'u' : strtolower($individual->sex());
         return '#' . $this->theme->parameter('chart-background-' . $genderLower);
     }
 

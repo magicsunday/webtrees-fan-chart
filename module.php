@@ -11,10 +11,10 @@ use Composer\Autoload\ClassLoader;
 // Register our namespace
 $loader = new ClassLoader();
 $loader->addPsr4(
-    'MagicSunday\\Webtrees\\',
+    'MagicSunday\\Webtrees\\FanChart\\',
     __DIR__ . '/src'
 );
 $loader->register();
 
 // Create and return instance of the module
-return new FanChartModule(__DIR__);
+return new FanChart\FanChartModule(__DIR__);

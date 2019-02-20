@@ -19,8 +19,8 @@ export default class Arc
      * Constructor.
      *
      * @param {Config}    config    The configuration
-     * @param {Options}   options
-     * @param {Hierarchy} hierarchy
+     * @param {Options}   options   The options
+     * @param {Hierarchy} hierarchy The hierarchiecal data
      */
     constructor(config, options, hierarchy)
     {

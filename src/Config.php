@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * See LICENSE.md file for further details.
  */
-namespace MagicSunday\Webtrees;
+namespace MagicSunday\Webtrees\FanChart;
 
 use Fisharebest\Webtrees\Tree;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,11 +34,15 @@ class Config
 
     /**
      * The defaut fan chart degree.
+     *
+     * @var int
      */
     public const FAN_DEGREE_DEFAULT = 210;
 
     /**
      * The default font size scaling factor in percent.
+     *
+     * @var int
      */
     public const FONT_SCALE_DEFAULT = 100;
 
