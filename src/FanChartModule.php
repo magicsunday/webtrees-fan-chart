@@ -166,13 +166,48 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
         Auth::checkIndividualAccess($individual);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
+        return $this->viewResponse(
+            $this->name() . '::chart',
+            [
+                'title'       => $this->getPageTitle($individual),
+                'moduleName'  => $this->name(),
+                'individual'  => $individual,
+                'tree'        => $this->tree,
+                'fanDegrees'  => $this->getFanDegrees(),
+                'config'      => $this->config,
+                'chartParams' => json_encode($this->getChartParameters($individual)),
+            ]
+        );
+    }
+
+    /**
+     * Returns the page title.
+     *
+     * @param Individual $individual The individual used in the curret chart
+     *
+     * @return string
+     */
+    private function getPageTitle(Individual $individual): string
+    {
         $title = I18N::translate('Fan chart');
 
         if ($individual && $individual->canShowName()) {
             $title = I18N::translate('Fan chart of %s', $individual->fullName());
         }
 
-        $chartParams = [
+        return $title;
+    }
+
+    /**
+     * Collects and returns the required chart data.
+     *
+     * @param Individual $individual The individual used to gather the chart data
+     *
+     * @return string[]
+     */
+    private function getChartParameters(Individual $individual): array
+    {
+        return [
             'rtl'                => I18N::direction() === 'rtl',
             'defaultColor'       => $this->getColor(),
             'fontColor'          => $this->getChartFontColor(),
@@ -189,20 +224,6 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
                 'move' => I18N::translate('Move the view with two fingers'),
             ],
         ];
-
-        return $this->viewResponse(
-            $this->name() . '::chart',
-            [
-                'rtl'         => I18N::direction() === 'rtl',
-                'title'       => $title,
-                'moduleName'  => $this->name(),
-                'individual'  => $individual,
-                'tree'        => $this->tree,
-                'fanDegrees'  => $this->getFanDegrees(),
-                'config'      => $this->config,
-                'chartParams' => json_encode($chartParams),
-            ]
-        );
     }
 
     /**
