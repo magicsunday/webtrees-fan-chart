@@ -1,14 +1,14 @@
 {
-    "name": "ancestral-fan-chart",
+    "name": "webtrees-fan-chart",
     "version": "2.0.0",
-    "license": "GPL-3.0-or-later",
+    "license": "GPL-3.0",
     "repository": {
         "type": "git",
-        "url": "https://github.com/magicsunday/ancestral-fan-chart"
+        "url": "https://github.com/magicsunday/webtrees-fan-chart"
     },
     "description": "",
     "scripts": {
-        "prepare": "rollup -c && uglifyjs js/ancestral-fan-chart.js --compress --mangle --output js/ancestral-fan-chart.min.js"
+        "prepare": "rollup -c && uglifyjs resources/js/fan-chart.js --compress --mangle --output resources/js/fan-chart.min.js"
     },
     "devDependencies": {
         "d3-fetch": "^1.1",

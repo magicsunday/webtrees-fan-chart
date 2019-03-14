@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Ancestral fan chart\n"
+"Project-Id-Version: Fan chart\n"
 "POT-Creation-Date: 2018-02-12 10:56+0100\n"
 "PO-Revision-Date: 2018-04-09 17:15+0200\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
@@ -12,26 +12,26 @@ msgstr ""
 "X-Generator: Poedit 2.0.5\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: translate;doShowTooltipOverlay\n"
-"X-Poedit-SearchPath-0: js/ancestral-fan-chart.js\n"
+"X-Poedit-SearchPath-0: js/webtrees-fan-chart.js\n"
 "X-Poedit-SearchPath-1: src/Controller/Chart.php\n"
 "X-Poedit-SearchPath-2: src/Module.php\n"
 "X-Poedit-SearchPath-3: src/View/form.phtml\n"
 
-#: js/ancestral-fan-chart.js:193
+#: js/webtrees-fan-chart.js:193
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Använd Ctrl + rullen för att zooma in vyn"
 
-#: js/ancestral-fan-chart.js:202
+#: js/webtrees-fan-chart.js:202
 msgid "Move the view with two fingers"
 msgstr "Flytta vyn med två fingrar"
 
 #: src/Controller/Chart.php:112 src/Module.php:106
-msgid "Ancestral fan chart"
+msgid "Fan chart"
 msgstr "Förfäders solfjäderdiagram"
 
 #: src/Controller/Chart.php:115
 #, php-format
-msgid "Ancestral fan chart of %s"
+msgid "Fan chart of %s"
 msgstr "Förfäders solfjäderdiagram för %s"
 
 #: src/Controller/Chart.php:290

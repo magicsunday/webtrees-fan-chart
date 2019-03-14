@@ -1,4 +1,4 @@
 .idea/
 vendor/
 node_modules/
-js/ancestral-fan-chart.js
+resources/js/fan-chart.js

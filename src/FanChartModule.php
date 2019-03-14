@@ -6,6 +6,7 @@ declare(strict_types=1);
  */
 namespace MagicSunday\Webtrees\FanChart;
 
+use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Exceptions\IndividualAccessDeniedException;
@@ -26,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
- * @link    https://github.com/magicsunday/ancestral-fan-chart/
+ * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInterface
 {
@@ -38,7 +39,7 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
     /**
      * @var string
      */
-    public const CUSTOM_WEBSITE = 'https://github.com/magicsunday/ancestral-fan-chart';
+    public const CUSTOM_WEBSITE = 'https://github.com/magicsunday/webtrees-fan-chart';
 
     /**
      * The current theme instance.
@@ -130,6 +131,20 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
     }
 
     /**
+     * Additional/updated translations.
+     *
+     * @param string $language
+     *
+     * @return string[]
+     */
+    public function customTranslations(string $language): array
+    {
+        return (new Translation(
+            $this->moduleDirecotry . '/resources/lang/' . $language . '/messages.mo'
+        ))->asArray();
+    }
+
+    /**
      * @inheritDoc
      *
      * @throws IndividualNotFoundException
@@ -151,10 +166,10 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
         Auth::checkIndividualAccess($individual);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
-        $title = I18N::translate('Ancestral fan chart');
+        $title = I18N::translate('Fan chart');
 
         if ($individual && $individual->canShowName()) {
-            $title = I18N::translate('Ancestral fan chart of %s', $individual->fullName());
+            $title = I18N::translate('Fan chart of %s', $individual->fullName());
         }
 
         $chartParams = [
