@@ -67,7 +67,7 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
      *
      * @var string
      */
-    private $moduleDirecotry;
+    private $moduleDirectory;
 
     /**
      * Constructor.
@@ -76,7 +76,17 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
      */
     public function __construct(string $moduleDirectory)
     {
-        $this->moduleDirecotry = $moduleDirectory;
+        $this->moduleDirectory = $moduleDirectory;
+    }
+
+    /**
+     * Where does this module store its resources
+     *
+     * @return string
+     */
+    public function resourcesFolder(): string
+    {
+        return $this->moduleDirectory . '/resources/';
     }
 
     /**
@@ -95,7 +105,7 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
         // Here is also a good place to register any views (templates) used by the module.
         // This command allows the module to use: view($this->name() . '::', 'fish')
         // to access the file ./resources/views/fish.phtml
-        View::registerNamespace($this->name(), $this->moduleDirecotry . '/resources/views/');
+        View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
     }
 
     /**
@@ -140,7 +150,7 @@ class FanChartModule extends WebtreesFanChartModule implements ModuleCustomInter
     public function customTranslations(string $language): array
     {
         return (new Translation(
-            $this->moduleDirecotry . '/resources/lang/' . $language . '/messages.mo'
+            $this->resourcesFolder() . 'lang/' . $language . '/messages.mo'
         ))->asArray();
     }
 
