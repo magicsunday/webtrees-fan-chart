@@ -15,7 +15,6 @@ use MagicSunday\Webtrees\FanChart\Config;
 /** @var string     $title */
 /** @var string     $moduleName */
 /** @var Individual $individual */
-/** @var string[]   $fanDegrees */
 /** @var array      $chartParams */
 ?>
 
@@ -54,7 +53,7 @@ use MagicSunday\Webtrees\FanChart\Config;
             <div class="col-sm-9 wt-page-options-value">
                 <?=
                     Bootstrap4::select(
-                        $fanDegrees,
+                        $config->getFanDegrees(),
                         $config->getFanDegree(),
                         [
                             'id'    => 'fanDegree',
@@ -73,12 +72,7 @@ use MagicSunday\Webtrees\FanChart\Config;
             <div class="col-sm-9 wt-page-options-value">
                 <?=
                     Bootstrap4::select(
-                        FunctionsEdit::numericOptions(
-                            range(
-                                Config::MIN_GENERATIONS,
-                                Config::MAX_GENERATIONS
-                            )
-                        ),
+                        $config->getGenerationsList(),
                         $config->getGenerations(),
                         [
                             'id'    => 'generations',

@@ -6,7 +6,8 @@ declare(strict_types=1);
  */
 namespace MagicSunday\Webtrees\FanChart;
 
-use Fisharebest\Webtrees\Tree;
+use Fisharebest\Webtrees\Functions\FunctionsEdit;
+use Fisharebest\Webtrees\I18N;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -19,32 +20,39 @@ use Symfony\Component\HttpFoundation\Request;
 class Config
 {
     /**
+     * The default number of generations to display.
+     *
+     * @var int
+     */
+    private const DEFAULT_GENERATIONS = 6;
+
+    /**
      * Minimum number of displayable generations.
      *
      * @var int
      */
-    public const MIN_GENERATIONS = 2;
+    private const MIN_GENERATIONS = 2;
 
     /**
      * Maximum number of displayable generations.
      *
      * @var int
      */
-    public const MAX_GENERATIONS = 10;
+    private const MAX_GENERATIONS = 10;
 
     /**
      * The defaut fan chart degree.
      *
      * @var int
      */
-    public const FAN_DEGREE_DEFAULT = 210;
+    private const FAN_DEGREE_DEFAULT = 210;
 
     /**
      * The default font size scaling factor in percent.
      *
      * @var int
      */
-    public const FONT_SCALE_DEFAULT = 100;
+    private const FONT_SCALE_DEFAULT = 100;
 
     /**
      * The current request instance.
@@ -54,32 +62,13 @@ class Config
     private $request;
 
     /**
-     * The current tree instance.
-     *
-     * @var Tree
-     */
-    private $tree;
-
-    /**
      * Config constructor.
      *
      * @param Request $request The current HTTP request
-     * @param Tree    $tree    The current tree
      */
-    public function __construct(Request $request, Tree $tree)
+    public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->tree    = $tree;
-    }
-
-    /**
-     * Returns the default number of generations to display.
-     *
-     * @return int
-     */
-    private function getDefaultGenerations(): int
-    {
-        return (int) $this->tree->getPreference('DEFAULT_PEDIGREE_GENERATIONS');
     }
 
     /**
@@ -89,10 +78,20 @@ class Config
      */
     public function getGenerations(): int
     {
-        $generations = (int) $this->request->get('generations', $this->getDefaultGenerations());
+        $generations = (int) $this->request->get('generations', self::DEFAULT_GENERATIONS);
         $generations = min($generations, self::MAX_GENERATIONS);
 
         return max($generations, self::MIN_GENERATIONS);
+    }
+
+    /**
+     * Returns a list of possible selectable generations.
+     *
+     * @return int[]
+     */
+    public function getGenerationsList(): array
+    {
+        return FunctionsEdit::numericOptions(range(self::MIN_GENERATIONS, self::MAX_GENERATIONS));
     }
 
     /**
@@ -119,6 +118,24 @@ class Config
         $fanDegree = min($fanDegree, 360);
 
         return max($fanDegree, 180);
+    }
+
+    /**
+     * Retursn a list of options for the chart degrees.
+     *
+     * @return string[]
+     */
+    public function getFanDegrees(): array
+    {
+        return [
+            180 => I18N::translate('180 degrees'),
+            210 => I18N::translate('210 degrees'),
+            240 => I18N::translate('240 degrees'),
+            270 => I18N::translate('270 degrees'),
+            300 => I18N::translate('300 degrees'),
+            330 => I18N::translate('330 degrees'),
+            360 => I18N::translate('360 degrees'),
+        ];
     }
 
     /**

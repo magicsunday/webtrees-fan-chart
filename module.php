@@ -17,4 +17,4 @@ $loader->addPsr4(
 $loader->register();
 
 // Create and return instance of the module
-return new FanChart\FanChartModule(__DIR__);
+return new FanChart\Module(__DIR__);
