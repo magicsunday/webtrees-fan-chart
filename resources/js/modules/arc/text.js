@@ -90,13 +90,14 @@ export default class Text
                 // Add last name
                 this.appendOuterArcText(d, 1, label, this.getLastName(d));
 
-                if ((d.depth < 5) && d.data.alternativeName) {
-                    let textElement = this.appendOuterArcText(d, 2, label, d.data.alternativeName, "alternativeName");
-
-                    if (d.data.isAltRtl) {
-                        textElement.classed("rtl", true);
-                    }
-                }
+                // Never reached
+                // if ((d.depth < 5) && d.data.alternativeName) {
+                //     let textElement = this.appendOuterArcText(d, 2, label, d.data.alternativeName, "alternativeName");
+                //
+                //     if (d.data.isAltRtl) {
+                //         textElement.classed("rtl", true);
+                //     }
+                // }
 
                 // Add dates
                 if ((d.depth < 6) && timeSpan) {
@@ -381,30 +382,24 @@ export default class Text
         let that          = this;
         let textElements  = label.selectAll("text");
         let countElements = textElements.size();
-        let offsets       = [0, -0.025, 0.5, 1.15, 2.0];
-        let offset        = offsets[countElements];
+        let offset        = 1.0;
+
+        // Special offsets for shifting the text around depending on the depth
+        switch (data.depth) {
+            case 1: offset = 6.5; break;
+            case 2: offset = 3.5; break;
+            case 3: offset = 2.2; break;
+            case 4: offset = 1.7; break;
+            case 5: offset = 1.5; break;
+            case 6: offset = 0.5; break;
+        }
 
         let mapIndexToOffset = d3.scaleLinear()
             .domain([0, countElements - 1])
             .range([-offset, offset]);
 
         textElements.each(function (ignore, i) {
-            // Slightly increase in the y axis' value so the texts may not overlay
-            let offsetRotate = (i <= 1 ? 1.25 : 1.75);
-
-            if ((data.depth === 0) || (data.depth === 6)) {
-                offsetRotate = 1.0;
-            }
-
-            if (data.depth === 7) {
-                offsetRotate = 0.75;
-            }
-
-            if (data.depth === 8) {
-                offsetRotate = 0.5;
-            }
-
-            offsetRotate *= mapIndexToOffset(i) * that._options.fontScale / 100.0;
+            const offsetRotate = mapIndexToOffset(i) * that._options.fontScale / 100.0;
 
             // Name of center person should not be rotated in any way
             if (data.depth === 0) {
