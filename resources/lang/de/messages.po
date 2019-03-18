@@ -95,3 +95,15 @@ msgstr "Anzeigen"
 #: resources/views/chart.phtml:135
 msgid "reset"
 msgstr "Zurücksetzen"
+
+msgid "Presentation"
+msgstr "Darstellung"
+
+msgid "Number of inner circles"
+msgstr "Anzahl der inneren Kreise"
+
+msgid "More options ..."
+msgstr "Weitere Optionen ..."
+
+msgid "Specifies the number of circles in which the text is written along a arc."
+msgstr "Bestimmt die Anzahl der Kreise in denen der Text entlang eines Kreisbogens geschrieben wird."

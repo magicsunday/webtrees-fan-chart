@@ -30,14 +30,11 @@ use MagicSunday\Webtrees\FanChart\Config;
                 <?= I18N::translate('Individual') ?>
             </label>
             <div class="col-sm-9 wt-page-options-value">
-                <?= view(
-                        'components/select-individual',
-                        [
-                            'name'       => 'xref',
-                            'individual' => $individual,
-                            'tree'       => $tree,
-                        ]
-                    );
+                <?= view('components/select-individual', [
+                        'name'       => 'xref',
+                        'individual' => $individual,
+                        'tree'       => $tree,
+                    ]);
                 ?>
             </div>
         </div>
@@ -48,11 +45,11 @@ use MagicSunday\Webtrees\FanChart\Config;
             </label>
             <div class="col-sm-9 wt-page-options-value">
                 <?= view('components/select', [
-                    'name'     => 'fanDegree',
-                    'selected' => $config->getFanDegree(),
-                    'options'  => $config->getFanDegrees(),
-                    'class'    => 'form-control-sm',
-                ]);
+                        'name'     => 'fanDegree',
+                        'selected' => $config->getFanDegree(),
+                        'options'  => $config->getFanDegreeList(),
+                        'class'    => 'form-control-sm',
+                    ]);
                 ?>
             </div>
         </div>
@@ -72,44 +69,75 @@ use MagicSunday\Webtrees\FanChart\Config;
             </div>
         </div>
 
-        <div class="form-group row">
-            <label class="col-sm-3 col-form-label wt-page-options-label" for="fontScale">
-                <?= I18N::translate('Font size'); ?>
-            </label>
-            <div class="col-sm-9 wt-page-options-value">
-                <div class="input-group input-group-sm">
-                    <input class="form-control" type="text" name="fontScale" id="fontScale"
-                           maxlength="3" placeholder="100" value="<?= $config->getFontScale(); ?>">
-                    <div class="input-group-append">
-                        <span class="input-group-text">%</span>
+        <div id="moreField" style="display: <?= ($config->getShowMore() ? 'block' : 'none') ?>">
+            <div class="form-group row">
+                <label class="col-form-label col-sm-3 wt-page-options-label">
+                    <?= I18N::translate('Presentation'); ?>
+                </label>
+                <div class="col-sm-9 wt-page-options-value">
+                    <?= view('components/checkbox', [
+                            'label'   => I18N::translate('Hide empty segments'),
+                            'name'    => 'hideEmptySegments',
+                            'checked' => $config->getHideEmptySegments(),
+                        ]);
+                    ?>
+
+                    <?= view('components/checkbox', [
+                            'label'   => I18N::translate('Show color gradients'),
+                            'name'    => 'showColorGradients',
+                            'checked' => $config->getShowColorGradients(),
+                        ]);
+                    ?>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label wt-page-options-label" for="innerArcs">
+                    <?= I18N::translate('Number of inner circles'); ?>
+                </label>
+                <div class="col-sm-9 wt-page-options-value">
+                    <?= view('components/select', [
+                            'name'     => 'innerArcs',
+                            'selected' => $config->getInnerArcs(),
+                            'options'  => $config->getInnerArcsList(),
+                            'class'    => 'form-control-sm',
+                        ]);
+                    ?>
+                    <small class="form-text text-muted">
+                        <?= I18N::translate('Specifies the number of circles in which the text is written along a arc.'); ?>
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label wt-page-options-label" for="fontScale">
+                    <?= I18N::translate('Font size'); ?>
+                </label>
+                <div class="col-sm-9 wt-page-options-value">
+                    <div class="input-group input-group-sm">
+                        <input class="form-control" type="text" name="fontScale" id="fontScale"
+                               maxlength="3" placeholder="100" value="<?= $config->getFontScale(); ?>">
+                        <div class="input-group-append">
+                            <span class="input-group-text">%</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="form-group row">
-            <label class="col-form-label col-sm-3 wt-page-options-label">
-                <?= I18N::translate('Layout'); ?>
-            </label>
-            <div class="col-sm-9 wt-page-options-value">
-                <?= view('components/checkbox', [
-                        'label'   => I18N::translate('Hide empty segments'),
-                        'name'    => 'hideEmptySegments',
-                        'checked' => $config->getHideEmptySegments(),
-                ]); ?>
+            <div class="col-sm-12 wt-page-options-value text-center">
+                <div class="btn-group-toggle btn-group-sm float-left more" data-toggle="buttons">
+                    <label class="btn btn-primary<?= ($config->getShowMore() ? ' active' : '') ?>" id="more">
+                        <input type="checkbox" name="showMore" value="1"<?= ($config->getShowMore() ? ' checked' : '') ?>>
+                        <?= I18N::translate('More options ...') ?>
+                    </label>
+                </div>
 
-                <?= view('components/checkbox', [
-                    'label'   => I18N::translate('Show color gradients'),
-                    'name'    => 'showColorGradients',
-                    'checked' => $config->getShowColorGradients(),
-                ]); ?>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-sm-12 wt-page-options-value btn-group-sm text-center">
-                <input class="btn btn-primary" type="submit" value="<?= I18N::translate('view') ?>">
-                <input class="btn btn-primary" type="reset" value="<?= I18N::translate('reset') ?>" id="resetButton">
+                <div class="btn-group-sm">
+                    <input class="btn btn-primary" type="submit" value="<?= I18N::translate('view') ?>">
+                    <input class="btn btn-primary" type="reset" value="<?= I18N::translate('reset') ?>" id="resetButton">
+                </div>
             </div>
         </div>
     </form>
@@ -127,6 +155,11 @@ use MagicSunday\Webtrees\FanChart\Config;
 <script type="text/javascript" src="modules_v4/webtrees-fan-chart/resources/js/fan-chart.min.js"></script>
 <script type="text/javascript">
 
+$("#more").click(function (event) {
+    event.preventDefault();
+    $("#moreField").toggle();
+});
+
 function AncestralFanChart(data)
 {
     let options = new rso.Options(
@@ -140,7 +173,8 @@ function AncestralFanChart(data)
         data.fontColor,
         data.hideEmptySegments,
         data.showColorGradients,
-        data.rtl
+        data.rtl,
+        data.innerArcs
     );
 
     options = Object.assign({}, options, data);

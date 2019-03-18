@@ -128,6 +128,7 @@ class Module extends WebtreesFanChartModule implements ModuleCustomInterface
             'fontScale'          => $this->config->getFontScale(),
             'hideEmptySegments'  => $this->config->getHideEmptySegments(),
             'showColorGradients' => $this->config->getShowColorGradients(),
+            'innerArcs'          => $this->config->getInnerArcs(),
             'updateUrl'          => $this->getUpdateRoute($individual->tree()),
             'individualUrl'      => $this->getIndividualRoute(),
             'data'               => $this->buildJsonTree($individual),

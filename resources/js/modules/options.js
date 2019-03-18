@@ -22,7 +22,8 @@ export default class Options
         fontColor          = "#000",
         hideEmptySegments  = false,
         showColorGradients = false,
-        rtl                = false
+        rtl                = false,
+        innerArcs          = 4
     ) {
         this.data = null;
 
@@ -33,7 +34,7 @@ export default class Options
         this.circlePadding = 0;
 
         // Number of circles, large enough to print text along arc path
-        this.numberOfInnerCircles = 5;
+        this.numberOfInnerCircles = innerArcs;
 
         // Radius of the innermost circle
         this.centerCircleRadius = 85;

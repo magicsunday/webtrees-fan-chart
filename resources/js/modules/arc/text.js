@@ -389,7 +389,7 @@ export default class Text
             case 1: offset = 6.5; break;
             case 2: offset = 3.5; break;
             case 3: offset = 2.2; break;
-            case 4: offset = 1.7; break;
+            case 4: offset = 1.9; break;
             case 5: offset = 1.5; break;
             case 6: offset = 0.5; break;
         }

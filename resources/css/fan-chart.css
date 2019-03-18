@@ -10,8 +10,13 @@
 /* Center form labels horizontally and vertically */
 #page-fan .col-form-label {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    /*align-items: center;*/
+    /*justify-content: center;*/
+}
+
+#page-fan .more {
+    position: absolute;
+    left: 10px;
 }
 
 #page-fan svg {

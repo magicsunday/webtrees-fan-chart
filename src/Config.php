@@ -41,6 +41,27 @@ class Config
     private const MAX_GENERATIONS = 10;
 
     /**
+     * The default number of inner arcs to display.
+     *
+     * @var int
+     */
+    private const DEFAULT_INNER_ARCS = 4;
+
+    /**
+     * Minimum number of displayable inner arcs.
+     *
+     * @var int
+     */
+    private const MIN_INNER_ARCS = 1;
+
+    /**
+     * Maximum number of displayable inner arcs.
+     *
+     * @var int
+     */
+    private const MAX_INNER_ARCS = 6;
+
+    /**
      * The defaut fan chart degree.
      *
      * @var int
@@ -125,7 +146,7 @@ class Config
      *
      * @return string[]
      */
-    public function getFanDegrees(): array
+    public function getFanDegreeList(): array
     {
         return [
             180 => I18N::translate('180 degrees'),
@@ -156,5 +177,38 @@ class Config
     public function getShowColorGradients(): bool
     {
         return (bool) $this->request->get('showColorGradients');
+    }
+
+    /**
+     * Returns the number of inner arcs to display.
+     *
+     * @return int
+     */
+    public function getInnerArcs(): int
+    {
+        $innerArcs = (int) $this->request->get('innerArcs', self::DEFAULT_INNER_ARCS);
+        $innerArcs = min($innerArcs, self::MAX_INNER_ARCS);
+
+        return max($innerArcs, self::MIN_INNER_ARCS);
+    }
+
+    /**
+     * Returns a list of possible selectable values for inner arcs.
+     *
+     * @return int[]
+     */
+    public function getInnerArcsList(): array
+    {
+        return FunctionsEdit::numericOptions(range(self::MIN_INNER_ARCS, self::MAX_INNER_ARCS));
+    }
+
+    /**
+     * Returns TRUE if the show more button was selected otherwise FALSE.
+     *
+     * @return bool
+     */
+    public function getShowMore(): bool
+    {
+        return (bool) $this->request->get('showMore');
     }
 }
