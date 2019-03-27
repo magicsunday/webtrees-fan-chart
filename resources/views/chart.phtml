@@ -4,8 +4,6 @@ declare(strict_types=1);
 /**
  * See LICENSE.md file for further details.
  */
-use Fisharebest\Webtrees\Bootstrap4;
-use Fisharebest\Webtrees\Functions\FunctionsEdit;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\View;
@@ -32,14 +30,12 @@ use MagicSunday\Webtrees\FanChart\Config;
                 <?= I18N::translate('Individual') ?>
             </label>
             <div class="col-sm-9 wt-page-options-value">
-                <?=
-                    FunctionsEdit::formControlIndividual(
-                        $tree,
-                        $individual,
+                <?= view(
+                        'components/select-individual',
                         [
-                            'id'    => 'xref',
-                            'name'  => 'xref',
-                            'class' => 'form-control-sm',
+                            'name'       => 'xref',
+                            'individual' => $individual,
+                            'tree'       => $tree,
                         ]
                     );
                 ?>
@@ -51,16 +47,12 @@ use MagicSunday\Webtrees\FanChart\Config;
                 <?= I18N::translate('Layout'); ?>
             </label>
             <div class="col-sm-9 wt-page-options-value">
-                <?=
-                    Bootstrap4::select(
-                        $config->getFanDegrees(),
-                        $config->getFanDegree(),
-                        [
-                            'id'    => 'fanDegree',
-                            'name'  => 'fanDegree',
-                            'class' => 'form-control-sm',
-                        ]
-                    );
+                <?= view('components/select', [
+                    'name'     => 'fanDegree',
+                    'selected' => $config->getFanDegree(),
+                    'values'   => $config->getFanDegrees(),
+                    'class'    => 'form-control-sm',
+                ]);
                 ?>
             </div>
         </div>
@@ -70,16 +62,12 @@ use MagicSunday\Webtrees\FanChart\Config;
                 <?= I18N::translate('Generations'); ?>
             </label>
             <div class="col-sm-9 wt-page-options-value">
-                <?=
-                    Bootstrap4::select(
-                        $config->getGenerationsList(),
-                        $config->getGenerations(),
-                        [
-                            'id'    => 'generations',
-                            'name'  => 'generations',
-                            'class' => 'form-control-sm',
-                        ]
-                    );
+                <?= view('components/select', [
+                        'name'     => 'generations',
+                        'selected' => $config->getGenerations(),
+                        'values'   => $config->getGenerationsList(),
+                        'class'    => 'form-control-sm',
+                    ]);
                 ?>
             </div>
         </div>
@@ -104,28 +92,17 @@ use MagicSunday\Webtrees\FanChart\Config;
                 <?= I18N::translate('Layout'); ?>
             </label>
             <div class="col-sm-9 wt-page-options-value">
-                <?=
-                    Bootstrap4::checkbox(
-                        I18N::translate('Hide empty segments'),
-                        false,
-                        [
-                            'id'      => 'hideEmptySegments',
-                            'name'    => 'hideEmptySegments',
-                            'checked' => $config->getHideEmptySegments(),
-                        ]
-                    );
-                ?>
-                <?=
-                    Bootstrap4::checkbox(
-                        I18N::translate('Show color gradients'),
-                        false,
-                        [
-                            'id'      => 'showColorGradients',
-                            'name'    => 'showColorGradients',
-                            'checked' => $config->getShowColorGradients(),
-                        ]
-                    );
-                ?>
+                <?= view('components/checkbox', [
+                        'label'   => I18N::translate('Hide empty segments'),
+                        'name'    => 'hideEmptySegments',
+                        'checked' => $config->getHideEmptySegments(),
+                ]); ?>
+
+                <?= view('components/checkbox', [
+                    'label'   => I18N::translate('Show color gradients'),
+                    'name'    => 'showColorGradients',
+                    'checked' => $config->getShowColorGradients(),
+                ]); ?>
             </div>
         </div>
 
