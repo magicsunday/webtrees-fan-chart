@@ -50,7 +50,7 @@ use MagicSunday\Webtrees\FanChart\Config;
                 <?= view('components/select', [
                     'name'     => 'fanDegree',
                     'selected' => $config->getFanDegree(),
-                    'values'   => $config->getFanDegrees(),
+                    'options'  => $config->getFanDegrees(),
                     'class'    => 'form-control-sm',
                 ]);
                 ?>
@@ -65,7 +65,7 @@ use MagicSunday\Webtrees\FanChart\Config;
                 <?= view('components/select', [
                         'name'     => 'generations',
                         'selected' => $config->getGenerations(),
-                        'values'   => $config->getGenerationsList(),
+                        'options'  => $config->getGenerationsList(),
                         'class'    => 'form-control-sm',
                     ]);
                 ?>
