@@ -74,11 +74,6 @@ trait UtilityTrait
      */
     public function boot(UserInterface $user, ?Tree $tree): void
     {
-        // The boot() function is called after the framework has been booted.
-        if (($tree !== null) && !Auth::isAdmin($user)) {
-            return;
-        }
-
         $this->config = app()->make(Config::class);
         $this->theme  = app()->make(ModuleThemeInterface::class);
 
