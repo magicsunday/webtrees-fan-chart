@@ -17,9 +17,8 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Services\ChartService;
 use Fisharebest\Webtrees\Tree;
 use MagicSunday\Webtrees\FanChart\Traits\UtilityTrait;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Fan chart module class.
@@ -48,6 +47,13 @@ class Module extends WebtreesFanChartModule implements ModuleCustomInterface
     public const CUSTOM_WEBSITE = 'https://github.com/magicsunday/webtrees-fan-chart';
 
     /**
+     * The configuration instance.
+     *
+     * @var Config
+     */
+    private $config;
+
+    /**
      * Constructor.
      *
      * @param string $moduleDirectory The module base directory
@@ -64,13 +70,14 @@ class Module extends WebtreesFanChartModule implements ModuleCustomInterface
      * @throws IndividualAccessDeniedException
      */
     public function getChartAction(
-        Request $request,
+        ServerRequestInterface $request,
         Tree $tree,
         UserInterface $user,
         ChartService $chart_service
-    ): Response {
-        $xref       = $request->get('xref');
-        $individual = Individual::getInstance($xref, $tree);
+    ): ResponseInterface {
+        $this->config = new Config($request);
+        $xref         = $request->getQueryParams()['xref'];
+        $individual   = Individual::getInstance($xref, $tree);
 
         if ($individual === null) {
             throw new IndividualNotFoundException();
@@ -142,24 +149,25 @@ class Module extends WebtreesFanChartModule implements ModuleCustomInterface
     /**
      * Update action.
      *
-     * @param Request       $request The current HTTP request
-     * @param Tree          $tree    The current tree
-     * @param UserInterface $user    The current user
+     * @param ServerRequestInterface $request The current HTTP request
+     * @param Tree                   $tree    The current tree
+     * @param UserInterface          $user    The current user
      *
-     * @return JsonResponse
+     * @return ResponseInterface
      *
      * @throws IndividualNotFoundException
      * @throws IndividualAccessDeniedException
      */
-    public function getUpdateAction(Request $request, Tree $tree, UserInterface $user): Response
+    public function getUpdateAction(ServerRequestInterface $request, Tree $tree, UserInterface $user): ResponseInterface
     {
-        $xref       = $request->get('xref');
-        $individual = Individual::getInstance($xref, $tree);
+        $this->config = new Config($request);
+        $xref         = $request->getQueryParams()['xref'];
+        $individual   = Individual::getInstance($xref, $tree);
 
         Auth::checkIndividualAccess($individual);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
-        return new JsonResponse(
+        return response(
             $this->buildJsonTree($individual)
         );
     }

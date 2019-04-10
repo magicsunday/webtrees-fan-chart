@@ -7,15 +7,11 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Traits;
 
 use Fisharebest\Localization\Translation;
-use Fisharebest\Webtrees\Auth;
-use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\Module\ModuleThemeInterface;
-use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
-use MagicSunday\Webtrees\FanChart\Config;
 
 /**
  * A utility trait.
@@ -34,13 +30,6 @@ trait UtilityTrait
      * @var ModuleThemeInterface
      */
     private $theme;
-
-    /**
-     * The configuration instance.
-     *
-     * @var Config
-     */
-    private $config;
 
     /**
      * The module base directory.
@@ -69,13 +58,11 @@ trait UtilityTrait
     /**
      * Bootstrap.
      *
-     * @param UserInterface $user A user (or visitor) object.
-     * @param Tree|null     $tree Note that $tree can be null (if all trees are private).
+     * @param ModuleThemeInterface $theme
      */
-    public function boot(UserInterface $user, ?Tree $tree): void
+    public function boot(ModuleThemeInterface $theme): void
     {
-        $this->config = app()->make(Config::class);
-        $this->theme  = app()->make(ModuleThemeInterface::class);
+        $this->theme = $theme;
 
         // Here is also a good place to register any views (templates) used by the module.
         // This command allows the module to use: view($this->name() . '::', 'fish')
