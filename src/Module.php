@@ -19,7 +19,7 @@ use MagicSunday\Webtrees\AncestralFanChart\Controller\Chart;
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
- * @link    https://github.com/magicsunday/ancestral-fan-chart/
+ * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 class Module extends AbstractModule implements ModuleChartInterface
 {
@@ -30,7 +30,7 @@ class Module extends AbstractModule implements ModuleChartInterface
      */
     private function isActive()
     {
-        return WebtreesModule::isActiveChart($this->getTree(), 'ancestral-fan-chart');
+        return WebtreesModule::isActiveChart($this->getTree(), 'webtrees-fan-chart');
     }
 
     /**
@@ -86,18 +86,6 @@ class Module extends AbstractModule implements ModuleChartInterface
     public function getDescription()
     {
         return $this->translate('A fan chart of an individual’s ancestors.');
-    }
-
-    /**
-     * What is the default access level for this module?
-     *
-     * Some modules are aimed at admins or managers, and are not generally shown to users.
-     *
-     * @return int
-     */
-    public function defaultAccessLevel()
-    {
-        return Auth::PRIV_PRIVATE;
     }
 
     /**
@@ -166,10 +154,10 @@ class Module extends AbstractModule implements ModuleChartInterface
             ->pageHeader()
             ->addExternalJavascript(WT_AUTOCOMPLETE_JS_URL)
             ->addExternalJavascript($urlPath . '/js/packages/d3.v4.custom.min.js')
-            ->addExternalJavascript($urlPath . '/js/ancestral-fan-chart.js');
+            ->addExternalJavascript($urlPath . '/js/webtrees-fan-chart.js');
 
         echo '<link rel="stylesheet" type="text/css" href="'
-            . $urlPath . '/css/ancestral-fan-chart.css">';
+            . $urlPath . '/css/webtrees-fan-chart.css">';
 
         echo $controller->render();
     }

@@ -20,7 +20,7 @@ use Fisharebest\Webtrees\Tree;
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
- * @link    https://github.com/magicsunday/ancestral-fan-chart/
+ * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 class Chart extends ChartController
 {
@@ -337,7 +337,7 @@ class Chart extends ChartController
     private function getUpdateUrl()
     {
         $queryData = array(
-            'mod'         => 'ancestral-fan-chart',
+            'mod'         => 'webtrees-fan-chart',
             'mod_action'  => 'update',
             'ged'         => $this->getTree()->getNameHtml(),
             'generations' => $this->generations,

@@ -1,5 +1,5 @@
 {
-    "name": "magicsunday/ancestral-fan-chart",
+    "name": "magicsunday/webtrees-fan-chart",
     "description": "This modules provides an SVG ancestral fan chart for the [webtrees](https://www.webtrees.net) genealogy application.",
     "license": "GPL-3.0-or-later",
     "type": "webtrees-module",
@@ -26,8 +26,5 @@
         "ext-json": "*",
         "fisharebest/webtrees": ">=1.7 <2.0",
         "magicsunday/webtrees-module-installer-plugin": "*"
-    },
-    "require-dev": {
-        "roave/security-advisories": "dev-master"
     }
 }

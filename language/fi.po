@@ -12,16 +12,16 @@ msgstr ""
 "X-Generator: Poedit 2.0.5\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: translate;doShowTooltipOverlay\n"
-"X-Poedit-SearchPath-0: js/ancestral-fan-chart.js\n"
+"X-Poedit-SearchPath-0: js/webtrees-fan-chart.js\n"
 "X-Poedit-SearchPath-1: src/Controller/Chart.php\n"
 "X-Poedit-SearchPath-2: src/Module.php\n"
 "X-Poedit-SearchPath-3: src/View/form.phtml\n"
 
-#: js/ancestral-fan-chart.js:193
+#: js/webtrees-fan-chart.js:193
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Zoomaa näkymää käyttämällä ohjausnäppäintä (Ctrl) + rullauslaitetta"
 
-#: js/ancestral-fan-chart.js:202
+#: js/webtrees-fan-chart.js:202
 msgid "Move the view with two fingers"
 msgstr "Siirrä näkymä kahdella sormella"
 
