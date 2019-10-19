@@ -6,19 +6,26 @@ declare(strict_types=1);
  */
 namespace MagicSunday\Webtrees\FanChart;
 
+use Aura\Router\RouterContainer;
+use Fig\Http\Message\RequestMethodInterface;
+use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Exceptions\IndividualAccessDeniedException;
 use Fisharebest\Webtrees\Exceptions\IndividualNotFoundException;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
-use Fisharebest\Webtrees\Module\FanChartModule as WebtreesFanChartModule;
+use Fisharebest\Webtrees\Menu;
+use Fisharebest\Webtrees\Module\AbstractModule;
+use Fisharebest\Webtrees\Module\ModuleChartInterface;
+use Fisharebest\Webtrees\Module\ModuleChartTrait;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
-use Fisharebest\Webtrees\Services\ChartService;
+use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Tree;
-use MagicSunday\Webtrees\FanChart\Traits\UtilityTrait;
+use Fisharebest\Webtrees\View;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Fan chart module class.
@@ -27,9 +34,27 @@ use Psr\Http\Message\ServerRequestInterface;
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-class Module extends WebtreesFanChartModule implements ModuleCustomInterface
+class Module extends AbstractModule implements ModuleCustomInterface, ModuleChartInterface, RequestHandlerInterface
 {
-    use UtilityTrait;
+    private const ROUTE_NAME = 'webtrees-fan-chart';
+    private const ROUTE_URL  = '/tree/{tree}/webtrees-fan-chart/{xref}/style/{style}/generations/{generations}/width/{width}/';
+
+    private const STYLE_HALF_CIRCLE          = '2';
+    private const STYLE_THREE_QUARTER_CIRCLE = '3';
+    private const STYLE_FULL_CIRCLE          = '4';
+
+    private const   DEFAULT_STYLE       = self::STYLE_THREE_QUARTER_CIRCLE;
+    private const   DEFAULT_GENERATIONS = 4;
+    private const   DEFAULT_WIDTH       = 100;
+
+    protected const DEFAULT_PARAMETERS  = [
+        'style'       => self::DEFAULT_STYLE,
+        'generations' => self::DEFAULT_GENERATIONS,
+        'width'       => self::DEFAULT_WIDTH,
+    ];
+
+    use ModuleChartTrait;
+//    use UtilityTrait;
 
     /**
      * @var string
@@ -54,30 +79,85 @@ class Module extends WebtreesFanChartModule implements ModuleCustomInterface
     private $config;
 
     /**
-     * Constructor.
+     * The current theme instance.
      *
-     * @param string $moduleDirectory The module base directory
+     * @var ModuleThemeInterface
      */
-    public function __construct(string $moduleDirectory)
+    private $theme;
+
+    private $name;
+
+    /**
+     * Initialization.
+     */
+    public function boot(): void
     {
-        $this->moduleDirectory = $moduleDirectory;
+        /** @var RouterContainer $routerContainer */
+        $routerContainer = app(RouterContainer::class);
+
+        $routerContainer->getMap()
+            ->get(self::ROUTE_NAME, self::ROUTE_URL, self::class)
+            ->allows(RequestMethodInterface::METHOD_POST)
+            ->tokens([
+//                'generations' => '\d+',
+//                'style'       => implode('|', array_keys($this->styles())),
+//                'width'       => '\d+',
+            ]);
+
+        /** @var ModuleThemeInterface $theme */
+        $theme = app(ModuleThemeInterface::class);
+
+        $this->theme = $theme;
+        $this->name  = $this->name();
+
+        View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
     }
 
     /**
-     * @inheritDoc
+     * How should this module be identified in the control panel, etc.?
      *
-     * @throws IndividualNotFoundException
-     * @throws IndividualAccessDeniedException
+     * @return string
      */
-    public function getChartAction(
-        ServerRequestInterface $request,
-        Tree $tree,
-        UserInterface $user,
-        ChartService $chart_service
-    ): ResponseInterface {
+    public function title(): string
+    {
+        return I18N::translate('Fan chart');
+    }
+
+    /**
+     * A sentence describing what this module does.
+     *
+     * @return string
+     */
+    public function description(): string
+    {
+        return I18N::translate('A fan chart of an individual’s ancestors.');
+    }
+
+    /**
+     * Where does this module store its resources
+     *
+     * @return string
+     */
+    public function resourcesFolder(): string
+    {
+        return __DIR__ . '/../resources/';
+    }
+
+    /**
+     * Handles a request and produces a response.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return ResponseInterface
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $tree       = $request->getAttribute('tree');
+        $user       = $request->getAttribute('user');
+        $xref       = $request->getAttribute('xref');
+        $individual = Individual::getInstance($xref, $tree);
+
         $this->config = new Config($request);
-        $xref         = $request->getQueryParams()['xref'];
-        $individual   = Individual::getInstance($xref, $tree);
 
         if ($individual === null) {
             throw new IndividualNotFoundException();
@@ -86,8 +166,16 @@ class Module extends WebtreesFanChartModule implements ModuleCustomInterface
         Auth::checkIndividualAccess($individual);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
+// EMPTY?
+$x = $this->name();
+$y = $this->resourcesFolder();
+
+var_dump($x, $y);
+
         return $this->viewResponse(
             $this->name() . '::chart',
+//            modules/fanchart/page
+//            $this->resourcesFolder() . 'chart',
             [
                 'title'       => $this->getPageTitle($individual),
                 'moduleName'  => $this->name(),
@@ -255,5 +343,164 @@ class Module extends WebtreesFanChartModule implements ModuleCustomInterface
             'generations' => $this->config->getGenerations(),
             'xref'        => '',
         ]);
+    }
+
+    /**
+     * CSS class for the URL.
+     *
+     * @return string
+     */
+    public function chartMenuClass(): string
+    {
+        return 'menu-chart-fanchart';
+    }
+
+    /**
+     * Return a menu item for this chart - for use in individual boxes.
+     *
+     * @param Individual $individual
+     *
+     * @return Menu|null
+     */
+    public function chartBoxMenu(Individual $individual): ?Menu
+    {
+        return $this->chartMenu($individual);
+    }
+
+    /**
+     * The title for a specific instance of this chart.
+     *
+     * @param Individual $individual
+     *
+     * @return string
+     */
+    public function chartTitle(Individual $individual): string
+    {
+        return I18N::translate('Fan chart of %s', $individual->fullName());
+    }
+
+    /**
+     * A form to request the chart parameters.
+     *
+     * @param Individual $individual
+     * @param string[]   $parameters
+     *
+     * @return string
+     */
+    public function chartUrl(Individual $individual, array $parameters = []): string
+    {
+        return route(self::ROUTE_NAME, [
+                'xref' => $individual->xref(),
+                'tree' => $individual->tree()->name(),
+            ] + $parameters + self::DEFAULT_PARAMETERS);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function customModuleAuthorName(): string
+    {
+        return self::CUSTOM_AUTHOR;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function customModuleVersion(): string
+    {
+        return self::CUSTOM_VERSION;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function customModuleLatestVersionUrl(): string
+    {
+        return self::CUSTOM_WEBSITE;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function customModuleSupportUrl(): string
+    {
+        return self::CUSTOM_WEBSITE;
+    }
+
+    /**
+     * Additional/updated translations.
+     *
+     * @param string $language
+     *
+     * @return string[]
+     */
+    public function customTranslations(string $language): array
+    {
+        $languageFile = $this->resourcesFolder() . 'lang/' . $language . '/messages.mo';
+        return file_exists($languageFile) ? (new Translation($languageFile))->asArray() : [];
+    }
+
+    /**
+     * Returns the unescaped HTML string.
+     *
+     * @param string $value The value to strip the HTML tags from
+     *
+     * @return null|string
+     */
+    public function unescapedHtml(string $value = null): ?string
+    {
+        return ($value === null)
+            ? $value
+            : html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Returns whether the given text is in RTL style or not.
+     *
+     * @param string $text The text to check
+     *
+     * @return bool
+     */
+    public function isRtl(string $text = null): bool
+    {
+        return $text ? I18N::scriptDirection(I18N::textScript($text)) === 'rtl' : false;
+    }
+
+    /**
+     * Get the raw individual URL. The "xref" parameter must be the last one as the URL gets appended
+     * with the clicked individual id in order to link to the right individual page.
+     *
+     * @return string
+     */
+    public function getIndividualRoute(): string
+    {
+        return route('individual', ['xref' => '']);
+    }
+
+    /**
+     * Get the default colors based on the gender of an individual.
+     *
+     * @param null|Individual $individual Individual instance
+     *
+     * @return string HTML color code
+     */
+    public function getColor(Individual $individual = null): string
+    {
+        $theme = app(ModuleThemeInterface::class);
+
+
+        $genderLower = ($individual === null) ? 'u' : strtolower($individual->sex());
+        return '#' . $theme->parameter('chart-background-' . $genderLower);
+    }
+
+    /**
+     * Get the theme defined chart font color.
+     *
+     * @return string HTML color code
+     */
+    public function getChartFontColor(): string
+    {
+        $theme = app(ModuleThemeInterface::class);
+        return '#' . $theme->parameter('chart-font-color');
     }
 }

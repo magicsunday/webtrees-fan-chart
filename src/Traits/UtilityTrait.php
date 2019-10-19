@@ -6,6 +6,8 @@ declare(strict_types=1);
  */
 namespace MagicSunday\Webtrees\FanChart\Traits;
 
+use Aura\Router\RouterContainer;
+use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
@@ -22,54 +24,6 @@ use Fisharebest\Webtrees\View;
  */
 trait UtilityTrait
 {
-    use ModuleCustomTrait;
-
-    /**
-     * The current theme instance.
-     *
-     * @var ModuleThemeInterface
-     */
-    private $theme;
-
-    /**
-     * The module base directory.
-     *
-     * @var string
-     */
-    private $moduleDirectory;
-
-    /**
-     * A unique internal name for this module (based on the installation folder).
-     *
-     * @return string
-     */
-    abstract public function name(): string;
-
-    /**
-     * Where does this module store its resources
-     *
-     * @return string
-     */
-    public function resourcesFolder(): string
-    {
-        return $this->moduleDirectory . '/resources/';
-    }
-
-    /**
-     * Bootstrap.
-     *
-     * @param ModuleThemeInterface $theme
-     */
-    public function boot(ModuleThemeInterface $theme): void
-    {
-        $this->theme = $theme;
-
-        // Here is also a good place to register any views (templates) used by the module.
-        // This command allows the module to use: view($this->name() . '::', 'fish')
-        // to access the file ./resources/views/fish.phtml
-        View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
-    }
-
     /**
      * @inheritDoc
      */

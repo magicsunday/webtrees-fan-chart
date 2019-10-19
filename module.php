@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees;
 
 use Composer\Autoload\ClassLoader;
+use MagicSunday\Webtrees\FanChart\Module;
 
 // Register our namespace
 $loader = new ClassLoader();
@@ -16,5 +17,4 @@ $loader->addPsr4(
 );
 $loader->register();
 
-// Create and return instance of the module
-return new FanChart\Module(__DIR__);
+return app(Module::class);
