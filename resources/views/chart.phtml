@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
+use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
 use MagicSunday\Webtrees\FanChart\Config;
 
@@ -14,17 +15,15 @@ use MagicSunday\Webtrees\FanChart\Config;
 /** @var string     $title */
 /** @var string     $moduleName */
 /** @var Individual $individual */
+/** @var Tree       $tree */
 /** @var array      $chartParams */
 ?>
 
 <div id="page-fan">
     <h2 class="wt-page-title"><?= $title ?></h2>
 
-    <form class="wt-page-options wt-page-options-fan-chart d-print-none">
-        <input type="hidden" name="route" value="module">
-        <input type="hidden" name="module" value="<?= e($moduleName) ?>">
-        <input type="hidden" name="ged" value="<?= e($tree->name()) ?>">
-        <input type="hidden" name="action" value="Chart">
+    <form method="post" class="wt-page-options wt-page-options-fan-chart d-print-none">
+        <?= csrf_field() ?>
 
         <div class="form-group row">
             <label class="col-sm-3 col-form-label wt-page-options-label" for="xref">
@@ -149,11 +148,11 @@ use MagicSunday\Webtrees\FanChart\Config;
 </div>
 
 <?php View::push('styles') ?>
-<link rel="stylesheet" type="text/css" href="modules_v4/webtrees-fan-chart/resources/css/fan-chart.css">
+<link rel="stylesheet" type="text/css" href="<?= $cssUrl ?>">
 <?php View::endpush(); ?>
 
 <?php View::push('javascript'); ?>
-<script type="text/javascript" src="modules_v4/webtrees-fan-chart/resources/js/fan-chart.min.js"></script>
+<script type="text/javascript" src="<?= $jsUrl ?>"></script>
 <script type="text/javascript">
 
 $("#more").click(function (event) {
@@ -164,8 +163,6 @@ $("#more").click(function (event) {
 function AncestralFanChart(data)
 {
     let options = new rso.Options(
-        data.individualUrl,
-        data.updateUrl,
         data.labels,
         data.generations,
         data.fanDegree,

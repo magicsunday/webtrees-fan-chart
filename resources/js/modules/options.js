@@ -12,8 +12,6 @@
 export default class Options
 {
     constructor(
-        individualUrl,
-        updateUrl,
         labels,
         generations        = 6,
         fanDegree          = 210,
@@ -64,9 +62,6 @@ export default class Options
 
         // Duration of update animation if clicked on a person
         this.updateDuration = 1250;
-
-        this.individualUrl = individualUrl;
-        this.updateUrl     = updateUrl;
 
         // Default degrees of the fan chart
         this.fanDegree = fanDegree;

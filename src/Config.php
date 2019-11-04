@@ -99,7 +99,7 @@ class Config
      */
     public function getGenerations(): int
     {
-        $generations = (int) ($this->request->getQueryParams()['generations'] ?? self::DEFAULT_GENERATIONS);
+        $generations = (int) ($this->request->getParsedBody()['generations'] ?? self::DEFAULT_GENERATIONS);
         $generations = min($generations, self::MAX_GENERATIONS);
 
         return max($generations, self::MIN_GENERATIONS);
@@ -122,7 +122,7 @@ class Config
      */
     public function getFontScale(): int
     {
-        $fontScale = (int) ($this->request->getQueryParams()['fontScale'] ?? self::FONT_SCALE_DEFAULT);
+        $fontScale = (int) ($this->request->getParsedBody()['fontScale'] ?? self::FONT_SCALE_DEFAULT);
         $fontScale = min($fontScale, 200);
 
         return max($fontScale, 10);
@@ -135,7 +135,7 @@ class Config
      */
     public function getFanDegree(): int
     {
-        $fanDegree = (int) ($this->request->getQueryParams()['fanDegree'] ?? self::FAN_DEGREE_DEFAULT);
+        $fanDegree = (int) ($this->request->getParsedBody()['fanDegree'] ?? self::FAN_DEGREE_DEFAULT);
         $fanDegree = min($fanDegree, 360);
 
         return max($fanDegree, 180);
@@ -166,7 +166,7 @@ class Config
      */
     public function getHideEmptySegments(): bool
     {
-        return (bool) ($this->request->getQueryParams()['hideEmptySegments'] ?? false);
+        return (bool) ($this->request->getParsedBody()['hideEmptySegments'] ?? false);
     }
 
     /**
@@ -176,7 +176,7 @@ class Config
      */
     public function getShowColorGradients(): bool
     {
-        return (bool) ($this->request->getQueryParams()['showColorGradients'] ?? false);
+        return (bool) ($this->request->getParsedBody()['showColorGradients'] ?? false);
     }
 
     /**
@@ -186,7 +186,7 @@ class Config
      */
     public function getInnerArcs(): int
     {
-        $innerArcs = (int) ($this->request->getQueryParams()['innerArcs'] ?? self::DEFAULT_INNER_ARCS);
+        $innerArcs = (int) ($this->request->getParsedBody()['innerArcs'] ?? self::DEFAULT_INNER_ARCS);
         $innerArcs = min($innerArcs, self::MAX_INNER_ARCS);
 
         return max($innerArcs, self::MIN_INNER_ARCS);
@@ -209,6 +209,6 @@ class Config
      */
     public function getShowMore(): bool
     {
-        return (bool) ($this->request->getQueryParams()['showMore'] ?? false);
+        return (bool) ($this->request->getParsedBody()['showMore'] ?? false);
     }
 }

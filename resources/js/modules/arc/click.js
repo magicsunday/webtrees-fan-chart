@@ -66,7 +66,7 @@ export default class Click
      */
     individual(d)
     {
-        window.location = this._options.individualUrl + d.data.xref;
+        window.location = d.data.url;
     }
 
     /**

@@ -6,14 +6,10 @@ declare(strict_types=1);
  */
 namespace MagicSunday\Webtrees\FanChart\Traits;
 
-use Aura\Router\RouterContainer;
-use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
-use Fisharebest\Webtrees\Module\ModuleThemeInterface;
-use Fisharebest\Webtrees\View;
 
 /**
  * A utility trait.
@@ -24,6 +20,8 @@ use Fisharebest\Webtrees\View;
  */
 trait UtilityTrait
 {
+    use ModuleCustomTrait;
+
     /**
      * @inheritDoc
      */
@@ -93,17 +91,6 @@ trait UtilityTrait
     public function isRtl(string $text = null): bool
     {
         return $text ? I18N::scriptDirection(I18N::textScript($text)) === 'rtl' : false;
-    }
-
-    /**
-     * Get the raw individual URL. The "xref" parameter must be the last one as the URL gets appended
-     * with the clicked individual id in order to link to the right individual page.
-     *
-     * @return string
-     */
-    public function getIndividualRoute(): string
-    {
-        return route('individual', ['xref' => '']);
     }
 
     /**

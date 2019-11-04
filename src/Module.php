@@ -8,9 +8,7 @@ namespace MagicSunday\Webtrees\FanChart;
 
 use Aura\Router\RouterContainer;
 use Fig\Http\Message\RequestMethodInterface;
-use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\Auth;
-use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Exceptions\IndividualAccessDeniedException;
 use Fisharebest\Webtrees\Exceptions\IndividualNotFoundException;
 use Fisharebest\Webtrees\I18N;
@@ -21,8 +19,8 @@ use Fisharebest\Webtrees\Module\ModuleChartInterface;
 use Fisharebest\Webtrees\Module\ModuleChartTrait;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleThemeInterface;
-use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
+use MagicSunday\Webtrees\FanChart\Traits\UtilityTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -36,25 +34,14 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class Module extends AbstractModule implements ModuleCustomInterface, ModuleChartInterface, RequestHandlerInterface
 {
-    private const ROUTE_NAME = 'webtrees-fan-chart';
-    private const ROUTE_URL  = '/tree/{tree}/webtrees-fan-chart/{xref}/style/{style}/generations/{generations}/width/{width}/';
+    private const ROUTE_DEFAULT     = 'webtrees-fan-chart';
+    private const ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}/';
 
-    private const STYLE_HALF_CIRCLE          = '2';
-    private const STYLE_THREE_QUARTER_CIRCLE = '3';
-    private const STYLE_FULL_CIRCLE          = '4';
-
-    private const   DEFAULT_STYLE       = self::STYLE_THREE_QUARTER_CIRCLE;
-    private const   DEFAULT_GENERATIONS = 4;
-    private const   DEFAULT_WIDTH       = 100;
-
-    protected const DEFAULT_PARAMETERS  = [
-        'style'       => self::DEFAULT_STYLE,
-        'generations' => self::DEFAULT_GENERATIONS,
-        'width'       => self::DEFAULT_WIDTH,
-    ];
+    private const ROUTE_UPDATE     = 'webtrees-fan-chart.update';
+    private const ROUTE_UPDATE_URL = '/tree/{tree}/webtrees-fan-chart/{xref}/update/';
 
     use ModuleChartTrait;
-//    use UtilityTrait;
+    use UtilityTrait;
 
     /**
      * @var string
@@ -85,8 +72,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     private $theme;
 
-    private $name;
-
     /**
      * Initialization.
      */
@@ -96,19 +81,14 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $routerContainer = app(RouterContainer::class);
 
         $routerContainer->getMap()
-            ->get(self::ROUTE_NAME, self::ROUTE_URL, self::class)
-            ->allows(RequestMethodInterface::METHOD_POST)
-            ->tokens([
-//                'generations' => '\d+',
-//                'style'       => implode('|', array_keys($this->styles())),
-//                'width'       => '\d+',
-            ]);
+            ->get(self::ROUTE_DEFAULT, self::ROUTE_DEFAULT_URL, $this)
+            ->allows(RequestMethodInterface::METHOD_POST);
 
-        /** @var ModuleThemeInterface $theme */
-        $theme = app(ModuleThemeInterface::class);
+        $routerContainer->getMap()
+            ->get(self::ROUTE_UPDATE, self::ROUTE_UPDATE_URL, $this)
+            ->allows(RequestMethodInterface::METHOD_GET);
 
-        $this->theme = $theme;
-        $this->name  = $this->name();
+        $this->theme = app(ModuleThemeInterface::class);
 
         View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
     }
@@ -152,6 +132,10 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        if ($request->getAttribute('route') === self::ROUTE_UPDATE) {
+            return $this->getUpdateAction($request);
+        }
+
         $tree       = $request->getAttribute('tree');
         $user       = $request->getAttribute('user');
         $xref       = $request->getAttribute('xref');
@@ -166,16 +150,8 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         Auth::checkIndividualAccess($individual);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
-// EMPTY?
-$x = $this->name();
-$y = $this->resourcesFolder();
-
-var_dump($x, $y);
-
         return $this->viewResponse(
             $this->name() . '::chart',
-//            modules/fanchart/page
-//            $this->resourcesFolder() . 'chart',
             [
                 'title'       => $this->getPageTitle($individual),
                 'moduleName'  => $this->name(),
@@ -183,6 +159,8 @@ var_dump($x, $y);
                 'tree'        => $tree,
                 'config'      => $this->config,
                 'chartParams' => json_encode($this->getChartParameters($individual)),
+                'cssUrl'      => $this->assetUrl('css/fan-chart.css'),
+                'jsUrl'       => $this->assetUrl('js/fan-chart.min.js')
             ]
         );
     }
@@ -224,8 +202,6 @@ var_dump($x, $y);
             'hideEmptySegments'  => $this->config->getHideEmptySegments(),
             'showColorGradients' => $this->config->getShowColorGradients(),
             'innerArcs'          => $this->config->getInnerArcs(),
-            'updateUrl'          => $this->getUpdateRoute($individual->tree()),
-            'individualUrl'      => $this->getIndividualRoute(),
             'data'               => $this->buildJsonTree($individual),
             'labels'             => [
                 'zoom' => I18N::translate('Use Ctrl + scroll to zoom in the view'),
@@ -238,18 +214,19 @@ var_dump($x, $y);
      * Update action.
      *
      * @param ServerRequestInterface $request The current HTTP request
-     * @param Tree                   $tree    The current tree
-     * @param UserInterface          $user    The current user
      *
      * @return ResponseInterface
      *
      * @throws IndividualNotFoundException
      * @throws IndividualAccessDeniedException
      */
-    public function getUpdateAction(ServerRequestInterface $request, Tree $tree, UserInterface $user): ResponseInterface
+    public function getUpdateAction(ServerRequestInterface $request): ResponseInterface
     {
         $this->config = new Config($request);
-        $xref         = $request->getQueryParams()['xref'];
+
+        $tree         = $request->getAttribute('tree');
+        $user         = $request->getAttribute('user');
+        $xref         = $request->getAttribute('xref');
         $individual   = Individual::getInstance($xref, $tree);
 
         Auth::checkIndividualAccess($individual);
@@ -266,7 +243,7 @@ var_dump($x, $y);
      * @param Individual $individual The start person
      * @param int        $generation The generation the person belongs to
      *
-     * @return array
+     * @return string[]
      */
     private function getIndividualData(Individual $individual, int $generation): array
     {
@@ -276,6 +253,8 @@ var_dump($x, $y);
         return [
             'id'              => 0,
             'xref'            => $individual->xref(),
+            'url'             => $individual->url(),
+            'updateUrl'       => $this->getUpdateRoute($individual),
             'generation'      => $generation,
             'name'            => $fullName,
             'alternativeName' => $alternativeName,
@@ -294,7 +273,7 @@ var_dump($x, $y);
      * @param null|Individual $individual The start person
      * @param int             $generation The current generation
      *
-     * @return array
+     * @return string[]
      */
     private function buildJsonTree(Individual $individual = null, int $generation = 1): array
     {
@@ -304,7 +283,7 @@ var_dump($x, $y);
         }
 
         $data   = $this->getIndividualData($individual, $generation);
-        $family = $individual->primaryChildFamily();
+        $family = $individual->childFamilies()->first();
 
         if ($family === null) {
             return $data;
@@ -330,18 +309,16 @@ var_dump($x, $y);
      * Get the raw update URL. The "xref" parameter must be the last one as the URL gets appended
      * with the clicked individual id in order to load the required chart data.
      *
-     * @param Tree $tree The current tree
+     * @param Individual $individual
      *
      * @return string
      */
-    private function getUpdateRoute(Tree $tree): string
+    private function getUpdateRoute(Individual $individual): string
     {
-        return route('module', [
-            'module'      => $this->name(),
-            'action'      => 'Update',
-            'ged'         => $tree->name(),
+        return route(self::ROUTE_UPDATE, [
+            'xref'        => $individual->xref(),
+            'tree'        => $individual->tree()->name(),
             'generations' => $this->config->getGenerations(),
-            'xref'        => '',
         ]);
     }
 
@@ -389,118 +366,10 @@ var_dump($x, $y);
      */
     public function chartUrl(Individual $individual, array $parameters = []): string
     {
-        return route(self::ROUTE_NAME, [
+
+        return route(self::ROUTE_DEFAULT, [
                 'xref' => $individual->xref(),
                 'tree' => $individual->tree()->name(),
-            ] + $parameters + self::DEFAULT_PARAMETERS);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function customModuleAuthorName(): string
-    {
-        return self::CUSTOM_AUTHOR;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function customModuleVersion(): string
-    {
-        return self::CUSTOM_VERSION;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function customModuleLatestVersionUrl(): string
-    {
-        return self::CUSTOM_WEBSITE;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function customModuleSupportUrl(): string
-    {
-        return self::CUSTOM_WEBSITE;
-    }
-
-    /**
-     * Additional/updated translations.
-     *
-     * @param string $language
-     *
-     * @return string[]
-     */
-    public function customTranslations(string $language): array
-    {
-        $languageFile = $this->resourcesFolder() . 'lang/' . $language . '/messages.mo';
-        return file_exists($languageFile) ? (new Translation($languageFile))->asArray() : [];
-    }
-
-    /**
-     * Returns the unescaped HTML string.
-     *
-     * @param string $value The value to strip the HTML tags from
-     *
-     * @return null|string
-     */
-    public function unescapedHtml(string $value = null): ?string
-    {
-        return ($value === null)
-            ? $value
-            : html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
-    }
-
-    /**
-     * Returns whether the given text is in RTL style or not.
-     *
-     * @param string $text The text to check
-     *
-     * @return bool
-     */
-    public function isRtl(string $text = null): bool
-    {
-        return $text ? I18N::scriptDirection(I18N::textScript($text)) === 'rtl' : false;
-    }
-
-    /**
-     * Get the raw individual URL. The "xref" parameter must be the last one as the URL gets appended
-     * with the clicked individual id in order to link to the right individual page.
-     *
-     * @return string
-     */
-    public function getIndividualRoute(): string
-    {
-        return route('individual', ['xref' => '']);
-    }
-
-    /**
-     * Get the default colors based on the gender of an individual.
-     *
-     * @param null|Individual $individual Individual instance
-     *
-     * @return string HTML color code
-     */
-    public function getColor(Individual $individual = null): string
-    {
-        $theme = app(ModuleThemeInterface::class);
-
-
-        $genderLower = ($individual === null) ? 'u' : strtolower($individual->sex());
-        return '#' . $theme->parameter('chart-background-' . $genderLower);
-    }
-
-    /**
-     * Get the theme defined chart font color.
-     *
-     * @return string HTML color code
-     */
-    public function getChartFontColor(): string
-    {
-        $theme = app(ModuleThemeInterface::class);
-        return '#' . $theme->parameter('chart-font-color');
+            ] + $parameters);
     }
 }

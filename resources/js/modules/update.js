@@ -46,7 +46,7 @@ export default class Update
             .on("click", null);
 
         d3.json(
-            this._options.updateUrl + d.data.xref
+            d.data.updateUrl
         ).then((data) => {
             // Initialize the new loaded data
             this._hierarchy.init(data);
