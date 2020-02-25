@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart;
 
 use Aura\Router\RouterContainer;
+use Exception;
 use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Exceptions\IndividualAccessDeniedException;
@@ -35,10 +36,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 class Module extends AbstractModule implements ModuleCustomInterface, ModuleChartInterface, RequestHandlerInterface
 {
     private const ROUTE_DEFAULT     = 'webtrees-fan-chart';
-    private const ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}/';
+    private const ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}';
 
-    private const ROUTE_UPDATE     = 'webtrees-fan-chart.update';
-    private const ROUTE_UPDATE_URL = '/tree/{tree}/webtrees-fan-chart/{xref}/update/';
+//    private const ROUTE_UPDATE     = 'webtrees-fan-chart.update';
+//    private const ROUTE_UPDATE_URL = '/tree/{tree}/webtrees-fan-chart/{xref}/update/';
 
     use ModuleChartTrait;
     use UtilityTrait;
@@ -84,9 +85,9 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             ->get(self::ROUTE_DEFAULT, self::ROUTE_DEFAULT_URL, $this)
             ->allows(RequestMethodInterface::METHOD_POST);
 
-        $routerContainer->getMap()
-            ->get(self::ROUTE_UPDATE, self::ROUTE_UPDATE_URL, $this)
-            ->allows(RequestMethodInterface::METHOD_GET);
+//        $routerContainer->getMap()
+//            ->get(self::ROUTE_UPDATE, self::ROUTE_UPDATE_URL, $this)
+//            ->allows(RequestMethodInterface::METHOD_GET);
 
         $this->theme = app(ModuleThemeInterface::class);
 
@@ -129,13 +130,10 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      * @param ServerRequestInterface $request
      *
      * @return ResponseInterface
+     * @throws Exception
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if ($request->getAttribute('route') === self::ROUTE_UPDATE) {
-            return $this->getUpdateAction($request);
-        }
-
         $tree       = $request->getAttribute('tree');
         $user       = $request->getAttribute('user');
         $xref       = $request->getAttribute('xref');
@@ -145,6 +143,22 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
 
         if ($individual === null) {
             throw new IndividualNotFoundException();
+        }
+
+        // Convert POST requests into GET requests for pretty URLs.
+        if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $params = (array) $request->getParsedBody();
+
+            return redirect(route(self::ROUTE_DEFAULT, [
+                'tree'               => $tree->name(),
+                'xref'               => $params['xref'],
+                'generations'        => $params['generations'],
+                'fanDegree'          => $params['fanDegree'],
+                'hideEmptySegments'  => $params['hideEmptySegments'] ?? '0',
+                'showColorGradients' => $params['showColorGradients'] ?? '0',
+                'innerArcs'          => $params['innerArcs'],
+                'fontScale'          => $params['fontScale'],
+            ]));
         }
 
         Auth::checkIndividualAccess($individual);
@@ -158,9 +172,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'individual'  => $individual,
                 'tree'        => $tree,
                 'config'      => $this->config,
-                'chartParams' => json_encode($this->getChartParameters($individual)),
-                'cssUrl'      => $this->assetUrl('css/fan-chart.css'),
-                'jsUrl'       => $this->assetUrl('js/fan-chart.min.js')
+                'chartParams' => json_encode($this->getChartParameters($individual), JSON_THROW_ON_ERROR, 512),
             ]
         );
     }
@@ -217,8 +229,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @return ResponseInterface
      *
-     * @throws IndividualNotFoundException
-     * @throws IndividualAccessDeniedException
+     * @throws Exception
      */
     public function getUpdateAction(ServerRequestInterface $request): ResponseInterface
     {
@@ -226,7 +237,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
 
         $tree         = $request->getAttribute('tree');
         $user         = $request->getAttribute('user');
-        $xref         = $request->getAttribute('xref');
+        $xref         = $request->getQueryParams()['xref'];
         $individual   = Individual::getInstance($xref, $tree);
 
         Auth::checkIndividualAccess($individual);
@@ -315,7 +326,10 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     private function getUpdateRoute(Individual $individual): string
     {
-        return route(self::ROUTE_UPDATE, [
+//        return route(self::ROUTE_UPDATE, [
+        return route('module', [
+            'module' => $this->name(),
+            'action' => 'update',
             'xref'        => $individual->xref(),
             'tree'        => $individual->tree()->name(),
             'generations' => $this->config->getGenerations(),
@@ -366,7 +380,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     public function chartUrl(Individual $individual, array $parameters = []): string
     {
-
         return route(self::ROUTE_DEFAULT, [
                 'xref' => $individual->xref(),
                 'tree' => $individual->tree()->name(),

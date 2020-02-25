@@ -30,41 +30,45 @@ use MagicSunday\Webtrees\FanChart\Config;
                 <?= I18N::translate('Individual') ?>
             </label>
             <div class="col-sm-9 wt-page-options-value">
-                <?= view('components/select-individual', [
+                <?=
+                    view('components/select-individual', [
                         'name'       => 'xref',
                         'individual' => $individual,
                         'tree'       => $tree,
-                    ]);
+                        'required'   => true,
+                    ])
                 ?>
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-sm-3 col-form-label wt-page-options-label" for="fanDegree">
-                <?= I18N::translate('Layout'); ?>
+                <?= I18N::translate('Layout') ?>
             </label>
             <div class="col-sm-9 wt-page-options-value">
-                <?= view('components/select', [
+                <?=
+                    view('components/select', [
                         'name'     => 'fanDegree',
                         'selected' => $config->getFanDegree(),
                         'options'  => $config->getFanDegreeList(),
                         'class'    => 'form-control-sm',
-                    ]);
+                    ])
                 ?>
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-sm-3 col-form-label wt-page-options-label" for="generations">
-                <?= I18N::translate('Generations'); ?>
+                <?= I18N::translate('Generations') ?>
             </label>
             <div class="col-sm-9 wt-page-options-value">
-                <?= view('components/select', [
+                <?=
+                    view('components/select', [
                         'name'     => 'generations',
                         'selected' => $config->getGenerations(),
                         'options'  => $config->getGenerationsList(),
                         'class'    => 'form-control-sm',
-                    ]);
+                    ])
                 ?>
             </div>
         </div>
@@ -72,51 +76,54 @@ use MagicSunday\Webtrees\FanChart\Config;
         <div id="moreField" style="display: <?= ($config->getShowMore() ? 'block' : 'none') ?>">
             <div class="form-group row">
                 <label class="col-form-label col-sm-3 wt-page-options-label">
-                    <?= I18N::translate('Presentation'); ?>
+                    <?= I18N::translate('Presentation') ?>
                 </label>
                 <div class="col-sm-9 wt-page-options-value">
-                    <?= view('components/checkbox', [
+                    <?=
+                        view('components/checkbox', [
                             'label'   => I18N::translate('Hide empty segments'),
                             'name'    => 'hideEmptySegments',
                             'checked' => $config->getHideEmptySegments(),
-                        ]);
+                        ])
                     ?>
 
-                    <?= view('components/checkbox', [
+                    <?=
+                        view('components/checkbox', [
                             'label'   => I18N::translate('Show color gradients'),
                             'name'    => 'showColorGradients',
                             'checked' => $config->getShowColorGradients(),
-                        ]);
+                        ])
                     ?>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label wt-page-options-label" for="innerArcs">
-                    <?= I18N::translate('Number of inner circles'); ?>
+                    <?= I18N::translate('Number of inner circles') ?>
                 </label>
                 <div class="col-sm-9 wt-page-options-value">
-                    <?= view('components/select', [
+                    <?=
+                        view('components/select', [
                             'name'     => 'innerArcs',
                             'selected' => $config->getInnerArcs(),
                             'options'  => $config->getInnerArcsList(),
                             'class'    => 'form-control-sm',
-                        ]);
+                        ])
                     ?>
                     <small class="form-text text-muted">
-                        <?= I18N::translate('Specifies the number of circles in which the text is written along a arc.'); ?>
+                        <?= I18N::translate('Specifies the number of circles in which the text is written along a arc.') ?>
                     </small>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label wt-page-options-label" for="fontScale">
-                    <?= I18N::translate('Font size'); ?>
+                    <?= I18N::translate('Font size') ?>
                 </label>
                 <div class="col-sm-9 wt-page-options-value">
                     <div class="input-group input-group-sm">
                         <input class="form-control" type="text" name="fontScale" id="fontScale"
-                               maxlength="3" placeholder="100" value="<?= $config->getFontScale(); ?>">
+                               maxlength="3" placeholder="100" value="<?= $config->getFontScale() ?>">
                         <div class="input-group-append">
                             <span class="input-group-text">%</span>
                         </div>
@@ -148,11 +155,11 @@ use MagicSunday\Webtrees\FanChart\Config;
 </div>
 
 <?php View::push('styles') ?>
-<link rel="stylesheet" type="text/css" href="<?= $cssUrl ?>">
+<link rel="stylesheet" type="text/css" href="modules_v4/webtrees-fan-chart/resources/css/fan-chart.css">
 <?php View::endpush(); ?>
 
 <?php View::push('javascript'); ?>
-<script type="text/javascript" src="<?= $jsUrl ?>"></script>
+<script type="text/javascript" src="modules_v4/webtrees-fan-chart/resources/js/fan-chart.min.js"></script>
 <script type="text/javascript">
 
 $("#more").click(function (event) {
