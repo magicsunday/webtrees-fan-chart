@@ -9,8 +9,8 @@ namespace MagicSunday\Webtrees\FanChart;
 use Aura\Router\RouterContainer;
 use Exception;
 use Fig\Http\Message\RequestMethodInterface;
+use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\Auth;
-use Fisharebest\Webtrees\Exceptions\IndividualAccessDeniedException;
 use Fisharebest\Webtrees\Exceptions\IndividualNotFoundException;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
@@ -19,9 +19,9 @@ use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleChartInterface;
 use Fisharebest\Webtrees\Module\ModuleChartTrait;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\View;
-use MagicSunday\Webtrees\FanChart\Traits\UtilityTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -41,8 +41,8 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
 //    private const ROUTE_UPDATE     = 'webtrees-fan-chart.update';
 //    private const ROUTE_UPDATE_URL = '/tree/{tree}/webtrees-fan-chart/{xref}/update/';
 
+    use ModuleCustomTrait;
     use ModuleChartTrait;
-    use UtilityTrait;
 
     /**
      * @var string
@@ -180,7 +180,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * Returns the page title.
      *
-     * @param Individual $individual The individual used in the curret chart
+     * @param Individual $individual The individual used in the current chart
      *
      * @return string
      */
@@ -254,7 +254,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      * @param Individual $individual The start person
      * @param int        $generation The generation the person belongs to
      *
-     * @return string[]
+     * @return string[][]
      */
     private function getIndividualData(Individual $individual, int $generation): array
     {
@@ -284,7 +284,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      * @param null|Individual $individual The start person
      * @param int             $generation The current generation
      *
-     * @return string[]
+     * @return string[][]
      */
     private function buildJsonTree(Individual $individual = null, int $generation = 1): array
     {
@@ -384,5 +384,99 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'xref' => $individual->xref(),
                 'tree' => $individual->tree()->name(),
             ] + $parameters);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function customModuleAuthorName(): string
+    {
+        return self::CUSTOM_AUTHOR;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function customModuleVersion(): string
+    {
+        return self::CUSTOM_VERSION;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function customModuleLatestVersionUrl(): string
+    {
+        return self::CUSTOM_WEBSITE;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function customModuleSupportUrl(): string
+    {
+        return self::CUSTOM_WEBSITE;
+    }
+
+    /**
+     * Additional/updated translations.
+     *
+     * @param string $language
+     *
+     * @return string[]
+     */
+    public function customTranslations(string $language): array
+    {
+        $languageFile = $this->resourcesFolder() . 'lang/' . $language . '/messages.mo';
+        return file_exists($languageFile) ? (new Translation($languageFile))->asArray() : [];
+    }
+
+    /**
+     * Returns the unescaped HTML string.
+     *
+     * @param string $value The value to strip the HTML tags from
+     *
+     * @return null|string
+     */
+    public function unescapedHtml(string $value = null): ?string
+    {
+        return ($value === null)
+            ? $value
+            : html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Returns whether the given text is in RTL style or not.
+     *
+     * @param string $text The text to check
+     *
+     * @return bool
+     */
+    public function isRtl(string $text = null): bool
+    {
+        return $text ? I18N::scriptDirection(I18N::textScript($text)) === 'rtl' : false;
+    }
+
+    /**
+     * Get the default colors based on the gender of an individual.
+     *
+     * @param null|Individual $individual Individual instance
+     *
+     * @return string HTML color code
+     */
+    public function getColor(Individual $individual = null): string
+    {
+        $genderLower = ($individual === null) ? 'u' : strtolower($individual->sex());
+        return '#' . $this->theme->parameter('chart-background-' . $genderLower);
+    }
+
+    /**
+     * Get the theme defined chart font color.
+     *
+     * @return string HTML color code
+     */
+    public function getChartFontColor(): string
+    {
+        return '#' . $this->theme->parameter('chart-font-color');
     }
 }

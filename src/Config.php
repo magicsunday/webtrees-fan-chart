@@ -62,7 +62,7 @@ class Config
     private const MAX_INNER_ARCS = 6;
 
     /**
-     * The defaut fan chart degree.
+     * The default fan chart degree.
      *
      * @var int
      */
@@ -142,7 +142,7 @@ class Config
     }
 
     /**
-     * Retursn a list of options for the chart degrees.
+     * Returns a list of options for the chart degrees.
      *
      * @return string[]
      */
