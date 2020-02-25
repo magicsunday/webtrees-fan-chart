@@ -172,7 +172,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'individual'  => $individual,
                 'tree'        => $tree,
                 'config'      => $this->config,
-                'chartParams' => json_encode($this->getChartParameters($individual), JSON_THROW_ON_ERROR, 512),
+                'chartParams' => json_encode($this->getChartParameters($individual)),
             ]
         );
     }
