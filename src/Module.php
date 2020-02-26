@@ -173,6 +173,8 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'tree'        => $tree,
                 'config'      => $this->config,
                 'chartParams' => json_encode($this->getChartParameters($individual)),
+                'stylesheet'  => $this->assetUrl('css/fan-chart.css'),
+                'javascript'  => $this->assetUrl('js/fan-chart.min.js'),
             ]
         );
     }

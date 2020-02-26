@@ -155,21 +155,17 @@ use MagicSunday\Webtrees\FanChart\Config;
 </div>
 
 <?php View::push('styles') ?>
-<link rel="stylesheet" type="text/css" href="modules_v4/webtrees-fan-chart/resources/css/fan-chart.css">
+<link rel="stylesheet" href="<?= e($stylesheet) ?>">
 <?php View::endpush(); ?>
 
 <?php View::push('javascript'); ?>
-<script type="text/javascript" src="modules_v4/webtrees-fan-chart/resources/js/fan-chart.min.js"></script>
-<script type="text/javascript">
+<script src="<?= e($javascript) ?>"></script>
+<script>
 
-$("#more").click(function (event) {
-    event.preventDefault();
-    $("#moreField").toggle();
-});
+document.addEventListener('DOMContentLoaded', function () {
+    let data = <?= $chartParams ?>;
 
-function AncestralFanChart(data)
-{
-    let options = new rso.Options(
+    let options = new fanchart.Options(
         data.labels,
         data.generations,
         data.fanDegree,
@@ -182,15 +178,16 @@ function AncestralFanChart(data)
         data.innerArcs
     );
 
-    options = Object.assign({}, options, data);
+    new fanchart.Chart("#fan_chart", Object.assign({}, options, data));
 
-    new rso.Chart("#fan_chart", options);
-}
+    document.getElementById("fan_chart")
+        .scrollIntoView(true);
 
-new AncestralFanChart(<?= $chartParams ?>);
-
-document.getElementById("fan_chart")
-    .scrollIntoView(true);
+    $("#more").click(function (event) {
+        event.preventDefault();
+        $("#moreField").toggle();
+    });
+});
 
 </script>
 <?php View::endpush(); ?>
