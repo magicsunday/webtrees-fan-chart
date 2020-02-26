@@ -158,6 +158,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'showColorGradients' => $params['showColorGradients'] ?? '0',
                 'innerArcs'          => $params['innerArcs'],
                 'fontScale'          => $params['fontScale'],
+                'showMore'           => $params['showMore'] ?? '0',
             ]));
         }
 

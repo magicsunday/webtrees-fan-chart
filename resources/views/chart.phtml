@@ -32,6 +32,7 @@ use MagicSunday\Webtrees\FanChart\Config;
             <div class="col-sm-9 wt-page-options-value">
                 <?=
                     view('components/select-individual', [
+                        'id'         => 'xref',
                         'name'       => 'xref',
                         'individual' => $individual,
                         'tree'       => $tree,
@@ -48,6 +49,7 @@ use MagicSunday\Webtrees\FanChart\Config;
             <div class="col-sm-9 wt-page-options-value">
                 <?=
                     view('components/select', [
+                        'id'       => 'fanDegree',
                         'name'     => 'fanDegree',
                         'selected' => $config->getFanDegree(),
                         'options'  => $config->getFanDegreeList(),
@@ -64,6 +66,7 @@ use MagicSunday\Webtrees\FanChart\Config;
             <div class="col-sm-9 wt-page-options-value">
                 <?=
                     view('components/select', [
+                        'id'       => 'generations',
                         'name'     => 'generations',
                         'selected' => $config->getGenerations(),
                         'options'  => $config->getGenerationsList(),
@@ -81,16 +84,18 @@ use MagicSunday\Webtrees\FanChart\Config;
                 <div class="col-sm-9 wt-page-options-value">
                     <?=
                         view('components/checkbox', [
-                            'label'   => I18N::translate('Hide empty segments'),
+                            'id'      => 'hideEmptySegments',
                             'name'    => 'hideEmptySegments',
+                            'label'   => I18N::translate('Hide empty segments'),
                             'checked' => $config->getHideEmptySegments(),
                         ])
                     ?>
 
                     <?=
                         view('components/checkbox', [
-                            'label'   => I18N::translate('Show color gradients'),
+                            'id'      => 'showColorGradients',
                             'name'    => 'showColorGradients',
+                            'label'   => I18N::translate('Show color gradients'),
                             'checked' => $config->getShowColorGradients(),
                         ])
                     ?>
@@ -104,6 +109,7 @@ use MagicSunday\Webtrees\FanChart\Config;
                 <div class="col-sm-9 wt-page-options-value">
                     <?=
                         view('components/select', [
+                            'id'       => 'innerArcs',
                             'name'     => 'innerArcs',
                             'selected' => $config->getInnerArcs(),
                             'options'  => $config->getInnerArcsList(),
@@ -136,7 +142,7 @@ use MagicSunday\Webtrees\FanChart\Config;
             <div class="col-sm-12 wt-page-options-value text-center">
                 <div class="btn-group-toggle btn-group-sm float-left more" data-toggle="buttons">
                     <label class="btn btn-primary<?= ($config->getShowMore() ? ' active' : '') ?>" id="more">
-                        <input type="checkbox" name="showMore" value="1"<?= ($config->getShowMore() ? ' checked' : '') ?>>
+                        <input type="checkbox" id="showMore" name="showMore" value="1"<?= ($config->getShowMore() ? ' checked' : '') ?>>
                         <?= I18N::translate('More options ...') ?>
                     </label>
                 </div>
@@ -184,8 +190,14 @@ document.addEventListener('DOMContentLoaded', function () {
         .scrollIntoView(true);
 
     $("#more").click(function (event) {
+        $("#moreField").toggle(1, function () {
+            // Set checkbox and trigger change
+            $("#showMore")
+                .prop("checked", $("#moreField").is(":visible"))
+                .trigger("change");
+        });
+
         event.preventDefault();
-        $("#moreField").toggle();
     });
 });
 
