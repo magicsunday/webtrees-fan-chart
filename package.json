@@ -11,17 +11,17 @@
         "prepare": "rollup -c && uglifyjs resources/js/fan-chart.js --compress --mangle --output resources/js/fan-chart.min.js"
     },
     "devDependencies": {
-        "d3-fetch": "^1.1",
+        "d3-fetch": "^1.1.2",
         "d3-hierarchy": "^1.1.9",
-        "d3-scale": "^2.1",
+        "d3-scale": "^3.2.1",
         "d3-selection": "^1.4.1",
         "d3-shape": "^1.3.7",
         "d3-timer": "^1.0.10",
         "d3-transition": "^1.3.2",
         "d3-zoom": "^1.8.3",
-        "rollup": "^0.66.6",
-        "rollup-plugin-node-resolve": "^3",
-        "uglify-es": "^3"
+        "rollup": "^1.31.1",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "uglify-es": "^3.3.9"
     },
     "dependencies": {}
 }
