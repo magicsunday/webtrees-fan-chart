@@ -93,11 +93,9 @@ export default class Chart
             this._config.svg.classed("rtl", true);
         }
 
-        if (this._options.showColorGradients) {
-            // Create the svg:defs element
-            this._config.svgDefs = this._config.svg
-                .append("defs");
-        }
+        // Create the svg:defs element
+        this._config.svgDefs = this._config.svg
+            .append("defs");
 
         this.overlay = new Overlay(this._config);
 

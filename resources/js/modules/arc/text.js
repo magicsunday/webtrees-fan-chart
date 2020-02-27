@@ -41,21 +41,21 @@ export default class Text
 
             // Create a path for each line of text as mobile devices
             // won't display <tspan> elements in the right position
-            let path1 = this.appendPathToLabel(label, 0, d);
-            let path2 = this.appendPathToLabel(label, 1, d);
+            let pathId1 = this.appendPathToLabel(label, 0, d);
+            let pathId2 = this.appendPathToLabel(label, 1, d);
 
-            this.appendTextPath(text, path1.attr("id"))
+            this.appendTextPath(text, pathId1)
                 .text(this.getFirstNames(d))
                 .each(this.truncate(d, 0));
 
-            this.appendTextPath(text, path2.attr("id"))
+            this.appendTextPath(text, pathId2)
                 .text(this.getLastName(d))
                 .each(this.truncate(d, 1));
 
             if (d.data.alternativeName) {
-                let path3 = this.appendPathToLabel(label, 2, d);
+                let pathId3 = this.appendPathToLabel(label, 2, d);
 
-                this.appendTextPath(text, path3.attr("id"))
+                this.appendTextPath(text, pathId3)
                     .attr("class", "alternativeName")
                     .classed("rtl", d.data.isAltRtl)
                     .text(d.data.alternativeName)
@@ -63,9 +63,9 @@ export default class Text
             }
 
             if (timeSpan) {
-                let path4 = this.appendPathToLabel(label, 3, d);
+                let pathId4 = this.appendPathToLabel(label, 3, d);
 
-                this.appendTextPath(text, path4.attr("id"))
+                this.appendTextPath(text, pathId4)
                     .attr("class", "date")
                     .text(timeSpan)
                     .each(this.truncate(d, 3));
@@ -164,7 +164,7 @@ export default class Text
      * @param {Number} index Index position of element in parent container. Required to create a unique path id.
      * @param {Object} d     D3 data object
      *
-     * @return {Object} D3 path object
+     * @return {String} The id of the newly created path element
      */
     appendPathToLabel(label, index, d)
     {
@@ -183,10 +183,15 @@ export default class Text
             .innerRadius(() => this._geometry.relativeRadius(d, this.getTextOffset(index, d)))
             .outerRadius(() => this._geometry.relativeRadius(d, this.getTextOffset(index, d)));
 
+        let pathId = "path-" + personId + "-" + index;
+
         // Append a path so we could use it to write the label along it
-        return label.append("path")
-            .attr("id", personId + "-" + index)
+        this._config.svgDefs
+            .append("path")
+            .attr("id", pathId)
             .attr("d", arcGenerator);
+
+        return pathId;
     }
 
     /**
@@ -309,17 +314,17 @@ export default class Text
      */
     getAvailableWidth(d, index)
     {
+        // Outer arcs
+        if (d.depth >= this._options.numberOfInnerCircles) {
+            return this._options.outerArcHeight - (this._options.textPadding * 2);
+        }
+
         // Innermost circle (Reducing the width slightly, avoiding the text is sticking too close to the edge)
         let availableWidth = (this._options.centerCircleRadius * 2) - (this._options.centerCircleRadius * 0.15);
 
         if ((d.depth >= 1) && (d.depth < this._options.numberOfInnerCircles)) {
             // Calculate length of the arc
             availableWidth = this._geometry.arcLength(d, this.getTextOffset(index, d));
-        } else {
-            // Outer arcs
-            if (d.depth >= this._options.numberOfInnerCircles) {
-                availableWidth = this._options.outerArcHeight;
-            }
         }
 
         return availableWidth - (this._options.textPadding * 2);
@@ -336,7 +341,7 @@ export default class Text
      *
      * @return {Object} D3 text object
      */
-    appendOuterArcText(d, index, group, label, textClass)
+    appendOuterArcText(d, index, group, label, textClass = null)
     {
         let textElement = group.append("text");
 

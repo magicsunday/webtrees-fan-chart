@@ -110,8 +110,8 @@ export default class Person
      */
     addArcToPerson(person, data)
     {
-        // Arc generator
-        let arcGen = d3.arc()
+        // Create arc generator
+        let arcGenerator = d3.arc()
             .startAngle(() => (data.depth === 0) ? 0 : this._geometry.startAngle(data))
             .endAngle(() => (data.depth === 0) ? MATH_PI2 : this._geometry.endAngle(data))
             .innerRadius(this._geometry.innerRadius(data))
@@ -124,7 +124,7 @@ export default class Person
 
         let path = arcGroup
             .append("path")
-            .attr("d", arcGen);
+            .attr("d", arcGenerator);
 
         // Hide arc initially if its new during chart update
         if (person.classed("new")) {
