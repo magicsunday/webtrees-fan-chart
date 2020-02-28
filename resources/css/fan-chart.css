@@ -75,6 +75,10 @@
     fill: rgb(240, 240, 240);
 }
 
+#page-fan svg .person text tspan.preferred {
+    text-decoration: underline;
+}
+
 #page-fan svg .label {
     font-weight: normal;
 }

@@ -7,7 +7,7 @@ import Person from "./person";
 
 /**
  * The class handles the creation of the person group and the person elements of the chart. It assignes
- * the click handler and the color group on to of each person.
+ * the click handler and the color group on top of each person.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0

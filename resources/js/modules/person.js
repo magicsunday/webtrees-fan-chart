@@ -59,10 +59,10 @@ export default class Person
             this.addTitleToPerson(person, d.data.name);
 
             // Append labels (initial hidden)
+            let text  = new Text(this._config, this._options);
             let label = this.addLabelToPerson(person);
 
-            let text = new Text(this._config, this._options);
-            text.addLabel(label, d);
+            text.createLabels(label, d);
         }
 
         // Hovering

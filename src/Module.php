@@ -38,9 +38,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     private const ROUTE_DEFAULT     = 'webtrees-fan-chart';
     private const ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}';
 
-//    private const ROUTE_UPDATE     = 'webtrees-fan-chart.update';
-//    private const ROUTE_UPDATE_URL = '/tree/{tree}/webtrees-fan-chart/{xref}/update/';
-
     use ModuleCustomTrait;
     use ModuleChartTrait;
 
@@ -84,10 +81,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $routerContainer->getMap()
             ->get(self::ROUTE_DEFAULT, self::ROUTE_DEFAULT_URL, $this)
             ->allows(RequestMethodInterface::METHOD_POST);
-
-//        $routerContainer->getMap()
-//            ->get(self::ROUTE_UPDATE, self::ROUTE_UPDATE_URL, $this)
-//            ->allows(RequestMethodInterface::METHOD_GET);
 
         $this->theme = app(ModuleThemeInterface::class);
 
@@ -264,21 +257,81 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $fullName        = $this->unescapedHtml($individual->fullName());
         $alternativeName = $this->unescapedHtml($individual->alternateName());
 
+        $givenName   = str_replace('@P.N.', '...', $this->givenName($individual));
+        $surname     = str_replace('@N.N.', '...', $this->surname($individual));
+        $starredName = str_replace('*', '', $this->starredName($individual));
+
         return [
-            'id'              => 0,
-            'xref'            => $individual->xref(),
-            'url'             => $individual->url(),
-            'updateUrl'       => $this->getUpdateRoute($individual),
-            'generation'      => $generation,
-            'name'            => $fullName,
-            'alternativeName' => $alternativeName,
-            'isAltRtl'        => $this->isRtl($alternativeName),
-            'sex'             => $individual->sex(),
-            'born'            => $individual->getBirthYear(),
-            'died'            => $individual->getDeathYear(),
-            'color'           => $this->getColor($individual),
-            'colors'          => [[], []],
+            'id'               => 0,
+            'xref'             => $individual->xref(),
+            'url'              => $individual->url(),
+            'updateUrl'        => $this->getUpdateRoute($individual),
+            'generation'       => $generation,
+            'name'             => $fullName,
+            'givenNames'       => array_filter(explode(' ', $givenName)),
+            'surnames'         => array_filter(explode(' ', $surname)),
+            'preferredName'    => $starredName,
+            'alternativeNames' => array_filter(explode(' ', $alternativeName ?? '')),
+            'isAltRtl'         => $this->isRtl($alternativeName),
+            'sex'              => $individual->sex(),
+            'born'             => $individual->getBirthYear(),
+            'died'             => $individual->getDeathYear(),
+            'color'            => $this->getColor($individual),
+            'colors'           => [[], []],
         ];
+    }
+
+    /**
+     * Returns the given name.
+     *
+     * @param Individual $individual
+     *
+     * @return string
+     */
+    public function givenName(Individual $individual): string
+    {
+        if ($individual->canShowName()) {
+            return $individual->getAllNames()[$individual->getPrimaryName()]['givn'];
+        }
+
+        return I18N::translate('Private');
+    }
+
+    /**
+     * Returns the surname.
+     *
+     * @param Individual $individual
+     *
+     * @return string
+     */
+    public function surname(Individual $individual): string
+    {
+        if ($individual->canShowName()) {
+            return $individual->getAllNames()[$individual->getPrimaryName()]['surn'];
+        }
+
+        return I18N::translate('Private');
+    }
+
+    /**
+     * Returns the starred name.
+     *
+     * @param Individual $individual
+     *
+     * @return string
+     */
+    public function starredName(Individual $individual): string
+    {
+        if ($individual->canShowName()) {
+            $fullNameHtml = $individual->getAllNames()[$individual->getPrimaryName()]['full'];
+
+            $matches = [];
+            preg_match('/<span class="starredname">(.*?)<\/span>/i', $fullNameHtml, $matches);
+
+            return $matches[1] ?? '';
+        }
+
+        return I18N::translate('Private');
     }
 
     /**
@@ -329,10 +382,9 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     private function getUpdateRoute(Individual $individual): string
     {
-//        return route(self::ROUTE_UPDATE, [
         return route('module', [
-            'module' => $this->name(),
-            'action' => 'update',
+            'module'      => $this->name(),
+            'action'      => 'update',
             'xref'        => $individual->xref(),
             'tree'        => $individual->tree()->name(),
             'generations' => $this->config->getGenerations(),

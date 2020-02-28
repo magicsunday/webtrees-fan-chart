@@ -8,7 +8,7 @@
     },
     "description": "",
     "scripts": {
-        "prepare": "rollup -c && uglifyjs resources/js/fan-chart.js --compress --mangle --output resources/js/fan-chart.min.js"
+        "prepare": "rollup -c"
     },
     "devDependencies": {
         "d3-fetch": "^1.1.2",
@@ -19,9 +19,9 @@
         "d3-timer": "^1.0.10",
         "d3-transition": "^1.3.2",
         "d3-zoom": "^1.8.3",
-        "rollup": "^1.31.1",
+        "rollup": "^1.32.0",
         "rollup-plugin-node-resolve": "^5.2.0",
-        "uglify-es": "^3.3.9"
+        "rollup-plugin-terser": "^5.2.0"
     },
     "dependencies": {}
 }
