@@ -1,12 +1,13 @@
 /**
  * See LICENSE.md file for further details.
  */
-import * as d3 from "../d3";
+
+import * as d3 from "./../../d3";
 
 /**
  * Constants
  *
- * @type {Number}
+ * @type {number}
  */
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 5.0;
@@ -23,20 +24,18 @@ export default class Zoom
     /**
      * Constructor.
      *
-     * @param {Config} config
+     * @param {Selection} parent The selected D3 parent element container
      */
-    constructor(config)
+    constructor(parent)
     {
         this._zoom   = null;
-        this._config = config;
+        this._parent = parent;
 
         this.init();
     }
 
     /**
      * Initializes a new D3 zoom behavior.
-     *
-     * @param {Config} config The configuration
      *
      * @private
      */
@@ -58,8 +57,7 @@ export default class Zoom
 
                 zoomLevel = d3.event.transform.k;
 
-                this._config.visual
-                    .attr("transform", d3.event.transform);
+                this._parent.attr("transform", d3.event.transform);
             });
 
         // Add zoom filter
@@ -95,9 +93,7 @@ export default class Zoom
     /**
      * Returns the internal d3 zoom behaviour.
      *
-     * @returns {Object}
-     *
-     * @public
+     * @return {zoom}
      */
     get()
     {

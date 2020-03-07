@@ -1,8 +1,7 @@
 #page-fan #fan_chart {
     position: relative;
-/*
-    font-family: Verdana,sans-serif;
-*/
+    /*font-family: 'Microsoft Sans Serif', Arial, sans-serif;*/
+    font-size: unset;
     display: flex;
     flex: auto;
 }
@@ -19,10 +18,13 @@
     left: 10px;
 }
 
+#page-fan #showMoreOptions.collapsing {
+    transition: none;
+}
+
 #page-fan svg {
     display: block;
     margin: auto;
-    cursor: move;
     cursor: -webkit-grab;
     cursor: -moz-grab;
     cursor: grab;

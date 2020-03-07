@@ -59,9 +59,9 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * The configuration instance.
      *
-     * @var Config
+     * @var Configuration
      */
-    private $config;
+    private $configuration;
 
     /**
      * The current theme instance.
@@ -132,43 +132,51 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $xref       = $request->getAttribute('xref');
         $individual = Individual::getInstance($xref, $tree);
 
-        $this->config = new Config($request);
+        $this->configuration = new Configuration($request);
 
         if ($individual === null) {
             throw new IndividualNotFoundException();
         }
 
         // Convert POST requests into GET requests for pretty URLs.
-        if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $params = (array) $request->getParsedBody();
-
-            return redirect(route(self::ROUTE_DEFAULT, [
-                'tree'               => $tree->name(),
-                'xref'               => $params['xref'],
-                'generations'        => $params['generations'],
-                'fanDegree'          => $params['fanDegree'],
-                'hideEmptySegments'  => $params['hideEmptySegments'] ?? '0',
-                'showColorGradients' => $params['showColorGradients'] ?? '0',
-                'innerArcs'          => $params['innerArcs'],
-                'fontScale'          => $params['fontScale'],
-                'showMore'           => $params['showMore'] ?? '0',
-            ]));
-        }
+//        if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
+//            $params = (array) $request->getParsedBody();
+//
+//            return redirect(route(self::ROUTE_DEFAULT, [
+//                'tree'               => $tree->name(),
+//                'xref'               => $params['xref'],
+//                'generations'        => $params['generations'],
+//                'fanDegree'          => $params['fanDegree'],
+//                'hideEmptySegments'  => $params['hideEmptySegments'] ?? '0',
+//                'showColorGradients' => $params['showColorGradients'] ?? '0',
+//                'innerArcs'          => $params['innerArcs'],
+//                'fontScale'          => $params['fontScale'],
+//                'showMore'           => $params['showMore'] ?? '0',
+//            ]));
+//        }
 
         Auth::checkIndividualAccess($individual);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
+        $ajaxUrl = route('module', [
+            'module' => $this->name(),
+            'action' => 'update',
+            'tree'   => $individual->tree()->name(),
+            'xref'   => '',
+        ]);
+
         return $this->viewResponse(
             $this->name() . '::chart',
             [
-                'title'       => $this->getPageTitle($individual),
-                'moduleName'  => $this->name(),
-                'individual'  => $individual,
-                'tree'        => $tree,
-                'config'      => $this->config,
-                'chartParams' => json_encode($this->getChartParameters($individual)),
-                'stylesheet'  => $this->assetUrl('css/fan-chart.css'),
-                'javascript'  => $this->assetUrl('js/fan-chart.min.js'),
+                'title'         => $this->getPageTitle($individual),
+                'ajaxUrl'       => $ajaxUrl,
+                'moduleName'    => $this->name(),
+                'individual'    => $individual,
+                'tree'          => $tree,
+                'configuration' => $this->configuration,
+                'chartParams'   => json_encode($this->getChartParameters()),
+                'stylesheet'    => $this->assetUrl('css/fan-chart.css'),
+                'javascript'    => $this->assetUrl('js/fan-chart.min.js'),
             ]
         );
     }
@@ -194,24 +202,15 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * Collects and returns the required chart data.
      *
-     * @param Individual $individual The individual used to gather the chart data
-     *
      * @return string[]
      */
-    private function getChartParameters(Individual $individual): array
+    private function getChartParameters(): array
     {
         return [
-            'rtl'                => I18N::direction() === 'rtl',
-            'defaultColor'       => $this->getColor(),
-            'fontColor'          => $this->getChartFontColor(),
-            'fanDegree'          => $this->config->getFanDegree(),
-            'generations'        => $this->config->getGenerations(),
-            'fontScale'          => $this->config->getFontScale(),
-            'hideEmptySegments'  => $this->config->getHideEmptySegments(),
-            'showColorGradients' => $this->config->getShowColorGradients(),
-            'innerArcs'          => $this->config->getInnerArcs(),
-            'data'               => $this->buildJsonTree($individual),
-            'labels'             => [
+            'rtl'          => I18N::direction() === 'rtl',
+            'defaultColor' => $this->getColor(),
+            'fontColor'    => $this->getChartFontColor(),
+            'labels'       => [
                 'zoom' => I18N::translate('Use Ctrl + scroll to zoom in the view'),
                 'move' => I18N::translate('Move the view with two fingers'),
             ],
@@ -229,7 +228,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     public function getUpdateAction(ServerRequestInterface $request): ResponseInterface
     {
-        $this->config = new Config($request);
+        $this->configuration = new Configuration($request);
 
         $tree         = $request->getAttribute('tree');
         $user         = $request->getAttribute('user');
@@ -345,7 +344,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     private function buildJsonTree(Individual $individual = null, int $generation = 1): array
     {
         // Maximum generation reached
-        if (($individual === null) || ($generation > $this->config->getGenerations())) {
+        if (($individual === null) || ($generation > $this->configuration->getGenerations())) {
             return [];
         }
 
@@ -387,7 +386,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             'action'      => 'update',
             'xref'        => $individual->xref(),
             'tree'        => $individual->tree()->name(),
-            'generations' => $this->config->getGenerations(),
+            'generations' => $this->configuration->getGenerations(),
         ]);
     }
 

@@ -1,7 +1,9 @@
 /**
  * See LICENSE.md file for further details.
  */
-import * as d3 from "./d3";
+
+import * as d3 from "./../d3";
+import Configuration from "./../configuration";
 
 export const SEX_MALE   = "M";
 export const SEX_FEMALE = "F";
@@ -18,23 +20,18 @@ export default class Hierarchy
     /**
      * Constructor.
      *
-     * @param {Array}  data    The tree data
-     * @param {Object} options
+     * @param {Configuration} configuration The application configuration
      */
-    constructor(data, options)
+    constructor(configuration)
     {
-        this._options = options;
-        this._nodes   = null;
-
-        this.init(data);
+        this._configuration = configuration;
+        this._nodes         = null;
     }
 
     /**
      * Initialize the hierarchical chart data.
      *
-     * @param {Object} data JSON encoded data
-     *
-     * @public
+     * @param {Object} data The JSON encoded chart data
      */
     init(data)
     {
@@ -48,7 +45,7 @@ export default class Hierarchy
             data => {
                 // Fill up the missing children to the requested number of generations
                 // if (!data.children && (data.generation < maxGenerations)) {
-                if (!data.children && (data.generation < this._options.generations)) {
+                if (!data.children && (data.generation < this._configuration.generations)) {
                     data.children = [
                         this.createEmptyNode(data.generation + 1, SEX_MALE),
                         this.createEmptyNode(data.generation + 1, SEX_FEMALE)
@@ -81,18 +78,16 @@ export default class Hierarchy
 
         // Create unique ids for each element
         this._nodes.forEach(entry => {
-            entry.data.id = this._options.id();
+            entry.data.id = this._configuration.id();
         });
 
-        this._options.id(true);
+        this._configuration.id(true);
     }
 
     /**
      * Returns the nodes.
      *
-     * @returns {Array}
-     *
-     * @public
+     * @return {Array}
      */
     get nodes()
     {
@@ -102,8 +97,8 @@ export default class Hierarchy
     /**
      * Create an empty child node object.
      *
-     * @param {Number} generation Generation of the node
-     * @param {String} sex        The sex of the individual
+     * @param {number} generation Generation of the node
+     * @param {string} sex        The sex of the individual
      *
      * @return {Object}
      *
@@ -112,13 +107,22 @@ export default class Hierarchy
     createEmptyNode(generation, sex)
     {
         return {
-            id         : 0,
-            xref       : "",
-            sex        : sex,
-            name       : "",
-            generation : generation,
-            color      : this._options.defaultColor,
-            colors     : [[], []]
+            id               : 0,
+            xref             : "",
+            url              : "",
+            updateUrl        : "",
+            generation       : generation,
+            name             : "",
+            givenNames       : [],
+            surnames         : [],
+            preferredName    : "",
+            alternativeNames : [],
+            isAltRtl         : false,
+            sex              : sex,
+            born             : "",
+            died             : "",
+            color            : this._configuration.defaultColor,
+            colors           : [[], []]
         };
     }
 }

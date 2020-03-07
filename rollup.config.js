@@ -1,16 +1,16 @@
-import resolve from "rollup-plugin-node-resolve";
+import resolve from '@rollup/plugin-node-resolve';
 import { terser } from "rollup-plugin-terser";
 
 export default {
     input: "resources/js/modules/index.js",
     output: [
         {
-            name: "fanchart",
+            name: "WebtreesFanChart",
             file: "resources/js/fan-chart.js",
             format: "umd"
         },
         {
-            name: "fanchart",
+            name: "WebtreesFanChart",
             file: "resources/js/fan-chart.min.js",
             format: "umd"
         }

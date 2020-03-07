@@ -17,7 +17,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-class Config
+class Configuration
 {
     /**
      * The default number of generations to display.
@@ -150,11 +150,17 @@ class Config
     {
         return [
             180 => I18N::translate('180 degrees'),
+//            195 => I18N::translate('195 degrees'),
             210 => I18N::translate('210 degrees'),
+//            225 => I18N::translate('225 degrees'),
             240 => I18N::translate('240 degrees'),
+//            255 => I18N::translate('255 degrees'),
             270 => I18N::translate('270 degrees'),
+//            285 => I18N::translate('285 degrees'),
             300 => I18N::translate('300 degrees'),
+//            315 => I18N::translate('315 degrees'),
             330 => I18N::translate('330 degrees'),
+//            345 => I18N::translate('345 degrees'),
             360 => I18N::translate('360 degrees'),
         ];
     }

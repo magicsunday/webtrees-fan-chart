@@ -14,12 +14,12 @@ export default class Overlay
     /**
      * Constructor.
      *
-     * @param {Config} config
+     * @param {Selection} parent The selected D3 parent element container
      */
-    constructor(config)
+    constructor(parent)
     {
         // Create the tooltip overlay container
-        this._overlay = config.parent
+        this._element = parent
             .append("div")
             .attr("class", "overlay")
             .style("opacity", 1e-6);
@@ -28,24 +28,23 @@ export default class Overlay
     /**
      * Stop any pending transition and hide overlay immediately.
      *
-     * @param {String}   text     Text to display in overlay
-     * @param {Number}   duration Duration of transition in msec
-     * @param {Function} callback Callback method to execute on end of transition
-     *
-     * @public
+     * @param {string}     text     Text to display in overlay
+     * @param {number}     duration Duration of transition in msec
+     * @param {function()} callback Callback method to execute on end of transition
      */
     show(text, duration = 0, callback = null)
     {
-        this._overlay
+        // Remove any previously added <p> element
+        this._element
             .select("p")
             .remove();
 
-        this._overlay
+        this._element
             .append("p")
             .attr("class", "tooltip")
             .text(text);
 
-        this._overlay
+        this._element
             .transition()
             .duration(duration)
             .style("opacity", 1)
@@ -59,17 +58,25 @@ export default class Overlay
     /**
      * Stop any pending transition and hide overlay immediately.
      *
-     * @param {Number} delay    Delay in milliseconds to wait before transition should start
-     * @param {Number} duration Duration of transition in milliseconds
-     *
-     * @public
+     * @param {number} delay    Delay in milliseconds to wait before transition should start
+     * @param {number} duration Duration of transition in milliseconds
      */
     hide(delay = 0, duration = 0)
     {
-        this._overlay
+        this._element
             .transition()
             .delay(delay)
             .duration(duration)
             .style("opacity", 1e-6);
+    }
+
+    /**
+     * Returns the internal element.
+     *
+     * @return {Selection}
+     */
+    get()
+    {
+        return this._element;
     }
 }

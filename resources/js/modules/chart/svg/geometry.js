@@ -1,7 +1,9 @@
 /**
  * See LICENSE.md file for further details.
  */
-import * as d3 from "./d3";
+
+import * as d3 from "./../../d3";
+import Configuration from "./../../configuration";
 
 export const MATH_DEG2RAD = Math.PI / 180;
 export const MATH_RAD2DEG = 180 / Math.PI;
@@ -19,37 +21,37 @@ export default class Geometry
     /**
      * Constructor.
      *
-     * @param {Options} options
+     * @param {Configuration} configuration The application configuration
      */
-    constructor(options)
+    constructor(configuration)
     {
-        this._options = options;
+        this._configuration = configuration;
     }
 
     /**
-     * @return {Number}
+     * @return {number}
      *
      * @private
      */
     get startPi()
     {
-        return -(this._options.fanDegree / 2 * MATH_DEG2RAD);
+        return -(this._configuration.fanDegree / 2 * MATH_DEG2RAD);
     }
 
     /**
-     * @return {Number}
+     * @return {number}
      *
      * @private
      */
     get endPi()
     {
-        return (this._options.fanDegree / 2 * MATH_DEG2RAD);
+        return (this._configuration.fanDegree / 2 * MATH_DEG2RAD);
     }
 
     /**
      * Scale the angles linear across the circle
      *
-     * @return {Number}
+     * @return {number}
      */
     get scale()
     {
@@ -59,11 +61,9 @@ export default class Geometry
     /**
      * Get the inner radius depending on the depth of an element.
      *
-     * @param {Object} data D3 data object
+     * @param {Object} data The D3 data object
      *
-     * @returns {Number}
-     *
-     * @public
+     * @return {number}
      */
     innerRadius(data)
     {
@@ -71,57 +71,53 @@ export default class Geometry
             return 0;
         }
 
-        if (data.depth < this._options.numberOfInnerCircles) {
-            return ((data.depth - 1) * (this._options.innerArcHeight + this._options.circlePadding))
-                + this._options.centerCircleRadius;
+        if (data.depth < this._configuration.numberOfInnerCircles) {
+            return ((data.depth - 1) * (this._configuration.innerArcHeight + this._configuration.circlePadding))
+                + this._configuration.centerCircleRadius;
         }
 
-        const innerWithPadding = this._options.innerArcHeight + this._options.circlePadding;
-        const outerWithPadding = this._options.outerArcHeight + this._options.circlePadding;
+        const innerWithPadding = this._configuration.innerArcHeight + this._configuration.circlePadding;
+        const outerWithPadding = this._configuration.outerArcHeight + this._configuration.circlePadding;
 
-        return ((this._options.numberOfInnerCircles - 1) * innerWithPadding)
-            + ((data.depth - this._options.numberOfInnerCircles) * outerWithPadding)
-            + this._options.centerCircleRadius;
+        return ((this._configuration.numberOfInnerCircles - 1) * innerWithPadding)
+            + ((data.depth - this._configuration.numberOfInnerCircles) * outerWithPadding)
+            + this._configuration.centerCircleRadius;
     }
 
     /**
      * Get the outer radius depending on the depth of an element.
      *
-     * @param {Object} data D3 data object
+     * @param {Object} data The D3 data object
      *
-     * @returns {Number}
-     *
-     * @public
+     * @return {number}
      */
     outerRadius(data)
     {
         if (data.depth === 0) {
-            return this._options.centerCircleRadius;
+            return this._configuration.centerCircleRadius;
         }
 
-        if (data.depth <  this._options.numberOfInnerCircles) {
-            return ((data.depth - 1) * (this._options.innerArcHeight + this._options.circlePadding))
-                + this._options.innerArcHeight
-                + this._options.centerCircleRadius;
+        if (data.depth <  this._configuration.numberOfInnerCircles) {
+            return ((data.depth - 1) * (this._configuration.innerArcHeight + this._configuration.circlePadding))
+                + this._configuration.innerArcHeight
+                + this._configuration.centerCircleRadius;
         }
 
-        const innerWithPadding = this._options.innerArcHeight + this._options.circlePadding;
-        const outerWithPadding = this._options.outerArcHeight + this._options.circlePadding;
+        const innerWithPadding = this._configuration.innerArcHeight + this._configuration.circlePadding;
+        const outerWithPadding = this._configuration.outerArcHeight + this._configuration.circlePadding;
 
-        return ((this._options.numberOfInnerCircles - 1) * innerWithPadding)
-            + ((data.depth - this._options.numberOfInnerCircles) * outerWithPadding)
-            + this._options.outerArcHeight
-            + this._options.centerCircleRadius;
+        return ((this._configuration.numberOfInnerCircles - 1) * innerWithPadding)
+            + ((data.depth - this._configuration.numberOfInnerCircles) * outerWithPadding)
+            + this._configuration.outerArcHeight
+            + this._configuration.centerCircleRadius;
     }
 
     /**
      * Get the center radius.
      *
-     * @param {Object} data D3 data object
+     * @param {Object} data The D3 data object
      *
-     * @returns {Number}
-     *
-     * @public
+     * @return {number}
      */
     centerRadius(data)
     {
@@ -132,12 +128,10 @@ export default class Geometry
      * Get an radius relative to the outer radius adjusted by the given
      * position in percent.
      *
-     * @param {Object} data     D3 data object
-     * @param {Number} position Percent offset (0 = inner radius, 100 = outer radius)
+     * @param {Object} data     The D3 data object
+     * @param {number} position Percent offset (0 = inner radius, 100 = outer radius)
      *
-     * @returns {number}
-     *
-     * @public
+     * @return {number}
      */
     relativeRadius(data, position)
     {
@@ -148,9 +142,9 @@ export default class Geometry
     /**
      * Calculates the angle in radians.
      *
-     * @param {Number} value The value
+     * @param {number} value The value
      *
-     * @returns {Number}
+     * @return {number}
      *
      * @private
      */
@@ -167,9 +161,7 @@ export default class Geometry
      *
      * @param {Object} data The D3 data object
      *
-     * @returns {Number}
-     *
-     * @public
+     * @return {number}
      */
     startAngle(data)
     {
@@ -181,9 +173,7 @@ export default class Geometry
      *
      * @param {Object} data The D3 data object
      *
-     * @returns {Number}
-     *
-     * @public
+     * @return {number}
      */
     endAngle(data)
     {
@@ -195,11 +185,9 @@ export default class Geometry
      * position in percent.
      *
      * @param {Object} data     The D3 data object
-     * @param {Number} position The percent offset (0 = inner radius, 100 = outer radius)
+     * @param {number} position The percent offset (0 = inner radius, 100 = outer radius)
      *
-     * @return {Number}
-     *
-     * @public
+     * @return {number}
      */
     arcLength(data, position)
     {

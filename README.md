@@ -60,6 +60,6 @@ At the charts menu, you will find a new link called `Fan chart`.
 To build/update the javascript, run the following commands:
 
 ```
-npm install
+npm install --unsafe-perm --save-dev
 npm run prepare
 ```

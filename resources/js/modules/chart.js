@@ -1,12 +1,14 @@
 /**
  * See LICENSE.md file for further details.
  */
-import * as d3 from "./d3";
-import Arc from "./arc";
-import Config from "./config";
-import Hierarchy from "./hierarchy";
+
+import Configuration from "./configuration";
+import Hierarchy from "./chart/hierarchy";
 import Overlay from "./chart/overlay";
-import Zoom from "./chart/zoom";
+import Svg from "./chart/svg";
+import Person from "./chart/svg/person";
+import Gradient from "./chart/gradient";
+import Update from "./chart/update";
 
 const MIN_HEIGHT  = 500;
 const MIN_PADDING = 10;   // Minimum padding around view box
@@ -23,102 +25,25 @@ export default class Chart
     /**
      * Constructor.
      *
-     * @param {String}  selector
-     * @param {Options} options
+     * @param {Selection}     parent        The selected D3 parent element container
+     * @param {Configuration} configuration The application configuration
      */
-    constructor(selector, options)
+    constructor(parent, configuration)
     {
-        this._options = options;
-        this._config  = new Config();
-        this._overlay = null;
-        this._zoom    = null;
-
-        // Parent container
-        this._config.parent = d3.select(selector);
-
-        this.createSvg();
-        this.init();
+        this._configuration = configuration;
+        this._parent        = parent;
+        this._hierarchy     = null;
+        this._data          = null;
     }
 
     /**
-     * @private
+     * Returns the SVG instance.
+     *
+     * @return {Svg}
      */
-    createSvg()
+    get svg()
     {
-        // Add SVG element
-        this._config.svg = this._config.parent
-            .append("svg")
-            .attr("version", "1.1")
-            .attr("xmlns", "http://www.w3.org/2000/svg")
-            .attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
-            .attr("width", "100%")
-            .attr("height", "100%")
-            .attr("text-rendering", "geometricPrecision")
-            .attr("text-anchor", "middle")
-            .on("contextmenu", () => d3.event.preventDefault())
-            .on("wheel", () => {
-                if (!d3.event.ctrlKey) {
-                    this.overlay.show(
-                        this._options.labels.zoom,
-                        300,
-                        () => {
-                            this.overlay.hide(700, 800);
-                        }
-                    );
-                }
-            })
-            .on("touchend", () => {
-                if (d3.event.touches.length < 2) {
-                    this.overlay.hide(0, 800);
-                }
-            })
-            .on("touchmove", () => {
-                if (d3.event.touches.length >= 2) {
-                    // Hide tooltip on more than 2 fingers
-                    this.overlay.hide();
-                } else {
-                    // Show tooltip if less than 2 fingers are used
-                    this.overlay.show(this._options.labels.move);
-                }
-            })
-            .on("click", () => this.doStopPropagation(), true);
-    }
-
-    /**
-     * @private
-     */
-    init()
-    {
-        if (this._options.rtl) {
-            this._config.svg.classed("rtl", true);
-        }
-
-        // Create the svg:defs element
-        this._config.svgDefs = this._config.svg
-            .append("defs");
-
-        this.overlay = new Overlay(this._config);
-
-        // Bind click event on reset button
-        d3.select("#resetButton")
-            .on("click", () => this.doReset());
-
-        // Add group
-        this._config.visual = this._config.svg
-            .append("g");
-
-        this._config.visual
-            .append("g")
-            .attr("class", "personGroup");
-
-        this._zoom = new Zoom(this._config);
-        this._config.svg.call(this._zoom.get());
-
-        // Create hierarchical data
-        let hierarchy = new Hierarchy(this._options.data, this._options);
-        let arc       = new Arc(this._config, this._options, hierarchy);
-
-        this.updateViewBox();
+        return this._svg;
     }
 
     /**
@@ -129,8 +54,8 @@ export default class Chart
     updateViewBox()
     {
         // Get bounding boxes
-        let svgBoundingBox    = this._config.visual.node().getBBox();
-        let clientBoundingBox = this._config.parent.node().getBoundingClientRect();
+        let svgBoundingBox    = this._svg.visual.node().getBBox();
+        let clientBoundingBox = this._parent.node().getBoundingClientRect();
 
         // View box should have at least the same width/height as the parent element
         let viewBoxWidth  = Math.max(clientBoundingBox.width, svgBoundingBox.width);
@@ -149,7 +74,7 @@ export default class Chart
         viewBoxHeight = Math.ceil(viewBoxHeight + (MIN_PADDING * 2));
 
         // Set view box attribute
-        this._config.svg
+        this._svg.get()
             .attr("viewBox", [
                 viewBoxLeft,
                 viewBoxTop,
@@ -158,61 +83,137 @@ export default class Chart
             ]);
 
         // Add rectangle element
-        // this._config.svg
+        // this._svg
         //     .insert("rect", ":first-child")
         //     .attr("class", "background")
         //     .attr("width", "100%")
         //     .attr("height", "100%");
         //
         // // Adjust rectangle position
-        // this._config.svg
+        // this._svg
         //     .select("rect")
         //     .attr("x", viewBoxLeft)
         //     .attr("y", viewBoxTop);
     }
 
     /**
-     * Returns the overlay container.
+     * Returns the chart data.
      *
-     * @return {Overlay}
+     * @return {Selection}
      */
-    get overlay()
+    get data()
     {
-        return this._overlay;
+        return this._data;
     }
 
     /**
-     * Sets parent overlay container.
+     * Sets the chart data.
      *
-     * @param {Overlay} value The overlay container
+     * @param {Object} value The chart data
      */
-    set overlay(value)
+    set data(value)
     {
-        this._overlay = value;
+        this._data = value;
+
+        // Create the hierarchical data structure
+        this._hierarchy = new Hierarchy(this._configuration);
+        this._hierarchy.init(this._data);
     }
 
     /**
-     * Prevent default click and stop propagation.
+     * This method draws the chart.
+     */
+    draw()
+    {
+        // Remove previously created content
+        this._parent.html("");
+
+        // Create the <svg> element
+        this._svg = new Svg(this._parent, this._configuration);
+
+        // Overlay must be placed after the <svg> element
+        this._overlay = new Overlay(this._parent);
+
+        // Init the <svg> events
+        this._svg.initEvents(this._overlay);
+
+        let personGroup = this._svg.get().select("g.personGroup");
+        let gradient    = new Gradient(this._svg, this._configuration);
+
+        personGroup.selectAll("g.person")
+            .data(this._hierarchy.nodes)
+            .enter()
+            .each(entry => {
+                let person = personGroup
+                    .append("g")
+                    .attr("class", "person")
+                    .attr("id", "person-" + entry.data.id)
+                    .on("click", null);
+
+                new Person(this._svg, this._configuration, person, entry);
+
+                if (this._configuration.showColorGradients) {
+                    gradient.init(entry);
+                }
+            });
+
+        gradient.addColorGroup(this._hierarchy)
+            .style("opacity", 1);
+
+        this.bindClickEventListener();
+        this.updateViewBox();
+    }
+
+    /**
+     * This method bind the "click" event listeners to a "person" element.
+     */
+    bindClickEventListener()
+    {
+        let personGroup = this._svg.get()
+            .select("g.personGroup")
+            .selectAll("g.person")
+            .data(this._hierarchy.nodes)
+            .filter(data => (data.data.xref !== ""))
+            .classed("available", true);
+
+        // Trigger method on click
+        personGroup.on("click", this.personClick.bind(this));
+    }
+
+    /**
+     * Method triggers either the "update" or "individual" method on the click on an person.
+     *
+     * @param {Object} data The D3 data object
      *
      * @private
      */
-    doStopPropagation()
+    personClick(data)
     {
-        if (d3.event.defaultPrevented) {
-            d3.event.stopPropagation();
-        }
+        // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
+        (data.depth === 0) ? this.redirectToIndividual(data.data.url) : this.update(data.data.updateUrl);
     }
 
     /**
-     * Reset chart to initial zoom level and position.
+     * Redirects to the individual page.
+     *
+     * @param {string} url The individual URL
      *
      * @private
      */
-    doReset()
+    redirectToIndividual(url)
     {
-        this._config.svg
-            .transition()
-            .duration(750)
-            .call(this._zoom.get().transform, d3.zoomIdentity);
+        window.location = url;
+    }
+
+    /**
+     * Updates the chart with the data of the selected individual.
+     *
+     * @param {string} url The update URL
+     */
+    update(url)
+    {
+        let update = new Update(this._svg, this._configuration, this._hierarchy);
+
+        update.update(url, () => this.bindClickEventListener());
     }
 }

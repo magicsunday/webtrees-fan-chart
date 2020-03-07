@@ -1,9 +1,12 @@
 /**
  * See LICENSE.md file for further details.
  */
-import * as d3 from "./d3";
-import Text from "./arc/text";
+
+import * as d3 from "./../../d3";
+import Configuration from "./../../configuration";
 import Geometry, {MATH_PI2} from "./geometry";
+import Svg from "./../svg";
+import Text from "./text";
 
 /**
  * This class handles the creation of the person elements of the chart.
@@ -17,52 +20,48 @@ export default class Person
     /**
      * Constructor.
      *
-     * @param {Config}    config    The configuration
-     * @param {Options}   options
-     * @param {Hierarchy} hierarchy
-     * @param {Object}    person
-     * @param {Object}    d
+     * @param {Svg}           svg
+     * @param {Configuration} configuration The application configuration
+     * @param {Selection}     person
+     * @param {Object}        data
      */
-    constructor(config, options, hierarchy, person, d)
+    constructor(svg, configuration, person, data)
     {
-        this._config    = config;
-        this._options   = options;
-        this._hierarchy = hierarchy;
-        this._geometry  = new Geometry(options);
+        this._svg           = svg;
+        this._configuration = configuration;
+        this._geometry      = new Geometry(this._configuration);
 
-        this.init(person, d);
+        this.init(person, data);
     }
 
     /**
      * Initialize the required elements.
      *
-     * @param {Object} person
-     * @param {Object} d
-     *
-     * @public
+     * @param {Selection} person
+     * @param {Object}    data
      */
-    init(person, d)
+    init(person, data)
     {
-        if (person.classed("new") && this._options.hideEmptySegments) {
-            this.addArcToPerson(person, d);
+        if (person.classed("new") && this._configuration.hideEmptySegments) {
+            this.addArcToPerson(person, data);
         } else {
             if (!person.classed("new")
                 && !person.classed("update")
                 && !person.classed("remove")
-                && ((d.data.xref !== "") || !this._options.hideEmptySegments)
+                && ((data.data.xref !== "") || !this._configuration.hideEmptySegments)
             ) {
-                this.addArcToPerson(person, d);
+                this.addArcToPerson(person, data);
             }
         }
 
-        if (d.data.xref !== "") {
-            this.addTitleToPerson(person, d.data.name);
+        if (data.data.xref !== "") {
+            this.addTitleToPerson(person, data.data.name);
 
             // Append labels (initial hidden)
-            let text  = new Text(this._config, this._options);
-            let label = this.addLabelToPerson(person);
+            let text  = new Text(this._svg, this._configuration);
+            let label = this.addLabelToPerson(person, data);
 
-            text.createLabels(label, d);
+            text.createLabels(label, data);
         }
 
         // Hovering
@@ -74,7 +73,7 @@ export default class Person
      * Handles the event when a pointing device is moved onto an element.
      *
      * @param {Object} datum
-     * @param {Number} index
+     * @param {number} index
      * @param {Array}  nodes
      *
      * @private
@@ -89,7 +88,7 @@ export default class Person
      * Handles the event when a pointing device is moved off an element.
      *
      * @param {Object} datum
-     * @param {Number} index
+     * @param {number} index
      * @param {Array}  nodes
      *
      * @private
@@ -103,8 +102,8 @@ export default class Person
     /**
      * Appends the arc element to the person element.
      *
-     * @param {Object} person The parent element used to append the arc too
-     * @param {Object} data   The D3 data object
+     * @param {Selection} person The parent element used to append the arc too
+     * @param {Object}    data   The D3 data object
      *
      * @private
      */
@@ -135,8 +134,8 @@ export default class Person
     /**
      * Add title element to the person element containing the full name of the individual.
      *
-     * @param {Object} person The parent element used to append the title too
-     * @param {String} value  The value to assign to the title
+     * @param {Selection} person The parent element used to append the title too
+     * @param {string}    value  The value to assign to the title
      *
      * @private
      */
@@ -150,17 +149,37 @@ export default class Person
     /**
      * Append labels (initial hidden).
      *
-     * @param {Object} parent The parent element used to append the label element too
+     * @param {Selection} parent The parent element used to append the label element too
+     * @param {Object}    data   The D3 data object
      *
-     * @return {Object} Newly added label element
+     * @return {Selection} Newly added label element
      *
      * @private
      */
-    addLabelToPerson(parent)
+    addLabelToPerson(parent, data)
     {
         return parent
             .append("g")
             .attr("class", "label")
-            .style("fill", this._options.fontColor);
+            .style("font-size", this.getFontSize(data) + "px")
+            .style("fill", this._configuration.fontColor);
+    }
+
+    /**
+     * Get the scaled font size.
+     *
+     * @param {Object} data The The D3 data object
+     *
+     * @return {number}
+     */
+    getFontSize(data)
+    {
+        let fontSize = this._configuration.fontSize;
+
+        if (data.depth >= (this._configuration.numberOfInnerCircles + 1)) {
+            fontSize += 1;
+        }
+
+        return ((fontSize - data.depth) * this._configuration.fontScale / 100.0);
     }
 }
