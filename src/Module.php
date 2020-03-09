@@ -139,21 +139,21 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         }
 
         // Convert POST requests into GET requests for pretty URLs.
-//        if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
-//            $params = (array) $request->getParsedBody();
-//
-//            return redirect(route(self::ROUTE_DEFAULT, [
-//                'tree'               => $tree->name(),
-//                'xref'               => $params['xref'],
-//                'generations'        => $params['generations'],
-//                'fanDegree'          => $params['fanDegree'],
-//                'hideEmptySegments'  => $params['hideEmptySegments'] ?? '0',
-//                'showColorGradients' => $params['showColorGradients'] ?? '0',
-//                'innerArcs'          => $params['innerArcs'],
-//                'fontScale'          => $params['fontScale'],
-//                'showMore'           => $params['showMore'] ?? '0',
-//            ]));
-//        }
+        // if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
+        //     $params = (array) $request->getParsedBody();
+        //
+        //     return redirect(route(self::ROUTE_DEFAULT, [
+        //         'tree'               => $tree->name(),
+        //         'xref'               => $params['xref'],
+        //         'generations'        => $params['generations'],
+        //         'fanDegree'          => $params['fanDegree'],
+        //         'hideEmptySegments'  => $params['hideEmptySegments'] ?? '0',
+        //         'showColorGradients' => $params['showColorGradients'] ?? '0',
+        //         'innerArcs'          => $params['innerArcs'],
+        //         'fontScale'          => $params['fontScale'],
+        //         'showMore'           => $params['showMore'] ?? '0',
+        //     ]));
+        // }
 
         Auth::checkIndividualAccess($individual);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
@@ -174,7 +174,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'individual'    => $individual,
                 'tree'          => $tree,
                 'configuration' => $this->configuration,
-                'chartParams'   => json_encode($this->getChartParameters()),
+                'chartParams'   => json_encode($this->getChartParameters($individual)),
                 'stylesheet'    => $this->assetUrl('css/fan-chart.css'),
                 'javascript'    => $this->assetUrl('js/fan-chart.min.js'),
             ]
@@ -202,13 +202,15 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * Collects and returns the required chart data.
      *
+     * @param Individual $individual The individual used in the current chart
+     *
      * @return string[]
      */
-    private function getChartParameters(): array
+    private function getChartParameters(Individual $individual): array
     {
         return [
             'rtl'          => I18N::direction() === 'rtl',
-            'defaultColor' => $this->getColor(),
+            'defaultColor' => $this->getColor($individual),
             'fontColor'    => $this->getChartFontColor(),
             'labels'       => [
                 'zoom' => I18N::translate('Use Ctrl + scroll to zoom in the view'),
@@ -253,12 +255,21 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     private function getIndividualData(Individual $individual, int $generation): array
     {
-        $fullName        = $this->unescapedHtml($individual->fullName());
-        $alternativeName = $this->unescapedHtml($individual->alternateName());
+        $allNames = $individual->getAllNames()[$individual->getPrimaryName()];
 
-        $givenName   = str_replace('@P.N.', '...', $this->givenName($individual));
-        $surname     = str_replace('@N.N.', '...', $this->surname($individual));
-        $starredName = str_replace('*', '', $this->starredName($individual));
+        // The formatted name of the individual (containing HTML)
+        $full = $allNames['full'];
+
+        // The name of the person without formatting of the individual parts of the name.
+        // Remove placeholders as we do not need them in this module
+        $fullNN = str_replace(['@N.N.', '@P.N.'], '', $allNames['fullNN']);
+
+        // Extract name parts
+        $preferredName   = $this->preferredName($full);
+        $nickName        = $this->nickname($full);
+        $lastNames       = $this->lastNames($full);
+        $firstNames      = $this->firstNames($full, $lastNames, $nickName);
+        $alternativeName = $this->unescapedHtml($individual->alternateName());
 
         return [
             'id'               => 0,
@@ -266,11 +277,11 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             'url'              => $individual->url(),
             'updateUrl'        => $this->getUpdateRoute($individual),
             'generation'       => $generation,
-            'name'             => $fullName,
-            'givenNames'       => array_filter(explode(' ', $givenName)),
-            'surnames'         => array_filter(explode(' ', $surname)),
-            'preferredName'    => $starredName,
-            'alternativeNames' => array_filter(explode(' ', $alternativeName ?? '')),
+            'name'             => $fullNN,
+            'firstNames'       => $firstNames,
+            'lastNames'        => $lastNames,
+            'preferredName'    => $preferredName,
+            'alternativeNames' => array_filter(explode(' ', $alternativeName)),
             'isAltRtl'         => $this->isRtl($alternativeName),
             'sex'              => $individual->sex(),
             'born'             => $individual->getBirthYear(),
@@ -281,56 +292,69 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     }
 
     /**
-     * Returns the given name.
+     * Returns all first names from the given full name.
      *
-     * @param Individual $individual
+     * @param string   $fullName  The formatted name of the individual (containing HTML)
+     * @param string[] $lastNames The list of last names of the individual
+     * @param string   $nickname  The nickname of the individual if any
      *
-     * @return string
+     * @return string[]
      */
-    public function givenName(Individual $individual): string
+    public function firstNames(string $fullName, array $lastNames, string $nickname): array
     {
-        if ($individual->canShowName()) {
-            return $individual->getAllNames()[$individual->getPrimaryName()]['givn'];
-        }
+        // Remove all HTML from the formatted full name
+        $fullName = $this->unescapedHtml($fullName);
 
-        return I18N::translate('Private');
+        // Extract the leftover first names of the individual (removing last names and nickname)
+        $firstNames = array_filter(explode(' ', $fullName));
+
+        return array_values(array_diff($firstNames, $lastNames, [ $nickname ]));
     }
 
     /**
-     * Returns the surname.
+     * Returns all last names from the given full name.
      *
-     * @param Individual $individual
+     * @param string $fullName The formatted name of the individual (containing HTML)
      *
-     * @return string
+     * @return string[]
      */
-    public function surname(Individual $individual): string
+    public function lastNames(string $fullName): array
     {
-        if ($individual->canShowName()) {
-            return $individual->getAllNames()[$individual->getPrimaryName()]['surn'];
-        }
+        // Extract all last names
+        $matches = [];
+        preg_match_all('/<span class="SURN">(.*?)<\/span>/i', $fullName, $matches);
 
-        return I18N::translate('Private');
+        return array_values(array_filter($matches[1])) ?? [];
     }
 
     /**
-     * Returns the starred name.
+     * Returns the preferred name from the given full name.
      *
-     * @param Individual $individual
+     * @param string $fullName The formatted name of the individual (containing HTML)
      *
      * @return string
      */
-    public function starredName(Individual $individual): string
+    public function preferredName(string $fullName): string
     {
-        if ($individual->canShowName()) {
-            $fullNameHtml = $individual->getAllNames()[$individual->getPrimaryName()]['full'];
+        $matches = [];
+        preg_match('/<span class="starredname">(.*?)<\/span>/i', $fullName, $matches);
 
-            $matches = [];
-            preg_match('/<span class="starredname">(.*?)<\/span>/i', $fullNameHtml, $matches);
+        return $matches[1] ?? '';
+    }
 
-            return $matches[1] ?? '';
-        }
+    /**
+     * Returns the nickname from the given full name.
+     *
+     * @param string $fullName The formatted name of the individual (containing HTML)
+     *
+     * @return string
+     */
+    public function nickname(string $fullName): string
+    {
+        $matches = [];
+        preg_match('/<q class="wt-nickname">(.*?)<\/q>/i', $fullName, $matches);
 
-        return I18N::translate('Private');
+        return $matches[1] ?? '';
     }
 
     /**
@@ -341,7 +365,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @return string[][]
      */
-    private function buildJsonTree(Individual $individual = null, int $generation = 1): array
+    private function buildJsonTree(?Individual $individual, int $generation = 1): array
     {
         // Maximum generation reached
         if (($individual === null) || ($generation > $this->configuration->getGenerations())) {
@@ -440,33 +464,24 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             ] + $parameters);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function customModuleAuthorName(): string
     {
         return self::CUSTOM_AUTHOR;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public function customModuleVersion(): string
     {
         return self::CUSTOM_VERSION;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public function customModuleLatestVersionUrl(): string
     {
         return self::CUSTOM_WEBSITE;
     }
 
-    /**
-     * @inheritDoc
-     */
+
     public function customModuleSupportUrl(): string
     {
         return self::CUSTOM_WEBSITE;
@@ -488,25 +503,25 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * Returns the unescaped HTML string.
      *
-     * @param string $value The value to strip the HTML tags from
+     * @param null|string $value The value to strip the HTML tags from
      *
-     * @return null|string
+     * @return string
      */
-    public function unescapedHtml(string $value = null): ?string
+    public function unescapedHtml(?string $value): string
     {
         return ($value === null)
-            ? $value
+            ? ''
             : html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
     }
 
     /**
      * Returns whether the given text is in RTL style or not.
      *
-     * @param string $text The text to check
+     * @param null|string $text The text to check
      *
      * @return bool
      */
-    public function isRtl(string $text = null): bool
+    public function isRtl(?string $text): bool
     {
         return $text ? I18N::scriptDirection(I18N::textScript($text)) === 'rtl' : false;
     }
@@ -518,7 +533,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @return string HTML color code
      */
-    public function getColor(Individual $individual = null): string
+    public function getColor(?Individual $individual): string
     {
         $genderLower = ($individual === null) ? 'u' : strtolower($individual->sex());
         return '#' . $this->theme->parameter('chart-background-' . $genderLower);

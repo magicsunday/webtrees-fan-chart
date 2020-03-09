@@ -33,7 +33,7 @@ export default class Chart
         this._configuration = configuration;
         this._parent        = parent;
         this._hierarchy     = null;
-        this._data          = null;
+        this._data          = {};
     }
 
     /**
@@ -99,7 +99,7 @@ export default class Chart
     /**
      * Returns the chart data.
      *
-     * @return {Selection}
+     * @return {Object}
      */
     get data()
     {

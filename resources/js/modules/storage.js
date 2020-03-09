@@ -51,7 +51,7 @@ export class Storage
     /**
      * This methods stores the value of an input element depending on its type.
      *
-     * @param {HTMLElement} element The HTML input element
+     * @param {EventTarget|HTMLInputElement} element The HTML input element
      */
     onInput(element)
     {

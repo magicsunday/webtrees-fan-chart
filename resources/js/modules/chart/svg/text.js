@@ -82,7 +82,7 @@ export default class Text
                     .attr("dy", "2px");
 
                 this.addFirstNames(text1, data);
-                this.addLastNames(text1, data, 0.25);
+                this.addLastNames(text1, data);
                 this.truncateNames(text1, data, 0);
             }
 
@@ -129,13 +129,13 @@ export default class Text
     {
         let i = 0;
 
-        for (let givenName of data.data.givenNames) {
+        for (let firstName of data.data.firstNames) {
             // Create a <tspan> element for each given name
             let tspan = parent.append("tspan")
-                .text(givenName);
+                .text(firstName);
 
             // The preferred name
-            if (givenName === data.data.preferredName) {
+            if (firstName === data.data.preferredName) {
                 tspan.attr("class", "preferred");
             }
 
@@ -153,18 +153,22 @@ export default class Text
      *
      * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
-     * @param {number}    dx     Delta X offset used to create a small spacing between multiple words
      */
-    addLastNames(parent, data, dx = 0)
+    addLastNames(parent, data)
     {
-        for (let surname of data.data.surnames) {
+        let i = 0;
+
+        for (let lastName of data.data.lastNames) {
             // Create a <tspan> element for the last name
             let tspan = parent.append("tspan")
-                .text(surname);
+                .text(lastName);
 
-            if (dx !== 0) {
-                tspan.attr("dx", dx + "em");
+            // Add some spacing between the elements
+            if (i !== 0) {
+                tspan.attr("dx", "0.25em");
             }
+
+            ++i;
         }
     }
 
@@ -202,7 +206,7 @@ export default class Text
     addTimeSpan(parent, data)
     {
         // Create a <tspan> element for the last name
-        let tspan = parent.append("tspan")
+        parent.append("tspan")
             .text(this.getTimeSpan(data));
     }
 
@@ -307,9 +311,7 @@ export default class Text
      */
     createTextElement(parent, data)
     {
-        return parent
-            .append("text");
-            // .style("font-size", this.getFontSize(data) + "px");
+        return parent.append("text");
     }
 
     /**
@@ -410,7 +412,7 @@ export default class Text
     }
 
     /**
-     * Get the relative position offsets in percent for different text lines (givenname, surname, dates).
+     * Get the relative position offsets in percent for different text lines (firstName, lastName, dates).
      *   => (0 = inner radius, 100 = outer radius)
      *
      * @param {number} index The index position of element in parent container. Required to create a unique path id.
@@ -421,7 +423,7 @@ export default class Text
     getTextOffset(index, data)
     {
         // First names, Last name, Alternate name, Date
-        return this.isPositionFlipped(data) ? [23, 41, 60, 83][index] : [73, 55, 36, 13][index];
+        return this.isPositionFlipped(data) ? [23, 42, 61, 84][index] : [73, 54, 35, 12][index];
     }
 
     /**
@@ -452,24 +454,6 @@ export default class Text
     }
 
     /**
-     * Calculates the font size of the data element depending on its depth in the chart.
-     *
-     * @param {Object} data The The D3 data object
-     *
-     * @return {number}
-     */
-    getFontSize(data)
-    {
-        let fontSize = this._configuration.fontSize;
-
-        if (data.depth >= (this._configuration.numberOfInnerCircles + 1)) {
-            fontSize += 1;
-        }
-
-        return ((fontSize - data.depth) * this._configuration.fontScale / 100.0);
-    }
-
-    /**
      * Transform the D3 <text> elements in the group. Rotate each <text> element depending on its offset,
      * so that they are equally positioned inside the arc.
      *
@@ -487,6 +471,7 @@ export default class Text
 
         // Special offsets for shifting the text around depending on the depth
         switch (data.depth) {
+            case 0: offset = 1.5; break;
             case 1: offset = 6.5; break;
             case 2: offset = 3.5; break;
             case 3: offset = 2.2; break;
