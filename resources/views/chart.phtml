@@ -47,18 +47,11 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 
         <div class="form-group row">
             <label class="col-sm-3 col-form-label wt-page-options-label" for="fanDegree">
-                <?= I18N::translate('Layout') ?>
+                <?= I18N::translate('Fan size') ?>
             </label>
-            <div class="col-sm-9 wt-page-options-value">
-                <?=
-                    view('components/select', [
-                        'id'       => 'fanDegree',
-                        'name'     => 'fanDegree',
-                        'selected' => $configuration->getFanDegree(),
-                        'options'  => $configuration->getFanDegreeList(),
-                        'class'    => 'form-control-sm',
-                    ])
-                ?>
+            <div class="col-sm-9 wt-page-options-value range-input">
+                <input id="fanDegree" class="custom-range" type="range" value="<?= $configuration->getFanDegree() ?>" min="180" max="360" step="5">
+                <output id="fanDegreeOutput" class="custom-range-value wt-page-options-label"><?= $configuration->getFanDegree() ?>°</output>
             </div>
         </div>
 
@@ -107,7 +100,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label wt-page-options-label" for="innerArcs">
-                    <?= I18N::translate('Number of inner circles') ?>
+                    <?= I18N::translate('Number of inner levels') ?>
                 </label>
                 <div class="col-sm-9 wt-page-options-value">
                     <?=
@@ -120,7 +113,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                         ])
                     ?>
                     <small class="form-text text-muted">
-                        <?= I18N::translate('Specifies the number of circles in which the text is written along a arc.') ?>
+                        <?= I18N::translate('Specifies the number of levels in which the text is written along an arc.') ?>
                     </small>
                 </div>
             </div>
@@ -170,6 +163,46 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 <script src="<?= e($javascript) ?>"></script>
 <script>
 
+/**
+ * Returns the AJAX update URL.
+ *
+ * @param {FanChart} fanChart
+ * @param {string}   baseUrl
+ *
+ * @returns {string}
+ */
+function getUrl(fanChart, baseUrl)
+{
+    let url = new URL(baseUrl);
+    url.searchParams.set("xref", document.getElementById('xref').value);
+    url.searchParams.set("generations", fanChart.configuration.generations);
+
+    return url.toString();
+}
+
+/**
+ * Load chart data and draws the chart.
+ *
+ * @param {FanChart} fanChart
+ * @param {string}   dataUrl
+ */
+function drawChart(fanChart, dataUrl)
+{
+    $.getJSON(
+        getUrl(fanChart, dataUrl),
+        function (data) {
+            fanChart.draw(data);
+
+            // document.getElementById("fan_chart")
+            //     .scrollIntoView(true);
+        }
+    );
+}
+
+document.getElementById("fanDegree").addEventListener("input", function (event) {
+    document.getElementById('fanDegreeOutput').value = document.getElementById('fanDegree').value + "°";
+});
+
 // Wait for DOM to be ready
 document.addEventListener("DOMContentLoaded", function () {
     // Set up storage object
@@ -183,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
     storage.register("innerArcs");
     storage.register("fontScale");
 
-    // Handle special case with option toggler
+    // Handle special case with option toggler (works only with jquery)
     $("#showMoreOptions")
         .on("shown.bs.collapse", function () {
             storage.write("showMoreOptions", true);
@@ -195,6 +228,8 @@ document.addEventListener("DOMContentLoaded", function () {
             storage.read("showMoreOptions") ? "show" : "hide"
         );
 
+    // Set initial stored value
+    document.getElementById('fanDegreeOutput').value = parseInt(storage.read("fanDegree")) + "°";
 
     let data    = <?= $chartParams ?>;
     let ajaxUrl = <?= json_encode($ajaxUrl) ?>;
@@ -217,18 +252,10 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     // Load initial chart data
-    $.getJSON(
-        getUrl(ajaxUrl),
-        function (data) {
-            fanChart.draw(data);
-
-            // document.getElementById("fan_chart")
-            //     .scrollIntoView(true);
-        }
-    );
+    drawChart(fanChart, ajaxUrl);
 
     // Redraw chart upon form submit
-    $("#webtrees-fan-chart-form").on("submit", function (event) {
+    document.getElementById('webtrees-fan-chart-form').addEventListener('submit', function (event) {
         event.preventDefault();
 
         // Update configuration with changed form values
@@ -239,30 +266,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fanChart.configuration.showColorGradients   = !!document.getElementById('showColorGradients').checked;
         fanChart.configuration.numberOfInnerCircles = parseInt(document.getElementById('innerArcs').value);
 
-        $.getJSON(
-            getUrl(ajaxUrl),
-            function (data) {
-                fanChart.draw(data);
-
-                // document.getElementById("fan_chart")
-                //     .scrollIntoView(true);
-            }
-        );
+        drawChart(fanChart, ajaxUrl);
     });
-
-    /**
-     * Returns the AJAX update URL.
-     *
-     * @returns {string}
-     */
-    function getUrl(baseUrl)
-    {
-        var url = new URL(baseUrl);
-        url.searchParams.set("xref", document.getElementById('xref').value);
-        url.searchParams.set("generations", fanChart.configuration.generations);
-
-        return url.toString();
-    }
 });
 
 </script>

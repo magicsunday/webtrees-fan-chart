@@ -35,6 +35,10 @@ export default class Geometry
      */
     get startPi()
     {
+        if (this._configuration.fanDegree === 90) {
+            return 0;
+        }
+
         return -(this._configuration.fanDegree / 2 * MATH_DEG2RAD);
     }
 
@@ -45,6 +49,10 @@ export default class Geometry
      */
     get endPi()
     {
+        if (this._configuration.fanDegree === 90) {
+            return (this._configuration.fanDegree * MATH_DEG2RAD);
+        }
+
         return (this._configuration.fanDegree / 2 * MATH_DEG2RAD);
     }
 

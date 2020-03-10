@@ -13,6 +13,28 @@
     /*justify-content: center;*/
 }
 
+#page-fan .range-input {
+    display: flex;
+}
+
+#page-fan .custom-range {
+    width: auto;
+    padding-top: 4px;
+    flex-grow: 100;
+}
+
+#page-fan .custom-range-value {
+    width: auto;
+    height: 26px;
+    flex-grow: 0;
+    color: rgb(255, 255, 255);
+    line-height: 16px;
+    text-align: center;
+    border-radius: 3px;
+    padding: 5px 10px;
+    margin-left: 10px;
+}
+
 #page-fan .more {
     position: absolute;
     left: 10px;

@@ -32,7 +32,7 @@ export default class Chart
     {
         this._configuration = configuration;
         this._parent        = parent;
-        this._hierarchy     = null;
+        this._hierarchy     = new Hierarchy(this._configuration);
         this._data          = {};
     }
 
@@ -116,7 +116,6 @@ export default class Chart
         this._data = value;
 
         // Create the hierarchical data structure
-        this._hierarchy = new Hierarchy(this._configuration);
         this._hierarchy.init(this._data);
     }
 

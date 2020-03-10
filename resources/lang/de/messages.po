@@ -1,109 +1,91 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-03-17 14:48+0100\n"
-"PO-Revision-Date: 2019-03-17 14:58+0100\n"
+"POT-Creation-Date: 2020-03-11 07:48+0100\n"
+"PO-Revision-Date: 2020-03-11 07:48+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.3\n"
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: resources/views/chart.phtml\n"
-"X-Poedit-SearchPath-1: src/Config.php\n"
-"X-Poedit-SearchPath-2: src/Module.php\n"
+"X-Poedit-SearchPath-1: src/Module.php\n"
+"X-Poedit-SearchPath-2: src/Configuration.php\n"
 "X-Poedit-SearchPath-3: module.php\n"
-"X-Poedit-SearchPath-4: src/Traits/UtilityTrait.php\n"
 
-#: src/Config.php:131
-msgid "180 degrees"
-msgstr "180 Grad"
-
-#: src/Config.php:132
-msgid "210 degrees"
-msgstr "210 Grad"
-
-#: src/Config.php:133
-msgid "240 degrees"
-msgstr "240 Grad"
-
-#: src/Config.php:134
-msgid "270 degrees"
-msgstr "270 Grad"
-
-#: src/Config.php:135
-msgid "300 degrees"
-msgstr "300 Grad"
-
-#: src/Config.php:136
-msgid "330 degrees"
-msgstr "330 Grad"
-
-#: src/Config.php:137
-msgid "360 degrees"
-msgstr "360 Grad"
-
-#: src/Module.php:104
+#: src/Module.php:97 src/Module.php:193
 msgid "Fan chart"
 msgstr "Fächerdiagramm"
 
 #: src/Module.php:107
+msgid "A fan chart of an individual’s ancestors."
+msgstr "Ein Fächerdiagramm der Vorfahren einer Person."
+
+#: src/Module.php:196 src/Module.php:448
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Fächerdiagramm von %s"
 
-#: src/Module.php:135
+#: src/Module.php:216
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Verwende Strg+Scrollen zum Zoomen der Ansicht"
 
-#: src/Module.php:136
+#: src/Module.php:217
 msgid "Move the view with two fingers"
 msgstr "Verschieben der Ansicht mit zwei Fingern"
 
-#: resources/views/chart.phtml:32
+#: resources/views/chart.phtml:33
 msgid "Individual"
 msgstr "Person"
 
-#: resources/views/chart.phtml:51 resources/views/chart.phtml:104
-msgid "Layout"
-msgstr "Ansicht"
+#: resources/views/chart.phtml:50
+msgid "Fan size"
+msgstr "Fächergröße"
 
-#: resources/views/chart.phtml:70
+#: resources/views/chart.phtml:60
 msgid "Generations"
 msgstr "Generationen"
 
-#: resources/views/chart.phtml:89
-msgid "Font size"
-msgstr "Schriftgröße"
-
-#: resources/views/chart.phtml:109
-msgid "Hide empty segments"
-msgstr "Verberge leere Segmente"
-
-#: resources/views/chart.phtml:120
-msgid "Show color gradients"
-msgstr "Zeige Farbverläufe"
-
-#: resources/views/chart.phtml:134
-msgid "view"
-msgstr "Anzeigen"
-
-#: resources/views/chart.phtml:135
-msgid "reset"
-msgstr "Zurücksetzen"
-
+#: resources/views/chart.phtml:78
 msgid "Presentation"
 msgstr "Darstellung"
 
-msgid "Number of inner circles"
+#: resources/views/chart.phtml:85
+msgid "Hide empty segments"
+msgstr "Verberge leere Segmente"
+
+#: resources/views/chart.phtml:94
+msgid "Show color gradients"
+msgstr "Zeige Farbverläufe"
+
+#: resources/views/chart.phtml:103
+msgid "Number of inner levels"
 msgstr "Anzahl der inneren Kreise"
 
+#: resources/views/chart.phtml:116
+msgid ""
+"Specifies the number of levels in which the text is written along an arc."
+msgstr ""
+"Bestimmt die Anzahl der Ebenen in denen der Text entlang eines Kreisbogens "
+"geschrieben wird."
+
+#: resources/views/chart.phtml:123
+msgid "Font size"
+msgstr "Schriftgröße"
+
+#: resources/views/chart.phtml:141
 msgid "More options ..."
 msgstr "Weitere Optionen ..."
 
-msgid "Specifies the number of circles in which the text is written along a arc."
-msgstr "Bestimmt die Anzahl der Kreise in denen der Text entlang eines Kreisbogens geschrieben wird."
+#: resources/views/chart.phtml:146
+msgid "view"
+msgstr "Anzeigen"
+
+#: resources/views/chart.phtml:147
+msgid "reset"
+msgstr "Zurücksetzen"
