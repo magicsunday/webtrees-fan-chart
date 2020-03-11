@@ -9,6 +9,8 @@ import Svg from "./chart/svg";
 import Person from "./chart/svg/person";
 import Gradient from "./chart/gradient";
 import Update from "./chart/update";
+import * as d3 from "./d3";
+import Geometry, {MATH_PI2} from "./chart/svg/geometry";
 
 const MIN_HEIGHT  = 500;
 const MIN_PADDING = 10;   // Minimum padding around view box
@@ -161,6 +163,34 @@ export default class Chart
 
         this.bindClickEventListener();
         this.updateViewBox();
+
+
+        let t = d3.transition()
+            .duration(8000);
+
+        this._configuration.fanDegree = 350;
+
+        let that     = this;
+        let geometry = new Geometry(this._configuration);
+
+        this._svg.get()
+            .selectAll("g.person g.arc")
+            .data(this._hierarchy.nodes)
+            .each(function (entry) {
+                let person = d3.select(this);
+
+                let arcGenerator = d3.arc()
+                    .startAngle(() => (entry.depth === 0) ? 0 : geometry.startAngle(entry))
+                    .endAngle(() => (entry.depth === 0) ? MATH_PI2 : geometry.endAngle(entry))
+                    .innerRadius(geometry.innerRadius(entry))
+                    .outerRadius(geometry.outerRadius(entry));
+
+                person.select("path")
+                    .transition(t)
+                    .attr("d", arcGenerator);
+            });
+
+
     }
 
     /**
