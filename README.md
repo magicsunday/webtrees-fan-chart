@@ -46,8 +46,9 @@ To manually install the module, perform the following steps:
 4. Rename the folder to ``webtrees-fan-chart``
 
 ## Enable module
-Go to the control panel (admin section) of your installation and click on the ``Module administration`` link 
-inside the ``Modules`` section. Enable the ``Fan chart`` module and save your settings.
+Go to the control panel (admin section) of your installation and scroll down to the ``Modules`` section. Click 
+on ``Charts`` (in subsection Genealogy). Enable the ``Fan chart`` custom module (optionally disable the original
+installed fan chart module) and save your settings.
 
 ![Control panel - Module administration](assets/control-panel-modules.png)
 
