@@ -1,16 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-03-11 07:46+0100\n"
-"PO-Revision-Date: 2020-03-11 07:48+0100\n"
+"POT-Creation-Date: 2020-03-15 14:23+0100\n"
+"PO-Revision-Date: 2020-03-15 14:23+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
-"X-Poedit-Basepath: ../../..\n"
+"X-Generator: Poedit 2.2.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: resources/views/chart.phtml\n"
@@ -26,7 +25,7 @@ msgstr "Éventail des ancêtres"
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
-#: src/Module.php:196 src/Module.php:448
+#: src/Module.php:196 src/Module.php:471
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Éventail des ancêtres de %s"
@@ -38,6 +37,20 @@ msgstr "Utiliser Ctrl + molette pour zoomer dans la vue"
 #: src/Module.php:217
 msgid "Move the view with two fingers"
 msgstr "Déplacer la vue avec deux doigts"
+
+#: src/Module.php:307
+#, php-format
+msgid "Born: %s"
+msgstr ""
+
+#: src/Module.php:311
+#, php-format
+msgid "Died: %s"
+msgstr ""
+
+#: src/Module.php:314
+msgid "Deceased"
+msgstr ""
 
 #: resources/views/chart.phtml:33
 msgid "Individual"

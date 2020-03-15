@@ -248,7 +248,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * Get the individual data required for display the chart.
      *
-     * @param Individual $individual The start person
+     * @param Individual $individual The current individual
      * @param int        $generation The generation the person belongs to
      *
      * @return string[][]
@@ -284,11 +284,34 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             'alternativeNames' => array_filter(explode(' ', $alternativeName)),
             'isAltRtl'         => $this->isRtl($alternativeName),
             'sex'              => $individual->sex(),
-            'born'             => $individual->getBirthYear(),
-            'died'             => $individual->getDeathYear(),
+            'timespan'         => $this->getTimespanLabel($individual),
             'color'            => $this->getColor($individual),
             'colors'           => [[], []],
         ];
+    }
+
+    /**
+     * Create the timespan label.
+     *
+     * @param Individual $individual The current individual
+     *
+     * @return string
+     */
+    private function getTimespanLabel(Individual $individual): string
+    {
+        if ($individual->getBirthDate()->isOK() && $individual->getDeathDate()->isOK()) {
+            return $individual->getBirthYear() . '-' . $individual->getDeathYear();
+        }
+
+        if ($individual->getBirthDate()->isOK()) {
+            return I18N::translate('Born: %s', $individual->getBirthYear());
+        }
+
+        if ($individual->getDeathDate()->isOK()) {
+            return I18N::translate('Died: %s', $individual->getDeathYear());
+        }
+
+        return I18N::translate('Deceased');
     }
 
     /**

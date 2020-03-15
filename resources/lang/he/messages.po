@@ -1,17 +1,18 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Fan chart\n"
+"Project-Id-Version: \n"
 "POT-Creation-Date: 2018-02-12 10:56+0100\n"
-"PO-Revision-Date: 2020-03-11 07:48+0100\n"
+"PO-Revision-Date: 2020-03-15 14:24+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-KeywordsList: translate;doShowTooltipOverlay\n"
+"X-Generator: Poedit 2.2.1\n"
+"X-Poedit-Basepath: ../../..\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? 2 : 3);\n"
+"X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: resources/views/chart.phtml\n"
 "X-Poedit-SearchPath-1: src/Module.php\n"
 "X-Poedit-SearchPath-2: src/Configuration.php\n"
@@ -37,6 +38,20 @@ msgstr "השתמש ב- Ctrl + גלילה כדי להגדיל את התצוגה"
 #: src/Module.php:217
 msgid "Move the view with two fingers"
 msgstr "הזז את התצוגה בשתי אצבעות"
+
+#: src/Module.php:307
+#, php-format
+msgid "Born: %s"
+msgstr ""
+
+#: src/Module.php:311
+#, php-format
+msgid "Died: %s"
+msgstr ""
+
+#: src/Module.php:314
+msgid "Deceased"
+msgstr ""
 
 #: resources/views/chart.phtml:33
 msgid "Individual"

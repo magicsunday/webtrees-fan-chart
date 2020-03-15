@@ -70,7 +70,7 @@ export default class Text
                 .attr("class", "date");
 
             this.addTimeSpan(textPath4, data);
-            this.truncateNames(textPath4, data, 3);
+            this.truncateNames(textPath4, data, 3, true);
 
         // Outer labels
         } else {
@@ -82,7 +82,7 @@ export default class Text
                     .attr("dy", "2px");
 
                 this.addFirstNames(text1, data);
-                this.addLastNames(text1, data);
+                this.addLastNames(text1, data, 0.25);
                 this.truncateNames(text1, data, 0);
             }
 
@@ -108,7 +108,7 @@ export default class Text
                         .attr("dy", "2px");
 
                     this.addTimeSpan(text4, data);
-                    this.truncateNames(text4, data, 3);
+                    this.truncateNames(text4, data, 3, true);
                 }
             }
 
@@ -153,8 +153,9 @@ export default class Text
      *
      * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
+     * @param {number}    dx     Additional space offset to add between names
      */
-    addLastNames(parent, data)
+    addLastNames(parent, data, dx = 0)
     {
         let i = 0;
 
@@ -166,6 +167,10 @@ export default class Text
             // Add some spacing between the elements
             if (i !== 0) {
                 tspan.attr("dx", "0.25em");
+            }
+
+            if (dx !== 0) {
+                tspan.attr("dx", dx + "em");
             }
 
             ++i;
@@ -207,7 +212,7 @@ export default class Text
     {
         // Create a <tspan> element for the last name
         parent.append("tspan")
-            .text(this.getTimeSpan(data));
+            .text(data.data.timespan);
     }
 
     /**
@@ -216,18 +221,19 @@ export default class Text
      * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      * @param {number}    index  The index position of the element in parent container.
+     * @param {boolean}   hide   Whether to show or hide the label if the text takes to much space to be displayed
      */
-    truncateNames(parent, data, index)
+    truncateNames(parent, data, index, hide = false)
     {
         let availableWidth = this.getAvailableWidth(data, index);
 
         // Start truncating those elements which are not the preferred ones
         parent.selectAll("tspan:not(.preferred)")
-            .each(this.truncateText(parent, availableWidth));
+            .each(this.truncateText(parent, availableWidth, hide));
 
-        // Afterwards the preferred ones if text takes still to much width
+        // Afterwards the preferred ones if text takes still to much space
         parent.selectAll("tspan.preferred")
-            .each(this.truncateText(parent, availableWidth));
+            .each(this.truncateText(parent, availableWidth, hide));
     }
 
     /**
@@ -254,8 +260,9 @@ export default class Text
      *
      * @param {Selection} parent         The parent (<text> or <textPath>) element containing the <tspan> child elements
      * @param {number}    availableWidth The total available width the text could take
+     * @param {boolean}   hide           Whether to show or hide the label if the text takes to much space to be displayed
      */
-    truncateText(parent, availableWidth)
+    truncateText(parent, availableWidth, hide = false)
     {
         let that = this;
 
@@ -264,9 +271,15 @@ export default class Text
             let tspan      = d3.select(this);
             let text       = tspan.text();
 
-            if ((textLength > availableWidth) && (text.length > 1)) {
-                // Keep only the first letter
-                tspan.text(text.slice(0, 1) + ".");
+            if (textLength > availableWidth) {
+                if (hide) {
+                    tspan.text("");
+                } else {
+                    if (text.length > 1) {
+                        // Keep only the first letter
+                        tspan.text(text.slice(0, 1) + ".");
+                    }
+                }
             }
         };
 
@@ -298,7 +311,7 @@ export default class Text
      */
     isInnerLabel(data)
     {
-        return ((data.depth > 0) && (data.depth < this._configuration.numberOfInnerCircles));
+        return ((data.depth > 0) && (data.depth <= this._configuration.numberOfInnerCircles));
     }
 
     /**
@@ -328,23 +341,6 @@ export default class Text
             .append("textPath")
             .attr("xlink:href", "#" + refId)
             .attr("startOffset", "25%");
-    }
-
-    /**
-     * Get the time span label of an person. Returns null if label
-     * should not be displayed due empty data.
-     *
-     * @param {Object} data The D3 data object
-     *
-     * @return {null|String}
-     */
-    getTimeSpan(data)
-    {
-        if (data.data.born || data.data.died) {
-            return data.data.born + "-" + data.data.died;
-        }
-
-        return "...";
     }
 
     /**
@@ -438,14 +434,14 @@ export default class Text
     getAvailableWidth(data, index)
     {
         // Outer arcs
-        if (data.depth >= this._configuration.numberOfInnerCircles) {
+        if (data.depth > this._configuration.numberOfInnerCircles) {
             return this._configuration.outerArcHeight - (this._configuration.textPadding * 2);
         }
 
         // Innermost circle (Reducing the width slightly, avoiding the text is sticking too close to the edge)
         let availableWidth = (this._configuration.centerCircleRadius * 2) - (this._configuration.centerCircleRadius * 0.15);
 
-        if ((data.depth >= 1) && (data.depth < this._configuration.numberOfInnerCircles)) {
+        if (data.depth >= 1) {
             // Calculate length of the arc
             availableWidth = this._geometry.arcLength(data, this.getTextOffset(index, data));
         }

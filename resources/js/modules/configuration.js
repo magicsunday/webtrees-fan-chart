@@ -53,7 +53,7 @@ export default class Configuration
         this.innerArcHeight = 85;
 
         // Height of each outer circle arc
-        this.outerArcHeight = 115;
+        this.outerArcHeight = 110;
 
         // Width of the colored arc above each single person arc
         this.colorArcWidth = 5;

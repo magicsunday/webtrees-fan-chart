@@ -119,8 +119,7 @@ export default class Hierarchy
             alternativeNames : [],
             isAltRtl         : false,
             sex              : sex,
-            born             : "",
-            died             : "",
+            timespan         : "",
             color            : this._configuration.defaultColor,
             colors           : [[], []]
         };

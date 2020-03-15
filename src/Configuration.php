@@ -45,7 +45,7 @@ class Configuration
      *
      * @var int
      */
-    private const DEFAULT_INNER_ARCS = 4;
+    private const DEFAULT_INNER_ARCS = 3;
 
     /**
      * Minimum number of displayable inner arcs.
@@ -59,7 +59,7 @@ class Configuration
      *
      * @var int
      */
-    private const MAX_INNER_ARCS = 6;
+    private const MAX_INNER_ARCS = 5;
 
     /**
      * The default fan chart degree.
