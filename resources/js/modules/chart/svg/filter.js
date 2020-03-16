@@ -21,30 +21,20 @@ export default class Filter
         // Create the <svg:defs> element
         this._element = defs;
 
-        // TODO: Set using filter: url(#drop-shadow);
+        // Filter is set in CSS via "filter: url(#drop-shadow);"
 
-        // let filter = this._element.append("filter")
-        //     .attr("id", "drop-shadow")
-        //     .attr("width", "200%")
-        //     .attr("height", "200%")
-        //     .attr("x", "-20%")
-        //     .attr("y", "-20%")
-        //     .attr("filterUnits", "objectBoundingBox")
-        //     .attr("primitiveUnits", "userSpaceOnUse")
-        //     .attr("color-interpolation-filters", "linearRGB");
-        //
-        // filter.append("feDropShadow")
-        //     .attr("in", "SourceGraphic")
-        //     .attr("stdDeviation", "8 8")
-        //     .attr("x", "0%")
-        //     .attr("y", "0%")
-        //     .attr("width", "100%")
-        //     .attr("height", "100%")
-        //     .attr("dx", "0")
-        //     .attr("dy", "0")
-        //     .attr("flood-opacity", "0.2")
-        //     .attr("result", "dropShadow")
-        //     .style("flood-color", "rgb(0,0,0)");
+        // Chrome still does not support filtering SVG elements using CSS other than the root
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=109224
+        let filter = this._element
+            .append("filter")
+            .attr("id", "drop-shadow");
+
+        filter.append("feDropShadow")
+            .attr("stdDeviation", "7 7")
+            .attr("dx", "0")
+            .attr("dy", "0")
+            .attr("flood-opacity", "0.3")
+            .style("flood-color", "rgb(0,0,0)");
     }
 
     /**

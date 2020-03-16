@@ -57,11 +57,7 @@ export default class Text
             if (data.data.alternativeNames.length > 0) {
                 let pathId3   = this.createPathDefinition(parentId, 2, data);
                 let textPath3 = this.createTextPath(text, pathId3)
-                    // .attr("class", "alternativeName")
-                    .style("fill", "rgb(127, 127, 127)")
-                    .style("font-weight", "normal")
-                    .style("direction", "ltr")
-                    .style("unicode-bidi", "normal")
+                    .attr("class", "alternativeName")
                     .classed("rtl", data.data.isAltRtl);
 
                 this.addAlternativeNames(textPath3, data);
@@ -71,18 +67,13 @@ export default class Text
             // Birth and death date
             let pathId4   = this.createPathDefinition(parentId, 3, data);
             let textPath4 = this.createTextPath(text, pathId4)
-                .attr("class", "date")
-                .style("fill", "rgb(127,127,127)")
-                .style("font-weight", "normal")
-                .style("direction", "ltr")
-                .style("unicode-bidi", "plaintext");
+                .attr("class", "date");
 
             this.addTimeSpan(textPath4, data);
             this.truncateNames(textPath4, data, 3, true);
 
         // Outer labels
         } else {
-
             // The outer most circles show the complete name and do
             // not distinguish between first name, last name and dates
             if (data.depth >= 7) {
@@ -113,11 +104,7 @@ export default class Text
                 if (data.depth < 6) {
                     let text4 = this.createTextElement(parent, data)
                         .attr("class", "date")
-                        .attr("dy", "2px")
-                        .style("fill", "rgb(127,127,127)")
-                        .style("font-weight", "normal")
-                        .style("direction", "ltr")
-                        .style("unicode-bidi", "plaintext");
+                        .attr("dy", "2px");
 
                     this.addTimeSpan(text4, data);
                     this.truncateNames(text4, data, 3, true);
@@ -148,8 +135,7 @@ export default class Text
 
             // The preferred name
             if (firstName === data.data.preferredName) {
-                tspan.attr("class", "preferred")
-                    .style("text-decoration", "underline");
+                tspan.attr("class", "preferred");
             }
 
             // Add some spacing between the elements
@@ -337,8 +323,7 @@ export default class Text
      */
     createTextElement(parent, data)
     {
-        return parent.append("text")
-            .style("font-weight", "bold");
+        return parent.append("text");
     }
 
     /**

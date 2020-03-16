@@ -6,6 +6,7 @@ import * as d3 from "./../d3";
 import Configuration from "./../configuration";
 import Defs from "./svg/defs";
 import Zoom from "./svg/zoom";
+import Filter from "./svg/filter";
 
 /**
  * SVG class
@@ -44,13 +45,12 @@ export default class Svg
     {
         // Add SVG element
         this._element
-            .attr("version", "1.1")
-            .attr("xmlns", "http://www.w3.org/2000/svg")
-            .attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
             .attr("width", "100%")
             .attr("height", "100%")
             .attr("text-rendering", "geometricPrecision")
             .attr("text-anchor", "middle");
+
+        new Filter(this._defs.get());
     }
 
     /**

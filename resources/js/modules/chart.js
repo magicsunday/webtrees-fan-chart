@@ -10,6 +10,7 @@ import Svg from "./chart/svg";
 import Person from "./chart/svg/person";
 import Gradient from "./chart/gradient";
 import Update from "./chart/update";
+import Export from "./chart/svg/export";
 
 const MIN_HEIGHT  = 500;
 const MIN_PADDING = 10;   // Minimum padding around view box
@@ -149,9 +150,7 @@ export default class Chart
             .enter()
             .append("g")
             .attr("class", "person")
-            .attr("id", (d) => "person-" + d.data.id)
-            .classed("available", (d) => d.data.xref !== "")
-            .on("click", null);
+            .attr("id", (d) => "person-" + d.data.id);
 
         // Create a new selection in order to leave the previous enter() selection
         personGroup
@@ -168,6 +167,9 @@ export default class Chart
 
         this.bindClickEventListener();
         this.updateViewBox();
+
+
+        // new Export(this._svg).svgToImage(this._svg, 'A4');
     }
 
     /**

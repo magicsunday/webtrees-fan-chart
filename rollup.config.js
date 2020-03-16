@@ -25,7 +25,6 @@ export default {
                 /^.+\.min\.js$/
             ],
             output: {
-
                 comments: false
             }
         })

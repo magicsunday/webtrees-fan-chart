@@ -67,7 +67,7 @@ export default class Update
                         .classed("new", !empty && !person.classed("available"));
 
                     if (!person.classed("new")) {
-                        person.selectAll("g.label, g.color, title")
+                        person.selectAll("g.name, g.color, title")
                             .classed("old", true);
                     }
 
@@ -77,7 +77,7 @@ export default class Update
             // Hide all new labels of not removed elements
             this._svg.get()
                 .selectAll("g.person:not(.remove)")
-                .selectAll("g.label:not(.old), g.color:not(.old)")
+                .selectAll("g.name:not(.old), g.color:not(.old)")
                 .style("opacity", 1e-6);
 
             // Create transition instance
@@ -102,14 +102,14 @@ export default class Update
             // Fade out all old labels and color group
             this._svg.get()
                 .selectAll("g.person.update, g.person.remove")
-                .selectAll("g.label.old, g.color.old")
+                .selectAll("g.name.old, g.color.old")
                 .transition(t)
                 .style("opacity", 1e-6);
 
             // Fade in all new labels and color group
             this._svg.get()
                 .selectAll("g.person:not(.remove)")
-                .selectAll("g.label:not(.old), g.color:not(.old)")
+                .selectAll("g.name:not(.old), g.color:not(.old)")
                 .transition(t)
                 .style("opacity", 1);
         });
@@ -140,7 +140,7 @@ export default class Update
                 .attr("style", null);
 
             this._svg.get()
-                .selectAll("g.person g.label, g.person g.color")
+                .selectAll("g.person g.name, g.person g.color")
                 .style("opacity", null);
 
             t.stop();
@@ -151,14 +151,12 @@ export default class Update
             .classed("new", false)
             .classed("update", false)
             .classed("remove", false)
-            .selectAll("g.label.old, g.color.old, title.old")
+            .selectAll("g.name.old, g.color.old, title.old")
             .remove();
 
         this._svg.get()
             .selectAll("g.person.available")
-            // .style("cursor", "none")
-            .classed("available", false)
-        ;
+            .classed("available", false);
 
         // Execute callback function after everything is done
         callback();

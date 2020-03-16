@@ -211,7 +211,7 @@ export default class Person
     {
         return parent
             .append("g")
-            .attr("class", "label")
+            .attr("class", "name")
             .style("font-size", this.getFontSize(data) + "px")
             .style("fill", this._configuration.fontColor);
     }

@@ -1,10 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * See LICENSE.md file for further details.
  */
+
+declare(strict_types=1);
 
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
@@ -152,7 +152,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     </form>
 
     <div class="row">
-        <div id="fan_chart" class="wt-ajax-load wt-page-content wt-chart wt-fan-chart"></div>
+        <div id="webtrees-fan-chart-container" class="wt-ajax-load wt-page-content wt-chart wt-fan-chart"></div>
     </div>
 </div>
 
@@ -194,7 +194,7 @@ function drawChart(fanChart, dataUrl)
         function (data) {
             fanChart.draw(data);
 
-            // document.getElementById("fan_chart")
+            // document.getElementById("webtrees-fan-chart-container")
             //     .scrollIntoView(true);
         }
     );
@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Create chart instance with stored configuration
     const fanChart = new WebtreesFanChart.FanChart(
-        "#fan_chart",
+        "#webtrees-fan-chart-container",
         {
             labels            : data.labels,
             generations       : parseInt(storage.read("generations")),
