@@ -1,13 +1,14 @@
 <?php
-declare(strict_types=1);
 
 /**
  * See LICENSE.md file for further details.
  */
+
+declare(strict_types=1);
+
 namespace MagicSunday\Webtrees\FanChart;
 
 use Fisharebest\Webtrees\Functions\FunctionsEdit;
-use Fisharebest\Webtrees\I18N;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -41,21 +42,21 @@ class Configuration
     private const MAX_GENERATIONS = 10;
 
     /**
-     * The default number of inner arcs to display.
+     * The default number of inner levels.
      *
      * @var int
      */
     private const DEFAULT_INNER_ARCS = 3;
 
     /**
-     * Minimum number of displayable inner arcs.
+     * Minimum number of displayable inner levels.
      *
      * @var int
      */
     private const MIN_INNER_ARCS = 1;
 
     /**
-     * Maximum number of displayable inner arcs.
+     * Maximum number of displayable inner levels.
      *
      * @var int
      */
@@ -83,7 +84,7 @@ class Configuration
     private $request;
 
     /**
-     * Config constructor.
+     * Configuration constructor.
      *
      * @param ServerRequestInterface $request
      */

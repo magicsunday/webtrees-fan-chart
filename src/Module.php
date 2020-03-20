@@ -1,27 +1,28 @@
 <?php
-declare(strict_types=1);
 
 /**
  * See LICENSE.md file for further details.
  */
+
+declare(strict_types=1);
+
 namespace MagicSunday\Webtrees\FanChart;
 
 use Aura\Router\RouterContainer;
 use Exception;
 use Fig\Http\Message\RequestMethodInterface;
-use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Exceptions\IndividualNotFoundException;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
-use Fisharebest\Webtrees\Menu;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleChartInterface;
-use Fisharebest\Webtrees\Module\ModuleChartTrait;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
-use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\View;
+use MagicSunday\Webtrees\FanChart\Traits\IndividualTrait;
+use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
+use MagicSunday\Webtrees\FanChart\Traits\ModuleCustomTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -35,11 +36,12 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class Module extends AbstractModule implements ModuleCustomInterface, ModuleChartInterface, RequestHandlerInterface
 {
-    private const ROUTE_DEFAULT     = 'webtrees-fan-chart';
-    private const ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}';
-
     use ModuleCustomTrait;
     use ModuleChartTrait;
+    use IndividualTrait;
+
+    private const ROUTE_DEFAULT     = 'webtrees-fan-chart';
+    private const ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}';
 
     /**
      * @var string
@@ -246,141 +248,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     }
 
     /**
-     * Get the individual data required for display the chart.
-     *
-     * @param Individual $individual The current individual
-     * @param int        $generation The generation the person belongs to
-     *
-     * @return string[][]
-     */
-    private function getIndividualData(Individual $individual, int $generation): array
-    {
-        $allNames = $individual->getAllNames()[$individual->getPrimaryName()];
-
-        // The formatted name of the individual (containing HTML)
-        $full = $allNames['full'];
-
-        // The name of the person without formatting of the individual parts of the name.
-        // Remove placeholders as we do not need them in this module
-        $fullNN = str_replace(['@N.N.', '@P.N.'], '', $allNames['fullNN']);
-
-        // Extract name parts
-        $preferredName   = $this->preferredName($full);
-        $nickName        = $this->nickname($full);
-        $lastNames       = $this->lastNames($full);
-        $firstNames      = $this->firstNames($full, $lastNames, $nickName);
-        $alternativeName = $this->unescapedHtml($individual->alternateName());
-
-        return [
-            'id'               => 0,
-            'xref'             => $individual->xref(),
-            'url'              => $individual->url(),
-            'updateUrl'        => $this->getUpdateRoute($individual),
-            'generation'       => $generation,
-            'name'             => $fullNN,
-            'firstNames'       => $firstNames,
-            'lastNames'        => $lastNames,
-            'preferredName'    => $preferredName,
-            'alternativeNames' => array_filter(explode(' ', $alternativeName)),
-            'isAltRtl'         => $this->isRtl($alternativeName),
-            'sex'              => $individual->sex(),
-            'timespan'         => $this->getTimespanLabel($individual),
-            'color'            => $this->getColor($individual),
-            'colors'           => [[], []],
-        ];
-    }
-
-    /**
-     * Create the timespan label.
-     *
-     * @param Individual $individual The current individual
-     *
-     * @return string
-     */
-    private function getTimespanLabel(Individual $individual): string
-    {
-        if ($individual->getBirthDate()->isOK() && $individual->getDeathDate()->isOK()) {
-            return $individual->getBirthYear() . '-' . $individual->getDeathYear();
-        }
-
-        if ($individual->getBirthDate()->isOK()) {
-            return I18N::translate('Born: %s', $individual->getBirthYear());
-        }
-
-        if ($individual->getDeathDate()->isOK()) {
-            return I18N::translate('Died: %s', $individual->getDeathYear());
-        }
-
-        return I18N::translate('Deceased');
-    }
-
-    /**
-     * Returns all first names from the given full name.
-     *
-     * @param string   $fullName  The formatted name of the individual (containing HTML)
-     * @param string[] $lastNames The list of last names of the individual
-     * @param string   $nickname  The nickname of the individual if any
-     *
-     * @return string[]
-     */
-    public function firstNames(string $fullName, array $lastNames, string $nickname): array
-    {
-        // Remove all HTML from the formatted full name
-        $fullName = $this->unescapedHtml($fullName);
-
-        // Extract the leftover first names of the individual (removing last names and nickname)
-        $firstNames = array_filter(explode(' ', $fullName));
-
-        return array_values(array_diff($firstNames, $lastNames, [ $nickname ]));
-    }
-
-    /**
-     * Returns all last names from the given full name.
-     *
-     * @param string $fullName The formatted name of the individual (containing HTML)
-     *
-     * @return string[]
-     */
-    public function lastNames(string $fullName): array
-    {
-        // Extract all last names
-        $matches = [];
-        preg_match_all('/<span class="SURN">(.*?)<\/span>/i', $fullName, $matches);
-
-        return array_values(array_filter($matches[1])) ?? [];
-    }
-
-    /**
-     * Returns the preferred name from the given full name.
-     *
-     * @param string $fullName The formatted name of the individual (containing HTML)
-     *
-     * @return string
-     */
-    public function preferredName(string $fullName): string
-    {
-        $matches = [];
-        preg_match('/<span class="starredname">(.*?)<\/span>/i', $fullName, $matches);
-
-        return $matches[1] ?? '';
-    }
-
-    /**
-     * Returns the nickname from the given full name.
-     *
-     * @param string $fullName The formatted name of the individual (containing HTML)
-     *
-     * @return string
-     */
-    public function nickname(string $fullName): string
-    {
-        $matches = [];
-        preg_match('/<q class="wt-nickname">(.*?)<\/q>/i', $fullName, $matches);
-
-        return $matches[1] ?? '';
-    }
-
-    /**
      * Recursively build the data array of the individual ancestors.
      *
      * @param null|Individual $individual The start person
@@ -438,99 +305,13 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     }
 
     /**
-     * CSS class for the URL.
-     *
-     * @return string
-     */
-    public function chartMenuClass(): string
-    {
-        return 'menu-chart-fanchart';
-    }
-
-    /**
-     * Return a menu item for this chart - for use in individual boxes.
-     *
-     * @param Individual $individual
-     *
-     * @return Menu|null
-     */
-    public function chartBoxMenu(Individual $individual): ?Menu
-    {
-        return $this->chartMenu($individual);
-    }
-
-    /**
-     * The title for a specific instance of this chart.
-     *
-     * @param Individual $individual
-     *
-     * @return string
-     */
-    public function chartTitle(Individual $individual): string
-    {
-        return I18N::translate('Fan chart of %s', $individual->fullName());
-    }
-
-    /**
-     * A form to request the chart parameters.
-     *
-     * @param Individual $individual
-     * @param string[]   $parameters
-     *
-     * @return string
-     */
-    public function chartUrl(Individual $individual, array $parameters = []): string
-    {
-        return route(self::ROUTE_DEFAULT, [
-                'xref' => $individual->xref(),
-                'tree' => $individual->tree()->name(),
-            ] + $parameters);
-    }
-
-    public function customModuleAuthorName(): string
-    {
-        return self::CUSTOM_AUTHOR;
-    }
-
-
-    public function customModuleVersion(): string
-    {
-        return self::CUSTOM_VERSION;
-    }
-
-
-    public function customModuleLatestVersionUrl(): string
-    {
-        return self::CUSTOM_WEBSITE;
-    }
-
-
-    public function customModuleSupportUrl(): string
-    {
-        return self::CUSTOM_WEBSITE;
-    }
-
-    /**
-     * Additional/updated translations.
-     *
-     * @param string $language
-     *
-     * @return string[]
-     */
-    public function customTranslations(string $language): array
-    {
-        $languageFile = $this->resourcesFolder() . 'lang/' . $language . '/messages.mo';
-        return file_exists($languageFile) ? (new Translation($languageFile))->asArray() : [];
-    }
-
-    /**
      * Returns the unescaped HTML string.
      *
      * @param null|string $value The value to strip the HTML tags from
      *
      * @return string
      */
-    public function unescapedHtml(?string $value): string
+    private function unescapedHtml(?string $value): string
     {
         return ($value === null)
             ? ''
@@ -544,7 +325,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @return bool
      */
-    public function isRtl(?string $text): bool
+    private function isRtl(?string $text): bool
     {
         return $text ? I18N::scriptDirection(I18N::textScript($text)) === 'rtl' : false;
     }
@@ -556,7 +337,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @return string HTML color code
      */
-    public function getColor(?Individual $individual): string
+    private function getColor(?Individual $individual): string
     {
         $genderLower = ($individual === null) ? 'u' : strtolower($individual->sex());
         return '#' . $this->theme->parameter('chart-background-' . $genderLower);
@@ -567,7 +348,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @return string HTML color code
      */
-    public function getChartFontColor(): string
+    private function getChartFontColor(): string
     {
         return '#' . $this->theme->parameter('chart-font-color');
     }

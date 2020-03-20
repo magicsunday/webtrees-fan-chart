@@ -1,9 +1,11 @@
 <?php
-declare(strict_types=1);
 
 /**
  * See LICENSE.md file for further details.
  */
+
+declare(strict_types=1);
+
 namespace MagicSunday\Webtrees;
 
 use Composer\Autoload\ClassLoader;
