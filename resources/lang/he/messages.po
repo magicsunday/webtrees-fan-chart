@@ -1,102 +1,103 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-02-12 10:56+0100\n"
-"PO-Revision-Date: 2020-03-15 14:24+0100\n"
+"POT-Creation-Date: 2020-03-20 17:09+0100\n"
+"PO-Revision-Date: 2020-03-20 17:11+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.3\n"
 "X-Poedit-Basepath: ../../..\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? "
+"2 : 3);\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: resources/views/chart.phtml\n"
-"X-Poedit-SearchPath-1: src/Module.php\n"
-"X-Poedit-SearchPath-2: src/Configuration.php\n"
-"X-Poedit-SearchPath-3: module.php\n"
+"X-Poedit-SearchPath-1: module.php\n"
+"X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:97 src/Module.php:193
+#: src/Module.php:99 src/Module.php:195
 msgid "Fan chart"
 msgstr "תרשים מניפה של אבות"
 
-#: src/Module.php:107
+#: src/Module.php:109
 msgid "A fan chart of an individual’s ancestors."
 msgstr "תרשים מעריצים של אבותיו של אדם."
 
-#: src/Module.php:196 src/Module.php:448
+#: src/Module.php:198 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "תרשים מניפה של אבות של %s"
 
-#: src/Module.php:216
+#: src/Module.php:218
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "השתמש ב- Ctrl + גלילה כדי להגדיל את התצוגה"
 
-#: src/Module.php:217
+#: src/Module.php:219
 msgid "Move the view with two fingers"
 msgstr "הזז את התצוגה בשתי אצבעות"
 
-#: src/Module.php:307
+#: src/Traits/IndividualTrait.php:82
 #, php-format
 msgid "Born: %s"
 msgstr ""
 
-#: src/Module.php:311
+#: src/Traits/IndividualTrait.php:86
 #, php-format
 msgid "Died: %s"
 msgstr ""
 
-#: src/Module.php:314
+#: src/Traits/IndividualTrait.php:89
 msgid "Deceased"
 msgstr ""
 
-#: resources/views/chart.phtml:33
+#: resources/views/chart.phtml:34
 msgid "Individual"
 msgstr ""
 
-#: resources/views/chart.phtml:50
+#: resources/views/chart.phtml:51
 msgid "Fan size"
 msgstr ""
 
-#: resources/views/chart.phtml:60
+#: resources/views/chart.phtml:61
 msgid "Generations"
 msgstr ""
 
-#: resources/views/chart.phtml:78
+#: resources/views/chart.phtml:79
 msgid "Presentation"
 msgstr ""
 
-#: resources/views/chart.phtml:85
+#: resources/views/chart.phtml:86
 msgid "Hide empty segments"
 msgstr ""
 
-#: resources/views/chart.phtml:94
+#: resources/views/chart.phtml:95
 msgid "Show color gradients"
 msgstr "הצג דרגות צבע"
 
-#: resources/views/chart.phtml:103
+#: resources/views/chart.phtml:104
 msgid "Number of inner levels"
 msgstr ""
 
-#: resources/views/chart.phtml:116
-msgid "Specifies the number of levels in which the text is written along an arc."
+#: resources/views/chart.phtml:117
+msgid ""
+"Specifies the number of levels in which the text is written along an arc."
 msgstr ""
 
-#: resources/views/chart.phtml:123
+#: resources/views/chart.phtml:124
 msgid "Font size"
 msgstr "גודל גופן"
 
-#: resources/views/chart.phtml:141
+#: resources/views/chart.phtml:142
 msgid "More options ..."
 msgstr ""
 
-#: resources/views/chart.phtml:146
+#: resources/views/chart.phtml:147
 msgid "view"
 msgstr ""
 
-#: resources/views/chart.phtml:147
+#: resources/views/chart.phtml:148
 msgid "reset"
 msgstr ""
