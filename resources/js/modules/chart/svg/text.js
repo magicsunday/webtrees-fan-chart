@@ -364,16 +364,16 @@ export default class Text
 
         // Create an arc generator for path segments
         let arcGenerator = d3.arc()
-            .startAngle(() => this.isPositionFlipped(data)
-                ? this._geometry.endAngle(data)
-                : this._geometry.startAngle(data)
+            .startAngle(this.isPositionFlipped(data.depth, data.x0, data.x1)
+                ? this._geometry.endAngle(data.depth, data.x1)
+                : this._geometry.startAngle(data.depth, data.x0)
             )
-            .endAngle(() => this.isPositionFlipped(data)
-                ? this._geometry.startAngle(data)
-                : this._geometry.endAngle(data)
+            .endAngle(this.isPositionFlipped(data.depth, data.x0, data.x1)
+                ? this._geometry.startAngle(data.depth, data.x0)
+                : this._geometry.endAngle(data.depth, data.x1)
             )
-            .innerRadius(() => this._geometry.relativeRadius(data, this.getTextOffset(index, data)))
-            .outerRadius(() => this._geometry.relativeRadius(data, this.getTextOffset(index, data)));
+            .innerRadius(this._geometry.relativeRadius(data.depth, this.getTextOffset(index, data)))
+            .outerRadius(this._geometry.relativeRadius(data.depth, this.getTextOffset(index, data)));
 
         // Store the <path> inside the definition list so we could
         // access it later on by its id
@@ -386,25 +386,26 @@ export default class Text
     }
 
     /**
-     * Check for the 360 degree chart if the current arc labels
-     * should be flipped for easier reading.
+     * Check for the 360 degree chart if the current arc labels should be flipped for easier reading.
      *
-     * @param {Object} data The D3 data object
+     * @param {number} depth The depth of the element inside the chart
+     * @param {number} x0    The left edge (x0) of the rectangle
+     * @param {number} x1    The right edge (x1) of the rectangle
      *
      * @return {boolean}
      */
-    isPositionFlipped(data)
+    isPositionFlipped(depth, x0, x1)
     {
-        if ((this._configuration.fanDegree !== 360) || (data.depth <= 1)) {
+        if ((this._configuration.fanDegree !== 360) || (depth <= 1)) {
             return false;
         }
 
-        let sAngle = this._geometry.startAngle(data);
-        let eAngle = this._geometry.endAngle(data);
+        const startAngle = this._geometry.startAngle(depth, x0);
+        const endAngle   = this._geometry.endAngle(depth, x1);
 
         // Flip names for better readability depending on position in chart
-        return ((sAngle >= (90 * MATH_DEG2RAD)) && (eAngle <= (180 * MATH_DEG2RAD)))
-            || ((sAngle >= (-180 * MATH_DEG2RAD)) && (eAngle <= (-90 * MATH_DEG2RAD)));
+        return ((startAngle >= (90 * MATH_DEG2RAD)) && (endAngle <= (180 * MATH_DEG2RAD)))
+            || ((startAngle >= (-180 * MATH_DEG2RAD)) && (endAngle <= (-90 * MATH_DEG2RAD)));
     }
 
     /**
@@ -419,7 +420,9 @@ export default class Text
     getTextOffset(index, data)
     {
         // First names, Last name, Alternate name, Date
-        return this.isPositionFlipped(data) ? [23, 42, 61, 84][index] : [73, 54, 35, 12][index];
+        return this.isPositionFlipped(data.depth, data.x0, data.x1)
+            ? [23, 42, 61, 84][index]
+            : [73, 54, 35, 12][index];
     }
 
     /**
@@ -486,13 +489,13 @@ export default class Text
             // Name of center person should not be rotated in any way
             if (data.depth === 0) {
                 // TODO Depends on font-size
-                d3.select(this).attr("dy", (offsetRotate * 14) + (14/2) + "px");
+                d3.select(this).attr("dy", (offsetRotate * 14) + (14 / 2) + "px");
             } else {
                 d3.select(this).attr("transform", function () {
                     let dx        = data.x1 - data.x0;
                     let angle     = that._geometry.scale(data.x0 + (dx / 2)) * MATH_RAD2DEG;
                     let rotate    = angle - (offsetRotate * (angle > 0 ? -1 : 1));
-                    let translate = (that._geometry.centerRadius(data) - (that._configuration.colorArcWidth / 2.0));
+                    let translate = (that._geometry.centerRadius(data.depth) - (that._configuration.colorArcWidth / 2.0));
 
                     if (angle > 0) {
                         rotate -= 90;

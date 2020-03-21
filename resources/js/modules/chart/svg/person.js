@@ -4,7 +4,7 @@
 
 import * as d3 from "./../../d3";
 import Configuration from "./../../configuration";
-import Geometry, {MATH_PI2} from "./geometry";
+import Geometry from "./geometry";
 import Svg from "./../svg";
 import Text from "./text";
 
@@ -111,10 +111,10 @@ export default class Person
     {
         // Create arc generator
         let arcGenerator = d3.arc()
-            .startAngle(() => (data.depth === 0) ? 0 : this._geometry.startAngle(data))
-            .endAngle(() => (data.depth === 0) ? MATH_PI2 : this._geometry.endAngle(data))
-            .innerRadius(this._geometry.innerRadius(data))
-            .outerRadius(this._geometry.outerRadius(data));
+            .startAngle(this._geometry.startAngle(data.depth, data.x0))
+            .endAngle(this._geometry.endAngle(data.depth, data.x1))
+            .innerRadius(this._geometry.innerRadius(data.depth))
+            .outerRadius(this._geometry.outerRadius(data.depth));
 
         // Append arc
         let arcGroup = person

@@ -7,7 +7,8 @@ import Configuration from "./../../configuration";
 
 export const MATH_DEG2RAD = Math.PI / 180;
 export const MATH_RAD2DEG = 180 / Math.PI;
-export const MATH_PI2     = Math.PI * 2;
+
+const MATH_PI2 = Math.PI * 2;
 
 /**
  * This class handles the geometric methods.
@@ -57,7 +58,7 @@ export default class Geometry
     }
 
     /**
-     * Scale the angles linear across the circle
+     * Scale the angles linear across the circle.
      *
      * @return {number}
      */
@@ -69,18 +70,18 @@ export default class Geometry
     /**
      * Get the inner radius depending on the depth of an element.
      *
-     * @param {Object} data The D3 data object
+     * @param {number} depth The depth of the element inside the chart
      *
      * @return {number}
      */
-    innerRadius(data)
+    innerRadius(depth)
     {
-        if (data.depth === 0) {
+        if (depth === 0) {
             return 0;
         }
 
-        if (data.depth <= this._configuration.numberOfInnerCircles) {
-            return ((data.depth - 1) * (this._configuration.innerArcHeight + this._configuration.circlePadding))
+        if (depth <= this._configuration.numberOfInnerCircles) {
+            return ((depth - 1) * (this._configuration.innerArcHeight + this._configuration.circlePadding))
                 + this._configuration.centerCircleRadius;
         }
 
@@ -88,25 +89,25 @@ export default class Geometry
         const outerWithPadding = this._configuration.outerArcHeight + this._configuration.circlePadding;
 
         return (this._configuration.numberOfInnerCircles * innerWithPadding)
-            + ((data.depth - this._configuration.numberOfInnerCircles - 1) * outerWithPadding)
+            + ((depth - this._configuration.numberOfInnerCircles - 1) * outerWithPadding)
             + this._configuration.centerCircleRadius;
     }
 
     /**
      * Get the outer radius depending on the depth of an element.
      *
-     * @param {Object} data The D3 data object
+     * @param {number} depth The depth of the element inside the chart
      *
      * @return {number}
      */
-    outerRadius(data)
+    outerRadius(depth)
     {
-        if (data.depth === 0) {
+        if (depth === 0) {
             return this._configuration.centerCircleRadius;
         }
 
-        if (data.depth <= this._configuration.numberOfInnerCircles) {
-            return ((data.depth - 1) * (this._configuration.innerArcHeight + this._configuration.circlePadding))
+        if (depth <= this._configuration.numberOfInnerCircles) {
+            return ((depth - 1) * (this._configuration.innerArcHeight + this._configuration.circlePadding))
                 + this._configuration.innerArcHeight
                 + this._configuration.centerCircleRadius;
         }
@@ -115,7 +116,7 @@ export default class Geometry
         const outerWithPadding = this._configuration.outerArcHeight + this._configuration.circlePadding;
 
         return (this._configuration.numberOfInnerCircles * innerWithPadding)
-            + ((data.depth - this._configuration.numberOfInnerCircles - 1) * outerWithPadding)
+            + ((depth - this._configuration.numberOfInnerCircles - 1) * outerWithPadding)
             + this._configuration.outerArcHeight
             + this._configuration.centerCircleRadius;
     }
@@ -123,34 +124,34 @@ export default class Geometry
     /**
      * Get the center radius.
      *
-     * @param {Object} data The D3 data object
+     * @param {number} depth The depth of the element inside the chart
      *
      * @return {number}
      */
-    centerRadius(data)
+    centerRadius(depth)
     {
-        return (this.innerRadius(data) + this.outerRadius(data)) / 2;
+        return (this.innerRadius(depth) + this.outerRadius(depth)) / 2;
     }
 
     /**
      * Get an radius relative to the outer radius adjusted by the given
      * position in percent.
      *
-     * @param {Object} data     The D3 data object
+     * @param {number} depth    The depth of the element inside the chart
      * @param {number} position Percent offset (0 = inner radius, 100 = outer radius)
      *
      * @return {number}
      */
-    relativeRadius(data, position)
+    relativeRadius(depth, position)
     {
-        const outer = this.outerRadius(data);
-        return outer - ((100 - position) * (outer - this.innerRadius(data)) / 100);
+        const outer = this.outerRadius(depth);
+        return outer - ((100 - position) * (outer - this.innerRadius(depth)) / 100);
     }
 
     /**
      * Calculates the angle in radians.
      *
-     * @param {number} value The value
+     * @param {number} value The starting point of the rectangle
      *
      * @return {number}
      *
@@ -158,34 +159,35 @@ export default class Geometry
      */
     calcAngle(value)
     {
-        return Math.max(
-            this.startPi,
-            Math.min(this.endPi, this.scale(value))
-        );
+        return Math.max(this.startPi, Math.min(this.endPi, this.scale(value)));
     }
 
     /**
      * Gets the start angle in radians.
      *
-     * @param {Object} data The D3 data object
+     * @param {number} depth The depth of the element inside the chart
+     * @param {number} x0    The left edge (x0) of the rectangle
      *
      * @return {number}
      */
-    startAngle(data)
+    startAngle(depth, x0)
     {
-        return this.calcAngle(data.x0);
+        // Starting from the left edge (x0) of the rectangle
+        return (depth === 0) ? 0 : this.calcAngle(x0);
     }
 
     /**
      * Gets the end angle in radians.
      *
-     * @param {Object} data The D3 data object
+     * @param {number} depth The depth of the element inside the chart
+     * @param {number} x1    The right edge (x1) of the rectangle
      *
      * @return {number}
      */
-    endAngle(data)
+    endAngle(depth, x1)
     {
-        return this.calcAngle(data.x1);
+        // Starting from the right edge (x1) of the rectangle
+        return (depth === 0) ? MATH_PI2 : this.calcAngle(x1);
     }
 
     /**
@@ -199,6 +201,7 @@ export default class Geometry
      */
     arcLength(data, position)
     {
-        return (this.endAngle(data) - this.startAngle(data)) * this.relativeRadius(data, position);
+        return (this.endAngle(data.depth, data.x1) - this.startAngle(data.depth, data.x0))
+            * this.relativeRadius(data.depth, position);
     }
 }

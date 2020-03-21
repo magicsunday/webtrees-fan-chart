@@ -4,7 +4,7 @@
 import * as d3 from "./../d3";
 import Configuration from "./../configuration";
 import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
-import Geometry, {MATH_PI2} from "./svg/geometry";
+import Geometry from "./svg/geometry";
 
 /**
  * This class handles the gradient coloring.
@@ -97,10 +97,10 @@ export default class Gradient
     {
         // Arc generator
         let arcGenerator = d3.arc()
-            .startAngle((data) => (data.depth === 0) ? 0 : this._geometry.startAngle(data))
-            .endAngle((data) => (data.depth === 0) ? MATH_PI2 : this._geometry.endAngle(data))
-            .innerRadius((data) => this._geometry.outerRadius(data) - this._configuration.colorArcWidth)
-            .outerRadius((data) => this._geometry.outerRadius(data) + 1);
+            .startAngle((data) => this._geometry.startAngle(data.depth, data.x0))
+            .endAngle((data) => this._geometry.endAngle(data.depth, data.x1))
+            .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth)
+            .outerRadius((data) => this._geometry.outerRadius(data.depth) + 1);
 
         let colorGroup = this._svg.get()
             .select("g")
