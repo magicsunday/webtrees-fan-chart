@@ -3,7 +3,6 @@
     "description": "This modules provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.",
     "license": "GPL-3.0-or-later",
     "type": "webtrees-module",
-    "version": "2.0",
     "keywords": [
         "webtrees",
         "module",
