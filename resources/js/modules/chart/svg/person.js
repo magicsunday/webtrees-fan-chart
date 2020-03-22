@@ -116,6 +116,10 @@ export default class Person
             .innerRadius(this._geometry.innerRadius(data.depth))
             .outerRadius(this._geometry.outerRadius(data.depth));
 
+        arcGenerator.padAngle(this._configuration.padAngle)
+            .padRadius(this._configuration.padRadius)
+            .cornerRadius(this._configuration.cornerRadius);
+
         // Append arc
         let arcGroup = person
             .append("g")

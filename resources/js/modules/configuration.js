@@ -43,6 +43,11 @@ export default class Configuration
         // Padding in pixel between each generation circle
         this.circlePadding = 0;
 
+        this.padAngle = 0.03;
+        this.padRadius = this.circlePadding * 10;
+        this.padDistance = this.padAngle * this.padRadius;
+        this.cornerRadius = 0;
+
         // Number of circles, large enough to print text along arc path
         this._numberOfInnerCircles = innerArcs;
 

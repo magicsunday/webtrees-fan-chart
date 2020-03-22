@@ -101,6 +101,12 @@ export default class Gradient
             .endAngle((data) => this._geometry.endAngle(data.depth, data.x1))
             .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth)
             .outerRadius((data) => this._geometry.outerRadius(data.depth) + 1);
+            // .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth - 2)
+            // .outerRadius((data) => this._geometry.outerRadius(data.depth) - 1);
+
+        // arcGenerator.padAngle(this._configuration.padAngle)
+        //     .padRadius(this._configuration.padRadius)
+        //     .cornerRadius(this._configuration.cornerRadius - 2);
 
         let colorGroup = this._svg.get()
             .select("g")

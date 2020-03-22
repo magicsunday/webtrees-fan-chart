@@ -53,7 +53,7 @@ class Configuration
      *
      * @var int
      */
-    private const MIN_INNER_ARCS = 1;
+    private const MIN_INNER_ARCS = 0;
 
     /**
      * Maximum number of displayable inner levels.

@@ -81,16 +81,15 @@ export default class Geometry
         }
 
         if (depth <= this._configuration.numberOfInnerCircles) {
-            return ((depth - 1) * (this._configuration.innerArcHeight + this._configuration.circlePadding))
-                + this._configuration.centerCircleRadius;
+            return ((depth - 1) * (this._configuration.innerArcHeight))
+                + this._configuration.centerCircleRadius
+                + this._configuration.circlePadding;
         }
 
-        const innerWithPadding = this._configuration.innerArcHeight + this._configuration.circlePadding;
-        const outerWithPadding = this._configuration.outerArcHeight + this._configuration.circlePadding;
-
-        return (this._configuration.numberOfInnerCircles * innerWithPadding)
-            + ((depth - this._configuration.numberOfInnerCircles - 1) * outerWithPadding)
-            + this._configuration.centerCircleRadius;
+        return (this._configuration.numberOfInnerCircles * this._configuration.innerArcHeight)
+            + ((depth - this._configuration.numberOfInnerCircles - 1) * this._configuration.outerArcHeight)
+            + this._configuration.centerCircleRadius
+            + this._configuration.circlePadding;
     }
 
     /**
@@ -107,18 +106,15 @@ export default class Geometry
         }
 
         if (depth <= this._configuration.numberOfInnerCircles) {
-            return ((depth - 1) * (this._configuration.innerArcHeight + this._configuration.circlePadding))
-                + this._configuration.innerArcHeight
-                + this._configuration.centerCircleRadius;
+            return ((depth - 1) * (this._configuration.innerArcHeight))
+                + this._configuration.centerCircleRadius
+                + this._configuration.innerArcHeight;
         }
 
-        const innerWithPadding = this._configuration.innerArcHeight + this._configuration.circlePadding;
-        const outerWithPadding = this._configuration.outerArcHeight + this._configuration.circlePadding;
-
-        return (this._configuration.numberOfInnerCircles * innerWithPadding)
-            + ((depth - this._configuration.numberOfInnerCircles - 1) * outerWithPadding)
-            + this._configuration.outerArcHeight
-            + this._configuration.centerCircleRadius;
+        return (this._configuration.numberOfInnerCircles * this._configuration.innerArcHeight)
+            + ((depth - this._configuration.numberOfInnerCircles - 1) * this._configuration.outerArcHeight)
+            + this._configuration.centerCircleRadius
+            + this._configuration.outerArcHeight;
     }
 
     /**

@@ -218,7 +218,7 @@ export default class Text
     /**
      * Loops over the <tspan> elements and truncates the contained texts.
      *
-     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are attached
      * @param {Object}    data   The D3 data object containing the individual data
      * @param {number}    index  The index position of the element in parent container.
      * @param {boolean}   hide   Whether to show or hide the label if the text takes to much space to be displayed
@@ -375,6 +375,10 @@ export default class Text
             .innerRadius(this._geometry.relativeRadius(data.depth, this.getTextOffset(index, data)))
             .outerRadius(this._geometry.relativeRadius(data.depth, this.getTextOffset(index, data)));
 
+        arcGenerator.padAngle(this._configuration.padAngle)
+            .padRadius(this._configuration.padRadius)
+            .cornerRadius(this._configuration.cornerRadius);
+
         // Store the <path> inside the definition list so we could
         // access it later on by its id
         this._svg.defs.get()
@@ -433,12 +437,16 @@ export default class Text
      * @param {number} index The index position of element in parent container.
      *
      * @returns {number} Calculated available width
+     *
+     * @private
      */
     getAvailableWidth(data, index)
     {
         // Outer arcs
         if (data.depth > this._configuration.numberOfInnerCircles) {
-            return this._configuration.outerArcHeight - (this._configuration.textPadding * 2);
+            return this._configuration.outerArcHeight
+                - (this._configuration.textPadding * 2)
+                - this._configuration.circlePadding;
         }
 
         // Innermost circle (Reducing the width slightly, avoiding the text is sticking too close to the edge)
@@ -449,7 +457,8 @@ export default class Text
             availableWidth = this._geometry.arcLength(data, this.getTextOffset(index, data));
         }
 
-        return availableWidth - (this._configuration.textPadding * 2);
+        return availableWidth - (this._configuration.textPadding * 2)
+            - (this._configuration.padDistance / 2);
     }
 
     /**
