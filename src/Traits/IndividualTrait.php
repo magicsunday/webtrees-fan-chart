@@ -23,6 +23,14 @@ use Fisharebest\Webtrees\Individual;
 trait IndividualTrait
 {
     /**
+     * The XPath identifiers to extract the name parts.
+     */
+    private $xpathName          = '//span[contains(attribute::class, "NAME")]';
+    private $xpathNickname      = '//q[contains(attribute::class, "wt-nickname")]';
+    private $xpathSurname       = '//span[contains(attribute::class, "SURN")]';
+    private $xpathPreferredName = '//span[contains(attribute::class, "starredname")]';
+
+    /**
      * Get the individual data required for display the chart.
      *
      * @param Individual $individual The current individual
@@ -46,9 +54,8 @@ trait IndividualTrait
 
         // Extract name parts
         $preferredName    = $this->getPreferredName($xpath);
-        $nickName         = $this->getNickname($xpath);
         $lastNames        = $this->getLastNames($xpath);
-        $firstNames       = $this->getFirstNames($xpath, $lastNames, $nickName);
+        $firstNames       = $this->getFirstNames($xpath);
         $alternativeNames = $this->getAlternateNames($individual);
 
         return [
@@ -80,7 +87,6 @@ trait IndividualTrait
     private function getXPath(string $fullName): DOMXPath
     {
         $document = new \DOMDocument();
-        $document->encoding = 'UTF-8';
         $document->loadHTML(mb_convert_encoding($fullName, 'HTML-ENTITIES', 'UTF-8'));
 
         return new DOMXPath($document);
@@ -107,27 +113,36 @@ trait IndividualTrait
             return I18N::translate('Died: %s', $individual->getDeathYear());
         }
 
-        return I18N::translate('Deceased');
+        if ($individual->isDead()) {
+            return I18N::translate('Deceased');
+        }
+
+        return '';
     }
 
     /**
      * Returns all first names from the given full name.
      *
-     * @param DOMXPath $xpath     The DOMXPath instance used to parse for the preferred name.
-     * @param string[] $lastNames The list of last names of the individual
-     * @param string   $nickname  The nickname of the individual if any
+     * @param DOMXPath $xpath The DOMXPath instance used to parse for the preferred name.
      *
      * @return string[]
      */
-    public function getFirstNames(DOMXPath $xpath, array $lastNames, string $nickname): array
+    public function getFirstNames(DOMXPath $xpath): array
     {
-        $nodeList   = $xpath->query('//span[contains(attribute::class, "NAME")]');
+        // Remove SURN HTML nodes
+        foreach ($xpath->query($this->xpathSurname) as $node) {
+            $node->parentNode->removeChild($node);
+        }
+
+        // Remove nickname HTML nodes
+        foreach ($xpath->query($this->xpathNickname) as $node) {
+            $node->parentNode->removeChild($node);
+        }
+
+        $nodeList   = $xpath->query($this->xpathName);
         $firstNames = $nodeList->count() ? $nodeList->item(0)->nodeValue : '';
 
-        // Extract the leftover first names of the individual (removing last names and nickname)
-        $firstNames = array_filter(explode(' ', $firstNames));
-
-        return array_values(array_diff($firstNames, $lastNames, [ $nickname ]));
+        return array_filter(explode(' ', $firstNames));
     }
 
     /**
@@ -139,7 +154,7 @@ trait IndividualTrait
      */
     public function getLastNames(DOMXPath $xpath): array
     {
-        $nodeList  = $xpath->query('//span[contains(attribute::class, "SURN")]');
+        $nodeList  = $xpath->query($this->xpathSurname);
         $lastNames = [];
 
         /** @var DOMNode $node */
@@ -159,20 +174,7 @@ trait IndividualTrait
      */
     public function getPreferredName(DOMXPath $xpath): string
     {
-        $nodeList = $xpath->query('//span[contains(attribute::class, "starredname")]');
-        return $nodeList->count() ? $nodeList->item(0)->nodeValue : '';
-    }
-
-    /**
-     * Returns the nickname from the given full name.
-     *
-     * @param DOMXPath $xpath The DOMXPath instance used to parse for the preferred name.
-     *
-     * @return string
-     */
-    public function getNickname(DOMXPath $xpath): string
-    {
-        $nodeList = $xpath->query('//q[contains(attribute::class, "wt-nickname")]');
+        $nodeList = $xpath->query($this->xpathPreferredName);
         return $nodeList->count() ? $nodeList->item(0)->nodeValue : '';
     }
 
@@ -192,7 +194,7 @@ trait IndividualTrait
         }
 
         $xpath    = $this->getXPath($name);
-        $nodeList = $xpath->query('//span[contains(attribute::class, "NAME")]');
+        $nodeList = $xpath->query($this->xpathName);
         $name     = $nodeList->count() ? $nodeList->item(0)->nodeValue : '';
 
         return array_filter(explode(' ', $name));
