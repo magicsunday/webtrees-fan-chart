@@ -305,29 +305,21 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     }
 
     /**
-     * Returns the unescaped HTML string.
-     *
-     * @param null|string $value The value to strip the HTML tags from
-     *
-     * @return string
-     */
-    private function unescapedHtml(?string $value): string
-    {
-        return ($value === null)
-            ? ''
-            : html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
-    }
-
-    /**
      * Returns whether the given text is in RTL style or not.
      *
-     * @param null|string $text The text to check
+     * @param string[] $text The text to check
      *
      * @return bool
      */
-    private function isRtl(?string $text): bool
+    private function isRtl(array $text): bool
     {
-        return $text ? I18N::scriptDirection(I18N::textScript($text)) === 'rtl' : false;
+        foreach ($text as $entry) {
+            if (I18N::scriptDirection(I18N::textScript($entry)) === 'rtl') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

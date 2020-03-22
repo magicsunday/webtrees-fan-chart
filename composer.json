@@ -25,6 +25,8 @@
     "require": {
         "php": "~7.1",
         "ext-json": "*",
+        "ext-dom": "*",
+        "ext-libxml": "*",
         "fisharebest/webtrees": "~2.0 || dev-master",
         "magicsunday/webtrees-module-installer-plugin": "~1.2"
     }
