@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Traits;
 
+use DOMDocument;
 use DOMNode;
 use DOMXPath;
 use Fisharebest\Webtrees\I18N;
@@ -86,7 +87,7 @@ trait IndividualTrait
      */
     private function getXPath(string $fullName): DOMXPath
     {
-        $document = new \DOMDocument();
+        $document = new DOMDocument();
         $document->loadHTML(mb_convert_encoding($fullName, 'HTML-ENTITIES', 'UTF-8'));
 
         return new DOMXPath($document);
@@ -140,7 +141,7 @@ trait IndividualTrait
         }
 
         $nodeList   = $xpath->query($this->xpathName);
-        $firstNames = $nodeList->count() ? $nodeList->item(0)->nodeValue : '';
+        $firstNames = $nodeList->length ? $nodeList->item(0)->nodeValue : '';
 
         return array_filter(explode(' ', $firstNames));
     }
@@ -175,7 +176,7 @@ trait IndividualTrait
     public function getPreferredName(DOMXPath $xpath): string
     {
         $nodeList = $xpath->query($this->xpathPreferredName);
-        return $nodeList->count() ? $nodeList->item(0)->nodeValue : '';
+        return $nodeList->length ? $nodeList->item(0)->nodeValue : '';
     }
 
     /**
@@ -195,7 +196,7 @@ trait IndividualTrait
 
         $xpath    = $this->getXPath($name);
         $nodeList = $xpath->query($this->xpathName);
-        $name     = $nodeList->count() ? $nodeList->item(0)->nodeValue : '';
+        $name     = $nodeList->length ? $nodeList->item(0)->nodeValue : '';
 
         return array_filter(explode(' ', $name));
     }
