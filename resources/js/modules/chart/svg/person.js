@@ -62,11 +62,55 @@ export default class Person
             let label = this.addLabelToPerson(person, data);
 
             text.createLabels(label, data);
-        }
+            this.addColorGroup(person, data);
 
-        // Hovering
-        person.on("mouseover", this.mouseover.bind(this))
-            .on("mouseout", this.mouseout.bind(this));
+            // Hovering
+            person
+                .on("mouseover", this.mouseover.bind(this))
+                .on("mouseout", this.mouseout.bind(this));
+        }
+    }
+
+    /**
+     * Adds an color overlay for each arc.
+     *
+     * @param {Selection} person
+     * @param {Object}    data   The D3 data object
+     */
+    addColorGroup(person, data)
+    {
+        // Arc generator
+        let arcGenerator = d3.arc()
+            .startAngle(this._geometry.startAngle(data.depth, data.x0))
+            .endAngle(this._geometry.endAngle(data.depth, data.x1))
+            .innerRadius(this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth)
+            .outerRadius(this._geometry.outerRadius(data.depth) + 1);
+        // .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth - 2)
+        // .outerRadius((data) => this._geometry.outerRadius(data.depth) - 1);
+
+        arcGenerator.padAngle(this._configuration.padAngle)
+            .padRadius(this._configuration.padRadius)
+        //     .cornerRadius(this._configuration.cornerRadius - 2)
+            ;
+
+        let color = person
+            .append("g")
+            .attr("class", "color");
+
+        color.append("path")
+            .attr("fill", () => {
+                if (this._configuration.showColorGradients) {
+                    // Innermost circle (first generation)
+                    if (!data.depth) {
+                        return "rgb(225, 225, 225)";
+                    }
+
+                    return "url(#grad-" + data.data.id + ")";
+                }
+
+                return data.data.color;
+            })
+            .attr("d", arcGenerator);
     }
 
     /**
@@ -80,8 +124,11 @@ export default class Person
      */
     mouseover(datum, index, nodes)
     {
+        // Use raise() to move element to the top, as in SVG the last element is always the
+        // one drawn on top of the others.
         d3.select(nodes[index])
-            .classed("hover", true);
+            .classed("hover", true)
+            .raise();
     }
 
     /**

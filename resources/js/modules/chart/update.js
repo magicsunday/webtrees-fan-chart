@@ -5,7 +5,6 @@
 import * as d3 from "./../d3";
 import Configuration from "./../configuration";
 import Svg from "./svg";
-import Gradient from "./gradient";
 import Person from "./svg/person";
 
 /**
@@ -29,7 +28,6 @@ export default class Update
         this._svg           = svg;
         this._configuration = configuration;
         this._hierarchy     = hierarchy;
-        this._gradient      = new Gradient(this._svg, this._configuration);
     }
 
     /**
@@ -46,7 +44,9 @@ export default class Update
 
         this._svg.get()
             .selectAll("g.person")
-            .on("click", null);
+            .on("click", null)
+            .on("mouseover", null)
+            .on("mouseout", null);
 
         d3.json(
             url
@@ -55,11 +55,11 @@ export default class Update
             this._hierarchy.init(data);
 
             // Flag all elements which are subject to change
-            this._svg.get()
+            let persons = this._svg.get()
                 .selectAll("g.person")
-                .data(this._hierarchy.nodes)
-                .each(function (entry) {
-                    let empty  = entry.data.xref === "";
+                .data(this._hierarchy.nodes, (d) => d.data.id)
+                .each(function (d) {
+                    let empty  = d.data.xref === "";
                     let person = d3.select(this);
 
                     person.classed("remove", empty)
@@ -67,21 +67,18 @@ export default class Update
                         .classed("new", !empty && !person.classed("available"));
 
                     if (!person.classed("new")) {
-                        person.selectAll("g.label, title")
+                        person.selectAll("g.label, g.color, title")
                             .classed("old", true);
                     }
 
-                    new Person(that._svg, that._configuration, person, entry);
+                    new Person(that._svg, that._configuration, person, d);
                 });
 
             // Hide all new labels of not removed elements
             this._svg.get()
                 .selectAll("g.person:not(.remove)")
-                .selectAll("g.label:not(.old)")
+                .selectAll("g.label:not(.old), g.color:not(.old)")
                 .style("opacity", 1e-6);
-
-            this._gradient.addColorGroup(this._hierarchy)
-                .classed("new", true);
 
             // Create transition instance
             let t = d3.transition()
@@ -104,13 +101,15 @@ export default class Update
 
             // Fade out all old labels and color group
             this._svg.get()
-                .selectAll("g.person.update g.label.old, g.person.remove g.label.old, g.colorGroup:not(.new)")
+                .selectAll("g.person.update, g.person.remove")
+                .selectAll("g.label.old, g.color.old")
                 .transition(t)
                 .style("opacity", 1e-6);
 
             // Fade in all new labels and color group
             this._svg.get()
-                .selectAll("g.person:not(.remove) g.label:not(.old), g.colorGroup.new")
+                .selectAll("g.person:not(.remove)")
+                .selectAll("g.label:not(.old), g.color:not(.old)")
                 .transition(t)
                 .style("opacity", 1);
         });
@@ -141,7 +140,7 @@ export default class Update
                 .attr("style", null);
 
             this._svg.get()
-                .selectAll("g.person g.label")
+                .selectAll("g.person g.label, g.person g.color")
                 .style("opacity", null);
 
             t.stop();
@@ -152,20 +151,14 @@ export default class Update
             .classed("new", false)
             .classed("update", false)
             .classed("remove", false)
-            .selectAll("g.label.old, title.old")
+            .selectAll("g.label.old, g.color.old, title.old")
             .remove();
-
-        this._svg.get()
-            .selectAll("g.colorGroup:not(.new)")
-            .remove();
-
-        this._svg.get()
-            .selectAll("g.colorGroup.new")
-            .classed("new", false);
 
         this._svg.get()
             .selectAll("g.person.available")
-            .classed("available", false);
+            // .style("cursor", "none")
+            .classed("available", false)
+        ;
 
         // Execute callback function after everything is done
         callback();

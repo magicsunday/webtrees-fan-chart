@@ -2,6 +2,7 @@
  * See LICENSE.md file for further details.
  */
 
+import * as d3 from "./d3";
 import Configuration from "./configuration";
 import Hierarchy from "./chart/hierarchy";
 import Overlay from "./chart/overlay";
@@ -87,7 +88,9 @@ export default class Chart
         //     .insert("rect", ":first-child")
         //     .attr("class", "background")
         //     .attr("width", "100%")
-        //     .attr("height", "100%");
+        //     .attr("height", "100%")
+        //     .style("fill", "none")
+        //     .style("pointer-events", "all");
         //
         // // Adjust rectangle position
         // this._svg
@@ -138,26 +141,30 @@ export default class Chart
 
         let personGroup = this._svg.get().select("g.personGroup");
         let gradient    = new Gradient(this._svg, this._configuration);
+        let that        = this;
 
-        personGroup.selectAll("g.person")
-            .data(this._hierarchy.nodes)
+         personGroup
+            .selectAll("g.person")
+            .data(this._hierarchy.nodes, (d) => d.data.id)
             .enter()
-            .each(entry => {
-                let person = personGroup
-                    .append("g")
-                    .attr("class", "person")
-                    .attr("id", "person-" + entry.data.id)
-                    .on("click", null);
+            .append("g")
+            .attr("class", "person")
+            .attr("id", (d) => "person-" + d.data.id)
+            .classed("available", (d) => d.data.xref !== "")
+            .on("click", null);
 
-                new Person(this._svg, this._configuration, person, entry);
+        // Create a new selection in order to leave the previous enter() selection
+        personGroup
+            .selectAll("g.person")
+            .each(function (d) {
+                let person = d3.select(this);
 
-                if (this._configuration.showColorGradients) {
-                    gradient.init(entry);
+                if (that._configuration.showColorGradients) {
+                    gradient.init(d);
                 }
-            });
 
-        gradient.addColorGroup(this._hierarchy)
-            .style("opacity", 1);
+                new Person(that._svg, that._configuration, person, d);
+            });
 
         this.bindClickEventListener();
         this.updateViewBox();
@@ -168,15 +175,14 @@ export default class Chart
      */
     bindClickEventListener()
     {
-        let personGroup = this._svg.get()
+        let persons = this._svg.get()
             .select("g.personGroup")
             .selectAll("g.person")
-            .data(this._hierarchy.nodes)
-            .filter(data => (data.data.xref !== ""))
+            .filter((d) => d.data.xref !== "")
             .classed("available", true);
 
         // Trigger method on click
-        personGroup.on("click", this.personClick.bind(this));
+        persons.on("click", this.personClick.bind(this));
     }
 
     /**

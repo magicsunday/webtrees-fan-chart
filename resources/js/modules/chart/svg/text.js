@@ -57,7 +57,11 @@ export default class Text
             if (data.data.alternativeNames.length > 0) {
                 let pathId3   = this.createPathDefinition(parentId, 2, data);
                 let textPath3 = this.createTextPath(text, pathId3)
-                    .attr("class", "alternativeName")
+                    // .attr("class", "alternativeName")
+                    .style("fill", "rgb(127, 127, 127)")
+                    .style("font-weight", "normal")
+                    .style("direction", "ltr")
+                    .style("unicode-bidi", "normal")
                     .classed("rtl", data.data.isAltRtl);
 
                 this.addAlternativeNames(textPath3, data);
@@ -67,7 +71,11 @@ export default class Text
             // Birth and death date
             let pathId4   = this.createPathDefinition(parentId, 3, data);
             let textPath4 = this.createTextPath(text, pathId4)
-                .attr("class", "date");
+                .attr("class", "date")
+                .style("fill", "rgb(127,127,127)")
+                .style("font-weight", "normal")
+                .style("direction", "ltr")
+                .style("unicode-bidi", "plaintext");
 
             this.addTimeSpan(textPath4, data);
             this.truncateNames(textPath4, data, 3, true);
@@ -105,7 +113,11 @@ export default class Text
                 if (data.depth < 6) {
                     let text4 = this.createTextElement(parent, data)
                         .attr("class", "date")
-                        .attr("dy", "2px");
+                        .attr("dy", "2px")
+                        .style("fill", "rgb(127,127,127)")
+                        .style("font-weight", "normal")
+                        .style("direction", "ltr")
+                        .style("unicode-bidi", "plaintext");
 
                     this.addTimeSpan(text4, data);
                     this.truncateNames(text4, data, 3, true);
@@ -136,7 +148,8 @@ export default class Text
 
             // The preferred name
             if (firstName === data.data.preferredName) {
-                tspan.attr("class", "preferred");
+                tspan.attr("class", "preferred")
+                    .style("text-decoration", "underline");
             }
 
             // Add some spacing between the elements
@@ -324,7 +337,8 @@ export default class Text
      */
     createTextElement(parent, data)
     {
-        return parent.append("text");
+        return parent.append("text")
+            .style("font-weight", "bold");
     }
 
     /**
@@ -339,7 +353,7 @@ export default class Text
     {
         return parent
             .append("textPath")
-            .attr("xlink:href", "#" + refId)
+            .attr("href", "#" + refId)
             .attr("startOffset", "25%");
     }
 

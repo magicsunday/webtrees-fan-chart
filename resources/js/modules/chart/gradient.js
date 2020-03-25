@@ -1,7 +1,7 @@
 /**
  * See LICENSE.md file for further details.
  */
-import * as d3 from "./../d3";
+
 import Configuration from "./../configuration";
 import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
 import Geometry from "./svg/geometry";
@@ -84,56 +84,5 @@ export default class Gradient
         newGrad.append("svg:stop")
             .attr("offset", "100%")
             .attr("stop-color", "rgb(" + data.data.colors[1].join(",") + ")");
-    }
-
-    /**
-     * Adds an color overlay for each arc.
-     *
-     * @param {Hierarchy} hierarchy
-     *
-     * @return {Selection} Color group object
-     */
-    addColorGroup(hierarchy)
-    {
-        // Arc generator
-        let arcGenerator = d3.arc()
-            .startAngle((data) => this._geometry.startAngle(data.depth, data.x0))
-            .endAngle((data) => this._geometry.endAngle(data.depth, data.x1))
-            .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth)
-            .outerRadius((data) => this._geometry.outerRadius(data.depth) + 1);
-            // .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth - 2)
-            // .outerRadius((data) => this._geometry.outerRadius(data.depth) - 1);
-
-        // arcGenerator.padAngle(this._configuration.padAngle)
-        //     .padRadius(this._configuration.padRadius)
-        //     .cornerRadius(this._configuration.cornerRadius - 2);
-
-        let colorGroup = this._svg.get()
-            .select("g")
-            .append("g")
-            .attr("class", "colorGroup")
-            .style("opacity", 1e-6);
-
-        colorGroup
-            .selectAll("g.colorGroup")
-            .data(hierarchy.nodes)
-            .enter()
-            .filter((data) => (data.data.xref !== ""))
-            .append("path")
-            .attr("fill", (data) => {
-                if (this._configuration.showColorGradients) {
-                    // Innermost circle (first generation)
-                    if (!data.depth) {
-                        return "rgb(225, 225, 225)";
-                    }
-
-                    return "url(#grad-" + data.data.id + ")";
-                }
-
-                return data.data.color;
-            })
-            .attr("d", arcGenerator);
-
-        return colorGroup;
     }
 }
