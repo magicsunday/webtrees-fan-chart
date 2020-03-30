@@ -34,7 +34,7 @@ export default class Filter
             .attr("dx", "0")
             .attr("dy", "0")
             .attr("flood-opacity", "0.3")
-            .style("flood-color", "rgb(0,0,0)");
+            .attr("flood-color", "rgb(0,0,0)");
     }
 
     /**
