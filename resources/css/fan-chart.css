@@ -1,30 +1,16 @@
 /* Form */
-#webtrees-fan-chart-form .col-form-label,
-#webtrees-fan-chart-form .range-input {
-    display: flex;
-}
-
 #webtrees-fan-chart-form .custom-range {
-    width: auto;
     padding-top: 4px;
-    flex-grow: 100;
 }
 
 #webtrees-fan-chart-form .custom-range-value {
-    width: auto;
     height: 26px;
-    flex-grow: 0;
     color: rgb(255, 255, 255);
     line-height: 16px;
     text-align: center;
     border-radius: 3px;
     padding: 5px 10px;
     margin-left: 10px;
-}
-
-#webtrees-fan-chart-form .more {
-    position: absolute;
-    left: 10px;
 }
 
 #webtrees-fan-chart-form #showMoreOptions.collapsing {

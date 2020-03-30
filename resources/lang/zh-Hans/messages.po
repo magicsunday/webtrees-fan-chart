@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-03-20 17:09+0100\n"
-"PO-Revision-Date: 2020-03-20 17:12+0100\n"
+"POT-Creation-Date: 2020-03-30 18:36+0200\n"
+"PO-Revision-Date: 2020-03-30 18:36+0200\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Poedit-KeywordsList: translate\n"
@@ -38,17 +38,17 @@ msgstr "按住Ctrl键滚动鼠标滚轮放大缩小"
 msgid "Move the view with two fingers"
 msgstr "用两个手指移动视图"
 
-#: src/Traits/IndividualTrait.php:82
+#: src/Traits/IndividualTrait.php:110
 #, php-format
 msgid "Born: %s"
 msgstr ""
 
-#: src/Traits/IndividualTrait.php:86
+#: src/Traits/IndividualTrait.php:114
 #, php-format
 msgid "Died: %s"
 msgstr ""
 
-#: src/Traits/IndividualTrait.php:89
+#: src/Traits/IndividualTrait.php:118
 msgid "Deceased"
 msgstr ""
 
@@ -88,14 +88,21 @@ msgstr ""
 msgid "Font size"
 msgstr "字体大小"
 
-#: resources/views/chart.phtml:142
+#: resources/views/chart.phtml:143
 msgid "More options ..."
 msgstr ""
 
-#: resources/views/chart.phtml:147
+#: resources/views/chart.phtml:148
 msgid "view"
 msgstr "查看"
 
-#: resources/views/chart.phtml:148
-msgid "reset"
-msgstr "重置"
+#: resources/views/chart.phtml:154
+msgid "Re center"
+msgstr ""
+
+#: resources/views/chart.phtml:159
+msgid "Export as PNG"
+msgstr ""
+
+#~ msgid "reset"
+#~ msgstr "重置"

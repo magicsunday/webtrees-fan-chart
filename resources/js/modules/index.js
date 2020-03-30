@@ -64,17 +64,21 @@ export class FanChart
      */
     init()
     {
-        // Bind click event on reset button
-        d3.select("#resetButton")
-            .on("click", () => this.doReset());
+        // Bind click event on center button
+        d3.select("#centerButton")
+            .on("click", () => this.center());
+
+        // Bind click event on export as PNG button
+        d3.select("#exportPNG")
+            .on("click", () => this.export());
     }
 
     /**
-     * Reset chart to initial zoom level and position.
+     * Resets the chart to initial zoom level and position.
      *
      * @private
      */
-    doReset()
+    center()
     {
         this._chart
             .svg.get()
@@ -102,5 +106,15 @@ export class FanChart
     {
         this._chart.data = data;
         this._chart.draw();
+    }
+
+    /**
+     * Exports the chart as PNG image and triggers a download.
+     *
+     * @private
+     */
+    export()
+    {
+        this._chart.svg.export('A4');
     }
 }

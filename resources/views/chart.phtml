@@ -50,8 +50,8 @@ use MagicSunday\Webtrees\FanChart\Configuration;
             <label class="col-sm-3 col-form-label wt-page-options-label" for="fanDegree">
                 <?= I18N::translate('Fan size') ?>
             </label>
-            <div class="col-sm-9 wt-page-options-value range-input">
-                <input id="fanDegree" class="custom-range" type="range" value="<?= $configuration->getFanDegree() ?>" min="180" max="360" step="5">
+            <div class="col-sm-9 wt-page-options-value d-flex justify-content-betwee">
+                <input id="fanDegree" class="flex-grow-1 custom-range" type="range" value="<?= $configuration->getFanDegree() ?>" min="180" max="360" step="5">
                 <output id="fanDegreeOutput" class="custom-range-value wt-page-options-label"><?= $configuration->getFanDegree() ?>°</output>
             </div>
         </div>
@@ -137,15 +137,29 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 
         <div class="form-group row">
             <div class="col-sm-12 wt-page-options-value text-center">
-                <div class="btn-group-sm float-left more">
-                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#showMoreOptions" aria-expanded="false" aria-controls="showMoreOptions">
-                        <?= I18N::translate('More options ...') ?>
-                    </button>
-                </div>
+                <div class="btn-toolbar justify-content-between">
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#showMoreOptions" aria-expanded="false" aria-controls="showMoreOptions">
+                            <?= I18N::translate('More options ...') ?>
+                        </button>
+                    </div>
 
-                <div class="btn-group-sm">
-                    <input class="btn btn-primary" type="submit" value="<?= I18N::translate('view') ?>">
-                    <input class="btn btn-primary" type="button" value="<?= I18N::translate('reset') ?>" id="resetButton">
+                    <div class="btn-group btn-group-sm">
+                        <input class="btn btn-primary" type="submit" value="<?= I18N::translate('view') ?>">
+                    </div>
+
+                    <div class="justify-content-around">
+                        <div class="btn-group btn-group-sm mr-2">
+                            <button class="btn btn-secondary" type="button" id="centerButton">
+                                <?= I18N::translate('Re center') ?>
+                            </button>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-secondary" type="button" id="exportPNG">
+                                <?= I18N::translate('Export as PNG') ?>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

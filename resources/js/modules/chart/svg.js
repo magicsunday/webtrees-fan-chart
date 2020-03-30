@@ -7,6 +7,7 @@ import Configuration from "./../configuration";
 import Defs from "./svg/defs";
 import Zoom from "./svg/zoom";
 import Filter from "./svg/filter";
+import Export from "./svg/export";
 
 /**
  * SVG class
@@ -114,6 +115,16 @@ export default class Svg
         if (d3.event.defaultPrevented) {
             d3.event.stopPropagation();
         }
+    }
+
+    /**
+     * Exports the chart as PNG image and triggers a download.
+     *
+     * @param {string} size The paper size format of the output image (A3, A4 or A5)
+     */
+    export(size)
+    {
+        new Export().svgToImage(this, size);
     }
 
     /**
