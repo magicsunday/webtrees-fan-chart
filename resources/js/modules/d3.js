@@ -36,7 +36,7 @@ export {
 } from "d3-shape";
 
 export {
-    json
+    json, text
 } from "d3-fetch";
 
 export {

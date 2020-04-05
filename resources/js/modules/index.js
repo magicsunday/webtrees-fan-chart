@@ -70,7 +70,11 @@ export class FanChart
 
         // Bind click event on export as PNG button
         d3.select("#exportPNG")
-            .on("click", () => this.export());
+            .on("click", () => this.exportPNG());
+
+        // Bind click event on export as SVG button
+        d3.select("#exportSVG")
+            .on("click", () => this.exportSVG());
     }
 
     /**
@@ -98,6 +102,16 @@ export class FanChart
     }
 
     /**
+     * Sets the URL to the CSS file used in SVG export.
+     *
+     * @param {string} }cssFile
+     */
+    set cssFile(cssFile)
+    {
+        this._cssFile = cssFile;
+    }
+
+    /**
      * Draws the chart.
      *
      * @param {Object} data The JSON encoded chart data
@@ -113,8 +127,24 @@ export class FanChart
      *
      * @private
      */
-    export()
+    exportPNG()
     {
-        this._chart.svg.export('A4');
+        const product = this._chart.svg.export('png');
+
+        product.svgToImage(this._chart.svg, 'A4');
+
+    }
+
+    /**
+     * Exports the chart as SVG image and triggers a download.
+     *
+     * @private
+     */
+    exportSVG()
+    {
+        const product = this._chart.svg.export('svg');
+
+        // @param {string} size    The paper size format of the output image (A3, A4 or A5)
+        product.svgToImage(this._chart.svg, 'A4', this._cssFile);
     }
 }

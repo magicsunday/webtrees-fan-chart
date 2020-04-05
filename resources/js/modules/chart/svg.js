@@ -7,7 +7,8 @@ import Configuration from "./../configuration";
 import Defs from "./svg/defs";
 import Zoom from "./svg/zoom";
 import Filter from "./svg/filter";
-import Export from "./svg/export";
+// import Export from "./svg/export";
+import ExportFactory from "./svg/export-factory";
 
 /**
  * SVG class
@@ -120,11 +121,14 @@ export default class Svg
     /**
      * Exports the chart as PNG image and triggers a download.
      *
-     * @param {string} size The paper size format of the output image (A3, A4 or A5)
+     * @param {string} type The export file type (either "png" or "svg")
+     *
+     * @return {PngExport|SvgExport}
      */
-    export(size)
+    export(type )
     {
-        new Export().svgToImage(this, size);
+        const factory = new ExportFactory();
+        return factory.createExport(type);
     }
 
     /**
