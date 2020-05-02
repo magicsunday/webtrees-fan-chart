@@ -157,7 +157,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         //     ]));
         // }
 
-        Auth::checkIndividualAccess($individual);
+        Auth::checkIndividualAccess($individual, false, true);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
         $ajaxUrl = route('module', [
@@ -240,7 +240,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $xref         = $request->getQueryParams()['xref'];
         $individual   = Individual::getInstance($xref, $tree);
 
-        Auth::checkIndividualAccess($individual);
+        Auth::checkIndividualAccess($individual, false, true);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
         return response(
