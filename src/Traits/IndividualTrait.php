@@ -26,10 +26,12 @@ trait IndividualTrait
     /**
      * The XPath identifiers to extract the name parts.
      */
-    private $xpathName          = '//span[contains(attribute::class, "NAME")]';
-    private $xpathNickname      = '//q[contains(attribute::class, "wt-nickname")]';
-    private $xpathSurname       = '//span[contains(attribute::class, "SURN")]';
-    private $xpathPreferredName = '//span[contains(attribute::class, "starredname")]';
+    private $xpathFirstNames      = '//text()[following::span[@class="SURN"]][normalize-space()]';
+    private $xpathLastNames       = '//text()[parent::*[not(@class="wt-nickname")]][not(following::span[@class="SURN"])][normalize-space()]';
+    private $xpathNickname        = '//q[@class="wt-nickname"]';
+    private $xpathPreferredName   = '//span[@class="starredname"]';
+    private $xpathAlternativeName = '//span[contains(attribute::class, "NAME")]';
+
 
     /**
      * Get the individual data required for display the chart.
@@ -53,7 +55,7 @@ trait IndividualTrait
         // Remove placeholders as we do not need them in this module
         $fullNN = str_replace(['@N.N.', '@P.N.'], '', $primaryName['fullNN']);
 
-        // Extract name parts
+        // Extract name parts (Do not change processing order!)
         $preferredName    = $this->getPreferredName($xpath);
         $lastNames        = $this->getLastNames($xpath);
         $firstNames       = $this->getFirstNames($xpath);
@@ -130,20 +132,17 @@ trait IndividualTrait
      */
     public function getFirstNames(DOMXPath $xpath): array
     {
-        // Remove SURN HTML nodes
-        foreach ($xpath->query($this->xpathSurname) as $node) {
-            $node->parentNode->removeChild($node);
+        $nodeList   = $xpath->query($this->xpathFirstNames);
+        $firstNames = [];
+
+        /** @var DOMNode $node */
+        foreach ($nodeList as $node) {
+            $firstNames[] = trim($node->nodeValue);
         }
 
-        // Remove nickname HTML nodes
-        foreach ($xpath->query($this->xpathNickname) as $node) {
-            $node->parentNode->removeChild($node);
-        }
+        $firstNames = explode(' ', implode(' ', $firstNames));
 
-        $nodeList   = $xpath->query($this->xpathName);
-        $firstNames = $nodeList->length ? $nodeList->item(0)->nodeValue : '';
-
-        return array_filter(explode(' ', $firstNames));
+        return array_values(array_filter($firstNames));
     }
 
     /**
@@ -155,15 +154,18 @@ trait IndividualTrait
      */
     public function getLastNames(DOMXPath $xpath): array
     {
-        $nodeList  = $xpath->query($this->xpathSurname);
+        $nodeList  = $xpath->query($this->xpathLastNames);
         $lastNames = [];
 
         /** @var DOMNode $node */
         foreach ($nodeList as $node) {
-            $lastNames[] = $node->nodeValue;
+            $lastNames[] = trim($node->nodeValue);
         }
 
-        return $lastNames;
+        // Concat to full last name (as SURN may contain a prefix and a separate suffix)
+        $lastNames = explode(' ', implode(' ', $lastNames));
+
+        return array_values(array_filter($lastNames));
     }
 
     /**
@@ -195,7 +197,7 @@ trait IndividualTrait
         }
 
         $xpath    = $this->getXPath($name);
-        $nodeList = $xpath->query($this->xpathName);
+        $nodeList = $xpath->query($this->xpathAlternativeName);
         $name     = $nodeList->length ? $nodeList->item(0)->nodeValue : '';
 
         return array_filter(explode(' ', $name));
