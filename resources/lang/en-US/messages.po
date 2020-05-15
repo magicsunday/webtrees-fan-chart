@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-03-30 18:36+0200\n"
-"PO-Revision-Date: 2020-03-30 18:36+0200\n"
+"POT-Creation-Date: 2020-05-15 15:14+0200\n"
+"PO-Revision-Date: 2020-05-15 15:14+0200\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Poedit-SearchPath-1: module.php\n"
 "X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:99 src/Module.php:195
+#: src/Module.php:99 src/Module.php:196
 msgid "Fan chart"
 msgstr ""
 
@@ -25,81 +25,85 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
-#: src/Module.php:198 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:199 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
 
-#: src/Module.php:218
+#: src/Module.php:219
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr ""
 
-#: src/Module.php:219
+#: src/Module.php:220
 msgid "Move the view with two fingers"
 msgstr ""
 
-#: src/Traits/IndividualTrait.php:110
+#: src/Traits/IndividualTrait.php:112
 #, php-format
 msgid "Born: %s"
 msgstr ""
 
-#: src/Traits/IndividualTrait.php:114
+#: src/Traits/IndividualTrait.php:116
 #, php-format
 msgid "Died: %s"
 msgstr ""
 
-#: src/Traits/IndividualTrait.php:118
+#: src/Traits/IndividualTrait.php:120
 msgid "Deceased"
 msgstr ""
 
-#: resources/views/chart.phtml:34
+#: resources/views/chart.phtml:35
 msgid "Individual"
 msgstr ""
 
-#: resources/views/chart.phtml:51
+#: resources/views/chart.phtml:52
 msgid "Fan size"
 msgstr ""
 
-#: resources/views/chart.phtml:61
+#: resources/views/chart.phtml:62
 msgid "Generations"
 msgstr ""
 
-#: resources/views/chart.phtml:79
+#: resources/views/chart.phtml:80
 msgid "Presentation"
 msgstr ""
 
-#: resources/views/chart.phtml:86
+#: resources/views/chart.phtml:87
 msgid "Hide empty segments"
 msgstr ""
 
-#: resources/views/chart.phtml:95
+#: resources/views/chart.phtml:96
 msgid "Show color gradients"
 msgstr ""
 
-#: resources/views/chart.phtml:104
+#: resources/views/chart.phtml:105
 msgid "Number of inner levels"
 msgstr ""
 
-#: resources/views/chart.phtml:117
+#: resources/views/chart.phtml:118
 msgid "Specifies the number of levels in which the text is written along an arc."
 msgstr ""
 
-#: resources/views/chart.phtml:124
+#: resources/views/chart.phtml:125
 msgid "Font size"
 msgstr ""
 
-#: resources/views/chart.phtml:143
+#: resources/views/chart.phtml:144
 msgid "More options ..."
 msgstr ""
 
-#: resources/views/chart.phtml:148
+#: resources/views/chart.phtml:149
 msgid "view"
 msgstr ""
 
-#: resources/views/chart.phtml:154
+#: resources/views/chart.phtml:155
 msgid "Re center"
 msgstr ""
 
-#: resources/views/chart.phtml:159
+#: resources/views/chart.phtml:160
 msgid "Export as PNG"
+msgstr ""
+
+#: resources/views/chart.phtml:163
+msgid "Export as SVG"
 msgstr ""
