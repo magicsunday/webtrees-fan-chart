@@ -1,0 +1,109 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2020-05-15 15:14+0200\n"
+"PO-Revision-Date: 2020-07-06 20:59+0700\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2\n"
+"X-Poedit-Basepath: ../../..\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-KeywordsList: translate\n"
+"Last-Translator: \n"
+"Language: vi_VN\n"
+"X-Poedit-SearchPath-0: resources/views/chart.phtml\n"
+"X-Poedit-SearchPath-1: module.php\n"
+"X-Poedit-SearchPath-2: src\n"
+
+#: src/Module.php:99 src/Module.php:196
+msgid "Fan chart"
+msgstr "Biểu đồ hình quạt"
+
+#: src/Module.php:109
+msgid "A fan chart of an individual’s ancestors."
+msgstr "Biểu đồ cá nhân Tổ tiên"
+
+#: src/Module.php:199 src/Traits/ModuleChartTrait.php:38
+#, php-format
+msgid "Fan chart of %s"
+msgstr ""
+
+#: src/Module.php:219
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Kết hợp Ctrl + scroll để thu phóng biểu đồ"
+
+#: src/Module.php:220
+msgid "Move the view with two fingers"
+msgstr "Di chuyển tầm nhìn bằng hai ngón tay"
+
+#: src/Traits/IndividualTrait.php:112
+#, php-format
+msgid "Born: %s"
+msgstr ""
+
+#: src/Traits/IndividualTrait.php:116
+#, php-format
+msgid "Died: %s"
+msgstr ""
+
+#: src/Traits/IndividualTrait.php:120
+msgid "Deceased"
+msgstr "Người mất"
+
+#: resources/views/chart.phtml:35
+msgid "Individual"
+msgstr "Cá nhân"
+
+#: resources/views/chart.phtml:52
+msgid "Fan size"
+msgstr "Kích thước biểu đồ"
+
+#: resources/views/chart.phtml:62
+msgid "Generations"
+msgstr "Các thế hệ"
+
+#: resources/views/chart.phtml:80
+msgid "Presentation"
+msgstr "Hình thức trình bày"
+
+#: resources/views/chart.phtml:87
+msgid "Hide empty segments"
+msgstr "Ẩn vùng trống"
+
+#: resources/views/chart.phtml:96
+msgid "Show color gradients"
+msgstr "Hiển thị màu viền"
+
+#: resources/views/chart.phtml:105
+msgid "Number of inner levels"
+msgstr "Độ rộng ô trong hình quạt"
+
+#: resources/views/chart.phtml:118
+msgid "Specifies the number of levels in which the text is written along an arc."
+msgstr "Cấp độ trong đó văn bản được viết dọc theo một vòng cung"
+
+#: resources/views/chart.phtml:125
+msgid "Font size"
+msgstr "Kích thước font chữ"
+
+#: resources/views/chart.phtml:144
+msgid "More options ..."
+msgstr "Lựa chọn thêm..."
+
+#: resources/views/chart.phtml:149
+msgid "view"
+msgstr "Xem biểu đồ"
+
+#: resources/views/chart.phtml:155
+msgid "Re center"
+msgstr "Chỉnh biểu đồ về giữa màn hình"
+
+#: resources/views/chart.phtml:160
+msgid "Export as PNG"
+msgstr "Xuất định dạng PNG"
+
+#: resources/views/chart.phtml:163
+msgid "Export as SVG"
+msgstr "Xuất định dạng SVG"
