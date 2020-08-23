@@ -32,7 +32,6 @@ trait IndividualTrait
     private $xpathPreferredName   = '//span[@class="starredname"]';
     private $xpathAlternativeName = '//span[contains(attribute::class, "NAME")]';
 
-
     /**
      * Get the individual data required for display the chart.
      *

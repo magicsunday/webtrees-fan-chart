@@ -21,9 +21,6 @@ export default {
             mangle: true,
             compress: true,
             module: true,
-            include: [
-                /^.+\.min\.js$/
-            ],
             output: {
                 comments: false
             }
