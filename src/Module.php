@@ -19,6 +19,7 @@ use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleChartInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleThemeInterface;
+use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\View;
 use MagicSunday\Webtrees\FanChart\Traits\IndividualTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
@@ -132,7 +133,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $tree       = $request->getAttribute('tree');
         $user       = $request->getAttribute('user');
         $xref       = $request->getAttribute('xref');
-        $individual = Individual::getInstance($xref, $tree);
+        $individual = Registry::individualFactory()->make($xref, $tree);
 
         $this->configuration = new Configuration($request);
 
@@ -238,7 +239,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $tree         = $request->getAttribute('tree');
         $user         = $request->getAttribute('user');
         $xref         = $request->getQueryParams()['xref'];
-        $individual   = Individual::getInstance($xref, $tree);
+        $individual   = Registry::individualFactory()->make($xref, $tree);
 
         Auth::checkIndividualAccess($individual, false, true);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
