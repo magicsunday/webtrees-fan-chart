@@ -5,7 +5,7 @@
 [![Issue Count](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/badges/issue_count.svg)](https://codeclimate.com/github/magicsunday/webtrees-fan-chart)
 
 # Fan chart
-This modules provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.
+This module provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.
 
 ![210 Degree chart](assets/fan-chart-210.png)
 ![210 Degree chart with color gradients and hidden empty segments](assets/fan-chart-210-gradient.png)
@@ -22,7 +22,7 @@ at the root directory of your webtrees installation.
 composer require magicsunday/webtrees-fan-chart --update-no-dev
 ```
 
-The module will automatically installed into the ``modules_v4`` directory of your webtrees installation.
+The module will automatically install into the ``modules_v4`` directory of your webtrees installation.
 
 To remove the module run:
 ```
@@ -54,7 +54,7 @@ installed fan chart module) and save your settings.
 
 
 ## Usage
-At the charts menu, you will find a new link called `Fan chart`.
+At the charts' menu, you will find a new link called `Fan chart`.
 
 
 ## Development
