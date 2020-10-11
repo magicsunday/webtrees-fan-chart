@@ -104,7 +104,7 @@ export class FanChart
     /**
      * Sets the URL to the CSS file used in SVG export.
      *
-     * @param {string} }cssFile
+     * @param {string} cssFile
      */
     set cssFile(cssFile)
     {
