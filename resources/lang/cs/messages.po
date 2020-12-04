@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-05-15 15:14+0200\n"
-"PO-Revision-Date: 2020-05-15 15:14+0200\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2020-12-04 17:03+0100\n"
+"PO-Revision-Date: 2020-12-04 17:11+0100\n"
+"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
@@ -18,24 +18,24 @@ msgstr ""
 "X-Poedit-SearchPath-2: src/Configuration.php\n"
 "X-Poedit-SearchPath-3: module.php\n"
 
-#: src/Module.php:99 src/Module.php:196
+#: src/Module.php:100 src/Module.php:197
 msgid "Fan chart"
 msgstr "Vějířový diagram"
 
-#: src/Module.php:109
+#: src/Module.php:110
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Vějíř předků osoby."
 
-#: src/Module.php:199
+#: src/Module.php:200
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Vějíř předků osoby %s"
 
-#: src/Module.php:219
+#: src/Module.php:220
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Pomocí Ctrl + kolečko zvětšit pohled"
 
-#: src/Module.php:220
+#: src/Module.php:221
 msgid "Move the view with two fingers"
 msgstr "Přemístit pohled dvěma prsty"
 

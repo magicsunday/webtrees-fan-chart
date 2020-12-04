@@ -1,54 +1,54 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-05-15 15:14+0200\n"
-"PO-Revision-Date: 2020-07-06 20:59+0700\n"
+"POT-Creation-Date: 2020-12-04 17:03+0100\n"
+"PO-Revision-Date: 2020-12-04 17:10+0100\n"
+"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
+"Language: vi_VN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Poedit-KeywordsList: translate\n"
-"Last-Translator: \n"
-"Language: vi_VN\n"
 "X-Poedit-SearchPath-0: resources/views/chart.phtml\n"
 "X-Poedit-SearchPath-1: module.php\n"
 "X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:99 src/Module.php:196
+#: src/Module.php:100 src/Module.php:197
 msgid "Fan chart"
 msgstr "Biểu đồ hình quạt"
 
-#: src/Module.php:109
+#: src/Module.php:110
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Biểu đồ cá nhân Tổ tiên"
 
-#: src/Module.php:199 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:200 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
 
-#: src/Module.php:219
+#: src/Module.php:220
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Kết hợp Ctrl + scroll để thu phóng biểu đồ"
 
-#: src/Module.php:220
+#: src/Module.php:221
 msgid "Move the view with two fingers"
 msgstr "Di chuyển tầm nhìn bằng hai ngón tay"
 
-#: src/Traits/IndividualTrait.php:112
+#: src/Traits/IndividualTrait.php:111
 #, php-format
 msgid "Born: %s"
 msgstr ""
 
-#: src/Traits/IndividualTrait.php:116
+#: src/Traits/IndividualTrait.php:115
 #, php-format
 msgid "Died: %s"
 msgstr ""
 
-#: src/Traits/IndividualTrait.php:120
+#: src/Traits/IndividualTrait.php:119
 msgid "Deceased"
 msgstr "Người mất"
 

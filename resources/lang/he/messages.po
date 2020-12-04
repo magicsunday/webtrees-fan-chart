@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-05-15 15:14+0200\n"
-"PO-Revision-Date: 2020-05-15 15:14+0200\n"
+"POT-Creation-Date: 2020-12-04 17:03+0100\n"
+"PO-Revision-Date: 2020-12-04 17:10+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: he\n"
@@ -18,38 +18,38 @@ msgstr ""
 "X-Poedit-SearchPath-1: module.php\n"
 "X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:99 src/Module.php:196
+#: src/Module.php:100 src/Module.php:197
 msgid "Fan chart"
 msgstr "תרשים מניפה של אבות"
 
-#: src/Module.php:109
+#: src/Module.php:110
 msgid "A fan chart of an individual’s ancestors."
 msgstr "תרשים מעריצים של אבותיו של אדם."
 
-#: src/Module.php:199 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:200 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "תרשים מניפה של אבות של %s"
 
-#: src/Module.php:219
+#: src/Module.php:220
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "השתמש ב- Ctrl + גלילה כדי להגדיל את התצוגה"
 
-#: src/Module.php:220
+#: src/Module.php:221
 msgid "Move the view with two fingers"
 msgstr "הזז את התצוגה בשתי אצבעות"
 
-#: src/Traits/IndividualTrait.php:112
+#: src/Traits/IndividualTrait.php:111
 #, php-format
 msgid "Born: %s"
 msgstr ""
 
-#: src/Traits/IndividualTrait.php:116
+#: src/Traits/IndividualTrait.php:115
 #, php-format
 msgid "Died: %s"
 msgstr ""
 
-#: src/Traits/IndividualTrait.php:120
+#: src/Traits/IndividualTrait.php:119
 msgid "Deceased"
 msgstr ""
 
