@@ -66,8 +66,25 @@ export default class Person
 
             // Hovering
             person
-                .on("mouseover", this.mouseover.bind(this))
-                .on("mouseout", this.mouseout.bind(this));
+                // Handles the event when a pointing device is moved onto an element.
+                .on("mouseover", function (event, datum) {
+                    const elements = person.nodes();
+                    const index    = elements.indexOf(this);
+
+                    // Use raise() to move element to the top, as in SVG the last element is always the
+                    // one drawn on top of the others.
+                    d3.select(elements[index])
+                        .classed("hover", true)
+                        .raise();
+                })
+                // Handles the event when a pointing device is moved off an element.
+                .on("mouseout", function (event, datum) {
+                    const elements = person.nodes();
+                    const index    = elements.indexOf(this);
+
+                    d3.select(elements[index])
+                        .classed("hover", false);
+                });
         }
     }
 
@@ -111,39 +128,6 @@ export default class Person
                 return data.data.color;
             })
             .attr("d", arcGenerator);
-    }
-
-    /**
-     * Handles the event when a pointing device is moved onto an element.
-     *
-     * @param {Object} datum
-     * @param {number} index
-     * @param {Array}  nodes
-     *
-     * @private
-     */
-    mouseover(datum, index, nodes)
-    {
-        // Use raise() to move element to the top, as in SVG the last element is always the
-        // one drawn on top of the others.
-        d3.select(nodes[index])
-            .classed("hover", true)
-            .raise();
-    }
-
-    /**
-     * Handles the event when a pointing device is moved off an element.
-     *
-     * @param {Object} datum
-     * @param {number} index
-     * @param {Array}  nodes
-     *
-     * @private
-     */
-    mouseout(datum, index, nodes)
-    {
-        d3.select(nodes[index])
-            .classed("hover", false);
     }
 
     /**

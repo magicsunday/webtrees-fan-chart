@@ -186,11 +186,12 @@ export default class Chart
     /**
      * Method triggers either the "update" or "individual" method on the click on an person.
      *
-     * @param {Object} data The D3 data object
+     * @param {Event}  event The current event
+     * @param {Object} data  The D3 data object
      *
      * @private
      */
-    personClick(data)
+    personClick(event, data)
     {
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
         (data.depth === 0) ? this.redirectToIndividual(data.data.url) : this.update(data.data.updateUrl);

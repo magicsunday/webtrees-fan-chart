@@ -14,7 +14,7 @@ https://github.com/d3/d3-timer
 */
 
 export {
-    event, select, selectAll
+    select, selectAll
 } from "d3-selection";
 
 export {

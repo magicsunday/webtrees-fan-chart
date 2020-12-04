@@ -46,44 +46,44 @@ export default class Zoom
         // Setup zoom and pan
         this._zoom = d3.zoom()
             .scaleExtent([MIN_ZOOM, MAX_ZOOM])
-            .on("zoom", () => {
+            .on("zoom", (event) => {
                 // Abort any action if only one finger is used on "touchmove" events
-                if (d3.event.sourceEvent
-                    && (d3.event.sourceEvent.type === "touchmove")
-                    && (d3.event.sourceEvent.touches.length < 2)
+                if (event.sourceEvent
+                    && (event.sourceEvent.type === "touchmove")
+                    && (event.sourceEvent.touches.length < 2)
                 ) {
                     return;
                 }
 
-                zoomLevel = d3.event.transform.k;
+                zoomLevel = event.transform.k;
 
-                this._parent.attr("transform", d3.event.transform);
+                this._parent.attr("transform", event.transform);
             });
 
         // Add zoom filter
-        this._zoom.filter(() => {
+        this._zoom.filter((event) => {
             // Allow "wheel" event only while control key is pressed
-            if (d3.event.type === "wheel") {
-                if (zoomLevel && d3.event.ctrlKey) {
+            if (event.type === "wheel") {
+                if (zoomLevel && event.ctrlKey) {
                     // Prevent zooming below lowest level
-                    if ((zoomLevel <= MIN_ZOOM) && (d3.event.deltaY > 0)) {
-                        d3.event.preventDefault();
+                    if ((zoomLevel <= MIN_ZOOM) && (event.deltaY > 0)) {
+                        event.preventDefault();
                         return false;
                     }
 
                     // Prevent zooming above highest level
-                    if ((zoomLevel >= MAX_ZOOM) && (d3.event.deltaY < 0)) {
-                        d3.event.preventDefault();
+                    if ((zoomLevel >= MAX_ZOOM) && (event.deltaY < 0)) {
+                        event.preventDefault();
                         return false;
                     }
                 }
 
-                return d3.event.ctrlKey;
+                return event.ctrlKey;
             }
 
             // Allow "touchmove" event only with two fingers
-            if (!d3.event.button && (d3.event.type === "touchmove")) {
-                return d3.event.touches.length === 2;
+            if (!event.button && (event.type === "touchmove")) {
+                return event.touches.length === 2;
             }
 
             return true;
