@@ -19,8 +19,8 @@
         "d3-timer": "^2.0",
         "d3-transition": "^2.0",
         "d3-zoom": "^2.0",
-        "rollup": "^2.26.5",
-        "@rollup/plugin-node-resolve": "^9.0.0",
-        "rollup-plugin-terser": "^7.0.0"
+        "rollup": "^2.34",
+        "@rollup/plugin-node-resolve": "^11.0",
+        "rollup-plugin-terser": "^7.0"
     }
 }
