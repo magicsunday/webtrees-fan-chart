@@ -23,7 +23,7 @@ msgstr "Éventail des ancêtres"
 
 #: src/Module.php:110
 msgid "A fan chart of an individual’s ancestors."
-msgstr ""
+msgstr "Un éventail des ancêtres d'un individu."
 
 #: src/Module.php:200 src/Traits/ModuleChartTrait.php:38
 #, php-format
@@ -41,16 +41,16 @@ msgstr "Déplacer la vue avec deux doigts"
 #: src/Traits/IndividualTrait.php:111
 #, php-format
 msgid "Born: %s"
-msgstr ""
+msgstr "Naissance:"
 
 #: src/Traits/IndividualTrait.php:115
 #, php-format
 msgid "Died: %s"
-msgstr ""
+msgstr "Décès:"
 
 #: src/Traits/IndividualTrait.php:119
 msgid "Deceased"
-msgstr ""
+msgstr "Décédé"
 
 #: resources/views/chart.phtml:35
 msgid "Individual"
@@ -58,7 +58,7 @@ msgstr "Individu"
 
 #: resources/views/chart.phtml:52
 msgid "Fan size"
-msgstr ""
+msgstr "Taille de l'éventail"
 
 #: resources/views/chart.phtml:62
 msgid "Generations"
@@ -66,23 +66,23 @@ msgstr "Générations"
 
 #: resources/views/chart.phtml:80
 msgid "Presentation"
-msgstr ""
+msgstr "Affichage"
 
 #: resources/views/chart.phtml:87
 msgid "Hide empty segments"
-msgstr ""
+msgstr "Cacher les segments vides"
 
 #: resources/views/chart.phtml:96
 msgid "Show color gradients"
-msgstr ""
+msgstr "Montrer les gradients de couleur"
 
 #: resources/views/chart.phtml:105
 msgid "Number of inner levels"
-msgstr ""
+msgstr "Nombre de niveaux internes"
 
 #: resources/views/chart.phtml:118
 msgid "Specifies the number of levels in which the text is written along an arc."
-msgstr ""
+msgstr "Spécifie le nombre de niveaux pour lesquel le texte est écrit le long d'un arc."
 
 #: resources/views/chart.phtml:125
 msgid "Font size"
@@ -90,7 +90,7 @@ msgstr "Taille de police"
 
 #: resources/views/chart.phtml:144
 msgid "More options ..."
-msgstr ""
+msgstr "Plus d'options..."
 
 #: resources/views/chart.phtml:149
 msgid "view"
@@ -98,15 +98,15 @@ msgstr "afficher"
 
 #: resources/views/chart.phtml:155
 msgid "Re center"
-msgstr ""
+msgstr "Re centrer"
 
 #: resources/views/chart.phtml:160
 msgid "Export as PNG"
-msgstr ""
+msgstr "Exporter au format PNG"
 
 #: resources/views/chart.phtml:163
 msgid "Export as SVG"
-msgstr ""
+msgstr "Exporter au format SVG"
 
 #~ msgid "reset"
 #~ msgstr "réinitialiser"
