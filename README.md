@@ -7,7 +7,7 @@
 # Fan chart
 This module provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.
 
-![210 Degree chart](assets/fan-chart-210.png)
+![210 Degree chart with opened contextmenu](assets/fan-chart-210-contextmenu.png)
 ![210 Degree chart with color gradients and hidden empty segments](assets/fan-chart-210-gradient.png)
 
 
@@ -54,7 +54,10 @@ installed fan chart module) and save your settings.
 
 
 ## Usage
-At the charts' menu, you will find a new link called `Fan chart`.
+At the charts' menu, you will find a new link called `Fan chart`. Use the provided configuration options
+to adjust the layout of the charts according to your needs.
+
+Right clicking on an individual opens an tooltip providing more detailed information of the current individual.
 
 
 ## Development
