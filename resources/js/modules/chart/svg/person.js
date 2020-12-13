@@ -2,11 +2,12 @@
  * See LICENSE.md file for further details.
  */
 
-import * as d3 from "./../../d3";
-import Configuration from "./../../configuration";
+import * as d3 from "../../d3";
+import Configuration from "../../configuration";
 import Geometry from "./geometry";
-import Svg from "./../svg";
+import Svg from "../svg";
 import Text from "./text";
+import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
 
 /**
  * This class handles the creation of the person elements of the chart.
@@ -64,8 +65,48 @@ export default class Person
             text.createLabels(label, data);
             this.addColorGroup(person, data);
 
+            const that = this;
+
             // Hovering
             person
+                .on("contextmenu", (event, datum) => {
+                    if (this._svg.div.property("active")) {
+                        this._svg.div
+                            .transition()
+                            .duration(200)
+                            .style("opacity", 0);
+
+                        this._svg.div.property("active", false);
+                        event.preventDefault();
+                    } else {
+                        this._svg.div.property("active", true);
+                        this.setTooltipHtml(datum);
+
+                        event.preventDefault();
+                    }
+                })
+                // Handles the event when a pointing device initially enters an element.
+                .on("mouseenter", (event, datum) => {
+                    if (datum.data.xref === "") {
+                        this._svg.div
+                            .style("opacity", 0);
+                    }
+
+                    this.setTooltipHtml(datum);
+                })
+                // Handles the event when a pointing device leaves an element.
+                .on("mouseleave", (event, datum) => {
+                    if (datum.data.xref === "") {
+                        this._svg.div
+                            .style("opacity", 0);
+                    }
+                })
+                // Handles the event when a pointing device is moved around an element.
+                .on("mousemove", (event, datum) => {
+                    this._svg.div
+                        .style("left", (event.pageX) + "px")
+                        .style("top", (event.pageY - 30) + "px");
+                })
                 // Handles the event when a pointing device is moved onto an element.
                 .on("mouseover", function (event, datum) {
                     const elements = person.nodes();
@@ -85,6 +126,52 @@ export default class Person
                     d3.select(elements[index])
                         .classed("hover", false);
                 });
+        }
+    }
+
+    /**
+     *
+     * @param {Object} datum The D3 data object
+     */
+    setTooltipHtml(datum)
+    {
+        // Ignore empty elements
+        if (datum.data.xref === "") {
+            return;
+        }
+
+        const image = (datum.data.thumbnail
+            ? "<img src=\"" + datum.data.thumbnail + "\" alt=\"\" />"
+            : "<i class=\"icon-silhouette-" + datum.data.sex + "\" ></i>");
+
+        const dates = datum.data.birth || datum.data.marriage || datum.data.death;
+
+        this._svg.div
+            .html(
+                "<div class=\"image\">" + image + "</div>"
+                + "<div class=\"name\">" + datum.data.name + "</div>"
+                + (dates
+                    ? "<table>"
+                        + (datum.data.birth
+                        ? ("<tr class=\"date\"><th>\u2605</th><td>" + datum.data.birth + "</td></tr>")
+                        : "")
+                        + (datum.data.marriage
+                        ? ("<tr class=\"date\"><th>\u26AD</th><td>" + datum.data.marriage + "</td></tr>")
+                        : "")
+                        + (datum.data.death
+                        ? ("<tr class=\"date\"><th>\u2020</th><td>" + datum.data.death + "</td></tr>")
+                        : "")
+                    + "</table>"
+                    : "")
+            )
+            .style("left", (event.pageX) + "px")
+            .style("top", (event.pageY - 30) + "px");
+
+        if (this._svg.div.property("active")) {
+            this._svg.div
+                .transition()
+                .duration(200)
+                .style("opacity", 1);
         }
     }
 

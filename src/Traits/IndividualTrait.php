@@ -11,6 +11,7 @@ namespace MagicSunday\Webtrees\FanChart\Traits;
 use DOMDocument;
 use DOMNode;
 use DOMXPath;
+use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 
@@ -72,7 +73,11 @@ trait IndividualTrait
             'preferredName'    => $preferredName,
             'alternativeNames' => $alternativeNames,
             'isAltRtl'         => $this->isRtl($alternativeNames),
+            'thumbnail'        => $this->getIndividualImage($individual),
             'sex'              => $individual->sex(),
+            'birth'            => strip_tags($individual->getBirthDate()->display()),
+            'death'            => strip_tags($individual->getDeathDate()->display()),
+            'marriage'         => $this->getMarriageDate($individual),
             'timespan'         => $this->getLifetimeDescription($individual),
             'color'            => $this->getColor($individual),
             'colors'           => [[], []],
@@ -117,6 +122,25 @@ trait IndividualTrait
 
         if ($individual->isDead()) {
             return I18N::translate('Deceased');
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the marriage date of the individual.
+     *
+     * @param Individual $individual
+     *
+     * @return string
+     */
+    private function getMarriageDate(Individual $individual): string
+    {
+        /** @var Family $family */
+        $family = $individual->spouseFamilies()->first();
+
+        if ($family) {
+            return strip_tags($family->getMarriageDate()->display());
         }
 
         return '';
@@ -200,5 +224,27 @@ trait IndividualTrait
         $name     = $nodeList->length ? $nodeList->item(0)->nodeValue : '';
 
         return array_filter(explode(' ', $name));
+    }
+
+    /**
+     * Returns the URL of the highlight image of an individual.
+     *
+     * @param Individual $individual The current individual
+     *
+     * @return string
+     */
+    private function getIndividualImage(Individual $individual): string
+    {
+        if ($individual->canShow()
+            && $individual->tree()->getPreference('SHOW_HIGHLIGHT_IMAGES')
+        ) {
+            $mediaFile = $individual->findHighlightedMediaFile();
+
+            if ($mediaFile !== null) {
+                return $mediaFile->imageUrl(100, 100, 'contain');
+            }
+        }
+
+        return '';
     }
 }

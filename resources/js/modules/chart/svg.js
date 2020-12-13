@@ -7,7 +7,6 @@ import Configuration from "./../configuration";
 import Defs from "./svg/defs";
 import Zoom from "./svg/zoom";
 import Filter from "./svg/filter";
-// import Export from "./svg/export";
 import ExportFactory from "./svg/export-factory";
 
 /**
@@ -33,6 +32,7 @@ export default class Svg
 
         this._visual        = null;
         this._zoom          = null;
+        this._div           = null;
         this._configuration = configuration;
 
         this.init();
@@ -93,6 +93,18 @@ export default class Svg
 
         if (this._configuration.rtl) {
             this._element.classed("rtl", true);
+        }
+
+        const tooltip = d3.select("div.tooltip");
+
+        if (tooltip.empty()) {
+            this._div = d3.select("body")
+                .append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+        } else {
+            this._div = tooltip
+                .style("opacity", 0);
         }
 
         // Add group
@@ -171,5 +183,15 @@ export default class Svg
     get()
     {
         return this._element;
+    }
+
+    /**
+     * Returns the <div> container for the overlay tooltip.
+     *
+     * @return {Selection}
+     */
+    get div()
+    {
+        return this._div;
     }
 }

@@ -44,6 +44,7 @@ export default class Update
 
         this._svg.get()
             .selectAll("g.person")
+            .classed("hover", false)
             .on("click", null)
             .on("mouseover", null)
             .on("mouseout", null);
