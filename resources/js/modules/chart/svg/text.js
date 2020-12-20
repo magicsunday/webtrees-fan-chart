@@ -188,7 +188,7 @@ export default class Text
         let i = 0;
 
         for (let alternativeName of data.data.alternativeNames) {
-            // Create a <tspan> element for the last name
+            // Create a <tspan> element for the alternative name
             let tspan = parent.append("tspan")
                 .text(alternativeName);
 
@@ -209,7 +209,7 @@ export default class Text
      */
     addTimeSpan(parent, data)
     {
-        // Create a <tspan> element for the last name
+        // Create a <tspan> element for the time span
         parent.append("tspan")
             .text(data.data.timespan);
     }

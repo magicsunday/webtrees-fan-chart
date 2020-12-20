@@ -41,10 +41,10 @@ export default class Zoom
      */
     init()
     {
-        let zoomLevel = null;
-
         // Setup zoom and pan
-        this._zoom = d3.zoom()
+        this._zoom = d3.zoom();
+
+        this._zoom
             .scaleExtent([MIN_ZOOM, MAX_ZOOM])
             .on("zoom", (event) => {
                 // Abort any action if only one finger is used on "touchmove" events
@@ -55,30 +55,42 @@ export default class Zoom
                     return;
                 }
 
-                zoomLevel = event.transform.k;
-
                 this._parent.attr("transform", event.transform);
             });
+
+        // Adjust the wheel delta (see defaultWheelDelta() in zoom.js, which adds
+        // a 10-times offset if ctrlKey is pressed)
+        this._zoom.wheelDelta((event) => {
+            return -event.deltaY * (event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002);
+        });
 
         // Add zoom filter
         this._zoom.filter((event) => {
             // Allow "wheel" event only while control key is pressed
             if (event.type === "wheel") {
-                if (zoomLevel && event.ctrlKey) {
+                if (!event.ctrlKey) {
+                    return false;
+                }
+
+                var transform = d3.zoomTransform(this);
+
+                if (transform.k) {
                     // Prevent zooming below lowest level
-                    if ((zoomLevel <= MIN_ZOOM) && (event.deltaY > 0)) {
+                    if ((transform.k <= MIN_ZOOM) && (event.deltaY > 0)) {
+                        // Prevent browsers page zoom while holding down the control key
                         event.preventDefault();
                         return false;
                     }
 
                     // Prevent zooming above highest level
-                    if ((zoomLevel >= MAX_ZOOM) && (event.deltaY < 0)) {
+                    if ((transform.k >= MAX_ZOOM) && (event.deltaY < 0)) {
+                        // Prevent browsers page zoom while holding down the control key
                         event.preventDefault();
                         return false;
                     }
                 }
 
-                return event.ctrlKey;
+                return true;
             }
 
             // Allow "touchmove" event only with two fingers
@@ -86,7 +98,7 @@ export default class Zoom
                 return event.touches.length === 2;
             }
 
-            return true;
+            return (!event.ctrlKey || event.type === 'wheel') && !event.button;
         });
     }
 
