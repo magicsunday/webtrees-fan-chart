@@ -39,51 +39,17 @@ export default class SvgExport extends Export
                 // Execute callback function after fetching the CSS file is done
                 callback();
             });
-
-        //
-        // $(document).ready(function() {
-        //     $.when($.get("test.css"))
-        //         .done(function(response) {
-        //             $('<style />').text(response).appendTo($('head'));
-        //             $('div').html(response);
-        //         });
-        // })
-
-        // let containerElements = ["svg", "g", "text", "textPath"];
-        //
-        // for (let i = 0; i < destinationNode.childNodes.length; ++i) {
-        //     let child = destinationNode.childNodes[i];
-        //
-        //     if (containerElements.indexOf(child.tagName) !== -1) {
-        //         this.copyStylesInline(sourceNode.childNodes[i], child);
-        //         continue;
-        //     }
-        //
-        //     let computedStyle = window.getComputedStyle(sourceNode.childNodes[i]);
-        //
-        //     // let computedStyle = sourceNode.childNodes[i].currentStyle
-        //     //    || ((sourceNode.childNodes[i] instanceof Element) && window.getComputedStyle(sourceNode.childNodes[i]));
-        //
-        //     if (computedStyle === null) {
-        //         continue;
-        //     }
-        //
-        //     for (let j = 0; j < computedStyle.length; ++j) {
-        //         child.style.setProperty(computedStyle[j], computedStyle.getPropertyValue(computedStyle[j]));
-        //     }
-        // }
     }
 
     /**
+     * Saves the given SVG as SVG image file.
      *
-     * @param {Svg}    svg     The source SVG object
-     * @param {string} size    The paper size format of the output image (A3, A4 or A5)
-     * @param {string} cssFile The CSS file used together with the SVG
+     * @param {Svg}    svg      The source SVG object
+     * @param {string} cssFile  The CSS file used together with the SVG
+     * @param (String} fileName The file name
      */
-    svgToImage(svg, size, cssFile)
+    svgToImage(svg, cssFile, fileName)
     {
-        let fileName = "fan-chart.svg";
-
         let oldSvg = svg.get().node();
         let newSvg = svg.get().node().cloneNode(true);
 

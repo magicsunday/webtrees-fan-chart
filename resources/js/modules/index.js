@@ -131,7 +131,7 @@ export class FanChart
     {
         const product = this._chart.svg.export('png');
 
-        product.svgToImage(this._chart.svg, 'A4');
+        product.svgToImage(this._chart.svg, "fan-chart.png");
 
     }
 
@@ -144,7 +144,6 @@ export class FanChart
     {
         const product = this._chart.svg.export('svg');
 
-        // @param {string} size    The paper size format of the output image (A3, A4 or A5)
-        product.svgToImage(this._chart.svg, 'A4', this._cssFile);
+        product.svgToImage(this._chart.svg, this._cssFile, "fan-chart.svg");
     }
 }

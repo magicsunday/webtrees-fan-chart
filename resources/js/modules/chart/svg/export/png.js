@@ -71,11 +71,12 @@ export default class PngExport extends Export
     }
 
     /**
+     * Saves the given SVG as PNG image file.
      *
-     * @param {Svg}    svg  The source SVG object
-     * @param {string} size The paper size format of the output image (A3, A4 or A5)
+     * @param {Svg}    svg      The source SVG object
+     * @param (String} fileName The file name
      */
-    svgToImage(svg, size)
+    svgToImage(svg, fileName)
     {
         // Paper sizes (width, height) in pixel at 300 DPI/PPI
         const paperSize = {
@@ -84,19 +85,18 @@ export default class PngExport extends Export
             'A5': [2480, 1748]
         };
 
-        let fileName = "fan-chart.png";
-
         let oldSvg = svg.get().node();
         let newSvg = svg.get().node().cloneNode(true);
 
         this.copyStylesInline(oldSvg, newSvg);
 
-        const width  = paperSize[size][0];
-        const height = paperSize[size][1];
+        const viewBox = this.calculateViewBox(svg.visual.node());
+        const width   = Math.max(paperSize['A4'][0], viewBox[2]);
+        const height  = Math.max(paperSize['A4'][1], viewBox[3]);
 
         newSvg.setAttribute("width", width);
         newSvg.setAttribute("height", height);
-        newSvg.setAttribute("viewBox", this.calculateViewBox(svg.visual.node()));
+        newSvg.setAttribute("viewBox", viewBox);
 
         let canvas    = document.createElement("canvas");
         canvas.width  = width;
