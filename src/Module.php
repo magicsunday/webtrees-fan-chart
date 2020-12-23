@@ -142,21 +142,22 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         }
 
         // Convert POST requests into GET requests for pretty URLs.
-        // if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
-        //     $params = (array) $request->getParsedBody();
-        //
-        //     return redirect(route(self::ROUTE_DEFAULT, [
-        //         'tree'               => $tree->name(),
-        //         'xref'               => $params['xref'],
-        //         'generations'        => $params['generations'],
-        //         'fanDegree'          => $params['fanDegree'],
-        //         'hideEmptySegments'  => $params['hideEmptySegments'] ?? '0',
-        //         'showColorGradients' => $params['showColorGradients'] ?? '0',
-        //         'innerArcs'          => $params['innerArcs'],
-        //         'fontScale'          => $params['fontScale'],
-        //         'showMore'           => $params['showMore'] ?? '0',
-        //     ]));
-        // }
+        // This also updates the name above the form, which wont get updated if only a POST request is used
+        if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $params = (array) $request->getParsedBody();
+
+            return redirect(route(self::ROUTE_DEFAULT, [
+                'tree'               => $tree->name(),
+                'xref'               => $params['xref'],
+                'generations'        => $params['generations'],
+                'fanDegree'          => $params['fanDegree'] ?? '210',
+                'fontScale'          => $params['fontScale'] ?? '100',
+                'hideEmptySegments'  => $params['hideEmptySegments'] ?? '0',
+                'showColorGradients' => $params['showColorGradients'] ?? '0',
+                'innerArcs'          => $params['innerArcs'] ?? '3',
+                'showMore'           => $params['showMore'] ?? '0',
+            ]));
+        }
 
         Auth::checkIndividualAccess($individual, false, true);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);

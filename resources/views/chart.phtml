@@ -277,20 +277,20 @@ document.addEventListener("DOMContentLoaded", function () {
     // Load initial chart data
     drawChart(fanChart, ajaxUrl);
 
-    // Redraw chart upon form submit
-    document.getElementById('webtrees-fan-chart-form').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        // Update configuration with changed form values
-        fanChart.configuration.generations          = parseInt(document.getElementById('generations').value);
-        fanChart.configuration.fanDegree            = parseInt(document.getElementById('fanDegree').value);
-        fanChart.configuration.fontScale            = parseInt(document.getElementById('fontScale').value);
-        fanChart.configuration.hideEmptySegments    = !!document.getElementById('hideEmptySegments').checked;
-        fanChart.configuration.showColorGradients   = !!document.getElementById('showColorGradients').checked;
-        fanChart.configuration.numberOfInnerCircles = parseInt(document.getElementById('innerArcs').value);
-
-        drawChart(fanChart, ajaxUrl);
-    });
+    // Redraw chart upon form submit (enable this to use AJAX only post request, without internal redirect from POST to GET)
+    // document.getElementById('webtrees-fan-chart-form').addEventListener('submit', function (event) {
+    //     event.preventDefault();
+    //
+    //     // Update configuration with changed form values
+    //     fanChart.configuration.generations          = parseInt(document.getElementById('generations').value);
+    //     fanChart.configuration.fanDegree            = parseInt(document.getElementById('fanDegree').value);
+    //     fanChart.configuration.fontScale            = parseInt(document.getElementById('fontScale').value);
+    //     fanChart.configuration.hideEmptySegments    = !!document.getElementById('hideEmptySegments').checked;
+    //     fanChart.configuration.showColorGradients   = !!document.getElementById('showColorGradients').checked;
+    //     fanChart.configuration.numberOfInnerCircles = parseInt(document.getElementById('innerArcs').value);
+    //
+    //     drawChart(fanChart, ajaxUrl);
+    // });
 });
 
 </script>
