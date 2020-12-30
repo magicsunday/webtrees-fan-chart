@@ -7,14 +7,14 @@
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
- * @link    https://github.com/magicsunday/webtrees-fan-chart/
+ * @link    https://github.com/magicsunday/webtrees-pedigree-chart/
  */
 export class Storage
 {
     /**
      * Constructor.
      *
-     * @param {string} name The name of the storage
+     * @param {String} name The name of the storage
      */
     constructor(name)
     {
@@ -25,12 +25,12 @@ export class Storage
     /**
      * Register a HTML element.
      *
-     * @param {string} id The HTML element id
+     * @param {String} name The id or name of a HTML element
      */
-    register(id)
+    register(name)
     {
-        let input       = document.getElementById(id);
-        let storedValue = this.read(input.id);
+        let input       = document.getElementById(name);
+        let storedValue = this.read(name);
 
         if (storedValue) {
             if (input.type && (input.type === "checkbox")) {
@@ -56,33 +56,33 @@ export class Storage
     onInput(element)
     {
         if (element.type && (element.type === "checkbox")) {
-            this.write(element.id, element.checked);
+            this.write(element.name, element.checked);
         } else {
-            this.write(element.id, element.value);
+            this.write(element.name, element.value);
         }
     }
 
     /**
      * Returns the stored value belonging to the HTML element id.
      *
-     * @param {string} id
+     * @param {String} name The id or name of a HTML element
      *
-     * @return {string|boolean|number}
+     * @return {String|Boolean|Number}
      */
-    read(id)
+    read(name)
     {
-        return this._storage[id];
+        return this._storage[name];
     }
 
     /**
      * Stores a value to the given HTML element id.
      *
-     * @param {string}                id
-     * @param {string|boolean|number} value
+     * @param {String}                name  The id or name of a HTML element
+     * @param {String|Boolean|Number} value The value to store
      */
-    write(id, value)
+    write(name, value)
     {
-        this._storage[id] = value;
+        this._storage[name] = value;
 
         localStorage.setItem(this._name, JSON.stringify(this._storage));
     }
