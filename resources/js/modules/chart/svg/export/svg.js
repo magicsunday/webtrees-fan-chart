@@ -19,7 +19,7 @@ export default class SvgExport extends Export
      * Copies recursively all the styles from the list of container elements from the source
      * to the desination node.
      *
-     * @param {string} cssFile
+     * @param {String} cssFile
      * @param {Node} destinationNode
      */
     copyStylesInline(cssFile, destinationNode, callback)
@@ -45,7 +45,7 @@ export default class SvgExport extends Export
      * Saves the given SVG as SVG image file.
      *
      * @param {Svg}    svg      The source SVG object
-     * @param {string} cssFile  The CSS file used together with the SVG
+     * @param {String} cssFile  The CSS file used together with the SVG
      * @param (String} fileName The file name
      */
     svgToImage(svg, cssFile, fileName)

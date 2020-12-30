@@ -257,7 +257,7 @@ export default class Person
      * Add title element to the person element containing the full name of the individual.
      *
      * @param {Selection} person The parent element used to append the title too
-     * @param {string}    value  The value to assign to the title
+     * @param {String}    value  The value to assign to the title
      *
      * @private
      */
@@ -292,7 +292,7 @@ export default class Person
      *
      * @param {Object} data The The D3 data object
      *
-     * @return {number}
+     * @return {Number}
      */
     getFontSize(data)
     {

@@ -53,7 +53,7 @@ export default class PngExport extends Export
      *
      * @param {SVGGraphicsElement} area
      *
-     * @returns {number[]}
+     * @returns {Number[]}
      */
     calculateViewBox(area)
     {

@@ -135,7 +135,7 @@ export default class Svg
     /**
      * Exports the chart as PNG image and triggers a download.
      *
-     * @param {string} type The export file type (either "png" or "svg")
+     * @param {String} type The export file type (either "png" or "svg")
      *
      * @return {PngExport|SvgExport}
      */

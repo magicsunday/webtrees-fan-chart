@@ -200,7 +200,7 @@ export default class Chart
     /**
      * Redirects to the individual page.
      *
-     * @param {string} url The individual URL
+     * @param {String} url The individual URL
      *
      * @private
      */
@@ -212,7 +212,7 @@ export default class Chart
     /**
      * Updates the chart with the data of the selected individual.
      *
-     * @param {string} url The update URL
+     * @param {String} url The update URL
      */
     update(url)
     {

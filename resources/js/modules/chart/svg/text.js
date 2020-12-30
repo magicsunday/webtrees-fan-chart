@@ -152,7 +152,7 @@ export default class Text
      *
      * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
-     * @param {number}    dx     Additional space offset to add between names
+     * @param {Number}    dx     Additional space offset to add between names
      */
     addLastNames(parent, data, dx = 0)
     {
@@ -181,7 +181,7 @@ export default class Text
      *
      * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
-     * @param {number}    dx     Delta X offset used to create a small spacing between multiple words
+     * @param {Number}    dx     Delta X offset used to create a small spacing between multiple words
      */
     addAlternativeNames(parent, data, dx = 0)
     {
@@ -219,8 +219,8 @@ export default class Text
      *
      * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are attached
      * @param {Object}    data   The D3 data object containing the individual data
-     * @param {number}    index  The index position of the element in parent container.
-     * @param {boolean}   hide   Whether to show or hide the label if the text takes to much space to be displayed
+     * @param {Number}    index  The index position of the element in parent container.
+     * @param {Boolean}   hide   Whether to show or hide the label if the text takes to much space to be displayed
      */
     truncateNames(parent, data, index, hide = false)
     {
@@ -240,7 +240,7 @@ export default class Text
      *
      * @param {Selection} parent The parent (<text> or <textPath>) element containing the <tspan> child elements
      *
-     * @returns {number}
+     * @returns {Number}
      */
     getTextLength(parent)
     {
@@ -258,8 +258,8 @@ export default class Text
      * Truncates the textual content of the actual element.
      *
      * @param {Selection} parent         The parent (<text> or <textPath>) element containing the <tspan> child elements
-     * @param {number}    availableWidth The total available width the text could take
-     * @param {boolean}   hide           Whether to show or hide the label if the text takes to much space to be displayed
+     * @param {Number}    availableWidth The total available width the text could take
+     * @param {Boolean}   hide           Whether to show or hide the label if the text takes to much space to be displayed
      */
     truncateText(parent, availableWidth, hide = false)
     {
@@ -306,7 +306,7 @@ export default class Text
      *
      * @param {Object} data The D3 data object
      *
-     * @return {boolean}
+     * @return {Boolean}
      */
     isInnerLabel(data)
     {
@@ -330,7 +330,7 @@ export default class Text
      * Creates a <textPath> element and append it to the parent element.
      *
      * @param {Selection} parent The parent element to which the <textPath> element is to be attached
-     * @param {string}    refId  The id of the reference element
+     * @param {String}    refId  The id of the reference element
      *
      * @return {Selection} Newly created <textPath> element
      */
@@ -346,11 +346,11 @@ export default class Text
      * Creates a new <path> definition and append it to the global definition list. The method
      * returns the newly created <path> element id.
      *
-     * @param {string} parentId The parent element id
-     * @param {number} index    Index position of element in parent container. Required to create a unique path id.
+     * @param {String} parentId The parent element id
+     * @param {Number} index    Index position of element in parent container. Required to create a unique path id.
      * @param {Object} data     The D3 data object
      *
-     * @return {string} The id of the newly created path element
+     * @return {String} The id of the newly created path element
      */
     createPathDefinition(parentId, index, data)
     {
@@ -391,11 +391,11 @@ export default class Text
     /**
      * Check for the 360 degree chart if the current arc labels should be flipped for easier reading.
      *
-     * @param {number} depth The depth of the element inside the chart
-     * @param {number} x0    The left edge (x0) of the rectangle
-     * @param {number} x1    The right edge (x1) of the rectangle
+     * @param {Number} depth The depth of the element inside the chart
+     * @param {Number} x0    The left edge (x0) of the rectangle
+     * @param {Number} x1    The right edge (x1) of the rectangle
      *
-     * @return {boolean}
+     * @return {Boolean}
      */
     isPositionFlipped(depth, x0, x1)
     {
@@ -415,10 +415,10 @@ export default class Text
      * Get the relative position offsets in percent for different text lines (firstName, lastName, dates).
      *   => (0 = inner radius, 100 = outer radius)
      *
-     * @param {number} index The index position of element in parent container. Required to create a unique path id.
+     * @param {Number} index The index position of element in parent container. Required to create a unique path id.
      * @param {Object} data  The D3 data object
      *
-     * @return {number}
+     * @return {Number}
      */
     getTextOffset(index, data)
     {
@@ -433,9 +433,9 @@ export default class Text
      * the chart the available width differs.
      *
      * @param {Object} data  The D3 data object
-     * @param {number} index The index position of element in parent container.
+     * @param {Number} index The index position of element in parent container.
      *
-     * @returns {number} Calculated available width
+     * @returns {Number} Calculated available width
      *
      * @private
      */

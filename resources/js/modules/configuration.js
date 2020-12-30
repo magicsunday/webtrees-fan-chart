@@ -14,16 +14,16 @@ export default class Configuration
     /**
      * Constructor.
      *
-     * @param {string[]}  labels
-     * @param {number}    generations
-     * @param {number}    fanDegree
-     * @param {string}    defaultColor
-     * @param {number}    fontScale
-     * @param {string}    fontColor
-     * @param {boolean}   hideEmptySegments
-     * @param {boolean}   showColorGradients
-     * @param {boolean}   rtl
-     * @param {number}    innerArcs
+     * @param {String[]}  labels
+     * @param {Number}    generations
+     * @param {Number}    fanDegree
+     * @param {String}    defaultColor
+     * @param {Number}    fontScale
+     * @param {String}    fontColor
+     * @param {Boolean}   hideEmptySegments
+     * @param {Boolean}   showColorGradients
+     * @param {Boolean}   rtl
+     * @param {Number}    innerArcs
      */
     constructor(
         labels,
@@ -103,7 +103,7 @@ export default class Configuration
     /**
      * Returns the number of generations to display.
      *
-     * @return {number}
+     * @return {Number}
      */
     get generations()
     {
@@ -113,7 +113,7 @@ export default class Configuration
     /**
      * Sets the number of generations to display.
      *
-     * @param {number} value The number of generations to display
+     * @param {Number} value The number of generations to display
      */
     set generations(value)
     {
@@ -123,7 +123,7 @@ export default class Configuration
     /**
      * Returns the degrees of the fan chart.
      *
-     * @return {number}
+     * @return {Number}
      */
     get fanDegree()
     {
@@ -133,7 +133,7 @@ export default class Configuration
     /**
      * Sets the degrees of the fan chart.
      *
-     * @param {number} value The degrees of the fan chart
+     * @param {Number} value The degrees of the fan chart
      */
     set fanDegree(value)
     {
@@ -143,7 +143,7 @@ export default class Configuration
     /**
      * Returns the font scaling.
      *
-     * @return {number}
+     * @return {Number}
      */
     get fontScale()
     {
@@ -153,7 +153,7 @@ export default class Configuration
     /**
      * Sets the font scaling.
      *
-     * @param {number} value The font scaling
+     * @param {Number} value The font scaling
      */
     set fontScale(value)
     {
@@ -163,7 +163,7 @@ export default class Configuration
     /**
      * Returns whether to show or hide empty chart segments.
      *
-     * @return {boolean}
+     * @return {Boolean}
      */
     get hideEmptySegments()
     {
@@ -173,7 +173,7 @@ export default class Configuration
     /**
      * Sets whether to show or hide empty chart segments.
      *
-     * @param {boolean} value Either true or false
+     * @param {Boolean} value Either true or false
      */
     set hideEmptySegments(value)
     {
@@ -183,7 +183,7 @@ export default class Configuration
     /**
      * Returns whether to show or hide a color gradient above each arc or display male/female colors instead.
      *
-     * @return {boolean}
+     * @return {Boolean}
      */
     get showColorGradients()
     {
@@ -193,7 +193,7 @@ export default class Configuration
     /**
      * Sets whether to show or hide a color gradient above each arc or display male/female colors instead
      *
-     * @param {boolean} value Either true or false
+     * @param {Boolean} value Either true or false
      */
     set showColorGradients(value)
     {
@@ -203,7 +203,7 @@ export default class Configuration
     /**
      * Returns the number of inner arcs to display.
      *
-     * @return {number}
+     * @return {Number}
      */
     get numberOfInnerCircles()
     {
@@ -213,7 +213,7 @@ export default class Configuration
     /**
      * Sets the number of inner arcs to display.
      *
-     * @param {number} value The number of inner arcs
+     * @param {Number} value The number of inner arcs
      */
     set numberOfInnerCircles(value)
     {
@@ -223,7 +223,7 @@ export default class Configuration
     /**
      * Returns the font size in pixel.
      *
-     * @return {number}
+     * @return {Number}
      */
     get fontSize()
     {

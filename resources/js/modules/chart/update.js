@@ -33,8 +33,8 @@ export default class Update
     /**
      * Update the chart with data loaded from AJAX.
      *
-     * @param {string}     url      The update URL
-     * @param {function()} callback The callback method to execute after the update
+     * @param {String}   url      The update URL
+     * @param {Function} callback The callback method to execute after the update
      *
      * @public
      */
@@ -119,7 +119,7 @@ export default class Update
     /**
      * Function is executed as callback after all transitions are done in update method.
      *
-     * @param {function()} callback The callback method to execute after the update
+     * @param {Function} callback The callback method to execute after the update
      *
      * @private
      */
@@ -167,7 +167,7 @@ export default class Update
      * Helper method to execute callback method after all transitions are done of a selection.
      *
      * @param {Transition} transition D3 transition object
-     * @param {function()} callback   Callback method
+     * @param {Function}   callback   Callback method
      *
      * @private
      */

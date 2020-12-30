@@ -20,19 +20,19 @@ export class FanChart
     /**
      * Constructor.
      *
-     * @param {string} selector The CSS selector of the HTML element used to assign the chart too
+     * @param {String} selector The CSS selector of the HTML element used to assign the chart too
      * @param {Object} options  A list of options passed from outside to the application
      *
-     * @param {string[]}  options.labels
-     * @param {number}    options.generations
-     * @param {number}    options.fanDegree
-     * @param {string}    options.defaultColor
-     * @param {number}    options.fontScale
-     * @param {string}    options.fontColor
-     * @param {boolean}   options.hideEmptySegments
-     * @param {boolean}   options.showColorGradients
-     * @param {boolean}   options.rtl
-     * @param {number}    options.innerArcs
+     * @param {String[]}  options.labels
+     * @param {Number}    options.generations
+     * @param {Number}    options.fanDegree
+     * @param {String}    options.defaultColor
+     * @param {Number}    options.fontScale
+     * @param {String}    options.fontColor
+     * @param {Boolean}   options.hideEmptySegments
+     * @param {Boolean}   options.showColorGradients
+     * @param {Boolean}   options.rtl
+     * @param {Number}    options.innerArcs
      */
     constructor(selector, options)
     {
@@ -104,7 +104,7 @@ export class FanChart
     /**
      * Sets the URL to the CSS file used in SVG export.
      *
-     * @param {string} cssFile
+     * @param {String} cssFile
      */
     set cssFile(cssFile)
     {

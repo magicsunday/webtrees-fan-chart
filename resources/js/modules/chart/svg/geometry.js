@@ -30,7 +30,7 @@ export default class Geometry
     }
 
     /**
-     * @return {number}
+     * @return {Number}
      *
      * @private
      */
@@ -44,7 +44,7 @@ export default class Geometry
     }
 
     /**
-     * @return {number}
+     * @return {Number}
      *
      * @private
      */
@@ -60,7 +60,7 @@ export default class Geometry
     /**
      * Scale the angles linear across the circle.
      *
-     * @return {number}
+     * @return {Number}
      */
     get scale()
     {
@@ -70,9 +70,9 @@ export default class Geometry
     /**
      * Get the inner radius depending on the depth of an element.
      *
-     * @param {number} depth The depth of the element inside the chart
+     * @param {Number} depth The depth of the element inside the chart
      *
-     * @return {number}
+     * @return {Number}
      */
     innerRadius(depth)
     {
@@ -95,9 +95,9 @@ export default class Geometry
     /**
      * Get the outer radius depending on the depth of an element.
      *
-     * @param {number} depth The depth of the element inside the chart
+     * @param {Number} depth The depth of the element inside the chart
      *
-     * @return {number}
+     * @return {Number}
      */
     outerRadius(depth)
     {
@@ -120,9 +120,9 @@ export default class Geometry
     /**
      * Get the center radius.
      *
-     * @param {number} depth The depth of the element inside the chart
+     * @param {Number} depth The depth of the element inside the chart
      *
-     * @return {number}
+     * @return {Number}
      */
     centerRadius(depth)
     {
@@ -133,10 +133,10 @@ export default class Geometry
      * Get an radius relative to the outer radius adjusted by the given
      * position in percent.
      *
-     * @param {number} depth    The depth of the element inside the chart
-     * @param {number} position Percent offset (0 = inner radius, 100 = outer radius)
+     * @param {Number} depth    The depth of the element inside the chart
+     * @param {Number} position Percent offset (0 = inner radius, 100 = outer radius)
      *
-     * @return {number}
+     * @return {Number}
      */
     relativeRadius(depth, position)
     {
@@ -147,9 +147,9 @@ export default class Geometry
     /**
      * Calculates the angle in radians.
      *
-     * @param {number} value The starting point of the rectangle
+     * @param {Number} value The starting point of the rectangle
      *
-     * @return {number}
+     * @return {Number}
      *
      * @private
      */
@@ -161,10 +161,10 @@ export default class Geometry
     /**
      * Gets the start angle in radians.
      *
-     * @param {number} depth The depth of the element inside the chart
-     * @param {number} x0    The left edge (x0) of the rectangle
+     * @param {Number} depth The depth of the element inside the chart
+     * @param {Number} x0    The left edge (x0) of the rectangle
      *
-     * @return {number}
+     * @return {Number}
      */
     startAngle(depth, x0)
     {
@@ -175,10 +175,10 @@ export default class Geometry
     /**
      * Gets the end angle in radians.
      *
-     * @param {number} depth The depth of the element inside the chart
-     * @param {number} x1    The right edge (x1) of the rectangle
+     * @param {Number} depth The depth of the element inside the chart
+     * @param {Number} x1    The right edge (x1) of the rectangle
      *
-     * @return {number}
+     * @return {Number}
      */
     endAngle(depth, x1)
     {
@@ -191,9 +191,9 @@ export default class Geometry
      * position in percent.
      *
      * @param {Object} data     The D3 data object
-     * @param {number} position The percent offset (0 = inner radius, 100 = outer radius)
+     * @param {Number} position The percent offset (0 = inner radius, 100 = outer radius)
      *
-     * @return {number}
+     * @return {Number}
      */
     arcLength(data, position)
     {
