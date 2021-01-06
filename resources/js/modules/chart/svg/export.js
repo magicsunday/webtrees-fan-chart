@@ -2,8 +2,6 @@
  * See LICENSE.md file for further details.
  */
 
-import Svg from "./../svg";
-
 /**
  * Base export class.
  *

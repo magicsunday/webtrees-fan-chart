@@ -2,8 +2,7 @@
  * See LICENSE.md file for further details.
  */
 
-import Svg from "./../../svg";
-import Export from "./../export";
+import Export from "../export";
 
 /**
  * Export the chart as PNG image.
@@ -16,10 +15,10 @@ export default class PngExport extends Export
 {
     /**
      * Copies recursively all the styles from the list of container elements from the source
-     * to the desination node.
+     * to the destination node.
      *
-     * @param {Node} sourceNode
-     * @param {Node} destinationNode
+     * @param {SVGGraphicsElement} sourceNode
+     * @param {SVGGraphicsElement} destinationNode
      */
     copyStylesInline(sourceNode, destinationNode)
     {
@@ -35,9 +34,6 @@ export default class PngExport extends Export
 
             let computedStyle = window.getComputedStyle(sourceNode.childNodes[i]);
 
-            // let computedStyle = sourceNode.childNodes[i].currentStyle
-            //    || ((sourceNode.childNodes[i] instanceof Element) && window.getComputedStyle(sourceNode.childNodes[i]));
-
             if (computedStyle === null) {
                 continue;
             }
@@ -51,14 +47,14 @@ export default class PngExport extends Export
     /**
      * Returns the viewbox of the SVG. Mainly used to apply a padding around the chart.
      *
-     * @param {SVGGraphicsElement} area
+     * @param {SVGGraphicsElement} svg The SVG element
      *
      * @returns {Number[]}
      */
-    calculateViewBox(area)
+    calculateViewBox(svg)
     {
         // Get bounding box
-        const boundingBox = area.getBBox();
+        const boundingBox = svg.getBBox();
         const padding     = 50;   // Padding on each side
 
         // Return calculated view box
@@ -71,10 +67,81 @@ export default class PngExport extends Export
     }
 
     /**
+     *
+     * @param {Number} width
+     * @param {Number} height
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    createCanvas(width, height)
+    {
+        let canvas    = document.createElement("canvas");
+        canvas.width  = width;
+        canvas.height = height;
+
+        return canvas;
+    }
+
+    /**
+     * Converts the given SVG into a PNG image. Resolves to the PNG data URL.
+     *
+     * @param {SVGGraphicsElement} svg    The SVG element
+     * @param {Number}             width  The width of the image
+     * @param {Number}             height The height of the image
+     *
+     * @returns {Promise<String>}
+     */
+    convertToDataUrl(svg, width, height)
+    {
+        return new Promise(resolve => {
+            let data    = (new XMLSerializer()).serializeToString(svg);
+            let DOMURL  = window.URL || window.webkitURL || window;
+            let svgBlob = new Blob([ data ], { type: "image/svg+xml;charset=utf-8" });
+            let url     = DOMURL.createObjectURL(svgBlob);
+            let img     = new Image();
+
+            img.onload = () => {
+                let canvas = this.createCanvas(width, height);
+                let ctx    = canvas.getContext("2d");
+
+                ctx.fillStyle = "rgb(255,255,255)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+
+                DOMURL.revokeObjectURL(url);
+
+                let imgURI = canvas
+                    .toDataURL("image/png")
+                    .replace("image/png", "image/octet-stream");
+
+                resolve(imgURI);
+            };
+
+            img.src = url;
+        });
+    }
+
+    /**
+     * Clones the SVG element.
+     *
+     * @param {SVGGraphicsElement} svg
+     *
+     * @returns {Promise<SVGGraphicsElement>}
+     */
+    cloneSvg(svg)
+    {
+        return new Promise(resolve => {
+            let newSvg = svg.cloneNode(true);
+
+            resolve(newSvg);
+        })
+    }
+
+    /**
      * Saves the given SVG as PNG image file.
      *
      * @param {Svg}    svg      The source SVG object
-     * @param (String} fileName The file name
+     * @param {String} fileName The file name
      */
     svgToImage(svg, fileName)
     {
@@ -85,50 +152,23 @@ export default class PngExport extends Export
             'A5': [2480, 1748]
         };
 
-        let oldSvg = svg.get().node();
-        let newSvg = svg.get().node().cloneNode(true);
+        this.cloneSvg(svg.get().node())
+            .then(newSvg => {
+                this.copyStylesInline(svg.get().node(), newSvg);
 
-        this.copyStylesInline(oldSvg, newSvg);
+                const viewBox = this.calculateViewBox(svg.get().node());
+                const width   = Math.max(paperSize['A4'][0], viewBox[2]);
+                const height  = Math.max(paperSize['A4'][1], viewBox[3]);
 
-        const viewBox = this.calculateViewBox(svg.visual.node());
-        const width   = Math.max(paperSize['A4'][0], viewBox[2]);
-        const height  = Math.max(paperSize['A4'][1], viewBox[3]);
+                newSvg.setAttribute("width", width);
+                newSvg.setAttribute("height", height);
+                newSvg.setAttribute("viewBox", viewBox);
 
-        newSvg.setAttribute("width", width);
-        newSvg.setAttribute("height", height);
-        newSvg.setAttribute("viewBox", viewBox);
-
-        let canvas    = document.createElement("canvas");
-        canvas.width  = width;
-        canvas.height = height;
-
-        let ctx = canvas.getContext("2d");
-        ctx.fillStyle = "rgb(255,255,255)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        let data    = (new XMLSerializer()).serializeToString(newSvg);
-        let DOMURL  = window.URL || window.webkitURL || window;
-        let svgBlob = new Blob([ data ], { type: "image/svg+xml;charset=utf-8" });
-        let url     = DOMURL.createObjectURL(svgBlob);
-        let img     = new Image();
-
-        img.onload = () => {
-            ctx.drawImage(img, 0, 0);
-
-            DOMURL.revokeObjectURL(url);
-
-            if ((typeof navigator !== "undefined") && navigator.msSaveOrOpenBlob) {
-                let blob = canvas.msToBlob();
-                navigator.msSaveOrOpenBlob(blob, fileName);
-            } else {
-                let imgURI = canvas
-                    .toDataURL("image/png")
-                    .replace("image/png", "image/octet-stream");
-
-                this.triggerDownload(imgURI, fileName);
-            }
-        };
-
-        img.src = url;
+                this.convertToDataUrl(newSvg, width, height)
+                    .then(imgURI => this.triggerDownload(imgURI, fileName))
+                    .catch(() => {
+                        console.log("Failed to save chart as PNG image");
+                    });
+            });
     }
 }
