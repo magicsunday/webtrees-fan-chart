@@ -47,17 +47,27 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * @var string
      */
+    private const GITHUB_REPO = 'magicsunday/webtrees-fan-chart';
+
+    /**
+     * @var string
+     */
     public const CUSTOM_AUTHOR = 'Rico Sonntag';
 
     /**
      * @var string
      */
-    public const CUSTOM_VERSION = '2.0';
+    public const CUSTOM_VERSION = '2.1.2';
 
     /**
      * @var string
      */
-    public const CUSTOM_WEBSITE = 'https://github.com/magicsunday/webtrees-fan-chart';
+    public const CUSTOM_SUPPORT_URL = 'https://github.com/' . self::GITHUB_REPO . '/issues';
+
+    /**
+     * @var string
+     */
+    public const CUSTOM_LATEST_VERSION = 'https://api.github.com/repos/' . self::GITHUB_REPO . '/releases/latest';
 
     /**
      * The configuration instance.
