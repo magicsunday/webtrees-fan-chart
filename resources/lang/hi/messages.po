@@ -1,0 +1,96 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: Hindi\n"
+"Language: hi\n"
+
+#: src/Module.php:220
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Ctrl + Scroll से ज़ूम इन करें"
+
+#: src/Module.php:221
+msgid "Move the view with two fingers"
+msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
+
+#: src/Traits/IndividualTrait.php:111
+msgid "Born: %s"
+msgstr "जन्म: %s"
+
+#: src/Traits/IndividualTrait.php:115
+msgid "Died: %s"
+msgstr "मृत्यु: %s"
+
+#: src/Traits/IndividualTrait.php:119
+msgid "Deceased"
+msgstr "मृतक"
+
+#: resources/views/chart.phtml:35
+msgid "Individual"
+msgstr "व्यक्ति"
+
+#: resources/views/chart.phtml:52
+msgid "Fan size"
+msgstr "फैन का आकार"
+
+#: resources/views/chart.phtml:62
+msgid "Generations"
+msgstr "पीढ़ियां"
+
+#: resources/views/chart.phtml:80
+msgid "Presentation"
+msgstr "प्रस्तुतीकरण"
+
+#: resources/views/chart.phtml:87
+msgid "Hide empty segments"
+msgstr "खाली खंड छिपाएं"
+
+#: resources/views/chart.phtml:96
+msgid "Show color gradients"
+msgstr "रंग ढाल दिखाएं"
+
+#: resources/views/chart.phtml:105
+msgid "Number of inner levels"
+msgstr "आंतरिक स्तरों की संख्या"
+
+#: resources/views/chart.phtml:118
+msgid "Specifies the number of levels in which the text is written along an arc."
+msgstr "उस स्तर की संख्या निर्दिष्ट करता है जिसमें पाठ चाप के साथ लिखा जाता है।"
+
+#: resources/views/chart.phtml:125
+msgid "Font size"
+msgstr "फ़ॉन्ट आकार"
+
+#: resources/views/chart.phtml:144
+msgid "More options ..."
+msgstr "अधिक विकल्प ..."
+
+#: resources/views/chart.phtml:149
+msgid "view"
+msgstr "देखें"
+
+#: resources/views/chart.phtml:155
+msgid "Re center"
+msgstr "पुनः केंद्रित करें"
+
+#: resources/views/chart.phtml:160
+msgid "Export as PNG"
+msgstr "PNG निकालें"
+
+#: resources/views/chart.phtml:163
+msgid "Export as SVG"
+msgstr "SVG निकालें"
+
+#: src/Module.php:100 src/Module.php:197
+msgid "Fan chart"
+msgstr "फैन चार्ट"
+
+#: src/Module.php:110
+msgid "A fan chart of an individual’s ancestors."
+msgstr "किसी व्यक्ती के पूर्वजों का एक फैन चार्ट।"
+
+#: src/Module.php:200 src/Traits/ModuleChartTrait.php:38
+msgid "Fan chart of %s"
+msgstr "%s का फैन चार्ट"
