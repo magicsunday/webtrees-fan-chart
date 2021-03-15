@@ -1,3 +1,5 @@
+composer.lock
+package-lock.json
 .idea/
 vendor/
 node_modules/
