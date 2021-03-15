@@ -1,7 +1,10 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
+
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%205-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
+[![PHP_CodeSniffer](https://img.shields.io/badge/PHP_CodeSniffer-PSR12-brightgreen.svg?style=flat)](https://github.com/squizlabs/PHP_CodeSniffer)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/magicsunday/webtrees-fan-chart/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/magicsunday/webtrees-fan-chart/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/magicsunday/webtrees-fan-chart/badges/build.png?b=master)](https://scrutinizer-ci.com/g/magicsunday/webtrees-fan-chart/build-status/master)
 [![Code Climate](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/badges/gpa.svg)](https://codeclimate.com/github/magicsunday/webtrees-fan-chart)
-[![Test Coverage](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/badges/coverage.svg)](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/coverage)
 [![Issue Count](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/badges/issue_count.svg)](https://codeclimate.com/github/magicsunday/webtrees-fan-chart)
 
 # Fan chart

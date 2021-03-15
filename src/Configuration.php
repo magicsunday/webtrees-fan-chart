@@ -109,7 +109,7 @@ class Configuration
     /**
      * Returns a list of possible selectable generations.
      *
-     * @return int[]
+     * @return string[]
      */
     public function getGenerationsList(): array
     {
@@ -184,7 +184,7 @@ class Configuration
     /**
      * Returns a list of possible selectable values for inner arcs.
      *
-     * @return int[]
+     * @return string[]
      */
     public function getInnerArcsList(): array
     {

@@ -188,7 +188,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'individual'    => $individual,
                 'tree'          => $tree,
                 'configuration' => $this->configuration,
-                'chartParams'   => json_encode($this->getChartParameters($individual)),
+                'chartParams'   => json_encode($this->getChartParameters($individual), JSON_THROW_ON_ERROR),
                 'stylesheet'    => $this->assetUrl('css/fan-chart.css'),
                 'svgStylesheet' => $this->assetUrl('css/svg.css'),
                 'javascript'    => $this->assetUrl('js/fan-chart.min.js'),
@@ -207,7 +207,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     {
         $title = I18N::translate('Fan chart');
 
-        if ($individual && $individual->canShowName()) {
+        if ($individual->canShowName()) {
             $title = I18N::translate('Fan chart of %s', $individual->fullName());
         }
 
@@ -219,7 +219,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @param Individual $individual The individual used in the current chart
      *
-     * @return string[]
+     * @return mixed[]
      */
     private function getChartParameters(Individual $individual): array
     {
@@ -266,7 +266,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      * @param null|Individual $individual The start person
      * @param int             $generation The current generation
      *
-     * @return string[][]
+     * @return mixed[]
      */
     private function buildJsonTree(?Individual $individual, int $generation = 1): array
     {

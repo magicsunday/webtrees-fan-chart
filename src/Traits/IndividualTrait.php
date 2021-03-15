@@ -27,10 +27,12 @@ trait IndividualTrait
     /**
      * The XPath identifiers to extract the name parts.
      */
-    private $xpathFirstNames      = '//text()[following::span[@class="SURN"]][normalize-space()]';
-    private $xpathLastNames       = '//text()[parent::*[not(@class="wt-nickname")]][not(following::span[@class="SURN"])][normalize-space()]';
-    private $xpathNickname        = '//q[@class="wt-nickname"]';
-    private $xpathPreferredName   = '//span[@class="starredname"]';
+    private $xpathFirstNames = '//text()[following::span[@class="SURN"]][normalize-space()]';
+    private $xpathLastNames
+        = '//text()[parent::*[not(@class="wt-nickname")]][not(following::span[@class="SURN"])][normalize-space()]';
+
+    private $xpathNickname = '//q[@class="wt-nickname"]';
+    private $xpathPreferredName = '//span[@class="starredname"]';
     private $xpathAlternativeName = '//span[contains(attribute::class, "NAME")]';
 
     /**
@@ -39,7 +41,7 @@ trait IndividualTrait
      * @param Individual $individual The current individual
      * @param int        $generation The generation the person belongs to
      *
-     * @return string[][]
+     * @return mixed[]
      */
     private function getIndividualData(Individual $individual, int $generation): array
     {
@@ -109,15 +111,15 @@ trait IndividualTrait
     private function getLifetimeDescription(Individual $individual): string
     {
         if ($individual->getBirthDate()->isOK() && $individual->getDeathDate()->isOK()) {
-            return $individual->getBirthYear() . '-' . $individual->getDeathYear();
+            return $this->getBirthYear($individual) . '-' . $this->getDeathYear($individual);
         }
 
         if ($individual->getBirthDate()->isOK()) {
-            return I18N::translate('Born: %s', $individual->getBirthYear());
+            return I18N::translate('Born: %s', $this->getBirthYear($individual));
         }
 
         if ($individual->getDeathDate()->isOK()) {
-            return I18N::translate('Died: %s', $individual->getDeathYear());
+            return I18N::translate('Died: %s', $this->getDeathYear($individual));
         }
 
         if ($individual->isDead()) {
@@ -125,6 +127,30 @@ trait IndividualTrait
         }
 
         return '';
+    }
+
+    /**
+     * Get the year of birth.
+     *
+     * @param Individual $individual The current individual
+     *
+     * @return string
+     */
+    private function getBirthYear(Individual $individual): string
+    {
+        return $individual->getBirthDate()->minimumDate()->format('%Y');
+    }
+
+    /**
+     * Get the year of death.
+     *
+     * @param Individual $individual The current individual
+     *
+     * @return string
+     */
+    private function getDeathYear(Individual $individual): string
+    {
+        return $individual->getDeathDate()->minimumDate()->format('%Y');
     }
 
     /**
@@ -136,7 +162,7 @@ trait IndividualTrait
      */
     private function getMarriageDate(Individual $individual): string
     {
-        /** @var Family $family */
+        /** @var null|Family $family */
         $family = $individual->spouseFamilies()->first();
 
         if ($family) {
@@ -158,9 +184,11 @@ trait IndividualTrait
         $nodeList   = $xpath->query($this->xpathFirstNames);
         $firstNames = [];
 
-        /** @var DOMNode $node */
-        foreach ($nodeList as $node) {
-            $firstNames[] = trim($node->nodeValue);
+        if ($nodeList !== false) {
+            /** @var DOMNode $node */
+            foreach ($nodeList as $node) {
+                $firstNames[] = trim($node->nodeValue);
+            }
         }
 
         $firstNames = explode(' ', implode(' ', $firstNames));
@@ -180,9 +208,11 @@ trait IndividualTrait
         $nodeList  = $xpath->query($this->xpathLastNames);
         $lastNames = [];
 
-        /** @var DOMNode $node */
-        foreach ($nodeList as $node) {
-            $lastNames[] = trim($node->nodeValue);
+        if ($nodeList !== false) {
+            /** @var DOMNode $node */
+            foreach ($nodeList as $node) {
+                $lastNames[] = trim($node->nodeValue);
+            }
         }
 
         // Concat to full last name (as SURN may contain a prefix and a separate suffix)
@@ -201,7 +231,13 @@ trait IndividualTrait
     public function getPreferredName(DOMXPath $xpath): string
     {
         $nodeList = $xpath->query($this->xpathPreferredName);
-        return $nodeList->length ? $nodeList->item(0)->nodeValue : '';
+
+        if (($nodeList !== false) && $nodeList->length) {
+            $nodeItem = $nodeList->item(0);
+            return $nodeItem !== null ? $nodeItem->nodeValue : '';
+        }
+
+        return '';
     }
 
     /**
@@ -221,7 +257,11 @@ trait IndividualTrait
 
         $xpath    = $this->getXPath($name);
         $nodeList = $xpath->query($this->xpathAlternativeName);
-        $name     = $nodeList->length ? $nodeList->item(0)->nodeValue : '';
+
+        if (($nodeList !== false) && $nodeList->length) {
+            $nodeItem = $nodeList->item(0);
+            $name     = $nodeItem !== null ? $nodeItem->nodeValue : '';
+        }
 
         return array_filter(explode(' ', $name));
     }
@@ -235,7 +275,8 @@ trait IndividualTrait
      */
     private function getIndividualImage(Individual $individual): string
     {
-        if ($individual->canShow()
+        if (
+            $individual->canShow()
             && $individual->tree()->getPreference('SHOW_HIGHLIGHT_IMAGES')
         ) {
             $mediaFile = $individual->findHighlightedMediaFile();
