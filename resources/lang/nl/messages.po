@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2020-12-04 17:03+0100\n"
-"PO-Revision-Date: 2020-12-04 17:10+0100\n"
-"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
+"PO-Revision-Date: 2021-03-24 06:29+0100\n"
+"Last-Translator: JustCarmen <carmen@justcarmen.nl>\n"
 "Language-Team: \n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: translate\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: src/Module.php:100 src/Module.php:197
 msgid "Fan chart"
-msgstr "Voorouderlijk waaierdiagram"
+msgstr "Waaierdiagram"
 
 #: src/Module.php:110
 msgid "A fan chart of an individual’s ancestors."
@@ -28,7 +28,7 @@ msgstr "Een waaierdiagram met de voorouders van een persoon."
 #: src/Module.php:200 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Voorouderlijk waaierdiagram van %s"
+msgstr "Waaierdiagram van %s"
 
 #: src/Module.php:220
 msgid "Use Ctrl + scroll to zoom in the view"
@@ -105,10 +105,8 @@ msgid "Export as PNG"
 msgstr "Exporteren als PNG"
 
 #: resources/views/chart.phtml:163
-#, fuzzy
-#| msgid "Export as PNG"
 msgid "Export as SVG"
-msgstr "Exporteren als PNG"
+msgstr "Exporteren als SVG"
 
 #~ msgid "reset"
 #~ msgstr "herstellen"
