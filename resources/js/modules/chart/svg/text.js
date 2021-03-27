@@ -38,27 +38,25 @@ export default class Text
     {
         // Inner labels
         if (this.isInnerLabel(data)) {
+            let text     = this.createTextElement(parent, data);
             let parentId = d3.select(parent.node().parentNode).attr("id");
 
             // First names
-            let text1     = this.createTextElement(parent, data);
             let pathId1   = this.createPathDefinition(parentId, 0, data);
-            let textPath1 = this.createTextPath(text1, pathId1);
+            let textPath1 = this.createTextPath(text, pathId1);
             this.addFirstNames(textPath1, data);
             this.truncateNames(textPath1, data, 0);
 
             // Last names
-            let text2     = this.createTextElement(parent, data);
             let pathId2   = this.createPathDefinition(parentId, 1, data);
-            let textPath2 = this.createTextPath(text2, pathId2);
+            let textPath2 = this.createTextPath(text, pathId2);
             this.addLastNames(textPath2, data);
             this.truncateNames(textPath2, data, 1);
 
             // Alternative names
             if (data.data.alternativeNames.length > 0) {
-                let text3     = this.createTextElement(parent, data);
                 let pathId3   = this.createPathDefinition(parentId, 2, data);
-                let textPath3 = this.createTextPath(text3, pathId3)
+                let textPath3 = this.createTextPath(text, pathId3)
                     .attr("class", "alternativeName")
                     .classed("rtl", data.data.isAltRtl);
 
@@ -67,9 +65,8 @@ export default class Text
             }
 
             // Birth and death date
-            let text4     = this.createTextElement(parent, data);
             let pathId4   = this.createPathDefinition(parentId, 3, data);
-            let textPath4 = this.createTextPath(text4, pathId4)
+            let textPath4 = this.createTextPath(text, pathId4)
                 .attr("class", "date");
 
             this.addTimeSpan(textPath4, data);
@@ -326,8 +323,7 @@ export default class Text
      */
     createTextElement(parent, data)
     {
-        return parent.append("text")
-            .attr("dy", 0);
+        return parent.append("text");
     }
 
     /**
