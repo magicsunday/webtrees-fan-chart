@@ -226,6 +226,9 @@ export default class Text
     {
         let availableWidth = this.getAvailableWidth(data, index);
 
+        // If more than 1 element, we start by reversing the elements order so the first one is the last one that will be truncated
+        this.reverseNames(parent);
+        
         // Start truncating those elements which are not the preferred ones
         parent.selectAll("tspan:not(.preferred)")
             .each(this.truncateText(parent, availableWidth, hide));
@@ -233,6 +236,53 @@ export default class Text
         // Afterwards the preferred ones if text takes still to much space
         parent.selectAll("tspan.preferred")
             .each(this.truncateText(parent, availableWidth, hide));
+
+        // If more than 1 element, we end by re-reversing the elements order to restore the original order
+        this.reverseNames(parent);
+    }
+
+    /**
+    * Reverse the names
+    * I haven't found another way to reverse the order with d3.js, feel free to improve!
+    * I select all the "tspan", convert them to an array, remove the original names from the DOM
+    * then re-add the names one by one in a reversed order
+    *
+    * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are attached
+    */
+    reverseNames(parent) {
+        // select all the names including the prefered one
+        let selAll = parent.selectAll("tspan");
+        // set an array with those names
+        let elements = [...selAll];
+
+        // if there is more than one name, we have to reverse the order, otherwise it is not useful
+        if (elements.length > 1) {
+
+            // remove the names in the original order
+            selAll.remove();
+            
+            // Browse each name in the original order...
+            for (let ind=0; ind<elements.length; ind++) {
+                if (elements[ind].textContent) {
+            
+                    // ...add the name at the first place (thus they will be reversed at the end)...
+                    let selThisElement = parent.insert("tspan",":first-child").text(elements[ind].textContent);
+                    
+                    // ...with its span attributes (style) if any
+                    if (elements[ind].attributes) {
+                        if (elements[ind].attributes.dx) {
+                            selThisElement.attr('dx',elements[ind].attributes.dx.nodeValue);
+                        }
+                        if (elements[ind].attributes.dy) {
+                            selThisElement.attr('dy',elements[ind].attributes.dy.nodeValue);
+                        }
+                        if (elements[ind].attributes.class) {
+                            selThisElement.attr('class',elements[ind].attributes.class.nodeValue);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
