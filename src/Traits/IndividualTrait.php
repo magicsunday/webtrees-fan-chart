@@ -115,15 +115,23 @@ trait IndividualTrait
         }
 
         if ($individual->getBirthDate()->isOK()) {
-            return I18N::translate('Born: %s', $this->getBirthYear($individual));
+            return I18N::translate('Birth') . " : " . $individual->getBirthYear();
         }
 
         if ($individual->getDeathDate()->isOK()) {
-            return I18N::translate('Died: %s', $this->getDeathYear($individual));
+            return I18N::translate('Death') . " : " . $individual->getDeathYear();
         }
 
         if ($individual->isDead()) {
-            return I18N::translate('Deceased');
+            switch ($individual->sex()) {
+                case 'M':
+                    return I18N::translateContext('MALE', 'died');
+                case 'F':
+                    return I18N::translateContext('FEMALE', 'died');
+                default:
+                    return I18N::translate('died');
+            }
+
         }
 
         return '';
