@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-12-04 17:03+0100\n"
-"PO-Revision-Date: 2021-03-24 06:29+0100\n"
+"POT-Creation-Date: 2021-04-05 17:11+0200\n"
+"PO-Revision-Date: 2021-04-05 17:11+0200\n"
 "Last-Translator: JustCarmen <carmen@justcarmen.nl>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -17,38 +17,38 @@ msgstr ""
 "X-Poedit-SearchPath-1: module.php\n"
 "X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:100 src/Module.php:197
+#: src/Module.php:110 src/Module.php:208
 msgid "Fan chart"
 msgstr "Waaierdiagram"
 
-#: src/Module.php:110
+#: src/Module.php:120
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Een waaierdiagram met de voorouders van een persoon."
 
-#: src/Module.php:200 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:211 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Waaierdiagram van %s"
 
-#: src/Module.php:220
+#: src/Module.php:231
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Gebruik Ctrl + scroll om in te zoomen op de weergave"
 
-#: src/Module.php:221
+#: src/Module.php:232
 msgid "Move the view with two fingers"
 msgstr "Verplaats de weergave met twee vingers"
 
-#: src/Traits/IndividualTrait.php:111
+#: src/Traits/IndividualTrait.php:123
 #, php-format
 msgid "Born: %s"
 msgstr "Geboren: %s"
 
-#: src/Traits/IndividualTrait.php:115
+#: src/Traits/IndividualTrait.php:127
 #, php-format
 msgid "Died: %s"
 msgstr "Overleden: %s"
 
-#: src/Traits/IndividualTrait.php:119
+#: src/Traits/IndividualTrait.php:131
 msgid "Deceased"
 msgstr "Overleden"
 

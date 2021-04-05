@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-04 17:03+0100\n"
-"PO-Revision-Date: 2021-01-05 18:59+0100\n"
+"POT-Creation-Date: 2021-04-05 17:11+0200\n"
+"PO-Revision-Date: 2021-04-05 17:11+0200\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Loco-Source-Locale: sv_SE\n"
 "X-Generator: Poedit 2.4.2\n"
 "X-Poedit-Basepath: ../../..\n"
@@ -20,38 +20,38 @@ msgstr ""
 "X-Poedit-SearchPath-1: module.php\n"
 "X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:100 src/Module.php:197
+#: src/Module.php:110 src/Module.php:208
 msgid "Fan chart"
 msgstr "Förfäders solfjäderdiagram"
 
-#: src/Module.php:110
+#: src/Module.php:120
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Ett solfjäderdiagram med en persons förfäder."
 
-#: src/Module.php:200 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:211 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Förfäders solfjäderdiagram för %s"
 
-#: src/Module.php:220
+#: src/Module.php:231
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Använd Ctrl + rullen för att zooma in vyn"
 
-#: src/Module.php:221
+#: src/Module.php:232
 msgid "Move the view with two fingers"
 msgstr "Flytta vyn med två fingrar"
 
-#: src/Traits/IndividualTrait.php:111
+#: src/Traits/IndividualTrait.php:123
 #, php-format
 msgid "Born: %s"
 msgstr "Född: %s"
 
-#: src/Traits/IndividualTrait.php:115
+#: src/Traits/IndividualTrait.php:127
 #, php-format
 msgid "Died: %s"
 msgstr "Död: %s"
 
-#: src/Traits/IndividualTrait.php:119
+#: src/Traits/IndividualTrait.php:131
 msgid "Deceased"
 msgstr "Död"
 
