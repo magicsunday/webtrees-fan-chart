@@ -1,0 +1,109 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2020-12-04 17:03+0100\n"
+"PO-Revision-Date: 2021-04-22 16:09-0300\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ../../..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: translate\n"
+"Last-Translator: \n"
+"Language: es\n"
+"X-Poedit-SearchPath-0: resources/views/chart.phtml\n"
+"X-Poedit-SearchPath-1: module.php\n"
+"X-Poedit-SearchPath-2: src\n"
+
+#: src/Module.php:100 src/Module.php:197
+msgid "Fan chart"
+msgstr "Diagrama en abanico"
+
+#: src/Module.php:110
+msgid "A fan chart of an individual’s ancestors."
+msgstr "Un diagrama de abanico de los antepasados de un individuo."
+
+#: src/Module.php:200 src/Traits/ModuleChartTrait.php:38
+#, php-format
+msgid "Fan chart of %s"
+msgstr "Diagrama en abanico de %s"
+
+#: src/Module.php:220
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Use Ctrl + scroll para acercar la vista"
+
+#: src/Module.php:221
+msgid "Move the view with two fingers"
+msgstr "Mueve la vista con dos dedos"
+
+#: src/Traits/IndividualTrait.php:111
+#, php-format
+msgid "Born: %s"
+msgstr "Nació: %s"
+
+#: src/Traits/IndividualTrait.php:115
+#, php-format
+msgid "Died: %s"
+msgstr "Murió: %s"
+
+#: src/Traits/IndividualTrait.php:119
+msgid "Deceased"
+msgstr "Fallecido"
+
+#: resources/views/chart.phtml:35
+msgid "Individual"
+msgstr "Individuo"
+
+#: resources/views/chart.phtml:52
+msgid "Fan size"
+msgstr "Ángulo del abanico"
+
+#: resources/views/chart.phtml:62
+msgid "Generations"
+msgstr "Generaciones"
+
+#: resources/views/chart.phtml:80
+msgid "Presentation"
+msgstr "Presentación"
+
+#: resources/views/chart.phtml:87
+msgid "Hide empty segments"
+msgstr "Ocultar segmentos vacíos"
+
+#: resources/views/chart.phtml:96
+msgid "Show color gradients"
+msgstr "Mostrar degradados de color"
+
+#: resources/views/chart.phtml:105
+msgid "Number of inner levels"
+msgstr "Número de niveles internos"
+
+#: resources/views/chart.phtml:118
+msgid "Specifies the number of levels in which the text is written along an arc."
+msgstr "Especifica el número de niveles en los que se escribe el texto a lo largo de un arco."
+
+#: resources/views/chart.phtml:125
+msgid "Font size"
+msgstr "Tamaño tipografía"
+
+#: resources/views/chart.phtml:144
+msgid "More options ..."
+msgstr "Más opciones..."
+
+#: resources/views/chart.phtml:149
+msgid "view"
+msgstr "ver"
+
+#: resources/views/chart.phtml:155
+msgid "Re center"
+msgstr "Volver a centrar"
+
+#: resources/views/chart.phtml:160
+msgid "Export as PNG"
+msgstr "Exportar como PNG"
+
+#: resources/views/chart.phtml:163
+msgid "Export as SVG"
+msgstr "Exportar como SVG"
