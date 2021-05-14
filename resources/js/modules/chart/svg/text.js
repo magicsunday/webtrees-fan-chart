@@ -70,7 +70,6 @@ export default class Text
                 .attr("class", "date");
 
             this.addTimeSpan(textPath4, data);
-            this.truncateNames(textPath4, data, 3, true);
 
         // Outer labels
         } else {
@@ -107,7 +106,6 @@ export default class Text
                         .attr("dy", "2px");
 
                     this.addTimeSpan(text4, data);
-                    this.truncateNames(text4, data, 3, true);
                 }
             }
 
@@ -226,9 +224,18 @@ export default class Text
     {
         let availableWidth = this.getAvailableWidth(data, index);
 
-        // Start truncating those elements which are not the preferred ones
-        parent.selectAll("tspan:not(.preferred)")
-            .each(this.truncateText(parent, availableWidth, hide));
+        // Select all not preferred names
+        let names = parent.selectAll("tspan:not(.preferred)");
+
+        if (names.size()) {
+            // Start truncating from last element to the first one
+            names.nodes()
+                .reverse()
+                .forEach(element => {
+                    d3.select(element)
+                        .each(this.truncateText(parent, availableWidth, hide));
+                });
+        }
 
         // Afterwards the preferred ones if text takes still to much space
         parent.selectAll("tspan.preferred")
