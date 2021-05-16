@@ -49,6 +49,7 @@ export class FanChart
             options.fontColor,
             options.hideEmptySegments,
             options.showColorGradients,
+            options.showParentMarriageDates,
             options.rtl,
             options.innerArcs
         );

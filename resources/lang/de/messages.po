@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-05 17:11+0200\n"
-"PO-Revision-Date: 2021-04-05 17:11+0200\n"
+"POT-Creation-Date: 2021-05-16 14:36+0200\n"
+"PO-Revision-Date: 2021-05-16 14:38+0200\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -17,38 +17,38 @@ msgstr ""
 "X-Poedit-SearchPath-1: module.php\n"
 "X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:110 src/Module.php:208
+#: src/Module.php:111 src/Module.php:210
 msgid "Fan chart"
 msgstr "Fächerdiagramm"
 
-#: src/Module.php:120
+#: src/Module.php:121
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Ein Fächerdiagramm der Vorfahren einer Person."
 
-#: src/Module.php:211 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:213 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Fächerdiagramm von %s"
 
-#: src/Module.php:231
+#: src/Module.php:233
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Verwende Strg+Scrollen zum Zoomen der Ansicht"
 
-#: src/Module.php:232
+#: src/Module.php:234
 msgid "Move the view with two fingers"
 msgstr "Verschieben der Ansicht mit zwei Fingern"
 
-#: src/Traits/IndividualTrait.php:123
+#: src/Traits/IndividualTrait.php:119
 #, php-format
 msgid "Born: %s"
 msgstr "Geboren: %s"
 
-#: src/Traits/IndividualTrait.php:127
+#: src/Traits/IndividualTrait.php:123
 #, php-format
 msgid "Died: %s"
 msgstr "Gestorben: %s"
 
-#: src/Traits/IndividualTrait.php:131
+#: src/Traits/IndividualTrait.php:127
 msgid "Deceased"
 msgstr "Verstorben"
 
@@ -77,36 +77,40 @@ msgid "Show color gradients"
 msgstr "Zeige Farbverläufe"
 
 #: resources/views/chart.phtml:105
+msgid "Show parent marriage dates"
+msgstr "Zeige die Heiratsdaten der Eltern an"
+
+#: resources/views/chart.phtml:114
 msgid "Number of inner levels"
 msgstr "Anzahl der inneren Ebenen"
 
-#: resources/views/chart.phtml:118
+#: resources/views/chart.phtml:127
 msgid ""
 "Specifies the number of levels in which the text is written along an arc."
 msgstr ""
 "Bestimmt die Anzahl der Ebenen in denen der Text entlang eines Kreisbogens "
 "geschrieben wird."
 
-#: resources/views/chart.phtml:125
+#: resources/views/chart.phtml:134
 msgid "Font size"
 msgstr "Schriftgröße"
 
-#: resources/views/chart.phtml:144
+#: resources/views/chart.phtml:153
 msgid "More options ..."
 msgstr "Weitere Optionen ..."
 
-#: resources/views/chart.phtml:149
+#: resources/views/chart.phtml:158
 msgid "view"
 msgstr "Anzeigen"
 
-#: resources/views/chart.phtml:155
+#: resources/views/chart.phtml:164
 msgid "Re center"
 msgstr "Neu zentrieren"
 
-#: resources/views/chart.phtml:160
+#: resources/views/chart.phtml:169
 msgid "Export as PNG"
 msgstr "Als PNG exportieren"
 
-#: resources/views/chart.phtml:163
+#: resources/views/chart.phtml:172
 msgid "Export as SVG"
 msgstr "Als SVG exportieren"

@@ -13,6 +13,7 @@ use Exception;
 use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Exceptions\IndividualNotFoundException;
+use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\AbstractModule;
@@ -157,15 +158,16 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             $params = (array) $request->getParsedBody();
 
             return redirect(route(self::ROUTE_DEFAULT, [
-                'tree'               => $tree->name(),
-                'xref'               => $params['xref'],
-                'generations'        => $params['generations'],
-                'fanDegree'          => $params['fanDegree'] ?? '210',
-                'fontScale'          => $params['fontScale'] ?? '100',
-                'hideEmptySegments'  => $params['hideEmptySegments'] ?? '0',
-                'showColorGradients' => $params['showColorGradients'] ?? '0',
-                'innerArcs'          => $params['innerArcs'] ?? '3',
-                'showMore'           => $params['showMore'] ?? '0',
+                'tree'                    => $tree->name(),
+                'xref'                    => $params['xref'],
+                'generations'             => $params['generations'],
+                'fanDegree'               => $params['fanDegree'] ?? '210',
+                'fontScale'               => $params['fontScale'] ?? '100',
+                'hideEmptySegments'       => $params['hideEmptySegments'] ?? '0',
+                'showColorGradients'      => $params['showColorGradients'] ?? '0',
+                'showParentMarriageDates' => $params['showParentMarriageDates'] ?? '0',
+                'innerArcs'               => $params['innerArcs'] ?? '3',
+                'showMore'                => $params['showMore'] ?? '0',
             ]));
         }
 
@@ -275,7 +277,9 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             return [];
         }
 
-        $data   = $this->getIndividualData($individual, $generation);
+        $data = $this->getIndividualData($individual, $generation);
+
+        /** @var Family $family */
         $family = $individual->childFamilies()->first();
 
         if ($family === null) {

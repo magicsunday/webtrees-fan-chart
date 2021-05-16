@@ -101,6 +101,7 @@ export default class Text
 
                 // Birth and death date
                 if (data.depth < 6) {
+                    // Birth and death date
                     let text4 = this.createTextElement(parent, data)
                         .attr("class", "date")
                         .attr("dy", "2px");
@@ -111,6 +112,17 @@ export default class Text
 
             // Rotate outer labels in right position
             this.transformOuterText(parent, data);
+        }
+
+        // Marriage date
+        if (this._configuration.showParentMarriageDates && data.children && (data.depth < 5)) {
+            let text5     = this.createTextElement(parent, data);
+            let parentId5 = d3.select(parent.node().parentNode).attr("id");
+            let pathId5   = this.createPathDefinition(parentId5, 4, data);
+            let textPath5 = this.createTextPath(text5, pathId5)
+                .attr("class", "marriage-date");
+
+            this.addMarriageDate(textPath5, data);
         }
     }
 
@@ -157,7 +169,7 @@ export default class Text
         let i = 0;
 
         for (let lastName of data.data.lastNames) {
-            // Create a <tspan> element for the last name
+            // Create a <tspan> element for each last name
             let tspan = parent.append("tspan")
                 .text(lastName);
 
@@ -186,7 +198,7 @@ export default class Text
         let i = 0;
 
         for (let alternativeName of data.data.alternativeNames) {
-            // Create a <tspan> element for the alternative name
+            // Create a <tspan> element for each alternative name
             let tspan = parent.append("tspan")
                 .text(alternativeName);
 
@@ -210,6 +222,21 @@ export default class Text
         // Create a <tspan> element for the time span
         parent.append("tspan")
             .text(data.data.timespan);
+    }
+
+    /**
+     * Creates a single <tspan> element for the marriage date and append it to the parent element.
+     *
+     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {Object}    data   The D3 data object containing the individual data
+     */
+    addMarriageDate(parent, data)
+    {
+        // Create a <tspan> element for the parent marriage date
+        if (data.data.parentMarriage) {
+            parent.append("tspan")
+                .text("\u26AD " + data.data.parentMarriage);
+        }
     }
 
     /**
@@ -317,6 +344,7 @@ export default class Text
      */
     isInnerLabel(data)
     {
+        // Note: The center element does not belong to the inner labels!
         return ((data.depth > 0) && (data.depth <= this._configuration.numberOfInnerCircles));
     }
 
@@ -350,8 +378,7 @@ export default class Text
     }
 
     /**
-     * Creates a new <path> definition and append it to the global definition list. The method
-     * returns the newly created <path> element id.
+     * Creates a new <path> definition and append it to the global definition list.
      *
      * @param {String} parentId The parent element id
      * @param {Number} index    Index position of element in parent container. Required to create a unique path id.
@@ -368,20 +395,26 @@ export default class Text
             return pathId;
         }
 
+        let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
+        let startAngle      = this._geometry.startAngle(data.depth, data.x0);
+        let endAngle        = this._geometry.endAngle(data.depth, data.x1);
+        let relativeRadius  = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, index));
+
+        // Special treatment for center marriage date position
+        if (this._configuration.showParentMarriageDates && (index === 4) && (data.depth < 1)) {
+            startAngle = this._geometry.calcAngle(data.x0);
+            endAngle   = this._geometry.calcAngle(data.x1);
+        }
+
         // Create an arc generator for path segments
         let arcGenerator = d3.arc()
-            .startAngle(this.isPositionFlipped(data.depth, data.x0, data.x1)
-                ? this._geometry.endAngle(data.depth, data.x1)
-                : this._geometry.startAngle(data.depth, data.x0)
-            )
-            .endAngle(this.isPositionFlipped(data.depth, data.x0, data.x1)
-                ? this._geometry.startAngle(data.depth, data.x0)
-                : this._geometry.endAngle(data.depth, data.x1)
-            )
-            .innerRadius(this._geometry.relativeRadius(data.depth, this.getTextOffset(index, data)))
-            .outerRadius(this._geometry.relativeRadius(data.depth, this.getTextOffset(index, data)));
+            .startAngle(positionFlipped ? endAngle : startAngle)
+            .endAngle(positionFlipped ? startAngle : endAngle)
+            .innerRadius(relativeRadius)
+            .outerRadius(relativeRadius);
 
-        arcGenerator.padAngle(this._configuration.padAngle)
+        arcGenerator
+            .padAngle(this._configuration.padAngle)
             .padRadius(this._configuration.padRadius)
             .cornerRadius(this._configuration.cornerRadius);
 
@@ -422,17 +455,17 @@ export default class Text
      * Get the relative position offsets in percent for different text lines (firstName, lastName, dates).
      *   => (0 = inner radius, 100 = outer radius)
      *
-     * @param {Number} index The index position of element in parent container. Required to create a unique path id.
-     * @param {Object} data  The D3 data object
+     * @param {Boolean} positionFlipped TRUE if the labels should be flipped for easier reading
+     * @param {Number}  index           The index position of element in parent container. Required to create a unique path id.
      *
      * @return {Number}
      */
-    getTextOffset(index, data)
+    getTextOffset(positionFlipped, index)
     {
-        // First names, Last name, Alternate name, Date
-        return this.isPositionFlipped(data.depth, data.x0, data.x1)
-            ? [23, 42, 61, 84][index]
-            : [73, 54, 35, 12][index];
+        // First names, Last name, Alternate name, Date, Parent marriage date
+        return positionFlipped
+            ? [23, 42, 61, 84, 125][index]
+            : [73, 54, 35, 12, 120][index];
     }
 
     /**
@@ -459,8 +492,10 @@ export default class Text
         let availableWidth = (this._configuration.centerCircleRadius * 2) - (this._configuration.centerCircleRadius * 0.15);
 
         if (data.depth >= 1) {
+            let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
+
             // Calculate length of the arc
-            availableWidth = this._geometry.arcLength(data, this.getTextOffset(index, data));
+            availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, index));
         }
 
         return availableWidth - (this._configuration.textPadding * 2)

@@ -97,6 +97,15 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                             'checked' => $configuration->getShowColorGradients(),
                         ])
                     ?>
+
+                    <?=
+                        view('components/checkbox', [
+                            'id'      => 'showParentMarriageDates',
+                            'name'    => 'showParentMarriageDates',
+                            'label'   => I18N::translate('Show parent marriage dates'),
+                            'checked' => $configuration->getShowParentMarriageDates(),
+                        ])
+                    ?>
                 </div>
             </div>
 
@@ -233,6 +242,7 @@ document.addEventListener("DOMContentLoaded", function () {
     storage.register("generations");
     storage.register("hideEmptySegments");
     storage.register("showColorGradients");
+    storage.register("showParentMarriageDates");
     storage.register("innerArcs");
     storage.register("fontScale");
 
@@ -259,16 +269,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const fanChart = new WebtreesFanChart.FanChart(
         "#webtrees-fan-chart-container",
         {
-            labels            : data.labels,
-            generations       : parseInt(storage.read("generations")),
-            fanDegree         : parseInt(storage.read("fanDegree")),
-            defaultColor      : data.defaultColor,
-            fontScale         : parseInt(storage.read("fontScale")),
-            fontColor         : data.fontColor,
-            hideEmptySegments : storage.read("hideEmptySegments"),
+            labels: data.labels,
+            generations: parseInt(storage.read("generations")),
+            fanDegree: parseInt(storage.read("fanDegree")),
+            defaultColor: data.defaultColor,
+            fontScale: parseInt(storage.read("fontScale")),
+            fontColor: data.fontColor,
+            hideEmptySegments: storage.read("hideEmptySegments"),
             showColorGradients: storage.read("showColorGradients"),
-            rtl               : data.rtl,
-            innerArcs         : parseInt(storage.read("innerArcs"))
+            showParentMarriageDates: storage.read("showParentMarriageDates"),
+            rtl: data.rtl,
+            innerArcs: parseInt(storage.read("innerArcs"))
         }
     );
 
@@ -282,12 +293,13 @@ document.addEventListener("DOMContentLoaded", function () {
     //     event.preventDefault();
     //
     //     // Update configuration with changed form values
-    //     fanChart.configuration.generations          = parseInt(document.getElementById('generations').value);
-    //     fanChart.configuration.fanDegree            = parseInt(document.getElementById('fanDegree').value);
-    //     fanChart.configuration.fontScale            = parseInt(document.getElementById('fontScale').value);
-    //     fanChart.configuration.hideEmptySegments    = !!document.getElementById('hideEmptySegments').checked;
-    //     fanChart.configuration.showColorGradients   = !!document.getElementById('showColorGradients').checked;
-    //     fanChart.configuration.numberOfInnerCircles = parseInt(document.getElementById('innerArcs').value);
+    //     fanChart.configuration.generations             = parseInt(document.getElementById('generations').value);
+    //     fanChart.configuration.fanDegree               = parseInt(document.getElementById('fanDegree').value);
+    //     fanChart.configuration.fontScale               = parseInt(document.getElementById('fontScale').value);
+    //     fanChart.configuration.hideEmptySegments       = !!document.getElementById('hideEmptySegments').checked;
+    //     fanChart.configuration.showColorGradients      = !!document.getElementById('showColorGradients').checked;
+    //     fanChart.configuration.showParentMarriageDates = !!document.getElementById('showParentMarriageDates').checked;
+    //     fanChart.configuration.numberOfInnerCircles    = parseInt(document.getElementById('innerArcs').value);
     //
     //     drawChart(fanChart, ajaxUrl);
     // });

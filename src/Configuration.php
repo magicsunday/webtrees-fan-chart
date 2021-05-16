@@ -169,6 +169,16 @@ class Configuration
     }
 
     /**
+     * Returns whether to show parent marriage dates or not.
+     *
+     * @return bool
+     */
+    public function getShowParentMarriageDates(): bool
+    {
+        return (bool) ($this->request->getQueryParams()['showParentMarriageDates'] ?? false);
+    }
+
+    /**
      * Returns the number of inner arcs to display.
      *
      * @return int

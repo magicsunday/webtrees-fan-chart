@@ -22,26 +22,32 @@ export default class Configuration
      * @param {String}    fontColor
      * @param {Boolean}   hideEmptySegments
      * @param {Boolean}   showColorGradients
+     * @param {Boolean}   showParentMarriageDates
      * @param {Boolean}   rtl
      * @param {Number}    innerArcs
      */
     constructor(
         labels,
-        generations        = 6,
-        fanDegree          = 210,
-        defaultColor       = "rgb(238, 238, 238)",
-        fontScale          = 100,
-        fontColor          = "rgb(0, 0, 0)",
-        hideEmptySegments  = false,
+        generations = 6,
+        fanDegree = 210,
+        defaultColor = "rgb(238, 238, 238)",
+        fontScale = 100,
+        fontColor = "rgb(0, 0, 0)",
+        hideEmptySegments = false,
         showColorGradients = false,
-        rtl                = false,
-        innerArcs          = 4
+        showParentMarriageDates = false,
+        rtl = false,
+        innerArcs = 4
     ) {
         // Default number of generations to display
         this._generations = generations;
 
         // Padding in pixel between each generation circle
         this.circlePadding = 0;
+
+        if (showParentMarriageDates) {
+            this.circlePadding = 40;
+        }
 
         this.padAngle = 0.03;
         this.padRadius = this.circlePadding * 10;
@@ -60,6 +66,11 @@ export default class Configuration
         // Height of each outer circle arc
         this.outerArcHeight = 110;
 
+        if (showParentMarriageDates) {
+            this.innerArcHeight = this.circlePadding + 110;
+            this.outerArcHeight = this.circlePadding + 110;
+        }
+
         // Width of the colored arc above each single person arc
         this.colorArcWidth = 5;
 
@@ -76,6 +87,7 @@ export default class Configuration
 
         this._hideEmptySegments  = hideEmptySegments;
         this._showColorGradients = showColorGradients;
+        this._showParentMarriageDates = showParentMarriageDates;
 
         // Duration of update animation if clicked on a person
         this.updateDuration = 1250;
@@ -191,13 +203,33 @@ export default class Configuration
     }
 
     /**
-     * Sets whether to show or hide a color gradient above each arc or display male/female colors instead
+     * Sets whether to show or hide a color gradient above each arc or display male/female colors instead.
      *
      * @param {Boolean} value Either true or false
      */
     set showColorGradients(value)
     {
         this._showColorGradients = value;
+    }
+
+    /**
+     * Returns whether to show or hide the parent marriage dates.
+     *
+     * @return {Boolean}
+     */
+    get showParentMarriageDates()
+    {
+        return this._showParentMarriageDates;
+    }
+
+    /**
+     * Sets whether to show or hide the parent marriage dates.
+     *
+     * @param {Boolean} value Either true or false
+     */
+    set showParentMarriageDates(value)
+    {
+        this._showParentMarriageDates = value;
     }
 
     /**

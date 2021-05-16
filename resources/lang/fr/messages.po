@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-05 17:11+0200\n"
-"PO-Revision-Date: 2021-04-05 17:11+0200\n"
+"POT-Creation-Date: 2021-05-16 14:37+0200\n"
+"PO-Revision-Date: 2021-05-16 14:37+0200\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -17,38 +17,38 @@ msgstr ""
 "X-Poedit-SearchPath-1: module.php\n"
 "X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:110 src/Module.php:208
+#: src/Module.php:111 src/Module.php:210
 msgid "Fan chart"
 msgstr "Éventail des ancêtres"
 
-#: src/Module.php:120
+#: src/Module.php:121
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Un éventail des ancêtres d'un individu."
 
-#: src/Module.php:211 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:213 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Éventail des ancêtres de %s"
 
-#: src/Module.php:231
+#: src/Module.php:233
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Utiliser Ctrl + molette pour zoomer dans la vue"
 
-#: src/Module.php:232
+#: src/Module.php:234
 msgid "Move the view with two fingers"
 msgstr "Déplacer la vue avec deux doigts"
 
-#: src/Traits/IndividualTrait.php:123
+#: src/Traits/IndividualTrait.php:119
 #, php-format
 msgid "Born: %s"
 msgstr "Naissance: %s"
 
-#: src/Traits/IndividualTrait.php:127
+#: src/Traits/IndividualTrait.php:123
 #, php-format
 msgid "Died: %s"
 msgstr "Décès: %s"
 
-#: src/Traits/IndividualTrait.php:131
+#: src/Traits/IndividualTrait.php:127
 msgid "Deceased"
 msgstr "Décédé"
 
@@ -77,37 +77,41 @@ msgid "Show color gradients"
 msgstr "Montrer les gradients de couleur"
 
 #: resources/views/chart.phtml:105
+msgid "Show parent marriage dates"
+msgstr ""
+
+#: resources/views/chart.phtml:114
 msgid "Number of inner levels"
 msgstr "Nombre de niveaux internes"
 
-#: resources/views/chart.phtml:118
+#: resources/views/chart.phtml:127
 msgid ""
 "Specifies the number of levels in which the text is written along an arc."
 msgstr ""
 "Spécifie le nombre de niveaux pour lesquel le texte est écrit le long d'un "
 "arc."
 
-#: resources/views/chart.phtml:125
+#: resources/views/chart.phtml:134
 msgid "Font size"
 msgstr "Taille de police"
 
-#: resources/views/chart.phtml:144
+#: resources/views/chart.phtml:153
 msgid "More options ..."
 msgstr "Plus d'options..."
 
-#: resources/views/chart.phtml:149
+#: resources/views/chart.phtml:158
 msgid "view"
 msgstr "afficher"
 
-#: resources/views/chart.phtml:155
+#: resources/views/chart.phtml:164
 msgid "Re center"
 msgstr "Re centrer"
 
-#: resources/views/chart.phtml:160
+#: resources/views/chart.phtml:169
 msgid "Export as PNG"
 msgstr "Exporter au format PNG"
 
-#: resources/views/chart.phtml:163
+#: resources/views/chart.phtml:172
 msgid "Export as SVG"
 msgstr "Exporter au format SVG"
 

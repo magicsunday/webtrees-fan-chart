@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-05 17:11+0200\n"
-"PO-Revision-Date: 2021-04-05 17:11+0200\n"
+"POT-Creation-Date: 2021-05-16 14:36+0200\n"
+"PO-Revision-Date: 2021-05-16 14:36+0200\n"
 "Last-Translator: Josef Prause <josef.prause@gmail.com>\n"
 "Language-Team: Josef Prause josef.prause@gmail.com\n"
 "Language: cs\n"
@@ -17,38 +17,38 @@ msgstr ""
 "X-Poedit-SearchPath-1: module.php\n"
 "X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:110 src/Module.php:208
+#: src/Module.php:111 src/Module.php:210
 msgid "Fan chart"
 msgstr "Vějířový diagram"
 
-#: src/Module.php:120
+#: src/Module.php:121
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Vějíř předků osoby."
 
-#: src/Module.php:211 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:213 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Vějíř předků osoby %s"
 
-#: src/Module.php:231
+#: src/Module.php:233
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Pomocí Ctrl + kolečko zvětšit pohled"
 
-#: src/Module.php:232
+#: src/Module.php:234
 msgid "Move the view with two fingers"
 msgstr "Přemístit pohled dvěma prsty"
 
-#: src/Traits/IndividualTrait.php:123
+#: src/Traits/IndividualTrait.php:119
 #, php-format
 msgid "Born: %s"
 msgstr "Narozen/a: %s"
 
-#: src/Traits/IndividualTrait.php:127
+#: src/Traits/IndividualTrait.php:123
 #, php-format
 msgid "Died: %s"
 msgstr "Zemřel/a: %s"
 
-#: src/Traits/IndividualTrait.php:131
+#: src/Traits/IndividualTrait.php:127
 msgid "Deceased"
 msgstr "Zesnulý/á"
 
@@ -77,33 +77,37 @@ msgid "Show color gradients"
 msgstr "Zobrazit barevné segmenty"
 
 #: resources/views/chart.phtml:105
+msgid "Show parent marriage dates"
+msgstr ""
+
+#: resources/views/chart.phtml:114
 msgid "Number of inner levels"
 msgstr "Počet vnitřních úrovní"
 
-#: resources/views/chart.phtml:118
+#: resources/views/chart.phtml:127
 msgid "Specifies the number of levels in which the text is written along an arc."
 msgstr "Počet úrovní, v nichž je text zapsán podél oblouku."
 
-#: resources/views/chart.phtml:125
+#: resources/views/chart.phtml:134
 msgid "Font size"
 msgstr "Velikost písma"
 
-#: resources/views/chart.phtml:144
+#: resources/views/chart.phtml:153
 msgid "More options ..."
 msgstr "Další možnosti..."
 
-#: resources/views/chart.phtml:149
+#: resources/views/chart.phtml:158
 msgid "view"
 msgstr "zobrazit"
 
-#: resources/views/chart.phtml:155
+#: resources/views/chart.phtml:164
 msgid "Re center"
 msgstr "Vystředit"
 
-#: resources/views/chart.phtml:160
+#: resources/views/chart.phtml:169
 msgid "Export as PNG"
 msgstr "Exportovat jako PNG"
 
-#: resources/views/chart.phtml:163
+#: resources/views/chart.phtml:172
 msgid "Export as SVG"
 msgstr "Exportovat jako SVG"

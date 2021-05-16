@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-05 17:11+0200\n"
-"PO-Revision-Date: 2021-04-05 17:11+0200\n"
+"POT-Creation-Date: 2021-05-16 14:37+0200\n"
+"PO-Revision-Date: 2021-05-16 14:37+0200\n"
 "Last-Translator: JustCarmen <carmen@justcarmen.nl>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -17,38 +17,38 @@ msgstr ""
 "X-Poedit-SearchPath-1: module.php\n"
 "X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:110 src/Module.php:208
+#: src/Module.php:111 src/Module.php:210
 msgid "Fan chart"
 msgstr "Waaierdiagram"
 
-#: src/Module.php:120
+#: src/Module.php:121
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Een waaierdiagram met de voorouders van een persoon."
 
-#: src/Module.php:211 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:213 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Waaierdiagram van %s"
 
-#: src/Module.php:231
+#: src/Module.php:233
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Gebruik Ctrl + scroll om in te zoomen op de weergave"
 
-#: src/Module.php:232
+#: src/Module.php:234
 msgid "Move the view with two fingers"
 msgstr "Verplaats de weergave met twee vingers"
 
-#: src/Traits/IndividualTrait.php:123
+#: src/Traits/IndividualTrait.php:119
 #, php-format
 msgid "Born: %s"
 msgstr "Geboren: %s"
 
-#: src/Traits/IndividualTrait.php:127
+#: src/Traits/IndividualTrait.php:123
 #, php-format
 msgid "Died: %s"
 msgstr "Overleden: %s"
 
-#: src/Traits/IndividualTrait.php:131
+#: src/Traits/IndividualTrait.php:127
 msgid "Deceased"
 msgstr "Overleden"
 
@@ -77,34 +77,38 @@ msgid "Show color gradients"
 msgstr "Kleurverlopen weergeven"
 
 #: resources/views/chart.phtml:105
+msgid "Show parent marriage dates"
+msgstr ""
+
+#: resources/views/chart.phtml:114
 msgid "Number of inner levels"
 msgstr "Aantal binnenste niveaus"
 
-#: resources/views/chart.phtml:118
+#: resources/views/chart.phtml:127
 msgid "Specifies the number of levels in which the text is written along an arc."
 msgstr "Geeft het aantal niveaus aan waarin de tekst langs een boog wordt geschreven."
 
-#: resources/views/chart.phtml:125
+#: resources/views/chart.phtml:134
 msgid "Font size"
 msgstr "Tekstgrootte"
 
-#: resources/views/chart.phtml:144
+#: resources/views/chart.phtml:153
 msgid "More options ..."
 msgstr "Meer opties ..."
 
-#: resources/views/chart.phtml:149
+#: resources/views/chart.phtml:158
 msgid "view"
 msgstr "weergeven"
 
-#: resources/views/chart.phtml:155
+#: resources/views/chart.phtml:164
 msgid "Re center"
 msgstr "Opnieuw centreren"
 
-#: resources/views/chart.phtml:160
+#: resources/views/chart.phtml:169
 msgid "Export as PNG"
 msgstr "Exporteren als PNG"
 
-#: resources/views/chart.phtml:163
+#: resources/views/chart.phtml:172
 msgid "Export as SVG"
 msgstr "Exporteren als SVG"
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-04-05 17:11+0200\n"
-"PO-Revision-Date: 2021-04-05 17:11+0200\n"
+"POT-Creation-Date: 2021-05-16 14:36+0200\n"
+"PO-Revision-Date: 2021-05-16 14:36+0200\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: af\n"
@@ -17,38 +17,38 @@ msgstr ""
 "X-Poedit-SearchPath-1: module.php\n"
 "X-Poedit-SearchPath-2: src\n"
 
-#: src/Module.php:110 src/Module.php:208
+#: src/Module.php:111 src/Module.php:210
 msgid "Fan chart"
 msgstr "Waaierdiagram"
 
-#: src/Module.php:120
+#: src/Module.php:121
 msgid "A fan chart of an individual’s ancestors."
 msgstr "'n Waaierdiagram van 'n persoon se voorouers."
 
-#: src/Module.php:211 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:213 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "%s se waaierdiagram"
 
-#: src/Module.php:231
+#: src/Module.php:233
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Gebruik Ctrl + rol om te vergroot"
 
-#: src/Module.php:232
+#: src/Module.php:234
 msgid "Move the view with two fingers"
 msgstr "Beweeg die aansig met twee vingers"
 
-#: src/Traits/IndividualTrait.php:123
+#: src/Traits/IndividualTrait.php:119
 #, php-format
 msgid "Born: %s"
 msgstr "Gebore: %s"
 
-#: src/Traits/IndividualTrait.php:127
+#: src/Traits/IndividualTrait.php:123
 #, php-format
 msgid "Died: %s"
 msgstr "Sterf: %s"
 
-#: src/Traits/IndividualTrait.php:131
+#: src/Traits/IndividualTrait.php:127
 msgid "Deceased"
 msgstr "Oorlede"
 
@@ -77,33 +77,37 @@ msgid "Show color gradients"
 msgstr "Wys kleurgradiënte"
 
 #: resources/views/chart.phtml:105
+msgid "Show parent marriage dates"
+msgstr ""
+
+#: resources/views/chart.phtml:114
 msgid "Number of inner levels"
 msgstr "Aantal binnevlakke"
 
-#: resources/views/chart.phtml:118
+#: resources/views/chart.phtml:127
 msgid "Specifies the number of levels in which the text is written along an arc."
 msgstr "Bepaal die aantal vlakke waarin die teks langs 'n boog geskryf word."
 
-#: resources/views/chart.phtml:125
+#: resources/views/chart.phtml:134
 msgid "Font size"
 msgstr "Skrifgrootte"
 
-#: resources/views/chart.phtml:144
+#: resources/views/chart.phtml:153
 msgid "More options ..."
 msgstr "Meer opsies ..."
 
-#: resources/views/chart.phtml:149
+#: resources/views/chart.phtml:158
 msgid "view"
 msgstr "bekyk"
 
-#: resources/views/chart.phtml:155
+#: resources/views/chart.phtml:164
 msgid "Re center"
 msgstr "Her sentreer"
 
-#: resources/views/chart.phtml:160
+#: resources/views/chart.phtml:169
 msgid "Export as PNG"
 msgstr "Voer as PNG uit"
 
-#: resources/views/chart.phtml:163
+#: resources/views/chart.phtml:172
 msgid "Export as SVG"
 msgstr "Voer as SVG uit"

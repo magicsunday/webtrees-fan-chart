@@ -77,10 +77,11 @@ trait IndividualTrait
             'isAltRtl'         => $this->isRtl($alternativeNames),
             'thumbnail'        => $this->getIndividualImage($individual),
             'sex'              => $individual->sex(),
-            'birth'            => strip_tags($individual->getBirthDate()->display()),
-            'death'            => strip_tags($individual->getDeathDate()->display()),
+            'birth'            => $this->decodeValue($individual->getBirthDate()->display()),
+            'death'            => $this->decodeValue($individual->getDeathDate()->display()),
             'marriage'         => $this->getMarriageDate($individual),
             'timespan'         => $this->getLifetimeDescription($individual),
+            'parentMarriage'   => $this->getParentMarriageDate($individual),
             'color'            => $this->getColor($individual),
             'colors'           => [[], []],
         ];
@@ -154,6 +155,18 @@ trait IndividualTrait
     }
 
     /**
+     * Convert HTML entities to their corresponding characters.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    private function decodeValue(string $value): string
+    {
+        return strip_tags($value);
+    }
+
+    /**
      * Returns the marriage date of the individual.
      *
      * @param Individual $individual
@@ -166,7 +179,26 @@ trait IndividualTrait
         $family = $individual->spouseFamilies()->first();
 
         if ($family) {
-            return strip_tags($family->getMarriageDate()->display());
+            return $this->decodeValue($family->getMarriageDate()->display());
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the marriage date of the parents.
+     *
+     * @param Individual $individual
+     *
+     * @return string
+     */
+    private function getParentMarriageDate(Individual $individual): string
+    {
+        /** @var Family $family */
+        $family = $individual->childFamilies()->first();
+
+        if ($family) {
+            return $this->decodeValue($family->getMarriageDate()->display());
         }
 
         return '';
