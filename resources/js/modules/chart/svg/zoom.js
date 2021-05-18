@@ -24,7 +24,7 @@ export default class Zoom
     /**
      * Constructor.
      *
-     * @param {Selection} parent The selected D3 parent element container
+     * @param {selection} parent The selected D3 parent element container
      */
     constructor(parent)
     {

@@ -3,7 +3,7 @@
  */
 
 import * as d3 from "./../../d3";
-import Svg from "./../svg";
+import Svg from "./../svg"
 import Geometry, {MATH_DEG2RAD, MATH_RAD2DEG} from "./geometry";
 
 /**
@@ -31,7 +31,7 @@ export default class Text
     /**
      * Creates all the labels and all dependent elements for a single person.
      *
-     * @param {Selection} parent The parent element to which the elements are to be attached
+     * @param {selection} parent The parent element to which the elements are to be attached
      * @param {Object}    data   The D3 data object
      */
     createLabels(parent, data)
@@ -131,7 +131,7 @@ export default class Text
      * parent element. The "tspan" element containing the preferred name gets an
      * additional underline style in order to highlight this one.
      *
-     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      */
     addFirstNames(parent, data)
@@ -160,7 +160,7 @@ export default class Text
     /**
      * Creates a single <tspan> element for each last name and append it to the parent element.
      *
-     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      * @param {Number}    dx     Additional space offset to add between names
      */
@@ -171,6 +171,7 @@ export default class Text
         for (let lastName of data.data.lastNames) {
             // Create a <tspan> element for each last name
             let tspan = parent.append("tspan")
+                .attr("class", "lastName")
                 .text(lastName);
 
             // Add some spacing between the elements
@@ -189,7 +190,7 @@ export default class Text
     /**
      * Creates a single <tspan> element for each alternative name and append it to the parent element.
      *
-     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      * @param {Number}    dx     Delta X offset used to create a small spacing between multiple words
      */
@@ -214,7 +215,7 @@ export default class Text
     /**
      * Creates a single <tspan> element for the time span append it to the parent element.
      *
-     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      */
     addTimeSpan(parent, data)
@@ -227,7 +228,7 @@ export default class Text
     /**
      * Creates a single <tspan> element for the marriage date and append it to the parent element.
      *
-     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      */
     addMarriageDate(parent, data)
@@ -242,7 +243,7 @@ export default class Text
     /**
      * Loops over the <tspan> elements and truncates the contained texts.
      *
-     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are attached
+     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are attached
      * @param {Object}    data   The D3 data object containing the individual data
      * @param {Number}    index  The index position of the element in parent container.
      * @param {Boolean}   hide   Whether to show or hide the label if the text takes to much space to be displayed
@@ -251,8 +252,8 @@ export default class Text
     {
         let availableWidth = this.getAvailableWidth(data, index);
 
-        // Select all not preferred names
-        let names = parent.selectAll("tspan:not(.preferred)");
+        // Select all not preferred names and not last names
+        let names = parent.selectAll("tspan:not(.preferred):not(.lastName)");
 
         if (names.size()) {
             // Start truncating from last element to the first one
@@ -267,12 +268,16 @@ export default class Text
         // Afterwards the preferred ones if text takes still to much space
         parent.selectAll("tspan.preferred")
             .each(this.truncateText(parent, availableWidth, hide));
+
+        // Truncate last names as last ones
+        parent.selectAll("tspan.lastName")
+            .each(this.truncateText(parent, availableWidth, hide));
     }
 
     /**
      * Returns a float representing the computed length of all <tspan> elements within the element.
      *
-     * @param {Selection} parent The parent (<text> or <textPath>) element containing the <tspan> child elements
+     * @param {selection} parent The parent (<text> or <textPath>) element containing the <tspan> child elements
      *
      * @returns {Number}
      */
@@ -291,7 +296,7 @@ export default class Text
     /**
      * Truncates the textual content of the actual element.
      *
-     * @param {Selection} parent         The parent (<text> or <textPath>) element containing the <tspan> child elements
+     * @param {selection} parent         The parent (<text> or <textPath>) element containing the <tspan> child elements
      * @param {Number}    availableWidth The total available width the text could take
      * @param {Boolean}   hide           Whether to show or hide the label if the text takes to much space to be displayed
      */
@@ -351,10 +356,10 @@ export default class Text
     /**
      * Creates a <text> element and append it to the parent element.
      *
-     * @param {Selection} parent The parent element to which the <text> element is to be attached
+     * @param {selection} parent The parent element to which the <text> element is to be attached
      * @param {Object}    data   The D3 data object
      *
-     * @return {Selection} Newly created <text> element
+     * @return {selection} Newly created <text> element
      */
     createTextElement(parent, data)
     {
@@ -364,10 +369,10 @@ export default class Text
     /**
      * Creates a <textPath> element and append it to the parent element.
      *
-     * @param {Selection} parent The parent element to which the <textPath> element is to be attached
+     * @param {selection} parent The parent element to which the <textPath> element is to be attached
      * @param {String}    refId  The id of the reference element
      *
-     * @return {Selection} Newly created <textPath> element
+     * @return {selection} Newly created <textPath> element
      */
     createTextPath(parent, refId)
     {
@@ -506,7 +511,7 @@ export default class Text
      * Transform the D3 <text> elements in the group. Rotate each <text> element depending on its offset,
      * so that they are equally positioned inside the arc.
      *
-     * @param {Selection} parent The D3 parent group object
+     * @param {selection} parent The D3 parent group object
      * @param {Object}    data   The The D3 data object
      *
      * @public
