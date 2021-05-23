@@ -31,7 +31,7 @@ export default class SvgExport extends Export
                     // Remove parent container selector as the CSS is included directly into the SVG element
                     data = data.replace(/#webtrees-fan-chart-container /g, "");
 
-                    let style = document.createElement("style");
+                    let style = document.createElementNS("http://www.w3.org/2000/svg", "style");
                     style.appendChild(document.createTextNode(data));
 
                     destinationNode.prepend(style);

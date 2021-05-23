@@ -378,7 +378,7 @@ export default class Text
     {
         return parent
             .append("textPath")
-            .attr("href", "#" + refId)
+            .attr("xlink:href", "#" + refId)
             .attr("startOffset", "25%");
     }
 

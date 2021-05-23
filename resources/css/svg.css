@@ -8,35 +8,35 @@
     font-weight: bold;
 }
 
-#webtrees-fan-chart-container svg .person .arc path {
+#webtrees-fan-chart-container svg g.person g.arc path {
     fill: rgb(235, 235, 235);
     stroke: rgb(225, 225, 225);
     stroke-width: 2px;
 }
 
-#webtrees-fan-chart-container svg .person.available .arc path {
+#webtrees-fan-chart-container svg g.person.available g.arc path {
     fill: rgb(250, 250, 250);
 }
 
-#webtrees-fan-chart-container svg .name .preferred {
+#webtrees-fan-chart-container svg g.name tspan.preferred {
     text-decoration: underline;
 }
 
-#webtrees-fan-chart-container svg .name .alternativeName {
+#webtrees-fan-chart-container svg g.name tspan.alternativeName {
     fill: rgb(127, 127, 127);
     font-weight: normal;
     direction: ltr;
     unicode-bidi: normal;
 }
 
-#webtrees-fan-chart-container svg .name .date {
+#webtrees-fan-chart-container svg g.name .date {
     fill: rgb(127, 127, 127);
     font-weight: normal;
     direction: ltr;
     unicode-bidi: plaintext;
 }
 
-#webtrees-fan-chart-container svg .name .marriage-date {
+#webtrees-fan-chart-container svg g.name .marriage-date {
     fill: rgb(127, 127, 127);
     font-weight: normal;
     direction: ltr;

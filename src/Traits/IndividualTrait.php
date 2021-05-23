@@ -194,7 +194,7 @@ trait IndividualTrait
      */
     private function getParentMarriageDate(Individual $individual): string
     {
-        /** @var Family $family */
+        /** @var null|Family $family */
         $family = $individual->childFamilies()->first();
 
         if ($family) {
