@@ -1,0 +1,113 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2021-05-16 14:36+0200\n"
+"PO-Revision-Date: 2021-07-09 13:36+0300\n"
+"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
+"Language-Team: z-yurets\n"
+"Language: uk_UA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"X-Poedit-Basepath: ../../..\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Poedit-KeywordsList: translate\n"
+"X-Poedit-SearchPath-0: resources/views/chart.phtml\n"
+"X-Poedit-SearchPath-1: module.php\n"
+"X-Poedit-SearchPath-2: src\n"
+
+#: src/Module.php:111 src/Module.php:210
+msgid "Fan chart"
+msgstr "Віяловий графік"
+
+#: src/Module.php:121
+msgid "A fan chart of an individual’s ancestors."
+msgstr "Віялова діаграма предків особи."
+
+#: src/Module.php:213 src/Traits/ModuleChartTrait.php:38
+#, php-format
+msgid "Fan chart of %s"
+msgstr "Віяловий графік для %s"
+
+#: src/Module.php:233
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Використовуйте Ctrl + коліщатко миші для збільшення зображення"
+
+#: src/Module.php:234
+msgid "Move the view with two fingers"
+msgstr "Переміщуйте зображення двома пальцями"
+
+#: src/Traits/IndividualTrait.php:119
+#, php-format
+msgid "Born: %s"
+msgstr "Народження: %s"
+
+#: src/Traits/IndividualTrait.php:123
+#, php-format
+msgid "Died: %s"
+msgstr "Смерть: %s"
+
+#: src/Traits/IndividualTrait.php:127
+msgid "Deceased"
+msgstr "Померлий"
+
+#: resources/views/chart.phtml:35
+msgid "Individual"
+msgstr "Персона"
+
+#: resources/views/chart.phtml:52
+msgid "Fan size"
+msgstr "Розмір віяла"
+
+#: resources/views/chart.phtml:62
+msgid "Generations"
+msgstr "Покоління"
+
+#: resources/views/chart.phtml:80
+msgid "Presentation"
+msgstr "Вигляд"
+
+#: resources/views/chart.phtml:87
+msgid "Hide empty segments"
+msgstr "Приховати порожні сегменти"
+
+#: resources/views/chart.phtml:96
+msgid "Show color gradients"
+msgstr "Показати градієнт кольорів"
+
+#: resources/views/chart.phtml:105
+msgid "Show parent marriage dates"
+msgstr "Показати дати шлюбів"
+
+#: resources/views/chart.phtml:114
+msgid "Number of inner levels"
+msgstr "Кількість внутрішніх рівнів"
+
+#: resources/views/chart.phtml:127
+msgid "Specifies the number of levels in which the text is written along an arc."
+msgstr "Вказує кількість рівнів, на яких текст пишеться по дузі."
+
+#: resources/views/chart.phtml:134
+msgid "Font size"
+msgstr "Розмір шрифту"
+
+#: resources/views/chart.phtml:153
+msgid "More options ..."
+msgstr "Додатково..."
+
+#: resources/views/chart.phtml:158
+msgid "view"
+msgstr "Перегляд"
+
+#: resources/views/chart.phtml:164
+msgid "Re center"
+msgstr "Відцентрувати"
+
+#: resources/views/chart.phtml:169
+msgid "Export as PNG"
+msgstr "Експорт в PNG"
+
+#: resources/views/chart.phtml:172
+msgid "Export as SVG"
+msgstr "Експорт в SVG"
