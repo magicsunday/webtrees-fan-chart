@@ -11,16 +11,16 @@
         "prepare": "rollup -c"
     },
     "devDependencies": {
-        "@rollup/plugin-node-resolve": "^11.0",
-        "d3-fetch": "^2.0",
-        "d3-hierarchy": "^2.0",
-        "d3-scale": "^3.2",
-        "d3-selection": "^2.0",
-        "d3-shape": "^2.0",
-        "d3-timer": "^2.0",
-        "d3-transition": "^2.0",
-        "d3-zoom": "^2.0",
-        "rollup": "^2.45",
+        "@rollup/plugin-node-resolve": "^13.0",
+        "d3-fetch": "^3.0",
+        "d3-hierarchy": "^3.0",
+        "d3-scale": "^4.0",
+        "d3-selection": "^3.0",
+        "d3-shape": "^3.0",
+        "d3-timer": "^3.0",
+        "d3-transition": "^3.0",
+        "d3-zoom": "^3.0",
+        "rollup": "^2.56",
         "rollup-plugin-terser": "^7.0"
     }
 }

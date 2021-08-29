@@ -167,7 +167,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'showColorGradients'      => $params['showColorGradients'] ?? '0',
                 'showParentMarriageDates' => $params['showParentMarriageDates'] ?? '0',
                 'innerArcs'               => $params['innerArcs'] ?? '3',
-                'showMore'                => $params['showMore'] ?? '0',
             ]));
         }
 

@@ -74,7 +74,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
             </div>
         </div>
 
-        <div class="collapse<?= ($configuration->getShowMore() ? ' show' : '') ?>" id="showMoreOptions">
+        <div class="collapse" id="showMoreOptions">
             <div class="form-group row">
                 <label class="col-form-label col-sm-3 wt-page-options-label">
                     <?= I18N::translate('Presentation') ?>
@@ -149,7 +149,12 @@ use MagicSunday\Webtrees\FanChart\Configuration;
             <div class="col-sm-12 wt-page-options-value text-center">
                 <div class="btn-toolbar justify-content-between">
                     <div class="btn-group btn-group-sm">
-                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#showMoreOptions" aria-expanded="false" aria-controls="showMoreOptions">
+                        <button class="btn btn-primary"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#showMoreOptions"
+                                aria-expanded="false"
+                                aria-controls="showMoreOptions">
                             <?= I18N::translate('More options ...') ?>
                         </button>
                     </div>
@@ -165,10 +170,10 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                             </button>
                         </div>
                         <div class="btn-group btn-group-sm">
-                            <button class="btn btn-secondary border-right" type="button" id="exportPNG">
+                            <button class="btn btn-secondary border-end" type="button" id="exportPNG">
                                 <?= I18N::translate('Export as PNG') ?>
                             </button>
-                            <button class="btn btn-secondary border-left" type="button" id="exportSVG">
+                            <button class="btn btn-secondary border-start" type="button" id="exportSVG">
                                 <?= I18N::translate('Export as SVG') ?>
                             </button>
                         </div>
@@ -228,6 +233,27 @@ function drawChart(fanChart, dataUrl)
     );
 }
 
+/**
+ * Set visibility of "Show more options" to previous state after page reload.
+ *
+ * @param Storage storage
+ */
+function toogleMoreOptions(storage)
+{
+    // Handle special case with option toggler (works only with jquery)
+    let showMoreOptions = document.getElementById('showMoreOptions');
+
+    showMoreOptions.addEventListener('shown.bs.collapse', function () {
+        storage.write("showMoreOptions", true);
+    });
+
+    showMoreOptions.addEventListener('hidden.bs.collapse', function () {
+        storage.write("showMoreOptions", false);
+    });
+
+    showMoreOptions.className = "collapse " + (storage.read("showMoreOptions") ? "show" : "hide");
+}
+
 document.getElementById("fanDegree").addEventListener("input", function (event) {
     document.getElementById('fanDegreeOutput').value = document.getElementById('fanDegree').value + "°";
 });
@@ -246,17 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
     storage.register("innerArcs");
     storage.register("fontScale");
 
-    // Handle special case with option toggler (works only with jquery)
-    $("#showMoreOptions")
-        .on("shown.bs.collapse", function () {
-            storage.write("showMoreOptions", true);
-        })
-        .on("hidden.bs.collapse", function () {
-            storage.write("showMoreOptions", false);
-        })
-        .collapse(
-            storage.read("showMoreOptions") ? "show" : "hide"
-        );
+    toogleMoreOptions(storage);
 
     // Set initial stored value
     document.getElementById('fanDegreeOutput').value = parseInt(storage.read("fanDegree")) + "°";
