@@ -58,7 +58,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * @var string
      */
-    public const CUSTOM_VERSION = '2.2.1-dev';
+    public const CUSTOM_VERSION = '2.2.1';
 
     /**
      * @var string
@@ -278,7 +278,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
 
         $data = $this->getIndividualData($individual, $generation);
 
-        /** @var Family $family */
+        /** @var null|Family $family */
         $family = $individual->childFamilies()->first();
 
         if ($family === null) {
