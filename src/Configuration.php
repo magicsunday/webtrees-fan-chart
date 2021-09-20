@@ -81,7 +81,7 @@ class Configuration
      *
      * @var ServerRequestInterface
      */
-    private $request;
+    private ServerRequestInterface $request;
 
     /**
      * Configuration constructor.

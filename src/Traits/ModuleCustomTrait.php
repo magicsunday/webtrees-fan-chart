@@ -72,7 +72,9 @@ trait ModuleCustomTrait
                         if ($response->getStatusCode() === StatusCodeInterface::STATUS_OK) {
                             $json = json_decode(
                                 $response->getBody()->getContents(),
-                                true
+                                true,
+                                512,
+                                JSON_THROW_ON_ERROR
                             );
 
                             if (is_array($json)) {
