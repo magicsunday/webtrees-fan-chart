@@ -25,15 +25,40 @@ use Fisharebest\Webtrees\Individual;
 trait IndividualTrait
 {
     /**
-     * The XPath identifiers to extract the name parts.
+     * The XPath identifier to extract the first name parts.
+     *
+     * @var string
      */
-    private $xpathFirstNames = '//text()[following::span[@class="SURN"]][normalize-space()]';
-    private $xpathLastNames
+    private string $xpathFirstNames = '//text()[following::span[@class="SURN"]][normalize-space()]';
+
+    /**
+     * The XPath identifier to extract the last name parts.
+     *
+     * @var string
+     */
+    private string $xpathLastNames
         = '//text()[parent::*[not(@class="wt-nickname")]][not(following::span[@class="SURN"])][normalize-space()]';
 
-    private $xpathNickname = '//q[@class="wt-nickname"]';
-    private $xpathPreferredName = '//span[@class="starredname"]';
-    private $xpathAlternativeName = '//span[contains(attribute::class, "NAME")]';
+    /**
+     * The XPath identifier to extract the nick name part.
+     *
+     * @var string
+     */
+    private string $xpathNickname = '//q[@class="wt-nickname"]';
+
+    /**
+     * The XPath identifier to extract the starred name part.
+     *
+     * @var string
+     */
+    private string $xpathPreferredName = '//span[@class="starredname"]';
+
+    /**
+     * The XPath identifier to extract the alternative name parts.
+     *
+     * @var string
+     */
+    private string $xpathAlternativeName = '//span[contains(attribute::class, "NAME")]';
 
     /**
      * Get the individual data required for display the chart.

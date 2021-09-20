@@ -66,7 +66,7 @@ trait ModuleCustomTrait
                 $response = $client->get($this->customModuleLatestVersionUrl());
 
                 if ($response->getStatusCode() === StatusCodeInterface::STATUS_OK) {
-                    $json    = json_decode($response->getBody()->getContents(), true);
+                    $json    = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
                     $version = $json['tag_name'];
 
                     // Does the response look like a version?
