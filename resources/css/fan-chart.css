@@ -90,7 +90,7 @@ div.tooltip {
     position: absolute;
     text-align: center;
     width: auto;
-    max-width: 325px;
+    max-width: 500px;
     height: auto;
     padding: 15px 5px;
     font: 12px sans-serif;

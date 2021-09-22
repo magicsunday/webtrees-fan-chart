@@ -80,7 +80,14 @@ trait IndividualTrait
 
         // The name of the person without formatting of the individual parts of the name.
         // Remove placeholders as we do not need them in this module
-        $fullNN = str_replace(['@N.N.', '@P.N.'], '', $primaryName['fullNN']);
+        $fullNN = str_replace(
+            [
+                Individual::NOMEN_NESCIO,
+                Individual::PRAENOMEN_NESCIO,
+            ],
+            '',
+            $primaryName['fullNN']
+        );
 
         // Extract name parts (Do not change processing order!)
         $preferredName    = $this->getPreferredName($xpath);
@@ -164,7 +171,9 @@ trait IndividualTrait
      */
     private function getBirthYear(Individual $individual): string
     {
-        return $individual->getBirthDate()->minimumDate()->format('%Y');
+        return $this->decodeValue(
+            $individual->getBirthDate()->minimumDate()->format('%Y')
+        );
     }
 
     /**
@@ -176,11 +185,13 @@ trait IndividualTrait
      */
     private function getDeathYear(Individual $individual): string
     {
-        return $individual->getDeathDate()->minimumDate()->format('%Y');
+        return $this->decodeValue(
+            $individual->getDeathDate()->minimumDate()->format('%Y')
+        );
     }
 
     /**
-     * Convert HTML entities to their corresponding characters.
+     * Removes HTML tags and converts/decodes HTML entities to their corresponding characters.
      *
      * @param string $value
      *
@@ -188,7 +199,7 @@ trait IndividualTrait
      */
     private function decodeValue(string $value): string
     {
-        return strip_tags($value);
+        return html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
     }
 
     /**
