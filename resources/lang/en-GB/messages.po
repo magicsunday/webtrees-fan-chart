@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-10-05 13:27+0100\n"
-"PO-Revision-Date: 2021-10-05 13:27+0100\n"
-"Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
+"POT-Creation-Date: 2021-10-03 21:01+0100\n"
+"PO-Revision-Date: 2021-10-03 21:01+0100\n"
+"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
-"Language: nl\n"
+"Language: en_GB\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: translate\n"
@@ -18,78 +18,78 @@ msgstr ""
 
 #: src/Module.php:111 src/Module.php:209
 msgid "Fan chart"
-msgstr "Waaierdiagram"
+msgstr ""
 
 #: src/Module.php:121
 msgid "A fan chart of an individual’s ancestors."
-msgstr "Een waaierdiagram met de voorouders van een persoon."
+msgstr ""
 
 #: src/Module.php:212 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Waaierdiagram van %s"
+msgstr ""
 
 #: src/Module.php:232
 msgid "Use Ctrl + scroll to zoom in the view"
-msgstr "Gebruik Ctrl + scroll om in te zoomen op de weergave"
+msgstr "Use Ctrl+Scroll wheel to zoom the chart"
 
 #: src/Module.php:233
 msgid "Move the view with two fingers"
-msgstr "Verplaats de weergave met twee vingers"
+msgstr ""
 
 #: src/Traits/IndividualTrait.php:119
 #, php-format
 msgid "Born: %s"
-msgstr "Geboren: %s"
+msgstr ""
 
 #: src/Traits/IndividualTrait.php:123
 #, php-format
 msgid "Died: %s"
-msgstr "Overleden: %s"
+msgstr ""
 
 #: src/Traits/IndividualTrait.php:127
 msgid "Deceased"
-msgstr "Overleden"
+msgstr ""
 
 #: resources/views/chart.phtml:35
 msgid "Individual"
-msgstr "Persoon"
+msgstr ""
 
 #: resources/views/chart.phtml:52
 msgid "Fan size"
-msgstr "Waaierhoek"
+msgstr ""
 
 #: resources/views/chart.phtml:62
 msgid "Generations"
-msgstr "Generaties"
+msgstr ""
 
 #: resources/views/chart.phtml:80
 msgid "Presentation"
-msgstr "Weergave"
+msgstr ""
 
 #: resources/views/chart.phtml:87
 msgid "Hide empty segments"
-msgstr "Lege segmenten verbergen"
+msgstr ""
 
 #: resources/views/chart.phtml:96
 msgid "Show color gradients"
-msgstr "Kleurverlopen weergeven"
+msgstr ""
 
 #: resources/views/chart.phtml:105
 msgid "Show parent marriage dates"
-msgstr "Toon huwelijksdata van ouders"
+msgstr ""
 
 #: resources/views/chart.phtml:114
 msgid "Number of inner levels"
-msgstr "Aantal binnenste niveaus"
+msgstr ""
 
 #: resources/views/chart.phtml:127
 msgid "Specifies the number of levels in which the text is written along an arc."
-msgstr "Geeft het aantal niveaus aan waarin de tekst langs een boog wordt geschreven."
+msgstr ""
 
 #: resources/views/chart.phtml:134
 msgid "Font size"
-msgstr "Tekstgrootte"
+msgstr ""
 
 #: resources/views/chart.phtml:160
 msgid "Show more options"
@@ -101,19 +101,16 @@ msgstr ""
 
 #: resources/views/chart.phtml:166
 msgid "view"
-msgstr "weergeven"
+msgstr ""
 
 #: resources/views/chart.phtml:172
 msgid "Re center"
-msgstr "Opnieuw centreren"
+msgstr "Re-centre"
 
 #: resources/views/chart.phtml:177
 msgid "Export as PNG"
-msgstr "Exporteren als PNG"
+msgstr ""
 
 #: resources/views/chart.phtml:180
 msgid "Export as SVG"
-msgstr "Exporteren als SVG"
-
-#~ msgid "reset"
-#~ msgstr "herstellen"
+msgstr ""

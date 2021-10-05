@@ -149,14 +149,17 @@ use MagicSunday\Webtrees\FanChart\Configuration;
             <div class="col-sm-12 wt-page-options-value text-center">
                 <div class="btn-toolbar justify-content-between">
                     <div class="btn-group btn-group-sm">
-                        <button class="btn btn-primary"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#showMoreOptions"
-                                aria-expanded="false"
-                                aria-controls="showMoreOptions">
-                            <?= I18N::translate('More options ...') ?>
-                        </button>
+                      <button
+                          id="options"
+                          class="btn btn-primary"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#showMoreOptions"
+                          aria-expanded="false"
+                          aria-controls="showMoreOptions">
+                        <span><?= I18N::translate('Show more options') ?></span>
+                        <span class="d-none"><?= I18N::translate('Hide more options') ?></span>
+                      </button>
                     </div>
 
                     <div class="btn-group btn-group-sm">
@@ -225,7 +228,7 @@ function drawChart(fanChart, dataUrl)
     $.getJSON(
         getUrl(fanChart, dataUrl),
         function (data) {
-            fanChart.draw(data);
+          fanChart.draw(data);
 
             // document.getElementById("webtrees-fan-chart-container")
             //     .scrollIntoView(true);
@@ -233,93 +236,100 @@ function drawChart(fanChart, dataUrl)
     );
 }
 
+document.getElementById("fanDegree").addEventListener("input", function (event) {
+    document.getElementById('fanDegreeOutput').value = document.getElementById('fanDegree').value + "°";
+});
+
 /**
  * Set visibility of "Show more options" to previous state after page reload.
+ * Toggle text on "Show more options" on click.
  *
  * @param {Storage} storage
  */
 function toggleMoreOptions(storage)
 {
-    // Handle special case with option toggler (works only with jquery)
-    let showMoreOptions = document.getElementById('showMoreOptions');
+  const showMoreOptions = document.getElementById('showMoreOptions');
+  // Options toggle button
+  const optionsToggle = document.getElementById('options');
 
-    showMoreOptions.addEventListener('shown.bs.collapse', function () {
-        storage.write("showMoreOptions", true);
+  showMoreOptions.addEventListener('shown.bs.collapse', function () {
+    storage.write("showMoreOptions", true);
+  });
+
+  showMoreOptions.addEventListener('hidden.bs.collapse', function () {
+    storage.write("showMoreOptions", false);
+  });
+
+  optionsToggle.addEventListener('click', () => {
+    Array.from(optionsToggle.children).forEach((element, index) => {
+      element.classList.toggle('d-none');
     });
+  });
 
-    showMoreOptions.addEventListener('hidden.bs.collapse', function () {
-        storage.write("showMoreOptions", false);
-    });
+  if (storage.read("showMoreOptions")) {
+    optionsToggle.click();
+  }
+};
 
-    showMoreOptions.className = "collapse " + (storage.read("showMoreOptions") ? "show" : "hide");
-}
+// Set up storage object
+let storage = new WebtreesFanChart.Storage("webtrees-fan-chart");
 
-document.getElementById("fanDegree").addEventListener("input", function (event) {
-    document.getElementById('fanDegreeOutput').value = document.getElementById('fanDegree').value + "°";
-});
+// Register all form elements valid for storing data
+storage.register("fanDegree");
+storage.register("generations");
+storage.register("hideEmptySegments");
+storage.register("showColorGradients");
+storage.register("showParentMarriageDates");
+storage.register("innerArcs");
+storage.register("fontScale");
 
-// Wait for DOM to be ready
-document.addEventListener("DOMContentLoaded", function () {
-    // Set up storage object
-    let storage = new WebtreesFanChart.Storage("webtrees-fan-chart");
 
-    // Register all form elements valid for storing data
-    storage.register("fanDegree");
-    storage.register("generations");
-    storage.register("hideEmptySegments");
-    storage.register("showColorGradients");
-    storage.register("showParentMarriageDates");
-    storage.register("innerArcs");
-    storage.register("fontScale");
+// Handle option toggle button
+toggleMoreOptions(storage);
 
-    toggleMoreOptions(storage);
+// Set initial stored value
+document.getElementById('fanDegreeOutput').value = parseInt(storage.read("fanDegree")) + "°";
 
-    // Set initial stored value
-    document.getElementById('fanDegreeOutput').value = parseInt(storage.read("fanDegree")) + "°";
+let data    = <?= $chartParams ?>;
+let ajaxUrl = <?= json_encode($ajaxUrl) ?>;
+let cssUrl  = <?= json_encode($svgStylesheet) ?>;
 
-    let data    = <?= $chartParams ?>;
-    let ajaxUrl = <?= json_encode($ajaxUrl) ?>;
-    let cssUrl  = <?= json_encode($svgStylesheet) ?>;
+// Create chart instance with stored configuration
+const fanChart = new WebtreesFanChart.FanChart(
+  "#webtrees-fan-chart-container",
+  {
+    labels: data.labels,
+    generations: parseInt(storage.read("generations")),
+    fanDegree: parseInt(storage.read("fanDegree")),
+    defaultColor: data.defaultColor,
+    fontScale: parseInt(storage.read("fontScale")),
+    fontColor: data.fontColor,
+    hideEmptySegments: storage.read("hideEmptySegments"),
+    showColorGradients: storage.read("showColorGradients"),
+    showParentMarriageDates: storage.read("showParentMarriageDates"),
+    rtl: data.rtl,
+    innerArcs: parseInt(storage.read("innerArcs"))
+  }
+);
 
-    // Create chart instance with stored configuration
-    const fanChart = new WebtreesFanChart.FanChart(
-        "#webtrees-fan-chart-container",
-        {
-            labels: data.labels,
-            generations: parseInt(storage.read("generations")),
-            fanDegree: parseInt(storage.read("fanDegree")),
-            defaultColor: data.defaultColor,
-            fontScale: parseInt(storage.read("fontScale")),
-            fontColor: data.fontColor,
-            hideEmptySegments: storage.read("hideEmptySegments"),
-            showColorGradients: storage.read("showColorGradients"),
-            showParentMarriageDates: storage.read("showParentMarriageDates"),
-            rtl: data.rtl,
-            innerArcs: parseInt(storage.read("innerArcs"))
-        }
-    );
+fanChart.cssFile = cssUrl;
 
-    fanChart.cssFile = cssUrl;
+// Load initial chart data
+drawChart(fanChart, ajaxUrl);
 
-    // Load initial chart data
-    drawChart(fanChart, ajaxUrl);
+// Redraw chart upon form submit (enable this to use AJAX only post request, without internal redirect from POST to GET)
+// document.getElementById('webtrees-fan-chart-form').addEventListener('submit', function (event) {
+//     event.preventDefault();
+     // Update configuration with changed form values
+//     fanChart.configuration.generations             = parseInt(document.getElementById('generations').value);
+//     fanChart.configuration.fanDegree               = parseInt(document.getElementById('fanDegree').value);
+//     fanChart.configuration.fontScale               = parseInt(document.getElementById('fontScale').value);
+//     fanChart.configuration.hideEmptySegments       = !!document.getElementById('hideEmptySegments').checked;
+//     fanChart.configuration.showColorGradients      = !!document.getElementById('showColorGradients').checked;
+//     fanChart.configuration.showParentMarriageDates = !!document.getElementById('showParentMarriageDates').checked;
+//     fanChart.configuration.numberOfInnerCircles    = parseInt(document.getElementById('innerArcs').value);
 
-    // Redraw chart upon form submit (enable this to use AJAX only post request, without internal redirect from POST to GET)
-    // document.getElementById('webtrees-fan-chart-form').addEventListener('submit', function (event) {
-    //     event.preventDefault();
-    //
-    //     // Update configuration with changed form values
-    //     fanChart.configuration.generations             = parseInt(document.getElementById('generations').value);
-    //     fanChart.configuration.fanDegree               = parseInt(document.getElementById('fanDegree').value);
-    //     fanChart.configuration.fontScale               = parseInt(document.getElementById('fontScale').value);
-    //     fanChart.configuration.hideEmptySegments       = !!document.getElementById('hideEmptySegments').checked;
-    //     fanChart.configuration.showColorGradients      = !!document.getElementById('showColorGradients').checked;
-    //     fanChart.configuration.showParentMarriageDates = !!document.getElementById('showParentMarriageDates').checked;
-    //     fanChart.configuration.numberOfInnerCircles    = parseInt(document.getElementById('innerArcs').value);
-    //
-    //     drawChart(fanChart, ajaxUrl);
-    // });
-});
-
+//     drawChart(fanChart, ajaxUrl);
+// });
 </script>
 <?php View::endpush(); ?>
