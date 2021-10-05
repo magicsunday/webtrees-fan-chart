@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-05-16 14:36+0200\n"
-"PO-Revision-Date: 2021-07-09 13:36+0300\n"
+"POT-Creation-Date: 2021-10-05 13:32+0100\n"
+"PO-Revision-Date: 2021-10-05 13:32+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: z-yurets\n"
 "Language: uk_UA\n"
@@ -11,13 +11,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.0\n"
 "X-Poedit-Basepath: ../../..\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Poedit-KeywordsList: translate\n"
-"X-Poedit-SearchPath-0: resources/views/chart.phtml\n"
-"X-Poedit-SearchPath-1: module.php\n"
-"X-Poedit-SearchPath-2: src\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:111 src/Module.php:210
+#: src/Module.php:111 src/Module.php:209
 msgid "Fan chart"
 msgstr "Віяловий графік"
 
@@ -25,16 +25,16 @@ msgstr "Віяловий графік"
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Віялова діаграма предків особи."
 
-#: src/Module.php:213 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:212 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Віяловий графік для %s"
 
-#: src/Module.php:233
+#: src/Module.php:232
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Використовуйте Ctrl + коліщатко миші для збільшення зображення"
 
-#: src/Module.php:234
+#: src/Module.php:233
 msgid "Move the view with two fingers"
 msgstr "Переміщуйте зображення двома пальцями"
 
@@ -85,29 +85,34 @@ msgid "Number of inner levels"
 msgstr "Кількість внутрішніх рівнів"
 
 #: resources/views/chart.phtml:127
-msgid "Specifies the number of levels in which the text is written along an arc."
+msgid ""
+"Specifies the number of levels in which the text is written along an arc."
 msgstr "Вказує кількість рівнів, на яких текст пишеться по дузі."
 
 #: resources/views/chart.phtml:134
 msgid "Font size"
 msgstr "Розмір шрифту"
 
-#: resources/views/chart.phtml:153
-msgid "More options ..."
-msgstr "Додатково..."
+#: resources/views/chart.phtml:160
+msgid "Show more options"
+msgstr ""
 
-#: resources/views/chart.phtml:158
+#: resources/views/chart.phtml:161
+msgid "Hide more options"
+msgstr ""
+
+#: resources/views/chart.phtml:166
 msgid "view"
 msgstr "Перегляд"
 
-#: resources/views/chart.phtml:164
+#: resources/views/chart.phtml:172
 msgid "Re center"
 msgstr "Відцентрувати"
 
-#: resources/views/chart.phtml:169
+#: resources/views/chart.phtml:177
 msgid "Export as PNG"
 msgstr "Експорт в PNG"
 
-#: resources/views/chart.phtml:172
+#: resources/views/chart.phtml:180
 msgid "Export as SVG"
 msgstr "Експорт в SVG"

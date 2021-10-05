@@ -12,8 +12,9 @@
     margin-left: 10px;
 }
 
-#webtrees-fan-chart-form #showMoreOptions.collapsing {
-    transition: none;
+#webtrees-fan-chart-form .row {
+    margin-left: 0;
+    margin-right: 0;
 }
 
 /* SVG */

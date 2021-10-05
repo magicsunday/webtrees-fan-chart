@@ -1,23 +1,22 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-05-16 14:37+0200\n"
-"PO-Revision-Date: 2021-05-16 14:37+0200\n"
+"POT-Creation-Date: 2021-10-05 13:29+0100\n"
+"PO-Revision-Date: 2021-10-05 13:29+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 3.0\n"
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: translate\n"
-"X-Poedit-SearchPath-0: resources/views/chart.phtml\n"
-"X-Poedit-SearchPath-1: module.php\n"
-"X-Poedit-SearchPath-2: src\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:111 src/Module.php:210
+#: src/Module.php:111 src/Module.php:209
 msgid "Fan chart"
 msgstr "Лепеза графикон"
 
@@ -25,16 +24,16 @@ msgstr "Лепеза графикон"
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Лепеза графикон појединчевих предака."
 
-#: src/Module.php:213 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:212 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Лепеза графикон %s"
 
-#: src/Module.php:233
+#: src/Module.php:232
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Користите CTRL + скрол да бисте зумирали приказ"
 
-#: src/Module.php:234
+#: src/Module.php:233
 msgid "Move the view with two fingers"
 msgstr "Померите поглед са два прста"
 
@@ -92,22 +91,26 @@ msgstr "Одређује број нивоа на којима је текст �
 msgid "Font size"
 msgstr "Величина слова"
 
-#: resources/views/chart.phtml:153
-msgid "More options ..."
-msgstr "Више опција ..."
+#: resources/views/chart.phtml:160
+msgid "Show more options"
+msgstr ""
 
-#: resources/views/chart.phtml:158
+#: resources/views/chart.phtml:161
+msgid "Hide more options"
+msgstr ""
+
+#: resources/views/chart.phtml:166
 msgid "view"
 msgstr "поглед"
 
-#: resources/views/chart.phtml:164
+#: resources/views/chart.phtml:172
 msgid "Re center"
 msgstr "Ре центар"
 
-#: resources/views/chart.phtml:169
+#: resources/views/chart.phtml:177
 msgid "Export as PNG"
 msgstr "Извези у PNG"
 
-#: resources/views/chart.phtml:172
+#: resources/views/chart.phtml:180
 msgid "Export as SVG"
 msgstr "Извези као SVG"
