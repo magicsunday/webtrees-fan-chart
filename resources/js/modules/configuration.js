@@ -17,9 +17,7 @@ export default class Configuration
      * @param {String[]} labels
      * @param {Number}   generations
      * @param {Number}   fanDegree
-     * @param {String}   defaultColor
      * @param {Number}   fontScale
-     * @param {String}   fontColor
      * @param {Boolean}  hideEmptySegments
      * @param {Boolean}  showColorGradients
      * @param {Boolean}  showParentMarriageDates
@@ -32,9 +30,7 @@ export default class Configuration
         labels,
         generations = 6,
         fanDegree = 210,
-        defaultColor = "rgb(238, 238, 238)",
         fontScale = 100,
-        fontColor = "rgb(0, 0, 0)",
         hideEmptySegments = false,
         showColorGradients = false,
         showParentMarriageDates = false,
@@ -81,13 +77,10 @@ export default class Configuration
         // Left/Right padding of text (used with truncation)
         this.textPadding = 8;
 
-        // Default background color of an arc
-        this.defaultColor = defaultColor;
-
         // Default font size, color and scaling
         this._fontSize  = 15;
         this._fontScale = fontScale;
-        this.fontColor = fontColor;
+        this.fontColor = "rgb(0, 0, 0)";
 
         this._hideEmptySegments  = hideEmptySegments;
         this._showColorGradients = showColorGradients;

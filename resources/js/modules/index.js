@@ -26,9 +26,7 @@ export class FanChart
      * @param {String[]} options.labels
      * @param {Number}   options.generations
      * @param {Number}   options.fanDegree
-     * @param {String}   options.defaultColor
      * @param {Number}   options.fontScale
-     * @param {String}   options.fontColor
      * @param {Boolean}  options.hideEmptySegments
      * @param {Boolean}  options.showColorGradients
      * @param {Boolean}  options.showParentMarriageDates
@@ -47,9 +45,7 @@ export class FanChart
             options.labels,
             options.generations,
             options.fanDegree,
-            options.defaultColor,
             options.fontScale,
-            options.fontColor,
             options.hideEmptySegments,
             options.showColorGradients,
             options.showParentMarriageDates,

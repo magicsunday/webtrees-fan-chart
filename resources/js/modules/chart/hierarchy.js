@@ -120,7 +120,6 @@ export default class Hierarchy
             isAltRtl         : false,
             sex              : sex,
             timespan         : "",
-            color            : this._configuration.defaultColor,
             colors           : [[], []]
         };
     }

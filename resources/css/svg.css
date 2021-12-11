@@ -8,10 +8,22 @@
     font-weight: bold;
 }
 
+#webtrees-fan-chart-container svg g.person g.color path.female {
+    fill: var(--sex-f-bg, rgb(233, 218, 241));
+}
+
+#webtrees-fan-chart-container svg g.person g.color path.male {
+    fill: var(--sex-m-bg, rgb(237, 247, 253));
+}
+
+#webtrees-fan-chart-container svg g.person g.color path.unknown {
+    fill: var(--sex-u-bg, rgb(255, 255, 255));
+}
+
 #webtrees-fan-chart-container svg g.person g.arc path {
     fill: rgb(235, 235, 235);
     stroke: rgb(225, 225, 225);
-    stroke-width: 2px;
+    stroke-width: 1px;
 }
 
 #webtrees-fan-chart-container svg g.person.available g.arc path {
