@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-05 13:31+0100\n"
-"PO-Revision-Date: 2021-10-05 13:31+0100\n"
+"PO-Revision-Date: 2021-12-12 19:37+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Loco-Source-Locale: sv_SE\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Loco-Parser: loco_parse_po\n"
@@ -80,7 +80,7 @@ msgstr "Visa färggradienter"
 
 #: resources/views/chart.phtml:105
 msgid "Show parent marriage dates"
-msgstr ""
+msgstr "Visa föräldrars giftermålsdatum"
 
 #: resources/views/chart.phtml:114
 msgid "Number of inner levels"
@@ -96,11 +96,11 @@ msgstr "Fontstorlek"
 
 #: resources/views/chart.phtml:160
 msgid "Show more options"
-msgstr ""
+msgstr "Visa fler alternativ"
 
 #: resources/views/chart.phtml:161
 msgid "Hide more options"
-msgstr ""
+msgstr "Göm fler alternativ"
 
 #: resources/views/chart.phtml:166
 msgid "view"
