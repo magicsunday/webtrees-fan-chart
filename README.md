@@ -1,11 +1,12 @@
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
+![Latest version](https://img.shields.io/github/v/release/magicsunday/webtrees-fan-chart?sort=semver)
+![License](https://img.shields.io/github/license/magicsunday/webtrees-fan-chart)
+![PHPStan](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpstan.yml/badge.svg)
+![PHPCodeSniffer](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpcs.yml/badge.svg)
 
-[![PHPStan](https://img.shields.io/badge/PHPStan-level%205-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
-[![PHP_CodeSniffer](https://img.shields.io/badge/PHP_CodeSniffer-PSR12-brightgreen.svg?style=flat)](https://github.com/squizlabs/PHP_CodeSniffer)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/magicsunday/webtrees-fan-chart/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/magicsunday/webtrees-fan-chart/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/magicsunday/webtrees-fan-chart/badges/build.png?b=master)](https://scrutinizer-ci.com/g/magicsunday/webtrees-fan-chart/build-status/master)
-[![Code Climate](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/badges/gpa.svg)](https://codeclimate.com/github/magicsunday/webtrees-fan-chart)
-[![Issue Count](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/badges/issue_count.svg)](https://codeclimate.com/github/magicsunday/webtrees-fan-chart)
+![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/magicsunday/webtrees-fan-chart/badges/quality-score.png?b=master)
+![Build Status](https://scrutinizer-ci.com/g/magicsunday/webtrees-fan-chart/badges/build.png?b=master)
+![Code Climate](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/badges/gpa.svg)
+![Issue Count](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/badges/issue_count.svg)
 
 # Fan chart
 This module provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.
