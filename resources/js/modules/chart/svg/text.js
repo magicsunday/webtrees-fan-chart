@@ -31,7 +31,7 @@ export default class Text
     /**
      * Creates all the labels and all dependent elements for a single person.
      *
-     * @param {selection} parent The parent element to which the elements are to be attached
+     * @param {Selection} parent The parent element to which the elements are to be attached
      * @param {Object}    data   The D3 data object
      */
     createLabels(parent, data)
@@ -134,7 +134,7 @@ export default class Text
      * parent element. The "tspan" element containing the preferred name gets an
      * additional underline style in order to highlight this one.
      *
-     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      */
     addFirstNames(parent, data)
@@ -163,7 +163,7 @@ export default class Text
     /**
      * Creates a single <tspan> element for each last name and append it to the parent element.
      *
-     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      * @param {Number}    dx     Additional space offset to add between names
      */
@@ -193,7 +193,7 @@ export default class Text
     /**
      * Creates a single <tspan> element for each alternative name and append it to the parent element.
      *
-     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      * @param {Number}    dx     Delta X offset used to create a small spacing between multiple words
      */
@@ -218,7 +218,7 @@ export default class Text
     /**
      * Creates a single <tspan> element for the time span append it to the parent element.
      *
-     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      */
     addTimeSpan(parent, data)
@@ -231,7 +231,7 @@ export default class Text
     /**
      * Creates a single <tspan> element for the marriage date and append it to the parent element.
      *
-     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    data   The D3 data object containing the individual data
      */
     addMarriageDate(parent, data)
@@ -246,7 +246,7 @@ export default class Text
     /**
      * Loops over the <tspan> elements and truncates the contained texts.
      *
-     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are attached
+     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are attached
      * @param {Object}    data   The D3 data object containing the individual data
      * @param {Number}    index  The index position of the element in parent container.
      * @param {Boolean}   hide   Whether to show or hide the label if the text takes to much space to be displayed
@@ -280,7 +280,7 @@ export default class Text
     /**
      * Returns a float representing the computed length of all <tspan> elements within the element.
      *
-     * @param {selection} parent The parent (<text> or <textPath>) element containing the <tspan> child elements
+     * @param {Selection} parent The parent (<text> or <textPath>) element containing the <tspan> child elements
      *
      * @returns {Number}
      */
@@ -299,7 +299,7 @@ export default class Text
     /**
      * Truncates the textual content of the actual element.
      *
-     * @param {selection} parent         The parent (<text> or <textPath>) element containing the <tspan> child elements
+     * @param {Selection} parent         The parent (<text> or <textPath>) element containing the <tspan> child elements
      * @param {Number}    availableWidth The total available width the text could take
      * @param {Boolean}   hide           Whether to show or hide the label if the text takes to much space to be displayed
      */
@@ -359,10 +359,10 @@ export default class Text
     /**
      * Creates a <text> element and append it to the parent element.
      *
-     * @param {selection} parent The parent element to which the <text> element is to be attached
+     * @param {Selection} parent The parent element to which the <text> element is to be attached
      * @param {Object}    data   The D3 data object
      *
-     * @return {selection} Newly created <text> element
+     * @return {Selection} Newly created <text> element
      */
     createTextElement(parent, data)
     {
@@ -372,10 +372,10 @@ export default class Text
     /**
      * Creates a <textPath> element and append it to the parent element.
      *
-     * @param {selection} parent The parent element to which the <textPath> element is to be attached
+     * @param {Selection} parent The parent element to which the <textPath> element is to be attached
      * @param {String}    refId  The id of the reference element
      *
-     * @return {selection} Newly created <textPath> element
+     * @return {Selection} Newly created <textPath> element
      */
     createTextPath(parent, refId)
     {
@@ -514,7 +514,7 @@ export default class Text
      * Transform the D3 <text> elements in the group. Rotate each <text> element depending on its offset,
      * so that they are equally positioned inside the arc.
      *
-     * @param {selection} parent The D3 parent group object
+     * @param {Selection} parent The D3 parent group object
      * @param {Object}    data   The The D3 data object
      *
      * @public

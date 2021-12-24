@@ -14,7 +14,7 @@ export default class Overlay
     /**
      * Constructor.
      *
-     * @param {selection} parent The selected D3 parent element container
+     * @param {Selection} parent The selected D3 parent element container
      */
     constructor(parent)
     {
@@ -73,7 +73,7 @@ export default class Overlay
     /**
      * Returns the internal element.
      *
-     * @return {selection}
+     * @return {Selection}
      */
     get()
     {

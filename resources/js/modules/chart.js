@@ -26,7 +26,7 @@ export default class Chart
     /**
      * Constructor.
      *
-     * @param {selection}     parent        The selected D3 parent element container
+     * @param {Selection}     parent        The selected D3 parent element container
      * @param {Configuration} configuration The application configuration
      */
     constructor(parent, configuration)
