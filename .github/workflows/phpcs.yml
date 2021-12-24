@@ -1,0 +1,26 @@
+name: phpcs
+
+on: [push, pull_request]
+
+jobs:
+  run:
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      matrix:
+        operating-system: [ubuntu-20.04]
+        php-version: ['7.1', '7.4']
+
+    name: Testing PHP ${{ matrix.php-version }} on ${{ matrix.operating-system }}
+
+    steps:
+      - uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: json,intl,mbstring
+
+      - uses: actions/checkout@v2
+
+      - run: composer validate
+      - run: composer install --no-progress
+      - run: vendor/bin/phpcs src/ --standard=PSR12
