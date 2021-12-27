@@ -31,5 +31,10 @@
     "require-dev": {
         "phpstan/phpstan": "^1.0",
         "squizlabs/php_codesniffer": "^3.6"
+    },
+    "config": {
+        "allow-plugins": {
+            "magicsunday/webtrees-module-installer-plugin": true
+        }
     }
 }
