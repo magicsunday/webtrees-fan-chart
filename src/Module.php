@@ -12,6 +12,7 @@ use Aura\Router\RouterContainer;
 use Exception;
 use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Exceptions\IndividualNotFoundException;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
@@ -21,6 +22,7 @@ use Fisharebest\Webtrees\Module\ModuleChartInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Registry;
+use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
 use MagicSunday\Webtrees\FanChart\Traits\IndividualTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
@@ -96,7 +98,9 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             ->get(self::ROUTE_DEFAULT, self::ROUTE_DEFAULT_URL, $this)
             ->allows(RequestMethodInterface::METHOD_POST);
 
-        $this->theme = app(ModuleThemeInterface::class);
+        /** @var ModuleThemeInterface $theme */
+        $theme = app(ModuleThemeInterface::class);
+        $this->theme = $theme;
 
         View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
     }
@@ -141,16 +145,20 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $tree       = $request->getAttribute('tree');
-        $user       = $request->getAttribute('user');
-        $xref       = $request->getAttribute('xref');
+        /** @var Tree $tree */
+        $tree = $request->getAttribute('tree');
+        assert($tree instanceof Tree);
+
+        $xref = $request->getAttribute('xref');
+        assert(is_string($xref));
+
         $individual = Registry::individualFactory()->make($xref, $tree);
+        $individual = Auth::checkIndividualAccess($individual, false, true);
+
+        /** @var UserInterface $user */
+        $user = $request->getAttribute('user');
 
         $this->configuration = new Configuration($request);
-
-        if ($individual === null) {
-            throw new IndividualNotFoundException();
-        }
 
         // Convert POST requests into GET requests for pretty URLs.
         // This also updates the name above the form, which wont get updated if only a POST request is used
@@ -170,7 +178,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             ]));
         }
 
-        Auth::checkIndividualAccess($individual, false, true);
         Auth::checkComponentAccess($this, 'chart', $tree, $user);
 
         $ajaxUrl = route('module', [
