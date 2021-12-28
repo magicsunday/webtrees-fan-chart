@@ -21,7 +21,7 @@ export default class Svg
     /**
      * Constructor.
      *
-     * @param {Selection}     parent        The selected D3 parent element container
+     * @param {selection}     parent        The selected D3 parent element container
      * @param {Configuration} configuration The application configuration
      */
     constructor(parent, configuration)
@@ -96,7 +96,7 @@ export default class Svg
             this._element.classed("rtl", true);
         }
 
-        /** @var {Selection} tooltip */
+        /** @var {selection} tooltip */
         const tooltip = d3.select("div.tooltip");
 
         if (tooltip.empty()) {
@@ -170,7 +170,7 @@ export default class Svg
     /**
      *
      *
-     * @return {Selection}
+     * @return {selection}
      */
     get visual()
     {
@@ -180,7 +180,7 @@ export default class Svg
     /**
      * Returns the internal element.
      *
-     * @return {Selection}
+     * @return {selection}
      */
     get()
     {
@@ -190,7 +190,7 @@ export default class Svg
     /**
      * Returns the <div> container for the overlay tooltip.
      *
-     * @return {Selection}
+     * @return {selection}
      */
     get div()
     {

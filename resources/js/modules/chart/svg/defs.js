@@ -14,7 +14,7 @@ export default class Defs
     /**
      * Constructor.
      *
-     * @param {Selection} svg The selected D3 parent element container
+     * @param {selection} svg The selected D3 parent element container
      */
     constructor(svg)
     {
@@ -25,7 +25,7 @@ export default class Defs
     /**
      * Returns the internal element.
      *
-     * @return {Selection}
+     * @return {selection}
      */
     get()
     {

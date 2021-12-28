@@ -26,7 +26,7 @@ export default class Chart
     /**
      * Constructor.
      *
-     * @param {Selection}     parent        The selected D3 parent element container
+     * @param {selection}     parent        The selected D3 parent element container
      * @param {Configuration} configuration The application configuration
      */
     constructor(parent, configuration)
@@ -148,7 +148,7 @@ export default class Chart
             .data(this._hierarchy.nodes, (d) => d.data.id)
             .enter()
             .append("g")
-            .attr("class", "person")
+            .attr("class", (d) => "person depth-" + d.depth)
             .attr("id", (d) => "person-" + d.data.id);
 
         // Create a new selection in order to leave the previous enter() selection

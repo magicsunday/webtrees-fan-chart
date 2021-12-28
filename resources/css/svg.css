@@ -42,3 +42,8 @@
     direction: ltr;
     unicode-bidi: plaintext;
 }
+
+#webtrees-fan-chart-container svg g.person.depth-0 .date {
+    font-size: 14px;
+}
+
