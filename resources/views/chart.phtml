@@ -200,23 +200,6 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 <script>
 
 /**
- * Returns the AJAX update URL.
- *
- * @param {FanChart} fanChart
- * @param {string}   baseUrl
- *
- * @returns {string}
- */
-function getUrl(fanChart, baseUrl)
-{
-    let url = new URL(baseUrl);
-    url.searchParams.set("xref", document.getElementById('xref').value);
-    url.searchParams.set("generations", fanChart.configuration.generations);
-
-    return url.toString();
-}
-
-/**
  * Load chart data and draws the chart.
  *
  * @param {FanChart} fanChart
@@ -224,20 +207,28 @@ function getUrl(fanChart, baseUrl)
  */
 function drawChart(fanChart, dataUrl)
 {
-    $.getJSON(
-        getUrl(fanChart, dataUrl),
-        function (data) {
-            fanChart.draw(data);
+    // Create URL
+    let url = new URL(dataUrl);
+    url.searchParams.set("xref", document.getElementById("xref").value);
+    url.searchParams.set("generations", fanChart.configuration.generations);
 
-            // document.getElementById("webtrees-fan-chart-container")
-            //     .scrollIntoView(true);
+    // Fetch data
+    fetch(
+        url.toString(),
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
         }
+    ).then(
+        response => response.json()
+    ).then(
+        data => fanChart.draw(data)
+    )
+    .catch(
+        error => console.error(error)
     );
 }
-
-document.getElementById("fanDegree").addEventListener("input", function (event) {
-    document.getElementById('fanDegreeOutput').value = document.getElementById('fanDegree').value + "°";
-});
 
 /**
  * Set visibility of "Show more options" to previous state after page reload.
@@ -248,22 +239,22 @@ document.getElementById("fanDegree").addEventListener("input", function (event) 
 function toggleMoreOptions(storage)
 {
     // Options container
-    const showMoreOptions = document.getElementById('showMoreOptions');
+    const showMoreOptions = document.getElementById("showMoreOptions");
 
     // Options toggle button
-    const optionsToggle = document.getElementById('options');
+    const optionsToggle = document.getElementById("options");
 
-    showMoreOptions.addEventListener('shown.bs.collapse', () => {
+    showMoreOptions.addEventListener("shown.bs.collapse", () => {
         storage.write("showMoreOptions", true);
     });
 
-    showMoreOptions.addEventListener('hidden.bs.collapse', () => {
+    showMoreOptions.addEventListener("hidden.bs.collapse", () => {
         storage.write("showMoreOptions", false);
     });
 
-    optionsToggle.addEventListener('click', () => {
+    optionsToggle.addEventListener("click", () => {
         Array.from(optionsToggle.children).forEach((element, index) => {
-            element.classList.toggle('d-none');
+            element.classList.toggle("d-none");
         });
     });
 
@@ -289,7 +280,11 @@ storage.register("fontScale");
 toggleMoreOptions(storage);
 
 // Set initial stored value
-document.getElementById('fanDegreeOutput').value = parseInt(storage.read("fanDegree")) + "°";
+document.getElementById("fanDegreeOutput").value = parseInt(storage.read("fanDegree")) + "°";
+
+document.getElementById("fanDegree").addEventListener("input", function (event) {
+    document.getElementById('fanDegreeOutput').value = document.getElementById("fanDegree").value + "°";
+});
 
 let data    = <?= $chartParams ?>;
 let ajaxUrl = <?= json_encode($ajaxUrl) ?>;
