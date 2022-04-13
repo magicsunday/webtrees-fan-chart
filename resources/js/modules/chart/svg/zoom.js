@@ -47,14 +47,6 @@ export default class Zoom
         this._zoom
             .scaleExtent([MIN_ZOOM, MAX_ZOOM])
             .on("zoom", (event) => {
-                // Abort any action if only one finger is used on "touchmove" events
-                if (event.sourceEvent
-                    && (event.sourceEvent.type === "touchmove")
-                    && (event.sourceEvent.touches.length < 2)
-                ) {
-                    return;
-                }
-
                 this._parent.attr("transform", event.transform);
             });
 
@@ -93,8 +85,8 @@ export default class Zoom
                 return true;
             }
 
-            // Allow "touchmove" event only with two fingers
-            if (!event.button && (event.type === "touchmove")) {
+            // Allow touch events only with two fingers
+            if (!event.button && (event.type === "touchstart")) {
                 return event.touches.length === 2;
             }
 
