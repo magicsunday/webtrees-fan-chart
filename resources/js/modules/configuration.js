@@ -14,17 +14,19 @@ export default class Configuration
     /**
      * Constructor.
      *
-     * @param {String[]}  labels
-     * @param {Number}    generations
-     * @param {Number}    fanDegree
-     * @param {String}    defaultColor
-     * @param {Number}    fontScale
-     * @param {String}    fontColor
-     * @param {Boolean}   hideEmptySegments
-     * @param {Boolean}   showColorGradients
-     * @param {Boolean}   showParentMarriageDates
-     * @param {Boolean}   rtl
-     * @param {Number}    innerArcs
+     * @param {String[]} labels
+     * @param {Number}   generations
+     * @param {Number}   fanDegree
+     * @param {String}   defaultColor
+     * @param {Number}   fontScale
+     * @param {String}   fontColor
+     * @param {Boolean}  hideEmptySegments
+     * @param {Boolean}  showColorGradients
+     * @param {Boolean}  showParentMarriageDates
+     * @param {Boolean}  showImages
+     * @param {Boolean}  showSilhouettes
+     * @param {Boolean}  rtl
+     * @param {Number}   innerArcs
      */
     constructor(
         labels,
@@ -36,6 +38,8 @@ export default class Configuration
         hideEmptySegments = false,
         showColorGradients = false,
         showParentMarriageDates = false,
+        showImages = false,
+        showSilhouettes = false,
         rtl = false,
         innerArcs = 4
     ) {
@@ -88,6 +92,8 @@ export default class Configuration
         this._hideEmptySegments  = hideEmptySegments;
         this._showColorGradients = showColorGradients;
         this._showParentMarriageDates = showParentMarriageDates;
+        this._showImages = showImages;
+        this._showSilhouettes = showSilhouettes;
 
         // Duration of update animation if clicked on a person
         this.updateDuration = 1250;
@@ -230,6 +236,26 @@ export default class Configuration
     set showParentMarriageDates(value)
     {
         this._showParentMarriageDates = value;
+    }
+
+    /**
+     * Returns TRUE if individual image should be shown otherwise FALSE.
+     *
+     * @return {Boolean}
+     */
+    get showImages()
+    {
+        return this._showImages;
+    }
+
+    /**
+     * Returns TRUE if silhouette placeholder image should be shown otherwise FALSE.
+     *
+     * @return {Boolean}
+     */
+    get showSilhouettes()
+    {
+        return this._showSilhouettes;
     }
 
     /**

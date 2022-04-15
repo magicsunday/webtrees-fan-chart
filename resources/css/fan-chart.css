@@ -127,6 +127,10 @@ div.tooltip .image {
     height: 100px;
 }
 
+div.tooltip .image + .text {
+    margin-left: 70px;
+}
+
 div.tooltip .image i,
 div.tooltip .image img {
     width: 100px;
@@ -140,7 +144,7 @@ div.tooltip .image img {
 }
 
 div.tooltip table {
-    padding: 0 0 0 80px;
+    padding: 0 0 0 10px;
     margin-right: 10px;
     margin-top: 5px;
     border-spacing: 0;
@@ -160,7 +164,7 @@ div.tooltip table td {
 div.tooltip .name {
     font-size: 16px;
     margin-right: 10px;
-    padding-left: 80px;
+    padding-left: 10px;
     color: rgb(0, 0, 0);
 }
 

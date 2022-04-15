@@ -232,14 +232,42 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     private function getChartParameters(Individual $individual): array
     {
         return [
-            'rtl'          => I18N::direction() === 'rtl',
-            'defaultColor' => $this->getColor($individual),
-            'fontColor'    => $this->getChartFontColor(),
-            'labels'       => [
+            'rtl'             => I18N::direction() === 'rtl',
+            'defaultColor'    => $this->getColor($individual),
+            'fontColor'       => $this->getChartFontColor(),
+            'showImages'      => $this->showImages($individual),
+            'showSilhouettes' => $this->showSilhouettes($individual),
+            'labels' => [
                 'zoom' => I18N::translate('Use Ctrl + scroll to zoom in the view'),
                 'move' => I18N::translate('Move the view with two fingers'),
             ],
         ];
+    }
+
+    /**
+     * Returns TRUE if the individual image should be shown, otherwise FALSE.
+     *
+     * @param Individual $individual The individual used in the current chart
+     *
+     * @return bool
+     */
+    private function showImages(Individual $individual): bool
+    {
+        return $individual->canShow()
+            && $individual->tree()->getPreference('SHOW_HIGHLIGHT_IMAGES');
+    }
+
+    /**
+     * Returns TRUE if the silhouette images should be shown as alternative to the individual image, otherwise FALSE.
+     *
+     * @param Individual $individual The individual used in the current chart
+     *
+     * @return bool
+     */
+    private function showSilhouettes(Individual $individual): bool
+    {
+        return $this->showImages($individual)
+            && $individual->tree()->getPreference('USE_SILHOUETTE');
     }
 
     /**

@@ -256,7 +256,7 @@ trait IndividualTrait
         if ($nodeList !== false) {
             /** @var DOMNode $node */
             foreach ($nodeList as $node) {
-                $firstNames[] = trim($node->nodeValue);
+                $firstNames[] = $node->nodeValue !== null ? trim($node->nodeValue) : '';
             }
         }
 
@@ -280,7 +280,7 @@ trait IndividualTrait
         if ($nodeList !== false) {
             /** @var DOMNode $node */
             foreach ($nodeList as $node) {
-                $lastNames[] = trim($node->nodeValue);
+                $lastNames[] = $node->nodeValue !== null ? trim($node->nodeValue) : '';
             }
         }
 
@@ -303,7 +303,7 @@ trait IndividualTrait
 
         if (($nodeList !== false) && $nodeList->length) {
             $nodeItem = $nodeList->item(0);
-            return $nodeItem !== null ? $nodeItem->nodeValue : '';
+            return ($nodeItem !== null) ? ($nodeItem->nodeValue ?? '') : '';
         }
 
         return '';
@@ -329,7 +329,7 @@ trait IndividualTrait
 
         if (($nodeList !== false) && $nodeList->length) {
             $nodeItem = $nodeList->item(0);
-            $name     = $nodeItem !== null ? $nodeItem->nodeValue : '';
+            $name     = ($nodeItem !== null) ? ($nodeItem->nodeValue ?? '') : '';
         }
 
         return array_filter(explode(' ', $name));

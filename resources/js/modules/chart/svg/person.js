@@ -140,29 +140,44 @@ export default class Person
             return;
         }
 
-        const image = (datum.data.thumbnail
-            ? "<img src=\"" + datum.data.thumbnail + "\" alt=\"\" />"
-            : "<i class=\"icon-silhouette-" + datum.data.sex + "\" ></i>");
+        let image = "";
+
+        // Show individual image or silhouette (depending on tree configuration)
+        if (this._configuration.showImages) {
+            if (datum.data.thumbnail) {
+                image = "<div class=\"image\">";
+                image += "<img src=\"" + datum.data.thumbnail + "\" alt=\"\" />";
+                image += "</div>";
+            } else {
+                if (this._configuration.showSilhouettes) {
+                    image = "<div class=\"image\">";
+                    image += "<i class=\"icon-silhouette-" + datum.data.sex + "\" ></i>";
+                    image += "</div>";
+                }
+            }
+        }
 
         const dates = datum.data.birth || datum.data.marriage || datum.data.death;
 
         this._svg.div
             .html(
-                "<div class=\"image\">" + image + "</div>"
-                + "<div class=\"name\">" + datum.data.name + "</div>"
-                + (dates
-                    ? "<table>"
-                        + (datum.data.birth
-                        ? ("<tr class=\"date\"><th>\u2605</th><td>" + datum.data.birth + "</td></tr>")
-                        : "")
-                        + (datum.data.marriage
-                        ? ("<tr class=\"date\"><th>\u26AD</th><td>" + datum.data.marriage + "</td></tr>")
-                        : "")
-                        + (datum.data.death
-                        ? ("<tr class=\"date\"><th>\u2020</th><td>" + datum.data.death + "</td></tr>")
-                        : "")
-                    + "</table>"
+                image
+                + "<div class=\"text\">"
+                    + "<div class=\"name\">" + datum.data.name + "</div>"
+                    + (dates
+                        ? "<table>"
+                            + (datum.data.birth
+                            ? ("<tr class=\"date\"><th>\u2605</th><td>" + datum.data.birth + "</td></tr>")
+                            : "")
+                            + (datum.data.marriage
+                            ? ("<tr class=\"date\"><th>\u26AD</th><td>" + datum.data.marriage + "</td></tr>")
+                            : "")
+                            + (datum.data.death
+                            ? ("<tr class=\"date\"><th>\u2020</th><td>" + datum.data.death + "</td></tr>")
+                            : "")
+                        + "</table>"
                     : "")
+                + "</div>"
             )
             .style("left", (event.pageX) + "px")
             .style("top", (event.pageY - 30) + "px");
