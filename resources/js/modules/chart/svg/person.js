@@ -151,7 +151,7 @@ export default class Person
             } else {
                 if (this._configuration.showSilhouettes) {
                     image = "<div class=\"image\">";
-                    image += "<i class=\"icon-silhouette-" + datum.data.sex + "\" ></i>";
+                    image += "<i class=\"icon-silhouette icon-silhouette-" + datum.data.sex.toLowerCase() + " wt-icon-flip-rtl\" ></i>";
                     image += "</div>";
                 }
             }
