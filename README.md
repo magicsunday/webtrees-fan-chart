@@ -24,7 +24,7 @@ To install using [composer](https://getcomposer.org/), just run the following co
 at the root directory of your webtrees installation.
 
 ``` 
-composer require magicsunday/webtrees-fan-chart --update-no-dev
+composer require magicsunday/webtrees-fan-chart:* --update-no-dev
 ```
 
 The module will automatically install into the ``modules_v4`` directory of your webtrees installation.
