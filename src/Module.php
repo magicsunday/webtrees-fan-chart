@@ -60,7 +60,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * @var string
      */
-    public const CUSTOM_VERSION = '2.3.1-dev';
+    public const CUSTOM_VERSION = '2.4.0';
 
     /**
      * @var string
