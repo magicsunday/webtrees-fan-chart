@@ -1,0 +1,116 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2021-10-03 21:00+0100\n"
+"PO-Revision-Date: 2022-05-07 17:36+0000\n"
+"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
+"Language-Team: \n"
+"Language: is\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ../../..\n"
+"X-Poedit-KeywordsList: translate\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: resources/views\n"
+
+#: src/Module.php:111 src/Module.php:209
+msgid "Fan chart"
+msgstr "Forfeðraskífa"
+
+#: src/Module.php:121
+msgid "A fan chart of an individual’s ancestors."
+msgstr "Skífurit yfir forfeður einstaklings."
+
+#: src/Module.php:212 src/Traits/ModuleChartTrait.php:38
+#, php-format
+msgid "Fan chart of %s"
+msgstr "Forfeðraskífa fyrir %s"
+
+#: src/Module.php:232
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Notaðu Ctrl + skruna til að þysja í ættartrénu"
+
+#: src/Module.php:233
+msgid "Move the view with two fingers"
+msgstr "Færðu yfirlitið með tveimur fingrum"
+
+#: src/Traits/IndividualTrait.php:119
+#, php-format
+msgid "Born: %s"
+msgstr "Fædd/-ur: %s"
+
+#: src/Traits/IndividualTrait.php:123
+#, php-format
+msgid "Died: %s"
+msgstr "Lést: %s"
+
+#: src/Traits/IndividualTrait.php:127
+msgid "Deceased"
+msgstr "Látin/-n"
+
+#: resources/views/chart.phtml:35
+msgid "Individual"
+msgstr "Einstaklingur"
+
+#: resources/views/chart.phtml:52
+msgid "Fan size"
+msgstr "Skífustærð"
+
+#: resources/views/chart.phtml:62
+msgid "Generations"
+msgstr "Ættliðir"
+
+#: resources/views/chart.phtml:80
+msgid "Presentation"
+msgstr "Kynning"
+
+#: resources/views/chart.phtml:87
+msgid "Hide empty segments"
+msgstr "Fela tóma hluta"
+
+#: resources/views/chart.phtml:96
+msgid "Show color gradients"
+msgstr "Sýna litastigul"
+
+#: resources/views/chart.phtml:105
+msgid "Show parent marriage dates"
+msgstr "Sýna giftingardagsetningar foreldra"
+
+#: resources/views/chart.phtml:114
+msgid "Number of inner levels"
+msgstr "Fjöldi innri þrepa"
+
+#: resources/views/chart.phtml:127
+msgid "Specifies the number of levels in which the text is written along an arc."
+msgstr "Tilgreinir fjölda þrepa þar sem textinn er skrifaður eftir boga."
+
+#: resources/views/chart.phtml:134
+msgid "Font size"
+msgstr "Leturstærð"
+
+#: resources/views/chart.phtml:160
+msgid "Show more options"
+msgstr "Sýna fleiri valkosti"
+
+#: resources/views/chart.phtml:161
+msgid "Hide more options"
+msgstr "Fela fleiri valkosti"
+
+#: resources/views/chart.phtml:166
+msgid "view"
+msgstr "skoða"
+
+#: resources/views/chart.phtml:172
+msgid "Re center"
+msgstr "Endurmiðja"
+
+#: resources/views/chart.phtml:177
+msgid "Export as PNG"
+msgstr "Flytja út sem PNG"
+
+#: resources/views/chart.phtml:180
+msgid "Export as SVG"
+msgstr "Flytja út sem SVG"
