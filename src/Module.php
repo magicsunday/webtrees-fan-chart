@@ -9,11 +9,12 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart;
 
 use Aura\Router\RouterContainer;
-use Exception;
 use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\Auth;
-use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Family;
+use Fisharebest\Webtrees\Http\Exceptions\HttpAccessDeniedException;
+use Fisharebest\Webtrees\Http\Exceptions\HttpBadRequestException;
+use Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\AbstractModule;
@@ -21,7 +22,7 @@ use Fisharebest\Webtrees\Module\ModuleChartInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Registry;
-use Fisharebest\Webtrees\Tree;
+use Fisharebest\Webtrees\Validator;
 use Fisharebest\Webtrees\View;
 use JsonException;
 use MagicSunday\Webtrees\FanChart\Traits\IndividualTrait;
@@ -77,14 +78,14 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @var Configuration
      */
-    private $configuration;
+    private Configuration $configuration;
 
     /**
      * The current theme instance.
      *
      * @var ModuleThemeInterface
      */
-    private $theme;
+    private ModuleThemeInterface $theme;
 
     /**
      * Initialization.
@@ -146,53 +147,55 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var Tree $tree */
-        $tree = $request->getAttribute('tree');
-        assert($tree instanceof Tree);
-
-        $xref = $request->getAttribute('xref');
-        assert(is_string($xref));
-
-        $individual = Registry::individualFactory()->make($xref, $tree);
-        $individual = Auth::checkIndividualAccess($individual, false, true);
-
-        /** @var UserInterface $user */
-        $user = $request->getAttribute('user');
-
-        $this->configuration = new Configuration($request);
+        $tree = Validator::attributes($request)->tree();
+        $xref = Validator::attributes($request)->isXref()->string('xref');
+        $user = Validator::attributes($request)->user();
 
         // Convert POST requests into GET requests for pretty URLs.
         // This also updates the name above the form, which wont get updated if only a POST request is used
         if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $params = (array) $request->getParsedBody();
+            $validator = Validator::parsedBody($request);
 
-            return redirect(route(self::ROUTE_DEFAULT, [
-                'tree'                    => $tree->name(),
-                'xref'                    => $params['xref'],
-                'generations'             => $params['generations'],
-                'fanDegree'               => $params['fanDegree'] ?? '210',
-                'fontScale'               => $params['fontScale'] ?? '100',
-                'hideEmptySegments'       => $params['hideEmptySegments'] ?? '0',
-                'showColorGradients'      => $params['showColorGradients'] ?? '0',
-                'showParentMarriageDates' => $params['showParentMarriageDates'] ?? '0',
-                'innerArcs'               => $params['innerArcs'] ?? '3',
-            ]));
+            return redirect(
+                route(
+                    self::ROUTE_DEFAULT,
+                    [
+                        'tree'                    => $tree->name(),
+                        'xref'                    => $validator->string('xref', ''),
+                        'generations'             => $validator->integer('generations', 6),
+                        'fanDegree'               => $validator->integer('fanDegree', 210),
+                        'fontScale'               => $validator->integer('fontScale' , 100),
+                        'hideEmptySegments'       => $validator->boolean('hideEmptySegments', false),
+                        'showColorGradients'      => $validator->boolean('showColorGradients', false),
+                        'showParentMarriageDates' => $validator->boolean('showParentMarriageDates', false),
+                        'innerArcs'               => $validator->integer('innerArcs', 3),
+                    ]
+                )
+            );
         }
 
-        Auth::checkComponentAccess($this, 'chart', $tree, $user);
+        Auth::checkComponentAccess($this, ModuleChartInterface::class, $tree, $user);
 
-        $ajaxUrl = route('module', [
-            'module' => $this->name(),
-            'action' => 'update',
-            'tree'   => $individual->tree()->name(),
-            'xref'   => '',
-        ]);
+        $individual = Registry::individualFactory()->make($xref, $tree);
+        $individual = Auth::checkIndividualAccess($individual, false, true);
+
+        $this->configuration = new Configuration($request);
+
+        $ajaxUpdateUrl = route(
+            'module',
+            [
+                'module' => $this->name(),
+                'action' => 'update',
+                'tree'   => $individual->tree()->name(),
+                'xref'   => '',
+            ]
+        );
 
         return $this->viewResponse(
             $this->name() . '::chart',
             [
                 'title'         => $this->getPageTitle($individual),
-                'ajaxUrl'       => $ajaxUrl,
+                'ajaxUrl'       => $ajaxUpdateUrl,
                 'moduleName'    => $this->name(),
                 'individual'    => $individual,
                 'tree'          => $tree,
@@ -228,7 +231,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @param Individual $individual The individual used in the current chart
      *
-     * @return mixed[]
+     * @return array<string, bool|array<string, string>>
      */
     private function getChartParameters(Individual $individual): array
     {
@@ -276,19 +279,23 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @return ResponseInterface
      *
-     * @throws Exception
+     * @throws JsonException
+     * @throws HttpBadRequestException
+     * @throws HttpAccessDeniedException
+     * @throws HttpNotFoundException
      */
     public function getUpdateAction(ServerRequestInterface $request): ResponseInterface
     {
         $this->configuration = new Configuration($request);
 
-        $tree         = $request->getAttribute('tree');
-        $user         = $request->getAttribute('user');
-        $xref         = $request->getQueryParams()['xref'];
-        $individual   = Registry::individualFactory()->make($xref, $tree);
+        $tree = Validator::attributes($request)->tree();
+        $user = Validator::attributes($request)->user();
+        $xref = Validator::queryParams($request)->isXref()->string('xref');
 
-        Auth::checkIndividualAccess($individual, false, true);
-        Auth::checkComponentAccess($this, 'chart', $tree, $user);
+        Auth::checkComponentAccess($this, ModuleChartInterface::class, $tree, $user);
+
+        $individual = Registry::individualFactory()->make($xref, $tree);
+        $individual = Auth::checkIndividualAccess($individual, false, true);
 
         return response(
             $this->buildJsonTree($individual)
@@ -310,6 +317,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             return [];
         }
 
+        /** @var array<string, array<string>> $data */
         $data = $this->getIndividualData($individual, $generation);
 
         /** @var null|Family $family */

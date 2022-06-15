@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart;
 
 use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Validator;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -100,10 +101,9 @@ class Configuration
      */
     public function getGenerations(): int
     {
-        $generations = (int) ($this->request->getQueryParams()['generations'] ?? self::DEFAULT_GENERATIONS);
-        $generations = min($generations, self::MAX_GENERATIONS);
-
-        return max($generations, self::MIN_GENERATIONS);
+        return Validator::queryParams($this->request)
+            ->isBetween(self::MIN_GENERATIONS, self::MAX_GENERATIONS)
+            ->integer('generations', self::DEFAULT_GENERATIONS);
     }
 
     /**
@@ -129,10 +129,9 @@ class Configuration
      */
     public function getFontScale(): int
     {
-        $fontScale = (int) ($this->request->getQueryParams()['fontScale'] ?? self::FONT_SCALE_DEFAULT);
-        $fontScale = min($fontScale, 200);
-
-        return max($fontScale, 10);
+        return Validator::queryParams($this->request)
+            ->isBetween(10, 200)
+            ->integer('fontScale', self::FONT_SCALE_DEFAULT);
     }
 
     /**
@@ -142,10 +141,9 @@ class Configuration
      */
     public function getFanDegree(): int
     {
-        $fanDegree = (int) ($this->request->getQueryParams()['fanDegree'] ?? self::FAN_DEGREE_DEFAULT);
-        $fanDegree = min($fanDegree, 360);
-
-        return max($fanDegree, 180);
+        return Validator::queryParams($this->request)
+            ->isBetween(180, 360)
+            ->integer('fanDegree', self::FAN_DEGREE_DEFAULT);
     }
 
     /**
@@ -155,7 +153,8 @@ class Configuration
      */
     public function getHideEmptySegments(): bool
     {
-        return (bool) ($this->request->getQueryParams()['hideEmptySegments'] ?? false);
+        return Validator::queryParams($this->request)
+            ->boolean('hideEmptySegments', false);
     }
 
     /**
@@ -165,7 +164,8 @@ class Configuration
      */
     public function getShowColorGradients(): bool
     {
-        return (bool) ($this->request->getQueryParams()['showColorGradients'] ?? false);
+        return Validator::queryParams($this->request)
+            ->boolean('showColorGradients', false);
     }
 
     /**
@@ -175,7 +175,8 @@ class Configuration
      */
     public function getShowParentMarriageDates(): bool
     {
-        return (bool) ($this->request->getQueryParams()['showParentMarriageDates'] ?? false);
+        return Validator::queryParams($this->request)
+            ->boolean('showParentMarriageDates', false);
     }
 
     /**
@@ -185,10 +186,9 @@ class Configuration
      */
     public function getInnerArcs(): int
     {
-        $innerArcs = (int) ($this->request->getQueryParams()['innerArcs'] ?? self::DEFAULT_INNER_ARCS);
-        $innerArcs = min($innerArcs, self::MAX_INNER_ARCS);
-
-        return max($innerArcs, self::MIN_INNER_ARCS);
+        return Validator::queryParams($this->request)
+            ->isBetween(self::MIN_INNER_ARCS, self::MAX_INNER_ARCS)
+            ->integer('innerArcs', self::DEFAULT_INNER_ARCS);
     }
 
     /**
