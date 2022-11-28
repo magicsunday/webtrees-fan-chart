@@ -25,7 +25,7 @@ This module provides an SVG ancestor fan chart for the [webtrees](https://www.we
 
 
 ## Installation
-Requires Webtrees 2.1.
+Requires Webtrees 2.2.
 
 There are several ways to install the module. The method using [composer](#using-composer) is suitable
 for experienced users, as a developer you can also use [git](#using-git) to get a copy of the repository. For all other users,
@@ -112,6 +112,5 @@ composer update
 composer ci:test
 composer ci:test:php:phpstan
 composer ci:test:php:lint
-composer ci:test:php:unit
 composer ci:test:php:rector
 ```
