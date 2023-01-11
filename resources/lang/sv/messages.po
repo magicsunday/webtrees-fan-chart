@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-05 13:31+0100\n"
-"PO-Revision-Date: 2021-12-12 19:37+0100\n"
+"POT-Creation-Date: 2023-01-11 08:41+0100\n"
+"PO-Revision-Date: 2023-01-11 08:41+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
@@ -12,45 +12,45 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Loco-Source-Locale: sv_SE\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Loco-Parser: loco_parse_po\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:111 src/Module.php:209
+#: src/Module.php:116 src/Module.php:220
 msgid "Fan chart"
 msgstr "Förfäders solfjäderdiagram"
 
-#: src/Module.php:121
+#: src/Module.php:126
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Ett solfjäderdiagram med en persons förfäder."
 
-#: src/Module.php:212 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:223 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Förfäders solfjäderdiagram för %s"
 
-#: src/Module.php:232
+#: src/Module.php:243
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Använd Ctrl + rullen för att zooma in vyn"
 
-#: src/Module.php:233
+#: src/Module.php:244
 msgid "Move the view with two fingers"
 msgstr "Flytta vyn med två fingrar"
 
-#: src/Traits/IndividualTrait.php:119
+#: src/Traits/IndividualTrait.php:151
 #, php-format
 msgid "Born: %s"
 msgstr "Född: %s"
 
-#: src/Traits/IndividualTrait.php:123
+#: src/Traits/IndividualTrait.php:155
 #, php-format
 msgid "Died: %s"
 msgstr "Död: %s"
 
-#: src/Traits/IndividualTrait.php:127
+#: src/Traits/IndividualTrait.php:159
 msgid "Deceased"
 msgstr "Död"
 
@@ -94,26 +94,26 @@ msgstr "Specificerar antalet inre nivåer i vilken texten skrivs längs en båge
 msgid "Font size"
 msgstr "Fontstorlek"
 
-#: resources/views/chart.phtml:160
+#: resources/views/chart.phtml:159
 msgid "Show more options"
 msgstr "Visa fler alternativ"
 
-#: resources/views/chart.phtml:161
+#: resources/views/chart.phtml:160
 msgid "Hide more options"
 msgstr "Göm fler alternativ"
 
-#: resources/views/chart.phtml:166
+#: resources/views/chart.phtml:165
 msgid "view"
 msgstr "visa"
 
-#: resources/views/chart.phtml:172
+#: resources/views/chart.phtml:171
 msgid "Re center"
 msgstr "Återcentrera"
 
-#: resources/views/chart.phtml:177
+#: resources/views/chart.phtml:176
 msgid "Export as PNG"
 msgstr "Exportera som PNG"
 
-#: resources/views/chart.phtml:180
+#: resources/views/chart.phtml:179
 msgid "Export as SVG"
 msgstr "Exportera som SVG"

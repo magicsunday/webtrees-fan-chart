@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-10-05 11:04+0100\n"
-"PO-Revision-Date: 2022-09-24 21:22+0200\n"
+"POT-Creation-Date: 2023-01-11 08:34+0100\n"
+"PO-Revision-Date: 2023-01-11 08:34+0100\n"
 "Last-Translator: Josef Prause <josef.prause@gmail.com>\n"
 "Language-Team: Josef Prause josef.prause@gmail.com\n"
 "Language: cs\n"
@@ -10,44 +10,44 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:111 src/Module.php:209
+#: src/Module.php:116 src/Module.php:220
 msgid "Fan chart"
 msgstr "Vějířový diagram"
 
-#: src/Module.php:121
+#: src/Module.php:126
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Vějíř předků osoby."
 
-#: src/Module.php:212 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:223 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Vějíř předků osoby %s"
 
-#: src/Module.php:232
+#: src/Module.php:243
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Pomocí Ctrl + kolečko zvětšit pohled"
 
-#: src/Module.php:233
+#: src/Module.php:244
 msgid "Move the view with two fingers"
 msgstr "Přemístit pohled dvěma prsty"
 
-#: src/Traits/IndividualTrait.php:119
+#: src/Traits/IndividualTrait.php:151
 #, php-format
 msgid "Born: %s"
 msgstr "Narozen/a: %s"
 
-#: src/Traits/IndividualTrait.php:123
+#: src/Traits/IndividualTrait.php:155
 #, php-format
 msgid "Died: %s"
 msgstr "Zemřel/a: %s"
 
-#: src/Traits/IndividualTrait.php:127
+#: src/Traits/IndividualTrait.php:159
 msgid "Deceased"
 msgstr "Zesnulý/á"
 
@@ -91,26 +91,26 @@ msgstr "Počet úrovní, v nichž je text zapsán podél oblouku."
 msgid "Font size"
 msgstr "Velikost písma"
 
-#: resources/views/chart.phtml:160
+#: resources/views/chart.phtml:159
 msgid "Show more options"
 msgstr "Zobrazit další volby"
 
-#: resources/views/chart.phtml:161
+#: resources/views/chart.phtml:160
 msgid "Hide more options"
 msgstr "Skrýt další volby"
 
-#: resources/views/chart.phtml:166
+#: resources/views/chart.phtml:165
 msgid "view"
 msgstr "zobrazit"
 
-#: resources/views/chart.phtml:172
+#: resources/views/chart.phtml:171
 msgid "Re center"
 msgstr "Vystředit"
 
-#: resources/views/chart.phtml:177
+#: resources/views/chart.phtml:176
 msgid "Export as PNG"
 msgstr "Exportovat jako PNG"
 
-#: resources/views/chart.phtml:180
+#: resources/views/chart.phtml:179
 msgid "Export as SVG"
 msgstr "Exportovat jako SVG"

@@ -1,52 +1,52 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Hindi\n"
-"POT-Creation-Date: 2021-10-05 13:25+0100\n"
+"POT-Creation-Date: 2023-01-11 08:40+0100\n"
 "PO-Revision-Date: \n"
-"Last-Translator: \n"
+"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:111 src/Module.php:209
+#: src/Module.php:116 src/Module.php:220
 msgid "Fan chart"
 msgstr "फैन चार्ट"
 
-#: src/Module.php:121
+#: src/Module.php:126
 msgid "A fan chart of an individual’s ancestors."
 msgstr "किसी व्यक्ती के पूर्वजों का एक फैन चार्ट।"
 
-#: src/Module.php:212 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:223 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "%s का फैन चार्ट"
 
-#: src/Module.php:232
+#: src/Module.php:243
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Ctrl + Scroll से ज़ूम इन करें"
 
-#: src/Module.php:233
+#: src/Module.php:244
 msgid "Move the view with two fingers"
 msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
 
-#: src/Traits/IndividualTrait.php:119
+#: src/Traits/IndividualTrait.php:151
 #, php-format
 msgid "Born: %s"
 msgstr "जन्म: %s"
 
-#: src/Traits/IndividualTrait.php:123
+#: src/Traits/IndividualTrait.php:155
 #, php-format
 msgid "Died: %s"
 msgstr "मृत्यु: %s"
 
-#: src/Traits/IndividualTrait.php:127
+#: src/Traits/IndividualTrait.php:159
 msgid "Deceased"
 msgstr "मृतक"
 
@@ -90,26 +90,26 @@ msgstr "उस स्तर की संख्या निर्दिष्�
 msgid "Font size"
 msgstr "फ़ॉन्ट आकार"
 
-#: resources/views/chart.phtml:160
+#: resources/views/chart.phtml:159
 msgid "Show more options"
 msgstr ""
 
-#: resources/views/chart.phtml:161
+#: resources/views/chart.phtml:160
 msgid "Hide more options"
 msgstr ""
 
-#: resources/views/chart.phtml:166
+#: resources/views/chart.phtml:165
 msgid "view"
 msgstr "देखें"
 
-#: resources/views/chart.phtml:172
+#: resources/views/chart.phtml:171
 msgid "Re center"
 msgstr "पुनः केंद्रित करें"
 
-#: resources/views/chart.phtml:177
+#: resources/views/chart.phtml:176
 msgid "Export as PNG"
 msgstr "PNG निकालें"
 
-#: resources/views/chart.phtml:180
+#: resources/views/chart.phtml:179
 msgid "Export as SVG"
 msgstr "SVG निकालें"

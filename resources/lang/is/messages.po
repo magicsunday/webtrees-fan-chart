@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-10-03 21:00+0100\n"
-"PO-Revision-Date: 2022-05-07 17:36+0000\n"
+"POT-Creation-Date: 2023-01-11 08:40+0100\n"
+"PO-Revision-Date: 2023-01-11 08:40+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: is\n"
@@ -10,44 +10,44 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:111 src/Module.php:209
+#: src/Module.php:116 src/Module.php:220
 msgid "Fan chart"
 msgstr "Forfeðraskífa"
 
-#: src/Module.php:121
+#: src/Module.php:126
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Skífurit yfir forfeður einstaklings."
 
-#: src/Module.php:212 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:223 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Forfeðraskífa fyrir %s"
 
-#: src/Module.php:232
+#: src/Module.php:243
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Notaðu Ctrl + skruna til að þysja í ættartrénu"
 
-#: src/Module.php:233
+#: src/Module.php:244
 msgid "Move the view with two fingers"
 msgstr "Færðu yfirlitið með tveimur fingrum"
 
-#: src/Traits/IndividualTrait.php:119
+#: src/Traits/IndividualTrait.php:151
 #, php-format
 msgid "Born: %s"
 msgstr "Fædd/-ur: %s"
 
-#: src/Traits/IndividualTrait.php:123
+#: src/Traits/IndividualTrait.php:155
 #, php-format
 msgid "Died: %s"
 msgstr "Lést: %s"
 
-#: src/Traits/IndividualTrait.php:127
+#: src/Traits/IndividualTrait.php:159
 msgid "Deceased"
 msgstr "Látin/-n"
 
@@ -91,26 +91,26 @@ msgstr "Tilgreinir fjölda þrepa þar sem textinn er skrifaður eftir boga."
 msgid "Font size"
 msgstr "Leturstærð"
 
-#: resources/views/chart.phtml:160
+#: resources/views/chart.phtml:159
 msgid "Show more options"
 msgstr "Sýna fleiri valkosti"
 
-#: resources/views/chart.phtml:161
+#: resources/views/chart.phtml:160
 msgid "Hide more options"
 msgstr "Fela fleiri valkosti"
 
-#: resources/views/chart.phtml:166
+#: resources/views/chart.phtml:165
 msgid "view"
 msgstr "skoða"
 
-#: resources/views/chart.phtml:172
+#: resources/views/chart.phtml:171
 msgid "Re center"
 msgstr "Endurmiðja"
 
-#: resources/views/chart.phtml:177
+#: resources/views/chart.phtml:176
 msgid "Export as PNG"
 msgstr "Flytja út sem PNG"
 
-#: resources/views/chart.phtml:180
+#: resources/views/chart.phtml:179
 msgid "Export as SVG"
 msgstr "Flytja út sem SVG"
