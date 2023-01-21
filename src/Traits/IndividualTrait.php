@@ -132,7 +132,7 @@ trait IndividualTrait
     private function getXPath(string $fullName): DOMXPath
     {
         $document = new DOMDocument();
-        $document->loadHTML(mb_convert_encoding($fullName, 'HTML-ENTITIES', 'UTF-8'));
+        $document->loadHTML(htmlspecialchars_decode(htmlentities($fullName)));
 
         return new DOMXPath($document);
     }
