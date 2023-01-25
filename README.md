@@ -66,6 +66,7 @@ Right clicking on an individual opens an tooltip providing more detailed informa
 To build/update the javascript, run the following commands:
 
 ```
+nvm install node
 npm install --unsafe-perm --save-dev
 npm run prepare
 ```

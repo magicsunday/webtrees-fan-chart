@@ -122,8 +122,7 @@ export default class Hierarchy
             alternativeNames : [],
             isAltRtl         : false,
             sex              : sex,
-            timespan         : "",
-            colors           : [[], []]
+            timespan         : ""
         };
     }
 }

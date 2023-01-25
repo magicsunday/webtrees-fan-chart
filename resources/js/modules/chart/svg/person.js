@@ -194,7 +194,7 @@ export default class Person
     }
 
     /**
-     * Adds an color overlay for each arc.
+     * Adds a color overlay for each arc.
      *
      * @param {selection} person
      * @param {Object}    data   The D3 data object
@@ -230,7 +230,7 @@ export default class Person
                     return "url(#grad-" + data.data.id + ")";
                 }
 
-                return data.data.color;
+                return null;
             })
             .attr("d", arcGenerator);
 
