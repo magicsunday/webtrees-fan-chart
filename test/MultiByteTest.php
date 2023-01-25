@@ -28,30 +28,30 @@ class MultiByteTest extends TestCase
     /**
      * @return string[][]
      */
-    public function encodingDataProvider(): array
+    public function convertToHtmlEntitiesDataProvider(): array
     {
         // [ input, expected ]
         return [
             // German umlauts
             [
                 '<div>abc <span>äöü</span> <p>&#228;&#246;&#252;</p></div>',
-                'abc äöü äöü',
+                '<div>abc <span>&auml;&ouml;&uuml;</span> <p>&#228;&#246;&#252;</p></div>',
             ],
 
             // Euro sign
             [
                 '€ &#8364;',
-                '€ €',
+                '&euro; &#8364;',
             ],
 
             // Korean
             [
                 '박성욱',
-                '박성욱',
+                '&#48149;&#49457;&#50865;',
             ],
             [
                 '<span><span>&#48149;</span>&#49457;&#50865;</span>',
-                '박성욱',
+                '<span><span>&#48149;</span>&#49457;&#50865;</span>',
             ],
         ];
     }
@@ -60,23 +60,22 @@ class MultiByteTest extends TestCase
      * Tests conversion of UTF-8 characters to HTML entities.
      *
      * @test
-     * @dataProvider encodingDataProvider
+     * @dataProvider convertToHtmlEntitiesDataProvider
      *
      * @param string $input
      * @param string $expected
      *
      * @return void
      */
-    public function convertUtf8ToHtmlEntities(string $input, string $expected): void
+    public function convertToHtmlEntities(string $input, string $expected): void
     {
         $reflection = new ReflectionClass(Module::class);
-        $method = $reflection->getMethod('getXPath');
+        $method = $reflection->getMethod('convertToHtmlEntities');
         $method->setAccessible(true);
 
         $module = new Module();
         $result = $method->invokeArgs($module, [ $input ]);
 
-        self::assertInstanceOf(DOMXPath::class, $result);
-        self::assertSame($expected, $result->query('*')->item(0)->nodeValue);
+        self::assertSame($expected, $result);
     }
 }

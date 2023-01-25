@@ -123,6 +123,18 @@ trait IndividualTrait
     }
 
     /**
+     * Returns the UTF-8 chars converted to HTML entities.
+     *
+     * @param string $input The input to encode
+     *
+     * @return string
+     */
+    private function convertToHtmlEntities(string $input): string
+    {
+        return mb_convert_encoding($input, 'HTML-ENTITIES', 'UTF-8');
+    }
+
+    /**
      * Returns the DOMXPath instance.
      *
      * @param string $fullName The individuals full name (containing HTML)
@@ -132,7 +144,7 @@ trait IndividualTrait
     private function getXPath(string $fullName): DOMXPath
     {
         $document = new DOMDocument();
-        $document->loadHTML(htmlspecialchars_decode(htmlentities($fullName)));
+        $document->loadHTML($this->convertToHtmlEntities($fullName));
 
         return new DOMXPath($document);
     }
