@@ -1,4 +1,4 @@
-name: PHPStan
+name: PHPUnit
 
 on: [push, pull_request]
 
@@ -18,9 +18,11 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           extensions: json,intl,mbstring
+          coverage: pcov
 
       - uses: actions/checkout@v2
 
       - run: composer validate
       - run: composer install --no-progress
-      - run: vendor/bin/phpstan analyse -c phpstan.neon
+      - run: composer require phpdocumentor/reflection-docblock
+      - run: vendor/bin/phpunit --coverage-clover=tests/coverage.xml

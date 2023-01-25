@@ -1,7 +1,10 @@
 <?php
 
 /**
- * See LICENSE.md file for further details.
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -20,7 +23,6 @@ use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleChartInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
-use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Validator;
 use Fisharebest\Webtrees\View;
@@ -81,13 +83,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     private Configuration $configuration;
 
     /**
-     * The current theme instance.
-     *
-     * @var ModuleThemeInterface
-     */
-    private ModuleThemeInterface $theme;
-
-    /**
      * Initialization.
      */
     public function boot(): void
@@ -98,10 +93,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $routerContainer->getMap()
             ->get(self::ROUTE_DEFAULT, self::ROUTE_DEFAULT_URL, $this)
             ->allows(RequestMethodInterface::METHOD_POST);
-
-        /** @var ModuleThemeInterface $theme */
-        $theme = app(ModuleThemeInterface::class);
-        $this->theme = $theme;
 
         View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
     }
@@ -164,7 +155,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                         'xref'                    => $validator->string('xref', ''),
                         'generations'             => $validator->integer('generations', 6),
                         'fanDegree'               => $validator->integer('fanDegree', 210),
-                        'fontScale'               => $validator->integer('fontScale' , 100),
+                        'fontScale'               => $validator->integer('fontScale', 100),
                         'hideEmptySegments'       => $validator->boolean('hideEmptySegments', false),
                         'showColorGradients'      => $validator->boolean('showColorGradients', false),
                         'showParentMarriageDates' => $validator->boolean('showParentMarriageDates', false),

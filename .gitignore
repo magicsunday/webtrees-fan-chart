@@ -4,3 +4,4 @@ package-lock.json
 vendor/
 node_modules/
 resources/js/fan-chart.js
+.phpunit.result.cache
