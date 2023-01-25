@@ -131,7 +131,7 @@ trait IndividualTrait
      */
     private function convertToHtmlEntities(string $input): string
     {
-        return htmlspecialchars_decode(htmlentities($input));
+        return mb_encode_numericentity($input, [0x80, 0xfffffff, 0, 0xfffffff], 'UTF-8');
     }
 
     /**
