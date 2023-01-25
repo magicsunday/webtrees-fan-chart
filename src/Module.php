@@ -23,7 +23,6 @@ use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleChartInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
-use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Validator;
 use Fisharebest\Webtrees\View;
@@ -84,13 +83,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     private Configuration $configuration;
 
     /**
-     * The current theme instance.
-     *
-     * @var ModuleThemeInterface
-     */
-    private ModuleThemeInterface $theme;
-
-    /**
      * Initialization.
      */
     public function boot(): void
@@ -101,10 +93,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $routerContainer->getMap()
             ->get(self::ROUTE_DEFAULT, self::ROUTE_DEFAULT_URL, $this)
             ->allows(RequestMethodInterface::METHOD_POST);
-
-        /** @var ModuleThemeInterface $theme */
-        $theme = app(ModuleThemeInterface::class);
-        $this->theme = $theme;
 
         View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
     }
