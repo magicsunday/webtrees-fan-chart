@@ -1,11 +1,10 @@
 ![Latest version](https://img.shields.io/github/v/release/magicsunday/webtrees-fan-chart?sort=semver)
 ![License](https://img.shields.io/github/license/magicsunday/webtrees-fan-chart)
 ![PHPStan](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpstan.yml/badge.svg)
+![PHPUnit](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpunit.yml/badge.svg)
 ![PHPCodeSniffer](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpcs.yml/badge.svg)
 ![CodeQL](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/codeql-analysis.yml/badge.svg)
 
-![Code Climate](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/badges/gpa.svg)
-![Issue Count](https://codeclimate.com/github/magicsunday/webtrees-fan-chart/badges/issue_count.svg)
 
 # Fan chart
 This module provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.
