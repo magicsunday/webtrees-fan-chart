@@ -6,7 +6,6 @@
  */
 
 import * as d3 from "./../../d3";
-import Svg from "./../svg"
 import Geometry, {MATH_DEG2RAD, MATH_RAD2DEG} from "./geometry";
 
 /**

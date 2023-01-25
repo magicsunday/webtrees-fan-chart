@@ -6,7 +6,6 @@
  */
 
 import * as d3 from "./d3";
-import Configuration from "./configuration";
 import Hierarchy from "./chart/hierarchy";
 import Overlay from "./chart/overlay";
 import Svg from "./chart/svg";

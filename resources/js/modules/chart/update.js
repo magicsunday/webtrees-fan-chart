@@ -6,8 +6,6 @@
  */
 
 import * as d3 from "./../d3";
-import Configuration from "./../configuration";
-import Svg from "./svg";
 import Person from "./svg/person";
 
 /**

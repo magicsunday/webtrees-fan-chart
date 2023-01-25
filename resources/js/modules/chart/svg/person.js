@@ -6,9 +6,7 @@
  */
 
 import * as d3 from "../../d3";
-import Configuration from "../../configuration";
 import Geometry from "./geometry";
-import Svg from "../svg";
 import Text from "./text";
 import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
 

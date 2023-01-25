@@ -6,7 +6,6 @@
  */
 
 import * as d3 from "./../../d3";
-import Configuration from "./../../configuration";
 
 export const MATH_DEG2RAD = Math.PI / 180;
 export const MATH_RAD2DEG = 180 / Math.PI;

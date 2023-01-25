@@ -6,7 +6,6 @@
  */
 
 import * as d3 from "./../d3";
-import Configuration from "./../configuration";
 import Defs from "./svg/defs";
 import Zoom from "./svg/zoom";
 import Filter from "./svg/filter";

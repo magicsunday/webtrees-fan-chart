@@ -5,9 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import Configuration from "./../configuration";
 import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
-import Geometry from "./svg/geometry";
 
 /**
  * This class handles the gradient coloring.
@@ -28,7 +26,6 @@ export default class Gradient
     {
         this._svg           = svg;
         this._configuration = configuration;
-        this._geometry      = new Geometry(this._configuration);
     }
 
     /**
