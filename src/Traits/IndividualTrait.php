@@ -70,7 +70,7 @@ trait IndividualTrait
      * @param Individual $individual The current individual
      * @param int        $generation The generation the person belongs to
      *
-     * @return array<string, array<array|string>|bool|int|string>
+     * @return array<string, bool|int|string|string[]>
      */
     private function getIndividualData(Individual $individual, int $generation): array
     {
