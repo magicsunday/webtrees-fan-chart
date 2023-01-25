@@ -35,13 +35,17 @@ class MultiByteTest extends TestCase
             // German umlauts
             [
                 '<div>abc <span>äöü</span> <p>&#228;&#246;&#252;</p></div>',
+                '<div>abc <span>&#228;&#246;&#252;</span> <p>&#228;&#246;&#252;</p></div>',
+            ],
+            [
+                '<div>abc <span>&auml;&ouml;&uuml;</span> <p>&#228;&#246;&#252;</p></div>',
                 '<div>abc <span>&auml;&ouml;&uuml;</span> <p>&#228;&#246;&#252;</p></div>',
             ],
 
             // Euro sign
             [
-                '€ &#8364;',
-                '&euro; &#8364;',
+                '€ &euro; &#8364;',
+                '&#8364; &euro; &#8364;',
             ],
 
             // Korean
