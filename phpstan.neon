@@ -1,6 +1,10 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
 parameters:
-    # you can currently choose from 10 levels (0 is the loosest and 9 is the strictest).
-    level: 9
+    # You can currently choose from 10 levels (0 is the loosest and 9 is the strictest).
+    level: max
 
     paths:
         - src

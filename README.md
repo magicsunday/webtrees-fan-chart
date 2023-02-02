@@ -1,7 +1,6 @@
 ![Latest version](https://img.shields.io/github/v/release/magicsunday/webtrees-fan-chart?sort=semver)
 ![License](https://img.shields.io/github/license/magicsunday/webtrees-fan-chart)
 ![PHPStan](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpstan.yml/badge.svg)
-![PHPUnit](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpunit.yml/badge.svg)
 ![PHPCodeSniffer](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpcs.yml/badge.svg)
 ![CodeQL](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/codeql-analysis.yml/badge.svg)
 
@@ -74,7 +73,6 @@ npm run prepare
 ### Run tests
 ```
 composer update
-vendor/bin/phpunit
-vendor/bin/phpstan analyse -c phpstan.neon
+vendor/bin/phpstan analyse --xdebug --memory-limit=-1 -c phpstan.neon
 vendor/bin/phpcs src/ --standard=PSR12
 ```

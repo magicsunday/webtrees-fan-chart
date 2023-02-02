@@ -83,7 +83,7 @@ trait ModuleCustomTrait
                             $version = $json['tag_name'] ?? '';
 
                             // Does the response look like a version?
-                            if (preg_match('/^\d+\.\d+\.\d+/', $version)) {
+                            if (preg_match('/^\d+\.\d+\.\d+/', $version) === 1) {
                                 return $version;
                             }
                         }

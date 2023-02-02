@@ -22,25 +22,24 @@
             "magicsunday/webtrees-module-installer-plugin": true
         }
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "ext-json": "*",
         "ext-dom": "*",
         "fisharebest/webtrees": "~2.2.0 || dev-main",
+        "magicsunday/webtrees-module-base": "^1.0",
         "magicsunday/webtrees-module-installer-plugin": "^1.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.6",
         "phpstan/phpstan": "^1.9",
+        "phpstan/phpstan-strict-rules": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^1.1",
         "squizlabs/php_codesniffer": "^3.7"
     },
     "autoload": {
         "psr-4": {
             "MagicSunday\\Webtrees\\FanChart\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "MagicSunday\\Webtrees\\FanChart\\Test\\": "test/"
         }
     },
     "scripts": {
@@ -49,17 +48,27 @@
             "rm -Rf webtrees-fan-chart/",
             "### Checkout latest version of repository",
             "git archive --prefix=webtrees-fan-chart/ HEAD --format=tar | tar -x",
+            "### Install required components",
+            "@composer require magicsunday/webtrees-module-base:^1.0",
+            "### Copy base module to vendor directory",
+            "mkdir -p webtrees-fan-chart/vendor/magicsunday",
+            "cp -r vendor/magicsunday/webtrees-module-base webtrees-fan-chart/vendor/magicsunday/webtrees-module-base",
             "### Remove all not required files from archive",
             "rm -rf webtrees-fan-chart/.github",
             "rm -rf webtrees-fan-chart/resources/js/modules",
-            "rm -rf webtrees-fan-chart/test",
             "rm -f webtrees-fan-chart/.gitattributes",
             "rm -f webtrees-fan-chart/.gitignore",
             "rm -f webtrees-fan-chart/composer.json",
             "rm -f webtrees-fan-chart/package.json",
             "rm -f webtrees-fan-chart/rollup.config.js",
             "rm -f webtrees-fan-chart/phpstan.neon",
-            "rm -f webtrees-fan-chart/phpunit.xml",
+            "### Clean vendor",
+            "rm -rf webtrees-fan-chart/vendor/magicsunday/webtrees-module-base/.github",
+            "rm -rf webtrees-fan-chart/vendor/magicsunday/webtrees-module-base/test",
+            "rm -f webtrees-fan-chart/vendor/magicsunday/webtrees-module-base/.gitignore",
+            "rm -f webtrees-fan-chart/vendor/magicsunday/webtrees-module-base/composer.json",
+            "rm -f webtrees-fan-chart/vendor/magicsunday/webtrees-module-base/phpstan.neon",
+            "rm -f webtrees-fan-chart/vendor/magicsunday/webtrees-module-base/phpunit.xml",
             "### Create archive",
             "zip --quiet --recurse-paths --move -9 webtrees-fan-chart.zip webtrees-fan-chart"
         ],
@@ -67,9 +76,7 @@
             "### PHP CodeSniffer",
             "@composer module:phpcs",
             "### PHPStan",
-            "@composer module:phpstan",
-            "### PHPUnit",
-            "@composer module:phpunit"
+            "@composer module:phpstan"
         ],
         "module:phpcs": [
             "@composer global require squizlabs/php_codesniffer=* --quiet",
@@ -82,11 +89,6 @@
             "@composer global require --quiet phpstan/phpstan-strict-rules=*",
             "@composer install --quiet",
             "~/.composer/vendor/bin/phpstan analyse --memory-limit=-1 -c phpstan.neon",
-            "@composer install --no-dev --quiet"
-        ],
-        "module:phpunit": [
-            "@composer install --quiet",
-            "@php vendor/bin/phpunit",
             "@composer install --no-dev --quiet"
         ]
     },

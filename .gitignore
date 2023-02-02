@@ -1,8 +1,8 @@
-composer.lock
-package-lock.json
 .idea/
 vendor/
 node_modules/
+composer.lock
+package-lock.json
 resources/js/fan-chart.js
 .phpunit.result.cache
 webtrees-fan-chart.zip

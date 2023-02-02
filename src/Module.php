@@ -27,9 +27,11 @@ use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Validator;
 use Fisharebest\Webtrees\View;
 use JsonException;
-use MagicSunday\Webtrees\FanChart\Traits\IndividualTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleCustomTrait;
+use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
+use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
+use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -45,7 +47,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
 {
     use ModuleCustomTrait;
     use ModuleChartTrait;
-    use IndividualTrait;
 
     private const ROUTE_DEFAULT     = 'webtrees-fan-chart';
     private const ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}';
@@ -246,7 +247,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     private function showImages(Individual $individual): bool
     {
         return $individual->canShow()
-            && $individual->tree()->getPreference('SHOW_HIGHLIGHT_IMAGES');
+            && ($individual->tree()->getPreference('SHOW_HIGHLIGHT_IMAGES') !== '');
     }
 
     /**
@@ -259,7 +260,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     private function showSilhouettes(Individual $individual): bool
     {
         return $this->showImages($individual)
-            && $individual->tree()->getPreference('USE_SILHOUETTE');
+            && ($individual->tree()->getPreference('USE_SILHOUETTE') !== '');
     }
 
     /**
@@ -269,7 +270,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @return ResponseInterface
      *
-     * @throws JsonException
      * @throws HttpBadRequestException
      * @throws HttpAccessDeniedException
      * @throws HttpNotFoundException
@@ -322,15 +322,53 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $motherTree = $this->buildJsonTree($family->wife(), $generation + 1);
 
         // Add array of child nodes
-        if (!empty($fatherTree)) {
+        if (count($fatherTree) > 0) {
             $data['children'][] = $fatherTree;
         }
 
-        if (!empty($motherTree)) {
+        if (count($motherTree) > 0) {
             $data['children'][] = $motherTree;
         }
 
         return $data;
+    }
+
+    /**
+     * Get the individual data required for display the chart.
+     *
+     * @param Individual $individual The current individual
+     * @param int        $generation The generation the person belongs to
+     *
+     * @return array<string, array<string>|bool|int|string>
+     */
+    private function getIndividualData(Individual $individual, int $generation): array
+    {
+        $nameProcessor  = new NameProcessor($individual);
+        $dateProcessor  = new DateProcessor($individual);
+        $imageProcessor = new ImageProcessor($this, $individual);
+
+        $alternativeNames = $nameProcessor->getAlternateNames();
+
+        return [
+            'id'               => 0,
+            'xref'             => $individual->xref(),
+            'url'              => $individual->url(),
+            'updateUrl'        => $this->getUpdateRoute($individual),
+            'generation'       => $generation,
+            'name'             => $nameProcessor->getFullName(),
+            'firstNames'       => $nameProcessor->getFirstNames(),
+            'lastNames'        => $nameProcessor->getLastNames(),
+            'preferredName'    => $nameProcessor->getPreferredName(),
+            'alternativeNames' => $alternativeNames,
+            'isAltRtl'         => $this->isRtl($alternativeNames),
+            'thumbnail'        => $imageProcessor->getHighlightImageUrl(100, 100, false),
+            'sex'              => $individual->sex(),
+            'birth'            => $dateProcessor->getBirthDate(),
+            'death'            => $dateProcessor->getDeathDate(),
+            'timespan'         => $dateProcessor->getLifetimeDescription(),
+            'marriage'         => $dateProcessor->getMarriageDate(),
+            'parentMarriage'   => $dateProcessor->getMarriageDateOfParents(),
+        ];
     }
 
     /**
