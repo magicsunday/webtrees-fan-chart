@@ -1,6 +1,0 @@
-parameters:
-	ignoreErrors:
-		-
-			message: "#^Call to an undefined method Fisharebest\\\\Webtrees\\\\Module\\\\ModuleCustomInterface\\:\\:assetUrl\\(\\)\\.$#"
-			count: 1
-			path: src/Processor/ImageProcessor.php
