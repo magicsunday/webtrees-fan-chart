@@ -20,29 +20,25 @@ export default class PngExport extends Export
      * Copies recursively all the styles from the list of container elements from the source
      * to the destination node.
      *
-     * @param {SVGGraphicsElement} sourceNode
-     * @param {SVGGraphicsElement} destinationNode
+     * @param {Element} sourceNode
+     * @param {Element} destinationNode
      */
     copyStylesInline(sourceNode, destinationNode)
     {
         let containerElements = ["svg", "g", "text", "textPath"];
 
-        for (let i = 0; i < destinationNode.childNodes.length; ++i) {
-            let child = destinationNode.childNodes[i];
+        for (let i = 0; i < destinationNode.children.length; ++i) {
+            let element = destinationNode.children[i];
 
-            if (containerElements.indexOf(child.tagName) !== -1) {
-                this.copyStylesInline(sourceNode.childNodes[i], child);
+            if (containerElements.indexOf(element.tagName) !== -1) {
+                this.copyStylesInline(sourceNode.children[i], element);
                 continue;
             }
 
-            let computedStyle = window.getComputedStyle(sourceNode.childNodes[i]);
-
-            if (computedStyle === null) {
-                continue;
-            }
+            let computedStyle = window.getComputedStyle(sourceNode.children[i]);
 
             for (let j = 0; j < computedStyle.length; ++j) {
-                child.style.setProperty(computedStyle[j], computedStyle.getPropertyValue(computedStyle[j]));
+                element.style.setProperty(computedStyle[j], computedStyle.getPropertyValue(computedStyle[j]));
             }
         }
     }
@@ -148,6 +144,9 @@ export default class PngExport extends Export
      */
     svgToImage(svg, fileName)
     {
+        // 300 DPI (good quality for printing) / 96 DPI (common browser)
+        //let scale = 300 / dpi();
+
         // Paper sizes (width, height) in pixel at 300 DPI/PPI
         const paperSize = {
             'A3': [4960, 3508],
@@ -160,18 +159,18 @@ export default class PngExport extends Export
                 this.copyStylesInline(svg.get().node(), newSvg);
 
                 const viewBox = this.calculateViewBox(svg.get().node());
-                const width   = Math.max(paperSize['A4'][0], viewBox[2]);
-                const height  = Math.max(paperSize['A4'][1], viewBox[3]);
+                const width   = Math.max(paperSize['A3'][0], viewBox[2]);
+                const height  = Math.max(paperSize['A3'][1], viewBox[3]);
 
-                newSvg.setAttribute("width", width);
-                newSvg.setAttribute("height", height);
-                newSvg.setAttribute("viewBox", viewBox);
+                newSvg.setAttribute("width", "" + width);
+                newSvg.setAttribute("height", "" + height);
+                newSvg.setAttribute("viewBox", "" + viewBox);
 
-                this.convertToDataUrl(newSvg, width, height)
-                    .then(imgURI => this.triggerDownload(imgURI, fileName))
-                    .catch(() => {
-                        console.log("Failed to save chart as PNG image");
-                    });
+                return this.convertToDataUrl(newSvg, width, height);
+            })
+            .then(imgURI => this.triggerDownload(imgURI, fileName))
+            .catch(() => {
+                console.log("Failed to save chart as PNG image");
             });
     }
 }
