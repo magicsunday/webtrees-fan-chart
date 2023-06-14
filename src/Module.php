@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart;
 
+use Aura\Router\Exception\ImmutableProperty;
+use Aura\Router\Exception\RouteAlreadyExists;
 use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Family;
@@ -85,6 +87,11 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
 
     /**
      * Initialization.
+     *
+     * @return void
+     *
+     * @throws ImmutableProperty
+     * @throws RouteAlreadyExists
      */
     public function boot(): void
     {
@@ -431,7 +438,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     private function getExportStylesheets(): array
     {
         /** @var ModuleThemeInterface $currentTheme */
-        $currentTheme  = app(ModuleThemeInterface::class);
+        $currentTheme  = Registry::container()->get(ModuleThemeInterface::class);
         $stylesheets   = $currentTheme->stylesheets();
         $stylesheets[] = $this->assetUrl('css/svg.css');
 
