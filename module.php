@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees;
 
 use Composer\Autoload\ClassLoader;
+use Fisharebest\Webtrees\Registry;
 use MagicSunday\Webtrees\FanChart\Module;
 
 // Register our required namespaces
@@ -21,4 +22,4 @@ $loader->addPsr4('MagicSunday\\Webtrees\\FanChart\\', __DIR__ . '/src');
 $loader->register();
 
 // Create and return instance of the module
-return app(Module::class);
+return Registry::container()->get(Module::class);
