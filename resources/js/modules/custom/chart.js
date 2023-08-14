@@ -216,7 +216,7 @@ export default class Chart
      */
     redirectToIndividual(url)
     {
-        window.location = url;
+        window.open(url, "_blank");
     }
 
     /**
