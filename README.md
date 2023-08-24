@@ -107,6 +107,6 @@ npm run prepare
 ### Run tests
 ```
 composer update
-vendor/bin/phpstan analyse --xdebug --memory-limit=-1 -c phpstan.neon
+vendor/bin/phpstan analyse --memory-limit=-1 -c phpstan.neon
 vendor/bin/phpcs src/ --standard=PSR12
 ```
