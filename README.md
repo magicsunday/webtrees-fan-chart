@@ -108,6 +108,5 @@ composer update
 composer ci:test
 composer ci:test:php:phpstan
 composer ci:test:php:lint
-composer ci:test:php:unit
 composer ci:test:php:rector
 ```
