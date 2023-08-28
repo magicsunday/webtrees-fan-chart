@@ -29,7 +29,7 @@
         "magicsunday/webtrees-module-installer-plugin": "^1.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^9.6",
         "phpstan/phpstan": "^1.9",
         "squizlabs/php_codesniffer": "^3.7"
     },
@@ -42,5 +42,56 @@
         "psr-4": {
             "MagicSunday\\Webtrees\\FanChart\\Test\\": "test/"
         }
+    },
+    "scripts": {
+        "module:build": [
+            "### Remove any left over files",
+            "rm -Rf webtrees-fan-chart/",
+            "### Checkout latest version of repository",
+            "git archive --prefix=webtrees-fan-chart/ HEAD --format=tar | tar -x",
+            "### Remove all not required files from archive",
+            "rm -rf webtrees-fan-chart/.github",
+            "rm -rf webtrees-fan-chart/resources/js/modules",
+            "rm -rf webtrees-fan-chart/test",
+            "rm -f webtrees-fan-chart/.gitattributes",
+            "rm -f webtrees-fan-chart/.gitignore",
+            "rm -f webtrees-fan-chart/composer.json",
+            "rm -f webtrees-fan-chart/package.json",
+            "rm -f webtrees-fan-chart/rollup.config.js",
+            "rm -f webtrees-fan-chart/phpstan.neon",
+            "rm -f webtrees-fan-chart/phpunit.xml",
+            "### Create archive",
+            "zip --quiet --recurse-paths --move -9 webtrees-fan-chart.zip webtrees-fan-chart"
+        ],
+        "module:check": [
+            "### PHP CodeSniffer",
+            "@composer module:phpcs",
+            "### PHPStan",
+            "@composer module:phpstan",
+            "### PHPUnit",
+            "@composer module:phpunit"
+        ],
+        "module:phpcs": [
+            "@composer global require squizlabs/php_codesniffer=* --quiet",
+            "~/.composer/vendor/bin/phpcs src/ --standard=PSR12"
+        ],
+        "module:phpstan": [
+            "@composer global require --quiet phpstan/phpstan=*",
+            "@composer global require --quiet phpstan/extension-installer=*",
+            "@composer global require --quiet phpstan/phpstan-deprecation-rules=*",
+            "@composer global require --quiet phpstan/phpstan-strict-rules=*",
+            "@composer install --quiet",
+            "~/.composer/vendor/bin/phpstan analyse --memory-limit=-1 -c phpstan.neon",
+            "@composer install --no-dev --quiet"
+        ],
+        "module:phpunit": [
+            "@composer install --quiet",
+            "@php vendor/bin/phpunit",
+            "@composer install --no-dev --quiet"
+        ]
+    },
+    "scripts-descriptions": {
+        "module:build": "Create a distribution file (webtrees-fan-chart.zip)",
+        "module:check": "Run various static analysis tools"
     }
 }
