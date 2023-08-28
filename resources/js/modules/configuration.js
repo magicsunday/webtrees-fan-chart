@@ -77,13 +77,12 @@ export default class Configuration
         // Width of the colored arc above each single person arc
         this.colorArcWidth = 5;
 
-        // Left/Right padding of text (used with truncation)
+        // Left/Right padding of the text (used with truncation)
         this.textPadding = 8;
 
         // Default font size, color and scaling
         this._fontSize  = 15;
         this._fontScale = fontScale;
-        this.fontColor = "rgb(0, 0, 0)";
 
         this._hideEmptySegments  = hideEmptySegments;
         this._showColorGradients = showColorGradients;

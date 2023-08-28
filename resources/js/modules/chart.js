@@ -171,7 +171,7 @@ export default class Chart
     }
 
     /**
-     * This method bind the "click" event listeners to a "person" element.
+     * This method binds a "click" event listeners to a "person" element.
      */
     bindClickEventListener()
     {

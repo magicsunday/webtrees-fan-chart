@@ -93,7 +93,7 @@ export default class Text
                     .append("textPath")
                     .attr("xlink:href", "#" + pathId3)
                     .attr("startOffset", "25%")
-                    .attr("class", "alternativeName")
+                    .attr("class", "wt-chart-box-name-alt")
                     .classed("rtl", datum.data.isAltRtl);
 
                 this.addAlternativeNames(textPath3, datum);
@@ -227,7 +227,7 @@ export default class Text
                 .append("textPath")
                 .attr("xlink:href", "#" + pathId5)
                 .attr("startOffset", "25%")
-                .attr("class", "marriage-date");
+                .attr("class", "date");
 
             this.addMarriageDate(textPath5, datum);
         }

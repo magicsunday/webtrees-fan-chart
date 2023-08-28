@@ -305,9 +305,8 @@ export default class Person
     {
         return parent
             .append("g")
-            .attr("class", "name")
-            .style("font-size", this.getFontSize(data) + "px")
-            .style("fill", this._configuration.fontColor);
+            .attr("class", "wt-chart-box-name name")
+            .style("font-size", this.getFontSize(data) + "px");
     }
 
     /**
