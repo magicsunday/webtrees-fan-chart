@@ -11,20 +11,23 @@ declare(strict_types=1);
 
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
+use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
 use MagicSunday\Webtrees\FanChart\Configuration;
 
-/** @var Configuration $configuration */
-/** @var string $title */
-/** @var string $moduleName */
-/** @var Individual $individual */
-/** @var Tree $tree */
-/** @var array $chartParams */
-/** @var string $javascript */
-/** @var string $stylesheet */
-/** @var string $svgStylesheet */
-/** @var string $ajaxUrl */
+/**
+ * @var Configuration $configuration
+ * @var string        $title
+ * @var string        $moduleName
+ * @var Individual    $individual
+ * @var Tree          $tree
+ * @var array         $chartParams
+ * @var string        $javascript
+ * @var string        $stylesheet
+ * @var string        $svgStylesheet
+ * @var string        $ajaxUrl
+ */
 ?>
 
 <div id="page-fan">
@@ -289,9 +292,15 @@ document.getElementById("fanDegree").addEventListener("input", function (event) 
     document.getElementById('fanDegreeOutput').value = document.getElementById("fanDegree").value + "°";
 });
 
-let data    = <?= $chartParams ?>;
-let ajaxUrl = <?= json_encode($ajaxUrl) ?>;
-let cssUrl  = <?= json_encode($svgStylesheet) ?>;
+let data     = <?= $chartParams ?>;
+let ajaxUrl  = <?= json_encode($ajaxUrl) ?>;
+let cssFiles = [];
+
+<?php foreach (app(ModuleThemeInterface::class)->stylesheets() as $stylesheet) : ?>
+    cssFiles.push(<?= json_encode($stylesheet) ?>);
+<?php endforeach ?>
+
+cssFiles.push(<?= json_encode($svgStylesheet) ?>);
 
 // Create chart instance with stored configuration
 const fanChart = new WebtreesFanChart.FanChart(
@@ -313,7 +322,7 @@ const fanChart = new WebtreesFanChart.FanChart(
     }
 );
 
-fanChart.cssFile = cssUrl;
+fanChart.cssFiles = cssFiles;
 
 // Load initial chart data
 drawChart(fanChart, ajaxUrl);

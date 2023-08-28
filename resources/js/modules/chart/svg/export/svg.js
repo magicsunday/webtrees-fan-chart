@@ -21,23 +21,26 @@ export default class SvgExport extends Export
      * Copies recursively all the styles from the list of container elements from the source
      * to the destination node.
      *
-     * @param {String}             cssFile
+     * @param {String[]}           cssFiles
      * @param {SVGGraphicsElement} destinationNode
      *
      * @returns {Promise<SVGGraphicsElement>}
      */
-    copyStylesInline(cssFile, destinationNode)
+    copyStylesInline(cssFiles, destinationNode)
     {
         return new Promise(resolve => {
-            d3.text(cssFile)
-                .then((data) => {
-                    // Remove parent container selector as the CSS is included directly into the SVG element
-                    data = data.replace(/#webtrees-fan-chart-container /g, "");
+            Promise
+                .all(cssFiles.map(url => d3.text(url)))
+                .then((filesData) => {
+                    filesData.forEach(data => {
+                        // Remove parent container selector as the CSS is included directly in the SVG element
+                        data = data.replace(/#webtrees-fan-chart-container /g, "");
 
-                    let style = document.createElementNS("http://www.w3.org/2000/svg", "style");
-                    style.appendChild(document.createTextNode(data));
+                        let style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+                        style.appendChild(document.createTextNode(data));
 
-                    destinationNode.prepend(style);
+                        destinationNode.prepend(style);
+                    });
 
                     resolve(destinationNode);
                 });
@@ -87,14 +90,14 @@ export default class SvgExport extends Export
     /**
      * Saves the given SVG as SVG image file.
      *
-     * @param {Svg}    svg      The source SVG object
-     * @param {String} cssFile  The CSS file used together with the SVG
-     * @param {String} fileName The file name
+     * @param {Svg}      svg      The source SVG object
+     * @param {String[]} cssFiles The CSS files used together with the SVG
+     * @param {String}   fileName The file name
      */
-    svgToImage(svg, cssFile, fileName)
+    svgToImage(svg, cssFiles, fileName)
     {
         this.cloneSvg(svg.get().node())
-            .then(newSvg => this.copyStylesInline(cssFile, newSvg))
+            .then(newSvg => this.copyStylesInline(cssFiles, newSvg))
             .then(newSvg => this.convertToObjectUrl(newSvg))
             .then(objectUrl => this.triggerDownload(objectUrl, fileName))
             .catch(() => {

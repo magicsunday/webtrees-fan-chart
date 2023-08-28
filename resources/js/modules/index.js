@@ -61,6 +61,9 @@ export class FanChart
         // Set up chart instance
         this._chart = new Chart(this._parent, this._configuration);
 
+        // List of css files used to render SVG export
+        this._cssFiles = [];
+
         this.init();
     }
 
@@ -107,13 +110,13 @@ export class FanChart
     }
 
     /**
-     * Sets the URL to the CSS file used in SVG export.
+     * Sets the URLs to the CSS files used in SVG export.
      *
-     * @param {String} cssFile
+     * @param {String[]} cssFiles
      */
-    set cssFile(cssFile)
+    set cssFiles(cssFiles)
     {
-        this._cssFile = cssFile;
+        this._cssFiles = cssFiles;
     }
 
     /**
@@ -149,6 +152,6 @@ export class FanChart
     {
         const product = this._chart.svg.export('svg');
 
-        product.svgToImage(this._chart.svg, this._cssFile, "fan-chart.svg");
+        product.svgToImage(this._chart.svg, this._cssFiles, "fan-chart.svg");
     }
 }
