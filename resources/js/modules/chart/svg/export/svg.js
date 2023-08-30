@@ -42,6 +42,9 @@ export default class SvgExport extends Export
                         destinationNode.prepend(style);
                     });
 
+                    // Assign class wt-global so theme related styles are correctly set in export
+                    destinationNode.classList.add("wt-global");
+
                     resolve(destinationNode);
                 });
         })
@@ -92,7 +95,7 @@ export default class SvgExport extends Export
      *
      * @param {Svg}      svg      The source SVG object
      * @param {String[]} cssFiles The CSS files used together with the SVG
-     * @param {String}   fileName The file name
+     * @param {String}   fileName The output file name
      */
     svgToImage(svg, cssFiles, fileName)
     {
