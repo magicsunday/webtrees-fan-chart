@@ -37,6 +37,7 @@ export class FanChart
      * @param {Boolean}  options.showSilhouettes
      * @param {Boolean}  options.rtl
      * @param {Number}   options.innerArcs
+     * @param {String[]} options.cssFiles
      */
     constructor(selector, options)
     {
@@ -58,11 +59,10 @@ export class FanChart
             options.innerArcs
         );
 
+        this._cssFiles = options.cssFiles;
+
         // Set up chart instance
         this._chart = new Chart(this._parent, this._configuration);
-
-        // List of css files used to render SVG export
-        this._cssFiles = [];
 
         this.init();
     }
@@ -107,16 +107,6 @@ export class FanChart
     get configuration()
     {
         return this._configuration;
-    }
-
-    /**
-     * Sets the URLs to the CSS files used in SVG export.
-     *
-     * @param {String[]} cssFiles
-     */
-    set cssFiles(cssFiles)
-    {
-        this._cssFiles = cssFiles;
     }
 
     /**

@@ -1,9 +1,9 @@
 /* Form */
-#webtrees-fan-chart-form .custom-range {
+.webtrees-fan-chart-form .custom-range {
     padding-top: 4px;
 }
 
-#webtrees-fan-chart-form .custom-range-value {
+.webtrees-fan-chart-form .custom-range-value {
     height: 26px;
     line-height: 16px;
     text-align: center;
@@ -12,26 +12,26 @@
     margin-left: 10px;
 }
 
-#webtrees-fan-chart-form .row {
+.webtrees-fan-chart-form .row {
     margin-left: 0;
     margin-right: 0;
 }
 
 /* SVG */
-#webtrees-fan-chart-container {
+.webtrees-fan-chart-container {
     position: relative;
     font-size: unset;
     display: flex;
     flex: auto;
 }
 
-#webtrees-fan-chart-container .rtl {
+.webtrees-fan-chart-container .rtl {
     direction: rtl !important;
     unicode-bidi: bidi-override !important;
 }
 
 /* Overlay */
-#webtrees-fan-chart-container div.overlay {
+.webtrees-fan-chart-container div.overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -49,12 +49,12 @@
 }
 
 @supports (-webkit-backdrop-filter: none) {
-    #webtrees-fan-chart-container div.overlay {
+    .webtrees-fan-chart-container div.overlay {
         -webkit-backdrop-filter: blur(1em);
     }
 }
 
-#webtrees-fan-chart-container div.overlay .tooltip {
+.webtrees-fan-chart-container div.overlay .tooltip {
     font-size: 22px;
     color: #5a6268;
     position: relative;
@@ -66,39 +66,39 @@
 }
 
 @supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-    #webtrees-fan-chart-container div.overlay {
+    .webtrees-fan-chart-container div.overlay {
         background: rgba(0, 0, 0, 0.5);
     }
 
-    #webtrees-fan-chart-container div.overlay .tooltip {
+    .webtrees-fan-chart-container div.overlay .tooltip {
         color: white;
     }
 }
 
-#webtrees-fan-chart-container svg {
+.webtrees-fan-chart-container svg {
     display: block;
     margin: auto;
     cursor: grab;
     filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.2));
 }
 
-#webtrees-fan-chart-container svg:active {
+.webtrees-fan-chart-container svg:active {
     cursor: grabbing;
 }
 
 /* Unset any style from our transition helper classes */
-#webtrees-fan-chart-container svg .new,
-#webtrees-fan-chart-container svg .remove,
-#webtrees-fan-chart-container svg .update,
-#webtrees-fan-chart-container svg .old {
+.webtrees-fan-chart-container svg .new,
+.webtrees-fan-chart-container svg .remove,
+.webtrees-fan-chart-container svg .update,
+.webtrees-fan-chart-container svg .old {
     all: unset;
 }
 
-#webtrees-fan-chart-container svg .person.available {
+.webtrees-fan-chart-container svg .person.available {
     cursor: pointer;
 }
 
-#webtrees-fan-chart-container svg .person.hover {
+.webtrees-fan-chart-container svg .person.hover {
     filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.3));
     filter: url('#drop-shadow');
 }

@@ -11,12 +11,12 @@ declare(strict_types=1);
 
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
-use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
 use MagicSunday\Webtrees\FanChart\Configuration;
 
 /**
+ * @var array         $id               The unique chart ID
  * @var Configuration $configuration
  * @var string        $title
  * @var string        $moduleName
@@ -24,13 +24,13 @@ use MagicSunday\Webtrees\FanChart\Configuration;
  * @var Tree          $tree
  * @var array         $chartParams
  * @var string        $javascript
- * @var string        $stylesheet
- * @var string        $svgStylesheet
+ * @var string[]      $stylesheets
+ * @var string[]      $exportStylesheets A list of stylesheets used by SVG export
  * @var string        $ajaxUrl
  */
 ?>
 
-<div id="page-fan">
+<div class="webtrees-fan-chart">
     <h2 class="wt-page-title"><?= $title ?></h2>
 
     <form id="webtrees-fan-chart-form" method="post" class="wt-page-options wt-page-options-fan-chart d-print-none">
@@ -192,13 +192,14 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     </form>
 
     <div class="row">
-        <div id="webtrees-fan-chart-container" class="wt-ajax-load wt-page-content wt-chart wt-fan-chart"></div>
+        <div id="webtrees-fan-chart-container-<?= $id ?>" class="webtrees-fan-chart-container wt-ajax-load wt-page-content wt-chart wt-fan-chart"></div>
     </div>
 </div>
 
 <?php View::push('styles') ?>
-<link rel="stylesheet" href="<?= e($stylesheet) ?>">
-<link rel="stylesheet" href="<?= e($svgStylesheet) ?>">
+    <?php foreach ($stylesheets as $stylesheet) : ?>
+        <link rel="stylesheet" href="<?= e($stylesheet) ?>">
+    <?php endforeach ?>
 <?php View::endpush(); ?>
 
 <?php View::push('javascript'); ?>
@@ -294,17 +295,11 @@ document.getElementById("fanDegree").addEventListener("input", function (event) 
 
 let data     = <?= $chartParams ?>;
 let ajaxUrl  = <?= json_encode($ajaxUrl) ?>;
-let cssFiles = [];
-
-<?php foreach (app(ModuleThemeInterface::class)->stylesheets() as $stylesheet) : ?>
-    cssFiles.push(<?= json_encode($stylesheet) ?>);
-<?php endforeach ?>
-
-cssFiles.push(<?= json_encode($svgStylesheet) ?>);
+let cssFiles = <?= json_encode($exportStylesheets) ?>;
 
 // Create chart instance with stored configuration
 const fanChart = new WebtreesFanChart.FanChart(
-    "#webtrees-fan-chart-container",
+    "#webtrees-fan-chart-container-<?= $id ?>",
     {
         labels: data.labels,
         generations: parseInt(storage.read("generations")),
@@ -317,11 +312,10 @@ const fanChart = new WebtreesFanChart.FanChart(
         showImages: data.showImages,
         showSilhouettes: data.showSilhouettes,
         rtl: data.rtl,
-        innerArcs: parseInt(storage.read("innerArcs"))
+        innerArcs: parseInt(storage.read("innerArcs")),
+        cssFiles: cssFiles
     }
 );
-
-fanChart.cssFiles = cssFiles;
 
 // Load initial chart data
 drawChart(fanChart, ajaxUrl);

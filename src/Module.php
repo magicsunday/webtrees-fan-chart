@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart;
 
-use Aura\Router\RouterContainer;
 use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Family;
@@ -23,6 +22,7 @@ use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleChartInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Validator;
 use Fisharebest\Webtrees\View;
@@ -87,10 +87,8 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     public function boot(): void
     {
-        /** @var RouterContainer $routerContainer */
-        $routerContainer = app(RouterContainer::class);
-
-        $routerContainer->getMap()
+        Registry::routeFactory()
+            ->routeMap()
             ->get(self::ROUTE_DEFAULT, self::ROUTE_DEFAULT_URL, $this)
             ->allows(RequestMethodInterface::METHOD_POST);
 
@@ -118,7 +116,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     }
 
     /**
-     * Where does this module store its resources
+     * Where does this module store its resources?
      *
      * @return string
      */
@@ -185,16 +183,17 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         return $this->viewResponse(
             $this->name() . '::chart',
             [
-                'title'         => $this->getPageTitle($individual),
-                'ajaxUrl'       => $ajaxUpdateUrl,
-                'moduleName'    => $this->name(),
-                'individual'    => $individual,
-                'tree'          => $tree,
-                'configuration' => $this->configuration,
-                'chartParams'   => json_encode($this->getChartParameters($individual), JSON_THROW_ON_ERROR),
-                'stylesheet'    => $this->assetUrl('css/fan-chart.css'),
-                'svgStylesheet' => $this->assetUrl('css/svg.css'),
-                'javascript'    => $this->assetUrl('js/fan-chart.min.js'),
+                'id'                => uniqid(),
+                'title'             => $this->getPageTitle($individual),
+                'ajaxUrl'           => $ajaxUpdateUrl,
+                'moduleName'        => $this->name(),
+                'individual'        => $individual,
+                'tree'              => $tree,
+                'configuration'     => $this->configuration,
+                'chartParams'       => json_encode($this->getChartParameters($individual), JSON_THROW_ON_ERROR),
+                'stylesheets'       => $this->getStylesheets(),
+                'exportStylesheets' => $this->getExportStylesheets(),
+                'javascript'        => $this->assetUrl('js/fan-chart.min.js'),
             ]
         );
     }
@@ -369,5 +368,35 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         }
 
         return false;
+    }
+
+    /**
+     * Returns a list of used stylesheets with this module.
+     *
+     * @return array<string>
+     */
+    private function getStylesheets(): array
+    {
+        $stylesheets = [];
+
+        $stylesheets[] = $this->assetUrl('css/fan-chart.css');
+        $stylesheets[] = $this->assetUrl('css/svg.css');
+
+        return $stylesheets;
+    }
+
+    /**
+     * Returns a list required stylesheets for the SVG export.
+     *
+     * @return array<string>
+     */
+    private function getExportStylesheets(): array
+    {
+        /** @var ModuleThemeInterface $currentTheme */
+        $currentTheme  = app(ModuleThemeInterface::class);
+        $stylesheets   = $currentTheme->stylesheets();
+        $stylesheets[] = $this->assetUrl('css/svg.css');
+
+        return $stylesheets;
     }
 }
