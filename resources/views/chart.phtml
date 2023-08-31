@@ -58,7 +58,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                 <?= I18N::translate('Fan size') ?>
             </label>
             <div class="col-sm-9 wt-page-options-value d-flex justify-content-between">
-                <input id="fanDegree" name="fanDegree" class="flex-grow-1 custom-range" type="range" value="<?= $configuration->getFanDegree() ?>" min="180" max="360" step="5">
+                <input id="fanDegree" name="fanDegree" class="flex-grow-1 custom-range" type="range" value="<?= $configuration->getFanDegree() ?>" min="90" max="360" step="5">
                 <output id="fanDegreeOutput" name="fanDegreeOutput" class="custom-range-value wt-page-options-label"><?= $configuration->getFanDegree() ?>°</output>
             </div>
         </div>
