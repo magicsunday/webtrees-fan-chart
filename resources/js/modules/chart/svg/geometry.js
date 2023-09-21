@@ -152,8 +152,6 @@ export default class Geometry
      * @param {Number} value The starting point of the rectangle
      *
      * @return {Number}
-     *
-     * @private
      */
     calcAngle(value)
     {

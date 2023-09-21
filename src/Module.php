@@ -321,7 +321,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $fatherTree = $this->buildJsonTree($family->husband(), $generation + 1);
         $motherTree = $this->buildJsonTree($family->wife(), $generation + 1);
 
-        // Add array of child nodes
+        // Add an array of child nodes
         if (!empty($fatherTree)) {
             $data['children'][] = $fatherTree;
         }

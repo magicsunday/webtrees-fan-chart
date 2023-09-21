@@ -68,7 +68,7 @@ export default class Text
                 this.truncateNames(textPath2, datum, 1);
             }
 
-            // If both first and last names are empty, add the full name as alternative
+            // If both first and last names are empty, add the full name as an alternative
             if (!datum.data.firstNames.length
                 && !datum.data.lastNames.length
             ) {
@@ -129,7 +129,7 @@ export default class Text
 
         // Outer labels
         } else {
-            // The outer most circles show the complete name and do
+            // The outermost circles show the complete name and do
             // not distinguish between first name, last name and dates
             if (datum.depth >= 7) {
                 let text1 = parent
@@ -144,7 +144,7 @@ export default class Text
                     this.addLastNames(text1, datum, 0.25);
                 }
 
-                // If both first and last names are empty, add the full name as alternative
+                // If both first and last names are empty, add the full name as an alternative
                 if (!datum.data.firstNames.length
                     && !datum.data.lastNames.length
                 ) {
@@ -229,7 +229,7 @@ export default class Text
                 }
             }
 
-            // Rotate outer labels in right position
+            // Rotate outer labels in the right position
             this.transformOuterText(parent, datum);
         }
 
@@ -363,7 +363,7 @@ export default class Text
         let availableWidth = this.getAvailableWidth(datum, index);
 
         // Select all not preferred names and not last names
-        // Start truncating from last element to the first one
+        // Start truncating from the last element to the first one
         parent.selectAll("tspan:not(.preferred):not(.lastName)")
             .nodes()
             .reverse()
@@ -372,7 +372,7 @@ export default class Text
                     .each(this.truncateText(parent, availableWidth));
             });
 
-        // Afterwards the preferred ones if text takes still to much space
+        // Afterward, the preferred ones if text takes still too much space
         parent.selectAll("tspan.preferred")
             .each(this.truncateText(parent, availableWidth));
 
@@ -396,7 +396,7 @@ export default class Text
             let tspan      = d3.select(this);
             let words      = tspan.text().split(/\s+/);
 
-            // If the <tspan> contains multiple words split them until available width matches
+            // If the <tspan> contains multiple words, split them until available width matches
             for (let i = words.length - 1; i >= 0; --i) {
                 if (textLength > availableWidth) {
                     // Keep only the first letter
@@ -481,7 +481,7 @@ export default class Text
 
     /**
      * Returns TRUE if the depth of the element is in the inner range. So labels should
-     * be rendered along an arc path. Otherwise returns FALSE to indicate the element
+     * be rendered along an arc path. Otherwise, returns FALSE to indicate the element
      * is either the center one or an outer arc.
      *
      * @param {Object} data The D3 data object
@@ -498,7 +498,7 @@ export default class Text
      * Creates a new <path> definition and append it to the global definition list.
      *
      * @param {String} parentId The parent element id
-     * @param {Number} index    Index position of element in parent container. Required to create a unique path id.
+     * @param {Number} index    Index position of an element in parent container. Required to create a unique path id.
      * @param {Object} data     The D3 data object
      *
      * @return {String} The id of the newly created path element
@@ -507,7 +507,7 @@ export default class Text
     {
         let pathId = "path-" + parentId + "-" + index;
 
-        // If definition already exists return the existing path id
+        // If definition already exists, return the existing path ID
         if (this._svg.defs.get().select("path#" + pathId).node()) {
             return pathId;
         }
@@ -546,7 +546,7 @@ export default class Text
     }
 
     /**
-     * Check for the 360 degree chart if the current arc labels should be flipped for easier reading.
+     * Check for the 360-degree chart if the current arc labels should be flipped for easier reading.
      *
      * @param {Number} depth The depth of the element inside the chart
      * @param {Number} x0    The left edge (x0) of the rectangle
@@ -653,7 +653,7 @@ export default class Text
         textElements.each(function (ignore, i) {
             const offsetRotate = mapIndexToOffset(i) * that._configuration.fontScale / 100.0;
 
-            // Name of center person should not be rotated in any way
+            // The name of center person should not be rotated in any way
             if (datum.depth === 0) {
                 // TODO Depends on font-size
                 d3.select(this).attr("dy", (offsetRotate * 15) + (15 / 2) + "px");
