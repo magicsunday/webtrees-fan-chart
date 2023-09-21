@@ -86,7 +86,7 @@ export default class Text
             }
 
             // Alternative names
-            if (datum.data.alternativeNames.length) {
+            if (datum.data.alternativeName !== "") {
                 let pathId3   = this.createPathDefinition(parentId, 2, datum);
                 let textPath3 = parent
                     .append("text")
@@ -174,7 +174,18 @@ export default class Text
                     this.truncateNames(text3, datum, 1);
                 }
 
-                // If both first and last names are empty, add the full name as alternative
+                // Alternative name
+                if (datum.data.alternativeName !== "") {
+                    let text4 = parent
+                        .append("text")
+                        .attr("dy", "2px")
+                        .attr("class", "wt-chart-box-name-alt");
+
+                    this.addAlternativeNames(text4, datum);
+                    this.truncateNames(text4, datum, 2);
+                }
+
+                // If both first and last names are empty, add the full name as an alternative
                 if (!datum.data.firstNames.length
                     && !datum.data.lastNames.length
                 ) {
@@ -303,9 +314,10 @@ export default class Text
      */
     addAlternativeNames(parent, datum, dx = 0)
     {
+        let words = datum.data.alternativeName.split(/\s+/);
         let i = 0;
 
-        for (let alternativeName of datum.data.alternativeNames) {
+        for (let alternativeName of words) {
             // Create a <tspan> element for each alternative name
             let tspan = parent.append("tspan")
                 .text(alternativeName);
@@ -614,10 +626,10 @@ export default class Text
      */
     transformOuterText(parent, datum)
     {
-        let that          = this;
-        let textElements  = parent.selectAll("text");
+        let that = this;
+        let textElements = parent.selectAll("text");
         let countElements = textElements.size();
-        let offset        = 1.0;
+        let offset = 1.0;
 
         // Special offsets for shifting the text around depending on the depth
         switch (datum.depth) {
@@ -640,7 +652,7 @@ export default class Text
             // Name of center person should not be rotated in any way
             if (datum.depth === 0) {
                 // TODO Depends on font-size
-                d3.select(this).attr("dy", (offsetRotate * 14) + (14 / 2) + "px");
+                d3.select(this).attr("dy", (offsetRotate * 15) + (15 / 2) + "px");
             } else {
                 d3.select(this).attr("transform", function () {
                     let dx        = datum.x1 - datum.x0;

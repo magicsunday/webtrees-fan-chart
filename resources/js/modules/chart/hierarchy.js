@@ -109,19 +109,19 @@ export default class Hierarchy
     createEmptyNode(generation, sex)
     {
         return {
-            id               : 0,
-            xref             : "",
-            url              : "",
-            updateUrl        : "",
-            generation       : generation,
-            name             : "",
-            firstNames       : [],
-            lastNames        : [],
-            preferredName    : "",
-            alternativeNames : [],
-            isAltRtl         : false,
-            sex              : sex,
-            timespan         : ""
+            id              : 0,
+            xref            : "",
+            url             : "",
+            updateUrl       : "",
+            generation      : generation,
+            name            : "",
+            firstNames      : [],
+            lastNames       : [],
+            preferredName   : "",
+            alternativeName : "",
+            isAltRtl        : false,
+            sex             : sex,
+            timespan        : ""
         };
     }
 }
