@@ -30,7 +30,7 @@
     text-decoration: underline;
 }
 
-.webtrees-fan-chart-container svg g.name tspan.wt-chart-box-name-alt {
+.webtrees-fan-chart-container svg g.name .wt-chart-box-name-alt {
     fill: rgb(127, 127, 127);
     font-weight: normal;
     direction: ltr;
