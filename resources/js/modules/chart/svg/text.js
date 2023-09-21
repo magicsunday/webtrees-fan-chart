@@ -101,28 +101,30 @@ export default class Text
             }
 
             // Birth and death date
-            let pathId4   = this.createPathDefinition(parentId, 3, datum);
-            let textPath4 = parent
-                .append("text")
-                .append("textPath")
-                .attr("xlink:href", "#" + pathId4)
-                .attr("startOffset", "25%")
-                .attr("class", "date");
+            if (datum.data.timespan !== "") {
+                let pathId4 = this.createPathDefinition(parentId, 3, datum);
+                let textPath4 = parent
+                    .append("text")
+                    .append("textPath")
+                    .attr("xlink:href", "#" + pathId4)
+                    .attr("startOffset", "25%")
+                    .attr("class", "date");
 
-            textPath4.append("title")
-                .text(datum.data.timespan);
+                textPath4.append("title")
+                    .text(datum.data.timespan);
 
-            // Create a <tspan> element for the time span
-            let tspan = textPath4.append("tspan")
-                .text(datum.data.timespan);
+                // Create a <tspan> element for the time span
+                let tspan = textPath4.append("tspan")
+                    .text(datum.data.timespan);
 
-            let availableWidth = this.getAvailableWidth(datum, 3);
+                let availableWidth = this.getAvailableWidth(datum, 3);
 
-            if (this.getTextLength(textPath4) > availableWidth) {
-                textPath4.selectAll("tspan")
-                    .each(this.truncateDate(textPath4, availableWidth));
+                if (this.getTextLength(textPath4) > availableWidth) {
+                    textPath4.selectAll("tspan")
+                        .each(this.truncateDate(textPath4, availableWidth));
 
-                tspan.text(tspan.text() + "\u2026");
+                    tspan.text(tspan.text() + "\u2026");
+                }
             }
 
         // Outer labels
@@ -202,25 +204,27 @@ export default class Text
                 // Birth and death date
                 if (datum.depth < 6) {
                     // Birth and death date
-                    let text4 = parent
-                        .append("text")
-                        .attr("class", "date")
-                        .attr("dy", "2px");
+                    if (datum.data.timespan !== "") {
+                        let text5 = parent
+                            .append("text")
+                            .attr("class", "date")
+                            .attr("dy", "2px");
 
-                    text4.append("title")
-                        .text(datum.data.timespan);
+                        text5.append("title")
+                            .text(datum.data.timespan);
 
-                    // Create a <tspan> element for the time span
-                    let tspan = text4.append("tspan")
-                        .text(datum.data.timespan);
+                        // Create a <tspan> element for the time span
+                        let tspan = text5.append("tspan")
+                            .text(datum.data.timespan);
 
-                    let availableWidth = this.getAvailableWidth(datum, 2);
+                        let availableWidth = this.getAvailableWidth(datum, 2);
 
-                    if (this.getTextLength(text4) > availableWidth) {
-                        text4.selectAll("tspan")
-                            .each(this.truncateDate(text4, availableWidth));
+                        if (this.getTextLength(text5) > availableWidth) {
+                            text5.selectAll("tspan")
+                                .each(this.truncateDate(text5, availableWidth));
 
-                        tspan.text(tspan.text() + "\u2026");
+                            tspan.text(tspan.text() + "\u2026");
+                        }
                     }
                 }
             }
