@@ -1,0 +1,117 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2023-01-11 08:34+0100\n"
+"PO-Revision-Date: 2023-12-22 12:53+0100\n"
+"Last-Translator: Gregor Anželj <gregor.anzelj@gmail.com>\n"
+"Language-Team: \n"
+"Language: sl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
+"n%100==4 ? 3 : 0);\n"
+"X-Generator: Poedit 3.4.1\n"
+"X-Poedit-Basepath: ../../..\n"
+"X-Poedit-KeywordsList: translate\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: resources/views\n"
+
+#: src/Module.php:116 src/Module.php:220
+msgid "Fan chart"
+msgstr "Pahljačasti diagram"
+
+#: src/Module.php:126
+msgid "A fan chart of an individual’s ancestors."
+msgstr "Pahljačasti diagram posameznikovih prednikov."
+
+#: src/Module.php:223 src/Traits/ModuleChartTrait.php:38
+#, php-format
+msgid "Fan chart of %s"
+msgstr "Pahljačasti diagram osebe %s"
+
+#: src/Module.php:243
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Uporabi Ctrl+Scroll kolesce za povečavo diagrama"
+
+#: src/Module.php:244
+msgid "Move the view with two fingers"
+msgstr "Premakni pogled z dvema prstoma"
+
+#: src/Traits/IndividualTrait.php:151
+#, php-format
+msgid "Born: %s"
+msgstr "Rojstvo: %s"
+
+#: src/Traits/IndividualTrait.php:155
+#, php-format
+msgid "Died: %s"
+msgstr "Smrt: %s"
+
+#: src/Traits/IndividualTrait.php:159
+msgid "Deceased"
+msgstr "Pokojni/a"
+
+#: resources/views/chart.phtml:35
+msgid "Individual"
+msgstr "Posameznik"
+
+#: resources/views/chart.phtml:52
+msgid "Fan size"
+msgstr "Velikost pahljače"
+
+#: resources/views/chart.phtml:62
+msgid "Generations"
+msgstr "Generacije"
+
+#: resources/views/chart.phtml:80
+msgid "Presentation"
+msgstr "Predstavitev"
+
+#: resources/views/chart.phtml:87
+msgid "Hide empty segments"
+msgstr "Skrij prazne dele"
+
+#: resources/views/chart.phtml:96
+msgid "Show color gradients"
+msgstr "Pokaži barvne prehode"
+
+#: resources/views/chart.phtml:105
+msgid "Show parent marriage dates"
+msgstr "Pokaži datum poroke staršev"
+
+#: resources/views/chart.phtml:114
+msgid "Number of inner levels"
+msgstr "Število notranjih ravni"
+
+#: resources/views/chart.phtml:127
+msgid "Specifies the number of levels in which the text is written along an arc."
+msgstr "Določi število ravni, v katerih je besedilo zapisano vzdolž loka."
+
+#: resources/views/chart.phtml:134
+msgid "Font size"
+msgstr "Velikost pisave"
+
+#: resources/views/chart.phtml:159
+msgid "Show more options"
+msgstr "Pokaži več možnosti"
+
+#: resources/views/chart.phtml:160
+msgid "Hide more options"
+msgstr "Skrij več možnosti"
+
+#: resources/views/chart.phtml:165
+msgid "view"
+msgstr "Prikaži"
+
+#: resources/views/chart.phtml:171
+msgid "Re center"
+msgstr "Znova na sredino"
+
+#: resources/views/chart.phtml:176
+msgid "Export as PNG"
+msgstr "Izvozi kot PNG"
+
+#: resources/views/chart.phtml:179
+msgid "Export as SVG"
+msgstr "Izvozi kot SVG"
