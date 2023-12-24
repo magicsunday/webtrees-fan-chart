@@ -38,7 +38,7 @@
 }
 
 .webtrees-fan-chart-container svg g.name .date {
-    fill: currentColor;
+    fill: rgb(50, 50, 50);
     font-weight: normal;
     direction: ltr;
     unicode-bidi: plaintext;
@@ -49,11 +49,11 @@
 }
 
 .webtrees-fan-chart-container svg .wt-chart-box-name {
-    fill: var(--link-color, currentColor);
+    fill: rgb(50, 50, 50);
 }
 
 .webtrees-fan-chart-container svg .wt-chart-box-name-alt {
-    fill: currentColor;
+    fill: rgb(50, 50, 50);
 }
 
 .webtrees-fan-chart-container svg .wt-chart-box-name:hover:not(.wt-chart-box-name-alt) {
