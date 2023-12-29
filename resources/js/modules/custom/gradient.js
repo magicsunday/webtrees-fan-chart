@@ -35,52 +35,52 @@ export default class Gradient
      *
      * @return {void}
      */
-    init(data)
+    init(datum)
     {
-        if (data.depth < 1) {
+        if (datum.depth < 1) {
             return;
         }
 
-        if (data.depth === 1) {
+        if (datum.depth === 1) {
             // Define initial gradient colors starting with second generation
             let color1 = [64, 143, 222];
             let color2 = [161, 219, 117];
 
-            if (data.data.sex === SEX_FEMALE) {
+            if (datum.data.data.sex === SEX_FEMALE) {
                 color1 = [218, 102, 13];
                 color2 = [235, 201, 33];
             }
 
-            data.data.colors = [ color1, color2 ];
+            datum.data.data.colors = [ color1, color2 ];
         } else {
             // Calculate subsequent gradient colors
             let c = [
-                Math.ceil((data.parent.data.colors[0][0] + data.parent.data.colors[1][0]) / 2.0),
-                Math.ceil((data.parent.data.colors[0][1] + data.parent.data.colors[1][1]) / 2.0),
-                Math.ceil((data.parent.data.colors[0][2] + data.parent.data.colors[1][2]) / 2.0),
+                Math.ceil((datum.parent.data.data.colors[0][0] + datum.parent.data.data.colors[1][0]) / 2.0),
+                Math.ceil((datum.parent.data.data.colors[0][1] + datum.parent.data.data.colors[1][1]) / 2.0),
+                Math.ceil((datum.parent.data.data.colors[0][2] + datum.parent.data.data.colors[1][2]) / 2.0),
             ];
 
-            if (data.data.sex === SEX_MALE) {
-                data.data.colors = [ data.parent.data.colors[0], c];
+            if (datum.data.data.sex === SEX_MALE) {
+                datum.data.data.colors = [ datum.parent.data.data.colors[0], c];
             }
 
-            if (data.data.sex === SEX_FEMALE) {
-                data.data.colors = [ c, data.parent.data.colors[1] ];
+            if (datum.data.data.sex === SEX_FEMALE) {
+                datum.data.data.colors = [ c, datum.parent.data.data.colors[1] ];
             }
         }
 
         // Add a new radial gradient
         let newGrad = this._svg.defs.get()
             .append("svg:linearGradient")
-            .attr("id", "grad-" + data.data.id);
+            .attr("id", "grad-" + datum.id);
 
         // Define start and stop colors of gradient
         newGrad.append("svg:stop")
             .attr("offset", "0%")
-            .attr("stop-color", "rgb(" + data.data.colors[0].join(",") + ")");
+            .attr("stop-color", "rgb(" + datum.data.data.colors[0].join(",") + ")");
 
         newGrad.append("svg:stop")
             .attr("offset", "100%")
-            .attr("stop-color", "rgb(" + data.data.colors[1].join(",") + ")");
+            .attr("stop-color", "rgb(" + datum.data.data.colors[1].join(",") + ")");
     }
 }

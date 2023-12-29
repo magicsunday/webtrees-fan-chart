@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "./../../d3";
+import * as d3 from "../../lib/d3";
 
 export const MATH_DEG2RAD = Math.PI / 180;
 export const MATH_RAD2DEG = 180 / Math.PI;
@@ -190,14 +190,14 @@ export default class Geometry
      * Get an radius relative to the outer radius adjusted by the given
      * position in percent.
      *
-     * @param {Object} data     The D3 data object
+     * @param {Object} datum    The D3 data object
      * @param {Number} position The percent offset (0 = inner radius, 100 = outer radius)
      *
      * @return {Number}
      */
-    arcLength(data, position)
+    arcLength(datum, position)
     {
-        return (this.endAngle(data.depth, data.x1) - this.startAngle(data.depth, data.x0))
-            * this.relativeRadius(data.depth, position);
+        return (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0))
+            * this.relativeRadius(datum.depth, position);
     }
 }

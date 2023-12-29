@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "./../d3";
+import * as d3 from "../lib/d3";
 import Person from "./svg/person";
 
 /**
@@ -54,14 +54,14 @@ export default class Update
             url
         ).then((data) => {
             // Initialize the new loaded data
-            this._hierarchy.init(data);
+            this._hierarchy.init(data.data);
 
             // Flag all elements which are subject to change
             let persons = this._svg.get()
                 .selectAll("g.person")
-                .data(this._hierarchy.nodes, (d) => d.data.id)
-                .each(function (d) {
-                    let empty  = d.data.xref === "";
+                .data(this._hierarchy.nodes, (datum) => datum.id)
+                .each(function (datum) {
+                    let empty  = datum.data.data.xref === "";
                     let person = d3.select(this);
 
                     person.classed("remove", empty)
@@ -73,7 +73,7 @@ export default class Update
                             .classed("old", true);
                     }
 
-                    new Person(that._svg, that._configuration, person, d);
+                    new Person(that._svg, that._configuration, person, datum);
                 });
 
             // Hide all new labels of not removed elements

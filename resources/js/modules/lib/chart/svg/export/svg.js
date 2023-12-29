@@ -1,8 +1,8 @@
 /**
- * This file is part of the package magicsunday/webtrees-fan-chart.
+ * This file is part of the package magicsunday/webtrees-descendants-chart.
  *
  * For the full copyright and license information, please read the
- * LICENSE file that was distributed with this source code.
+ * LICENSE file distributed with this source code.
  */
 
 import * as d3 from "../../../d3";
@@ -13,7 +13,7 @@ import Export from "../export";
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
- * @link    https://github.com/magicsunday/webtrees-fan-chart/
+ * @link    https://github.com/magicsunday/webtrees-descendants-chart/
  */
 export default class SvgExport extends Export
 {
@@ -23,10 +23,11 @@ export default class SvgExport extends Export
      *
      * @param {String[]}           cssFiles
      * @param {SVGGraphicsElement} destinationNode
+     * @param {String}             containerClassName The container class name
      *
      * @returns {Promise<SVGGraphicsElement>}
      */
-    copyStylesInline(cssFiles, destinationNode)
+    copyStylesInline(cssFiles, destinationNode, containerClassName)
     {
         return new Promise(resolve => {
             Promise
@@ -34,7 +35,7 @@ export default class SvgExport extends Export
                 .then((filesData) => {
                     filesData.forEach(data => {
                         // Remove parent container selector as the CSS is included directly in the SVG element
-                        data = data.replace(/.webtrees-fan-chart-container /g, "");
+                        data = data.replace(new RegExp("." + containerClassName + " ", "g"), "");
 
                         let style = document.createElementNS("http://www.w3.org/2000/svg", "style");
                         style.appendChild(document.createTextNode(data));
@@ -93,14 +94,15 @@ export default class SvgExport extends Export
     /**
      * Saves the given SVG as SVG image file.
      *
-     * @param {Svg}      svg      The source SVG object
-     * @param {String[]} cssFiles The CSS files used together with the SVG
-     * @param {String}   fileName The output file name
+     * @param {Svg}      svg                The source SVG object
+     * @param {String[]} cssFiles           The CSS files used together with the SVG
+     * @param {String}   containerClassName The container class name
+     * @param {String}   fileName           The output file name
      */
-    svgToImage(svg, cssFiles, fileName)
+    svgToImage(svg, cssFiles, containerClassName, fileName)
     {
         this.cloneSvg(svg.get().node())
-            .then(newSvg => this.copyStylesInline(cssFiles, newSvg))
+            .then(newSvg => this.copyStylesInline(cssFiles, newSvg, containerClassName))
             .then(newSvg => this.convertToObjectUrl(newSvg))
             .then(objectUrl => this.triggerDownload(objectUrl, fileName))
             .catch(() => {

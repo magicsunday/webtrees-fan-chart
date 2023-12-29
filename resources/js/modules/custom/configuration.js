@@ -98,19 +98,6 @@ export default class Configuration
 
         this.rtl    = rtl;
         this.labels = labels;
-
-        // Helper method to create a ongoing id
-        this.id = (() => {
-            let i = 1;
-
-            return function (reset = false) {
-                if (reset) {
-                    i = 0;
-                }
-
-                return i++;
-            };
-        })();
     }
 
     /**

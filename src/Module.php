@@ -13,7 +13,6 @@ namespace MagicSunday\Webtrees\FanChart;
 
 use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\Auth;
-use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\Http\Exceptions\HttpAccessDeniedException;
 use Fisharebest\Webtrees\Http\Exceptions\HttpBadRequestException;
 use Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException;
@@ -27,7 +26,7 @@ use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Validator;
 use Fisharebest\Webtrees\View;
 use JsonException;
-use MagicSunday\Webtrees\FanChart\Traits\IndividualTrait;
+use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleCustomTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -45,7 +44,6 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
 {
     use ModuleCustomTrait;
     use ModuleChartTrait;
-    use IndividualTrait;
 
     private const ROUTE_DEFAULT     = 'webtrees-fan-chart';
     private const ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}';
@@ -81,6 +79,22 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      * @var Configuration
      */
     private Configuration $configuration;
+
+    /**
+     * @var DataFacade
+     */
+    private DataFacade $dataFacade;
+
+    /**
+     * Constructor.
+     *
+     * @param DataFacade $dataFacade
+     */
+    public function __construct(
+        DataFacade $dataFacade
+    ) {
+        $this->dataFacade = $dataFacade;
+    }
 
     /**
      * Initialization.
@@ -193,7 +207,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'chartParams'       => json_encode($this->getChartParameters($individual), JSON_THROW_ON_ERROR),
                 'stylesheets'       => $this->getStylesheets(),
                 'exportStylesheets' => $this->getExportStylesheets(),
-                'javascript'        => $this->assetUrl('js/fan-chart.min.js'),
+                'javascript'        => $this->assetUrl('js/fan-chart.js'),
             ]
         );
     }
@@ -287,81 +301,14 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $individual = Registry::individualFactory()->make($xref, $tree);
         $individual = Auth::checkIndividualAccess($individual, false, true);
 
-        return response(
-            $this->buildJsonTree($individual)
-        );
-    }
+        $this->dataFacade
+            ->setModule($this)
+            ->setConfiguration($this->configuration)
+            ->setRoute(self::ROUTE_DEFAULT);
 
-    /**
-     * Recursively build the data array of the individual ancestors.
-     *
-     * @param null|Individual $individual The start person
-     * @param int             $generation The current generation
-     *
-     * @return mixed[]
-     */
-    private function buildJsonTree(?Individual $individual, int $generation = 1): array
-    {
-        // Maximum generation reached
-        if (($individual === null) || ($generation > $this->configuration->getGenerations())) {
-            return [];
-        }
-
-        /** @var array<string, array<string>> $data */
-        $data = $this->getIndividualData($individual, $generation);
-
-        /** @var null|Family $family */
-        $family = $individual->childFamilies()->first();
-
-        if ($family === null) {
-            return $data;
-        }
-
-        // Recursively call the method for the parents of the individual
-        $fatherTree = $this->buildJsonTree($family->husband(), $generation + 1);
-        $motherTree = $this->buildJsonTree($family->wife(), $generation + 1);
-
-        // Add an array of child nodes
-        if (!empty($fatherTree)) {
-            $data['children'][] = $fatherTree;
-        }
-
-        if (!empty($motherTree)) {
-            $data['children'][] = $motherTree;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Get the raw update URL. The "xref" parameter must be the last one as the URL gets appended
-     * with the clicked individual id in order to load the required chart data.
-     *
-     * @param Individual $individual
-     *
-     * @return string
-     */
-    private function getUpdateRoute(Individual $individual): string
-    {
-        return route('module', [
-            'module'      => $this->name(),
-            'action'      => 'update',
-            'xref'        => $individual->xref(),
-            'tree'        => $individual->tree()->name(),
-            'generations' => $this->configuration->getGenerations(),
+        return response([
+            'data' => $this->dataFacade->createTreeStructure($individual),
         ]);
-    }
-
-    /**
-     * Returns whether the given text is in RTL style or not.
-     *
-     * @param string $text The text to check
-     *
-     * @return bool
-     */
-    private function isRtl(string $text): bool
-    {
-        return I18N::scriptDirection(I18N::textScript($text)) === 'rtl';
     }
 
     /**
@@ -386,9 +333,9 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     private function getExportStylesheets(): array
     {
-        /** @var ModuleThemeInterface $currentTheme */
-        $currentTheme  = app(ModuleThemeInterface::class);
-        $stylesheets   = $currentTheme->stylesheets();
+        /** @var ModuleThemeInterface $moduleTheme */
+        $moduleTheme   = app(ModuleThemeInterface::class);
+        $stylesheets   = $moduleTheme->stylesheets();
         $stylesheets[] = $this->assetUrl('css/svg.css');
 
         return $stylesheets;

@@ -230,9 +230,8 @@ function drawChart(fanChart, dataUrl)
     ).then(
         response => response.json()
     ).then(
-        data => fanChart.draw(data)
-    )
-    .catch(
+        data => fanChart.draw(data.data)
+    ).catch(
         error => console.error(error)
     );
 }
@@ -281,7 +280,6 @@ storage.register("showColorGradients");
 storage.register("showParentMarriageDates");
 storage.register("innerArcs");
 storage.register("fontScale");
-
 
 // Handle option toggle button
 toggleMoreOptions(storage);

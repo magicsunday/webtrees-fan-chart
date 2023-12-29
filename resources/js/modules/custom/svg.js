@@ -5,11 +5,11 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "./../d3";
-import Defs from "./svg/defs";
-import Zoom from "./svg/zoom";
+import * as d3 from "../lib/d3";
+import Defs from "../lib/chart/svg/defs";
+import Zoom from "../lib/chart/svg/zoom";
 import Filter from "./svg/filter";
-import ExportFactory from "./svg/export-factory";
+import ExportFactory from "../lib/chart/svg/export-factory";
 
 /**
  * SVG class

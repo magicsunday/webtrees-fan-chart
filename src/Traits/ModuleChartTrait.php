@@ -43,9 +43,12 @@ trait ModuleChartTrait
 
     public function chartUrl(Individual $individual, array $parameters = []): string
     {
-        return route(self::ROUTE_DEFAULT, [
+        return route(
+            self::ROUTE_DEFAULT,
+            [
                 'xref' => $individual->xref(),
                 'tree' => $individual->tree()->name(),
-            ] + $parameters);
+            ] + $parameters
+        );
     }
 }

@@ -5,11 +5,11 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "./d3";
-import Configuration from "./configuration";
-import Chart from "./chart";
+import * as d3 from "./lib/d3";
+import Configuration from "./custom/configuration";
+import Chart from "./custom/chart";
 
-export { Storage } from "./storage";
+export { Storage } from "./lib/storage";
 
 /**
  * The application class.
@@ -127,10 +127,9 @@ export class FanChart
      */
     exportPNG()
     {
-        const product = this._chart.svg.export('png');
-
-        product.svgToImage(this._chart.svg, "fan-chart.png");
-
+        this._chart.svg
+            .export('png')
+            .svgToImage(this._chart.svg, "fan-chart.png");
     }
 
     /**
@@ -140,8 +139,13 @@ export class FanChart
      */
     exportSVG()
     {
-        const product = this._chart.svg.export('svg');
-
-        product.svgToImage(this._chart.svg, this._cssFiles, "fan-chart.svg");
+        this._chart.svg
+            .export('svg')
+            .svgToImage(
+                this._chart.svg,
+                this._cssFiles,
+                "webtrees-fan-chart-container",
+                "fan-chart.svg"
+            );
     }
 }

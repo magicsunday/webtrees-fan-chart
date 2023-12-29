@@ -5,13 +5,13 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "./d3";
-import Hierarchy from "./chart/hierarchy";
-import Overlay from "./chart/overlay";
-import Svg from "./chart/svg";
-import Person from "./chart/svg/person";
-import Gradient from "./chart/gradient";
-import Update from "./chart/update";
+import * as d3 from "../lib/d3";
+import Hierarchy from "./hierarchy";
+import Overlay from "../lib/chart/overlay";
+import Svg from "./svg";
+import Person from "./svg/person";
+import Gradient from "./gradient";
+import Update from "./update";
 
 const MIN_HEIGHT  = 500;
 const MIN_PADDING = 10;   // Minimum padding around view box
@@ -147,11 +147,11 @@ export default class Chart
 
          personGroup
             .selectAll("g.person")
-            .data(this._hierarchy.nodes, (d) => d.data.id)
+            .data(this._hierarchy.nodes, (datum) => datum.id)
             .enter()
             .append("g")
-            .attr("class", (d) => "person depth-" + d.depth)
-            .attr("id", (d) => "person-" + d.data.id);
+            .attr("class", (datum) => "person depth-" + datum.depth)
+            .attr("id", (datum) => "person-" + datum.id);
 
         // Create a new selection in order to leave the previous enter() selection
         personGroup
@@ -178,7 +178,7 @@ export default class Chart
         let persons = this._svg.get()
             .select("g.personGroup")
             .selectAll("g.person")
-            .filter((d) => d.data.xref !== "")
+            .filter((datum) => datum.data.data.xref !== "")
             .classed("available", true);
 
         // Trigger method on click
@@ -193,10 +193,10 @@ export default class Chart
      *
      * @private
      */
-    personClick(event, data)
+    personClick(event, datum)
     {
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
-        (data.depth === 0) ? this.redirectToIndividual(data.data.url) : this.update(data.data.updateUrl);
+        (datum.depth === 0) ? this.redirectToIndividual(datum.data.data.url) : this.update(datum.data.data.updateUrl);
     }
 
     /**

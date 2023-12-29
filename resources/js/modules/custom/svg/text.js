@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "./../../d3";
+import * as d3 from "../../lib/d3";
 import Geometry, {MATH_DEG2RAD, MATH_RAD2DEG} from "./geometry";
 
 /**
@@ -43,7 +43,7 @@ export default class Text
             let parentId = d3.select(parent.node().parentNode).attr("id");
 
             // First names
-            if (datum.data.firstNames.length) {
+            if (datum.data.data.firstNames.length) {
                 let pathId1   = this.createPathDefinition(parentId, 0, datum);
                 let textPath1 = parent
                     .append("text")
@@ -56,7 +56,7 @@ export default class Text
             }
 
             // Last names
-            if (datum.data.lastNames.length) {
+            if (datum.data.data.lastNames.length) {
                 let pathId2   = this.createPathDefinition(parentId, 1, datum);
                 let textPath2 = parent
                     .append("text")
@@ -69,8 +69,8 @@ export default class Text
             }
 
             // If both first and last names are empty, add the full name as an alternative
-            if (!datum.data.firstNames.length
-                && !datum.data.lastNames.length
+            if (!datum.data.data.firstNames.length
+                && !datum.data.data.lastNames.length
             ) {
                 let pathId1   = this.createPathDefinition(parentId, 0, datum);
                 let textPath1 = parent
@@ -80,13 +80,13 @@ export default class Text
                     .attr("startOffset", "25%");
 
                 textPath1.append("tspan")
-                    .text(datum.data.name);
+                    .text(datum.data.data.name);
 
                 this.truncateNames(textPath1, datum, 0);
             }
 
             // Alternative names
-            if (datum.data.alternativeName !== "") {
+            if (datum.data.data.alternativeName !== "") {
                 let pathId3   = this.createPathDefinition(parentId, 2, datum);
                 let textPath3 = parent
                     .append("text")
@@ -94,14 +94,14 @@ export default class Text
                     .attr("xlink:href", "#" + pathId3)
                     .attr("startOffset", "25%")
                     .attr("class", "wt-chart-box-name-alt")
-                    .classed("rtl", datum.data.isAltRtl);
+                    .classed("rtl", datum.data.data.isAltRtl);
 
                 this.addAlternativeNames(textPath3, datum);
                 this.truncateNames(textPath3, datum, 2);
             }
 
             // Birth and death date
-            if (datum.data.timespan !== "") {
+            if (datum.data.data.timespan !== "") {
                 let pathId4 = this.createPathDefinition(parentId, 3, datum);
                 let textPath4 = parent
                     .append("text")
@@ -111,11 +111,11 @@ export default class Text
                     .attr("class", "date");
 
                 textPath4.append("title")
-                    .text(datum.data.timespan);
+                    .text(datum.data.data.timespan);
 
                 // Create a <tspan> element for the time span
                 let tspan = textPath4.append("tspan")
-                    .text(datum.data.timespan);
+                    .text(datum.data.data.timespan);
 
                 let availableWidth = this.getAvailableWidth(datum, 3);
 
@@ -136,20 +136,20 @@ export default class Text
                     .append("text")
                     .attr("dy", "2px");
 
-                if (datum.data.firstNames.length) {
+                if (datum.data.data.firstNames.length) {
                     this.addFirstNames(text1, datum);
                 }
 
-                if (datum.data.lastNames.length) {
+                if (datum.data.data.lastNames.length) {
                     this.addLastNames(text1, datum, 0.25);
                 }
 
                 // If both first and last names are empty, add the full name as an alternative
-                if (!datum.data.firstNames.length
-                    && !datum.data.lastNames.length
+                if (!datum.data.data.firstNames.length
+                    && !datum.data.data.lastNames.length
                 ) {
                     text1.append("tspan")
-                        .text(datum.data.name);
+                        .text(datum.data.data.name);
                 }
 
                 this.truncateNames(text1, datum, 0);
@@ -157,7 +157,7 @@ export default class Text
 
             else {
                 // First names
-                if (datum.data.firstNames.length) {
+                if (datum.data.data.firstNames.length) {
                     let text2 = parent
                         .append("text")
                         .attr("dy", "2px");
@@ -167,7 +167,7 @@ export default class Text
                 }
 
                 // Last names
-                if (datum.data.lastNames.length) {
+                if (datum.data.data.lastNames.length) {
                     let text3 = parent
                         .append("text")
                         .attr("dy", "2px");
@@ -177,7 +177,7 @@ export default class Text
                 }
 
                 // Alternative name
-                if (datum.data.alternativeName !== "") {
+                if (datum.data.data.alternativeName !== "") {
                     let text4 = parent
                         .append("text")
                         .attr("dy", "2px")
@@ -188,15 +188,15 @@ export default class Text
                 }
 
                 // If both first and last names are empty, add the full name as an alternative
-                if (!datum.data.firstNames.length
-                    && !datum.data.lastNames.length
+                if (!datum.data.data.firstNames.length
+                    && !datum.data.data.lastNames.length
                 ) {
                     let text2 = parent
                         .append("text")
                         .attr("dy", "2px");
 
                     text2.append("tspan")
-                        .text(datum.data.name);
+                        .text(datum.data.data.name);
 
                     this.truncateNames(text2, datum, 0);
                 }
@@ -204,18 +204,18 @@ export default class Text
                 // Birth and death date
                 if (datum.depth < 6) {
                     // Birth and death date
-                    if (datum.data.timespan !== "") {
+                    if (datum.data.data.timespan !== "") {
                         let text5 = parent
                             .append("text")
                             .attr("class", "date")
                             .attr("dy", "2px");
 
                         text5.append("title")
-                            .text(datum.data.timespan);
+                            .text(datum.data.data.timespan);
 
                         // Create a <tspan> element for the time span
                         let tspan = text5.append("tspan")
-                            .text(datum.data.timespan);
+                            .text(datum.data.data.timespan);
 
                         let availableWidth = this.getAvailableWidth(datum, 2);
 
@@ -236,7 +236,7 @@ export default class Text
         // Marriage date
         if (this._configuration.showParentMarriageDates && datum.children && (datum.depth < 5)) {
             let parentId5 = d3.select(parent.node().parentNode).attr("id");
-            let pathId5   = this.createPathDefinition(parentId5, 4, datum);
+            let pathId5 = this.createPathDefinition(parentId5, 4, datum);
             let textPath5 = parent
                 .append("text")
                 .append("textPath")
@@ -260,7 +260,7 @@ export default class Text
     {
         let i = 0;
 
-        for (let firstName of datum.data.firstNames) {
+        for (let firstName of datum.data.data.firstNames) {
             // Create a <tspan> element for each given name
             let tspan = parent.append("tspan")
                 .text(firstName);
@@ -290,7 +290,7 @@ export default class Text
     {
         let i = 0;
 
-        for (let lastName of datum.data.lastNames) {
+        for (let lastName of datum.data.data.lastNames) {
             // Create a <tspan> element for each last name
             let tspan = parent.append("tspan")
                 .attr("class", "lastName")
@@ -344,9 +344,9 @@ export default class Text
     addMarriageDate(parent, datum)
     {
         // Create a <tspan> element for the parent marriage date
-        if (datum.data.parentMarriage) {
+        if (datum.data.data.marriageDateOfParents) {
             parent.append("tspan")
-                .text("\u26AD " + datum.data.parentMarriage);
+                .text("\u26AD " + datum.data.data.marriageDateOfParents);
         }
     }
 
