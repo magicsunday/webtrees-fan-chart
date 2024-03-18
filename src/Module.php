@@ -33,9 +33,6 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleConfigTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleCustomTrait;
-use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
-use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
-use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
