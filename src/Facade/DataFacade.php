@@ -18,9 +18,9 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
-use MagicSunday\Webtrees\FanChart\Processor\DateProcessor;
-use MagicSunday\Webtrees\FanChart\Processor\ImageProcessor;
-use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
+use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
+use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
+use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 
 /**
  * Facade class to hide complex logic to generate the structure required to display the tree.

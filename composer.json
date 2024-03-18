@@ -59,7 +59,7 @@
             "@composer require magicsunday/webtrees-module-base:^1.0",
             "### Copy base module to vendor directory",
             "mkdir -p webtrees-fan-chart/vendor/magicsunday",
-            "cp -r vendor/magicsunday/webtrees-module-base webtrees-fan-chart/vendor/magicsunday/webtrees-module-base",
+            "cp -r .build/vendor/magicsunday/webtrees-module-base webtrees-fan-chart/vendor/magicsunday/webtrees-module-base",
             "### Remove all not required files from archive",
             "rm -rf webtrees-fan-chart/.github",
             "rm -rf webtrees-fan-chart/resources/js/modules",
@@ -94,7 +94,7 @@
         "ci:test": [
             "@ci:test:php:lint",
             "@ci:test:php:phpstan",
-            "@ci:test:php:rector",
+            "@ci:test:php:rector"
         ],
         "module:check": [
             "@ci:test"
