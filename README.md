@@ -1,9 +1,19 @@
-![Latest version](https://img.shields.io/github/v/release/magicsunday/webtrees-fan-chart?sort=semver)
-![License](https://img.shields.io/github/license/magicsunday/webtrees-fan-chart)
-![PHPStan](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpstan.yml/badge.svg)
-![PHPUnit](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpunit.yml/badge.svg)
-![PHPCodeSniffer](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/phpcs.yml/badge.svg)
-![CodeQL](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/codeql-analysis.yml/badge.svg)
+[![Latest version](https://img.shields.io/github/v/release/magicsunday/webtrees-fan-chart?sort=semver)](https://github.com/magicsunday/webtrees-fan-chart/releases/latest)
+[![License](https://img.shields.io/github/license/magicsunday/webtrees-fan-chart)](https://github.com/magicsunday/webtrees-fan-chart/blob/main/LICENSE)
+[![CI](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/ci.yml/badge.svg)](https://github.com/magicsunday/webtrees-fan-chart/actions/workflows/ci.yml)
+
+
+<!-- TOC -->
+* [Fan chart](#fan-chart)
+  * [Installation](#installation)
+    * [Using Composer](#using-composer)
+    * [Using Git](#using-git)
+    * [Manual installation](#manual-installation)
+  * [Enable module](#enable-module)
+  * [Usage](#usage)
+  * [Development](#development)
+    * [Run tests](#run-tests)
+<!-- TOC -->
 
 
 # Fan chart

@@ -1,8 +1,24 @@
-composer.lock
-package-lock.json
-.idea/
+# PHPStorm
+.idea
+
+# OSX
+.DS_Store
+
+# Composer
 vendor/
+composer.lock
+
+# Build stuff
+.build/
+package-lock.json
 node_modules/
-resources/js/fan-chart.js
+
+# Cache
+.php-cs-fixer.cache
+.phplint.cache
 .phpunit.result.cache
+.phpunit.cache
+
+# Custom
+resources/js/fan-chart.js
 webtrees-fan-chart.zip

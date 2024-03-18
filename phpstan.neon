@@ -1,17 +1,21 @@
+includes:
+    - %currentWorkingDirectory%/.build/vendor/phpstan/phpstan-strict-rules/rules.neon
+    - %currentWorkingDirectory%/.build/vendor/phpstan/phpstan-deprecation-rules/rules.neon
+#    - %currentWorkingDirectory%/phpstan-baseline.neon
+
 parameters:
-    # you can currently choose from 10 levels (0 is the loosest and 9 is the strictest).
+    # You can currently choose from 10 levels (0 is the loosest and 9 is the strictest).
     level: 9
 
     paths:
-        - src
-        # if you have tests and want to analyze this folder, uncomment the line below
-        # - test
+        - %currentWorkingDirectory%/src/
+
+    excludePaths:
+        - %currentWorkingDirectory%/.build/
 
     fileExtensions:
         - php
 
-    excludePaths:
-        - vendor/
-
+    # Ignored validations
     checkGenericClassInNonGenericObjectType: false
     treatPhpDocTypesAsCertain: false

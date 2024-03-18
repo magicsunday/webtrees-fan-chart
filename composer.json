@@ -18,6 +18,11 @@
         }
     ],
     "config": {
+        "bin-dir": ".build/bin",
+        "vendor-dir": ".build/vendor",
+        "discard-changes": true,
+        "sort-packages": true,
+        "optimize-autoloader": true,
         "allow-plugins": {
             "magicsunday/webtrees-module-installer-plugin": true
         }
@@ -29,9 +34,14 @@
         "magicsunday/webtrees-module-installer-plugin": "^1.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.6",
-        "phpstan/phpstan": "^1.9",
-        "squizlabs/php_codesniffer": "^3.7"
+        "friendsofphp/php-cs-fixer": "^3.50",
+        "overtrue/phplint": "^3.4 || ^9.0",
+        "phpunit/phpunit": "^9.0 || ^10.0 || ^11.0",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-phpunit": "^1.3",
+        "phpstan/phpstan-strict-rules": "^1.5",
+        "phpstan/phpstan-deprecation-rules": "^1.1",
+        "rector/rector": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -59,35 +69,40 @@
             "rm -f webtrees-fan-chart/package.json",
             "rm -f webtrees-fan-chart/rollup.config.js",
             "rm -f webtrees-fan-chart/phpstan.neon",
+            "rm -f webtrees-fan-chart/phpstan-baseline.neon",
             "rm -f webtrees-fan-chart/phpunit.xml",
+            "rm -f webtrees-fan-chart/.php-cs-fixer.dist.php",
+            "rm -f webtrees-fan-chart/.phplint.yml",
+            "rm -f webtrees-fan-chart/rector.php",
             "### Create archive",
             "zip --quiet --recurse-paths --move -9 webtrees-fan-chart.zip webtrees-fan-chart"
         ],
+        "ci:test:php:lint": [
+            "phplint"
+        ],
+        "ci:test:php:phpstan": [
+            "phpstan analyze"
+        ],
+        "ci:test:php:phpstan:baseline": [
+            "phpstan analyze --generate-baseline phpstan-baseline.neon --allow-empty-baseline"
+        ],
+        "ci:test:php:rector": [
+            "rector process --config rector.php --dry-run"
+        ],
+        "ci:test:php:unit": [
+            "phpunit"
+        ],
+        "ci:cgl": [
+            "php-cs-fixer fix --diff --verbose"
+        ],
+        "ci:test": [
+            "@ci:test:php:lint",
+            "@ci:test:php:phpstan",
+            "@ci:test:php:rector",
+            "@ci:test:php:unit"
+        ],
         "module:check": [
-            "### PHP CodeSniffer",
-            "@composer module:phpcs",
-            "### PHPStan",
-            "@composer module:phpstan",
-            "### PHPUnit",
-            "@composer module:phpunit"
-        ],
-        "module:phpcs": [
-            "@composer global require squizlabs/php_codesniffer=* --quiet",
-            "~/.composer/vendor/bin/phpcs src/ --standard=PSR12"
-        ],
-        "module:phpstan": [
-            "@composer global require --quiet phpstan/phpstan=*",
-            "@composer global require --quiet phpstan/extension-installer=*",
-            "@composer global require --quiet phpstan/phpstan-deprecation-rules=*",
-            "@composer global require --quiet phpstan/phpstan-strict-rules=*",
-            "@composer install --quiet",
-            "~/.composer/vendor/bin/phpstan analyse --memory-limit=-1 -c phpstan.neon",
-            "@composer install --no-dev --quiet"
-        ],
-        "module:phpunit": [
-            "@composer install --quiet",
-            "@php vendor/bin/phpunit",
-            "@composer install --no-dev --quiet"
+            "@ci:test"
         ]
     },
     "scripts-descriptions": {
