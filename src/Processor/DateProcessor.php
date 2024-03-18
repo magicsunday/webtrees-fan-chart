@@ -4,7 +4,7 @@
  * This file is part of the package magicsunday/webtrees-fan-chart.
  *
  * For the full copyright and license information, please read the
- * LICENSE file distributed with this source code.
+ * LICENSE file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -54,8 +54,8 @@ class DateProcessor
     public function __construct(Individual $individual)
     {
         $this->individual = $individual;
-        $this->birthDate = $this->individual->getBirthDate();
-        $this->deathDate = $this->individual->getDeathDate();
+        $this->birthDate  = $this->individual->getBirthDate();
+        $this->deathDate  = $this->individual->getDeathDate();
     }
 
     /**
@@ -147,7 +147,7 @@ class DateProcessor
      */
     public function getMarriageDate(): string
     {
-        /** @var null|Family $family */
+        /** @var Family|null $family */
         $family = $this->individual->spouseFamilies()->first();
 
         if ($family !== null) {
@@ -166,7 +166,7 @@ class DateProcessor
      */
     public function getMarriageDateOfParents(): string
     {
-        /** @var null|Family $family */
+        /** @var Family|null $family */
         $family = $this->individual->childFamilies()->first();
 
         if ($family !== null) {

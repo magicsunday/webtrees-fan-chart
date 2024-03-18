@@ -4,7 +4,7 @@
  * This file is part of the package magicsunday/webtrees-fan-chart.
  *
  * For the full copyright and license information, please read the
- * LICENSE file distributed with this source code.
+ * LICENSE file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Processor;
 
 use Fisharebest\Webtrees\Individual;
+use Fisharebest\Webtrees\MediaFile;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 
 /**
@@ -45,7 +46,7 @@ class ImageProcessor
      */
     public function __construct(ModuleCustomInterface $module, Individual $individual)
     {
-        $this->module = $module;
+        $this->module     = $module;
         $this->individual = $individual;
     }
 
@@ -70,7 +71,7 @@ class ImageProcessor
         ) {
             $mediaFile = $this->individual->findHighlightedMediaFile();
 
-            if ($mediaFile !== null) {
+            if ($mediaFile instanceof MediaFile) {
                 return $mediaFile->imageUrl($width, $height, 'contain');
             }
 

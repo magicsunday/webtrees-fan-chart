@@ -11,8 +11,7 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test;
 
-use DOMXPath;
-use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -28,7 +27,7 @@ class MultiByteTest extends TestCase
     /**
      * @return string[][]
      */
-    public function convertToHtmlEntitiesDataProvider(): array
+    public static function convertToHtmlEntitiesDataProvider(): array
     {
         // [ input, expected ]
         return [
@@ -64,6 +63,7 @@ class MultiByteTest extends TestCase
      * Tests conversion of UTF-8 characters to HTML entities.
      *
      * @test
+     *
      * @dataProvider convertToHtmlEntitiesDataProvider
      *
      * @param string $input
@@ -73,12 +73,13 @@ class MultiByteTest extends TestCase
      */
     public function convertToHtmlEntities(string $input, string $expected): void
     {
-        $reflection = new ReflectionClass(Module::class);
-        $method = $reflection->getMethod('convertToHtmlEntities');
+        $nameProcessorMock = $this->createMock(NameProcessor::class);
+
+        $reflection = new ReflectionClass(NameProcessor::class);
+        $method     = $reflection->getMethod('convertToHtmlEntities');
         $method->setAccessible(true);
 
-        $module = new Module();
-        $result = $method->invokeArgs($module, [ $input ]);
+        $result = $method->invokeArgs($nameProcessorMock, [$input]);
 
         self::assertSame($expected, $result);
     }

@@ -45,7 +45,8 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     use ModuleCustomTrait;
     use ModuleChartTrait;
 
-    private const ROUTE_DEFAULT     = 'webtrees-fan-chart';
+    private const ROUTE_DEFAULT = 'webtrees-fan-chart';
+
     private const ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}';
 
     /**
@@ -221,13 +222,11 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     private function getPageTitle(Individual $individual): string
     {
-        $title = I18N::translate('Fan chart');
-
         if ($individual->canShowName()) {
-            $title = I18N::translate('Fan chart of %s', $individual->fullName());
+            return I18N::translate('Fan chart of %s', $individual->fullName());
         }
 
-        return $title;
+        return I18N::translate('Fan chart');
     }
 
     /**
@@ -243,7 +242,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             'rtl'             => I18N::direction() === 'rtl',
             'showImages'      => $this->showImages($individual),
             'showSilhouettes' => $this->showSilhouettes($individual),
-            'labels' => [
+            'labels'          => [
                 'zoom' => I18N::translate('Use Ctrl + scroll to zoom in the view'),
                 'move' => I18N::translate('Move the view with two fingers'),
             ],
@@ -260,7 +259,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     private function showImages(Individual $individual): bool
     {
         return $individual->canShow()
-            && $individual->tree()->getPreference('SHOW_HIGHLIGHT_IMAGES');
+            && ($individual->tree()->getPreference('SHOW_HIGHLIGHT_IMAGES') === '1');
     }
 
     /**
@@ -273,7 +272,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     private function showSilhouettes(Individual $individual): bool
     {
         return $this->showImages($individual)
-            && $individual->tree()->getPreference('USE_SILHOUETTE');
+            && ($individual->tree()->getPreference('USE_SILHOUETTE') === '1');
     }
 
     /**
@@ -318,12 +317,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     private function getStylesheets(): array
     {
-        $stylesheets = [];
-
-        $stylesheets[] = $this->assetUrl('css/fan-chart.css');
-        $stylesheets[] = $this->assetUrl('css/svg.css');
-
-        return $stylesheets;
+        return [$this->assetUrl('css/fan-chart.css'), $this->assetUrl('css/svg.css')];
     }
 
     /**

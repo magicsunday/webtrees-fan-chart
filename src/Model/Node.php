@@ -3,8 +3,8 @@
 /**
  * This file is part of the package magicsunday/webtrees-fan-chart.
  *
- * For the full copyright and license information; please read the
- * LICENSE file distributed with this source code.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -60,6 +60,7 @@ class Node implements JsonSerializable
     public function addParent(Node $parent): Node
     {
         $this->parents[] = $parent;
+
         return $this;
     }
 
@@ -74,7 +75,7 @@ class Node implements JsonSerializable
             'data' => $this->data,
         ];
 
-        if (count($this->parents) > 0) {
+        if ($this->parents !== []) {
             $jsonData['parents'] = $this->parents;
         }
 

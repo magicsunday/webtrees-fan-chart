@@ -43,10 +43,10 @@ trait ModuleCustomTrait
         return self::CUSTOM_LATEST_VERSION;
     }
 
-//    protected function extractVersion(string $content): string
-//    {
-//        return json_decode($content, true)['tag_name'] ?? '';
-//    }
+    //    protected function extractVersion(string $content): string
+    //    {
+    //        return json_decode($content, true)['tag_name'] ?? '';
+    //    }
 
     /**
      * Fetch the latest version of this module.
@@ -83,7 +83,7 @@ trait ModuleCustomTrait
                             $version = $json['tag_name'] ?? '';
 
                             // Does the response look like a version?
-                            if (preg_match('/^\d+\.\d+\.\d+/', $version)) {
+                            if (preg_match('/^\d+\.\d+\.\d+/', $version) === 1) {
                                 return $version;
                             }
                         }

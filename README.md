@@ -84,7 +84,10 @@ npm run prepare
 ### Run tests
 ```
 composer update
-vendor/bin/phpunit
-vendor/bin/phpstan analyse -c phpstan.neon
-vendor/bin/phpcs src/ --standard=PSR12
+
+composer ci:test
+composer ci:test:php:phpstan
+composer ci:test:php:lint
+composer ci:test:php:unit
+composer ci:test:php:rector
 ```

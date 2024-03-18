@@ -4,7 +4,7 @@
  * This file is part of the package magicsunday/webtrees-fan-chart.
  *
  * For the full copyright and license information, please read the
- * LICENSE file distributed with this source code.
+ * LICENSE file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -64,12 +64,12 @@ class NameProcessor
      * Constructor.
      *
      * @param Individual      $individual     The individual to process
-     * @param null|Individual $spouse
+     * @param Individual|null $spouse
      * @param bool            $useMarriedName TRUE to return the married name instead of the primary one
      */
     public function __construct(
         Individual $individual,
-        Individual $spouse = null,
+        ?Individual $spouse = null,
         bool $useMarriedName = false
     ) {
         $this->individual  = $individual;
@@ -97,27 +97,30 @@ class NameProcessor
     /**
      * Extracts the primary name from the individual.
      *
-     * @param null|Individual $spouse
+     * @param Individual|null $spouse
      * @param bool            $useMarriedName TRUE to return the married name instead of the primary one
      *
      * @return array<string, string>
      */
     private function extractPrimaryName(
-        Individual $spouse = null,
+        ?Individual $spouse = null,
         bool $useMarriedName = false
     ): array {
         $individualNames = $this->individual->getAllNames();
 
-        if ($useMarriedName !== false) {
+        if ($useMarriedName) {
             foreach ($individualNames as $individualName) {
-                if ($spouse !== null) {
+                if ($spouse instanceof Individual) {
                     foreach ($spouse->getAllNames() as $spouseName) {
-                        if (
-                            ($individualName['type'] === '_MARNM')
-                            && ($individualName['surn'] === $spouseName['surn'])
-                        ) {
-                            return $individualName;
+                        if ($individualName['type'] !== '_MARNM') {
+                            continue;
                         }
+
+                        if ($individualName['surn'] !== $spouseName['surn']) {
+                            continue;
+                        }
+
+                        return $individualName;
                     }
                 } elseif ($individualName['type'] === '_MARNM') {
                     return $individualName;
@@ -137,7 +140,7 @@ class NameProcessor
      */
     private function convertToHtmlEntities(string $input): string
     {
-        return mb_encode_numericentity($input, [0x80, 0xfffffff, 0, 0xfffffff], 'UTF-8');
+        return mb_encode_numericentity($input, [0x80, 0xFFFFFFF, 0, 0xFFFFFFF], 'UTF-8');
     }
 
     /**

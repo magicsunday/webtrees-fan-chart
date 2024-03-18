@@ -3,8 +3,8 @@
 /**
  * This file is part of the package magicsunday/webtrees-fan-chart.
  *
- * For the full copyright and license information; please read the
- * LICENSE file distributed with this source code.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -159,7 +159,7 @@ class NodeData implements JsonSerializable
     /**
      * The underlying individual instance. Only used internally.
      *
-     * @var null|Individual
+     * @var Individual|null
      */
     protected ?Individual $individual = null;
 
@@ -179,6 +179,7 @@ class NodeData implements JsonSerializable
     public function setId(int $id): NodeData
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -190,6 +191,7 @@ class NodeData implements JsonSerializable
     public function setXref(string $xref): NodeData
     {
         $this->xref = $xref;
+
         return $this;
     }
 
@@ -201,6 +203,7 @@ class NodeData implements JsonSerializable
     public function setUrl(string $url): NodeData
     {
         $this->url = $url;
+
         return $this;
     }
 
@@ -212,6 +215,7 @@ class NodeData implements JsonSerializable
     public function setUpdateUrl(string $updateUrl): NodeData
     {
         $this->updateUrl = $updateUrl;
+
         return $this;
     }
 
@@ -223,6 +227,7 @@ class NodeData implements JsonSerializable
     public function setGeneration(int $generation): NodeData
     {
         $this->generation = $generation;
+
         return $this;
     }
 
@@ -242,6 +247,7 @@ class NodeData implements JsonSerializable
     public function setName(string $name): NodeData
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -253,6 +259,7 @@ class NodeData implements JsonSerializable
     public function setIsNameRtl(bool $isNameRtl): NodeData
     {
         $this->isNameRtl = $isNameRtl;
+
         return $this;
     }
 
@@ -264,6 +271,7 @@ class NodeData implements JsonSerializable
     public function setFirstNames(array $firstNames): NodeData
     {
         $this->firstNames = $firstNames;
+
         return $this;
     }
 
@@ -275,6 +283,7 @@ class NodeData implements JsonSerializable
     public function setLastNames(array $lastNames): NodeData
     {
         $this->lastNames = $lastNames;
+
         return $this;
     }
 
@@ -286,6 +295,7 @@ class NodeData implements JsonSerializable
     public function setPreferredName(string $preferredName): NodeData
     {
         $this->preferredName = $preferredName;
+
         return $this;
     }
 
@@ -297,6 +307,7 @@ class NodeData implements JsonSerializable
     public function setAlternativeName(string $alternativeName): NodeData
     {
         $this->alternativeName = $alternativeName;
+
         return $this;
     }
 
@@ -308,6 +319,7 @@ class NodeData implements JsonSerializable
     public function setIsAltRtl(bool $isAltRtl): NodeData
     {
         $this->isAltRtl = $isAltRtl;
+
         return $this;
     }
 
@@ -319,6 +331,7 @@ class NodeData implements JsonSerializable
     public function setThumbnail(string $thumbnail): NodeData
     {
         $this->thumbnail = $thumbnail;
+
         return $this;
     }
 
@@ -330,6 +343,7 @@ class NodeData implements JsonSerializable
     public function setSex(string $sex): NodeData
     {
         $this->sex = $sex;
+
         return $this;
     }
 
@@ -341,6 +355,7 @@ class NodeData implements JsonSerializable
     public function setBirth(string $birth): NodeData
     {
         $this->birth = $birth;
+
         return $this;
     }
 
@@ -352,6 +367,7 @@ class NodeData implements JsonSerializable
     public function setDeath(string $death): NodeData
     {
         $this->death = $death;
+
         return $this;
     }
 
@@ -363,6 +379,7 @@ class NodeData implements JsonSerializable
     public function setMarriageDate(string $marriageDate): NodeData
     {
         $this->marriageDate = $marriageDate;
+
         return $this;
     }
 
@@ -374,6 +391,7 @@ class NodeData implements JsonSerializable
     public function setMarriageDateOfParents(string $marriageDateOfParents): NodeData
     {
         $this->marriageDateOfParents = $marriageDateOfParents;
+
         return $this;
     }
 
@@ -385,11 +403,12 @@ class NodeData implements JsonSerializable
     public function setTimespan(string $timespan): NodeData
     {
         $this->timespan = $timespan;
+
         return $this;
     }
 
     /**
-     * @return null|Individual
+     * @return Individual|null
      */
     public function getIndividual(): ?Individual
     {
@@ -397,13 +416,14 @@ class NodeData implements JsonSerializable
     }
 
     /**
-     * @param null|Individual $individual
+     * @param Individual|null $individual
      *
      * @return NodeData
      */
     public function setIndividual(?Individual $individual): NodeData
     {
         $this->individual = $individual;
+
         return $this;
     }
 
