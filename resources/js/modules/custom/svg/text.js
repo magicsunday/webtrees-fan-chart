@@ -318,7 +318,7 @@ export default class Text
      */
     addAlternativeNames(parent, datum, dx = 0)
     {
-        let words = datum.data.alternativeName.split(/\s+/);
+        let words = datum.data.data.alternativeName.split(/\s+/);
         let i = 0;
 
         for (let alternativeName of words) {
