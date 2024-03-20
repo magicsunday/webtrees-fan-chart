@@ -62,7 +62,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * @var string
      */
-    public const CUSTOM_VERSION = '2.6.3-dev';
+    public const CUSTOM_VERSION = '2.7.0';
 
     /**
      * @var string
@@ -208,7 +208,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'chartParams'       => json_encode($this->getChartParameters($individual), JSON_THROW_ON_ERROR),
                 'stylesheets'       => $this->getStylesheets(),
                 'exportStylesheets' => $this->getExportStylesheets(),
-                'javascript'        => $this->assetUrl('js/fan-chart.js'),
+                'javascript'        => $this->assetUrl('js/fan-chart.min.js'),
             ]
         );
     }
