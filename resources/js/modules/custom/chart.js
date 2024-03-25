@@ -142,13 +142,21 @@ export default class Chart
         this._svg.initEvents(this._overlay);
 
         let personGroup = this._svg.get().select("g.personGroup");
-        let gradient    = new Gradient(this._svg, this._configuration);
-        let that        = this;
+        let gradient = new Gradient(this._svg, this._configuration);
+        let that = this;
 
          personGroup
             .selectAll("g.person")
             .data(this._hierarchy.nodes, (datum) => datum.id)
             .enter()
+            .filter(
+                (datum) => {
+                    // Filter out all empty records, but only if we hide empty segments
+                    // otherwise the arcs won't be drawn correctly
+                    return (datum.data.data.xref !== "")
+                         || !this._configuration.hideEmptySegments
+                }
+            )
             .append("g")
             .attr("class", (datum) => "person depth-" + datum.depth)
             .attr("id", (datum) => "person-" + datum.id);
