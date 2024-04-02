@@ -34,6 +34,25 @@ class NameProcessor
      */
     private const FULL_NAME = 'full';
 
+    private const XPATH_FIRST_NAMES_ALL
+        = './/text()';
+
+    private const XPATH_FIRST_NAMES_EXCEPT_PART
+        = '(//q[@class="wt-nickname"]/text() | //span[@class="SURN"]/text() | //span[@class="SURN"]/following::text())';
+
+    /**
+     * The XPath identifier to extract the first name parts (including the prefix).
+     *
+     * As PHP does not support XPath 2.0 "except" => XPATH_FIRST_NAMES_ALL except XPATH_FIRST_NAMES_EXCEPT_PART
+     */
+    private const XPATH_FIRST_NAMES
+        = self::XPATH_FIRST_NAMES_ALL . '[count(.|' . self::XPATH_FIRST_NAMES_EXCEPT_PART . ')!=count(' . self::XPATH_FIRST_NAMES_EXCEPT_PART . ')]';
+
+    /**
+     * The XPath identifier to extract the last name parts (surname + surname suffix).
+     */
+    private const XPATH_LAST_NAMES = '//span[@class="NAME"]//span[@class="SURN"]/text()|//span[@class="SURN"]/following::text()';
+
     /**
      * The XPath identifier to extract the starred name part.
      */
@@ -97,7 +116,7 @@ class NameProcessor
     /**
      * Extracts the primary name from the individual.
      *
-     * @param Individual|null $spouse
+     * @param null|Individual $spouse
      * @param bool            $useMarriedName TRUE to return the married name instead of the primary one
      *
      * @return array<string, string>
@@ -165,25 +184,6 @@ class NameProcessor
     }
 
     /**
-     * Splits a name into an array, removing all name placeholders.
-     *
-     * @param string $name
-     *
-     * @return string[]
-     */
-    private function splitAndCleanName(string $name): array
-    {
-        return array_values(
-            array_filter(
-                explode(
-                    ' ',
-                    $this->replacePlaceholders($name)
-                )
-            )
-        );
-    }
-
-    /**
      * Returns the full name of the individual without formatting of the individual parts of the name.
      * All placeholders were removed as we do not need them in this module.
      *
@@ -197,13 +197,61 @@ class NameProcessor
     }
 
     /**
+     * Splits a name into an array, removing all name placeholders.
+     *
+     * @param string[] $names
+     *
+     * @return string[]
+     */
+    private function splitAndCleanName(array $names): array
+    {
+        $values = [[]];
+
+        foreach ($names as $name) {
+            $values[] = explode(' ', $name);
+        }
+
+        // Remove empty values and reindex array
+        return array_values(
+            array_filter(
+                array_merge(...$values)
+            )
+        );
+    }
+
+    /**
+     * Returns all name parts by given identifier.
+     *
+     * @param string $expression The XPath expression to execute
+     *
+     * @return string[]
+     */
+    private function getNamesByIdentifier(string $expression): array
+    {
+        $nodeList = $this->xPath->query($expression);
+        $names    = [];
+
+        if ($nodeList !== false) {
+            /** @var DOMNode $node */
+            foreach ($nodeList as $node) {
+                $names[] = $node->nodeValue ?? '';
+            }
+        }
+
+        // Remove all leading/trailing whitespace characters
+        $names = array_map('trim', $names);
+
+        return $this->splitAndCleanName($names);
+    }
+
+    /**
      * Returns all assigned first names of the individual.
      *
      * @return string[]
      */
     public function getFirstNames(): array
     {
-        return $this->splitAndCleanName($this->primaryName['givn']);
+        return $this->getNamesByIdentifier(self::XPATH_FIRST_NAMES);
     }
 
     /**
@@ -213,7 +261,7 @@ class NameProcessor
      */
     public function getLastNames(): array
     {
-        return $this->splitAndCleanName($this->primaryName['surn']);
+        return $this->getNamesByIdentifier(self::XPATH_LAST_NAMES);
     }
 
     /**
@@ -247,7 +295,7 @@ class NameProcessor
             $individual->canShowName()
             && ($individual->getPrimaryName() !== $individual->getSecondaryName())
         ) {
-            $allNames        = $individual->getAllNames();
+            $allNames = $individual->getAllNames();
             $alternativeName = $allNames[$individual->getSecondaryName()][self::FULL_NAME_WITH_PLACEHOLDERS];
 
             return $this->replacePlaceholders($alternativeName);

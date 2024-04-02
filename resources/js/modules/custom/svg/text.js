@@ -118,8 +118,11 @@ export default class Text
             // The outermost circles show the complete name and do
             // not distinguish between first name, last name and dates
             if (datum.depth >= 7) {
-                const nameGroups = this.createNamesData(datum);
+                const [first, ...last] = this.createNamesData(datum);
                 const availableWidth = this.getAvailableWidth(datum, 0);
+
+                // Merge the firstname and lastname groups, as we display the whole name in one line
+                const combined = [].concat(first, typeof last[0] !== "undefined" ? last[0] : []);
 
                 let text1 = parent
                     .append("text")
@@ -129,10 +132,7 @@ export default class Text
                     text1,
                     this.truncateNamesData(
                         text1,
-                        [
-                            ...nameGroups[0],
-                            ...nameGroups[1],
-                        ],
+                        combined,
                         availableWidth
                     )
                 );
@@ -242,13 +242,16 @@ export default class Text
         let lastnames = {};
         let minPosFirstnames = Number.MAX_SAFE_INTEGER;
         let minPosLastnames = Number.MAX_SAFE_INTEGER;
+        let offset = 0;
 
         // Iterate over the individual name components and determine their position in the overall
         // name and insert the component at the corresponding position in the result object.
         for (let i in datum.data.data.firstNames) {
-            const pos = datum.data.data.name.indexOf(datum.data.data.firstNames[i]);
+            const pos = datum.data.data.name.indexOf(datum.data.data.firstNames[i], offset);
 
             if (pos !== -1) {
+                offset = pos;
+
                 if (pos < minPosFirstnames) {
                     minPosFirstnames = pos;
                 }
@@ -265,9 +268,11 @@ export default class Text
         names[minPosFirstnames] = Object.values(firstnames);
 
         for (let i in datum.data.data.lastNames) {
-            const pos = datum.data.data.name.indexOf(datum.data.data.lastNames[i]);
+            const pos = datum.data.data.name.indexOf(datum.data.data.lastNames[i], offset);
 
             if (pos !== -1) {
+                offset = pos;
+
                 if (pos < minPosLastnames) {
                     minPosLastnames = pos;
                 }
@@ -283,7 +288,7 @@ export default class Text
 
         names[minPosLastnames] = Object.values(lastnames);
 
-        // Extract the values (keys doesn't matter anymore)
+        // Extract the values (keys don't matter anymore)
         return Object.values(names);
     }
 
