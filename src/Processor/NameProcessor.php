@@ -34,19 +34,11 @@ class NameProcessor
      */
     private const FULL_NAME = 'full';
 
-    private const XPATH_FIRST_NAMES_ALL
-        = './/text()';
-
-    private const XPATH_FIRST_NAMES_EXCEPT_PART
-        = '(//q[@class="wt-nickname"]/text() | //span[@class="SURN"]/text() | //span[@class="SURN"]/following::text())';
-
     /**
      * The XPath identifier to extract the first name parts (including the prefix).
-     *
-     * As PHP does not support XPath 2.0 "except" => XPATH_FIRST_NAMES_ALL except XPATH_FIRST_NAMES_EXCEPT_PART
      */
     private const XPATH_FIRST_NAMES
-        = self::XPATH_FIRST_NAMES_ALL . '[count(.|' . self::XPATH_FIRST_NAMES_EXCEPT_PART . ')!=count(' . self::XPATH_FIRST_NAMES_EXCEPT_PART . ')]';
+        = '//text()[not(ancestor::q[@class="wt-nickname"]) and not(preceding::span[@class="SURN"] or ancestor::span[@class="SURN"])]';
 
     /**
      * The XPath identifier to extract the last name parts (surname + surname suffix).
