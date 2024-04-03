@@ -36,7 +36,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     <form id="webtrees-fan-chart-form" method="post" class="wt-page-options wt-page-options-fan-chart d-print-none">
         <?= csrf_field() ?>
 
-        <div class="form-group row">
+        <fieldset class="form-group row">
             <label class="col-sm-3 col-form-label wt-page-options-label" for="xref">
                 <?= I18N::translate('Individual') ?>
             </label>
@@ -51,9 +51,9 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                     ])
                 ?>
             </div>
-        </div>
+        </fieldset>
 
-        <div class="form-group row">
+        <fieldset class="form-group row">
             <label class="col-sm-3 col-form-label wt-page-options-label" for="fanDegree">
                 <?= I18N::translate('Fan size') ?>
             </label>
@@ -61,9 +61,9 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                 <input id="fanDegree" name="fanDegree" class="flex-grow-1 custom-range" type="range" value="<?= $configuration->getFanDegree() ?>" min="180" max="360" step="5">
                 <output id="fanDegreeOutput" name="fanDegreeOutput" class="custom-range-value wt-page-options-label ms-3"><?= $configuration->getFanDegree() ?>°</output>
             </div>
-        </div>
+        </fieldset>
 
-        <div class="form-group row">
+        <fieldset class="form-group row">
             <label class="col-sm-3 col-form-label wt-page-options-label" for="generations">
                 <?= I18N::translate('Generations') ?>
             </label>
@@ -78,13 +78,13 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                     ])
                 ?>
             </div>
-        </div>
+        </fieldset>
 
         <div class="collapse" id="showMoreOptions">
-            <div class="form-group row">
-                <label class="col-form-label col-sm-3 wt-page-options-label">
+            <fieldset class="form-group row">
+                <legend class="col-form-label col-sm-3 wt-page-options-label">
                     <?= I18N::translate('Presentation') ?>
-                </label>
+                </legend>
                 <div class="col-sm-9 wt-page-options-value">
                     <?=
                         view('components/checkbox', [
@@ -113,9 +113,9 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                         ])
                     ?>
                 </div>
-            </div>
+            </fieldset>
 
-            <div class="form-group row">
+            <fieldset class="form-group row">
                 <label class="col-sm-3 col-form-label wt-page-options-label" for="innerArcs">
                     <?= I18N::translate('Number of inner levels') ?>
                 </label>
@@ -133,9 +133,9 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                         <?= I18N::translate('Specifies the number of levels in which the text is written along an arc.') ?>
                     </small>
                 </div>
-            </div>
+            </fieldset>
 
-            <div class="form-group row">
+            <fieldset class="form-group row">
                 <label class="col-sm-3 col-form-label wt-page-options-label" for="fontScale">
                     <?= I18N::translate('Font size') ?>
                 </label>
@@ -148,10 +148,10 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                         </div>
                     </div>
                 </div>
-            </div>
+            </fieldset>
         </div>
 
-        <div class="form-group row mt-2">
+        <fieldset class="form-group row mt-2">
             <div class="col-sm-12 wt-page-options-value text-center">
                 <div class="btn-toolbar justify-content-between">
                     <div class="btn-group btn-group-sm">
@@ -188,7 +188,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                     </div>
                 </div>
             </div>
-        </div>
+        </fieldset>
     </form>
 
     <div class="row">
