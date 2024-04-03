@@ -43,12 +43,16 @@ export default class Text
         if (this.isInnerLabel(datum)) {
             const parentId = d3.select(parent.node().parentNode).attr("id");
             const nameGroups = this.createNamesData(datum);
-            const text = parent.append("text");
+
+            // The textPath element must be contained individually in a text element, otherwise the exported
+            // chart will not be drawn correctly in Inkscape (actually this is not necessary, the browsers
+            // display the chart correctly).
 
             nameGroups.forEach((nameGroup, index) => {
                 const availableWidth = this.getAvailableWidth(datum, index);
                 const pathId = this.createPathDefinition(parentId, index, datum);
-                const textPath = text
+                const textPath = parent
+                    .append("text")
                     .append("textPath")
                     .attr("xlink:href", "#" + pathId)
                     .attr("startOffset", "25%");
@@ -69,7 +73,8 @@ export default class Text
                 const availableWidth = this.getAvailableWidth(datum, 2);
                 const nameGroup = this.createAlternativeNamesData(datum);
 
-                const textPath = text
+                const textPath = parent
+                    .append("text")
                     .append("textPath")
                     .attr("xlink:href", "#" + pathId)
                     .attr("startOffset", "25%")
@@ -88,26 +93,26 @@ export default class Text
 
             // Birth and death date
             if (datum.data.data.timespan !== "") {
-                let pathId4 = this.createPathDefinition(parentId, 3, datum);
-                let textPath4 = parent
+                const pathId = this.createPathDefinition(parentId, 3, datum);
+                const textPath = parent
                     .append("text")
                     .append("textPath")
-                    .attr("xlink:href", "#" + pathId4)
+                    .attr("xlink:href", "#" + pathId)
                     .attr("startOffset", "25%")
                     .attr("class", "date");
 
-                textPath4.append("title")
+                textPath.append("title")
                     .text(datum.data.data.timespan);
 
                 // Create a <tspan> element for the time span
-                let tspan = textPath4.append("tspan")
+                const tspan = textPath.append("tspan")
                     .text(datum.data.data.timespan);
 
-                let availableWidth = this.getAvailableWidth(datum, 3);
+                const availableWidth = this.getAvailableWidth(datum, 3);
 
-                if (this.getTextLength(textPath4) > availableWidth) {
-                    textPath4.selectAll("tspan")
-                        .each(this.truncateDate(textPath4, availableWidth));
+                if (this.getTextLength(textPath) > availableWidth) {
+                    textPath.selectAll("tspan")
+                        .each(this.truncateDate(textPath, availableWidth));
 
                     tspan.text(tspan.text() + "\u2026");
                 }
@@ -180,23 +185,23 @@ export default class Text
                 if (datum.depth < 6) {
                     // Birth and death date
                     if (datum.data.data.timespan !== "") {
-                        let text5 = parent
+                        const text = parent
                             .append("text")
                             .attr("class", "date")
                             .attr("dy", "7px");
 
-                        text5.append("title")
+                        text.append("title")
                             .text(datum.data.data.timespan);
 
                         // Create a <tspan> element for the time span
-                        let tspan = text5.append("tspan")
+                        const tspan = text.append("tspan")
                             .text(datum.data.data.timespan);
 
-                        let availableWidth = this.getAvailableWidth(datum, 2);
+                        const availableWidth = this.getAvailableWidth(datum, 2);
 
-                        if (this.getTextLength(text5) > availableWidth) {
-                            text5.selectAll("tspan")
-                                .each(this.truncateDate(text5, availableWidth));
+                        if (this.getTextLength(text) > availableWidth) {
+                            text.selectAll("tspan")
+                                .each(this.truncateDate(text, availableWidth));
 
                             tspan.text(tspan.text() + "\u2026");
                         }
@@ -210,16 +215,16 @@ export default class Text
 
         // Marriage date
         if (this._configuration.showParentMarriageDates && datum.children && (datum.depth < 5)) {
-            let parentId5 = d3.select(parent.node().parentNode).attr("id");
-            let pathId5 = this.createPathDefinition(parentId5, 4, datum);
-            let textPath5 = parent
+            const parentId = d3.select(parent.node().parentNode).attr("id");
+            const pathId = this.createPathDefinition(parentId, 4, datum);
+            const textPath = parent
                 .append("text")
                 .append("textPath")
-                .attr("xlink:href", "#" + pathId5)
+                .attr("xlink:href", "#" + pathId)
                 .attr("startOffset", "25%")
                 .attr("class", "date");
 
-            this.addMarriageDate(textPath5, datum);
+            this.addMarriageDate(textPath, datum);
         }
     }
 
