@@ -97,6 +97,13 @@ export class Storage
     {
         this._storage[name] = value;
 
-        localStorage.setItem(this._name, JSON.stringify(this._storage));
+        try {
+            localStorage.setItem(this._name, JSON.stringify(this._storage));
+        }
+        catch (exception) {
+            console.log(
+                "There wasn't enough space to store '" + name + "' with value '" + value + "' in the local storage."
+            );
+        }
     }
 }
