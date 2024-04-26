@@ -1,5 +1,5 @@
 /**
- * This file is part of the package magicsunday/webtrees-descendants-chart.
+ * This file is part of the package magicsunday/webtrees-fan-chart.
  *
  * For the full copyright and license information, please read the
  * LICENSE file distributed with this source code.
@@ -10,7 +10,7 @@
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
- * @link    https://github.com/magicsunday/webtrees-descendants-chart/
+ * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 export class Storage
 {
@@ -28,12 +28,14 @@ export class Storage
     /**
      * Register an HTML element.
      *
-     * @param {String} name The id or name of an HTML element
+     * @param {String} name The ID of an HTML element
      */
     register(name)
     {
-        // Use "querySelector" here as the ID of a checkbox elements may additionally contain a hyphen and the value
-        let input = document.querySelector('[id^="' + name + '"]');
+        // Use "querySelector" here as the ID of checkbox elements may additionally contain a hyphen and the value
+        // Query checked elements (radio and checkbox) separately
+        let input = document.querySelector('[id^="' + name + '"]:checked')
+            || document.querySelector('[id^="' + name + '"]');
 
         if (input === null) {
             return;

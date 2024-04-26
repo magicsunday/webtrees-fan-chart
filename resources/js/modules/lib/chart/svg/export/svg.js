@@ -1,11 +1,10 @@
 /**
- * This file is part of the package magicsunday/webtrees-descendants-chart.
+ * This file is part of the package magicsunday/webtrees-fan-chart.
  *
  * For the full copyright and license information, please read the
  * LICENSE file distributed with this source code.
  */
 
-import * as d3 from "../../../d3";
 import Export from "../export";
 
 /**
@@ -13,86 +12,255 @@ import Export from "../export";
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
- * @link    https://github.com/magicsunday/webtrees-descendants-chart/
+ * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 export default class SvgExport extends Export
 {
-    /**
-     * Copies recursively all the styles from the list of container elements from the source
-     * to the destination node.
-     *
-     * @param {String[]}           cssFiles
-     * @param {SVGGraphicsElement} destinationNode
-     * @param {String}             containerClassName The container class name
-     *
-     * @returns {Promise<SVGGraphicsElement>}
-     */
-    copyStylesInline(cssFiles, destinationNode, containerClassName)
+    constructor()
     {
-        return new Promise(resolve => {
-            Promise
-                .all(cssFiles.map(url => d3.text(url)))
-                .then((filesData) => {
-                    filesData.forEach(data => {
-                        // Remove parent container selector as the CSS is included directly in the SVG element
-                        data = data.replace(new RegExp("." + containerClassName + " ", "g"), "");
+        super();
 
-                        let style = document.createElementNS("http://www.w3.org/2000/svg", "style");
-                        style.appendChild(document.createTextNode(data));
+        // Styles to ignore
+        this._obsoleteStyles = [
+            'd',
+            'cursor',
+            'user-select',
+            'block-size',
+            'inline-size',
+            'width',
+            'height',
+            'column-rule-color',
+            'vertical-align',
+            'border-collapse',
+            'border-spacing',
+            'place-content',
+            'place-items',
+            'place-self',
+            'bottom',
+            'top',
+            'right',
+            'left',
+            'column-fill',
+            'gap',
+            'column-rule-style',
+            'column-rule-width',
+            'column-span',
+            'empty-cells',
+            'flex',
+            'flex-flow',
+            'grid-area',
+            'order',
+            'shape-image-threshold',
+            'shape-margin',
+            'shape-outside',
+            'table-layout',
+            'z-index'
+        ];
 
-                        destinationNode.prepend(style);
-                    });
+        this._defaultStyles = {};
+    }
 
-                    // Assign class wt-global so theme related styles are correctly set in export
-                    destinationNode.classList.add("wt-global");
+    /**
+     * Create a sandbox, used to query the default styles of an element.
+     *
+     * @param {Node} node
+     *
+     * @return {Node}
+     */
+    createSandbox(node)
+    {
+        this._sandbox = document.createElement('iframe');
+        this._sandbox.style.visibility = 'hidden';
+        this._sandbox.style.position = 'fixed';
 
-                    resolve(destinationNode);
+        document.body.appendChild(this._sandbox);
+
+        this._sandbox.contentWindow.document.write(
+            '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Sandbox</title></head><body></body></html>'
+        );
+
+        return node;
+    }
+
+    /**
+     * Returns the default style declaration of an element. To achieve this, a new element is created using
+     * the tag name and added to the sandbox.
+     *
+     * @param {Node|Element} source
+     *
+     * @return {CSSStyleDeclaration}
+     */
+    getDefaultComputedStyle(source)
+    {
+        if (this._defaultStyles[source.tagName]) {
+            return this._defaultStyles[source.tagName];
+        }
+
+        const defaultElement = this._sandbox.contentWindow.document.createElement(source.tagName);
+        defaultElement.textContent = '\u200b';
+
+        this._sandbox.contentWindow.document.body.appendChild(defaultElement);
+        const defaultStyleDeclaration = this._sandbox.contentWindow.getComputedStyle(defaultElement);
+        this._sandbox.contentWindow.document.body.removeChild(defaultElement);
+
+        this._defaultStyles[source.tagName] = defaultStyleDeclaration;
+        return this._defaultStyles[source.tagName];
+    }
+
+    /**
+     * Clones the style information of the source node and appends it to the target node.
+     *
+     * @param {Node|Element}        source
+     * @param {Node|Element}        target
+     * @param {CSSStyleDeclaration} parentStyleDeclaration
+     *
+     * @return {Node}
+     */
+    cloneStyles(source, target, parentStyleDeclaration)
+    {
+        if (!(target instanceof Element)) {
+            return Promise.resolve(target);
+        }
+
+        const defaultStyleDeclaration = this.getDefaultComputedStyle(source);
+        const sourceStyleDeclaration = window.getComputedStyle(source);
+        const targetStyle = target.style;
+
+        Array
+            .from(sourceStyleDeclaration)
+            .forEach((name) => {
+                // Ignore CSS variables
+                if (name.startsWith('--')) {
+                    return;
+                }
+
+                // Ignore the following list of styles
+                if (this._obsoleteStyles.indexOf(name) !== -1) {
+                    return;
+                }
+
+                const sourceValue = sourceStyleDeclaration.getPropertyValue(name);
+                const defaultValue = defaultStyleDeclaration[name];
+                const parentValue = parentStyleDeclaration
+                    ? parentStyleDeclaration.getPropertyValue(name)
+                    : undefined;
+
+                if (
+                    ((sourceValue !== defaultValue) && (sourceValue !== parentValue))
+                    || (parentStyleDeclaration && (sourceValue !== parentValue))
+                ) {
+                    const priority = sourceStyleDeclaration.getPropertyPriority(name);
+
+                    if (priority) {
+                        targetStyle.setProperty(name, sourceValue, priority);
+                    } else {
+                        targetStyle.setProperty(name, sourceValue);
+                    }
+
+                    // Force font family as native font stack may not work with Inkscape
+                    if (name === 'font-family') {
+                        targetStyle.setProperty(name, '"Segoe UI", Arial, sans-serif');
+                    }
+                }
+            });
+
+        return Promise.resolve(target);
+    }
+
+    /**
+     * Clones the passed node and its child nodes. Then the duplicated style information is
+     * appended to the cloned node.
+     *
+     * @param {Node}                source
+     * @param {CSSStyleDeclaration} sourceStyleDeclaration
+     *
+     * @return {Promise<Node>}
+     */
+    createNodeDuplicate(source, sourceStyleDeclaration)
+    {
+        return Promise
+            .resolve(source)
+            .then(clone => clone.cloneNode(false))
+            .then(clone => this.cloneChildren(source, clone))
+            .then(clone => this.cloneStyles(source, clone, sourceStyleDeclaration));
+    }
+
+    /**
+     * Clones all child nodes of the passed source parent node and adds the copy to the cloned parent.
+     *
+     * @param {Node} source
+     * @param {Node} target
+     *
+     * @return {Promise<Node>}
+     */
+    cloneChildren(source, target)
+    {
+        let done = Promise.resolve();
+
+        if (source.childNodes.length !== 0) {
+            const sourceStyleDeclaration = window.getComputedStyle(source);
+
+            Array
+                .from(source.childNodes)
+                .forEach((child) => {
+                    done = done
+                        .then(() => this.createNodeDuplicate(child, sourceStyleDeclaration))
+                        .then((childClone) => {
+                            if (childClone) {
+                                target.appendChild(childClone);
+                            }
+                        });
                 });
-        })
+        }
+
+        return done
+            .then(() => target);
     }
 
     /**
      * Converts the given SVG into an object URL. Resolves to the object URL.
      *
-     * @param {SVGGraphicsElement} svg The SVG element
+     * @param {Node} svg The SVG element
      *
      * @returns {Promise<String>}
      */
     convertToObjectUrl(svg)
     {
         return new Promise(resolve => {
-            let data    = (new XMLSerializer()).serializeToString(svg);
-            let DOMURL  = window.URL || window.webkitURL || window;
-            let svgBlob = new Blob([ data ], { type: "image/svg+xml;charset=utf-8" });
-            let url     = DOMURL.createObjectURL(svgBlob);
-            let img     = new Image();
+            const data = (new XMLSerializer()).serializeToString(svg);
+            const domURL = window.URL || window.webkitURL || window;
+            const svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
+            const url = domURL.createObjectURL(svgBlob);
+            const htmlImageElement = new Image();
 
-            img.onload = () => {
+            htmlImageElement.onload = () => {
                 resolve(url);
             };
 
-            img.src = url;
+            htmlImageElement.src = url;
         });
     }
 
     /**
-     * Clones the SVG element.
+     * Perform clean-up task.
      *
-     * @param {SVGGraphicsElement} svg
+     * @param {String} objectUrl
      *
-     * @returns {Promise<SVGGraphicsElement>}
+     * @return {String}
      */
-    cloneSvg(svg)
+    cleanUp(objectUrl)
     {
-        return new Promise(resolve => {
-            let newSvg = svg.cloneNode(true);
+        // Remove the sandbox
+        if (this._sandbox) {
+            document.body.removeChild(this._sandbox);
+            this._sandbox = null;
+        }
 
-            resolve(newSvg);
-        })
+        return objectUrl;
     }
 
     /**
-     * Saves the given SVG as SVG image file.
+     * Saves the given SVG as an SVG image file.
      *
      * @param {Svg}      svg                The source SVG object
      * @param {String[]} cssFiles           The CSS files used together with the SVG
@@ -101,12 +269,20 @@ export default class SvgExport extends Export
      */
     svgToImage(svg, cssFiles, containerClassName, fileName)
     {
-        this.cloneSvg(svg.get().node())
-            .then(newSvg => this.copyStylesInline(cssFiles, newSvg, containerClassName))
-            .then(newSvg => this.convertToObjectUrl(newSvg))
+        let node = svg.get().node();
+
+        Promise
+            .resolve(node)
+            .then(node => this.createSandbox(node))
+            .then(clone => clone.cloneNode(false))
+            .then(clone => this.cloneStyles(node, clone, null))
+            .then(clone => this.cloneChildren(node, clone))
+            .then(clone => this.convertToObjectUrl(clone))
+            .then(objectUrl => this.cleanUp(objectUrl))
             .then(objectUrl => this.triggerDownload(objectUrl, fileName))
-            .catch(() => {
-                console.log("Failed to save chart as SVG image");
+            .catch((error) => {
+                console.log("Failed to save chart as SVG image: " + error.message);
+                console.log(error);
             });
     }
 }

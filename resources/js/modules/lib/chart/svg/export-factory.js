@@ -1,5 +1,5 @@
 /**
- * This file is part of the package magicsunday/webtrees-descendants-chart.
+ * This file is part of the package magicsunday/webtrees-fan-chart.
  *
  * For the full copyright and license information, please read the
  * LICENSE file distributed with this source code.
@@ -13,7 +13,7 @@ import SvgExport from "./export/svg";
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
- * @link    https://github.com/magicsunday/webtrees-descendants-chart/
+ * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 export default class ExportFactory
 {

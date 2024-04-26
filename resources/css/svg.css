@@ -1,9 +1,3 @@
-/* SVG export styles */
-.webtrees-fan-chart-container svg {
-    /* Native font stack: see https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/ */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
-
 .webtrees-fan-chart-container svg g.person g.color path.female {
     fill: var(--sex-f-bg, rgb(233, 218, 241));
 }
@@ -24,10 +18,6 @@
 
 .webtrees-fan-chart-container svg g.person.available g.arc path {
     fill: rgb(250, 250, 250);
-}
-
-.webtrees-fan-chart-container svg g.name tspan.preferred {
-    text-decoration: underline;
 }
 
 .webtrees-fan-chart-container svg g.name .wt-chart-box-name-alt {

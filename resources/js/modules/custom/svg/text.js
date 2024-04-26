@@ -54,7 +54,7 @@ export default class Text
                 const textPath = parent
                     .append("text")
                     .append("textPath")
-                    .attr("xlink:href", "#" + pathId)
+                    .attr("href", "#" + pathId)
                     .attr("startOffset", "25%");
 
                 this.addNameElements(
@@ -76,7 +76,7 @@ export default class Text
                 const textPath = parent
                     .append("text")
                     .append("textPath")
-                    .attr("xlink:href", "#" + pathId)
+                    .attr("href", "#" + pathId)
                     .attr("startOffset", "25%")
                     .classed("wt-chart-box-name-alt", true)
                     .classed("rtl", datum.data.data.isAltRtl);
@@ -97,7 +97,7 @@ export default class Text
                 const textPath = parent
                     .append("text")
                     .append("textPath")
-                    .attr("xlink:href", "#" + pathId)
+                    .attr("href", "#" + pathId)
                     .attr("startOffset", "25%")
                     .attr("class", "date");
 
@@ -220,7 +220,7 @@ export default class Text
             const textPath = parent
                 .append("text")
                 .append("textPath")
-                .attr("xlink:href", "#" + pathId)
+                .attr("href", "#" + pathId)
                 .attr("startOffset", "25%")
                 .attr("class", "date");
 
@@ -371,7 +371,7 @@ export default class Text
                         return index !== 0 ? ((datum.isNameRtl ? -1 : 1) * 0.25) + "em" : null;
                     })
                     // Highlight the preferred and last name
-                    .classed("preferred", datum => datum.isPreferred)
+                    .attr("text-decoration", datum => datum.isPreferred ? "underline" : null)
                     .classed("lastName", datum => datum.isLastName);
             });
     }
