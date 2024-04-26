@@ -158,7 +158,7 @@ export default class Chart
                 }
             )
             .append("g")
-            .attr("class", (datum) => "person depth-" + datum.depth)
+            .attr("class", "person")
             .attr("id", (datum) => "person-" + datum.id);
 
         // Create a new selection in order to leave the previous enter() selection

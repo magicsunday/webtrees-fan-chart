@@ -371,7 +371,7 @@ export default class Text
                         return index !== 0 ? ((datum.isNameRtl ? -1 : 1) * 0.25) + "em" : null;
                     })
                     // Highlight the preferred and last name
-                    .classed("preferred", datum => datum.isPreferred)
+                    .attr("text-decoration", datum => datum.isPreferred ? "underline" : null)
                     .classed("lastName", datum => datum.isLastName);
             });
     }
