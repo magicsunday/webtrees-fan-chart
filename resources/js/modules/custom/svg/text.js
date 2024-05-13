@@ -247,51 +247,71 @@ export default class Text
         let lastnames = {};
         let minPosFirstnames = Number.MAX_SAFE_INTEGER;
         let minPosLastnames = Number.MAX_SAFE_INTEGER;
-        let offset = 0;
+
+        let firstnameOffset = 0;
+        let firstnameMap = new Map();
 
         // Iterate over the individual name components and determine their position in the overall
         // name and insert the component at the corresponding position in the result object.
         for (let i in datum.data.data.firstNames) {
-            const pos = datum.data.data.name.indexOf(datum.data.data.firstNames[i], offset);
+            const pos = datum.data.data.name.indexOf(datum.data.data.firstNames[i], firstnameOffset);
 
             if (pos !== -1) {
-                offset = pos;
+                firstnameOffset = pos + datum.data.data.firstNames[i].length;
 
                 if (pos < minPosFirstnames) {
                     minPosFirstnames = pos;
                 }
 
-                firstnames[pos] = {
-                    label: datum.data.data.firstNames[i],
-                    isPreferred: datum.data.data.firstNames[i] === datum.data.data.preferredName,
-                    isLastName: false,
-                    isNameRtl: datum.data.data.isNameRtl
-                };
+                firstnameMap.set(
+                    pos,
+                    {
+                        label: datum.data.data.firstNames[i],
+                        isPreferred: datum.data.data.firstNames[i] === datum.data.data.preferredName,
+                        isLastName: false,
+                        isNameRtl: datum.data.data.isNameRtl
+                    }
+                );
             }
         }
 
-        names[minPosFirstnames] = Object.values(firstnames);
+        names[minPosFirstnames] = [...firstnameMap].map(([, value]) => ( value ));
+
+        let lastnameOffset = 0;
+        let lastnameMap = new Map();
 
         for (let i in datum.data.data.lastNames) {
-            const pos = datum.data.data.name.indexOf(datum.data.data.lastNames[i], offset);
+            let pos;
+
+            // Check if last name already exists in first names list, in case first name equals last name
+            do {
+                pos = datum.data.data.name.indexOf(datum.data.data.lastNames[i], lastnameOffset);
+
+                if ((pos !== -1) && firstnameMap.has(pos)) {
+                    lastnameOffset += pos + datum.data.data.lastNames[i].length;
+                }
+            } while ((pos !== -1) && firstnameMap.has(pos));
 
             if (pos !== -1) {
-                offset = pos;
+                lastnameOffset = pos;
 
                 if (pos < minPosLastnames) {
                     minPosLastnames = pos;
                 }
 
-                lastnames[pos] = {
-                    label: datum.data.data.lastNames[i],
-                    isPreferred: false,
-                    isLastName: true,
-                    isNameRtl: datum.data.data.isNameRtl
-                };
+                lastnameMap.set(
+                    pos,
+                    {
+                        label: datum.data.data.lastNames[i],
+                        isPreferred: false,
+                        isLastName: true,
+                        isNameRtl: datum.data.data.isNameRtl
+                    }
+                );
             }
         }
 
-        names[minPosLastnames] = Object.values(lastnames);
+        names[minPosLastnames] = [...lastnameMap].map(([, value]) => ( value ));
 
         // Extract the values (keys don't matter anymore)
         return Object.values(names);
