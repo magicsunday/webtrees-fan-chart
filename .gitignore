@@ -20,5 +20,7 @@ node_modules/
 .phpunit.cache
 
 # Custom
-resources/js/fan-chart.js
+resources/js/fan-chart-*.js
+# Allow minified file
+!resources/js/fan-chart-*.min.js
 webtrees-fan-chart.zip

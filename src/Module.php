@@ -208,7 +208,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
                 'chartParams'       => json_encode($this->getChartParameters($individual), JSON_THROW_ON_ERROR),
                 'stylesheets'       => $this->getStylesheets(),
                 'exportStylesheets' => $this->getExportStylesheets(),
-                'javascript'        => $this->assetUrl('js/fan-chart.min.js'),
+                'javascript'        => $this->assetUrl('js/fan-chart-' . self::CUSTOM_VERSION . '.min.js'),
             ]
         );
     }
@@ -317,7 +317,10 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      */
     private function getStylesheets(): array
     {
-        return [$this->assetUrl('css/fan-chart.css'), $this->assetUrl('css/svg.css')];
+        return [
+            $this->assetUrl('css/fan-chart.css'),
+            $this->assetUrl('css/svg.css'),
+        ];
     }
 
     /**
