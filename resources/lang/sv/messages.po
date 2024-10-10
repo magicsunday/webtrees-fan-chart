@@ -3,16 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-11 08:41+0100\n"
-"PO-Revision-Date: 2023-01-11 08:41+0100\n"
+"PO-Revision-Date: 2024-10-10 21:37+0200\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Loco-Source-Locale: sv_SE\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: PO File Editor https://pofile.net/free-po-editor\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Loco-Parser: loco_parse_po\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: src/Module.php:116 src/Module.php:220
 msgid "Fan chart"
-msgstr "Förfäders solfjäderdiagram"
+msgstr "Solfjäderdiagram"
 
 #: src/Module.php:126
 msgid "A fan chart of an individual’s ancestors."
@@ -30,7 +30,7 @@ msgstr "Ett solfjäderdiagram med en persons förfäder."
 #: src/Module.php:223 src/Traits/ModuleChartTrait.php:38
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Förfäders solfjäderdiagram för %s"
+msgstr "Solfjäderdiagram för %s"
 
 #: src/Module.php:243
 msgid "Use Ctrl + scroll to zoom in the view"
