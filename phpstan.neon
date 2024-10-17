@@ -17,5 +17,4 @@ parameters:
         - php
 
     # Ignored validations
-    checkGenericClassInNonGenericObjectType: false
     treatPhpDocTypesAsCertain: false

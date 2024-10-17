@@ -23,7 +23,7 @@ jobs:
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: ${{ matrix.php }}
-                    tools: composer:v2, php-cs-fixer
+                    tools: composer:v2
 
             -   name: Validate composer.json and composer.lock
                 run: composer validate
@@ -60,7 +60,7 @@ jobs:
                 name: CGL
                 if: ${{ always() && steps.install.conclusion == 'success' }}
                 run: |
-                    php-cs-fixer fix --dry-run --verbose
+                    composer ci:cgl -- --dry-run
 
             -   id: phpstan
                 name: PHPStan
