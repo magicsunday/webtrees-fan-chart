@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Hindi\n"
-"POT-Creation-Date: 2023-01-11 08:40+0100\n"
+"POT-Creation-Date: 2024-10-27 15:20+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -9,107 +9,146 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:116 src/Module.php:220
+#: src/Module.php:127 src/Module.php:243
 msgid "Fan chart"
 msgstr "फैन चार्ट"
 
-#: src/Module.php:126
+#: src/Module.php:137
 msgid "A fan chart of an individual’s ancestors."
 msgstr "किसी व्यक्ती के पूर्वजों का एक फैन चार्ट।"
 
-#: src/Module.php:223 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
 #, php-format
 msgid "Fan chart of %s"
 msgstr "%s का फैन चार्ट"
 
-#: src/Module.php:243
+#: src/Module.php:260
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Ctrl + Scroll से ज़ूम इन करें"
 
-#: src/Module.php:244
+#: src/Module.php:261
 msgid "Move the view with two fingers"
 msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
 
-#: src/Traits/IndividualTrait.php:151
+#: src/Processor/DateProcessor.php:129
 #, php-format
 msgid "Born: %s"
 msgstr "जन्म: %s"
 
-#: src/Traits/IndividualTrait.php:155
+#: src/Processor/DateProcessor.php:133
 #, php-format
 msgid "Died: %s"
 msgstr "मृत्यु: %s"
 
-#: src/Traits/IndividualTrait.php:159
+#: src/Processor/DateProcessor.php:137
 msgid "Deceased"
 msgstr "मृतक"
 
-#: resources/views/chart.phtml:35
-msgid "Individual"
-msgstr "व्यक्ति"
-
-#: resources/views/chart.phtml:52
-msgid "Fan size"
-msgstr "फैन का आकार"
-
-#: resources/views/chart.phtml:62
-msgid "Generations"
-msgstr "पीढ़ियां"
-
-#: resources/views/chart.phtml:80
-msgid "Presentation"
-msgstr "प्रस्तुतीकरण"
-
-#: resources/views/chart.phtml:87
-msgid "Hide empty segments"
-msgstr "खाली खंड छिपाएं"
-
-#: resources/views/chart.phtml:96
-msgid "Show color gradients"
-msgstr "रंग ढाल दिखाएं"
-
-#: resources/views/chart.phtml:105
-msgid "Show parent marriage dates"
+#: src/Traits/ModuleConfigTrait.php:91
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: resources/views/chart.phtml:114
-msgid "Number of inner levels"
-msgstr "आंतरिक स्तरों की संख्या"
-
-#: resources/views/chart.phtml:127
-msgid "Specifies the number of levels in which the text is written along an arc."
-msgstr "उस स्तर की संख्या निर्दिष्ट करता है जिसमें पाठ चाप के साथ लिखा जाता है।"
-
-#: resources/views/chart.phtml:134
-msgid "Font size"
-msgstr "फ़ॉन्ट आकार"
-
-#: resources/views/chart.phtml:159
-msgid "Show more options"
-msgstr ""
-
-#: resources/views/chart.phtml:160
-msgid "Hide more options"
-msgstr ""
-
-#: resources/views/chart.phtml:165
-msgid "view"
-msgstr "देखें"
-
-#: resources/views/chart.phtml:171
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
 msgid "Re center"
 msgstr "पुनः केंद्रित करें"
 
-#: resources/views/chart.phtml:176
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:17
+msgid "Show help"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
 msgstr "PNG निकालें"
 
-#: resources/views/chart.phtml:179
+#: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
 msgid "Export as SVG"
 msgstr "SVG निकालें"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:50
+msgid "save"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:55
+msgid "cancel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/fan-size.phtml:22
+msgid "Fan size"
+msgstr "फैन का आकार"
+
+#: resources/views/modules/fan-chart/form/font-size.phtml:22
+msgid "Font size"
+msgstr "फ़ॉन्ट आकार"
+
+#: resources/views/modules/fan-chart/form/generations.phtml:22
+msgid "Generations"
+msgstr "पीढ़ियां"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
+msgid "Number of inner levels"
+msgstr "आंतरिक स्तरों की संख्या"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
+msgid ""
+"Specifies the number of levels in which the text is written along an arc."
+msgstr "उस स्तर की संख्या निर्दिष्ट करता है जिसमें पाठ चाप के साथ लिखा जाता है।"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:23
+msgid "Layout"
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/layout.phtml:29
+msgid "Hide empty segments"
+msgstr "खाली खंड छिपाएं"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:39
+msgid "Show color gradients"
+msgstr "रंग ढाल दिखाएं"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:45
+msgid ""
+"Instead of the colors for men and women, a color gradient is displayed for "
+"the paternal and maternal lineage."
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Show parent marriage dates"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "व्यक्ति"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "देखें"
+
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:80
+msgid "Hide more options"
+msgstr ""
+
+#~ msgid "Presentation"
+#~ msgstr "प्रस्तुतीकरण"

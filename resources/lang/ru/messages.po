@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-01-11 08:41+0100\n"
-"PO-Revision-Date: 2023-01-11 08:41+0100\n"
+"POT-Creation-Date: 2024-10-27 15:20+0100\n"
+"PO-Revision-Date: 2024-10-27 15:20+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: z-yurets\n"
 "Language: ru\n"
@@ -11,108 +11,146 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:116 src/Module.php:220
+#: src/Module.php:127 src/Module.php:243
 msgid "Fan chart"
 msgstr "Веерный график"
 
-#: src/Module.php:126
+#: src/Module.php:137
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Веерный график персоны."
 
-#: src/Module.php:223 src/Traits/ModuleChartTrait.php:38
+#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Веерный график для %s"
 
-#: src/Module.php:243
+#: src/Module.php:260
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Используйте Ctrl + колёсико мыши, чтобы увеличить"
 
-#: src/Module.php:244
+#: src/Module.php:261
 msgid "Move the view with two fingers"
 msgstr "Перемещайте, используя два пальца"
 
-#: src/Traits/IndividualTrait.php:151
+#: src/Processor/DateProcessor.php:129
 #, php-format
 msgid "Born: %s"
 msgstr "Рождение: %s"
 
-#: src/Traits/IndividualTrait.php:155
+#: src/Processor/DateProcessor.php:133
 #, php-format
 msgid "Died: %s"
 msgstr "Смерть: %s"
 
-#: src/Traits/IndividualTrait.php:159
+#: src/Processor/DateProcessor.php:137
 msgid "Deceased"
 msgstr "Умер"
 
-#: resources/views/chart.phtml:35
-msgid "Individual"
-msgstr "Персона"
+#: src/Traits/ModuleConfigTrait.php:91
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr ""
 
-#: resources/views/chart.phtml:52
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
+msgid "Re center"
+msgstr "Выровнять"
+
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:17
+msgid "Show help"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/png-export-button.phtml:18
+msgid "Export as PNG"
+msgstr "Экспорт в PNG"
+
+#: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
+msgid "Export as SVG"
+msgstr "Экспорт в SVG"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:50
+msgid "save"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:55
+msgid "cancel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
 msgstr "Размер веера"
 
-#: resources/views/chart.phtml:62
+#: resources/views/modules/fan-chart/form/font-size.phtml:22
+msgid "Font size"
+msgstr "Размер шрифта"
+
+#: resources/views/modules/fan-chart/form/generations.phtml:22
 msgid "Generations"
 msgstr "Поколения"
 
-#: resources/views/chart.phtml:80
-msgid "Presentation"
-msgstr "Отображение"
-
-#: resources/views/chart.phtml:87
-msgid "Hide empty segments"
-msgstr "Скрыть пустое"
-
-#: resources/views/chart.phtml:96
-msgid "Show color gradients"
-msgstr "Выделить ответвления цветом"
-
-#: resources/views/chart.phtml:105
-msgid "Show parent marriage dates"
-msgstr "Показать даты бракосочетания"
-
-#: resources/views/chart.phtml:114
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
 msgid "Number of inner levels"
 msgstr "Ширина"
 
-#: resources/views/chart.phtml:127
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
 "Specifies the number of levels in which the text is written along an arc."
 msgstr "Указать ширину строчек для написания по дуге."
 
-#: resources/views/chart.phtml:134
-msgid "Font size"
-msgstr "Размер шрифта"
+#: resources/views/modules/fan-chart/form/layout.phtml:23
+msgid "Layout"
+msgstr ""
 
-#: resources/views/chart.phtml:159
-msgid "Show more options"
-msgstr "Дополнительные опции"
+#: resources/views/modules/fan-chart/form/layout.phtml:29
+msgid "Hide empty segments"
+msgstr "Скрыть пустое"
 
-#: resources/views/chart.phtml:160
-msgid "Hide more options"
-msgstr "Спрятать доп. опции"
+#: resources/views/modules/fan-chart/form/layout.phtml:39
+msgid "Show color gradients"
+msgstr "Выделить ответвления цветом"
 
-#: resources/views/chart.phtml:165
+#: resources/views/modules/fan-chart/form/layout.phtml:45
+msgid ""
+"Instead of the colors for men and women, a color gradient is displayed for "
+"the paternal and maternal lineage."
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Show parent marriage dates"
+msgstr "Показать даты бракосочетания"
+
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "Персона"
+
+#: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
 msgstr "Обновить"
 
-#: resources/views/chart.phtml:171
-msgid "Re center"
-msgstr "Выровнять"
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "Дополнительные опции"
 
-#: resources/views/chart.phtml:176
-msgid "Export as PNG"
-msgstr "Экспорт в PNG"
+#: resources/views/modules/fan-chart/page.phtml:80
+msgid "Hide more options"
+msgstr "Спрятать доп. опции"
 
-#: resources/views/chart.phtml:179
-msgid "Export as SVG"
-msgstr "Экспорт в SVG"
+#~ msgid "Presentation"
+#~ msgstr "Отображение"

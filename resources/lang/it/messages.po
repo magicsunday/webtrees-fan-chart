@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-02-17 17:47+0100\n"
-"PO-Revision-Date: 2023-02-17 18:56+0100\n"
+"POT-Creation-Date: 2024-10-27 15:20+0100\n"
+"PO-Revision-Date: 2024-10-27 15:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -10,107 +10,147 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:107 src/Module.php:211
+#: src/Module.php:127 src/Module.php:243
 msgid "Fan chart"
 msgstr "Grafico a ventaglio"
 
-#: src/Module.php:117
+#: src/Module.php:137
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Un grafico a ventaglio degli antenati di una persona."
 
-#: src/Module.php:214 src/Traits/ModuleChartTrait.php:41
+#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Grafico a ventaglio di %s"
 
-#: src/Module.php:234
+#: src/Module.php:260
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Usare Ctrl + scorrimento per ingrandire la vista"
 
-#: src/Module.php:235
+#: src/Module.php:261
 msgid "Move the view with two fingers"
 msgstr "Spostare la vista"
 
-#: src/Traits/IndividualTrait.php:165
+#: src/Processor/DateProcessor.php:129
 #, php-format
 msgid "Born: %s"
 msgstr "Nato/a: %s"
 
-#: src/Traits/IndividualTrait.php:169
+#: src/Processor/DateProcessor.php:133
 #, php-format
 msgid "Died: %s"
 msgstr "Morto/a: %s"
 
-#: src/Traits/IndividualTrait.php:173
+#: src/Processor/DateProcessor.php:137
 msgid "Deceased"
 msgstr "Deceduto"
 
-#: resources/views/chart.phtml:38
-msgid "Individual"
-msgstr "Persona"
+#: src/Traits/ModuleConfigTrait.php:91
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr ""
 
-#: resources/views/chart.phtml:55
-msgid "Fan size"
-msgstr "Impostare i gradi di apertura del grafico"
-
-#: resources/views/chart.phtml:65
-msgid "Generations"
-msgstr "Generazioni da visualizzare"
-
-#: resources/views/chart.phtml:83
-msgid "Presentation"
-msgstr "Visualizza"
-
-#: resources/views/chart.phtml:90
-msgid "Hide empty segments"
-msgstr "Nascondi i settori vuoti"
-
-#: resources/views/chart.phtml:99
-msgid "Show color gradients"
-msgstr "Mostra con colori sfumati"
-
-#: resources/views/chart.phtml:108
-msgid "Show parent marriage dates"
-msgstr "Mostra la data del matrimonio dei genitori"
-
-#: resources/views/chart.phtml:117
-msgid "Number of inner levels"
-msgstr "Numero di livelli interni"
-
-#: resources/views/chart.phtml:130
-msgid "Specifies the number of levels in which the text is written along an arc."
-msgstr "Specifica il numero di livelli in cui il testo è scritto lungo un arco."
-
-#: resources/views/chart.phtml:137
-msgid "Font size"
-msgstr "Dimensione dei caratteri"
-
-#: resources/views/chart.phtml:162
-msgid "Show more options"
-msgstr "Mostra opzioni"
-
-#: resources/views/chart.phtml:163
-msgid "Hide more options"
-msgstr "Nascondi opzioni"
-
-#: resources/views/chart.phtml:168
-msgid "view"
-msgstr "Aggiorna la vista"
-
-#: resources/views/chart.phtml:174
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
 msgid "Re center"
 msgstr "Riposiziona"
 
-#: resources/views/chart.phtml:179
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:17
+msgid "Show help"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
 msgstr "Esporta come PNG"
 
-#: resources/views/chart.phtml:182
+#: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
 msgid "Export as SVG"
 msgstr "Esporta come SVG"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:50
+msgid "save"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:55
+msgid "cancel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/fan-size.phtml:22
+msgid "Fan size"
+msgstr "Impostare i gradi di apertura del grafico"
+
+#: resources/views/modules/fan-chart/form/font-size.phtml:22
+msgid "Font size"
+msgstr "Dimensione dei caratteri"
+
+#: resources/views/modules/fan-chart/form/generations.phtml:22
+msgid "Generations"
+msgstr "Generazioni da visualizzare"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
+msgid "Number of inner levels"
+msgstr "Numero di livelli interni"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
+msgid ""
+"Specifies the number of levels in which the text is written along an arc."
+msgstr ""
+"Specifica il numero di livelli in cui il testo è scritto lungo un arco."
+
+#: resources/views/modules/fan-chart/form/layout.phtml:23
+msgid "Layout"
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/layout.phtml:29
+msgid "Hide empty segments"
+msgstr "Nascondi i settori vuoti"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:39
+msgid "Show color gradients"
+msgstr "Mostra con colori sfumati"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:45
+msgid ""
+"Instead of the colors for men and women, a color gradient is displayed for "
+"the paternal and maternal lineage."
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Show parent marriage dates"
+msgstr "Mostra la data del matrimonio dei genitori"
+
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "Persona"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "Aggiorna la vista"
+
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "Mostra opzioni"
+
+#: resources/views/modules/fan-chart/page.phtml:80
+msgid "Hide more options"
+msgstr "Nascondi opzioni"
+
+#~ msgid "Presentation"
+#~ msgstr "Visualizza"
