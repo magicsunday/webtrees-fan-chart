@@ -1,4 +1,72 @@
+.wt-ajax-load:empty {
+    min-height: 50dvh;
+}
+
+.webtrees-fan-fullscreen-container::backdrop {
+    background-color: var(--bs-body-bg);
+}
+
+.webtrees-fan-fullscreen-container {
+    position: relative;
+}
+
+/* Button toolbar */
+.webtrees-fan-fullscreen-container .btn-toolbar {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.webtrees-fan-fullscreen-container .btn-chart {
+    color: var(--bs-btn-bg);
+    background: rgb(245, 245, 245);
+    border: 1px solid rgb(210, 210, 210);
+    width: 40px;
+    height: 32px;
+    border-radius: 30%;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+}
+
+.webtrees-fan-fullscreen-container .btn-primary:hover {
+    background: rgb(245, 245, 245);
+}
+
+.webtrees-fan-fullscreen-container .btn-chart:hover {
+    color: var(--link-color-hover);
+}
+
+.webtrees-fan-fullscreen-container .btn-chart .icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.webtrees-fan-fullscreen-container .btn-chart .icon .svg-inline--fa {
+    height: 1.5em;
+    vertical-align: -0.375em;
+}
+
+.webtrees-fan-fullscreen-container .btn-fullscreen span:nth-child(2) {
+    display: none;
+}
+
 /* Form */
+.form-element-description {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+
+#webtrees-fan-chart-form .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
 #webtrees-fan-chart-form .custom-range {
     padding-top: 4px;
 }
@@ -9,11 +77,6 @@
     text-align: center;
     border-radius: 3px;
     padding: 5px 10px;
-}
-
-#webtrees-fan-chart-form .row {
-    margin-left: 0;
-    margin-right: 0;
 }
 
 /* SVG */
@@ -76,7 +139,6 @@
 
 .webtrees-fan-chart-container svg {
     display: block;
-    margin: auto;
     cursor: grab;
     filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.2));
 }
@@ -170,4 +232,30 @@ div.tooltip .name {
 div.tooltip .date {
     font-size: 14px;
     color: rgb(127, 127, 127);
+}
+
+/* Fullscreen */
+[fullscreen] .webtrees-fan-fullscreen-container .wt-page-content {
+    padding: 0;
+}
+
+[fullscreen] .webtrees-fan-fullscreen-container .btn-fullscreen span:nth-child(1) {
+    display: none;
+}
+
+[fullscreen] .webtrees-fan-fullscreen-container .btn-fullscreen span:nth-child(2) {
+    display: inline-block;
+}
+
+[fullscreen] .webtrees-fan-fullscreen-container #exportPNG {
+    display: none;
+}
+
+[fullscreen] .webtrees-fan-fullscreen-container #exportSVG {
+    display: none;
+}
+
+[fullscreen] .webtrees-fan-chart-container {
+    min-height: 100dvh;
+    max-height: 100dvh;
 }

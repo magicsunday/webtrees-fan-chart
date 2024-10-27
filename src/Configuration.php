@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart;
 
+use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Validator;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -81,6 +83,11 @@ class Configuration
     private const FONT_SCALE_DEFAULT = 100;
 
     /**
+     * The calling module.
+     */
+    private AbstractModule $module;
+
+    /**
      * The current request instance.
      *
      * @var ServerRequestInterface
@@ -91,10 +98,12 @@ class Configuration
      * Configuration constructor.
      *
      * @param ServerRequestInterface $request
+     * @param AbstractModule         $module
      */
-    public function __construct(ServerRequestInterface $request)
+    public function __construct(ServerRequestInterface $request, AbstractModule $module)
     {
         $this->request = $request;
+        $this->module  = $module;
     }
 
     /**
@@ -104,9 +113,21 @@ class Configuration
      */
     public function getGenerations(): int
     {
-        return Validator::queryParams($this->request)
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
             ->isBetween(self::MIN_GENERATIONS, self::MAX_GENERATIONS)
-            ->integer('generations', self::DEFAULT_GENERATIONS);
+            ->integer(
+                'generations',
+                (int) $this->module->getPreference(
+                    'default_generations',
+                    (string) self::DEFAULT_GENERATIONS
+                )
+            );
     }
 
     /**
@@ -132,9 +153,21 @@ class Configuration
      */
     public function getFontScale(): int
     {
-        return Validator::queryParams($this->request)
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
             ->isBetween(10, 200)
-            ->integer('fontScale', self::FONT_SCALE_DEFAULT);
+            ->integer(
+                'fontScale',
+                (int) $this->module->getPreference(
+                    'default_fontScale',
+                    (string) self::FONT_SCALE_DEFAULT
+                )
+            );
     }
 
     /**
@@ -144,9 +177,21 @@ class Configuration
      */
     public function getFanDegree(): int
     {
-        return Validator::queryParams($this->request)
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
             ->isBetween(180, 360)
-            ->integer('fanDegree', self::FAN_DEGREE_DEFAULT);
+            ->integer(
+                'fanDegree',
+                (int) $this->module->getPreference(
+                    'default_fanDegree',
+                    (string) self::FAN_DEGREE_DEFAULT
+                )
+            );
     }
 
     /**
@@ -156,8 +201,20 @@ class Configuration
      */
     public function getHideEmptySegments(): bool
     {
-        return Validator::queryParams($this->request)
-            ->boolean('hideEmptySegments', false);
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->boolean(
+                'hideEmptySegments',
+                (bool) $this->module->getPreference(
+                    'default_hideEmptySegments',
+                    '0'
+                )
+            );
     }
 
     /**
@@ -167,8 +224,20 @@ class Configuration
      */
     public function getShowColorGradients(): bool
     {
-        return Validator::queryParams($this->request)
-            ->boolean('showColorGradients', false);
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->boolean(
+                'showColorGradients',
+                (bool) $this->module->getPreference(
+                    'default_showColorGradients',
+                    '0'
+                )
+            );
     }
 
     /**
@@ -178,8 +247,20 @@ class Configuration
      */
     public function getShowParentMarriageDates(): bool
     {
-        return Validator::queryParams($this->request)
-            ->boolean('showParentMarriageDates', false);
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->boolean(
+                'showParentMarriageDates',
+                (bool) $this->module->getPreference(
+                    'default_showParentMarriageDates',
+                    '0'
+                )
+            );
     }
 
     /**
@@ -189,9 +270,21 @@ class Configuration
      */
     public function getInnerArcs(): int
     {
-        return Validator::queryParams($this->request)
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
             ->isBetween(self::MIN_INNER_ARCS, self::MAX_INNER_ARCS)
-            ->integer('innerArcs', self::DEFAULT_INNER_ARCS);
+            ->integer(
+                'innerArcs',
+                (int) $this->module->getPreference(
+                    'default_innerArcs',
+                    (string) self::DEFAULT_INNER_ARCS
+                )
+            );
     }
 
     /**

@@ -17,17 +17,17 @@ export default class Configuration
     /**
      * Constructor.
      *
-     * @param {String[]} labels
-     * @param {Number}   generations
-     * @param {Number}   fanDegree
-     * @param {Number}   fontScale
-     * @param {Boolean}  hideEmptySegments
-     * @param {Boolean}  showColorGradients
-     * @param {Boolean}  showParentMarriageDates
-     * @param {Boolean}  showImages
-     * @param {Boolean}  showSilhouettes
-     * @param {Boolean}  rtl
-     * @param {Number}   innerArcs
+     * @param {string[]} labels
+     * @param {number}   generations
+     * @param {number}   fanDegree
+     * @param {number}   fontScale
+     * @param {boolean}  hideEmptySegments
+     * @param {boolean}  showColorGradients
+     * @param {boolean}  showParentMarriageDates
+     * @param {boolean}  showImages
+     * @param {boolean}  showSilhouettes
+     * @param {boolean}  rtl
+     * @param {number}   innerArcs
      */
     constructor(
         labels,
@@ -57,17 +57,17 @@ export default class Configuration
         this.padDistance = this.padAngle * this.padRadius;
         this.cornerRadius = 0;
 
-        // Number of circles, large enough to print text along arc path
+        // Number of circles, large enough to print text along an arc path
         this._numberOfInnerCircles = innerArcs;
 
         // Radius of the innermost circle
-        this.centerCircleRadius = 85;
+        this.centerCircleRadius = 100;
 
         // Height of each inner circle arc
-        this.innerArcHeight = 85;
+        this.innerArcHeight = 100;
 
         // Height of each outer circle arc
-        this.outerArcHeight = 110;
+        this.outerArcHeight = 160;
 
         if (showParentMarriageDates) {
             this.innerArcHeight = this.circlePadding + 110;
@@ -81,7 +81,7 @@ export default class Configuration
         this.textPadding = 8;
 
         // Default font size, color and scaling
-        this._fontSize  = 15;
+        this._fontSize  = 18;
         this._fontScale = fontScale;
 
         this._hideEmptySegments  = hideEmptySegments;
@@ -103,7 +103,7 @@ export default class Configuration
     /**
      * Returns the number of generations to display.
      *
-     * @return {Number}
+     * @return {number}
      */
     get generations()
     {
@@ -113,7 +113,7 @@ export default class Configuration
     /**
      * Sets the number of generations to display.
      *
-     * @param {Number} value The number of generations to display
+     * @param {number} value The number of generations to display
      */
     set generations(value)
     {
@@ -123,7 +123,7 @@ export default class Configuration
     /**
      * Returns the degrees of the fan chart.
      *
-     * @return {Number}
+     * @return {number}
      */
     get fanDegree()
     {
@@ -133,7 +133,7 @@ export default class Configuration
     /**
      * Sets the degrees of the fan chart.
      *
-     * @param {Number} value The degrees of the fan chart
+     * @param {number} value The degrees of the fan chart
      */
     set fanDegree(value)
     {
@@ -143,7 +143,7 @@ export default class Configuration
     /**
      * Returns the font scaling.
      *
-     * @return {Number}
+     * @return {number}
      */
     get fontScale()
     {
@@ -153,7 +153,7 @@ export default class Configuration
     /**
      * Sets the font scaling.
      *
-     * @param {Number} value The font scaling
+     * @param {number} value The font scaling
      */
     set fontScale(value)
     {
@@ -163,7 +163,7 @@ export default class Configuration
     /**
      * Returns whether to show or hide empty chart segments.
      *
-     * @return {Boolean}
+     * @return {boolean}
      */
     get hideEmptySegments()
     {
@@ -173,7 +173,7 @@ export default class Configuration
     /**
      * Sets whether to show or hide empty chart segments.
      *
-     * @param {Boolean} value Either true or false
+     * @param {boolean} value Either true or false
      */
     set hideEmptySegments(value)
     {
@@ -183,7 +183,7 @@ export default class Configuration
     /**
      * Returns whether to show or hide a color gradient above each arc or display male/female colors instead.
      *
-     * @return {Boolean}
+     * @return {boolean}
      */
     get showColorGradients()
     {
@@ -193,7 +193,7 @@ export default class Configuration
     /**
      * Sets whether to show or hide a color gradient above each arc or display male/female colors instead.
      *
-     * @param {Boolean} value Either true or false
+     * @param {boolean} value Either true or false
      */
     set showColorGradients(value)
     {
@@ -203,7 +203,7 @@ export default class Configuration
     /**
      * Returns whether to show or hide the parent marriage dates.
      *
-     * @return {Boolean}
+     * @return {boolean}
      */
     get showParentMarriageDates()
     {
@@ -213,7 +213,7 @@ export default class Configuration
     /**
      * Sets whether to show or hide the parent marriage dates.
      *
-     * @param {Boolean} value Either true or false
+     * @param {boolean} value Either true or false
      */
     set showParentMarriageDates(value)
     {
@@ -223,7 +223,7 @@ export default class Configuration
     /**
      * Returns TRUE if individual image should be shown otherwise FALSE.
      *
-     * @return {Boolean}
+     * @return {boolean}
      */
     get showImages()
     {
@@ -233,7 +233,7 @@ export default class Configuration
     /**
      * Returns TRUE if silhouette placeholder image should be shown otherwise FALSE.
      *
-     * @return {Boolean}
+     * @return {boolean}
      */
     get showSilhouettes()
     {
@@ -243,7 +243,7 @@ export default class Configuration
     /**
      * Returns the number of inner arcs to display.
      *
-     * @return {Number}
+     * @return {number}
      */
     get numberOfInnerCircles()
     {
@@ -253,7 +253,7 @@ export default class Configuration
     /**
      * Sets the number of inner arcs to display.
      *
-     * @param {Number} value The number of inner arcs
+     * @param {number} value The number of inner arcs
      */
     set numberOfInnerCircles(value)
     {
@@ -263,7 +263,7 @@ export default class Configuration
     /**
      * Returns the font size in pixel.
      *
-     * @return {Number}
+     * @return {number}
      */
     get fontSize()
     {

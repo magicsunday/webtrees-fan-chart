@@ -48,7 +48,7 @@ export default class PngExport extends Export
      *
      * @param {SVGGraphicsElement} svg The SVG element
      *
-     * @returns {Number[]}
+     * @returns {number[]}
      */
     calculateViewBox(svg)
     {
@@ -67,8 +67,8 @@ export default class PngExport extends Export
 
     /**
      *
-     * @param {Number} width
-     * @param {Number} height
+     * @param {number} width
+     * @param {number} height
      *
      * @returns {HTMLCanvasElement}
      */
@@ -85,8 +85,8 @@ export default class PngExport extends Export
      * Converts the given SVG into a PNG image. Resolves to the PNG data URL.
      *
      * @param {SVGGraphicsElement} svg    The SVG element
-     * @param {Number}             width  The width of the image
-     * @param {Number}             height The height of the image
+     * @param {number}             width  The width of the image
+     * @param {number}             height The height of the image
      *
      * @returns {Promise<String>}
      */
@@ -140,7 +140,7 @@ export default class PngExport extends Export
      * Saves the given SVG as PNG image file.
      *
      * @param {Svg}    svg      The source SVG object
-     * @param {String} fileName The file name
+     * @param {string} fileName The file name
      */
     svgToImage(svg, fileName)
     {
@@ -154,11 +154,11 @@ export default class PngExport extends Export
             'A5': [2480, 1748]
         };
 
-        this.cloneSvg(svg.get().node())
+        this.cloneSvg(svg.node())
             .then(newSvg => {
-                this.copyStylesInline(svg.get().node(), newSvg);
+                this.copyStylesInline(svg.node(), newSvg);
 
-                const viewBox = this.calculateViewBox(svg.get().node());
+                const viewBox = this.calculateViewBox(svg.node());
                 const width   = Math.max(paperSize['A3'][0], viewBox[2]);
                 const height  = Math.max(paperSize['A3'][1], viewBox[3]);
 

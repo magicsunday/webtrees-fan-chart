@@ -9,8 +9,6 @@ import * as d3 from "./lib/d3";
 import Configuration from "./custom/configuration";
 import Chart from "./custom/chart";
 
-export { Storage } from "./lib/storage";
-
 /**
  * The application class.
  *
@@ -23,21 +21,22 @@ export class FanChart
     /**
      * Constructor.
      *
-     * @param {String} selector The CSS selector of the HTML element used to assign the chart too
+     * @param {string} selector The CSS selector of the HTML element used to assign the chart too
      * @param {Object} options  A list of options passed from outside to the application
      *
-     * @param {String[]} options.labels
-     * @param {Number}   options.generations
-     * @param {Number}   options.fanDegree
-     * @param {Number}   options.fontScale
-     * @param {Boolean}  options.hideEmptySegments
-     * @param {Boolean}  options.showColorGradients
-     * @param {Boolean}  options.showParentMarriageDates
-     * @param {Boolean}  options.showImages
-     * @param {Boolean}  options.showSilhouettes
-     * @param {Boolean}  options.rtl
-     * @param {Number}   options.innerArcs
-     * @param {String[]} options.cssFiles
+     * @param {string[]} options.labels
+     * @param {number}   options.generations
+     * @param {number}   options.fanDegree
+     * @param {number}   options.fontScale
+     * @param {boolean}  options.hideEmptySegments
+     * @param {boolean}  options.showColorGradients
+     * @param {boolean}  options.showParentMarriageDates
+     * @param {boolean}  options.showImages
+     * @param {boolean}  options.showSilhouettes
+     * @param {boolean}  options.rtl
+     * @param {number}   options.innerArcs
+     * @param {string[]} options.cssFiles
+     * @param {Data[]}   options.data
      */
     constructor(selector, options)
     {
@@ -65,38 +64,7 @@ export class FanChart
         this._chart = new Chart(this._parent, this._configuration);
 
         this.init();
-    }
-
-    /**
-     * @private
-     */
-    init()
-    {
-        // Bind click event on center button
-        d3.select("#centerButton")
-            .on("click", () => this.center());
-
-        // Bind click event on export as PNG button
-        d3.select("#exportPNG")
-            .on("click", () => this.exportPNG());
-
-        // Bind click event on export as SVG button
-        d3.select("#exportSVG")
-            .on("click", () => this.exportSVG());
-    }
-
-    /**
-     * Resets the chart to initial zoom level and position.
-     *
-     * @private
-     */
-    center()
-    {
-        this._chart
-            .svg.get()
-            .transition()
-            .duration(750)
-            .call(this._chart.svg.zoom.get().transform, d3.zoomIdentity);
+        this.draw(options.data);
     }
 
     /**
@@ -107,6 +75,64 @@ export class FanChart
     get configuration()
     {
         return this._configuration;
+    }
+
+    /**
+     * @private
+     */
+    init()
+    {
+        // Bind click event on center button
+        d3.select("#centerButton")
+            .on("click", () => this._chart.center());
+
+        // Bind click event on export as PNG button
+        d3.select("#exportPNG")
+            .on("click", () => this.exportPNG());
+
+        // Bind click event on export as SVG button
+        d3.select("#exportSVG")
+            .on("click", () => this.exportSVG());
+
+        this.addEventListeners();
+    }
+
+    /**
+     * Add event listeners.
+     */
+    addEventListeners()
+    {
+        // Listen for fullscreen change event
+        document.addEventListener(
+            "fullscreenchange",
+            () => {
+                if (document.fullscreenElement) {
+                    // Add attribute to the body element to indicate fullscreen state
+                    document.body.setAttribute("fullscreen", "");
+                } else {
+                    document.body.removeAttribute("fullscreen");
+                }
+
+                this._chart.updateViewBox();
+            }
+        );
+
+        // Listen for orientation change event
+        screen.orientation.addEventListener(
+            "change",
+            () => {
+                this._chart.updateViewBox();
+            });
+    }
+
+    /**
+     * Updates the chart.
+     *
+     * @param {string} url The update url
+     */
+    update(url)
+    {
+        this._chart.update(url);
     }
 
     /**

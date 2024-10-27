@@ -1,0 +1,63 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+use Fisharebest\Webtrees\I18N;
+use MagicSunday\Webtrees\FanChart\Configuration;
+
+/**
+ * @var Configuration $configuration
+ * @var string        $moduleName
+ */
+?>
+
+<div class="row">
+    <div class="col-form-label col-sm-3 wt-page-options-label">
+        <?= I18N::translate('Layout') ?>
+    </div>
+    <div class="col-sm-9 wt-page-options-value">
+        <?=
+            view($moduleName . '::modules/components/checkbox', [
+                'name'      => 'hideEmptySegments',
+                'label'     => I18N::translate('Hide empty segments'),
+                'checked'   => $configuration->getHideEmptySegments(),
+                'unchecked' => '0',
+            ])
+        ?>
+
+        <div class="mt-3">
+            <?=
+                view($moduleName . '::modules/components/checkbox', [
+                    'name'      => 'showColorGradients',
+                    'label'     => I18N::translate('Show color gradients'),
+                    'checked'   => $configuration->getShowColorGradients(),
+                    'unchecked' => '0',
+                ])
+            ?>
+            <small class="ps-4 form-text text-muted form-element-description">
+                <?= I18N::translate('Open the current individual\'s detail page in a new browser window/tab when it\'s left-clicked, otherwise the current window/tab is used.') ?>
+            </small>
+        </div>
+
+        <div class="mt-3">
+            <?=
+                view($moduleName . '::modules/components/checkbox', [
+                    'name'      => 'showParentMarriageDates',
+                    'label'     => I18N::translate('Show parent marriage dates'),
+                    'checked'   => $configuration->getShowParentMarriageDates(),
+                    'unchecked' => '0',
+                ])
+            ?>
+            <small class="ps-4 form-text text-muted form-element-description">
+                <?= I18N::translate('Displays a person\'s alternate name, if available. This simultaneously enlarges the individuals\' respective boxes to create the necessary space for the display.') ?>
+            </small>
+        </div>
+    </div>
+</div>

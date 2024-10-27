@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+use Fisharebest\Webtrees\I18N;
+use MagicSunday\Webtrees\FanChart\Configuration;
+
+/**
+ * @var Configuration $configuration
+ */
+?>
+
+<div class="row">
+    <label class="col-sm-3 col-form-label wt-page-options-label" for="fanDegree">
+        <?= I18N::translate('Fan size') ?>
+    </label>
+    <div class="col-sm-9 wt-page-options-value d-flex justify-content-between">
+        <input id="fanDegree" name="fanDegree" class="flex-grow-1 custom-range" type="range" value="<?= $configuration->getFanDegree() ?>" min="180" max="360" step="5">
+        <output id="fanDegreeOutput" name="fanDegreeOutput" class="custom-range-value wt-page-options-label ms-3"><?= $configuration->getFanDegree() ?>°</output>
+
+        <script>
+
+            document.getElementById("fanDegree").addEventListener("input", () => {
+                document.getElementById('fanDegreeOutput').value = document.getElementById("fanDegree").value + "°";
+            });
+
+        </script>
+    </div>
+</div>

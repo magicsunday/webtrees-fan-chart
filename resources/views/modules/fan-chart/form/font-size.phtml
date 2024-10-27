@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+use Fisharebest\Webtrees\I18N;
+use MagicSunday\Webtrees\FanChart\Configuration;
+
+/**
+ * @var Configuration $configuration
+ */
+?>
+
+<div class="row">
+    <label class="col-sm-3 col-form-label wt-page-options-label" for="fontScale">
+        <?= I18N::translate('Font size') ?>
+    </label>
+    <div class="col-sm-9 wt-page-options-value">
+        <div class="input-group input-group-sm">
+            <input class="form-control" type="text" name="fontScale" id="fontScale"
+                   maxlength="3" placeholder="100" value="<?= $configuration->getFontScale() ?>">
+            <div class="input-group-append">
+                <span class="input-group-text">%</span>
+            </div>
+        </div>
+    </div>
+</div>

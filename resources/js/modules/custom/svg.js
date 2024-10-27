@@ -23,7 +23,7 @@ export default class Svg
     /**
      * Constructor.
      *
-     * @param {selection}     parent        The selected D3 parent element container
+     * @param {Selection}     parent        The selected D3 parent element container
      * @param {Configuration} configuration The application configuration
      */
     constructor(parent, configuration)
@@ -38,6 +38,46 @@ export default class Svg
         this._configuration = configuration;
 
         this.init();
+    }
+
+    /**
+     * Returns the SVG definition instance.
+     *
+     * @return {Defs}
+     */
+    get defs()
+    {
+        return this._defs;
+    }
+
+    /**
+     * Returns the SVG definition instance.
+     *
+     * @return {Zoom}
+     */
+    get zoom()
+    {
+        return this._zoom;
+    }
+
+    /**
+     *
+     *
+     * @return {Selection}
+     */
+    get visual()
+    {
+        return this._visual;
+    }
+
+    /**
+     * Returns the <div> container for the overlay tooltip.
+     *
+     * @return {Selection}
+     */
+    get div()
+    {
+        return this._div;
     }
 
     /**
@@ -98,7 +138,7 @@ export default class Svg
             this._element.classed("rtl", true);
         }
 
-        /** @var {selection} tooltip */
+        /** @var {Selection} tooltip */
         const tooltip = d3.select("div.tooltip");
 
         if (tooltip.empty()) {
@@ -111,7 +151,7 @@ export default class Svg
                 .style("opacity", 0);
         }
 
-        // Add group
+        // Add a group
         this._visual = this._element.append("g");
 
         this._visual
@@ -139,7 +179,7 @@ export default class Svg
     /**
      * Exports the chart as PNG image and triggers a download.
      *
-     * @param {String} type The export file type (either "png" or "svg")
+     * @param {string} type The export file type (either "png" or "svg")
      *
      * @return {PngExport|SvgExport}
      */
@@ -150,52 +190,58 @@ export default class Svg
     }
 
     /**
-     * Returns the SVG definition instance.
-     *
-     * @return {Defs}
+     * @returns {Node}
      */
-    get defs()
+    node()
     {
-        return this._defs;
+        return this._element.node();
     }
 
     /**
-     * Returns the SVG definition instance.
+     * @param {function|string} select
      *
-     * @return {Zoom}
+     * @returns {Selection}
      */
-    get zoom()
+    select(select)
     {
-        return this._zoom;
+        return this._element.select(select);
     }
 
     /**
+     * @param {function|string|null} select
      *
-     *
-     * @return {selection}
+     * @returns {Selection}
      */
-    get visual()
+    selectAll(select)
     {
-        return this._visual;
+        return this._element.selectAll(select);
     }
 
     /**
-     * Returns the internal element.
+     * @param {string} name
      *
-     * @return {selection}
+     * @returns {string|this}
      */
-    get()
+    style(name)
     {
-        return this._element;
+        return this._element.style(...arguments);
     }
 
     /**
-     * Returns the <div> container for the overlay tooltip.
+     * @param {string} name
      *
-     * @return {selection}
+     * @returns {string|this}
      */
-    get div()
+    attr(name)
     {
-        return this._div;
+        return this._element.attr(...arguments);
+    }
+
+    /**
+     * @returns {Transition}
+     */
+    transition()
+    {
+        return this._element.transition();
     }
 }

@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+use Fisharebest\Webtrees\I18N;
+use MagicSunday\Webtrees\FanChart\Configuration;
+
+/**
+ * @var Configuration $configuration
+ */
+?>
+
+<div class="row">
+    <label class="col-sm-3 col-form-label wt-page-options-label" for="innerArcs">
+        <?= I18N::translate('Number of inner levels') ?>
+    </label>
+    <div class="col-sm-9 wt-page-options-value">
+        <?=
+        view('components/select', [
+            'id'       => 'innerArcs',
+            'name'     => 'innerArcs',
+            'selected' => $configuration->getInnerArcs(),
+            'options'  => $configuration->getInnerArcsList(),
+            'class'    => 'form-control-sm',
+        ])
+        ?>
+        <small class="form-text text-muted">
+            <?= I18N::translate('Specifies the number of levels in which the text is written along an arc.') ?>
+        </small>
+    </div>
+</div>

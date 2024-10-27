@@ -34,7 +34,7 @@ export default class Text
     /**
      * Creates all the labels and all dependent elements for a single person.
      *
-     * @param {selection} parent The parent element to which the elements are to be attached
+     * @param {Selection} parent The parent element to which the elements are to be attached
      * @param {Object}    datum  The D3 data object
      */
     createLabels(parent, datum)
@@ -353,7 +353,7 @@ export default class Text
      * parent element. The "tspan" element containing the preferred name gets an
      * additional underline style to highlight this one.
      *
-     * @param {selection}                       parent The parent element to which the <tspan> elements are to be attached
+     * @param {Selection}                       parent The parent element to which the <tspan> elements are to be attached
      * @param {function(*): LabelElementData[]} data
      *
      * @private
@@ -381,7 +381,7 @@ export default class Text
      *
      * @param {Object}             parent
      * @param {LabelElementData[]} names
-     * @param {Number}             availableWidth
+     * @param {number}             availableWidth
      *
      * @return {LabelElementData[]}
      *
@@ -398,7 +398,7 @@ export default class Text
     /**
      * Creates a single <tspan> element for the marriage date and append it to the parent element.
      *
-     * @param {selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
+     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
      * @param {Object}    datum  The D3 data object containing the individual data
      */
     addMarriageDate(parent, datum)
@@ -414,9 +414,9 @@ export default class Text
      * Truncates the list of names.
      *
      * @param {LabelElementData[]} names          The names array
-     * @param {String}             fontSize       The font size
-     * @param {Number}             fontWeight     The font weight
-     * @param {Number}             availableWidth The available width
+     * @param {string}             fontSize       The font size
+     * @param {number}             fontWeight     The font weight
+     * @param {number}             availableWidth The available width
      *
      * @return {LabelElementData[]}
      *
@@ -474,17 +474,17 @@ export default class Text
     /**
      * Measures the given text and return its width depending on the used font (including size and weight).
      *
-     * @param {String} text
-     * @param {String} fontSize
-     * @param {Number} fontWeight
+     * @param {string} text
+     * @param {string} fontSize
+     * @param {number} fontWeight
      *
-     * @returns {Number}
+     * @returns {number}
      *
      * @private
      */
     measureText(text, fontSize, fontWeight = 400)
     {
-        const fontFamily = this._svg.get().style("font-family");
+        const fontFamily = this._svg.style("font-family");
 
         return measureText(text, fontFamily, fontSize, fontWeight);
     }
@@ -492,8 +492,8 @@ export default class Text
     /**
      * Truncates a date value.
      *
-     * @param {selection} parent         The parent (<text> or <textPath>) element containing the <tspan> child elements
-     * @param {Number}    availableWidth The total available width the text could take
+     * @param {Selection} parent         The parent (<text> or <textPath>) element containing the <tspan> child elements
+     * @param {number}    availableWidth The total available width the text could take
      */
     truncateDate(parent, availableWidth)
     {
@@ -525,9 +525,9 @@ export default class Text
     /**
      * Returns a float representing the computed length of all <tspan> elements within the element.
      *
-     * @param {selection} parent The parent (<text> or <textPath>) element containing the <tspan> child elements
+     * @param {Selection} parent The parent (<text> or <textPath>) element containing the <tspan> child elements
      *
-     * @returns {Number}
+     * @returns {number}
      */
     getTextLength(parent)
     {
@@ -548,7 +548,7 @@ export default class Text
      *
      * @param {Object} data The D3 data object
      *
-     * @return {Boolean}
+     * @return {boolean}
      */
     isInnerLabel(data)
     {
@@ -559,18 +559,18 @@ export default class Text
     /**
      * Creates a new <path> definition and append it to the global definition list.
      *
-     * @param {String} parentId The parent element id
-     * @param {Number} index    Index position of an element in parent container. Required to create a unique path id.
+     * @param {string} parentId The parent element id
+     * @param {number} index    Index position of an element in parent container. Required to create a unique path id.
      * @param {Object} data     The D3 data object
      *
-     * @return {String} The id of the newly created path element
+     * @return {string} The id of the newly created path element
      */
     createPathDefinition(parentId, index, data)
     {
         let pathId = "path-" + parentId + "-" + index;
 
         // If definition already exists, return the existing path ID
-        if (this._svg.defs.get().select("path#" + pathId).node()) {
+        if (this._svg.defs.select("path#" + pathId).node()) {
             return pathId;
         }
 
@@ -599,7 +599,7 @@ export default class Text
 
         // Store the <path> inside the definition list, so we could
         // access it later on by its id
-        this._svg.defs.get()
+        this._svg.defs
             .append("path")
             .attr("id", pathId)
             .attr("d", arcGenerator);
@@ -610,11 +610,11 @@ export default class Text
     /**
      * Check for the 360-degree chart if the current arc labels should be flipped for easier reading.
      *
-     * @param {Number} depth The depth of the element inside the chart
-     * @param {Number} x0    The left edge (x0) of the rectangle
-     * @param {Number} x1    The right edge (x1) of the rectangle
+     * @param {number} depth The depth of the element inside the chart
+     * @param {number} x0    The left edge (x0) of the rectangle
+     * @param {number} x1    The right edge (x1) of the rectangle
      *
-     * @return {Boolean}
+     * @return {boolean}
      */
     isPositionFlipped(depth, x0, x1)
     {
@@ -634,10 +634,10 @@ export default class Text
      * Get the relative position offsets in percent for different text lines (firstName, lastName, dates).
      *   => (0 = inner radius, 100 = outer radius)
      *
-     * @param {Boolean} positionFlipped TRUE if the labels should be flipped for easier reading
-     * @param {Number}  index           The index position of element in parent container. Required to create a unique path id.
+     * @param {boolean} positionFlipped TRUE if the labels should be flipped for easier reading
+     * @param {number}  index           The index position of element in parent container. Required to create a unique path id.
      *
-     * @return {Number}
+     * @return {number}
      */
     getTextOffset(positionFlipped, index)
     {
@@ -652,9 +652,9 @@ export default class Text
      * the chart the available width differs.
      *
      * @param {Object} data  The D3 data object
-     * @param {Number} index The index position of element in parent container.
+     * @param {number} index The index position of element in parent container.
      *
-     * @returns {Number} Calculated available width
+     * @returns {number} Calculated available width
      *
      * @private
      */
@@ -685,7 +685,7 @@ export default class Text
      * Transform the D3 <text> elements in the group. Rotate each <text> element depending on its offset,
      * so that they are equally positioned inside the arc.
      *
-     * @param {selection} parent The D3 parent group object
+     * @param {Selection} parent The D3 parent group object
      * @param {Object}    datum  The The D3 data object
      *
      * @public

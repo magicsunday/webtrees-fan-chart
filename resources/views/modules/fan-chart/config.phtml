@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+use Fisharebest\Webtrees\Http\RequestHandlers\ControlPanel;
+use Fisharebest\Webtrees\Http\RequestHandlers\ModulesAllPage;
+use Fisharebest\Webtrees\I18N;
+use MagicSunday\Webtrees\FanChart\Configuration;
+
+/**
+ * @var Configuration $configuration
+ * @var string        $moduleName
+ * @var string        $title
+ * @var string        $description
+ */
+?>
+
+<?= view('components/breadcrumbs', ['links' => [route(ControlPanel::class) => I18N::translate('Control panel'), route(ModulesAllPage::class) => I18N::translate('Modules'), $title]]) ?>
+
+<h1><?= $title ?></h1>
+<p><?= $description ?></p>
+
+<form method="post">
+    <div class="mb-3">
+        <?= view($moduleName . '::modules/fan-chart/form/fan-size', ['configuration' => $configuration]) ?>
+    </div>
+    <div class="mb-3">
+        <?= view($moduleName . '::modules/fan-chart/form/generations', ['configuration' => $configuration]) ?>
+    </div>
+    <div class="mb-3">
+        <?= view($moduleName . '::modules/fan-chart/form/layout', ['configuration' => $configuration, 'moduleName' => $moduleName]) ?>
+    </div>
+    <div class="mb-3">
+        <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['configuration' => $configuration]) ?>
+    </div>
+    <div class="mb-3">
+        <?= view($moduleName . '::modules/fan-chart/form/font-size', ['configuration' => $configuration]) ?>
+    </div>
+
+    <div class="row mb-3">
+        <div class="offset-sm-3 col-sm-9">
+            <button type="submit" class="btn btn-primary">
+                <?= I18N::translate('save') ?>
+            </button>
+
+            <a href="<?= route(ControlPanel::class) ?>" class="btn btn-secondary">
+                <?= view('icons/cancel') ?>
+                <?= I18N::translate('cancel') ?>
+            </a>
+        </div>
+    </div>
+
+    <?= csrf_field() ?>
+</form>

@@ -58,5 +58,41 @@ Generated: <%= moment().format('YYYY-MM-DD HH:mm:ss') %>
 Version: <%= pkg.version %>`
             })
         ]
+    },
+
+    // fan-chart-storage.js
+    {
+        input: "resources/js/modules/lib/storage.js",
+        output: [
+            {
+                name: "WebtreesFanChart",
+                file: "resources/js/fan-chart-storage.js",
+                format: "umd"
+            }
+        ],
+        plugins: [
+            resolve()
+        ]
+    },
+    {
+        input: "resources/js/modules/lib/storage.js",
+        output: [
+            {
+                name: "WebtreesFanChart",
+                file: "resources/js/fan-chart-storage.min.js",
+                format: "umd"
+            }
+        ],
+        plugins: [
+            resolve(),
+            terser({
+                mangle: true,
+                compress: true,
+                module: true,
+                output: {
+                    comments: false
+                }
+            })
+        ]
     }
 ];

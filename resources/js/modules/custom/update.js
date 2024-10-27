@@ -34,7 +34,7 @@ export default class Update
     /**
      * Update the chart with data loaded from AJAX.
      *
-     * @param {String}   url      The update URL
+     * @param {string}   url      The update URL
      * @param {Function} callback The callback method to execute after the update
      *
      * @public
@@ -43,7 +43,7 @@ export default class Update
     {
         let that = this;
 
-        this._svg.get()
+        this._svg
             .selectAll("g.person")
             .classed("hover", false)
             .on("click", null)
@@ -57,7 +57,7 @@ export default class Update
             this._hierarchy.init(data.data);
 
             // Flag all elements which are subject to change
-            let persons = this._svg.get()
+            let persons = this._svg
                 .selectAll("g.person")
                 .data(this._hierarchy.nodes, (datum) => datum.id)
                 .each(function (datum) {
@@ -77,7 +77,7 @@ export default class Update
                 });
 
             // Hide all new labels of not removed elements
-            this._svg.get()
+            this._svg
                 .selectAll("g.person:not(.remove)")
                 .selectAll("g.name:not(.old), g.color:not(.old)")
                 .style("opacity", 1e-6);
@@ -88,28 +88,28 @@ export default class Update
                 .call(this.endAll, () => this.updateDone(callback));
 
             // Fade out old arc
-            this._svg.get()
+            this._svg
                 .selectAll("g.person.remove g.arc path")
                 .transition(t)
                 .style("fill", () => this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)")
                 .style("opacity", () => this._configuration.hideEmptySegments ? 1e-6 : null);
 
             // Fade in new arcs
-            this._svg.get()
+            this._svg
                 .selectAll("g.person.new g.arc path")
                 .transition(t)
                 .style("fill", "rgb(250, 250, 250)")
                 .style("opacity", () => this._configuration.hideEmptySegments ? 1 : null);
 
             // Fade out all old labels and color group
-            this._svg.get()
+            this._svg
                 .selectAll("g.person.update, g.person.remove")
                 .selectAll("g.name.old, g.color.old")
                 .transition(t)
                 .style("opacity", 1e-6);
 
             // Fade in all new labels and color group
-            this._svg.get()
+            this._svg
                 .selectAll("g.person:not(.remove)")
                 .selectAll("g.name:not(.old), g.color:not(.old)")
                 .transition(t)
@@ -128,7 +128,7 @@ export default class Update
     {
         // Remove arc if segments should be hidden
         if (this._configuration.hideEmptySegments) {
-            this._svg.get()
+            this._svg
                 .selectAll("g.person.remove")
                 .selectAll("g.arc")
                 .remove();
@@ -137,18 +137,18 @@ export default class Update
         // Remove styles so CSS classes may work correct, Uses a small timer as animation seems not
         // to be done already if the point is reached
         let t = d3.timer(() => {
-            this._svg.get()
+            this._svg
                 .selectAll("g.person g.arc path")
                 .attr("style", null);
 
-            this._svg.get()
+            this._svg
                 .selectAll("g.person g.name, g.person g.color")
                 .style("opacity", null);
 
             t.stop();
         }, 10);
 
-        this._svg.get()
+        this._svg
             .selectAll("g.person.new, g.person.update, g.person.remove")
             .classed("new", false)
             .classed("update", false)
@@ -156,7 +156,7 @@ export default class Update
             .selectAll("g.name.old, g.color.old, title.old")
             .remove();
 
-        this._svg.get()
+        this._svg
             .selectAll("g.person.available")
             .classed("available", false);
 

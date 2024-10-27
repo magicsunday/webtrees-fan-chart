@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Extends the default checkbox component with a hidden input field used to submit a default value
+ * if the checkbox is not checked, otherwise the submitted form won't contain the checkbox value.
+ *
+ * @var bool|null   $checked
+ * @var bool|null   $disabled
+ * @var string|null $id
+ * @var string      $label
+ * @var string      $name
+ * @var string      $value
+ * @var string      $unchecked
+ */
+
+?>
+
+<input type="hidden" value="<?= e($unchecked) ?>" name="<?= e($name) ?>">
+
+<?=
+    view('components/checkbox', [
+        'checked'   => $checked ?? null,
+        'disabled'  => $disabled ?? null,
+        'id'        => $id ?? null,
+        'label'     => $label,
+        'name'      => $name,
+        'value'     => $value ?? '1',
+        'unchecked' => $unchecked,
+    ])
+?>

@@ -1,3 +1,8 @@
+/* SVG export styles */
+.webtrees-fan-chart-container svg {
+    min-height: 50dvh;
+}
+
 .webtrees-fan-chart-container svg g.person g.color path.female {
     fill: var(--sex-f-bg, rgb(233, 218, 241));
 }

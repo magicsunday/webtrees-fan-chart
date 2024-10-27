@@ -10,7 +10,7 @@ import * as d3 from "./../../d3";
 /**
  * Constants
  *
- * @type {Number}
+ * @type {number}
  */
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 20.0;
@@ -27,7 +27,7 @@ export default class Zoom
     /**
      * Constructor.
      *
-     * @param {selection} parent The selected D3 parent element container
+     * @param {Selection} parent The selected D3 parent element container
      */
     constructor(parent)
     {
@@ -100,7 +100,7 @@ export default class Zoom
     /**
      * Returns the internal d3 zoom behavior.
      *
-     * @returns {zoom}
+     * @returns {d3.zoom}
      */
     get()
     {

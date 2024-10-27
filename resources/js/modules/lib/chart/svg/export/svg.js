@@ -65,7 +65,7 @@ export default class SvgExport extends Export
      *
      * @param {Node} node
      *
-     * @return {Node}
+     * @returns {Node}
      */
     createSandbox(node)
     {
@@ -88,7 +88,7 @@ export default class SvgExport extends Export
      *
      * @param {Node|Element} source
      *
-     * @return {CSSStyleDeclaration}
+     * @returns {CSSStyleDeclaration}
      */
     getDefaultComputedStyle(source)
     {
@@ -114,7 +114,7 @@ export default class SvgExport extends Export
      * @param {Node|Element}        target
      * @param {CSSStyleDeclaration} parentStyleDeclaration
      *
-     * @return {Node}
+     * @returns {Node}
      */
     cloneStyles(source, target, parentStyleDeclaration)
     {
@@ -174,7 +174,7 @@ export default class SvgExport extends Export
      * @param {Node}                source
      * @param {CSSStyleDeclaration} sourceStyleDeclaration
      *
-     * @return {Promise<Node>}
+     * @returns {Promise<Node>}
      */
     createNodeDuplicate(source, sourceStyleDeclaration)
     {
@@ -191,7 +191,7 @@ export default class SvgExport extends Export
      * @param {Node} source
      * @param {Node} target
      *
-     * @return {Promise<Node>}
+     * @returns {Promise<Node>}
      */
     cloneChildren(source, target)
     {
@@ -242,11 +242,11 @@ export default class SvgExport extends Export
     }
 
     /**
-     * Perform clean-up task.
+     * Performs a cleanup task.
      *
-     * @param {String} objectUrl
+     * @param {string} objectUrl
      *
-     * @return {String}
+     * @returns {string}
      */
     cleanUp(objectUrl)
     {
@@ -263,13 +263,13 @@ export default class SvgExport extends Export
      * Saves the given SVG as an SVG image file.
      *
      * @param {Svg}      svg                The source SVG object
-     * @param {String[]} cssFiles           The CSS files used together with the SVG
-     * @param {String}   containerClassName The container class name
-     * @param {String}   fileName           The output file name
+     * @param {string[]} cssFiles           The CSS files used together with the SVG
+     * @param {string}   containerClassName The container class name
+     * @param {string}   fileName           The output file name
      */
     svgToImage(svg, cssFiles, containerClassName, fileName)
     {
-        let node = svg.get().node();
+        let node = svg.node();
 
         Promise
             .resolve(node)

@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+use Fisharebest\Webtrees\View;
+use MagicSunday\Webtrees\FanChart\Configuration;
+
+/**
+ * @var string        $javascript
+ * @var Configuration $configuration
+ * @var array         $id                The unique chart ID
+ * @var array         $chartParams
+ * @var string[]      $exportStylesheets A list of stylesheets used by SVG export
+ * @var array         $data              The chart data
+ */
+?>
+
+<div class="webtrees-fan-chart-container" id="webtrees-fan-chart-container-<?= $id ?>"></div>
+
+<?php View::push('javascript'); ?>
+<script src="<?= e($javascript) ?>"></script>
+<?php View::endpush(); ?>
+
+<?php View::push('javascript'); ?>
+<script>
+
+// Create chart instance
+new WebtreesFanChart.FanChart(
+    "#webtrees-fan-chart-container-<?= $id ?>",
+    {
+        labels: <?= json_encode($chartParams['labels']) ?>,
+        rtl: <?= json_encode($chartParams['rtl']) ?>,
+        cssFiles: <?= json_encode($exportStylesheets) ?>,
+
+        get generations() {
+            return (typeof generations !== "undefined" && generations !== null) ? generations : <?= $configuration->getGenerations() ?>
+        },
+
+        get fanDegree() {
+            return (typeof fanDegree !== "undefined" && fanDegree !== null) ? fanDegree : <?= json_encode($configuration->getFanDegree()) ?>;
+        },
+
+        get fontScale() {
+            return (typeof fontScale !== "undefined" && fontScale !== null) ? fontScale : <?= json_encode($configuration->getFontScale()) ?>;
+        },
+
+        get hideEmptySegments() {
+            return (typeof hideEmptySegments !== "undefined" && hideEmptySegments !== null) ? hideEmptySegments : <?= json_encode($configuration->getHideEmptySegments()) ?>;
+        },
+
+        get showColorGradients() {
+            return (typeof showColorGradients !== "undefined" && showColorGradients !== null) ? showColorGradients : <?= json_encode($configuration->getShowColorGradients()) ?>;
+        },
+
+        get showParentMarriageDates() {
+            return (typeof showParentMarriageDates !== "undefined" && showParentMarriageDates !== null) ? showParentMarriageDates : <?= json_encode($configuration->getShowParentMarriageDates()) ?>;
+        },
+
+        get innerArcs() {
+            return (typeof innerArcs !== "undefined" && innerArcs !== null) ? innerArcs : <?= json_encode($configuration->getInnerArcs()) ?>;
+        },
+
+        //defaultColor: <?php //= json_encode($chartParams['defaultColor']) ?>//,
+        showImages: <?= json_encode($chartParams['showImages']) ?>,
+        showSilhouettes: <?= json_encode($chartParams['showSilhouettes']) ?>,
+
+        // defaultColor: data.defaultColor,
+        // showImages: data.showImages,
+        // showSilhouettes: data.showSilhouettes,
+        data: <?= json_encode($data) ?>
+    }
+);
+
+</script>
+<?php View::endpush(); ?>

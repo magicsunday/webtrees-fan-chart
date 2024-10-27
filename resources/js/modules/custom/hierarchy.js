@@ -111,8 +111,8 @@ export default class Hierarchy
     /**
      * Create an empty child node object.
      *
-     * @param {Number} generation Generation of the node
-     * @param {String} sex        The sex of the individual
+     * @param {number} generation Generation of the node
+     * @param {string} sex        The sex of the individual
      *
      * @return {Object}
      *

@@ -70,16 +70,6 @@ class DataFacade
     }
 
     /**
-     * @param string $route
-     *
-     * @return DataFacade
-     */
-    public function setRoute(string $route): DataFacade
-    {
-        return $this;
-    }
-
-    /**
      * Creates the JSON tree structure.
      *
      * @param Individual $individual

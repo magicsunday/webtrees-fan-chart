@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+use Fisharebest\Webtrees\View;
+
+/**
+ * @var string   $content     The content to output
+ * @var string[] $stylesheets The list of stylesheets
+ */
+?>
+
+<?= $content ?>
+
+<?php View::push('styles') ?>
+<?php foreach ($stylesheets as $stylesheet) : ?>
+    <link rel="stylesheet" href="<?= e($stylesheet) ?>">
+<?php endforeach ?>
+<?php View::endpush(); ?>
+
+<?= View::stack('styles') ?>
+<?= View::stack('javascript') ?>

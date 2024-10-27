@@ -17,7 +17,7 @@ export default class Overlay
     /**
      * Constructor.
      *
-     * @param {selection} parent The selected D3 parent element container
+     * @param {Selection} parent The selected D3 parent element container
      */
     constructor(parent)
     {
@@ -31,8 +31,8 @@ export default class Overlay
     /**
      * Stop any pending transition and hide overlay immediately.
      *
-     * @param {String}   text     Text to display in overlay
-     * @param {Number}   duration Duration of transition in msec
+     * @param {string}   text     Text to display in overlay
+     * @param {number}   duration Duration of transition in msec
      * @param {Function} callback Callback method to execute on end of transition
      */
     show(text, duration = 0, callback = null)
@@ -61,8 +61,8 @@ export default class Overlay
     /**
      * Stop any pending transition and hide overlay immediately.
      *
-     * @param {Number} delay    Delay in milliseconds to wait before transition should start
-     * @param {Number} duration Duration of transition in milliseconds
+     * @param {number} delay    Delay in milliseconds to wait before transition should start
+     * @param {number} duration Duration of transition in milliseconds
      */
     hide(delay = 0, duration = 0)
     {
@@ -76,7 +76,7 @@ export default class Overlay
     /**
      * Returns the internal element.
      *
-     * @returns {selection}
+     * @returns {Selection}
      */
     get()
     {

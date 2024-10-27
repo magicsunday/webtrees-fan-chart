@@ -17,7 +17,7 @@ export class Storage
     /**
      * Constructor.
      *
-     * @param {String} name The name of the storage
+     * @param {string} name The name of the storage
      */
     constructor(name)
     {
@@ -28,14 +28,14 @@ export class Storage
     /**
      * Register an HTML element.
      *
-     * @param {String} name The ID of an HTML element
+     * @param {string} name The ID of an HTML element
      */
     register(name)
     {
         // Use "querySelector" here as the ID of checkbox elements may additionally contain a hyphen and the value
         // Query checked elements (radio and checkbox) separately
-        let input = document.querySelector('[id^="' + name + '"]:checked')
-            || document.querySelector('[id^="' + name + '"]');
+        let input = document.querySelector('input[id^="' + name + '"]:checked, select[id^="' + name + '"]')
+            || document.querySelector('input[id^="' + name + '"]');
 
         if (input === null) {
             return;
@@ -44,19 +44,27 @@ export class Storage
         let storedValue = this.read(name);
 
         if (storedValue !== null) {
-            if (input.type && (input.type === "checkbox")) {
+            if (input.type && (input.type === "radio")) {
                 input.checked = storedValue;
             } else {
-                input.value = storedValue;
+                if (input.type && (input.type === "checkbox")) {
+                    input.checked = storedValue;
+                } else {
+                    input.value = storedValue;
+                }
             }
         } else {
             this.onInput(input);
         }
 
-        // Add event listener
-        input.addEventListener("input", (event) => {
-            this.onInput(event.target);
-        });
+        // Add event listener to all inputs by their IDs
+        document
+            .querySelectorAll('input[id^="' + name + '"], select[id^="' + name + '"]')
+            .forEach(
+                (input) => input.addEventListener("input", (event) => {
+                    this.onInput(event.target);
+                })
+            );
     }
 
     /**
@@ -76,7 +84,7 @@ export class Storage
     /**
      * Returns the stored value belonging to the HTML element id.
      *
-     * @param {String} name The id or name of an HTML element
+     * @param {string} name The id or name of an HTML element
      *
      * @returns {null|String|Boolean|Number}
      */
@@ -92,8 +100,8 @@ export class Storage
     /**
      * Stores a value to the given HTML element id.
      *
-     * @param {String}                name  The id or name of an HTML element
-     * @param {String|Boolean|Number} value The value to store
+     * @param {string}                name  The id or name of an HTML element
+     * @param {string|Boolean|Number} value The value to store
      */
     write(name, value)
     {

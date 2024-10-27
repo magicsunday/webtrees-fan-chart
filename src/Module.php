@@ -18,20 +18,21 @@ use Fisharebest\Webtrees\Http\Exceptions\HttpBadRequestException;
 use Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
-use Fisharebest\Webtrees\Module\AbstractModule;
+use Fisharebest\Webtrees\Module\FanChartModule;
 use Fisharebest\Webtrees\Module\ModuleChartInterface;
+use Fisharebest\Webtrees\Module\ModuleConfigInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Registry;
+use Fisharebest\Webtrees\Services\ChartService;
 use Fisharebest\Webtrees\Validator;
 use Fisharebest\Webtrees\View;
-use JsonException;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
+use MagicSunday\Webtrees\FanChart\Traits\ModuleConfigTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleCustomTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Fan chart module class.
@@ -40,10 +41,11 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-class Module extends AbstractModule implements ModuleCustomInterface, ModuleChartInterface, RequestHandlerInterface
+class Module extends FanChartModule implements ModuleCustomInterface, ModuleConfigInterface
 {
     use ModuleCustomTrait;
     use ModuleChartTrait;
+    use ModuleConfigTrait;
 
     private const ROUTE_DEFAULT = 'webtrees-fan-chart';
 
@@ -89,11 +91,15 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     /**
      * Constructor.
      *
-     * @param DataFacade $dataFacade
+     * @param ChartService $chartService
+     * @param DataFacade   $dataFacade
      */
     public function __construct(
+        ChartService $chartService,
         DataFacade $dataFacade
     ) {
+        parent::__construct($chartService);
+
         $this->dataFacade = $dataFacade;
     }
 
@@ -108,6 +114,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
             ->allows(RequestMethodInterface::METHOD_POST);
 
         View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
+        View::registerCustomView('::modules/charts/chart', $this->name() . '::modules/charts/chart');
     }
 
     /**
@@ -146,17 +153,16 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      * @param ServerRequestInterface $request
      *
      * @return ResponseInterface
-     *
-     * @throws JsonException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $tree = Validator::attributes($request)->tree();
         $xref = Validator::attributes($request)->isXref()->string('xref');
         $user = Validator::attributes($request)->user();
+        $ajax = Validator::queryParams($request)->boolean('ajax', false);
 
         // Convert POST requests into GET requests for pretty URLs.
-        // This also updates the name above the form, which wont get updated if only a POST request is used
+        // This also updates the name above the form, which won't get updated if only a POST request is used
         if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
             $validator = Validator::parsedBody($request);
 
@@ -183,32 +189,40 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
         $individual = Registry::individualFactory()->make($xref, $tree);
         $individual = Auth::checkIndividualAccess($individual, false, true);
 
-        $this->configuration = new Configuration($request);
+        $this->configuration = new Configuration($request, $this);
 
-        $ajaxUpdateUrl = route(
-            'module',
-            [
-                'module' => $this->name(),
-                'action' => 'update',
-                'tree'   => $individual->tree()->name(),
-                'xref'   => '',
-            ]
-        );
+        if ($ajax) {
+            $this->layout = $this->name() . '::layouts/ajax';
+
+            $this->dataFacade
+                ->setModule($this)
+                ->setConfiguration($this->configuration);
+
+            return $this->viewResponse(
+                $this->name() . '::modules/fan-chart/chart',
+                [
+                    'id'                => uniqid(),
+                    'data'              => $this->dataFacade->createTreeStructure($individual),
+                    'configuration'     => $this->configuration,
+                    'chartParams'       => $this->getChartParameters($individual),
+                    'exportStylesheets' => $this->getExportStylesheets(),
+                    'stylesheets'       => $this->getStylesheets(),
+                    'javascript'        => $this->assetUrl('js/fan-chart-' . self::CUSTOM_VERSION . '.min.js'),
+                ]
+            );
+        }
 
         return $this->viewResponse(
-            $this->name() . '::chart',
+            $this->name() . '::modules/fan-chart/page',
             [
-                'id'                => uniqid(),
-                'title'             => $this->getPageTitle($individual),
-                'ajaxUrl'           => $ajaxUpdateUrl,
-                'moduleName'        => $this->name(),
-                'individual'        => $individual,
-                'tree'              => $tree,
-                'configuration'     => $this->configuration,
-                'chartParams'       => json_encode($this->getChartParameters($individual), JSON_THROW_ON_ERROR),
-                'stylesheets'       => $this->getStylesheets(),
-                'exportStylesheets' => $this->getExportStylesheets(),
-                'javascript'        => $this->assetUrl('js/fan-chart-' . self::CUSTOM_VERSION . '.min.js'),
+                'ajaxUrl'       => $this->getAjaxRoute($individual, $xref),
+                'title'         => $this->getPageTitle($individual),
+                'moduleName'    => $this->name(),
+                'individual'    => $individual,
+                'tree'          => $tree,
+                'configuration' => $this->configuration,
+                'stylesheets'   => $this->getStylesheets(),
+                'javascript'    => $this->assetUrl('js/fan-chart-storage.min.js'),
             ]
         );
     }
@@ -250,6 +264,24 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
     }
 
     /**
+     * @param Individual $individual
+     * @param string     $xref
+     *
+     * @return string
+     */
+    private function getAjaxRoute(Individual $individual, string $xref): string
+    {
+        return $this->chartUrl(
+            $individual,
+            [
+                'ajax'        => true,
+                'generations' => $this->configuration->getGenerations(),
+                'xref'        => $xref,
+            ]
+        );
+    }
+
+    /**
      * Returns TRUE if the individual image should be shown, otherwise FALSE.
      *
      * @param Individual $individual The individual used in the current chart
@@ -282,14 +314,13 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
      *
      * @return ResponseInterface
      *
-     * @throws JsonException
      * @throws HttpBadRequestException
      * @throws HttpAccessDeniedException
      * @throws HttpNotFoundException
      */
     public function getUpdateAction(ServerRequestInterface $request): ResponseInterface
     {
-        $this->configuration = new Configuration($request);
+        $this->configuration = new Configuration($request, $this);
 
         $tree = Validator::attributes($request)->tree();
         $user = Validator::attributes($request)->user();
@@ -302,8 +333,7 @@ class Module extends AbstractModule implements ModuleCustomInterface, ModuleChar
 
         $this->dataFacade
             ->setModule($this)
-            ->setConfiguration($this->configuration)
-            ->setRoute(self::ROUTE_DEFAULT);
+            ->setConfiguration($this->configuration);
 
         return response([
             'data' => $this->dataFacade->createTreeStructure($individual),

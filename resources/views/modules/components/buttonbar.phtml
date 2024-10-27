@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/**
+ * @var string $moduleName
+ */
+?>
+
+<div class="btn-toolbar justify-content-end">
+    <div class="btn-group">
+        <?= view($moduleName . '::modules/components/buttonbar/fullscreen-button') ?>
+        <?= view($moduleName . '::modules/components/buttonbar/center-button') ?>
+        <?= view($moduleName . '::modules/components/buttonbar/png-export-button') ?>
+        <?= view($moduleName . '::modules/components/buttonbar/svg-export-button') ?>
+<?php /*
+        <?= view($moduleName . '::modules/components/buttonbar/help-button') ?>
+ */ ?>
+    </div>
+</div>
+
+<script>
+
+// Hide fullscreen button if fullscreen mode is not available (e.g., iPhone)
+if (!document.fullscreenEnabled) {
+    document
+        .querySelector(".webtrees-fan-fullscreen-container .btn-fullscreen")
+        .style
+        .display = 'none';
+}
+
+</script>

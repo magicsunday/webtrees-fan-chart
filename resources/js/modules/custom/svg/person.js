@@ -24,7 +24,7 @@ export default class Person
      *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
-     * @param {selection}     person
+     * @param {Selection}     person
      * @param {Object}        children
      */
     constructor(svg, configuration, person, children)
@@ -39,7 +39,7 @@ export default class Person
     /**
      * Initialize the required elements.
      *
-     * @param {selection} person
+     * @param {Selection} person
      * @param {Object}    datum
      */
     init(person, datum)
@@ -194,7 +194,7 @@ export default class Person
     /**
      * Adds a color overlay for each arc.
      *
-     * @param {selection} person
+     * @param {Selection} person
      * @param {Object}    data   The D3 data object
      */
     addColorGroup(person, datum)
@@ -243,7 +243,7 @@ export default class Person
     /**
      * Appends the arc element to the person element.
      *
-     * @param {selection} person The parent element used to append the arc too
+     * @param {Selection} person The parent element used to append the arc too
      * @param {Object}    datum  The D3 data object
      *
      * @private
@@ -279,8 +279,8 @@ export default class Person
     /**
      * Add title element to the person element containing the full name of the individual.
      *
-     * @param {selection} person The parent element used to append the title too
-     * @param {String}    value  The value to assign to the title
+     * @param {Selection} person The parent element used to append the title too
+     * @param {string}    value  The value to assign to the title
      *
      * @private
      */
@@ -294,10 +294,10 @@ export default class Person
     /**
      * Append labels (initial hidden).
      *
-     * @param {selection} parent The parent element used to append the label element too
+     * @param {Selection} parent The parent element used to append the label element too
      * @param {Object}    datum  The D3 data object
      *
-     * @return {selection} Newly added label element
+     * @return {Selection} Newly added label element
      *
      * @private
      */
@@ -314,7 +314,7 @@ export default class Person
      *
      * @param {Object} children The The D3 data object
      *
-     * @return {Number}
+     * @return {number}
      */
     getFontSize(children)
     {

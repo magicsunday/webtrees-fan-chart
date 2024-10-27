@@ -17,7 +17,7 @@ export default class Filter
     /**
      * Constructor.
      *
-     * @param {selection} defs The selected D3 parent element container
+     * @param {Selection} defs The selected D3 parent element container
      */
     constructor(defs)
     {
@@ -43,7 +43,7 @@ export default class Filter
     /**
      * Returns the internal element.
      *
-     * @return {selection}
+     * @return {Selection}
      */
     get()
     {

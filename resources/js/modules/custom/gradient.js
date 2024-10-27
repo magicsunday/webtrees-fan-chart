@@ -70,7 +70,7 @@ export default class Gradient
         }
 
         // Add a new radial gradient
-        let newGrad = this._svg.defs.get()
+        let newGrad = this._svg.defs
             .append("svg:linearGradient")
             .attr("id", "grad-" + datum.id);
 
