@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2024-10-27 15:20+0100\n"
-"PO-Revision-Date: 2024-10-27 15:20+0100\n"
-"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
+"PO-Revision-Date: 2024-10-28 17:17+0100\n"
+"Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -54,7 +54,7 @@ msgstr "Overleden"
 #: src/Traits/ModuleConfigTrait.php:91
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
-msgstr ""
+msgstr "De voorkeuren voor de module \"%s\" zijn bijgewerkt."
 
 #: resources/views/modules/components/buttonbar/center-button.phtml:18
 msgid "Re center"
@@ -62,11 +62,11 @@ msgstr "Opnieuw centreren"
 
 #: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
 msgid "Switch between full screen mode and normal view"
-msgstr ""
+msgstr "Schakelen tussen volledig scherm en normale weergave"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:17
 msgid "Show help"
-msgstr ""
+msgstr "Toon Help"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -78,19 +78,19 @@ msgstr "Exporteren als SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
-msgstr ""
+msgstr "Controlepaneel"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Modules"
-msgstr ""
+msgstr "Modules"
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "save"
-msgstr ""
+msgstr "opslaan"
 
 #: resources/views/modules/fan-chart/config.phtml:55
 msgid "cancel"
-msgstr ""
+msgstr "annuleren"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
@@ -116,7 +116,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
-msgstr ""
+msgstr "Indeling"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
@@ -131,6 +131,8 @@ msgid ""
 "Instead of the colors for men and women, a color gradient is displayed for "
 "the paternal and maternal lineage."
 msgstr ""
+"In plaats van de kleuren voor mannen en vrouwen wordt er een kleurverloop "
+"weergegeven voor de vaderlijke en moederlijke lijn."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Show parent marriage dates"
