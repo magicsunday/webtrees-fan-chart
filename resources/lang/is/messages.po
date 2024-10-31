@@ -54,7 +54,7 @@ msgstr "Látin/-n"
 #: src/Traits/ModuleConfigTrait.php:91
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
-msgstr ""
+msgstr "Kjörstillingar fyrir eininguna "%s“ hafa verið uppfærðar."
 
 #: resources/views/modules/components/buttonbar/center-button.phtml:18
 msgid "Re center"
@@ -62,11 +62,11 @@ msgstr "Endurmiðja"
 
 #: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
 msgid "Switch between full screen mode and normal view"
-msgstr ""
+msgstr "Skiptu á milli fullskjás og venjulegs skjás"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:17
 msgid "Show help"
-msgstr ""
+msgstr "Sýna hjálp"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -78,19 +78,19 @@ msgstr "Flytja út sem SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
-msgstr ""
+msgstr "Stjórnborð"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Modules"
-msgstr ""
+msgstr "Einingar"
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "save"
-msgstr ""
+msgstr "vista"
 
 #: resources/views/modules/fan-chart/config.phtml:55
 msgid "cancel"
-msgstr ""
+msgstr "hætta"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
@@ -115,7 +115,7 @@ msgstr "Tilgreinir fjölda þrepa þar sem textinn er skrifaður eftir boga."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
-msgstr ""
+msgstr "Útlit"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
@@ -129,7 +129,8 @@ msgstr "Sýna litastigul"
 msgid ""
 "Instead of the colors for men and women, a color gradient is displayed for "
 "the paternal and maternal lineage."
-msgstr ""
+msgstr "Í stað litanna fyrir karla og konur er litastigull sýndur fyrir "
+"föður- og móðurætt."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Show parent marriage dates"
