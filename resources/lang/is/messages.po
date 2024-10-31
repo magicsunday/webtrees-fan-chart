@@ -54,7 +54,7 @@ msgstr "Látin/-n"
 #: src/Traits/ModuleConfigTrait.php:91
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
-msgstr "Kjörstillingar fyrir eininguna "%s“ hafa verið uppfærðar."
+msgstr "Kjörstillingar fyrir eininguna “%s” hafa verið uppfærðar."
 
 #: resources/views/modules/components/buttonbar/center-button.phtml:18
 msgid "Re center"
