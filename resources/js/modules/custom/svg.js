@@ -154,9 +154,9 @@ export default class Svg
         // Add a group
         this._visual = this._element.append("g");
 
-        this._visual
-            .append("g")
-            .attr("class", "personGroup");
+        // this._visual
+        //     .append("g")
+        //     .attr("class", "personGroup");
 
         this._zoom = new Zoom(this._visual);
         this._element.call(this._zoom.get());
@@ -215,6 +215,16 @@ export default class Svg
     selectAll(select)
     {
         return this._element.selectAll(select);
+    }
+
+    /**
+     * @param {string|function} name
+     *
+     * @returns {Selection}
+     */
+    append(name)
+    {
+        return this._element.append(name);
     }
 
     /**

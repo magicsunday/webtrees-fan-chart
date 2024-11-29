@@ -12,6 +12,7 @@ import Svg from "./svg";
 import Person from "./svg/person";
 import Gradient from "./gradient";
 import Update from "./update";
+import Geometry from "./svg/geometry.js";
 
 const MIN_HEIGHT  = 500;
 const MIN_PADDING = 1;   // Minimum padding around view box in "rem"
@@ -186,29 +187,33 @@ export default class Chart
         // Init the <svg> events
         this._svg.initEvents(this._overlay);
 
-        let personGroup = this._svg.select("g.personGroup");
+        // let personGroup = this._svg.select("g.personGroup");
         let gradient = new Gradient(this._svg, this._configuration);
         let that = this;
 
-         personGroup
+        const person = this._svg.visual
             .selectAll("g.person")
-            .data(this._hierarchy.nodes, (datum) => datum.id)
-            .enter()
-            .filter(
-                (datum) => {
-                    // Filter out all empty records, but only if we hide empty segments
-                    // otherwise the arcs won't be drawn correctly
-                    return (datum.data.data.xref !== "")
-                         || !this._configuration.hideEmptySegments
-                }
-            )
-            .append("g")
-            .attr("class", "person")
-            .attr("id", (datum) => "person-" + datum.id);
+            // .data(this._hierarchy.nodes, (datum) => datum.id)
+            .data(this._hierarchy.nodes.slice(1))
+            .join("g");
 
-        // Create a new selection in order to leave the previous enter() selection
-        personGroup
-            .selectAll("g.person")
+        person.filter(
+            (datum) => {
+                // Filter out all empty records, but only if we hide empty segments,
+                // otherwise the arcs won't be drawn correctly
+                return (datum.data.data.xref !== "")
+                     || !this._configuration.hideEmptySegments
+            }
+        );
+
+        person
+            .attr("class", "person")
+            .classed("root", datum => datum.id === 0)
+            .attr("id", datum => "person-" + datum.id)
+            // .attr("fill-opacity", datum => datum.data.data.xref !== "" ? 1 : 0)
+            .attr("fill-opacity", d => this.arcVisible(d.current) ? 1 : 0)
+            .attr("fill-opacity", d => this.arcVisible(d.current) ? 1 : 0)
+            .attr("pointer-events", d => this.arcVisible(d.current) ? "auto" : "none")
             .each(function (d) {
                 let person = d3.select(this);
 
@@ -216,11 +221,50 @@ export default class Chart
                     gradient.init(d);
                 }
 
-                new Person(that._svg, that._configuration, person, d);
+                d.person = new Person(that._svg, that._configuration, person, d);
             });
+
+        // this._rootPerson = d3.select("g.person.root")
+        //     .datum(this._hierarchy.root)
+        // ;
+
+        this._rootPerson = this._svg.visual
+            .append("g")
+            .datum(this._hierarchy.root)
+            .attr("id", datum => "person-" + datum.id)
+            .attr("class", "person")
+            .classed("root", datum => datum.id === 0)
+            // .attr("r", radius)
+            // .attr("fill", "none")
+            .attr("pointer-events", "all")
+            .classed("dummy", function (d) {
+console.log('classed', d);
+
+                const person = d3.select(this);
+
+                if (that._configuration.showColorGradients) {
+                    gradient.init(d);
+                }
+
+                d.person = new Person(that._svg, that._configuration, person, d);
+
+                return false;
+            })
+            // .on("click", clicked)
+        ;
+
+// // console.log('_rootPerson', this._rootPerson.datum.parent);
 
         this.updateViewBox();
         this.bindClickEventListener();
+    }
+
+    arcVisible(d)
+    {
+// console.log('arcVisible', d);
+        // return d.y1 > d.y0 && d.x1 > d.x0;
+
+        return d.y1 <= this._configuration.generations && d.y0 >= 1 && d.x1 > d.x0;
     }
 
     /**
@@ -228,14 +272,13 @@ export default class Chart
      */
     bindClickEventListener()
     {
-        let persons = this._svg
-            .select("g.personGroup")
+        this._svg
+            // .select("g.personGroup")
             .selectAll("g.person")
             .filter((datum) => datum.data.data.xref !== "")
-            .classed("available", true);
-
-        // Trigger method on click
-        persons.on("click", this.personClick.bind(this));
+            // .filter(d => d.children)
+            .classed("available", true)
+            .on("click", this.personClick.bind(this));
     }
 
     /**
@@ -248,8 +291,45 @@ export default class Chart
      */
     personClick(event, datum)
     {
+console.log('clicked', datum);
+
+        // const geometry = new Geometry(this._configuration);
+        // const radius = geometry.outerRadius(this._configuration.generations);
+
+        //     .append("circle")
+        //     .datum(this._hierarchy.root)
+        //     .attr("r", 100)
+        //     .attr("fill", "none")
+        //     .attr("pointer-events", "all")
+        //     .on("click", this.personClick.bind(this));
+
+        this._rootPerson.datum(datum.parent || this._hierarchy.root);
+
+// console.log('updated _rootPerson', this._rootPerson.datum.parent);
+
+        // Calculate target coordinates for each node
+        this._hierarchy.root.each(d => {
+            d.target = {
+                x0: Math.max(0, Math.min(1, (d.x0 - datum.x0) / (datum.x1 - datum.x0))) * 2 * Math.PI,
+                x1: Math.max(0, Math.min(1, (d.x1 - datum.x0) / (datum.x1 - datum.x0))) * 2 * Math.PI,
+                y0: Math.max(0, d.y0 - datum.depth),
+                y1: Math.max(0, d.y1 - datum.depth)
+            }
+
+console.log(d.data.data.name);
+console.log(d.current);
+console.log(d.target);
+        });
+
+        const t = this.svg
+            .transition()
+            .duration(750);
+
+        datum.person
+            .tween(t);
+
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
-        (datum.depth === 0) ? this.redirectToIndividual(datum.data.data.url) : this.update(datum.data.data.updateUrl);
+        // (datum.depth === 0) ? this.redirectToIndividual(datum.data.data.url) : this.update(datum.data.data.updateUrl);
     }
 
     /**

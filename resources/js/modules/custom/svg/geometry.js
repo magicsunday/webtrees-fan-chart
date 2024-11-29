@@ -33,8 +33,6 @@ export default class Geometry
 
     /**
      * @return {number}
-     *
-     * @private
      */
     get startPi()
     {
@@ -47,8 +45,6 @@ export default class Geometry
 
     /**
      * @return {number}
-     *
-     * @private
      */
     get endPi()
     {
@@ -64,9 +60,9 @@ export default class Geometry
      *
      * @return {number}
      */
-    get scale()
+    scale(value)
     {
-        return d3.scaleLinear().range([this.startPi, this.endPi]);
+        return d3.scaleLinear().range([this.startPi, this.endPi])(value);
     }
 
     /**
@@ -132,7 +128,7 @@ export default class Geometry
     }
 
     /**
-     * Get an radius relative to the outer radius adjusted by the given
+     * Get the radius relative to the outer radius adjusted by the given
      * position in percent.
      *
      * @param {number} depth    The depth of the element inside the chart
@@ -168,6 +164,8 @@ export default class Geometry
      */
     startAngle(depth, x0)
     {
+        return x0 - Math.PI;
+
         // Starting from the left edge (x0) of the rectangle
         return (depth === 0) ? 0 : this.calcAngle(x0);
     }
@@ -182,6 +180,8 @@ export default class Geometry
      */
     endAngle(depth, x1)
     {
+        return x1 - Math.PI;
+
         // Starting from the right edge (x1) of the rectangle
         return (depth === 0) ? MATH_PI2 : this.calcAngle(x1);
     }

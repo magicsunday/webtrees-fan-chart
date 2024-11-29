@@ -30,7 +30,11 @@ export {
 } from "d3-path";
 
 export {
-    scaleLinear
+    interpolate
+} from "d3-interpolate";
+
+export {
+    scaleLinear, scaleSqrt
 } from "d3-scale";
 
 export {

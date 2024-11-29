@@ -207,7 +207,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
                     'chartParams'       => $this->getChartParameters($individual),
                     'exportStylesheets' => $this->getExportStylesheets(),
                     'stylesheets'       => $this->getStylesheets(),
-                    'javascript'        => $this->assetUrl('js/fan-chart-' . self::CUSTOM_VERSION . '.min.js'),
+                    'javascript'        => $this->assetUrl('js/fan-chart-' . self::CUSTOM_VERSION . '.js'),
                 ]
             );
         }

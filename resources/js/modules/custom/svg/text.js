@@ -29,6 +29,254 @@ export default class Text
         this._svg           = svg;
         this._configuration = configuration;
         this._geometry      = new Geometry(this._configuration);
+
+        this.initArcGenerator0();
+        this.initArcGenerator1();
+        this.initArcGenerator2();
+        this.initArcGenerator3();
+        this.initArcGenerator4();
+    }
+
+    initArcGenerator0(index)
+    {
+        // // Create arc generator
+        // this._arcGenerator = d3.arc()
+        //     .startAngle(d => d.x0)
+        //     .endAngle(d => d.x1)
+        //     // .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
+        //     // .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
+        //     .padAngle(this._configuration.padAngle)
+        //     .padRadius(this._configuration.padRadius)
+        //     // .innerRadius(this._geometry.innerRadius(datum.depth))
+        //     // .outerRadius(this._geometry.outerRadius(datum.depth))
+        //     .innerRadius(d => this._geometry.innerRadius(d.y0))
+        //     .outerRadius(d => this._geometry.outerRadius(d.y0))
+        //     .cornerRadius(this._configuration.cornerRadius);
+        //
+        // return
+
+
+        // let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
+        // let startAngle      = data.x0;
+        // let endAngle        = data.x1;
+        // let startAngle      = this._geometry.startAngle(data.depth, data.x0);
+        // let endAngle        = this._geometry.endAngle(data.depth, data.x1);
+        // let relativeRadius  = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, index));
+
+        const that = this;
+
+        function positionFlipped(d) {
+            return that.isPositionFlipped(d.depth, d.x0, d.x1);
+        }
+
+        function startAngle(d, index) {
+            // Special treatment for center marriage date position
+            // if (that._configuration.showParentMarriageDates && (index === 4) && (d.depth < 1)) {
+            //     return that._geometry.calcAngle(d.x0);
+            // }
+
+            // if (positionFlipped) {
+            //     return d.x1;
+            // }
+
+            return d.x0;
+        }
+
+        function endAngle(d, index) {
+            // Special treatment for center marriage date position
+            // if (that._configuration.showParentMarriageDates && (index === 4) && (d.depth < 1)) {
+            //     return that._geometry.calcAngle(d.x1);
+            // }
+
+            // if (positionFlipped) {
+            //     return d.x1;
+            // }
+
+            return d.x1;
+        }
+
+        function relativeRadius(d, index) {
+
+console.log('relativeRadius', index);
+
+            return that._geometry
+                .relativeRadius(
+                    d.y0,
+                    that.getTextOffset(positionFlipped(d), index)
+                );
+        }
+
+        // // Special treatment for center marriage date position
+        // if (this._configuration.showParentMarriageDates && (index === 4) && (data.depth < 1)) {
+        //     startAngle = this._geometry.calcAngle(data.x0);
+        //     endAngle   = this._geometry.calcAngle(data.x1);
+        // }
+
+        // Create arc generator
+        this._arcGenerator0 = d3.arc()
+            // .startAngle(d => d.x0)
+            // .endAngle(d => d.x1)
+            .startAngle((d) => positionFlipped(d) ? endAngle(d, 0) : startAngle(d, 0))
+            .endAngle((d) => positionFlipped(d) ? startAngle(d, 0) : endAngle(d, 0))
+            .padAngle(this._configuration.padAngle)
+            .padRadius(this._configuration.padRadius)
+            .innerRadius((d) => relativeRadius(d, 0))
+            .outerRadius((d) => relativeRadius(d, 0))
+            // .innerRadius(d => this._geometry.innerRadius(d.y0))
+            // .outerRadius(d => this._geometry.outerRadius(d.y0))
+            .cornerRadius(this._configuration.cornerRadius);
+    }
+
+    initArcGenerator1(index)
+    {
+        const that = this;
+
+        function positionFlipped(d) {
+            return that.isPositionFlipped(d.depth, d.x0, d.x1);
+        }
+
+        function startAngle(d, index) {
+            return d.x0;
+        }
+
+        function endAngle(d, index) {
+            return d.x1;
+        }
+
+        function relativeRadius(d, index) {
+
+            console.log('relativeRadius', index);
+
+            return that._geometry
+                .relativeRadius(
+                    d.y0,
+                    that.getTextOffset(positionFlipped(d), index)
+                );
+        }
+
+        // Create arc generator
+        this._arcGenerator1 = d3.arc()
+            .startAngle((d) => positionFlipped(d) ? endAngle(d, 1) : startAngle(d, 1))
+            .endAngle((d) => positionFlipped(d) ? startAngle(d, 1) : endAngle(d, 1))
+            .padAngle(this._configuration.padAngle)
+            .padRadius(this._configuration.padRadius)
+            .innerRadius((d) => relativeRadius(d, 1))
+            .outerRadius((d) => relativeRadius(d, 1))
+            .cornerRadius(this._configuration.cornerRadius);
+    }
+
+    initArcGenerator2(index)
+    {
+        const that = this;
+
+        function positionFlipped(d) {
+            return that.isPositionFlipped(d.depth, d.x0, d.x1);
+        }
+
+        function startAngle(d, index) {
+            return d.x0;
+        }
+
+        function endAngle(d, index) {
+            return d.x1;
+        }
+
+        function relativeRadius(d, index) {
+
+            console.log('relativeRadius', index);
+
+            return that._geometry
+                .relativeRadius(
+                    d.y0,
+                    that.getTextOffset(positionFlipped(d), index)
+                );
+        }
+
+        // Create arc generator
+        this._arcGenerator2 = d3.arc()
+            .startAngle((d) => positionFlipped(d) ? endAngle(d, 2) : startAngle(d, 2))
+            .endAngle((d) => positionFlipped(d) ? startAngle(d, 2) : endAngle(d, 2))
+            .padAngle(this._configuration.padAngle)
+            .padRadius(this._configuration.padRadius)
+            .innerRadius((d) => relativeRadius(d, 2))
+            .outerRadius((d) => relativeRadius(d, 2))
+            .cornerRadius(this._configuration.cornerRadius);
+    }
+
+    initArcGenerator3(index)
+    {
+        const that = this;
+
+        function positionFlipped(d) {
+            return that.isPositionFlipped(d.depth, d.x0, d.x1);
+        }
+
+        function startAngle(d, index) {
+            return d.x0;
+        }
+
+        function endAngle(d, index) {
+            return d.x1;
+        }
+
+        function relativeRadius(d, index) {
+
+            console.log('relativeRadius', index);
+
+            return that._geometry
+                .relativeRadius(
+                    d.y0,
+                    that.getTextOffset(positionFlipped(d), index)
+                );
+        }
+
+        // Create arc generator
+        this._arcGenerator3 = d3.arc()
+            .startAngle((d) => positionFlipped(d) ? endAngle(d, 3) : startAngle(d, 3))
+            .endAngle((d) => positionFlipped(d) ? startAngle(d, 3) : endAngle(d, 3))
+            .padAngle(this._configuration.padAngle)
+            .padRadius(this._configuration.padRadius)
+            .innerRadius((d) => relativeRadius(d, 3))
+            .outerRadius((d) => relativeRadius(d, 3))
+            .cornerRadius(this._configuration.cornerRadius);
+    }
+
+    initArcGenerator4(index)
+    {
+        const that = this;
+
+        function positionFlipped(d) {
+            return that.isPositionFlipped(d.depth, d.x0, d.x1);
+        }
+
+        function startAngle(d, index) {
+            return d.x0;
+        }
+
+        function endAngle(d, index) {
+            return d.x1;
+        }
+
+        function relativeRadius(d, index) {
+
+            console.log('relativeRadius', index);
+
+            return that._geometry
+                .relativeRadius(
+                    d.y0,
+                    that.getTextOffset(positionFlipped(d), index)
+                );
+        }
+
+        // Create arc generator
+        this._arcGenerator4 = d3.arc()
+            .startAngle((d) => positionFlipped(d) ? endAngle(d, 4) : startAngle(d, 4))
+            .endAngle((d) => positionFlipped(d) ? startAngle(d, 4) : endAngle(d, 4))
+            .padAngle(this._configuration.padAngle)
+            .padRadius(this._configuration.padRadius)
+            .innerRadius((d) => relativeRadius(d, 4))
+            .outerRadius((d) => relativeRadius(d, 4))
+            .cornerRadius(this._configuration.cornerRadius);
     }
 
     /**
@@ -49,10 +297,21 @@ export default class Text
             // display the chart correctly).
 
             nameGroups.forEach((nameGroup, index) => {
+                const text = parent
+                    .append("text");
+
                 const availableWidth = this.getAvailableWidth(datum, index);
-                const pathId = this.createPathDefinition(parentId, index, datum);
-                const textPath = parent
-                    .append("text")
+                // const pathId = this.createPathDefinition(parentId, index, datum);
+
+                const pathId = "path-" + parentId + "-" + index;
+
+                // Store the <path> inside the definition list, so we could access it later on by its id
+                text
+                    .append("path")
+                    .attr("id", pathId)
+                    .attr("d", d => this._arcGenerator0(d.current));
+
+                const textPath = text
                     .append("textPath")
                     .attr("href", "#" + pathId)
                     .attr("startOffset", "25%");
@@ -69,12 +328,22 @@ export default class Text
 
             // Alternative names
             if (datum.data.data.alternativeName !== "") {
-                const pathId = this.createPathDefinition(parentId, 2, datum);
+                const text = parent
+                    .append("text");
+
+                const pathId = "path-" + parentId + "-" + 2;
+
+                // Store the <path> inside the definition list, so we could access it later on by its id
+                text
+                    .append("path")
+                    .attr("id", pathId)
+                    .attr("d", d => this._arcGenerator2(d.current));
+
+                // const pathId = this.createPathDefinition(parentId, 2, datum);
                 const availableWidth = this.getAvailableWidth(datum, 2);
                 const nameGroup = this.createAlternativeNamesData(datum);
 
-                const textPath = parent
-                    .append("text")
+                const textPath = text
                     .append("textPath")
                     .attr("href", "#" + pathId)
                     .attr("startOffset", "25%")
@@ -93,9 +362,19 @@ export default class Text
 
             // Birth and death date
             if (datum.data.data.timespan !== "") {
-                const pathId = this.createPathDefinition(parentId, 3, datum);
-                const textPath = parent
-                    .append("text")
+                const text = parent
+                    .append("text");
+
+                const pathId = "path-" + parentId + "-" + 3;
+
+                // Store the <path> inside the definition list, so we could access it later on by its id
+                text
+                    .append("path")
+                    .attr("id", pathId)
+                    .attr("d", d => this._arcGenerator3(d.current));
+
+                // const pathId = this.createPathDefinition(parentId, 3, datum);
+                const textPath = text
                     .append("textPath")
                     .attr("href", "#" + pathId)
                     .attr("startOffset", "25%")
@@ -215,10 +494,21 @@ export default class Text
 
         // Marriage date
         if (this._configuration.showParentMarriageDates && datum.children && (datum.depth < 5)) {
+            const text = parent
+                .append("text");
+
             const parentId = d3.select(parent.node().parentNode).attr("id");
-            const pathId = this.createPathDefinition(parentId, 4, datum);
-            const textPath = parent
-                .append("text")
+            const pathId = "path-" + parentId + "-" + 4;
+
+            // Store the <path> inside the definition list, so we could access it later on by its id
+            text
+                .append("path")
+                .attr("id", pathId)
+                .attr("d", d => this._arcGenerator4(d.current));
+
+            // const pathId = this.createPathDefinition(parentId, 4, datum);
+
+            const textPath = text
                 .append("textPath")
                 .attr("href", "#" + pathId)
                 .attr("startOffset", "25%")
@@ -283,7 +573,8 @@ export default class Text
         for (let i in datum.data.data.lastNames) {
             let pos;
 
-            // Check if last name already exists in first names list, in case first name equals last name
+            // Check if lastname already exists in the list of firstnames,
+            // in case first name equals last name
             do {
                 pos = datum.data.data.name.indexOf(datum.data.data.lastNames[i], lastnameOffset);
 
@@ -574,35 +865,13 @@ export default class Text
             return pathId;
         }
 
-        let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
-        let startAngle      = this._geometry.startAngle(data.depth, data.x0);
-        let endAngle        = this._geometry.endAngle(data.depth, data.x1);
-        let relativeRadius  = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, index));
-
-        // Special treatment for center marriage date position
-        if (this._configuration.showParentMarriageDates && (index === 4) && (data.depth < 1)) {
-            startAngle = this._geometry.calcAngle(data.x0);
-            endAngle   = this._geometry.calcAngle(data.x1);
-        }
-
-        // Create an arc generator for path segments
-        let arcGenerator = d3.arc()
-            .startAngle(positionFlipped ? endAngle : startAngle)
-            .endAngle(positionFlipped ? startAngle : endAngle)
-            .innerRadius(relativeRadius)
-            .outerRadius(relativeRadius);
-
-        arcGenerator
-            .padAngle(this._configuration.padAngle)
-            .padRadius(this._configuration.padRadius)
-            .cornerRadius(this._configuration.cornerRadius);
-
         // Store the <path> inside the definition list, so we could
         // access it later on by its id
-        this._svg.defs
+        // this._svg.defs
+        this._svg.visual
             .append("path")
             .attr("id", pathId)
-            .attr("d", arcGenerator);
+            .attr("d", this._arcGenerator(data.current, index));
 
         return pathId;
     }
@@ -737,5 +1006,38 @@ export default class Text
                 });
             }
         });
+    }
+
+    arcVisible(d)
+    {
+        // return d.y1 > d.y0 && d.x1 > d.x0;
+        return d.y1 <= this._configuration.generations && d.y0 >= 0 && d.x1 > d.x0;
+    }
+
+    /**
+     *
+     * @param {Transition} transition
+     */
+    tween(transition)
+    {
+        this._svg.visual
+            .selectAll(".name text path")
+            .transition(transition)
+            .tween("data", d => {
+                const i = d3.interpolate(d.current, d.target);
+                return transition => d.current = i(transition);
+            })
+//             .filter(function (d) {
+//                 return +this.parentNode.parentNode.getAttribute("fill-opacity") || that.arcVisible(d.target);
+// //                 return that.arcVisible(d.target);
+// //                 return true;
+//             })
+            // .filter(function(d) {
+            //     return +this.getAttribute("fill-opacity") || this.arcVisible(d.target);
+            // })
+            // .attr("fill-opacity", d => this.arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
+            .attr("fill-opacity", d => this.arcVisible(d.target) ? 1 : 0)
+            // .attr("pointer-events", d => this.arcVisible(d.target) ? "auto" : "none")
+            .attrTween("d", d => () => this._arcGenerator0(d.current));
     }
 }

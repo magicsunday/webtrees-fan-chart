@@ -46,6 +46,16 @@ export default class Defs
     }
 
     /**
+     * @param {function|string|null} select
+     *
+     * @returns {Selection}
+     */
+    selectAll(select)
+    {
+        return this._element.selectAll(select);
+    }
+
+    /**
      * @param {string|function} name
      *
      * @returns {Selection}

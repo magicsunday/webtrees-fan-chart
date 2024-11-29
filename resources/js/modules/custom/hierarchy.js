@@ -6,6 +6,7 @@
  */
 
 import * as d3 from "../lib/d3";
+import {MATH_DEG2RAD} from "./svg/geometry.js";
 
 export const SEX_MALE   = "M";
 export const SEX_FEMALE = "F";
@@ -28,62 +29,87 @@ export default class Hierarchy
     {
         this._configuration = configuration;
         this._nodes         = null;
+        this._hierarchy     = null;
         this._root          = null;
+    }
+
+    /**
+     * @return {number}
+     */
+    get startPi()
+    {
+        if (this._configuration.fanDegree === 90) {
+            return 0;
+        }
+
+        return -(this._configuration.fanDegree / 2 * MATH_DEG2RAD);
+    }
+
+    /**
+     * @return {number}
+     */
+    get endPi()
+    {
+        if (this._configuration.fanDegree === 90) {
+            return (this._configuration.fanDegree * MATH_DEG2RAD);
+        }
+
+        return (this._configuration.fanDegree / 2 * MATH_DEG2RAD);
     }
 
     /**
      * Initialize the hierarchical chart data.
      *
-     * @param {Object} datum The JSON encoded chart data
+     * @param {Object} data The JSON encoded chart data
      */
-    init(datum)
+    init(data)
     {
         // Get the greatest depth
         // const getDepth       = ({parents}) => 1 + (parents ? Math.max(...parents.map(getDepth)) : 0);
-        // const maxGenerations = getDepth(datum);
+        // const maxGenerations = getDepth(data);
 
-        // Construct root node from the hierarchical data
-        this._root = d3.hierarchy(
-            datum,
-            datum => {
+        // Construct the hierarchical data
+        this._hierarchy = d3.hierarchy(
+            data,
+            data => {
                 // Fill up the missing parents to the requested number of generations
-                // if (!datum.data.parents && (datum.data.generation < maxGenerations)) {
-                if (!datum.parents && (datum.data.generation < this._configuration.generations)) {
-                    datum.parents = [
-                        this.createEmptyNode(datum.data.generation + 1, SEX_MALE),
-                        this.createEmptyNode(datum.data.generation + 1, SEX_FEMALE)
+                // if (!data.data.parents && (data.data.generation < maxGenerations)) {
+                if (!data.parents && (data.data.generation < this._configuration.generations)) {
+                    data.parents = [
+                        this.createEmptyNode(data.data.generation + 1, SEX_MALE),
+                        this.createEmptyNode(data.data.generation + 1, SEX_FEMALE)
                     ];
                 }
 
                 // Add missing parent record if we got only one
-                if (datum.parents && (datum.parents.length < 2)) {
-                    if (datum.parents[0].data.sex === SEX_MALE) {
-                        datum.parents.push(
-                            this.createEmptyNode(datum.data.generation + 1, SEX_FEMALE)
+                if (data.parents && (data.parents.length < 2)) {
+                    if (data.parents[0].data.sex === SEX_MALE) {
+                        data.parents.push(
+                            this.createEmptyNode(data.data.generation + 1, SEX_FEMALE)
                         );
                     } else {
-                        datum.parents.unshift(
-                            this.createEmptyNode(datum.data.generation + 1, SEX_MALE)
+                        data.parents.unshift(
+                            this.createEmptyNode(data.data.generation + 1, SEX_MALE)
                         );
                     }
                 }
 
-                return datum.parents;
+                return data.parents;
             })
             // Calculate value properties of each node in the hierarchy
             .count();
 
-        // Create partition layout
-        let partitionLayout = d3.partition();
-
-        // Map the node data to the partition layout
-        this._nodes = partitionLayout(this._root)
-            .descendants();
+        // Compute the layout
+        this._root  = d3.partition().size([2 * -this.startPi, this._hierarchy.height + 1])(this._hierarchy);
+        this._nodes = this._root.descendants();
 
         // Assign a unique ID to each node
-        this._nodes.forEach((d, i) => {
+        this._root.each((d, i) => {
+            d.current = d;
             d.id = i;
         });
+
+console.log(this._root);
     }
 
     /**

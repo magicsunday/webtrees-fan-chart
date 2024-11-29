@@ -9,6 +9,7 @@ import * as d3 from "../../lib/d3";
 import Geometry from "./geometry";
 import Text from "./text";
 import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
+import ColorStripe from "./arc/color-stripe.js";
 
 /**
  * This class handles the creation of the person elements of the chart.
@@ -33,7 +34,25 @@ export default class Person
         this._configuration = configuration;
         this._geometry      = new Geometry(this._configuration);
 
+        this.initArcGenerator();
         this.init(person, children);
+    }
+
+    initArcGenerator()
+    {
+        // Create arc generator
+        this._arcGenerator = d3.arc()
+            .startAngle(d => d.x0)
+            .endAngle(d => d.x1)
+            // .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
+            // .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
+            .padAngle(this._configuration.padAngle)
+            .padRadius(this._configuration.padRadius)
+            // .innerRadius(this._geometry.innerRadius(datum.depth))
+            // .outerRadius(this._geometry.outerRadius(datum.depth))
+            .innerRadius(d => this._geometry.innerRadius(d.y0))
+            .outerRadius(d => this._geometry.outerRadius(d.y0))
+            .cornerRadius(this._configuration.cornerRadius);
     }
 
     /**
@@ -59,14 +78,22 @@ export default class Person
         if (datum.data.data.xref !== "") {
             this.addTitleToPerson(person, datum.data.data.name);
 
+            const labelContainer = person
+                .append("g")
+                .attr("class", "wt-chart-box-name name")
+                .style("font-size", this.getFontSize(datum) + "px");
+
             // Append labels (initial hidden)
-            let text  = new Text(this._svg, this._configuration);
-            let label = this.addLabelToPerson(person, datum);
+            this._text = new Text(this._svg, this._configuration);
+            this._text
+                .createLabels(labelContainer, datum);
 
-            text.createLabels(label, datum);
-            this.addColorGroup(person, datum);
+            // this.addColorGroup(person, datum);
+            this._colorStripe = new ColorStripe(this._svg, this._configuration);
+            this._colorStripe
+                .createOverlay(person, datum);
 
-            const that = this;
+            // const that = this;
 
             // Hovering
             person
@@ -192,55 +219,6 @@ export default class Person
     }
 
     /**
-     * Adds a color overlay for each arc.
-     *
-     * @param {Selection} person
-     * @param {Object}    data   The D3 data object
-     */
-    addColorGroup(person, datum)
-    {
-        // Arc generator
-        let arcGenerator = d3.arc()
-            .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
-            .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
-            .innerRadius(this._geometry.outerRadius(datum.depth) - this._configuration.colorArcWidth)
-            .outerRadius(this._geometry.outerRadius(datum.depth) + 1);
-        // .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth - 2)
-        // .outerRadius((data) => this._geometry.outerRadius(data.depth) - 1);
-
-        arcGenerator.padAngle(this._configuration.padAngle)
-            .padRadius(this._configuration.padRadius)
-        //     .cornerRadius(this._configuration.cornerRadius - 2)
-            ;
-
-        let color = person
-            .append("g")
-            .attr("class", "color");
-
-        let path = color.append("path")
-            .attr("fill", () => {
-                if (this._configuration.showColorGradients) {
-                    // Innermost circle (first generation)
-                    if (!datum.depth) {
-                        return "rgb(225, 225, 225)";
-                    }
-
-                    return "url(#grad-" + datum.id + ")";
-                }
-
-                return null;
-            })
-            .attr("d", arcGenerator);
-
-        if (!this._configuration.showColorGradients) {
-            path.attr(
-                "class",
-                datum.data.data.sex === SEX_FEMALE ? "female" : (datum.data.data.sex === SEX_MALE ? "male" : "unknown")
-            );
-        }
-    }
-
-    /**
      * Appends the arc element to the person element.
      *
      * @param {Selection} person The parent element used to append the arc too
@@ -250,16 +228,38 @@ export default class Person
      */
     addArcToPerson(person, datum)
     {
-        // Create arc generator
-        let arcGenerator = d3.arc()
-            .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
-            .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
-            .innerRadius(this._geometry.innerRadius(datum.depth))
-            .outerRadius(this._geometry.outerRadius(datum.depth));
+console.log('addArcToPerson', datum);
+// console.log(this._geometry.startAngle(datum.depth, datum.x0));
+// console.log(this._geometry.endAngle(datum.depth, datum.x1));
+// console.log(this._geometry.innerRadius(datum.y0));
+// console.log(this._geometry.outerRadius(datum.y0));
 
-        arcGenerator.padAngle(this._configuration.padAngle)
-            .padRadius(this._configuration.padRadius)
-            .cornerRadius(this._configuration.cornerRadius);
+        datum.x0 = this._geometry.startAngle(datum.depth, datum.x0);
+        datum.x1 = this._geometry.endAngle(datum.depth, datum.x1);
+        // datum.y0 = datum.depth;
+        // datum.y1 = datum.depth + 1;
+
+        datum.current = {
+            x0: datum.x0,
+            x1: datum.x1,
+            y0: datum.y0,
+            y1: datum.y1
+        }
+
+        // Create arc generator
+        // let arcGenerator = d3.arc()
+        //     .startAngle(datum.x0)
+        //     .endAngle(datum.x1)
+        //     // .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
+        //     // .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
+        //     .padAngle(this._configuration.padAngle)
+        //     .padRadius(this._configuration.padRadius)
+        //     // .innerRadius(this._geometry.innerRadius(datum.depth))
+        //     // .outerRadius(this._geometry.outerRadius(datum.depth))
+        //     .innerRadius(this._geometry.innerRadius(datum.y0))
+        //     .outerRadius(this._geometry.outerRadius(datum.y0))
+        //     .cornerRadius(this._configuration.cornerRadius)
+        // ;
 
         // Append arc
         let arcGroup = person
@@ -268,12 +268,68 @@ export default class Person
 
         let path = arcGroup
             .append("path")
-            .attr("d", arcGenerator);
+            .attr("d", d => this._arcGenerator(d.current));
 
-        // Hide arc initially if its new during chart update
+        // Hide arc initially if it's new during chart update
         if (person.classed("new")) {
             path.style("opacity", 1e-6);
         }
+    }
+
+    arcVisible(d)
+    {
+// console.log('arcVisible', d);
+        // return d.y1 > d.y0 && d.x1 > d.x0;
+
+        return d.y1 <= this._configuration.generations && d.y0 >= 1 && d.x1 > d.x0;
+    }
+
+    /**
+     *
+     * @param {Transition} transition
+     */
+    tween(transition)
+    {
+        const that = this;
+
+        // Transition the data on all arcs, even the ones that aren’t visible,
+        // so that if this transition is interrupted, entering arcs will start
+        // the next transition from the desired position.
+        this._svg.visual
+            .selectAll(".arc path")
+            .transition(transition)
+            .tween("data", d => {
+                const i = d3.interpolate(d.current, d.target);
+                return transition => d.current = i(transition);
+            })
+            .filter(function (d) {
+console.log('filter', this.parentNode.parentNode.getAttribute("fill-opacity"), this);
+                return +this.parentNode.parentNode.getAttribute("fill-opacity") || that.arcVisible(d.target);
+//                 return that.arcVisible(d.target);
+//                 return true;
+            })
+//             .call((d) => {
+// console.log('call', d);
+//                 return this.arcVisible(d.target) ? 1 : 0;
+//             })
+            .attr("fill-opacity", d => this.arcVisible(d.target) ? 1 : 0)
+            .attr("stroke-opacity", d => this.arcVisible(d.target) ? 1 : 0)
+            // .attr("fill-opacity", d => this.arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
+            .attr("pointer-events", d => this.arcVisible(d.target) ? "auto" : "none")
+            .attrTween("d", d => () => this._arcGenerator(d.current))
+        // .on("end", () => {
+        //     this.svg.visual
+        //         .selectAll(".person")
+        //         .attr("pointer-events", d => this.arcVisible(d.target) ? "auto" : "none")
+        //         // .attr("fill-opacity", d => this.arcVisible(d.target) ? 1 : 0)
+        // })
+        ;
+
+        this._text
+            .tween(transition);
+
+        this._colorStripe
+            .tween(transition);
     }
 
     /**
@@ -301,29 +357,29 @@ export default class Person
      *
      * @private
      */
-    addLabelToPerson(parent, children)
+    addLabelToPerson(parent, datum)
     {
         return parent
             .append("g")
             .attr("class", "wt-chart-box-name name")
-            .style("font-size", this.getFontSize(children) + "px");
+            .style("font-size", this.getFontSize(datum) + "px");
     }
 
     /**
      * Get the scaled font size.
      *
-     * @param {Object} children The The D3 data object
+     * @param {Object} datum The The D3 data object
      *
      * @return {number}
      */
-    getFontSize(children)
+    getFontSize(datum)
     {
         let fontSize = this._configuration.fontSize;
 
-        if (children.depth >= (this._configuration.numberOfInnerCircles + 1)) {
+        if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
             fontSize += 1;
         }
 
-        return ((fontSize - children.depth) * this._configuration.fontScale / 100.0);
+        return ((fontSize - datum.depth) * this._configuration.fontScale / 100.0);
     }
 }
