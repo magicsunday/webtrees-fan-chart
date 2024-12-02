@@ -30,9 +30,9 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "ext-json": "*",
         "ext-dom": "*",
-        "fisharebest/webtrees": "~2.2.0 || dev-main",
+        "ext-json": "*",
+        "fisharebest/webtrees": "~2.2.0",
         "magicsunday/webtrees-module-base": "^1.0",
         "magicsunday/webtrees-module-installer-plugin": "^1.3"
     },
@@ -89,12 +89,16 @@
             "rector process --config rector.php --dry-run"
         ],
         "ci:cgl": [
-            "php-cs-fixer fix --diff --verbose"
+            "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix --diff --verbose"
+        ],
+        "ci:rector": [
+            "rector process --config rector.php"
         ],
         "ci:test": [
             "@ci:test:php:lint",
             "@ci:test:php:phpstan",
-            "@ci:test:php:rector"
+            "@ci:test:php:rector",
+            "@ci:cgl --dry-run"
         ],
         "module:check": [
             "@ci:test"
