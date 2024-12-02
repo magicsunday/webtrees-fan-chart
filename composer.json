@@ -32,7 +32,7 @@
     "require": {
         "ext-dom": "*",
         "ext-json": "*",
-        "fisharebest/webtrees": "~2.2.0",
+        "fisharebest/webtrees": "~2.2.0 || dev-main",
         "magicsunday/webtrees-module-base": "^1.0",
         "magicsunday/webtrees-module-installer-plugin": "^1.3"
     },
