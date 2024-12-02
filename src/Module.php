@@ -64,7 +64,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     /**
      * @var string
      */
-    public const CUSTOM_VERSION = '2.7.2-dev';
+    public const CUSTOM_VERSION = '2.7.2';
 
     /**
      * @var string
