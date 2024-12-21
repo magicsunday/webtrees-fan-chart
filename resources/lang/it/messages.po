@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2024-10-27 15:20+0100\n"
-"PO-Revision-Date: 2024-10-27 15:20+0100\n"
+"PO-Revision-Date: 2024-12-21 18:09+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -49,12 +49,12 @@ msgstr "Morto/a: %s"
 
 #: src/Processor/DateProcessor.php:137
 msgid "Deceased"
-msgstr "Deceduto"
+msgstr "Deceduto/a"
 
 #: src/Traits/ModuleConfigTrait.php:91
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
-msgstr ""
+msgstr "Le preferenze per il modulo \"%s\" sono state aggiornate."
 
 #: resources/views/modules/components/buttonbar/center-button.phtml:18
 msgid "Re center"
@@ -62,11 +62,11 @@ msgstr "Riposiziona"
 
 #: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
 msgid "Switch between full screen mode and normal view"
-msgstr ""
+msgstr "Passa dalla modalità a schermo intero alla visualizzazione normale"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:17
 msgid "Show help"
-msgstr ""
+msgstr "Mostra aiuto"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -78,19 +78,19 @@ msgstr "Esporta come SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
-msgstr ""
+msgstr "Pannello di controllo"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Modules"
-msgstr ""
+msgstr "Moduli"
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "save"
-msgstr ""
+msgstr "salva"
 
 #: resources/views/modules/fan-chart/config.phtml:55
 msgid "cancel"
-msgstr ""
+msgstr "cancella"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
@@ -116,7 +116,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
-msgstr ""
+msgstr "Tipo di schema"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
@@ -131,6 +131,8 @@ msgid ""
 "Instead of the colors for men and women, a color gradient is displayed for "
 "the paternal and maternal lineage."
 msgstr ""
+"Al posto dei colori per uomini e donne, viene visualizzata una sfumatura "
+"di colore per la linea paterna e materna."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Show parent marriage dates"
