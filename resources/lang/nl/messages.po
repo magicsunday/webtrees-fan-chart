@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2024-12-22 13:03+0100\n"
-"PO-Revision-Date: 2024-12-22 13:06+0100\n"
+"PO-Revision-Date: 2024-12-22 20:01+0100\n"
 "Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -86,15 +86,15 @@ msgstr "Modules"
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "General"
-msgstr ""
+msgstr "Algemeen"
 
 #: resources/views/modules/fan-chart/config.phtml:56
 msgid "Hide the SVG export button"
-msgstr ""
+msgstr "Verberg de SVG-exportknop"
 
 #: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
-msgstr ""
+msgstr "Verberg de PNG-exportknop"
 
 #: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
