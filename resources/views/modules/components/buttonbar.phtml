@@ -9,8 +9,11 @@
 
 declare(strict_types=1);
 
+use MagicSunday\Webtrees\DescendantsChart\Configuration;
+
 /**
- * @var string $moduleName
+ * @var Configuration $configuration
+ * @var string        $moduleName
  */
 ?>
 
@@ -18,12 +21,20 @@ declare(strict_types=1);
     <div class="btn-group">
         <?= view($moduleName . '::modules/components/buttonbar/fullscreen-button') ?>
         <?= view($moduleName . '::modules/components/buttonbar/center-button') ?>
-        <?= view($moduleName . '::modules/components/buttonbar/png-export-button') ?>
-        <?= view($moduleName . '::modules/components/buttonbar/svg-export-button') ?>
-<?php /*
-        <?= view($moduleName . '::modules/components/buttonbar/help-button') ?>
- */ ?>
     </div>
+    <?php if (($configuration->getHidePngExport() === false) || ($configuration->getHideSvgExport() === false)): ?>
+        <div class="btn-group ms-2">
+            <?php if ($configuration->getHidePngExport() === false): ?>
+                <?= view($moduleName . '::modules/components/buttonbar/png-export-button') ?>
+            <?php endif; ?>
+            <?php if ($configuration->getHideSvgExport() === false): ?>
+                <?= view($moduleName . '::modules/components/buttonbar/svg-export-button') ?>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+    <?php /*
+    <?= view($moduleName . '::modules/components/buttonbar/help-button') ?>
+ */ ?>
 </div>
 
 <script>

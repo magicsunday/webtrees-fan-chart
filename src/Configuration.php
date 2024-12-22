@@ -302,4 +302,50 @@ class Configuration
 
         return $result;
     }
+
+    /**
+     * Returns whether to hide the SVG export button or not.
+     *
+     * @return bool
+     */
+    public function getHideSvgExport(): bool
+    {
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->boolean(
+                'hideSvgExport',
+                (bool) $this->module->getPreference(
+                    'default_hideSvgExport',
+                    '0'
+                )
+            );
+    }
+
+    /**
+     * Returns whether to hide the PNG export button or not.
+     *
+     * @return bool
+     */
+    public function getHidePngExport(): bool
+    {
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->boolean(
+                'hidePngExport',
+                (bool) $this->module->getPreference(
+                    'default_hidePngExport',
+                    '0'
+                )
+            );
+    }
 }

@@ -44,6 +44,35 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         <?= view($moduleName . '::modules/fan-chart/form/font-size', ['configuration' => $configuration]) ?>
     </div>
 
+    <div class="mb-3">
+        <div class="row">
+            <div class="col-form-label col-sm-3 wt-page-options-label">
+                <?= I18N::translate('General') ?>
+            </div>
+            <div class="col-sm-9 wt-page-options-value">
+                <?=
+                view($moduleName . '::modules/components/checkbox', [
+                    'name'      => 'hideSvgExport',
+                    'label'     => I18N::translate('Hide the SVG export button'),
+                    'checked'   => $configuration->getHideSvgExport(),
+                    'unchecked' => '0',
+                ])
+                ?>
+
+                <div class="mt-3">
+                    <?=
+                    view($moduleName . '::modules/components/checkbox', [
+                        'name'      => 'hidePngExport',
+                        'label'     => I18N::translate('Hide the PNG export button'),
+                        'checked'   => $configuration->getHidePngExport(),
+                        'unchecked' => '0',
+                    ])
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mb-3">
         <div class="offset-sm-3 col-sm-9">
             <button type="submit" class="btn btn-primary">

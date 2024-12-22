@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-27 15:20+0100\n"
-"PO-Revision-Date: 2024-10-27 15:20+0100\n"
+"POT-Creation-Date: 2024-12-22 13:03+0100\n"
+"PO-Revision-Date: 2024-12-22 13:07+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -51,7 +51,7 @@ msgstr ""
 msgid "Deceased"
 msgstr ""
 
-#: src/Traits/ModuleConfigTrait.php:91
+#: src/Traits/ModuleConfigTrait.php:99
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
@@ -85,10 +85,22 @@ msgid "Modules"
 msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:50
+msgid "General"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:66
+msgid "Hide the PNG export button"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:55
+#: resources/views/modules/fan-chart/config.phtml:84
 msgid "cancel"
 msgstr ""
 

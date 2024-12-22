@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-27 15:20+0100\n"
-"PO-Revision-Date: 2024-12-21 18:09+0100\n"
+"POT-Creation-Date: 2024-12-22 13:03+0100\n"
+"PO-Revision-Date: 2024-12-22 13:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -51,7 +51,7 @@ msgstr "Morto/a: %s"
 msgid "Deceased"
 msgstr "Deceduto/a"
 
-#: src/Traits/ModuleConfigTrait.php:91
+#: src/Traits/ModuleConfigTrait.php:99
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr "Le preferenze per il modulo \"%s\" sono state aggiornate."
@@ -85,10 +85,22 @@ msgid "Modules"
 msgstr "Moduli"
 
 #: resources/views/modules/fan-chart/config.phtml:50
+msgid "General"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:66
+msgid "Hide the PNG export button"
+msgstr ""
+
+#: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
 msgstr "salva"
 
-#: resources/views/modules/fan-chart/config.phtml:55
+#: resources/views/modules/fan-chart/config.phtml:84
 msgid "cancel"
 msgstr "cancella"
 
@@ -131,8 +143,8 @@ msgid ""
 "Instead of the colors for men and women, a color gradient is displayed for "
 "the paternal and maternal lineage."
 msgstr ""
-"Al posto dei colori per uomini e donne, viene visualizzata una sfumatura "
-"di colore per la linea paterna e materna."
+"Al posto dei colori per uomini e donne, viene visualizzata una sfumatura di "
+"colore per la linea paterna e materna."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Show parent marriage dates"

@@ -86,7 +86,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     </form>
 
     <div class="row webtrees-fan-fullscreen-container">
-        <?= view($moduleName . '::modules/components/buttonbar', ['moduleName' => $moduleName]) ?>
+        <?= view($moduleName . '::modules/components/buttonbar', ['configuration' => $configuration, 'moduleName' => $moduleName]) ?>
 
         <div id="fan-chart-url" class="wt-ajax-load wt-page-content wt-chart wt-chart-fan mt-0"></div>
     </div>
