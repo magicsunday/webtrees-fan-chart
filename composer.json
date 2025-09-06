@@ -22,10 +22,7 @@
         "vendor-dir": ".build/vendor",
         "discard-changes": true,
         "sort-packages": true,
-        "optimize-autoloader": true,
-        "allow-plugins": {
-            "magicsunday/webtrees-module-installer-plugin": true
-        }
+        "optimize-autoloader": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -33,8 +30,7 @@
         "ext-dom": "*",
         "ext-json": "*",
         "fisharebest/webtrees": "~2.2.0 || dev-main",
-        "magicsunday/webtrees-module-base": "^1.0",
-        "magicsunday/webtrees-module-installer-plugin": "^1.3"
+        "magicsunday/webtrees-module-base": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "3.63.2",
