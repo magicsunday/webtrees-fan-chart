@@ -239,6 +239,15 @@ div.tooltip .date {
     padding: 0;
 }
 
+[fullscreen] .webtrees-fan-fullscreen-container .btn-toolbar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+}
+
 [fullscreen] .webtrees-fan-fullscreen-container .btn-fullscreen span:nth-child(1) {
     display: none;
 }

@@ -128,17 +128,13 @@ export default class Chart
         let viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - padding);
         let viewBoxTop  = Math.ceil(svgBoundingBox.y - offsetY - padding);
 
-        // Add additional padding in the fullscreen view coming from the button bar
+        // In fullscreen mode, use the full available height
+        // (buttonbar is now overlayed, so no offset needed)
         if (document.fullscreenElement) {
-            const buttonBarHeight = 32;
-            const buttonBarOffset = (buttonBarHeight + this.convertRemToPixels(2));
-
-            viewBoxTop += buttonBarHeight - (padding << 1);
-
             // Set width/height attributes
             this.svg
                 .attr("width", clientBoundingBox.width)
-                .attr("height", clientBoundingBox.height - buttonBarOffset);
+                .attr("height", clientBoundingBox.height);
         }
 
         // Final width/height of view box
