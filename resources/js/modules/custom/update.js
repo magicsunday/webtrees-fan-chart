@@ -53,6 +53,21 @@ export default class Update
         d3.json(
             url
         ).then((data) => {
+            // Update the page title if provided in response
+            if (data.title) {
+                // Update the page header with HTML content
+                const pageTitle = document.querySelector('.wt-page-title');
+
+                if (pageTitle) {
+                    pageTitle.innerHTML = data.title;
+                }
+
+                // Update the browser tab title with text only (strip HTML tags)
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = data.title;
+                document.title = tempDiv.textContent || tempDiv.innerText || '';
+            }
+
             // Initialize the new loaded data
             this._hierarchy.init(data.data);
 

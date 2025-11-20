@@ -343,7 +343,8 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
             ->setConfiguration($this->configuration);
 
         return response([
-            'data' => $this->dataFacade->createTreeStructure($individual),
+            'title' => $this->getPageTitle($individual),
+            'data'  => $this->dataFacade->createTreeStructure($individual),
         ]);
     }
 
