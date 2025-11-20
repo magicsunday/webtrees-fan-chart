@@ -1,40 +1,43 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-22 13:03+0100\n"
-"PO-Revision-Date: 2024-12-22 13:06+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-20 17:40+0100\n"
+"PO-Revision-Date: 2025-11-20 17:44+0100\n"
 "Last-Translator: Gregor Anželj <gregor.anzelj@gmail.com>\n"
-"Language-Team: \n"
+"Language-Team: Slovenian\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
 "n%100==4 ? 3 : 0);\n"
+"X-Loco-Source-Locale: sl_SI\n"
 "X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
+"X-Loco-Parser: loco_parse_po\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:127 src/Module.php:243
+#: src/Module.php:134 src/Module.php:250
 msgid "Fan chart"
 msgstr "Pahljačasti diagram"
 
-#: src/Module.php:137
+#: src/Module.php:144
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Pahljačasti diagram posameznikovih prednikov."
 
-#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
+#: src/Module.php:247 src/Traits/ModuleChartTrait.php:41
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Pahljačasti diagram osebe %s"
 
-#: src/Module.php:260
+#: src/Module.php:267
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Uporabi Ctrl+Scroll kolesce za povečavo diagrama"
 
-#: src/Module.php:261
+#: src/Module.php:268
 msgid "Move the view with two fingers"
 msgstr "Premakni pogled z dvema prstoma"
 
@@ -55,7 +58,7 @@ msgstr "Pokojni/a"
 #: src/Traits/ModuleConfigTrait.php:99
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
-msgstr ""
+msgstr "Nastavitve modula “%s” so posodobljene."
 
 #: resources/views/modules/components/buttonbar/center-button.phtml:18
 msgid "Re center"
@@ -63,11 +66,11 @@ msgstr "Znova na sredino"
 
 #: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
 msgid "Switch between full screen mode and normal view"
-msgstr ""
+msgstr "Preklopi med celozaslonskim in običajnim načinom"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:17
 msgid "Show help"
-msgstr ""
+msgstr "Prikaži pomoč"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -79,15 +82,17 @@ msgstr "Izvozi kot SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
-msgstr ""
+msgstr "Nadzorna plošča"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Modules"
-msgstr ""
+msgstr "Moduli"
 
 #: resources/views/modules/fan-chart/config.phtml:50
+#, fuzzy
+#| msgid "Generations"
 msgid "General"
-msgstr ""
+msgstr "Generacije"
 
 #: resources/views/modules/fan-chart/config.phtml:56
 msgid "Hide the SVG export button"
@@ -99,11 +104,11 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
-msgstr ""
+msgstr "Shrani"
 
 #: resources/views/modules/fan-chart/config.phtml:84
 msgid "cancel"
-msgstr ""
+msgstr "Prekliči"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
@@ -128,7 +133,7 @@ msgstr "Določi število ravni, v katerih je besedilo zapisano vzdolž loka."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
-msgstr ""
+msgstr "Postavitev"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
@@ -136,17 +141,19 @@ msgstr "Skrij prazne dele"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
 msgid "Show color gradients"
-msgstr "Pokaži barvne prehode"
+msgstr "Prikaži barvne prehode"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:45
 msgid ""
 "Instead of the colors for men and women, a color gradient is displayed for "
 "the paternal and maternal lineage."
 msgstr ""
+"Namesto barv za moške in ženske je prikazan barvni preliv za očetovo in "
+"materino linijo."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Show parent marriage dates"
-msgstr "Pokaži datum poroke staršev"
+msgstr "Prikaži datum poroke staršev"
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -158,11 +165,8 @@ msgstr "Prikaži"
 
 #: resources/views/modules/fan-chart/page.phtml:79
 msgid "Show more options"
-msgstr "Pokaži več možnosti"
+msgstr "Prikaži več možnosti"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr "Skrij več možnosti"
-
-#~ msgid "Presentation"
-#~ msgstr "Predstavitev"
