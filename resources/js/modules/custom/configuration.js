@@ -48,10 +48,6 @@ export default class Configuration
         // Padding in pixel between each generation circle
         this.circlePadding = 0;
 
-        if (showParentMarriageDates) {
-            this.circlePadding = 40;
-        }
-
         this.padAngle = 0.03;
         this.padRadius = this.circlePadding * 10;
         this.padDistance = this.padAngle * this.padRadius;
@@ -68,11 +64,6 @@ export default class Configuration
 
         // Height of each outer circle arc
         this.outerArcHeight = 160;
-
-        if (showParentMarriageDates) {
-            this.innerArcHeight = this.circlePadding + 110;
-            this.outerArcHeight = this.circlePadding + 110;
-        }
 
         // Width of the colored arc above each single person arc
         this.colorArcWidth = 5;

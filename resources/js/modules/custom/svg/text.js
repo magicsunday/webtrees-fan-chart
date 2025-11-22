@@ -577,7 +577,10 @@ export default class Text
         let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
         let startAngle      = this._geometry.startAngle(data.depth, data.x0);
         let endAngle        = this._geometry.endAngle(data.depth, data.x1);
-        let relativeRadius  = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, index));
+        let relativeRadius  = this._geometry.relativeRadius(
+            data.depth,
+            index === 4 ? this.getMarriageTextOffset(positionFlipped) : this.getTextOffset(positionFlipped, index)
+        );
 
         // Special treatment for center marriage date position
         if (this._configuration.showParentMarriageDates && (index === 4) && (data.depth < 1)) {
@@ -593,8 +596,8 @@ export default class Text
             .outerRadius(relativeRadius);
 
         arcGenerator
-            .padAngle(this._configuration.padAngle)
-            .padRadius(this._configuration.padRadius)
+            .padAngle(index === 4 ? 0 : this._configuration.padAngle)
+            .padRadius(index === 4 ? 0 : this._configuration.padRadius)
             .cornerRadius(this._configuration.cornerRadius);
 
         // Store the <path> inside the definition list, so we could
@@ -643,8 +646,20 @@ export default class Text
     {
         // First names, Last name, Alternative name, Date, Parent marriage date
         return positionFlipped
-            ? [23, 40, 62, 84, 125][index]
-            : [73, 56, 34, 12, 120][index];
+            ? [23, 40, 62, 84, 92][index]
+            : [73, 56, 34, 12, 92][index];
+    }
+
+    /**
+     * Get the relative position offset for the parent marriage date path.
+     *
+     * @param {boolean} positionFlipped TRUE if the labels should be flipped for easier reading
+     *
+     * @return {number}
+     */
+    getMarriageTextOffset(positionFlipped)
+    {
+        return positionFlipped ? 90 : 95;
     }
 
     /**
@@ -674,7 +689,11 @@ export default class Text
             let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
 
             // Calculate length of the arc
-            availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, index));
+            const offset = index === 4
+                ? this.getMarriageTextOffset(positionFlipped)
+                : this.getTextOffset(positionFlipped, index);
+
+            availableWidth = this._geometry.arcLength(data, offset);
         }
 
         return availableWidth - (this._configuration.textPadding * 2)
