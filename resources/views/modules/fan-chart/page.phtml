@@ -57,6 +57,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 
         <div class="collapse" id="showMoreOptions">
             <?= view($moduleName . '::modules/fan-chart/form/layout', ['configuration' => $configuration, 'moduleName' => $moduleName]) ?>
+            <?= view($moduleName . '::modules/fan-chart/form/date-precision', ['configuration' => $configuration]) ?>
             <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['configuration' => $configuration]) ?>
             <?= view($moduleName . '::modules/fan-chart/form/font-size', ['configuration' => $configuration]) ?>
         </div>
@@ -110,11 +111,12 @@ use MagicSunday\Webtrees\FanChart\Configuration;
  *
  * @returns {String}
  */
-function getUrl(baseUrl, generations)
+function getUrl(baseUrl, generations, detailedDateGenerations)
 {
     let url = new URL(baseUrl);
     url.searchParams.set("xref", document.getElementById('xref').value);
     url.searchParams.set("generations", generations);
+    url.searchParams.set("detailedDateGenerations", detailedDateGenerations);
 
     return url.toString();
 }
@@ -163,6 +165,7 @@ storage.register("showColorGradients");
 storage.register("showParentMarriageDates");
 storage.register("innerArcs");
 storage.register("fontScale");
+storage.register("detailedDateGenerations");
 
 // Handle option toggle button
 toggleMoreOptions(storage);
@@ -177,7 +180,8 @@ const showColorGradients      = storage.read("showColorGradients");
 const showParentMarriageDates = storage.read("showParentMarriageDates");
 const innerArcs               = storage.read("innerArcs");
 const fontScale               = storage.read("fontScale");
-const ajaxUrl                 = getUrl(<?= json_encode($ajaxUrl) ?>, storage.read("generations"));
+const detailedDateGenerations = storage.read("detailedDateGenerations") ?? <?= json_encode($configuration->getDetailedDateGenerations()) ?>;
+const ajaxUrl                 = getUrl(<?= json_encode($ajaxUrl) ?>, storage.read("generations"), detailedDateGenerations);
 
 document.getElementById("fan-chart-url")
     .setAttribute('data-wt-ajax-url', ajaxUrl);

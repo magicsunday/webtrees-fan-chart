@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Processor;
 
 use Fisharebest\Webtrees\Date;
+use Fisharebest\Webtrees\Date\AbstractCalendarDate;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
@@ -47,15 +48,27 @@ class DateProcessor
     private Date $deathDate;
 
     /**
+     * The generation the individual belongs to.
+     */
+    private int $generation;
+
+    /**
+     * The number of generations using detailed birth and death dates.
+     */
+    private int $detailedDateGenerations;
+
+    /**
      * Constructor.
      *
      * @param Individual $individual The individual to process
      */
-    public function __construct(Individual $individual)
+    public function __construct(Individual $individual, int $generation, int $detailedDateGenerations)
     {
-        $this->individual = $individual;
-        $this->birthDate  = $this->individual->getBirthDate();
-        $this->deathDate  = $this->individual->getDeathDate();
+        $this->individual              = $individual;
+        $this->birthDate               = $this->individual->getBirthDate();
+        $this->deathDate               = $this->individual->getDeathDate();
+        $this->generation              = $generation;
+        $this->detailedDateGenerations = $detailedDateGenerations;
     }
 
     /**
@@ -71,13 +84,56 @@ class DateProcessor
     }
 
     /**
+     * Formats the given date.
+     *
+     * @param Date $date The date to format
+     *
+     * @return string
+     */
+    private function formatDate(Date $date): string
+    {
+        return $this->decodeValue($date->display());
+    }
+
+    /**
+     * Returns a formatted life event date, using detailed output for configured generations.
+     *
+     * @param Date $date The life event date
+     *
+     * @return string
+     */
+    private function getLifeEventDate(Date $date): string
+    {
+        if ($this->generation <= $this->detailedDateGenerations) {
+            return $this->formatDate($date);
+        }
+
+        return (string) $this->getYear($date);
+    }
+
+    /**
+     * Returns the calendar year of the given date.
+     *
+     * @param Date $date The date to extract the year from
+     *
+     * @return int
+     */
+    private function getYear(Date $date): int
+    {
+        /** @var AbstractCalendarDate $minimumDate */
+        $minimumDate = $date->minimumDate();
+
+        return $minimumDate->year();
+    }
+
+    /**
      * Get the year of birth.
      *
      * @return int
      */
     public function getBirthYear(): int
     {
-        return $this->birthDate->minimumDate()->year();
+        return $this->getYear($this->birthDate);
     }
 
     /**
@@ -87,7 +143,7 @@ class DateProcessor
      */
     public function getDeathYear(): int
     {
-        return $this->deathDate->minimumDate()->year();
+        return $this->getYear($this->deathDate);
     }
 
     /**
@@ -97,9 +153,7 @@ class DateProcessor
      */
     public function getBirthDate(): string
     {
-        return $this->decodeValue(
-            $this->birthDate->display()
-        );
+        return $this->formatDate($this->birthDate);
     }
 
     /**
@@ -109,9 +163,7 @@ class DateProcessor
      */
     public function getDeathDate(): string
     {
-        return $this->decodeValue(
-            $this->deathDate->display()
-        );
+        return $this->formatDate($this->deathDate);
     }
 
     /**
@@ -122,15 +174,15 @@ class DateProcessor
     public function getLifetimeDescription(): string
     {
         if ($this->birthDate->isOK() && $this->deathDate->isOK()) {
-            return $this->getBirthYear() . '-' . $this->getDeathYear();
+            return $this->getLifeEventDate($this->birthDate) . '-' . $this->getLifeEventDate($this->deathDate);
         }
 
         if ($this->birthDate->isOK()) {
-            return I18N::translate('Born: %s', (string) $this->getBirthYear());
+            return I18N::translate('Born: %s', $this->getLifeEventDate($this->birthDate));
         }
 
         if ($this->deathDate->isOK()) {
-            return I18N::translate('Died: %s', (string) $this->getDeathYear());
+            return I18N::translate('Died: %s', $this->getLifeEventDate($this->deathDate));
         }
 
         if ($this->individual->isDead()) {
