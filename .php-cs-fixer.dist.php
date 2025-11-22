@@ -4,7 +4,7 @@
  * This file is part of the package magicsunday/webtrees-fan-chart.
  *
  * For the full copyright and license information, please read the
- * LICENSE file distributed with this source code.
+ * LICENSE file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -16,7 +16,7 @@ declare(strict_types=1);
  *
  *  $ composer global require friendsofphp/php-cs-fixer
  *
- * And then run
+ * And then simply run
  *
  *  $ php-cs-fixer fix
  *
@@ -37,7 +37,9 @@ LICENSE file that was distributed with this source code.
 EOF;
 
 return (new PhpCsFixer\Config())
+    ->setCacheFile(__DIR__ . '/.build/cache/.php-cs-fixer.cache')
     ->setRiskyAllowed(true)
+    ->setParallelConfig(new PhpCsFixer\Runner\Parallel\ParallelConfig(4, 8))
     ->setRules([
         '@PSR12'                          => true,
         '@PER-CS2.0'                      => true,
@@ -56,6 +58,7 @@ return (new PhpCsFixer\Config())
         ],
         'phpdoc_to_comment'               => false,
         'phpdoc_no_alias_tag'             => false,
+        'phpdoc_annotation_without_dot'   => false,
         'no_superfluous_phpdoc_tags'      => false,
         'phpdoc_separation'               => [
             'groups' => [
@@ -103,8 +106,8 @@ return (new PhpCsFixer\Config())
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
-            ->exclude('.build')
-            ->exclude('.github')
-            ->in(__DIR__)
+            ->in([
+                __DIR__ . '/src/',
+                __DIR__ . '/tests/',
+            ])
     );
-

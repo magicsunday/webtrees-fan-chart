@@ -36,6 +36,7 @@
         "rollup-plugin-license": "^3.5.2"
     },
     "dependencies": {
+        "jscpd": "^4.0.5",
         "node": "^25.2.1"
     }
 }

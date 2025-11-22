@@ -98,7 +98,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      */
     public function __construct(
         ChartService $chartService,
-        DataFacade $dataFacade
+        DataFacade $dataFacade,
     ) {
         parent::__construct($chartService);
 

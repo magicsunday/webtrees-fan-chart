@@ -1,20 +1,22 @@
 includes:
     - %currentWorkingDirectory%/.build/vendor/phpstan/phpstan-strict-rules/rules.neon
     - %currentWorkingDirectory%/.build/vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - %currentWorkingDirectory%/.build/vendor/phpstan/phpstan-phpunit/extension.neon
+    - %currentWorkingDirectory%/.build/vendor/phpstan/phpstan-phpunit/rules.neon
     - %currentWorkingDirectory%/phpstan-baseline.neon
 
 parameters:
-    # You can currently choose from 10 levels (0 is the loosest and 9 is the strictest).
-    level: 9
+    # You can currently choose from 11 levels (0 is the loosest and 10 is the strictest).
+    level: max
+
+    tmpDir: %currentWorkingDirectory%/.build/cache/.phpstan.cache
 
     paths:
         - %currentWorkingDirectory%/src/
-
-    excludePaths:
-        - %currentWorkingDirectory%/.build/
+        - %currentWorkingDirectory%/tests/
 
     fileExtensions:
         - php
 
-    # Ignored validations
-    treatPhpDocTypesAsCertain: false
+    excludePaths:
+        - %currentWorkingDirectory%/.build/

@@ -133,7 +133,7 @@ class DataFacade
      */
     private function getNodeData(
         int $generation,
-        Individual $individual
+        Individual $individual,
     ): NodeData {
         // Create a unique ID for each individual
         static $id = 0;
