@@ -17,9 +17,8 @@ use MagicSunday\Webtrees\FanChart\Module;
 
 // Register our required namespaces
 $loader = new ClassLoader();
-$loader->addPsr4('MagicSunday\\Webtrees\\ModuleBase\\', __DIR__ . '/vendor/magicsunday/webtrees-module-base/src');
 $loader->addPsr4('MagicSunday\\Webtrees\\FanChart\\', __DIR__ . '/src');
 $loader->register();
 
-// Create and return instance of the module
+// Create and return an instance of the module
 return Registry::container()->get(Module::class);

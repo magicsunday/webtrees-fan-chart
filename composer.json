@@ -34,7 +34,6 @@
         "ext-dom": "*",
         "ext-json": "*",
         "fisharebest/webtrees": "~2.2.0 || dev-main",
-        "magicsunday/webtrees-module-base": "^1.0",
         "magicsunday/webtrees-module-installer-plugin": "^1.3"
     },
     "require-dev": {
@@ -59,11 +58,6 @@
             "rm -Rf webtrees-fan-chart/",
             "### Checkout latest version of repository",
             "git archive --prefix=webtrees-fan-chart/ HEAD --format=tar | tar -x",
-            "### Install required components",
-            "@composer require magicsunday/webtrees-module-base:^1.0",
-            "### Copy base module to vendor directory",
-            "mkdir -p webtrees-fan-chart/vendor/magicsunday",
-            "cp -r .build/vendor/magicsunday/webtrees-module-base webtrees-fan-chart/vendor/magicsunday/webtrees-module-base",
             "### Remove all not required files from archive",
             "rm -rf webtrees-fan-chart/.github",
             "rm -rf webtrees-fan-chart/resources/js/modules",

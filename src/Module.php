@@ -33,6 +33,7 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleConfigTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleCustomTrait;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -49,14 +50,14 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     use ModuleChartTrait;
     use ModuleConfigTrait;
 
-    private const ROUTE_DEFAULT = 'webtrees-fan-chart';
+    private const string ROUTE_DEFAULT = 'webtrees-fan-chart';
 
-    private const ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}';
+    private const string ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}';
 
     /**
      * @var string
      */
-    private const GITHUB_REPO = 'magicsunday/webtrees-fan-chart';
+    private const string GITHUB_REPO = 'magicsunday/webtrees-fan-chart';
 
     /**
      * @var string
@@ -113,6 +114,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      * @throws ImmutableProperty
      * @throws RouteAlreadyExists
      */
+    #[Override]
     public function boot(): void
     {
         Registry::routeFactory()
@@ -129,6 +131,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      *
      * @return string
      */
+    #[Override]
     public function title(): string
     {
         return I18N::translate('Fan chart');
@@ -139,6 +142,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      *
      * @return string
      */
+    #[Override]
     public function description(): string
     {
         return I18N::translate('A fan chart of an individual’s ancestors.');
@@ -149,6 +153,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      *
      * @return string
      */
+    #[Override]
     public function resourcesFolder(): string
     {
         return __DIR__ . '/../resources/';
@@ -161,6 +166,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      *
      * @return ResponseInterface
      */
+    #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $tree = Validator::attributes($request)->tree();

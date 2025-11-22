@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Traits;
 
 use Fisharebest\Localization\Translation;
-use MagicSunday\Webtrees\ModuleBase\Module\VersionInformation;
+use MagicSunday\Webtrees\FanChart\Module\VersionInformation;
 
 /**
  * Trait ModuleCustomTrait.

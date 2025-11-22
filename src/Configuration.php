@@ -31,56 +31,56 @@ class Configuration
      *
      * @var int
      */
-    private const DEFAULT_GENERATIONS = 6;
+    private const int DEFAULT_GENERATIONS = 6;
 
     /**
      * Minimum number of displayable generations.
      *
      * @var int
      */
-    private const MIN_GENERATIONS = 2;
+    private const int MIN_GENERATIONS = 2;
 
     /**
      * Maximum number of displayable generations.
      *
      * @var int
      */
-    private const MAX_GENERATIONS = 10;
+    private const int MAX_GENERATIONS = 10;
 
     /**
      * The default number of inner levels.
      *
      * @var int
      */
-    private const DEFAULT_INNER_ARCS = 3;
+    private const int DEFAULT_INNER_ARCS = 3;
 
     /**
      * Minimum number of displayable inner levels.
      *
      * @var int
      */
-    private const MIN_INNER_ARCS = 0;
+    private const int MIN_INNER_ARCS = 0;
 
     /**
      * Maximum number of displayable inner levels.
      *
      * @var int
      */
-    private const MAX_INNER_ARCS = 5;
+    private const int MAX_INNER_ARCS = 5;
 
     /**
      * The default fan chart degree.
      *
      * @var int
      */
-    private const FAN_DEGREE_DEFAULT = 210;
+    private const int FAN_DEGREE_DEFAULT = 210;
 
     /**
      * The default font size scaling factor in percent.
      *
      * @var int
      */
-    private const FONT_SCALE_DEFAULT = 100;
+    private const int FONT_SCALE_DEFAULT = 100;
 
     /**
      * The calling module.
