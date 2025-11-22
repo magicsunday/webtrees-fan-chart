@@ -32,6 +32,7 @@ export default class Person
         this._svg           = svg;
         this._configuration = configuration;
         this._geometry      = new Geometry(this._configuration);
+        this._text          = new Text(this._svg, this._configuration);
 
         this.init(person, children);
     }
@@ -60,11 +61,12 @@ export default class Person
             this.addTitleToPerson(person, datum.data.data.name);
 
             // Append labels (initial hidden)
-            let text  = new Text(this._svg, this._configuration);
+            let text  = this._text;
             let label = this.addLabelToPerson(person, datum);
 
             text.createLabels(label, datum);
             this.addColorGroup(person, datum);
+            this.addMarriagePath(person, datum);
 
             const that = this;
 
@@ -274,6 +276,43 @@ export default class Person
         if (person.classed("new")) {
             path.style("opacity", 1e-6);
         }
+    }
+
+    /**
+     * Appends a dedicated arc path for the parent marriage date to the person element.
+     *
+     * @param {Selection} person The parent element used to append the arc too
+     * @param {Object}    datum  The D3 data object
+     *
+     * @private
+     */
+    addMarriagePath(person, datum)
+    {
+        if (!this._configuration.showParentMarriageDates
+            || !datum.data.data.marriageDateOfParents
+            || (datum.depth >= 5)
+        ) {
+            return;
+        }
+
+        const parentId = person.attr("id");
+
+        if (!parentId) {
+            return;
+        }
+
+        const pathId = this._text.createPathDefinition(parentId, 4, datum);
+        const pathDefinition = this._svg.defs.select("path#" + pathId);
+
+        if (!pathDefinition.node()) {
+            return;
+        }
+
+        person
+            .append("g")
+            .attr("class", "marriage")
+            .append("path")
+            .attr("d", pathDefinition.attr("d"));
     }
 
     /**

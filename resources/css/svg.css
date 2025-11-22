@@ -21,6 +21,12 @@
     stroke-width: 1px;
 }
 
+.webtrees-fan-chart-container svg g.person g.marriage path {
+    fill: none;
+    stroke: rgb(200, 200, 200);
+    stroke-width: 1px;
+}
+
 .webtrees-fan-chart-container svg g.person.available g.arc path {
     fill: rgb(250, 250, 250);
 }
