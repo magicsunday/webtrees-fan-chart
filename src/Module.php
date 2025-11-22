@@ -176,6 +176,8 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
         $user = Validator::attributes($request)->user();
         $ajax = Validator::queryParams($request)->boolean('ajax', false);
 
+        $this->configuration = new Configuration($request, $this);
+
         // Convert POST requests into GET requests for pretty URLs.
         // This also updates the name above the form, which won't get updated if only a POST request is used
         if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
@@ -194,6 +196,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
                         'showColorGradients'      => $validator->boolean('showColorGradients', false),
                         'showParentMarriageDates' => $validator->boolean('showParentMarriageDates', false),
                         'innerArcs'               => $validator->integer('innerArcs', 3),
+                        'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
                     ]
                 )
             );
@@ -203,8 +206,6 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
 
         $individual = Registry::individualFactory()->make($xref, $tree);
         $individual = Auth::checkIndividualAccess($individual, false, true);
-
-        $this->configuration = new Configuration($request, $this);
 
         if ($ajax) {
             $this->layout = $this->name() . '::layouts/ajax';
@@ -289,9 +290,10 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
         return $this->chartUrl(
             $individual,
             [
-                'ajax'        => true,
-                'generations' => $this->configuration->getGenerations(),
-                'xref'        => $xref,
+                'ajax'                    => true,
+                'generations'             => $this->configuration->getGenerations(),
+                'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
+                'xref'                    => $xref,
             ]
         );
     }
