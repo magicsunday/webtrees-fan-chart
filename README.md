@@ -113,6 +113,23 @@ npm test
 npm run test:watch
 ```
 
+### Updating export goldens
+Run the export regression test in update mode whenever intentional visual changes occur.
+
+1. Install the Playwright browser binaries if they are not present:
+
+   ```shell
+   npx playwright install chromium
+   ```
+
+2. Regenerate the reference files:
+
+   ```shell
+   UPDATE_GOLDENS=1 npm test -- resources/js/tests/export.integration.test.js
+   ```
+
+Review the refreshed files in `resources/js/tests/__goldens__` before committing.
+
 PHP quality gates remain available via composer:
 ```shell
 composer update
