@@ -94,6 +94,10 @@ describe("FanChart", () => {
         selectMock.mockClear();
         chartInstances.length = 0;
         ensureOrientationListeners();
+
+        if (screen.orientation?.addEventListener?.mockClear) {
+            screen.orientation.addEventListener.mockClear();
+        }
     });
 
     it("draws initial data during setup", () => {
@@ -154,5 +158,58 @@ describe("FanChart", () => {
         fanChart.update("/update/url");
 
         expect(chart.update).toHaveBeenCalledWith("/update/url");
+    });
+
+    it("keeps the viewBox in sync when fullscreen mode changes", () => {
+        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
+            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+
+        const addEventListenerSpy = jest.spyOn(document, "addEventListener");
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions());
+
+        const chart = chartInstances[0];
+
+        const fullscreenCall = addEventListenerSpy.mock.calls.find(([event]) => event === "fullscreenchange");
+        expect(fullscreenCall?.[1]).toBeInstanceOf(Function);
+
+        const [ , fullscreenHandler ] = fullscreenCall;
+
+        document.fullscreenElement = document.createElement("div");
+        fullscreenHandler();
+        expect(document.body.hasAttribute("fullscreen")).toBe(true);
+        expect(chart.updateViewBox).toHaveBeenCalledTimes(1);
+
+        document.fullscreenElement = null;
+        fullscreenHandler();
+        expect(document.body.hasAttribute("fullscreen")).toBe(false);
+        expect(chart.updateViewBox).toHaveBeenCalledTimes(2);
+
+        addEventListenerSpy.mockRestore();
+    });
+
+    it("updates the viewBox after device orientation changes", () => {
+        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
+            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+
+        const orientationListenerSpy = jest.spyOn(screen.orientation, "addEventListener");
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions());
+
+        const changeCall = orientationListenerSpy.mock.calls.find(([event]) => event === "change");
+        expect(changeCall?.[1]).toBeInstanceOf(Function);
+
+        const [ , changeHandler ] = changeCall;
+
+        const chart = chartInstances[0];
+        chart.updateViewBox.mockClear();
+
+        changeHandler();
+
+        expect(chart.updateViewBox).toHaveBeenCalledTimes(1);
+
+        orientationListenerSpy.mockRestore();
     });
 });
