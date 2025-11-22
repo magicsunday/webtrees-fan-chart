@@ -20,6 +20,7 @@
         "prepare": "rollup --config rollup.config.js",
         "watch": "rollup --watch --config rollup.config.js",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
+        "test:exports": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runTestsByPath resources/js/tests/export.integration.test.js resources/js/tests/export.large.integration.test.js",
         "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
     },
     "devDependencies": {
