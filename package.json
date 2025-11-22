@@ -20,7 +20,8 @@
         "prepare": "rollup --config rollup.config.js",
         "watch": "rollup --watch --config rollup.config.js",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
-        "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
+        "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+        "pretest": "npx playwright install --with-deps chromium"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^15.2.3",
