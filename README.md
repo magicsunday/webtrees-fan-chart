@@ -106,6 +106,14 @@ npm run prepare
 
 
 ### Run tests
+JavaScript unit tests use Jest with a jsdom environment to exercise the fan chart modules headlessly.
+
+```shell
+npm test
+npm run test:watch
+```
+
+PHP quality gates remain available via composer:
 ```shell
 composer update
 
