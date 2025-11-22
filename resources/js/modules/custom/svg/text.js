@@ -214,7 +214,10 @@ export default class Text
         }
 
         // Marriage date
-        if (this._configuration.showParentMarriageDates && datum.children && (datum.depth < 5)) {
+        if (this._configuration.showParentMarriageDates
+            && datum.data.data.marriageDateOfParents
+            && (datum.depth < 5)
+        ) {
             const parentId = d3.select(parent.node().parentNode).attr("id");
             const pathId = this.createPathDefinition(parentId, 4, datum);
             const textPath = parent
