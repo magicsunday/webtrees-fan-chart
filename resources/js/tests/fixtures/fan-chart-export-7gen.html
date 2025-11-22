@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fan chart export fixture (7 generations)</title>
+    <link rel="stylesheet" href="../../../css/fan-chart.css">
+    <link rel="stylesheet" href="../../../css/svg.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 1rem;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f8f9fa;
+        }
+
+        .webtrees-fan-chart-container {
+            max-width: 1700px;
+            margin: 0 auto;
+        }
+
+        #chart {
+            width: 1600px;
+            height: 1200px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .toolbar button {
+            padding: 0.35rem 0.65rem;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="webtrees-fan-chart-container" id="webtrees-fan-chart-container">
+        <div class="toolbar">
+            <button id="centerButton" type="button">Center</button>
+            <button id="exportPNG" type="button">Export PNG</button>
+            <button id="exportSVG" type="button">Export SVG</button>
+        </div>
+        <div id="chart"></div>
+    </div>
+
+    <script src="../../fan-chart-3.0.1-dev.js"></script>
+    <script>
+        const sampleData = {
+            data: {
+                id: 1,
+                xref: "I1",
+                url: "https://example.test/individuals/I1",
+                updateUrl: "https://example.test/update/I1",
+                generation: 1,
+                name: "Alex Example",
+                isNameRtl: false,
+                firstNames: ["Alex"],
+                lastNames: ["Example"],
+                preferredName: "Alex Example",
+                alternativeName: "",
+                isAltRtl: false,
+                thumbnail: "",
+                sex: "M",
+                birth: "1901-01-01",
+                death: "1980-12-31",
+                marriageDate: "",
+                marriageDateOfParents: "",
+                timespan: "1901–1980",
+            },
+            parents: [
+                {
+                    data: {
+                        id: 2,
+                        xref: "I2",
+                        url: "https://example.test/individuals/I2",
+                        updateUrl: "https://example.test/update/I2",
+                        generation: 2,
+                        name: "Briar Example",
+                        isNameRtl: false,
+                        firstNames: ["Briar"],
+                        lastNames: ["Example"],
+                        preferredName: "Briar Example",
+                        alternativeName: "",
+                        isAltRtl: false,
+                        thumbnail: "",
+                        sex: "M",
+                        birth: "1870-01-15",
+                        death: "1940-04-19",
+                        marriageDate: "1895-06-01",
+                        marriageDateOfParents: "",
+                        timespan: "1870–1940",
+                    },
+                    parents: [
+                        {
+                            data: {
+                                id: 4,
+                                xref: "I4",
+                                url: "https://example.test/individuals/I4",
+                                updateUrl: "https://example.test/update/I4",
+                                generation: 3,
+                                name: "Charles Example",
+                                isNameRtl: false,
+                                firstNames: ["Charles"],
+                                lastNames: ["Example"],
+                                preferredName: "Charles Example",
+                                alternativeName: "",
+                                isAltRtl: false,
+                                thumbnail: "",
+                                sex: "M",
+                                birth: "1840-02-01",
+                                death: "1910-05-12",
+                                marriageDate: "",
+                                marriageDateOfParents: "",
+                                timespan: "1840–1910",
+                            },
+                            parents: [
+                                {
+                                    data: {
+                                        id: 8,
+                                        xref: "I8",
+                                        url: "https://example.test/individuals/I8",
+                                        updateUrl: "https://example.test/update/I8",
+                                        generation: 4,
+                                        name: "Etta Example",
+                                        isNameRtl: false,
+                                        firstNames: ["Etta"],
+                                        lastNames: ["Example"],
+                                        preferredName: "Etta Example",
+                                        alternativeName: "",
+                                        isAltRtl: false,
+                                        thumbnail: "",
+                                        sex: "F",
+                                        birth: "1810-10-10",
+                                        death: "1884-11-30",
+                                        marriageDate: "",
+                                        marriageDateOfParents: "",
+                                        timespan: "1810–1884",
+                                    },
+                                    parents: [
+                                        {
+                                            data: {
+                                                id: 12,
+                                                xref: "I12",
+                                                url: "https://example.test/individuals/I12",
+                                                updateUrl: "https://example.test/update/I12",
+                                                generation: 5,
+                                                name: "Felix Example",
+                                                isNameRtl: false,
+                                                firstNames: ["Felix"],
+                                                lastNames: ["Example"],
+                                                preferredName: "Felix Example",
+                                                alternativeName: "",
+                                                isAltRtl: false,
+                                                thumbnail: "",
+                                                sex: "M",
+                                                birth: "1782-07-21",
+                                                death: "1855-03-14",
+                                                marriageDate: "",
+                                                marriageDateOfParents: "",
+                                                timespan: "1782–1855",
+                                            },
+                                            parents: [
+                                                {
+                                                    data: {
+                                                        id: 16,
+                                                        xref: "I16",
+                                                        url: "https://example.test/individuals/I16",
+                                                        updateUrl: "https://example.test/update/I16",
+                                                        generation: 6,
+                                                        name: "Greta Example",
+                                                        isNameRtl: false,
+                                                        firstNames: ["Greta"],
+                                                        lastNames: ["Example"],
+                                                        preferredName: "Greta Example",
+                                                        alternativeName: "",
+                                                        isAltRtl: false,
+                                                        thumbnail: "",
+                                                        sex: "F",
+                                                        birth: "1755-05-11",
+                                                        death: "1825-12-01",
+                                                        marriageDate: "",
+                                                        marriageDateOfParents: "",
+                                                        timespan: "1755–1825",
+                                                    },
+                                                    parents: [
+                                                        {
+                                                            data: {
+                                                                id: 20,
+                                                                xref: "I20",
+                                                                url: "https://example.test/individuals/I20",
+                                                                updateUrl: "https://example.test/update/I20",
+                                                                generation: 7,
+                                                                name: "Hale Example",
+                                                                isNameRtl: false,
+                                                                firstNames: ["Hale"],
+                                                                lastNames: ["Example"],
+                                                                preferredName: "Hale Example",
+                                                                alternativeName: "",
+                                                                isAltRtl: false,
+                                                                thumbnail: "",
+                                                                sex: "M",
+                                                                birth: "1720-02-02",
+                                                                death: "1790-09-18",
+                                                                marriageDate: "",
+                                                                marriageDateOfParents: "",
+                                                                timespan: "1720–1790",
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            data: {
+                                                id: 13,
+                                                xref: "I13",
+                                                url: "https://example.test/individuals/I13",
+                                                updateUrl: "https://example.test/update/I13",
+                                                generation: 5,
+                                                name: "Ida Example",
+                                                isNameRtl: false,
+                                                firstNames: ["Ida"],
+                                                lastNames: ["Example"],
+                                                preferredName: "Ida Example",
+                                                alternativeName: "",
+                                                isAltRtl: false,
+                                                thumbnail: "",
+                                                sex: "F",
+                                                birth: "1786-04-03",
+                                                death: "1860-01-06",
+                                                marriageDate: "",
+                                                marriageDateOfParents: "",
+                                                timespan: "1786–1860",
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    data: {
+                                        id: 9,
+                                        xref: "I9",
+                                        url: "https://example.test/individuals/I9",
+                                        updateUrl: "https://example.test/update/I9",
+                                        generation: 4,
+                                        name: "Hadley Example",
+                                        isNameRtl: false,
+                                        firstNames: ["Hadley"],
+                                        lastNames: ["Example"],
+                                        preferredName: "Hadley Example",
+                                        alternativeName: "",
+                                        isAltRtl: false,
+                                        thumbnail: "",
+                                        sex: "M",
+                                        birth: "1815-09-09",
+                                        death: "1888-02-28",
+                                        marriageDate: "",
+                                        marriageDateOfParents: "",
+                                        timespan: "1815–1888",
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            data: {
+                                id: 5,
+                                xref: "I5",
+                                url: "https://example.test/individuals/I5",
+                                updateUrl: "https://example.test/update/I5",
+                                generation: 3,
+                                name: "Diana Example",
+                                isNameRtl: false,
+                                firstNames: ["Diana"],
+                                lastNames: ["Example"],
+                                preferredName: "Diana Example",
+                                alternativeName: "",
+                                isAltRtl: false,
+                                thumbnail: "",
+                                sex: "F",
+                                birth: "1845-07-11",
+                                death: "1915-01-30",
+                                marriageDate: "",
+                                marriageDateOfParents: "",
+                                timespan: "1845–1915",
+                            },
+                            parents: [
+                                {
+                                    data: {
+                                        id: 10,
+                                        xref: "I10",
+                                        url: "https://example.test/individuals/I10",
+                                        updateUrl: "https://example.test/update/I10",
+                                        generation: 4,
+                                        name: "Isla Example",
+                                        isNameRtl: false,
+                                        firstNames: ["Isla"],
+                                        lastNames: ["Example"],
+                                        preferredName: "Isla Example",
+                                        alternativeName: "",
+                                        isAltRtl: false,
+                                        thumbnail: "",
+                                        sex: "F",
+                                        birth: "1812-03-25",
+                                        death: "1882-12-19",
+                                        marriageDate: "",
+                                        marriageDateOfParents: "",
+                                        timespan: "1812–1882",
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    data: {
+                        id: 3,
+                        xref: "I3",
+                        url: "https://example.test/individuals/I3",
+                        updateUrl: "https://example.test/update/I3",
+                        generation: 2,
+                        name: "Carmen Example",
+                        isNameRtl: false,
+                        firstNames: ["Carmen"],
+                        lastNames: ["Example"],
+                        preferredName: "Carmen Example",
+                        alternativeName: "",
+                        isAltRtl: false,
+                        thumbnail: "",
+                        sex: "F",
+                        birth: "1875-03-02",
+                        death: "1950-09-09",
+                        marriageDate: "1895-06-01",
+                        marriageDateOfParents: "",
+                        timespan: "1875–1950",
+                    },
+                    parents: [
+                        {
+                            data: {
+                                id: 6,
+                                xref: "I6",
+                                url: "https://example.test/individuals/I6",
+                                updateUrl: "https://example.test/update/I6",
+                                generation: 3,
+                                name: "Elliott Example",
+                                isNameRtl: false,
+                                firstNames: ["Elliott"],
+                                lastNames: ["Example"],
+                                preferredName: "Elliott Example",
+                                alternativeName: "",
+                                isAltRtl: false,
+                                thumbnail: "",
+                                sex: "M",
+                                birth: "1842-11-08",
+                                death: "1912-06-18",
+                                marriageDate: "",
+                                marriageDateOfParents: "",
+                                timespan: "1842–1912",
+                            },
+                            parents: [
+                                {
+                                    data: {
+                                        id: 11,
+                                        xref: "I11",
+                                        url: "https://example.test/individuals/I11",
+                                        updateUrl: "https://example.test/update/I11",
+                                        generation: 4,
+                                        name: "Jonas Example",
+                                        isNameRtl: false,
+                                        firstNames: ["Jonas"],
+                                        lastNames: ["Example"],
+                                        preferredName: "Jonas Example",
+                                        alternativeName: "",
+                                        isAltRtl: false,
+                                        thumbnail: "",
+                                        sex: "M",
+                                        birth: "1818-08-17",
+                                        death: "1890-05-04",
+                                        marriageDate: "",
+                                        marriageDateOfParents: "",
+                                        timespan: "1818–1890",
+                                    },
+                                    parents: [
+                                        {
+                                            data: {
+                                                id: 14,
+                                                xref: "I14",
+                                                url: "https://example.test/individuals/I14",
+                                                updateUrl: "https://example.test/update/I14",
+                                                generation: 5,
+                                                name: "Kora Example",
+                                                isNameRtl: false,
+                                                firstNames: ["Kora"],
+                                                lastNames: ["Example"],
+                                                preferredName: "Kora Example",
+                                                alternativeName: "",
+                                                isAltRtl: false,
+                                                thumbnail: "",
+                                                sex: "F",
+                                                birth: "1788-06-29",
+                                                death: "1866-04-21",
+                                                marriageDate: "",
+                                                marriageDateOfParents: "",
+                                                timespan: "1788–1866",
+                                            },
+                                            parents: [
+                                                {
+                                                    data: {
+                                                        id: 17,
+                                                        xref: "I17",
+                                                        url: "https://example.test/individuals/I17",
+                                                        updateUrl: "https://example.test/update/I17",
+                                                        generation: 6,
+                                                        name: "Lyle Example",
+                                                        isNameRtl: false,
+                                                        firstNames: ["Lyle"],
+                                                        lastNames: ["Example"],
+                                                        preferredName: "Lyle Example",
+                                                        alternativeName: "",
+                                                        isAltRtl: false,
+                                                        thumbnail: "",
+                                                        sex: "M",
+                                                        birth: "1759-01-09",
+                                                        death: "1830-11-02",
+                                                        marriageDate: "",
+                                                        marriageDateOfParents: "",
+                                                        timespan: "1759–1830",
+                                                    }
+                                                },
+                                                {
+                                                    data: {
+                                                        id: 18,
+                                                        xref: "I18",
+                                                        url: "https://example.test/individuals/I18",
+                                                        updateUrl: "https://example.test/update/I18",
+                                                        generation: 6,
+                                                        name: "Mara Example",
+                                                        isNameRtl: false,
+                                                        firstNames: ["Mara"],
+                                                        lastNames: ["Example"],
+                                                        preferredName: "Mara Example",
+                                                        alternativeName: "",
+                                                        isAltRtl: false,
+                                                        thumbnail: "",
+                                                        sex: "F",
+                                                        birth: "1763-04-12",
+                                                        death: "1838-12-24",
+                                                        marriageDate: "",
+                                                        marriageDateOfParents: "",
+                                                        timespan: "1763–1838",
+                                                    },
+                                                    parents: [
+                                                        {
+                                                            data: {
+                                                                id: 21,
+                                                                xref: "I21",
+                                                                url: "https://example.test/individuals/I21",
+                                                                updateUrl: "https://example.test/update/I21",
+                                                                generation: 7,
+                                                                name: "Nico Example",
+                                                                isNameRtl: false,
+                                                                firstNames: ["Nico"],
+                                                                lastNames: ["Example"],
+                                                                preferredName: "Nico Example",
+                                                                alternativeName: "",
+                                                                isAltRtl: false,
+                                                                thumbnail: "",
+                                                                sex: "M",
+                                                                birth: "1728-07-07",
+                                                                death: "1798-02-15",
+                                                                marriageDate: "",
+                                                                marriageDateOfParents: "",
+                                                                timespan: "1728–1798",
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            data: {
+                                id: 7,
+                                xref: "I7",
+                                url: "https://example.test/individuals/I7",
+                                updateUrl: "https://example.test/update/I7",
+                                generation: 3,
+                                name: "Frances Example",
+                                isNameRtl: false,
+                                firstNames: ["Frances"],
+                                lastNames: ["Example"],
+                                preferredName: "Frances Example",
+                                alternativeName: "",
+                                isAltRtl: false,
+                                thumbnail: "",
+                                sex: "F",
+                                birth: "1848-12-23",
+                                death: "1920-08-04",
+                                marriageDate: "",
+                                marriageDateOfParents: "",
+                                timespan: "1848–1920",
+                            },
+                            parents: [
+                                {
+                                    data: {
+                                        id: 15,
+                                        xref: "I15",
+                                        url: "https://example.test/individuals/I15",
+                                        updateUrl: "https://example.test/update/I15",
+                                        generation: 4,
+                                        name: "Ora Example",
+                                        isNameRtl: false,
+                                        firstNames: ["Ora"],
+                                        lastNames: ["Example"],
+                                        preferredName: "Ora Example",
+                                        alternativeName: "",
+                                        isAltRtl: false,
+                                        thumbnail: "",
+                                        sex: "F",
+                                        birth: "1819-02-14",
+                                        death: "1895-07-03",
+                                        marriageDate: "",
+                                        marriageDateOfParents: "",
+                                        timespan: "1819–1895",
+                                    },
+                                    parents: [
+                                        {
+                                            data: {
+                                                id: 19,
+                                                xref: "I19",
+                                                url: "https://example.test/individuals/I19",
+                                                updateUrl: "https://example.test/update/I19",
+                                                generation: 5,
+                                                name: "Pax Example",
+                                                isNameRtl: false,
+                                                firstNames: ["Pax"],
+                                                lastNames: ["Example"],
+                                                preferredName: "Pax Example",
+                                                alternativeName: "",
+                                                isAltRtl: false,
+                                                thumbnail: "",
+                                                sex: "M",
+                                                birth: "1789-09-30",
+                                                death: "1864-06-11",
+                                                marriageDate: "",
+                                                marriageDateOfParents: "",
+                                                timespan: "1789–1864",
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const chartLabels = {
+            zoom: "Scroll or pinch to zoom",
+            move: "Drag to move"
+        };
+
+        const options = {
+            labels: chartLabels,
+            generations: 7,
+            fanDegree: 240,
+            fontScale: 100,
+            hideEmptySegments: true,
+            showColorGradients: true,
+            showParentMarriageDates: false,
+            showImages: false,
+            showSilhouettes: true,
+            rtl: false,
+            innerArcs: 4,
+            cssFiles: ["../../../css/fan-chart.css", "../../../css/svg.css"],
+            data: sampleData,
+        };
+
+        // eslint-disable-next-line no-new
+        new WebtreesFanChart.FanChart("#chart", options);
+    </script>
+</body>
+</html>
