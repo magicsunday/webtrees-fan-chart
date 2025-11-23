@@ -1,9 +1,10 @@
-<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2025-02-11 -->
+<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2025-02-12 -->
 
 ## Overview
 - Instructions for assets under `resources/` (JS, CSS, translations, views).
 - Decision Log:
   - 2025-02-11: Documented rollup-based build steps and alignment with PHP module guidelines for assets.
+  - 2025-02-12: Documented JavaScript test location (`resources/js/tests`) and required commands after JS changes.
 
 ## Setup/env
 - Install Node.js dependencies with `npm install`; rollup configuration lives in `rollup.config.js` and uses ES modules.
@@ -11,7 +12,8 @@
 
 ## Build & tests
 - Build assets via `npm run prepare`; use `npm run watch` while developing to mirror rollup bundling.
-- Run `composer ci:test:php:unit:coverage`, `composer ci:test:php:phpstan`, and `composer ci:cgl` before commits when asset changes accompany PHP updates.
+- When JavaScript files change, run `npm test` (or focused scripts like `npm run test:exports`) to exercise suites in `resources/js/tests`.
+- Run `composer ci:test:php:unit:coverage`, `composer ci:test:php:phpstan`, and `composer ci:cgl` only when PHP changes accompany asset updates.
 - For static assets, prefer linting via rollup warnings; keep generated artifacts out of version control unless explicitly required.
 
 ## Code style

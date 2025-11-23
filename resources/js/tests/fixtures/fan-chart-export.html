@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fan chart export fixture</title>
+    <link rel="stylesheet" href="../../../css/fan-chart.css">
+    <link rel="stylesheet" href="../../../css/svg.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 1rem;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f8f9fa;
+        }
+
+        .webtrees-fan-chart-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #chart {
+            width: 1200px;
+            height: 900px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .toolbar button {
+            padding: 0.35rem 0.65rem;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="webtrees-fan-chart-container" id="webtrees-fan-chart-container">
+        <div class="toolbar">
+            <button id="centerButton" type="button">Center</button>
+            <button id="exportPNG" type="button">Export PNG</button>
+            <button id="exportSVG" type="button">Export SVG</button>
+        </div>
+        <div id="chart"></div>
+    </div>
+
+    <script src="../../fan-chart-3.0.1-dev.js"></script>
+    <script>
+        const sampleData = {
+            data: {
+                id: 1,
+                xref: "I1",
+                url: "https://example.test/individuals/I1",
+                updateUrl: "https://example.test/update/I1",
+                generation: 1,
+                name: "Alex Example",
+                isNameRtl: false,
+                firstNames: ["Alex"],
+                lastNames: ["Example"],
+                preferredName: "Alex Example",
+                alternativeName: "",
+                isAltRtl: false,
+                thumbnail: "",
+                sex: "M",
+                birth: "1901-01-01",
+                death: "1980-12-31",
+                marriageDate: "",
+                marriageDateOfParents: "",
+                timespan: "1901–1980",
+            },
+            parents: [
+                {
+                    data: {
+                        id: 2,
+                        xref: "I2",
+                        url: "https://example.test/individuals/I2",
+                        updateUrl: "https://example.test/update/I2",
+                        generation: 2,
+                        name: "Briar Example",
+                        isNameRtl: false,
+                        firstNames: ["Briar"],
+                        lastNames: ["Example"],
+                        preferredName: "Briar Example",
+                        alternativeName: "",
+                        isAltRtl: false,
+                        thumbnail: "",
+                        sex: "M",
+                        birth: "1870-01-15",
+                        death: "1940-04-19",
+                        marriageDate: "1895-06-01",
+                        marriageDateOfParents: "",
+                        timespan: "1870–1940",
+                    },
+                    parents: [
+                        {
+                            data: {
+                                id: 4,
+                                xref: "I4",
+                                url: "https://example.test/individuals/I4",
+                                updateUrl: "https://example.test/update/I4",
+                                generation: 3,
+                                name: "Charles Example",
+                                isNameRtl: false,
+                                firstNames: ["Charles"],
+                                lastNames: ["Example"],
+                                preferredName: "Charles Example",
+                                alternativeName: "",
+                                isAltRtl: false,
+                                thumbnail: "",
+                                sex: "M",
+                                birth: "1840-02-01",
+                                death: "1910-05-12",
+                                marriageDate: "",
+                                marriageDateOfParents: "",
+                                timespan: "1840–1910",
+                            }
+                        },
+                        {
+                            data: {
+                                id: 5,
+                                xref: "I5",
+                                url: "https://example.test/individuals/I5",
+                                updateUrl: "https://example.test/update/I5",
+                                generation: 3,
+                                name: "Diana Example",
+                                isNameRtl: false,
+                                firstNames: ["Diana"],
+                                lastNames: ["Example"],
+                                preferredName: "Diana Example",
+                                alternativeName: "",
+                                isAltRtl: false,
+                                thumbnail: "",
+                                sex: "F",
+                                birth: "1845-07-11",
+                                death: "1915-01-30",
+                                marriageDate: "",
+                                marriageDateOfParents: "",
+                                timespan: "1845–1915",
+                            }
+                        }
+                    ]
+                },
+                {
+                    data: {
+                        id: 3,
+                        xref: "I3",
+                        url: "https://example.test/individuals/I3",
+                        updateUrl: "https://example.test/update/I3",
+                        generation: 2,
+                        name: "Carmen Example",
+                        isNameRtl: false,
+                        firstNames: ["Carmen"],
+                        lastNames: ["Example"],
+                        preferredName: "Carmen Example",
+                        alternativeName: "",
+                        isAltRtl: false,
+                        thumbnail: "",
+                        sex: "F",
+                        birth: "1875-03-02",
+                        death: "1950-09-09",
+                        marriageDate: "1895-06-01",
+                        marriageDateOfParents: "",
+                        timespan: "1875–1950",
+                    },
+                    parents: [
+                        {
+                            data: {
+                                id: 6,
+                                xref: "I6",
+                                url: "https://example.test/individuals/I6",
+                                updateUrl: "https://example.test/update/I6",
+                                generation: 3,
+                                name: "Elliott Example",
+                                isNameRtl: false,
+                                firstNames: ["Elliott"],
+                                lastNames: ["Example"],
+                                preferredName: "Elliott Example",
+                                alternativeName: "",
+                                isAltRtl: false,
+                                thumbnail: "",
+                                sex: "M",
+                                birth: "1842-11-08",
+                                death: "1912-06-18",
+                                marriageDate: "",
+                                marriageDateOfParents: "",
+                                timespan: "1842–1912",
+                            }
+                        },
+                        {
+                            data: {
+                                id: 7,
+                                xref: "I7",
+                                url: "https://example.test/individuals/I7",
+                                updateUrl: "https://example.test/update/I7",
+                                generation: 3,
+                                name: "Frances Example",
+                                isNameRtl: false,
+                                firstNames: ["Frances"],
+                                lastNames: ["Example"],
+                                preferredName: "Frances Example",
+                                alternativeName: "",
+                                isAltRtl: false,
+                                thumbnail: "",
+                                sex: "F",
+                                birth: "1848-12-23",
+                                death: "1920-08-04",
+                                marriageDate: "",
+                                marriageDateOfParents: "",
+                                timespan: "1848–1920",
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const chartLabels = {
+            zoom: "Scroll or pinch to zoom",
+            move: "Drag to move"
+        };
+
+        const options = {
+            labels: chartLabels,
+            generations: 3,
+            fanDegree: 210,
+            fontScale: 100,
+            hideEmptySegments: false,
+            showColorGradients: true,
+            showParentMarriageDates: true,
+            showImages: false,
+            showSilhouettes: true,
+            rtl: false,
+            innerArcs: 4,
+            cssFiles: ["../../../css/fan-chart.css", "../../../css/svg.css"],
+            data: sampleData,
+        };
+
+        // eslint-disable-next-line no-new
+        new WebtreesFanChart.FanChart("#chart", options);
+    </script>
+</body>
+</html>
