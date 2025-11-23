@@ -220,7 +220,7 @@ export default class Chart
                     gradient.init(d);
                 }
 
-                new Person(that._svg, that._configuration, that._arcFactory, person, d);
+                new Person(that._svg, that._configuration, that._arcFactory, that._geometry, person, d);
             });
 
         this.updateViewBox();
