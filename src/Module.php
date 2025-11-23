@@ -34,6 +34,8 @@ use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleConfigTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleCustomTrait;
 use Override;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -62,22 +64,22 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     /**
      * @var string
      */
-    public const CUSTOM_AUTHOR = 'Rico Sonntag';
+    public const string CUSTOM_AUTHOR = 'Rico Sonntag';
 
     /**
      * @var string
      */
-    public const CUSTOM_VERSION = '3.0.1-dev';
+    public const string CUSTOM_VERSION = '3.0.1-dev';
 
     /**
      * @var string
      */
-    public const CUSTOM_SUPPORT_URL = 'https://github.com/' . self::GITHUB_REPO . '/issues';
+    public const string CUSTOM_SUPPORT_URL = 'https://github.com/' . self::GITHUB_REPO . '/issues';
 
     /**
      * @var string
      */
-    public const CUSTOM_LATEST_VERSION = 'https://api.github.com/repos/' . self::GITHUB_REPO . '/releases/latest';
+    public const string CUSTOM_LATEST_VERSION = 'https://api.github.com/repos/' . self::GITHUB_REPO . '/releases/latest';
 
     /**
      * The configuration instance.
@@ -371,6 +373,9 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      * Returns a list required stylesheets for the SVG export.
      *
      * @return array<string>
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function getExportStylesheets(): array
     {

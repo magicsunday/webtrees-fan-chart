@@ -9,12 +9,18 @@
 
 declare(strict_types=1);
 
-namespace MagicSunday\Webtrees\FanChart\Tests\Module;
+namespace MagicSunday\Webtrees\FanChart\Test\Module;
 
+use Aura\Router\Map;
+use Aura\Router\Route;
+use Fisharebest\Localization\Locale;
+use Fisharebest\Localization\Translator;
 use Fisharebest\Webtrees\Contracts\ContainerInterface;
 use Fisharebest\Webtrees\Contracts\RouteFactoryInterface;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
+use Fisharebest\Webtrees\Registry;
+use Fisharebest\Webtrees\Services\ChartService;
 use Fisharebest\Webtrees\Tree;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Module;
@@ -33,14 +39,14 @@ final class ModuleTest extends TestCase
                 return '/route/' . $route_name . '?' . http_build_query($parameters);
             }
 
-            public function routeMap(): \Aura\Router\Map
+            public function routeMap(): Map
             {
-                return new \Aura\Router\Map(new \Aura\Router\Route());
+                return new Map(new Route());
             }
         };
 
-        $container = new class($routeFactory) implements ContainerInterface {
-            public function __construct(private readonly RouteFactoryInterface $routeFactory)
+        $container = new readonly class($routeFactory) implements ContainerInterface {
+            public function __construct(private RouteFactoryInterface $routeFactory)
             {
             }
 
@@ -60,23 +66,21 @@ final class ModuleTest extends TestCase
             }
         };
 
-        \Fisharebest\Webtrees\Registry::routeFactory($routeFactory);
-        \Fisharebest\Webtrees\Registry::container($container);
+        Registry::routeFactory($routeFactory);
+        Registry::container($container);
 
-        $chartService = $this->createMock(\Fisharebest\Webtrees\Services\ChartService::class);
+        $chartService = $this->createMock(ChartService::class);
         $module       = new Module($chartService, new DataFacade());
         $individual   = $this->createMock(Individual::class);
         $tree         = $this->createMock(Tree::class);
 
-        $locale     = \Fisharebest\Localization\Locale::create('en');
-        $translator = new \Fisharebest\Localization\Translator([], $locale->pluralRule());
+        $locale     = Locale::create('en');
+        $translator = new Translator([], $locale->pluralRule());
 
         $localeProperty = new ReflectionProperty(I18N::class, 'locale');
-        $localeProperty->setAccessible(true);
         $localeProperty->setValue($locale);
 
         $translatorProperty = new ReflectionProperty(I18N::class, 'translator');
-        $translatorProperty->setAccessible(true);
         $translatorProperty->setValue($translator);
 
         $individual->method('fullName')->willReturn('Example Person');

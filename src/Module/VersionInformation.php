@@ -17,6 +17,8 @@ use Fisharebest\Webtrees\Registry;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
+use function is_array;
+
 /**
  * Class VersionInformation.
  *

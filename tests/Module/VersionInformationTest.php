@@ -9,10 +9,12 @@
 
 declare(strict_types=1);
 
-namespace MagicSunday\Webtrees\FanChart\Tests\Module;
+namespace MagicSunday\Webtrees\FanChart\Test\Module;
 
+use Fisharebest\Webtrees\Cache;
 use Fisharebest\Webtrees\Contracts\CacheFactoryInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Fisharebest\Webtrees\Registry;
 use MagicSunday\Webtrees\FanChart\Module\VersionInformation;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -24,18 +26,18 @@ final class VersionInformationTest extends TestCase
     public function testFetchLatestVersionFallsBackToCustomWhenUrlMissing(): void
     {
         $factory = new class implements CacheFactoryInterface {
-            public function array(): \Fisharebest\Webtrees\Cache
+            public function array(): Cache
             {
-                return new \Fisharebest\Webtrees\Cache(new ArrayAdapter());
+                return new Cache(new ArrayAdapter());
             }
 
-            public function file(): \Fisharebest\Webtrees\Cache
+            public function file(): Cache
             {
-                return new \Fisharebest\Webtrees\Cache(new ArrayAdapter());
+                return new Cache(new ArrayAdapter());
             }
         };
 
-        \Fisharebest\Webtrees\Registry::cache($factory);
+        Registry::cache($factory);
 
         $module = $this->createMock(ModuleCustomInterface::class);
         $module->method('customModuleLatestVersionUrl')->willReturn('');

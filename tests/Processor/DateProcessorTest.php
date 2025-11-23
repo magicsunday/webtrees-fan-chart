@@ -9,9 +9,10 @@
 
 declare(strict_types=1);
 
-namespace MagicSunday\Webtrees\FanChart\Tests\Processor;
+namespace MagicSunday\Webtrees\FanChart\Test\Processor;
 
 use Fisharebest\Webtrees\Date;
+use Fisharebest\Webtrees\Date\AbstractCalendarDate;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\Individual;
 use Illuminate\Support\Collection;
@@ -64,7 +65,7 @@ final class DateProcessorTest extends TestCase
 
     private function createDate(int $year, string $display, bool $ok): Date
     {
-        $minimumDate = $this->createMock(Date\AbstractCalendarDate::class);
+        $minimumDate = $this->createMock(AbstractCalendarDate::class);
         $minimumDate->method('year')->willReturn($year);
 
         $date = $this->createMock(Date::class);
@@ -80,7 +81,7 @@ final class DateProcessorTest extends TestCase
      */
     private function createCollection(?Family $family): Collection
     {
-        return new Collection($family !== null ? [$family] : []);
+        return new Collection($family instanceof Family ? [$family] : []);
     }
 
     private function createConfiguredFamily(Date $marriageDate): Family

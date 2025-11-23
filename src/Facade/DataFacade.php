@@ -46,6 +46,11 @@ class DataFacade
     private Configuration $configuration;
 
     /**
+     * The incremental node identifier.
+     */
+    private int $nodeId = 0;
+
+    /**
      * @param ModuleCustomInterface $module
      *
      * @return DataFacade
@@ -135,10 +140,6 @@ class DataFacade
         int $generation,
         Individual $individual,
     ): NodeData {
-        // Create a unique ID for each individual
-        /** @var int $id */
-        static $id = 0;
-
         $nameProcessor  = new NameProcessor($individual);
         $dateProcessor  = new DateProcessor($individual);
         $imageProcessor = new ImageProcessor($this->module, $individual);
@@ -148,7 +149,7 @@ class DataFacade
 
         $treeData = new NodeData();
         $treeData
-            ->setId(++$id)
+            ->setId(++$this->nodeId)
             ->setGeneration($generation)
             ->setXref($individual->xref())
             ->setUrl($individual->url())

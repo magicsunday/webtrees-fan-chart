@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace MagicSunday\Webtrees\FanChart\Tests\Processor;
+namespace MagicSunday\Webtrees\FanChart\Test\Processor;
 
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\MediaFile;
@@ -75,9 +75,7 @@ final class ImageProcessorTest extends TestCase
     {
         $tree = $this->createMock(Tree::class);
         $tree->method('getPreference')->willReturnCallback(
-            static function (string $name) use ($highlightPreference, $silhouettePreference): string {
-                return $name === 'SHOW_HIGHLIGHT_IMAGES' ? $highlightPreference : $silhouettePreference;
-            }
+            static fn (string $name): string => $name === 'SHOW_HIGHLIGHT_IMAGES' ? $highlightPreference : $silhouettePreference
         );
 
         return $tree;
@@ -85,8 +83,8 @@ final class ImageProcessorTest extends TestCase
 
     private function createModuleStub(string $assetUrl): ModuleCustomInterface
     {
-        return new class($assetUrl) implements ModuleCustomInterface {
-            public function __construct(private readonly string $asset)
+        return new readonly class($assetUrl) implements ModuleCustomInterface {
+            public function __construct(private string $asset)
             {
             }
 

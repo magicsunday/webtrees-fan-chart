@@ -24,8 +24,7 @@ use Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByMethodCallTypeRector;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
         __DIR__ . '/src/',
-        // Exclude tests-directory as this may change test cases too
-        // __DIR__ . '/tests/',
+        __DIR__ . '/tests/',
     ]);
 
     if (

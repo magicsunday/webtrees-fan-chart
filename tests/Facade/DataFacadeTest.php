@@ -9,15 +9,21 @@
 
 declare(strict_types=1);
 
-namespace MagicSunday\Webtrees\FanChart\Tests\Facade;
+namespace MagicSunday\Webtrees\FanChart\Test\Facade;
 
+use Aura\Router\Map;
+use Aura\Router\Route;
+use Fisharebest\Localization\Locale;
+use Fisharebest\Localization\Translator;
 use Fisharebest\Webtrees\Contracts\ContainerInterface;
 use Fisharebest\Webtrees\Contracts\RouteFactoryInterface;
 use Fisharebest\Webtrees\Date;
+use Fisharebest\Webtrees\Factories\CalendarDateFactory;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Validator;
 use GuzzleHttp\Psr7\ServerRequest;
@@ -39,17 +45,15 @@ final class DataFacadeTest extends TestCase
         parent::setUp();
 
         Validator::serverParams(new ServerRequest('GET', '/'));
-        \Fisharebest\Webtrees\Registry::calendarDateFactory(new \Fisharebest\Webtrees\Factories\CalendarDateFactory());
+        Registry::calendarDateFactory(new CalendarDateFactory());
 
-        $locale     = \Fisharebest\Localization\Locale::create('en');
-        $translator = new \Fisharebest\Localization\Translator([], $locale->pluralRule());
+        $locale     = Locale::create('en');
+        $translator = new Translator([], $locale->pluralRule());
 
         $localeProperty = new ReflectionProperty(I18N::class, 'locale');
-        $localeProperty->setAccessible(true);
         $localeProperty->setValue($locale);
 
         $translatorProperty = new ReflectionProperty(I18N::class, 'translator');
-        $translatorProperty->setAccessible(true);
         $translatorProperty->setValue($translator);
     }
 
@@ -61,14 +65,14 @@ final class DataFacadeTest extends TestCase
                 return '/route/' . $route_name . '?' . http_build_query($parameters);
             }
 
-            public function routeMap(): \Aura\Router\Map
+            public function routeMap(): Map
             {
-                return new \Aura\Router\Map(new \Aura\Router\Route());
+                return new Map(new Route());
             }
         };
 
-        $container = new class($routeFactory) implements ContainerInterface {
-            public function __construct(private readonly RouteFactoryInterface $routeFactory)
+        $container = new readonly class($routeFactory) implements ContainerInterface {
+            public function __construct(private RouteFactoryInterface $routeFactory)
             {
             }
 
@@ -88,8 +92,8 @@ final class DataFacadeTest extends TestCase
             }
         };
 
-        \Fisharebest\Webtrees\Registry::routeFactory($routeFactory);
-        \Fisharebest\Webtrees\Registry::container($container);
+        Registry::routeFactory($routeFactory);
+        Registry::container($container);
 
         $configuration = $this->createMock(Configuration::class);
         $configuration->method('getGenerations')->willReturn(2);

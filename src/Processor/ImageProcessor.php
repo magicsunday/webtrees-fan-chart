@@ -15,6 +15,9 @@ use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\MediaFile;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 
+use function is_string;
+use function sprintf;
+
 /**
  * Class ImageProcessor.
  *

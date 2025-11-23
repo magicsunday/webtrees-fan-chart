@@ -9,11 +9,17 @@
 
 declare(strict_types=1);
 
-namespace MagicSunday\Webtrees\FanChart\Tests\Configuration;
+namespace MagicSunday\Webtrees\FanChart\Test;
 
 use Fig\Http\Message\RequestMethodInterface;
+use Fisharebest\Localization\Locale;
+use Fisharebest\Localization\Translator;
 use Fisharebest\Webtrees\DB;
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Module\AbstractModule;
+use Fisharebest\Webtrees\Services\ChartService;
 use GuzzleHttp\Psr7\ServerRequest;
+use Illuminate\Database\Schema\Blueprint;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Module;
@@ -28,15 +34,13 @@ final class ConfigurationTest extends TestCase
     {
         parent::setUp();
 
-        $locale     = \Fisharebest\Localization\Locale::create('en');
-        $translator = new \Fisharebest\Localization\Translator([], $locale->pluralRule());
+        $locale     = Locale::create('en');
+        $translator = new Translator([], $locale->pluralRule());
 
-        $localeProperty = new ReflectionProperty(\Fisharebest\Webtrees\I18N::class, 'locale');
-        $localeProperty->setAccessible(true);
+        $localeProperty = new ReflectionProperty(I18N::class, 'locale');
         $localeProperty->setValue($locale);
 
-        $translatorProperty = new ReflectionProperty(\Fisharebest\Webtrees\I18N::class, 'translator');
-        $translatorProperty->setAccessible(true);
+        $translatorProperty = new ReflectionProperty(I18N::class, 'translator');
         $translatorProperty->setValue($translator);
     }
 
@@ -152,7 +156,7 @@ final class ConfigurationTest extends TestCase
             ]);
             $database->setAsGlobal();
             $database->bootEloquent();
-            DB::connection()->getSchemaBuilder()->create('module_setting', static function (\Illuminate\Database\Schema\Blueprint $table): void {
+            DB::connection()->getSchemaBuilder()->create('module_setting', static function (Blueprint $table): void {
                 $table->string('module_name');
                 $table->string('setting_name');
                 $table->string('setting_value');
@@ -174,11 +178,10 @@ final class ConfigurationTest extends TestCase
             )
         );
 
-        $chartService = $this->createMock(\Fisharebest\Webtrees\Services\ChartService::class);
+        $chartService = $this->createMock(ChartService::class);
         $module       = new Module($chartService, new DataFacade());
 
-        $reflection = new ReflectionProperty(\Fisharebest\Webtrees\Module\AbstractModule::class, 'name');
-        $reflection->setAccessible(true);
+        $reflection = new ReflectionProperty(AbstractModule::class, 'name');
         $reflection->setValue($module, 'webtrees-fan-chart');
 
         return $module;

@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace MagicSunday\Webtrees\FanChart\Tests\Processor;
+namespace MagicSunday\Webtrees\FanChart\Test\Processor;
 
 use Fisharebest\Webtrees\Individual;
 use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
