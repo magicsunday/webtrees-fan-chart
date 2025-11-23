@@ -23,12 +23,13 @@ export default class Text
      *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
+     * @param {Geometry}      geometry      Geometry helper instance
      */
-    constructor(svg, configuration)
+    constructor(svg, configuration, geometry = new Geometry(configuration))
     {
         this._svg           = svg;
         this._configuration = configuration;
-        this._geometry      = new Geometry(this._configuration);
+        this._geometry      = geometry;
     }
 
     /**
