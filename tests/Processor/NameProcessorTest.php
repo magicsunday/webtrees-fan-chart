@@ -14,12 +14,20 @@ namespace MagicSunday\Webtrees\FanChart\Test\Processor;
 use Fisharebest\Webtrees\Individual;
 use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(NameProcessor::class)]
+/**
+ * Verifies name extraction and formatting behaviour.
+ */
 final class NameProcessorTest extends TestCase
 {
-    public function testNameExtractionProvidesFirstLastAndPreferredParts(): void
+    /**
+     * Ensures full, first, and last names are exposed correctly when available.
+     */
+    #[Test]
+    public function nameExtractionProvidesFirstLastAndPreferredParts(): void
     {
         $names = [
             [
@@ -64,7 +72,11 @@ final class NameProcessorTest extends TestCase
         self::assertSame('', $processor->getAlternateName($individual));
     }
 
-    public function testAlternateNameReturnsSecondaryNameWhenDifferent(): void
+    /**
+     * Ensures alternate names return the secondary entry when it differs from primary.
+     */
+    #[Test]
+    public function alternateNameReturnsSecondaryNameWhenDifferent(): void
     {
         $names = [
             [

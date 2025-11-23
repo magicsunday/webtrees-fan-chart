@@ -25,13 +25,21 @@ use Fisharebest\Webtrees\Tree;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Module;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 #[CoversClass(Module::class)]
+/**
+ * Validates module metadata exposure and chart helpers.
+ */
 final class ModuleTest extends TestCase
 {
-    public function testTraitHelpersExposeExpectedValues(): void
+    /**
+     * Ensures trait-provided helpers return expected metadata and URLs.
+     */
+    #[Test]
+    public function traitHelpersExposeExpectedValues(): void
     {
         $routeFactory = new class implements RouteFactoryInterface {
             public function route(string $route_name, array $parameters = []): string

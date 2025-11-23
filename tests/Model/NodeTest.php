@@ -14,12 +14,20 @@ namespace MagicSunday\Webtrees\FanChart\Test\Model;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Node::class)]
+/**
+ * Tests node serialization logic and parent handling.
+ */
 final class NodeTest extends TestCase
 {
-    public function testJsonSerializeAddsParentsWhenPresent(): void
+    /**
+     * Ensures parent references are included during serialization when they exist.
+     */
+    #[Test]
+    public function jsonSerializeAddsParentsWhenPresent(): void
     {
         $childData  = (new NodeData())->setId(1);
         $fatherData = (new NodeData())->setId(2);
@@ -36,7 +44,11 @@ final class NodeTest extends TestCase
         self::assertSame([$father], $result['parents']);
     }
 
-    public function testJsonSerializeOmitsParentsWhenEmpty(): void
+    /**
+     * Ensures serialization omits parent data when no parents are attached.
+     */
+    #[Test]
+    public function jsonSerializeOmitsParentsWhenEmpty(): void
     {
         $child = new Node(new NodeData());
 
