@@ -207,7 +207,8 @@ class NameProcessor
         // Remove empty values and reindex array
         return array_values(
             array_filter(
-                array_merge(...$values)
+                array_merge(...$values),
+                static fn (string $value): bool => $value !== ''
             )
         );
     }
