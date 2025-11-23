@@ -3,6 +3,19 @@ import Configuration from "resources/js/modules/custom/configuration";
 describe("Configuration", () => {
     const labels = ["child", "parent"];
 
+    it("uses defaults when options are omitted", () => {
+        const config = new Configuration(labels);
+
+        expect(config.generations).toBe(6);
+        expect(config.fanDegree).toBe(210);
+        expect(config.fontScale).toBe(100);
+        expect(config.circlePadding).toBe(0);
+        expect(config.innerArcHeight).toBe(100);
+        expect(config.outerArcHeight).toBe(160);
+        expect(config.padRadius).toBe(0);
+        expect(config.padDistance).toBe(0);
+    });
+
     it("stores base values when marriage dates are hidden", () => {
         const configuration = new Configuration(
             labels,
@@ -36,6 +49,28 @@ describe("Configuration", () => {
         expect(configuration.outerArcHeight).toBe(160);
     });
 
+    it("adjusts padding and arc sizes when marriage dates are shown", () => {
+        const marriageLabels = ["ancestor", "spouse"];
+        const config = new Configuration(
+            marriageLabels,
+            6,
+            210,
+            100,
+            false,
+            false,
+            true
+        );
+
+        expect(config.circlePadding).toBe(40);
+        expect(config.innerArcHeight).toBe(150);
+        expect(config.outerArcHeight).toBe(150);
+        expect(config.padRadius).toBe(400);
+        expect(config.padDistance).toBeCloseTo(12, 5);
+        expect(config.generations).toBe(6);
+        expect(config.fanDegree).toBe(210);
+        expect(config.fontScale).toBe(100);
+    });
+
     it("expands spacing when parent marriage dates are shown", () => {
         const configuration = new Configuration(
             labels,
@@ -58,5 +93,25 @@ describe("Configuration", () => {
         expect(configuration.outerArcHeight).toBe(150);
         expect(configuration.showParentMarriageDates).toBe(true);
         expect(configuration.rtl).toBe(true);
+    });
+
+    it("propagates labels and RTL preference for downstream renderers", () => {
+        const rtlLabels = ["Self", "Parents", "Grandparents"];
+        const config = new Configuration(
+            rtlLabels,
+            6,
+            210,
+            100,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true
+        );
+
+        expect(config.rtl).toBe(true);
+        expect(config.labels).toBe(rtlLabels);
+        expect(config.labels).toEqual(["Self", "Parents", "Grandparents"]);
     });
 });
