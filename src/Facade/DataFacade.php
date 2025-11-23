@@ -136,6 +136,7 @@ class DataFacade
         Individual $individual,
     ): NodeData {
         // Create a unique ID for each individual
+        /** @var int $id */
         static $id = 0;
 
         $nameProcessor  = new NameProcessor($individual);
