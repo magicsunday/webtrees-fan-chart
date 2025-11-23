@@ -38,6 +38,9 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         <?= view($moduleName . '::modules/fan-chart/form/layout', ['configuration' => $configuration, 'moduleName' => $moduleName]) ?>
     </div>
     <div class="mb-3">
+        <?= view($moduleName . '::modules/fan-chart/form/date-precision', ['configuration' => $configuration]) ?>
+    </div>
+    <div class="mb-3">
         <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['configuration' => $configuration]) ?>
     </div>
     <div class="mb-3">

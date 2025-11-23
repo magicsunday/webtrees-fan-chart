@@ -13,7 +13,7 @@ namespace MagicSunday\Webtrees\FanChart\Processor;
 
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\MediaFile;
-use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use MagicSunday\Webtrees\FanChart\Module;
 
 /**
  * Class ImageProcessor.
@@ -27,9 +27,9 @@ class ImageProcessor
     /**
      * The module.
      *
-     * @var ModuleCustomInterface
+     * @var Module
      */
-    private ModuleCustomInterface $module;
+    private Module $module;
 
     /**
      * The individual.
@@ -41,10 +41,10 @@ class ImageProcessor
     /**
      * Constructor.
      *
-     * @param ModuleCustomInterface $module     The module
-     * @param Individual            $individual The individual to process
+     * @param Module     $module     The module
+     * @param Individual $individual The individual to process
      */
-    public function __construct(ModuleCustomInterface $module, Individual $individual)
+    public function __construct(Module $module, Individual $individual)
     {
         $this->module     = $module;
         $this->individual = $individual;

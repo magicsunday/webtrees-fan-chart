@@ -14,10 +14,10 @@ namespace MagicSunday\Webtrees\FanChart\Facade;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
-use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
+use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Processor\DateProcessor;
 use MagicSunday\Webtrees\FanChart\Processor\ImageProcessor;
 use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
@@ -34,9 +34,9 @@ class DataFacade
     /**
      * The module.
      *
-     * @var ModuleCustomInterface
+     * @var Module
      */
-    private ModuleCustomInterface $module;
+    private Module $module;
 
     /**
      * The configuration instance.
@@ -46,11 +46,16 @@ class DataFacade
     private Configuration $configuration;
 
     /**
-     * @param ModuleCustomInterface $module
+     * The incremental node identifier.
+     */
+    private int $nodeId = 0;
+
+    /**
+     * @param Module $module
      *
      * @return DataFacade
      */
-    public function setModule(ModuleCustomInterface $module): DataFacade
+    public function setModule(Module $module): DataFacade
     {
         $this->module = $module;
 
@@ -135,11 +140,12 @@ class DataFacade
         int $generation,
         Individual $individual,
     ): NodeData {
-        // Create a unique ID for each individual
-        static $id = 0;
-
-        $nameProcessor  = new NameProcessor($individual);
-        $dateProcessor  = new DateProcessor($individual);
+        $nameProcessor = new NameProcessor($individual);
+        $dateProcessor = new DateProcessor(
+            $individual,
+            $generation,
+            $this->configuration->getDetailedDateGenerations(),
+        );
         $imageProcessor = new ImageProcessor($this->module, $individual);
 
         $fullNN          = $nameProcessor->getFullName();
@@ -147,7 +153,7 @@ class DataFacade
 
         $treeData = new NodeData();
         $treeData
-            ->setId(++$id)
+            ->setId(++$this->nodeId)
             ->setGeneration($generation)
             ->setXref($individual->xref())
             ->setUrl($individual->url())
@@ -182,11 +188,12 @@ class DataFacade
     private function getUpdateRoute(Individual $individual): string
     {
         return route('module', [
-            'module'      => $this->module->name(),
-            'action'      => 'update',
-            'xref'        => $individual->xref(),
-            'tree'        => $individual->tree()->name(),
-            'generations' => $this->configuration->getGenerations(),
+            'module'                  => $this->module->name(),
+            'action'                  => 'update',
+            'xref'                    => $individual->xref(),
+            'tree'                    => $individual->tree()->name(),
+            'generations'             => $this->configuration->getGenerations(),
+            'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
         ]);
     }
 

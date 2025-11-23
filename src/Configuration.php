@@ -83,6 +83,16 @@ class Configuration
     private const int FONT_SCALE_DEFAULT = 100;
 
     /**
+     * The default number of generations for which detailed life event dates are displayed.
+     */
+    private const int DEFAULT_DETAILED_DATE_GENERATIONS = 3;
+
+    /**
+     * Minimum number of generations showing detailed life event dates.
+     */
+    private const int MIN_DETAILED_DATE_GENERATIONS = 0;
+
+    /**
      * The calling module.
      */
     private AbstractModule $module;
@@ -141,6 +151,51 @@ class Configuration
 
         foreach (range(self::MIN_GENERATIONS, self::MAX_GENERATIONS) as $value) {
             $result[$value] = I18N::number($value);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns the number of generations to display detailed birth and death dates for.
+     *
+     * @return int
+     */
+    public function getDetailedDateGenerations(): int
+    {
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->isBetween(self::MIN_DETAILED_DATE_GENERATIONS, self::MAX_GENERATIONS)
+            ->integer(
+                'detailedDateGenerations',
+                (int) $this->module->getPreference(
+                    'default_detailedDateGenerations',
+                    (string) self::DEFAULT_DETAILED_DATE_GENERATIONS
+                )
+            );
+    }
+
+    /**
+     * Returns a list of possible generation counts for detailed birth and death dates.
+     *
+     * @return string[]
+     */
+    public function getDetailedDateGenerationsList(): array
+    {
+        $result = [
+            self::MIN_DETAILED_DATE_GENERATIONS => I18N::translate('Years only'),
+        ];
+
+        foreach (range(self::MIN_DETAILED_DATE_GENERATIONS + 1, self::MAX_GENERATIONS) as $value) {
+            $result[$value] = I18N::translate(
+                'Show full dates up to generation %s',
+                I18N::number($value)
+            );
         }
 
         return $result;
