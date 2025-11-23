@@ -86,10 +86,10 @@ final class ModuleTest extends TestCase
         $translator = new Translator([], $locale->pluralRule());
 
         $localeProperty = new ReflectionProperty(I18N::class, 'locale');
-        $localeProperty->setValue($locale);
+        $localeProperty->setValue(null, $locale);
 
         $translatorProperty = new ReflectionProperty(I18N::class, 'translator');
-        $translatorProperty->setValue($translator);
+        $translatorProperty->setValue(null, $translator);
 
         $individual->method('fullName')->willReturn('Example Person');
         $individual->method('xref')->willReturn('I1');
