@@ -1,4 +1,4 @@
-import Configuration from "./configuration";
+import Configuration from "resources/js/modules/custom/configuration";
 
 describe("Configuration", () => {
     const labels = ["child", "parent"];

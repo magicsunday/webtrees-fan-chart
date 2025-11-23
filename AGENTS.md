@@ -1,10 +1,10 @@
-<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2025-02-11 -->
+<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2025-02-12 -->
 
 ## Overview
 - This repository hosts the webtrees fan chart module; this file sets global defaults and indexes scoped instructions (nearest AGENTS.md takes precedence).
 - Decision Log:
   - 2025-02-11: Added AGENTS.md scaffolding and documented required composer checks before commits.
-  - 2025-02-11: No pull request template found in .github; PR bodies should still include the required milestone heading.
+  - 2025-02-12: Consolidated JavaScript tests under resources/js/tests and clarified test expectations (JS vs PHP tooling).
 - Scoped guides: see [src/AGENTS.md](src/AGENTS.md) for PHP code and [resources/AGENTS.md](resources/AGENTS.md) for assets.
 
 ## Setup/env
@@ -13,8 +13,9 @@
 - Prefer running composer/npm commands inside the repository root so paths and caches resolve correctly.
 
 ## Build & tests
-- Before every commit run: `composer ci:test:php:unit:coverage`, `composer ci:test:php:phpstan`, and `composer ci:cgl`; fix any findings and keep coverage at or above 90%.
-- For quick checks, use `composer ci:test:php:unit` for targeted unit feedback and `composer ci:test:php:lint` for syntax validation.
+- When PHP files change, run: `composer ci:test:php:unit:coverage`, `composer ci:test:php:phpstan`, and `composer ci:cgl`; fix any findings and keep coverage at or above 90%.
+- When JavaScript files change, run `npm test` (or targeted scripts like `npm run test:exports`) to execute suites under `resources/js/tests`.
+- For quick PHP checks, use `composer ci:test:php:unit` for targeted unit feedback and `composer ci:test:php:lint` for syntax validation.
 - Asset changes should be validated with `npm run prepare` (build) or `npm run watch` during development.
 
 ## Code style
