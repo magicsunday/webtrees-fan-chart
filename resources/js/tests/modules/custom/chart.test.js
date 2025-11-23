@@ -216,8 +216,22 @@ const createHierarchyDatum = () => ({
 
 describe("Chart", () => {
     beforeEach(() => {
+        window.getComputedStyle = jest.fn(() => ({ fontSize: "16px" }));
         mockSvgInstances.length = 0;
         setSvgBoundingBox({ x: 0, y: 0, width: 400, height: 300 });
+    });
+
+    test("convertRemToPixels uses the document root font size", () => {
+        const chart = new Chart(createParentSelection(), createConfiguration());
+        const getComputedStyleSpy = jest.spyOn(window, "getComputedStyle")
+            .mockReturnValue({ fontSize: "18px" });
+
+        const result = chart.convertRemToPixels(2.5);
+
+        expect(getComputedStyleSpy).toHaveBeenCalledWith(document.documentElement);
+        expect(result).toBe(45);
+
+        getComputedStyleSpy.mockRestore();
     });
 
     test("personGroup selection filters empty nodes only when empty segments are hidden", () => {
@@ -260,5 +274,32 @@ describe("Chart", () => {
         const viewBoxCall = mockSvgInstances[0].attrCalls.find((call) => call.name === "viewBox");
 
         expect(viewBoxCall.value).toEqual([-66, -66, 532, 432]);
+    });
+
+    test("updateViewBox respects fullscreen dimensions", () => {
+        const data = createHierarchyDatum();
+        const parentSelection = createParentSelection({ width: 600, height: 450 });
+        const chart = new Chart(parentSelection, createConfiguration());
+        const getComputedStyleSpy = jest.spyOn(window, "getComputedStyle")
+            .mockReturnValue({ fontSize: "16px" });
+
+        setSvgBoundingBox({ x: 0, y: 0, width: 400, height: 300 });
+        chart.data = data;
+        chart.draw();
+
+        document.fullscreenElement = document.createElement("div");
+        chart.updateViewBox();
+
+        const svg = mockSvgInstances[0];
+        const widthCall = svg.attrCalls.filter((call) => call.name === "width").pop();
+        const heightCall = svg.attrCalls.filter((call) => call.name === "height").pop();
+        const viewBoxCall = svg.attrCalls.filter((call) => call.name === "viewBox").pop();
+
+        expect(widthCall?.value).toBe(600);
+        expect(heightCall?.value).toBe(450);
+        expect(viewBoxCall?.value).toEqual([-16, -16, 432, 332]);
+
+        document.fullscreenElement = null;
+        getComputedStyleSpy.mockRestore();
     });
 });
