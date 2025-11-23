@@ -1,112 +1,46 @@
 import { jest } from "@jest/globals";
 
-const hoverClassCalls = [];
-const hoverSelection = {
-    classed: jest.fn((name, value) => {
-        hoverClassCalls.push({ name, value });
-        return hoverSelection;
-    }),
-    raise: jest.fn(() => hoverSelection)
-};
+const labelConstructor = jest.fn();
+const labelRender = jest.fn();
+const tooltipConstructor = jest.fn();
+const tooltipBind = jest.fn();
 
-const selectMock = jest.fn(() => hoverSelection);
-const arcMock = jest.fn(() => ({
-    startAngle: jest.fn(() => ({
-        endAngle: jest.fn(() => ({
-            innerRadius: jest.fn(() => ({
-                outerRadius: jest.fn(() => ({})),
-                padAngle: jest.fn(() => ({})),
-                padRadius: jest.fn(() => ({})),
-                cornerRadius: jest.fn(() => ({}))
-            }))
-        }))
-    }))
-}));
-
-await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
-    __esModule: true,
-    select: selectMock,
-    arc: arcMock
-}));
-
-const textCreateLabels = jest.fn();
-
-await jest.unstable_mockModule("resources/js/modules/custom/svg/text", () => ({
+await jest.unstable_mockModule("resources/js/modules/custom/svg/label-renderer", () => ({
     __esModule: true,
     default: class {
-        createLabels = textCreateLabels;
+        constructor(...args) { labelConstructor(...args); }
+        render(...args) { labelRender(...args); }
     }
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () => ({
+await jest.unstable_mockModule("resources/js/modules/custom/svg/tooltip-renderer", () => ({
     __esModule: true,
     default: class {
-        startAngle() { return 0; }
-        endAngle() { return 0; }
-        innerRadius() { return 0; }
-        outerRadius() { return 0; }
+        constructor(...args) { tooltipConstructor(...args); }
+        bind(...args) { tooltipBind(...args); }
     }
 }));
 
 const { default: Person } = await import("resources/js/modules/custom/svg/person");
 
-afterEach(() => {
-    jest.clearAllMocks();
-    hoverClassCalls.length = 0;
+let addArcSpy;
+let addTitleSpy;
+let addColorSpy;
+
+beforeEach(() => {
+    addArcSpy = jest.spyOn(Person.prototype, "addArcToPerson").mockImplementation(() => {});
+    addTitleSpy = jest.spyOn(Person.prototype, "addTitleToPerson").mockImplementation(() => {});
+    addColorSpy = jest.spyOn(Person.prototype, "addColorGroup").mockImplementation(() => {});
 });
 
-const createDivSelection = () => {
-    const htmlCalls = [];
-    const styleCalls = [];
-    const transitionStyleCalls = [];
-    const properties = new Map();
+afterEach(() => {
+    jest.clearAllMocks();
+    jest.restoreAllMocks();
+});
 
-    const transitionSelection = {
-        duration: jest.fn(() => transitionSelection),
-        style: jest.fn((name, value) => {
-            transitionStyleCalls.push({ name, value });
-            return transitionSelection;
-        })
-    };
-
-    const div = {
-        html: jest.fn((value) => {
-            htmlCalls.push(value);
-            return div;
-        }),
-        style: jest.fn((name, value) => {
-            styleCalls.push({ name, value });
-            return div;
-        }),
-        transition: jest.fn(() => transitionSelection),
-        property: jest.fn((name, value) => {
-            if (value === undefined) {
-                return properties.get(name);
-            }
-
-            properties.set(name, value);
-            return div;
-        })
-    };
-
-    return { div, htmlCalls, styleCalls, transitionStyleCalls, properties };
-};
-
-const createPersonSelection = () => {
-    const handlers = {};
-    const nodes = [{}];
-
-    const personSelection = {
-        classed: jest.fn((name) => name === "new"),
-        on: jest.fn((event, handler) => {
-            handlers[event] = handler;
-            return personSelection;
-        }),
-        nodes: jest.fn(() => nodes)
-    };
-
-    return { personSelection, handlers, nodes };
-};
+const createPersonSelection = (isNew = false) => ({
+    classed: jest.fn((name) => name === "new" ? isNew : false)
+});
 
 const createArcFactory = () => ({
     createPrimaryArc: jest.fn(() => ({})),
@@ -121,165 +55,57 @@ const baseDatum = {
         data: {
             xref: "I1",
             name: "Alex Example",
-            thumbnail: "",
-            sex: "M",
-            birth: "1900",
-            marriageDate: "1920",
-            death: "1980"
+            sex: "M"
         }
     }
 };
 
-describe("Person tooltips", () => {
-    beforeEach(() => {
-        jest.spyOn(Person.prototype, "addArcToPerson").mockImplementation(() => {});
-        jest.spyOn(Person.prototype, "addTitleToPerson").mockImplementation(() => {});
-        jest.spyOn(Person.prototype, "addLabelToPerson").mockImplementation(() => ({}));
-        jest.spyOn(Person.prototype, "addColorGroup").mockImplementation(() => {});
+describe("Person", () => {
+    it("injects the shared geometry into renderers", () => {
+        const geometry = {};
+        const svg = {};
+        const configuration = { hideEmptySegments: false };
+        const personSelection = createPersonSelection();
+
+        new Person(svg, configuration, createArcFactory(), geometry, personSelection, { ...baseDatum });
+
+        expect(labelConstructor).toHaveBeenCalledWith(svg, configuration, geometry);
+        expect(tooltipConstructor).toHaveBeenCalledWith(svg, configuration, geometry);
     });
 
-    it("skips tooltip creation when the person data is empty", () => {
-        const { personSelection } = createPersonSelection();
-        const { div, htmlCalls } = createDivSelection();
+    it("adds an arc for new nodes when empty segments are hidden", () => {
+        new Person({}, { hideEmptySegments: true }, createArcFactory(), {}, createPersonSelection(true), { ...baseDatum });
 
-        const person = new Person({ div }, { hideEmptySegments: false }, createArcFactory(), personSelection, {
+        expect(addArcSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("skips label and tooltip rendering for empty data", () => {
+        new Person({}, { hideEmptySegments: false }, createArcFactory(), {}, createPersonSelection(), {
             ...baseDatum,
             data: { data: { xref: "" } }
         });
 
-        person.setTooltipHtml({ data: { data: { xref: "" } } });
-
-        expect(htmlCalls).toHaveLength(0);
+        expect(labelRender).not.toHaveBeenCalled();
+        expect(tooltipBind).not.toHaveBeenCalled();
     });
 
-    it("renders the thumbnail when images are enabled", () => {
-        const { personSelection } = createPersonSelection();
-        const { div, htmlCalls, styleCalls } = createDivSelection();
-        const datum = {
+    it("orchestrates title, labels, color, and tooltip for populated data", () => {
+        const personSelection = createPersonSelection();
+
+        new Person({}, { hideEmptySegments: false }, createArcFactory(), {}, personSelection, { ...baseDatum });
+
+        expect(addTitleSpy).toHaveBeenCalledWith(personSelection, baseDatum.data.data.name);
+        expect(labelRender).toHaveBeenCalledWith(personSelection, expect.objectContaining(baseDatum));
+        expect(addColorSpy).toHaveBeenCalled();
+        expect(tooltipBind).toHaveBeenCalledWith(personSelection, expect.objectContaining(baseDatum));
+    });
+
+    it("does not add arcs when empty segments are hidden and data is empty", () => {
+        new Person({}, { hideEmptySegments: true }, createArcFactory(), {}, createPersonSelection(), {
             ...baseDatum,
-            data: {
-                data: {
-                    ...baseDatum.data.data,
-                    thumbnail: "thumb.jpg"
-                }
-            }
-        };
-
-        global.event = { pageX: 120, pageY: 80 };
-
-        const person = new Person(
-            { div },
-            { hideEmptySegments: false, showImages: true, showSilhouettes: true },
-            createArcFactory(),
-            personSelection,
-            datum
-        );
-
-        person.setTooltipHtml(datum);
-
-        expect(htmlCalls[0]).toContain("thumb.jpg");
-        expect(htmlCalls[0]).not.toContain("icon-silhouette");
-        expect(styleCalls).toEqual([
-            { name: "left", value: "120px" },
-            { name: "top", value: "50px" }
-        ]);
-        expect(div.transition).not.toHaveBeenCalled();
-    });
-
-    it("renders a silhouette when no thumbnail is present", () => {
-        const { personSelection } = createPersonSelection();
-        const { div, htmlCalls } = createDivSelection();
-        const datum = {
-            ...baseDatum,
-            data: {
-                data: {
-                    ...baseDatum.data.data,
-                    thumbnail: "",
-                    sex: "F"
-                }
-            }
-        };
-
-        global.event = { pageX: 200, pageY: 100 };
-
-        const person = new Person(
-            { div },
-            { hideEmptySegments: false, showImages: true, showSilhouettes: true },
-            createArcFactory(),
-            personSelection,
-            datum
-        );
-
-        person.setTooltipHtml(datum);
-
-        expect(htmlCalls[0]).toContain("icon-silhouette-f");
-    });
-});
-
-describe("Person interactions", () => {
-    let personSelection;
-    let handlers;
-    let divSelection;
-    let datum;
-
-    beforeEach(() => {
-        ({ personSelection, handlers } = createPersonSelection());
-        ({ div: divSelection } = createDivSelection());
-        datum = { ...baseDatum };
-
-        jest.spyOn(Person.prototype, "addArcToPerson").mockImplementation(() => {});
-        jest.spyOn(Person.prototype, "addTitleToPerson").mockImplementation(() => {});
-        jest.spyOn(Person.prototype, "addLabelToPerson").mockImplementation(() => ({}));
-        jest.spyOn(Person.prototype, "addColorGroup").mockImplementation(() => {});
-
-        new Person(
-            { div: divSelection },
-            { hideEmptySegments: false, showImages: true, showSilhouettes: true },
-            createArcFactory(),
-            personSelection,
-            datum
-        );
-    });
-
-    it("toggles tooltip visibility on context menu", () => {
-        divSelection.property.mockImplementation((name, value) => {
-            if (value === undefined) {
-                return name === "active" ? true : undefined;
-            }
-
-            return divSelection;
+            data: { data: { xref: "" } }
         });
 
-        const transitionSpy = jest.fn(() => ({
-            duration: jest.fn(() => ({ style: jest.fn() })),
-            style: jest.fn()
-        }));
-        divSelection.transition = transitionSpy;
-
-        handlers.contextmenu({ preventDefault: jest.fn() }, datum);
-
-        expect(divSelection.property).toHaveBeenCalledWith("active", false);
-        expect(transitionSpy).toHaveBeenCalled();
-    });
-
-    it("positions tooltip on mouse move", () => {
-        handlers.mousemove({ pageX: 15, pageY: 45 }, datum);
-
-        expect(divSelection.style).toHaveBeenCalledWith("left", "15px");
-        expect(divSelection.style).toHaveBeenCalledWith("top", "15px");
-    });
-
-    it("updates hover classes on mouse over/out", () => {
-        const node = {};
-        personSelection.nodes.mockReturnValue([node]);
-
-        handlers.mouseover.call(node, {}, datum);
-        handlers.mouseout.call(node, {}, datum);
-
-        expect(selectMock).toHaveBeenCalledWith(node);
-        expect(hoverClassCalls).toEqual([
-            { name: "hover", value: true },
-            { name: "hover", value: false }
-        ]);
+        expect(addArcSpy).not.toHaveBeenCalled();
     });
 });
