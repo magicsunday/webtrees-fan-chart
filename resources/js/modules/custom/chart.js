@@ -12,6 +12,8 @@ import Svg from "./svg";
 import Person from "./svg/person";
 import Gradient from "./gradient";
 import Update from "./update";
+import Geometry from "./svg/geometry";
+import ArcFactory from "./svg/segments/arc-factory";
 
 const MIN_HEIGHT  = 500;
 const MIN_PADDING = 1;   // Minimum padding around view box in "rem"
@@ -37,6 +39,12 @@ export default class Chart
         this._parent        = parent;
         this._hierarchy     = new Hierarchy(this._configuration);
         this._data          = {};
+        this._geometry      = new Geometry(this._configuration);
+        this._arcFactory    = new ArcFactory(this._geometry, {
+            padAngle: this._configuration.padAngle,
+            padRadius: this._configuration.padRadius,
+            cornerRadius: this._configuration.cornerRadius,
+        });
     }
 
     /**
@@ -212,7 +220,7 @@ export default class Chart
                     gradient.init(d);
                 }
 
-                new Person(that._svg, that._configuration, person, d);
+                new Person(that._svg, that._configuration, that._arcFactory, person, d);
             });
 
         this.updateViewBox();
@@ -267,7 +275,7 @@ export default class Chart
      */
     update(url)
     {
-        let update = new Update(this._svg, this._configuration, this._hierarchy);
+        let update = new Update(this._svg, this._configuration, this._hierarchy, this._arcFactory);
 
         update.update(url, () => this.bindClickEventListener());
     }

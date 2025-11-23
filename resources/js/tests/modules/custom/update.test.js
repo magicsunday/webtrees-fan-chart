@@ -389,6 +389,11 @@ const defaultConfiguration = (overrides = {}) => ({
     ...overrides,
 });
 
+const createArcFactory = () => ({
+    createPrimaryArc: jest.fn(() => ({})),
+    createOverlayArc: jest.fn(() => ({})),
+});
+
 beforeEach(() => {
     jsonMock.mockReset();
     timerMock.mockClear();
@@ -406,7 +411,7 @@ describe("Update", () => {
         const svg         = createSvgWithPersons(["1"]);
         const hierarchy   = new HierarchyStub();
         const configuration = defaultConfiguration();
-        const update      = new Update(svg, configuration, hierarchy);
+        const update      = new Update(svg, configuration, hierarchy, createArcFactory());
         const titleHtml   = "<strong>Updated</strong>";
         const callback    = jest.fn();
 
@@ -436,7 +441,7 @@ describe("Update", () => {
         const svg           = createSvgWithPersons(["1"]);
         const hierarchy     = new HierarchyStub();
         const configuration = defaultConfiguration();
-        const update        = new Update(svg, configuration, hierarchy);
+        const update        = new Update(svg, configuration, hierarchy, createArcFactory());
         const callback      = jest.fn();
 
         jsonMock.mockResolvedValueOnce({
@@ -491,7 +496,7 @@ describe("Update", () => {
         const svg           = createSvgWithPersons(["1", "2"]);
         const hierarchy     = new HierarchyStub();
         const configuration = defaultConfiguration({ hideEmptySegments: true });
-        const update        = new Update(svg, configuration, hierarchy);
+        const update        = new Update(svg, configuration, hierarchy, createArcFactory());
         const callback      = jest.fn();
 
         jsonMock.mockResolvedValueOnce({

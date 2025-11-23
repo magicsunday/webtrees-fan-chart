@@ -108,6 +108,11 @@ const createPersonSelection = () => {
     return { personSelection, handlers, nodes };
 };
 
+const createArcFactory = () => ({
+    createPrimaryArc: jest.fn(() => ({})),
+    createOverlayArc: jest.fn(() => ({})),
+});
+
 const baseDatum = {
     depth: 0,
     x0: 0,
@@ -137,7 +142,7 @@ describe("Person tooltips", () => {
         const { personSelection } = createPersonSelection();
         const { div, htmlCalls } = createDivSelection();
 
-        const person = new Person({ div }, { hideEmptySegments: false }, personSelection, {
+        const person = new Person({ div }, { hideEmptySegments: false }, createArcFactory(), personSelection, {
             ...baseDatum,
             data: { data: { xref: "" } }
         });
@@ -165,6 +170,7 @@ describe("Person tooltips", () => {
         const person = new Person(
             { div },
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
+            createArcFactory(),
             personSelection,
             datum
         );
@@ -199,6 +205,7 @@ describe("Person tooltips", () => {
         const person = new Person(
             { div },
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
+            createArcFactory(),
             personSelection,
             datum
         );
@@ -228,6 +235,7 @@ describe("Person interactions", () => {
         new Person(
             { div: divSelection },
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
+            createArcFactory(),
             personSelection,
             datum
         );

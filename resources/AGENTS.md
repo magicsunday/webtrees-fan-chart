@@ -1,13 +1,15 @@
-<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2025-02-12 -->
+<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2025-11-23 -->
 
 ## Overview
 - Instructions for assets under `resources/` (JS, CSS, translations, views).
 - Decision Log:
   - 2025-02-11: Documented rollup-based build steps and alignment with PHP module guidelines for assets.
   - 2025-02-12: Documented JavaScript test location (`resources/js/tests`) and required commands after JS changes.
+  - 2025-11-23: Playwright browsers must be installed (`npx playwright install --with-deps`) so `npm test` can run without download errors.
 
 ## Setup/env
 - Install Node.js dependencies with `npm install`; rollup configuration lives in `rollup.config.js` and uses ES modules.
+- After installing dependencies, run `npx playwright install --with-deps` once to fetch browser binaries required by Playwright-based tests.
 - Keep D3-related packages and rollup plugins in sync with package.json; avoid switching package managers.
 
 ## Build & tests
