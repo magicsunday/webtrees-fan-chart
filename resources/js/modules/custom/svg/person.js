@@ -6,9 +6,9 @@
  */
 
 import * as d3 from "../../lib/d3";
-import Geometry from "./geometry";
 import Text from "./text";
 import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
+import ArcFactory from "./segments/arc-factory";
 
 /**
  * This class handles the creation of the person elements of the chart.
@@ -24,14 +24,15 @@ export default class Person
      *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
+     * @param {ArcFactory}    arcFactory    Factory for creating arc generators
      * @param {Selection}     person
      * @param {Object}        children
      */
-    constructor(svg, configuration, person, children)
+    constructor(svg, configuration, arcFactory, person, children)
     {
         this._svg           = svg;
         this._configuration = configuration;
-        this._geometry      = new Geometry(this._configuration);
+        this._arcFactory    = arcFactory;
 
         this.init(person, children);
     }
@@ -199,19 +200,7 @@ export default class Person
      */
     addColorGroup(person, datum)
     {
-        // Arc generator
-        let arcGenerator = d3.arc()
-            .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
-            .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
-            .innerRadius(this._geometry.outerRadius(datum.depth) - this._configuration.colorArcWidth)
-            .outerRadius(this._geometry.outerRadius(datum.depth) + 1);
-        // .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth - 2)
-        // .outerRadius((data) => this._geometry.outerRadius(data.depth) - 1);
-
-        arcGenerator.padAngle(this._configuration.padAngle)
-            .padRadius(this._configuration.padRadius)
-        //     .cornerRadius(this._configuration.cornerRadius - 2)
-            ;
+        let arcGenerator = this._arcFactory.createOverlayArc(datum, this._configuration.colorArcWidth);
 
         let color = person
             .append("g")
@@ -250,16 +239,7 @@ export default class Person
      */
     addArcToPerson(person, datum)
     {
-        // Create arc generator
-        let arcGenerator = d3.arc()
-            .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
-            .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
-            .innerRadius(this._geometry.innerRadius(datum.depth))
-            .outerRadius(this._geometry.outerRadius(datum.depth));
-
-        arcGenerator.padAngle(this._configuration.padAngle)
-            .padRadius(this._configuration.padRadius)
-            .cornerRadius(this._configuration.cornerRadius);
+        let arcGenerator = this._arcFactory.createPrimaryArc(datum);
 
         // Append arc
         let arcGroup = person

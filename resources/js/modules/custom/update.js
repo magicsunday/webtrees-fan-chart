@@ -23,12 +23,14 @@ export default class Update
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      * @param {Hierarchy}     hierarchy
+     * @param {ArcFactory}    arcFactory
      */
-    constructor(svg, configuration, hierarchy)
+    constructor(svg, configuration, hierarchy, arcFactory)
     {
         this._svg           = svg;
         this._configuration = configuration;
         this._hierarchy     = hierarchy;
+        this._arcFactory    = arcFactory;
     }
 
     /**
@@ -88,7 +90,7 @@ export default class Update
                             .classed("old", true);
                     }
 
-                    new Person(that._svg, that._configuration, person, datum);
+                    new Person(that._svg, that._configuration, that._arcFactory, person, datum);
                 });
 
             // Hide all new labels of not removed elements
