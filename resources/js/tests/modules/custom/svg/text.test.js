@@ -49,6 +49,7 @@ await jest.unstable_mockModule("resources/js/modules/lib/chart/text/measure", ()
     default: measureTextMock
 }));
 
+const { default: Geometry } = await import("resources/js/modules/custom/svg/geometry");
 const { default: Text } = await import("resources/js/modules/custom/svg/text");
 
 const createConfiguration = (overrides = {}) => ({
@@ -66,6 +67,20 @@ const createConfiguration = (overrides = {}) => ({
     fontScale: 100,
     ...overrides
 });
+
+const svgStub = {
+    style: jest.fn(() => "Arial"),
+    defs: { select: jest.fn(), append: jest.fn(() => ({ append: jest.fn() })) }
+};
+
+const createText = (configuration = createConfiguration()) => {
+    const geometry = new Geometry(configuration);
+
+    return {
+        geometry,
+        text: new Text(svgStub, configuration, geometry)
+    };
+};
 
 const createDatum = (overrides = {}) => ({
     depth: 1,
@@ -89,18 +104,13 @@ const createDatum = (overrides = {}) => ({
 });
 
 describe("Text", () => {
-    const svgStub = {
-        style: jest.fn(() => "Arial"),
-        defs: { select: jest.fn(), append: jest.fn(() => ({ append: jest.fn() })) }
-    };
-
     beforeEach(() => {
         measureTextMock.mockClear();
         scaleLinearMock.mockClear();
     });
 
     it("splits full names into ordered label groups", () => {
-        const text = new Text(svgStub, createConfiguration());
+        const { text } = createText();
         const datum = createDatum();
 
         const [firstNames, lastNames] = text.createNamesData(datum);
@@ -115,7 +125,7 @@ describe("Text", () => {
     });
 
     it("truncates names based on available width and preference", () => {
-        const text = new Text(svgStub, createConfiguration());
+        const { text } = createText();
         const nameGroup = [
             { label: "Anna", isPreferred: false, isLastName: false, isNameRtl: false },
             { label: "Beatrice", isPreferred: true, isLastName: false, isNameRtl: false }
@@ -133,25 +143,29 @@ describe("Text", () => {
     });
 
     it("calculates available width using arc geometry for inner labels", () => {
-        const text = new Text(svgStub, createConfiguration());
+        const { text, geometry } = createText();
         const datum = createDatum();
+        const layout = geometry.createLayout(datum.depth, datum);
 
-        const availableWidth = text.getAvailableWidth(datum, 0);
+        const availableWidth = text.getAvailableWidth(datum, 0, layout);
 
-        expect(availableWidth).toBeCloseTo((Math.PI * text._geometry.relativeRadius(datum.depth, 73)) - 23);
+        expect(availableWidth).toBeCloseTo(
+            geometry.arcLength(layout, text.getTextOffset(false, 0)) - 23
+        );
     });
 
     it("calculates available width for outer arcs without geometry", () => {
-        const text = new Text(svgStub, createConfiguration());
+        const { text, geometry } = createText();
         const datum = createDatum({ depth: 4 });
+        const layout = geometry.createLayout(datum.depth, datum);
 
-        const availableWidth = text.getAvailableWidth(datum, 0);
+        const availableWidth = text.getAvailableWidth(datum, 0, layout);
 
         expect(availableWidth).toBe(150 - 20 - 5);
     });
 
     it("truncates date labels without trailing dots", () => {
-        const text = new Text(svgStub, createConfiguration());
+        const { text } = createText();
         const tspanNode = {
             textContent: "01 JAN. 1900",
             getComputedTextLength() {

@@ -394,6 +394,16 @@ const createArcFactory = () => ({
     createOverlayArc: jest.fn(() => ({})),
 });
 
+const createGeometry = () => ({
+    createLayout: jest.fn(() => ({
+        startAngle: 0,
+        endAngle: 0,
+        innerRadius: 0,
+        outerRadius: 0,
+        centerRadius: 0,
+    })),
+});
+
 beforeEach(() => {
     jsonMock.mockReset();
     timerMock.mockClear();
@@ -411,7 +421,8 @@ describe("Update", () => {
         const svg         = createSvgWithPersons(["1"]);
         const hierarchy   = new HierarchyStub();
         const configuration = defaultConfiguration();
-        const update      = new Update(svg, configuration, hierarchy, createArcFactory());
+        const geometry    = createGeometry();
+        const update      = new Update(svg, configuration, hierarchy, createArcFactory(), geometry);
         const titleHtml   = "<strong>Updated</strong>";
         const callback    = jest.fn();
 
@@ -441,7 +452,8 @@ describe("Update", () => {
         const svg           = createSvgWithPersons(["1"]);
         const hierarchy     = new HierarchyStub();
         const configuration = defaultConfiguration();
-        const update        = new Update(svg, configuration, hierarchy, createArcFactory());
+        const geometry      = createGeometry();
+        const update        = new Update(svg, configuration, hierarchy, createArcFactory(), geometry);
         const callback      = jest.fn();
 
         jsonMock.mockResolvedValueOnce({
@@ -496,7 +508,8 @@ describe("Update", () => {
         const svg           = createSvgWithPersons(["1", "2"]);
         const hierarchy     = new HierarchyStub();
         const configuration = defaultConfiguration({ hideEmptySegments: true });
-        const update        = new Update(svg, configuration, hierarchy, createArcFactory());
+        const geometry      = createGeometry();
+        const update        = new Update(svg, configuration, hierarchy, createArcFactory(), geometry);
         const callback      = jest.fn();
 
         jsonMock.mockResolvedValueOnce({

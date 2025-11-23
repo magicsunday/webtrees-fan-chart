@@ -6,7 +6,7 @@
  */
 
 import * as d3 from "../../lib/d3";
-import Geometry, {MATH_DEG2RAD, MATH_RAD2DEG} from "./geometry";
+import {MATH_DEG2RAD, MATH_RAD2DEG} from "./geometry";
 import measureText from "../../lib/chart/text/measure"
 
 /**
@@ -25,7 +25,7 @@ export default class Text
      * @param {Configuration} configuration The application configuration
      * @param {Geometry}      geometry      Geometry helper instance
      */
-    constructor(svg, configuration, geometry = new Geometry(configuration))
+    constructor(svg, configuration, geometry)
     {
         this._svg           = svg;
         this._configuration = configuration;
@@ -37,8 +37,9 @@ export default class Text
      *
      * @param {Selection} parent The parent element to which the elements are to be attached
      * @param {Object}    datum  The D3 data object
+     * @param {Object}    layout Geometry layout descriptor
      */
-    createLabels(parent, datum)
+    createLabels(parent, datum, layout)
     {
         // Inner labels
         if (this.isInnerLabel(datum)) {
@@ -50,8 +51,8 @@ export default class Text
             // display the chart correctly).
 
             nameGroups.forEach((nameGroup, index) => {
-                const availableWidth = this.getAvailableWidth(datum, index);
-                const pathId = this.createPathDefinition(parentId, index, datum);
+                const availableWidth = this.getAvailableWidth(datum, index, layout);
+                const pathId = this.createPathDefinition(parentId, index, datum, layout);
                 const textPath = parent
                     .append("text")
                     .append("textPath")
@@ -70,8 +71,8 @@ export default class Text
 
             // Alternative names
             if (datum.data.data.alternativeName !== "") {
-                const pathId = this.createPathDefinition(parentId, 2, datum);
-                const availableWidth = this.getAvailableWidth(datum, 2);
+                const pathId = this.createPathDefinition(parentId, 2, datum, layout);
+                const availableWidth = this.getAvailableWidth(datum, 2, layout);
                 const nameGroup = this.createAlternativeNamesData(datum);
 
                 const textPath = parent
@@ -94,7 +95,7 @@ export default class Text
 
             // Birth and death date
             if (datum.data.data.timespan !== "") {
-                const pathId = this.createPathDefinition(parentId, 3, datum);
+                const pathId = this.createPathDefinition(parentId, 3, datum, layout);
                 const textPath = parent
                     .append("text")
                     .append("textPath")
@@ -109,7 +110,7 @@ export default class Text
                 const tspan = textPath.append("tspan")
                     .text(datum.data.data.timespan);
 
-                const availableWidth = this.getAvailableWidth(datum, 3);
+                const availableWidth = this.getAvailableWidth(datum, 3, layout);
 
                 if (this.getTextLength(textPath) > availableWidth) {
                     textPath.selectAll("tspan")
@@ -125,7 +126,7 @@ export default class Text
             // not distinguish between first name, last name and dates
             if (datum.depth >= 7) {
                 const [first, ...last] = this.createNamesData(datum);
-                const availableWidth = this.getAvailableWidth(datum, 0);
+                const availableWidth = this.getAvailableWidth(datum, 0, layout);
 
                 // Merge the firstname and lastname groups, as we display the whole name in one line
                 const combined = [].concat(first, typeof last[0] !== "undefined" ? last[0] : []);
@@ -146,7 +147,7 @@ export default class Text
                 const nameGroups = this.createNamesData(datum);
 
                 nameGroups.forEach((nameGroup, index) => {
-                    const availableWidth = this.getAvailableWidth(datum, index);
+                    const availableWidth = this.getAvailableWidth(datum, index, layout);
                     const text = parent
                         .append("text")
                         .attr("dy", "2px");
@@ -163,7 +164,7 @@ export default class Text
 
                 // Alternative name
                 if (datum.data.data.alternativeName !== "") {
-                    const availableWidth = this.getAvailableWidth(datum, 2);
+                    const availableWidth = this.getAvailableWidth(datum, 2, layout);
                     const nameGroup = this.createAlternativeNamesData(datum);
 
                     const text = parent
@@ -198,7 +199,7 @@ export default class Text
                         const tspan = text.append("tspan")
                             .text(datum.data.data.timespan);
 
-                        const availableWidth = this.getAvailableWidth(datum, 2);
+                        const availableWidth = this.getAvailableWidth(datum, 2, layout);
 
                         if (this.getTextLength(text) > availableWidth) {
                             text.selectAll("tspan")
@@ -211,13 +212,13 @@ export default class Text
             }
 
             // Rotate outer labels in the right position
-            this.transformOuterText(parent, datum);
+            this.transformOuterText(parent, datum, layout);
         }
 
         // Marriage date
         if (this._configuration.showParentMarriageDates && datum.children && (datum.depth < 5)) {
             const parentId = d3.select(parent.node().parentNode).attr("id");
-            const pathId = this.createPathDefinition(parentId, 4, datum);
+            const pathId = this.createPathDefinition(parentId, 4, datum, layout);
             const textPath = parent
                 .append("text")
                 .append("textPath")
@@ -566,7 +567,7 @@ export default class Text
      *
      * @return {string} The id of the newly created path element
      */
-    createPathDefinition(parentId, index, data)
+    createPathDefinition(parentId, index, data, layout)
     {
         let pathId = "path-" + parentId + "-" + index;
 
@@ -575,10 +576,13 @@ export default class Text
             return pathId;
         }
 
-        let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
-        let startAngle      = this._geometry.startAngle(data.depth, data.x0);
-        let endAngle        = this._geometry.endAngle(data.depth, data.x1);
-        let relativeRadius  = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, index));
+        let positionFlipped = this.isPositionFlipped(layout, data.depth);
+        let startAngle      = layout.startAngle;
+        let endAngle        = layout.endAngle;
+        let relativeRadius  = this._geometry.relativeRadiusFromLayout(
+            layout,
+            this.getTextOffset(positionFlipped, index)
+        );
 
         // Special treatment for center marriage date position
         if (this._configuration.showParentMarriageDates && (index === 4) && (data.depth < 1)) {
@@ -617,14 +621,14 @@ export default class Text
      *
      * @return {boolean}
      */
-    isPositionFlipped(depth, x0, x1)
+    isPositionFlipped(layout, depth)
     {
         if ((this._configuration.fanDegree !== 360) || (depth <= 1)) {
             return false;
         }
 
-        const startAngle = this._geometry.startAngle(depth, x0);
-        const endAngle   = this._geometry.endAngle(depth, x1);
+        const startAngle = layout.startAngle;
+        const endAngle   = layout.endAngle;
 
         // Flip names for better readability depending on position in chart
         return ((startAngle >= (90 * MATH_DEG2RAD)) && (endAngle <= (180 * MATH_DEG2RAD)))
@@ -659,7 +663,7 @@ export default class Text
      *
      * @private
      */
-    getAvailableWidth(data, index)
+    getAvailableWidth(data, index, layout)
     {
         // Outer arcs
         if (data.depth > this._configuration.numberOfInnerCircles) {
@@ -672,10 +676,10 @@ export default class Text
         let availableWidth = (this._configuration.centerCircleRadius * 2) - (this._configuration.centerCircleRadius * 0.15);
 
         if (data.depth >= 1) {
-            let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
+            let positionFlipped = this.isPositionFlipped(layout, data.depth);
 
             // Calculate length of the arc
-            availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, index));
+            availableWidth = this._geometry.arcLength(layout, this.getTextOffset(positionFlipped, index));
         }
 
         return availableWidth - (this._configuration.textPadding * 2)
@@ -691,7 +695,7 @@ export default class Text
      *
      * @public
      */
-    transformOuterText(parent, datum)
+    transformOuterText(parent, datum, layout)
     {
         let that = this;
         let textElements = parent.selectAll("text");
@@ -722,10 +726,9 @@ export default class Text
                 d3.select(this).attr("dy", (offsetRotate * 15) + (15 / 2) + "px");
             } else {
                 d3.select(this).attr("transform", function () {
-                    let dx        = datum.x1 - datum.x0;
-                    let angle     = that._geometry.scale(datum.x0 + (dx / 2)) * MATH_RAD2DEG;
+                    let angle     = ((layout.startAngle + layout.endAngle) / 2) * MATH_RAD2DEG;
                     let rotate    = angle - (offsetRotate * (angle > 0 ? -1 : 1));
-                    let translate = (that._geometry.centerRadius(datum.depth) - (that._configuration.colorArcWidth / 2.0));
+                    let translate = (layout.centerRadius - (that._configuration.colorArcWidth / 2.0));
 
                     if (angle > 0) {
                         rotate -= 90;

@@ -32,6 +32,28 @@ export default class Geometry
     }
 
     /**
+     * Creates a layout descriptor for the given datum.
+     *
+     * @param {number} depth The depth of the element inside the chart
+     * @param {Object} node  The D3 data object
+     *
+     * @returns {{startAngle: number, endAngle: number, innerRadius: number, outerRadius: number, centerRadius: number}}
+     */
+    createLayout(depth, node)
+    {
+        const innerRadius = this.innerRadius(depth);
+        const outerRadius = this.outerRadius(depth);
+
+        return {
+            startAngle: this.startAngle(depth, node.x0),
+            endAngle: this.endAngle(depth, node.x1),
+            innerRadius,
+            outerRadius,
+            centerRadius: this.centerRadius(depth),
+        };
+    }
+
+    /**
      * @return {number}
      *
      * @private
@@ -142,8 +164,26 @@ export default class Geometry
      */
     relativeRadius(depth, position)
     {
-        const outer = this.outerRadius(depth);
-        return outer - ((100 - position) * (outer - this.innerRadius(depth)) / 100);
+        return this.relativeRadiusFromLayout(
+            {
+                innerRadius: this.innerRadius(depth),
+                outerRadius: this.outerRadius(depth),
+            },
+            position
+        );
+    }
+
+    /**
+     * Get a radius relative to the pre-calculated layout radii adjusted by the given position in percent.
+     *
+     * @param {Object} layout   Geometry layout object
+     * @param {number} position Percent offset (0 = inner radius, 100 = outer radius)
+     *
+     * @returns {number}
+     */
+    relativeRadiusFromLayout(layout, position)
+    {
+        return layout.outerRadius - ((100 - position) * (layout.outerRadius - layout.innerRadius) / 100);
     }
 
     /**
@@ -195,9 +235,9 @@ export default class Geometry
      *
      * @return {number}
      */
-    arcLength(datum, position)
+    arcLength(layout, position)
     {
-        return (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0))
-            * this.relativeRadius(datum.depth, position);
+        return (layout.endAngle - layout.startAngle)
+            * this.relativeRadiusFromLayout(layout, position);
     }
 }

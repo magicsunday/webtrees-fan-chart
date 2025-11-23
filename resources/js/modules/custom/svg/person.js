@@ -25,15 +25,17 @@ export default class Person
      * @param {Configuration} configuration The application configuration
      * @param {ArcFactory}    arcFactory    Factory for creating arc generators
      * @param {Geometry}      geometry      Geometry helper instance
+     * @param {Object}        layout        Pre-calculated geometry layout
      * @param {Selection}     person
      * @param {Object}        children
      */
-    constructor(svg, configuration, arcFactory, geometry, person, children)
+    constructor(svg, configuration, arcFactory, geometry, layout, person, children)
     {
         this._svg           = svg;
         this._configuration = configuration;
         this._arcFactory    = arcFactory;
         this._geometry      = geometry;
+        this._layout        = layout;
 
         this._labelRenderer   = new LabelRenderer(this._svg, this._configuration, this._geometry);
         this._tooltipRenderer = new TooltipRenderer(this._svg, this._configuration, this._geometry);
@@ -64,7 +66,7 @@ export default class Person
         if (datum.data.data.xref !== "") {
             this.addTitleToPerson(person, datum.data.data.name);
 
-            this._labelRenderer.render(person, datum);
+            this._labelRenderer.render(person, datum, this._layout);
             this.addColorGroup(person, datum);
 
             this._tooltipRenderer.bind(person, datum);
@@ -79,7 +81,7 @@ export default class Person
      */
     addColorGroup(person, datum)
     {
-        let arcGenerator = this._arcFactory.createOverlayArc(datum, this._configuration.colorArcWidth);
+        let arcGenerator = this._arcFactory.createOverlayArc(datum, this._layout, this._configuration.colorArcWidth);
 
         let color = person
             .append("g")
@@ -118,7 +120,7 @@ export default class Person
      */
     addArcToPerson(person, datum)
     {
-        let arcGenerator = this._arcFactory.createPrimaryArc(datum);
+        let arcGenerator = this._arcFactory.createPrimaryArc(datum, this._layout);
 
         // Append arc
         let arcGroup = person

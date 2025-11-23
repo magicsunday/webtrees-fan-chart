@@ -31,11 +31,12 @@ export default class Gradient
     /**
      * Initializes the gradient fill.
      *
-     * @param {Object} data D3 data object
+     * @param {Object} data   D3 data object
+     * @param {Object} layout Geometry layout descriptor
      *
      * @return {void}
      */
-    init(datum)
+    init(datum, layout)
     {
         if (datum.depth < 1) {
             return;

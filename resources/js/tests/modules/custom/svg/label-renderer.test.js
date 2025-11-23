@@ -49,13 +49,14 @@ describe("LabelRenderer", () => {
         const renderer = new LabelRenderer({}, configuration, {});
         const { append, child } = createParentSelection();
         const datum = { depth: 3 };
+        const layout = { startAngle: 0 };
 
-        const label = renderer.render({ append }, datum);
+        const label = renderer.render({ append }, datum, layout);
 
         expect(append).toHaveBeenCalledWith("g");
         expect(child.attr).toHaveBeenCalledWith("class", "wt-chart-box-name name");
         expect(child.style).toHaveBeenCalledWith("font-size", "10px");
-        expect(createLabels).toHaveBeenCalledWith(child, datum);
+        expect(createLabels).toHaveBeenCalledWith(child, datum, layout);
         expect(label).toBe(child);
     });
 });

@@ -47,6 +47,14 @@ const createArcFactory = () => ({
     createOverlayArc: jest.fn(() => ({})),
 });
 
+const layout = {
+    startAngle: 0,
+    endAngle: 1,
+    innerRadius: 10,
+    outerRadius: 20,
+    centerRadius: 15,
+};
+
 const baseDatum = {
     depth: 0,
     x0: 0,
@@ -67,20 +75,20 @@ describe("Person", () => {
         const configuration = { hideEmptySegments: false };
         const personSelection = createPersonSelection();
 
-        new Person(svg, configuration, createArcFactory(), geometry, personSelection, { ...baseDatum });
+        new Person(svg, configuration, createArcFactory(), geometry, layout, personSelection, { ...baseDatum });
 
         expect(labelConstructor).toHaveBeenCalledWith(svg, configuration, geometry);
         expect(tooltipConstructor).toHaveBeenCalledWith(svg, configuration, geometry);
     });
 
     it("adds an arc for new nodes when empty segments are hidden", () => {
-        new Person({}, { hideEmptySegments: true }, createArcFactory(), {}, createPersonSelection(true), { ...baseDatum });
+        new Person({}, { hideEmptySegments: true }, createArcFactory(), {}, layout, createPersonSelection(true), { ...baseDatum });
 
         expect(addArcSpy).toHaveBeenCalledTimes(1);
     });
 
     it("skips label and tooltip rendering for empty data", () => {
-        new Person({}, { hideEmptySegments: false }, createArcFactory(), {}, createPersonSelection(), {
+        new Person({}, { hideEmptySegments: false }, createArcFactory(), {}, layout, createPersonSelection(), {
             ...baseDatum,
             data: { data: { xref: "" } }
         });
@@ -92,16 +100,16 @@ describe("Person", () => {
     it("orchestrates title, labels, color, and tooltip for populated data", () => {
         const personSelection = createPersonSelection();
 
-        new Person({}, { hideEmptySegments: false }, createArcFactory(), {}, personSelection, { ...baseDatum });
+        new Person({}, { hideEmptySegments: false }, createArcFactory(), {}, layout, personSelection, { ...baseDatum });
 
         expect(addTitleSpy).toHaveBeenCalledWith(personSelection, baseDatum.data.data.name);
-        expect(labelRender).toHaveBeenCalledWith(personSelection, expect.objectContaining(baseDatum));
+        expect(labelRender).toHaveBeenCalledWith(personSelection, expect.objectContaining(baseDatum), layout);
         expect(addColorSpy).toHaveBeenCalled();
         expect(tooltipBind).toHaveBeenCalledWith(personSelection, expect.objectContaining(baseDatum));
     });
 
     it("does not add arcs when empty segments are hidden and data is empty", () => {
-        new Person({}, { hideEmptySegments: true }, createArcFactory(), {}, createPersonSelection(), {
+        new Person({}, { hideEmptySegments: true }, createArcFactory(), {}, layout, createPersonSelection(), {
             ...baseDatum,
             data: { data: { xref: "" } }
         });

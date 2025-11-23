@@ -31,16 +31,17 @@ export default class ArcFactory
      * Creates the arc generator for the primary segment.
      *
      * @param {Object} datum
+     * @param {Object} layout
      *
      * @returns {Function}
      */
-    createPrimaryArc(datum)
+    createPrimaryArc(datum, layout)
     {
         const arc = d3.arc()
-            .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
-            .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
-            .innerRadius(this._geometry.innerRadius(datum.depth))
-            .outerRadius(this._geometry.outerRadius(datum.depth));
+            .startAngle(layout.startAngle)
+            .endAngle(layout.endAngle)
+            .innerRadius(layout.innerRadius)
+            .outerRadius(layout.outerRadius);
 
         return this._applyPadding(arc, true);
     }
@@ -49,17 +50,18 @@ export default class ArcFactory
      * Creates the arc generator for overlay elements (e.g., color ring).
      *
      * @param {Object} datum
+     * @param {Object} layout
      * @param {number} thickness
      *
      * @returns {Function}
      */
-    createOverlayArc(datum, thickness = 0)
+    createOverlayArc(datum, layout, thickness = 0)
     {
-        const outerRadius = this._geometry.outerRadius(datum.depth);
+        const outerRadius = layout.outerRadius;
 
         const arc = d3.arc()
-            .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
-            .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
+            .startAngle(layout.startAngle)
+            .endAngle(layout.endAngle)
             .innerRadius(outerRadius - thickness)
             .outerRadius(outerRadius + 1);
 

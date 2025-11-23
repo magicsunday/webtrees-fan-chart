@@ -24,13 +24,15 @@ export default class Update
      * @param {Configuration} configuration The application configuration
      * @param {Hierarchy}     hierarchy
      * @param {ArcFactory}    arcFactory
+     * @param {Geometry}      geometry
      */
-    constructor(svg, configuration, hierarchy, arcFactory)
+    constructor(svg, configuration, hierarchy, arcFactory, geometry)
     {
         this._svg           = svg;
         this._configuration = configuration;
         this._hierarchy     = hierarchy;
         this._arcFactory    = arcFactory;
+        this._geometry      = geometry;
     }
 
     /**
@@ -80,6 +82,7 @@ export default class Update
                 .each(function (datum) {
                     let empty  = datum.data.data.xref === "";
                     let person = d3.select(this);
+                    const layout = that._geometry.createLayout(datum.depth, datum);
 
                     person.classed("remove", empty)
                         .classed("update", !empty && person.classed("available"))
@@ -90,7 +93,7 @@ export default class Update
                             .classed("old", true);
                     }
 
-                    new Person(that._svg, that._configuration, that._arcFactory, person, datum);
+                    new Person(that._svg, that._configuration, that._arcFactory, that._geometry, layout, person, datum);
                 });
 
             // Hide all new labels of not removed elements

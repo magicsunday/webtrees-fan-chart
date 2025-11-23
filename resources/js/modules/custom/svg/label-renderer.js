@@ -36,14 +36,15 @@ export default class LabelRenderer
      *
      * @param {Selection} parent The parent element used to append the label element to
      * @param {Object}    datum  The D3 data object
+     * @param {Object}    layout Geometry layout descriptor
      *
      * @return {Selection}
      */
-    render(parent, datum)
+    render(parent, datum, layout)
     {
         const label = this.createLabelGroup(parent, datum);
 
-        this._text.createLabels(label, datum);
+        this._text.createLabels(label, datum, layout);
 
         return label;
     }

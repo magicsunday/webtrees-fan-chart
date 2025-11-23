@@ -91,13 +91,19 @@ describe("Geometry", () => {
     it("computes arc length for datum and position", () => {
         const geometry = new Geometry(createConfiguration({ fanDegree: 120 }));
         const datum = { depth: 1, x0: 0, x1: 1 };
-        const length = geometry.arcLength(datum, 50);
+        const layout = geometry.createLayout(datum.depth, datum);
+        const length = geometry.arcLength(layout, 50);
 
         const span = 120 * MATH_DEG2RAD;
         const inner = geometry.innerRadius(datum.depth);
         const outer = geometry.outerRadius(datum.depth);
         const relative = outer - ((100 - 50) * (outer - inner) / 100);
 
+        expect(layout.startAngle).toBeCloseTo(-(60 * MATH_DEG2RAD));
+        expect(layout.endAngle).toBeCloseTo(60 * MATH_DEG2RAD);
+        expect(layout.innerRadius).toBe(inner);
+        expect(layout.outerRadius).toBe(outer);
+        expect(layout.centerRadius).toBe(geometry.centerRadius(datum.depth));
         expect(length).toBeCloseTo(span * relative);
     });
 });

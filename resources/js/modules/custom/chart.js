@@ -215,12 +215,21 @@ export default class Chart
             .selectAll("g.person")
             .each(function (d) {
                 let person = d3.select(this);
+                const layout = that._geometry.createLayout(d.depth, d);
 
                 if (that._configuration.showColorGradients) {
-                    gradient.init(d);
+                    gradient.init(d, layout);
                 }
 
-                new Person(that._svg, that._configuration, that._arcFactory, that._geometry, person, d);
+                new Person(
+                    that._svg,
+                    that._configuration,
+                    that._arcFactory,
+                    that._geometry,
+                    layout,
+                    person,
+                    d
+                );
             });
 
         this.updateViewBox();
@@ -275,7 +284,7 @@ export default class Chart
      */
     update(url)
     {
-        let update = new Update(this._svg, this._configuration, this._hierarchy, this._arcFactory);
+        let update = new Update(this._svg, this._configuration, this._hierarchy, this._arcFactory, this._geometry);
 
         update.update(url, () => this.bindClickEventListener());
     }
