@@ -32,14 +32,21 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 use function array_map;
 
 #[CoversClass(DataFacade::class)]
+/**
+ * Validates tree construction and data extraction performed by the facade.
+ */
 final class DataFacadeTest extends TestCase
 {
+    /**
+     * Prepares router and translation context required by the facade.
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -57,7 +64,11 @@ final class DataFacadeTest extends TestCase
         $translatorProperty->setValue($translator);
     }
 
-    public function testTreeStructureIncludesParentsUntilConfiguredLimit(): void
+    /**
+     * Ensures the facade builds a node hierarchy respecting generation limits and URLs.
+     */
+    #[Test]
+    public function treeStructureIncludesParentsUntilConfiguredLimit(): void
     {
         $routeFactory = new class implements RouteFactoryInterface {
             public function route(string $route_name, array $parameters = []): string
@@ -192,6 +203,8 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
+     * Builds a fake name set matching webtrees output structure.
+     *
      * @return array<int, array<string, string|bool|array<string>>>
      */
     private function buildNameSet(string $firstName, string $lastName): array
@@ -225,6 +238,9 @@ final class DataFacadeTest extends TestCase
         ];
     }
 
+    /**
+     * Creates a date instance with predefined values for testing.
+     */
     private function createDate(string $display): Date
     {
         return new Date($display);

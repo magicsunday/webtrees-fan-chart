@@ -24,12 +24,19 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Module;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 #[CoversClass(Configuration::class)]
+/**
+ * Verifies that configuration handling honors defaults, validation, and selectable ranges.
+ */
 final class ConfigurationTest extends TestCase
 {
+    /**
+     * Ensures locale and translator are initialised before each test.
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,7 +51,11 @@ final class ConfigurationTest extends TestCase
         $translatorProperty->setValue($translator);
     }
 
-    public function testQueriesUseDefaultsWhenMissingParameters(): void
+    /**
+     * Ensures GET requests fall back to configured defaults when parameters are absent.
+     */
+    #[Test]
+    public function queriesUseDefaultsWhenMissingParameters(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
 
@@ -73,7 +84,11 @@ final class ConfigurationTest extends TestCase
         self::assertTrue($configuration->getHidePngExport());
     }
 
-    public function testPostRequestsAreValidatedAgainstRanges(): void
+    /**
+     * Ensures POSTed values are validated against allowed ranges and sanitised.
+     */
+    #[Test]
+    public function postRequestsAreValidatedAgainstRanges(): void
     {
         $request = new ServerRequest(
             RequestMethodInterface::METHOD_POST,
@@ -120,7 +135,11 @@ final class ConfigurationTest extends TestCase
         self::assertTrue($configuration->getHidePngExport());
     }
 
-    public function testSelectableListsReflectDefinedRanges(): void
+    /**
+     * Confirms list getters expose complete ranges derived from default configuration.
+     */
+    #[Test]
+    public function selectableListsReflectDefinedRanges(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
 
@@ -142,6 +161,8 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
+     * Creates a module instance prepopulated with the provided preferences.
+     *
      * @param array<string, string> $preferences
      */
     private function createModuleWithPreferences(array $preferences): Module

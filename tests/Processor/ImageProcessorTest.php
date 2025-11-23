@@ -17,12 +17,20 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Tree;
 use MagicSunday\Webtrees\FanChart\Processor\ImageProcessor;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ImageProcessor::class)]
+/**
+ * Verifies highlight image resolution based on permissions and configuration.
+ */
 final class ImageProcessorTest extends TestCase
 {
-    public function testReturnsHighlightImageWhenAvailable(): void
+    /**
+     * Ensures highlight images are returned when available and visible.
+     */
+    #[Test]
+    public function returnsHighlightImageWhenAvailable(): void
     {
         $mediaFile = $this->createMock(MediaFile::class);
         $mediaFile->method('imageUrl')->with(100, 100, 'contain')->willReturn('/highlight.png');
@@ -40,7 +48,11 @@ final class ImageProcessorTest extends TestCase
         self::assertSame('/highlight.png', $processor->getHighlightImageUrl(100, 100));
     }
 
-    public function testReturnsSilhouetteWhenEnabledAndNoMediaFound(): void
+    /**
+     * Ensures silhouettes are used when highlight images are enabled but missing.
+     */
+    #[Test]
+    public function returnsSilhouetteWhenEnabledAndNoMediaFound(): void
     {
         $tree = $this->createConfiguredTree('1', '1');
 
@@ -57,7 +69,11 @@ final class ImageProcessorTest extends TestCase
         self::assertSame('/silhouette.svg', $processor->getHighlightImageUrl(100, 100));
     }
 
-    public function testReturnsEmptyStringWhenImageNotAllowed(): void
+    /**
+     * Ensures the processor returns an empty string when images are not permitted.
+     */
+    #[Test]
+    public function returnsEmptyStringWhenImageNotAllowed(): void
     {
         $tree = $this->createConfiguredTree('', '');
 
@@ -71,6 +87,9 @@ final class ImageProcessorTest extends TestCase
         self::assertSame('', $processor->getHighlightImageUrl());
     }
 
+    /**
+     * Creates a tree mock with configured image preferences.
+     */
     private function createConfiguredTree(string $highlightPreference, string $silhouettePreference): Tree
     {
         $tree = $this->createMock(Tree::class);
@@ -81,6 +100,9 @@ final class ImageProcessorTest extends TestCase
         return $tree;
     }
 
+    /**
+     * Creates a lightweight module stub returning the provided asset URL.
+     */
     private function createModuleStub(string $assetUrl): ModuleCustomInterface
     {
         return new readonly class($assetUrl) implements ModuleCustomInterface {

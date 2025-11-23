@@ -17,13 +17,21 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Registry;
 use MagicSunday\Webtrees\FanChart\Module\VersionInformation;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 #[CoversClass(VersionInformation::class)]
+/**
+ * Confirms version information retrieval behaviour for the module.
+ */
 final class VersionInformationTest extends TestCase
 {
-    public function testFetchLatestVersionFallsBackToCustomWhenUrlMissing(): void
+    /**
+     * Ensures the current module version is returned when no remote URL is provided.
+     */
+    #[Test]
+    public function fetchLatestVersionFallsBackToCustomWhenUrlMissing(): void
     {
         $factory = new class implements CacheFactoryInterface {
             public function array(): Cache

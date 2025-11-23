@@ -18,12 +18,20 @@ use Fisharebest\Webtrees\Individual;
 use Illuminate\Support\Collection;
 use MagicSunday\Webtrees\FanChart\Processor\DateProcessor;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(DateProcessor::class)]
+/**
+ * Validates date processing for individuals and family relationships.
+ */
 final class DateProcessorTest extends TestCase
 {
-    public function testLifetimeDescriptionPrefersBothBirthAndDeathYears(): void
+    /**
+     * Ensures the lifetime description uses both birth and death years when available.
+     */
+    #[Test]
+    public function lifetimeDescriptionPrefersBothBirthAndDeathYears(): void
     {
         $individual = $this->createConfiguredIndividual();
         $processor  = new DateProcessor($individual);
@@ -31,7 +39,11 @@ final class DateProcessorTest extends TestCase
         self::assertSame('1900-1950', $processor->getLifetimeDescription());
     }
 
-    public function testMarriageDatesDecodeHtml(): void
+    /**
+     * Ensures marriage dates decode HTML content for individuals and their parents.
+     */
+    #[Test]
+    public function marriageDatesDecodeHtml(): void
     {
         $individual = $this->createConfiguredIndividual();
         $processor  = new DateProcessor($individual);
@@ -40,6 +52,9 @@ final class DateProcessorTest extends TestCase
         self::assertSame('1 JAN 1880', $processor->getMarriageDateOfParents());
     }
 
+    /**
+     * Creates an individual mock with configurable life events.
+     */
     private function createConfiguredIndividual(
         bool $isDead = true,
         bool $withBirth = true,
@@ -63,6 +78,9 @@ final class DateProcessorTest extends TestCase
         return $individual;
     }
 
+    /**
+     * Creates a date mock with provided display and validation state.
+     */
     private function createDate(int $year, string $display, bool $ok): Date
     {
         $minimumDate = $this->createMock(AbstractCalendarDate::class);
@@ -77,6 +95,8 @@ final class DateProcessorTest extends TestCase
     }
 
     /**
+     * Creates a collection containing the provided family when present.
+     *
      * @return Collection<int, Family>
      */
     private function createCollection(?Family $family): Collection
@@ -84,6 +104,9 @@ final class DateProcessorTest extends TestCase
         return new Collection($family instanceof Family ? [$family] : []);
     }
 
+    /**
+     * Creates a family mock with a preset marriage date.
+     */
     private function createConfiguredFamily(Date $marriageDate): Family
     {
         $family = $this->createMock(Family::class);

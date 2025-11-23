@@ -13,12 +13,20 @@ namespace MagicSunday\Webtrees\FanChart\Test\Model;
 
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(NodeData::class)]
+/**
+ * Tests serialization of node data with all configured fields.
+ */
 final class NodeDataTest extends TestCase
 {
-    public function testJsonSerializeContainsAllConfiguredFields(): void
+    /**
+     * Ensures the serialized payload exposes all configured node data attributes.
+     */
+    #[Test]
+    public function jsonSerializeContainsAllConfiguredFields(): void
     {
         $nodeData = (new NodeData())
             ->setId(42)
