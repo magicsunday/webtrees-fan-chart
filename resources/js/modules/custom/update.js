@@ -22,15 +22,20 @@ export default class Update
      *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
-     * @param {Hierarchy}     hierarchy
-     * @param {ArcFactory}    arcFactory
+     * @param {LayoutEngine}  layoutEngine
+     * @param {DataLoader}    dataLoader
      */
-    constructor(svg, configuration, hierarchy, arcFactory)
+    constructor(svg, configuration, layoutEngine, dataLoader)
     {
         this._svg           = svg;
         this._configuration = configuration;
-        this._hierarchy     = hierarchy;
-        this._arcFactory    = arcFactory;
+        this._layoutEngine  = layoutEngine;
+
+        const loader = dataLoader ?? {};
+
+        this._dataLoader = (typeof loader.fetchHierarchy === "function")
+            ? loader
+            : { fetchHierarchy: (url) => d3.json(url) };
     }
 
     /**
@@ -52,9 +57,7 @@ export default class Update
             .on("mouseover", null)
             .on("mouseout", null);
 
-        d3.json(
-            url
-        ).then((data) => {
+        this._dataLoader.fetchHierarchy(url).then((data) => {
             // Update the page title if provided in response
             if (data.title) {
                 // Update the page header with HTML content
@@ -71,12 +74,12 @@ export default class Update
             }
 
             // Initialize the new loaded data
-            this._hierarchy.init(data.data);
+            this._layoutEngine.initializeHierarchy(data.data);
 
             // Flag all elements which are subject to change
             let persons = this._svg
                 .selectAll("g.person")
-                .data(this._hierarchy.nodes, (datum) => datum.id)
+                .data(this._layoutEngine.hierarchy.nodes, (datum) => datum.id)
                 .each(function (datum) {
                     let empty  = datum.data.data.xref === "";
                     let person = d3.select(this);
@@ -90,7 +93,7 @@ export default class Update
                             .classed("old", true);
                     }
 
-                    new Person(that._svg, that._configuration, that._arcFactory, person, datum);
+                    new Person(that._svg, that._configuration, that._layoutEngine.arcFactory, that._layoutEngine.geometry, person, datum);
                 });
 
             // Hide all new labels of not removed elements

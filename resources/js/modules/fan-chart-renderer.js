@@ -6,7 +6,11 @@
  */
 
 import * as defaultD3 from "./lib/d3";
-import Chart from "./custom/chart";
+import DataLoader from "./custom/data-loader";
+import ExportService from "./custom/export-service";
+import LayoutEngine from "./custom/layout-engine";
+import ViewLayer from "./custom/view-layer";
+import Update from "./custom/update";
 
 /**
  * Renders the fan chart.
@@ -33,8 +37,11 @@ export default class FanChartRenderer
         this._configuration  = configuration;
         this._hierarchyData  = hierarchyData;
         this._cssFiles       = cssFiles;
-        this._chart          = null;
         this._parent         = null;
+        this._viewLayer      = new ViewLayer(this._configuration);
+        this._layoutEngine   = new LayoutEngine(this._configuration);
+        this._dataLoader     = new DataLoader();
+        this._exportService  = new ExportService(this._cssFiles);
     }
 
     /**
@@ -45,10 +52,9 @@ export default class FanChartRenderer
     render()
     {
         this._parent = this._d3.select(this._selector);
-        this._chart  = new Chart(this._parent, this._configuration);
-
-        this._chart.data = this._hierarchyData;
-        this._chart.draw();
+        this._layoutEngine.initializeHierarchy(this._hierarchyData);
+        this._viewLayer.onUpdate((url) => this.update(url));
+        this._viewLayer.render(this._parent, this._layoutEngine);
 
         return this;
     }
@@ -58,9 +64,7 @@ export default class FanChartRenderer
      */
     resize()
     {
-        if (this._chart) {
-            this._chart.updateViewBox();
-        }
+        this._viewLayer.updateViewBox();
     }
 
     /**
@@ -68,9 +72,7 @@ export default class FanChartRenderer
      */
     resetZoom()
     {
-        if (this._chart) {
-            this._chart.center();
-        }
+        this._viewLayer.center();
     }
 
     /**
@@ -80,26 +82,7 @@ export default class FanChartRenderer
      */
     export(type)
     {
-        if (!this._chart?.svg) {
-            return;
-        }
-
-        if (type === "png") {
-            this._chart.svg
-                .export(type)
-                .svgToImage(this._chart.svg, "fan-chart.png");
-
-            return;
-        }
-
-        this._chart.svg
-            .export(type)
-            .svgToImage(
-                this._chart.svg,
-                this._cssFiles,
-                "webtrees-fan-chart-container",
-                "fan-chart.svg"
-            );
+        this._exportService.export(type, this._viewLayer.svg);
     }
 
     /**
@@ -109,8 +92,8 @@ export default class FanChartRenderer
      */
     update(url)
     {
-        if (this._chart) {
-            this._chart.update(url);
-        }
+        this._update = new Update(this._viewLayer.svg, this._configuration, this._layoutEngine, this._dataLoader);
+
+        this._update.update(url, () => this._viewLayer.bindClickEventListener());
     }
 }
