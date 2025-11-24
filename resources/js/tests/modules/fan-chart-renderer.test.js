@@ -81,7 +81,7 @@ const { default: FanChartRenderer } = await import("resources/js/modules/fan-cha
 const baseOptions = {
     selector: "#chart",
     configuration: {},
-    hierarchyData: { id: "I1" },
+    data: { id: "I1" },
     cssFiles: ["fan.css"],
 };
 
@@ -103,7 +103,7 @@ describe("FanChartRenderer", () => {
         expect(selectMock).toHaveBeenCalledWith("#chart");
         expect(layoutMock).toHaveBeenCalledWith(baseOptions.configuration);
         expect(viewLayerMock).toHaveBeenCalledWith(baseOptions.configuration);
-        expect(renderer._layoutEngine.initializeHierarchy).toHaveBeenCalledWith(baseOptions.hierarchyData);
+        expect(renderer._layoutEngine.initializeHierarchy).toHaveBeenCalledWith(baseOptions.data);
         expect(renderer._viewLayer.render).toHaveBeenCalledWith({ tag: "parent" }, renderer._layoutEngine);
     });
 
