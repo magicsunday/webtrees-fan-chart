@@ -7,11 +7,11 @@
 
 import DataLoader from "./custom/data-loader";
 import D3ChartExporter from "./custom/export/d3-chart-exporter";
+import { FAN_CHART_BASE_DEFAULTS } from "./custom/fan-chart-definitions";
 import LayoutEngine from "./custom/layout-engine";
 import ViewLayer from "./custom/view-layer";
 import Update from "./custom/update";
 import ViewportEventService from "./custom/viewport-event-service";
-import * as defaultD3 from "./lib/d3";
 
 /**
  * @typedef {import("./custom/service-contracts").FanChartLayoutEngine} FanChartLayoutEngine
@@ -29,7 +29,7 @@ export default class FanChartRenderer
      * @param {import("./custom/fan-chart-options").ResolvedFanChartOptions} options
      */
     constructor(options) {
-        this._d3             = options.d3 ?? defaultD3;
+        this._d3             = options.d3 ?? FAN_CHART_BASE_DEFAULTS.d3;
         this._selector       = options.selector;
         this._configuration  = options.configuration;
         this._data           = options.data;

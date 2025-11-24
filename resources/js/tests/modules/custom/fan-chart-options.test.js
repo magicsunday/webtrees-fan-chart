@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import { FAN_CHART_BASE_DEFAULTS } from "resources/js/modules/custom/fan-chart-definitions";
 import { FAN_CHART_DEFAULTS, resolveFanChartOptions } from "resources/js/modules/custom/fan-chart-options";
 import * as defaultD3 from "resources/js/modules/lib/d3";
 
@@ -61,9 +62,28 @@ describe("resolveFanChartOptions", () => {
             controls: {
                 onRender: "not a function",
                 onResize,
+                onUnknown: jest.fn(),
             },
         });
 
         expect(resolved.controls).toEqual({ onResize });
+    });
+
+    it("preserves shared defaults for selector, css files, and d3", () => {
+        const resolved = resolveFanChartOptions({ selector: 123 });
+
+        expect(resolved.selector).toBe(FAN_CHART_BASE_DEFAULTS.selector);
+        expect(resolved.d3).toBe(FAN_CHART_BASE_DEFAULTS.d3);
+        expect(resolved.cssFiles).toEqual(FAN_CHART_BASE_DEFAULTS.cssFiles);
+    });
+
+    it("returns copies when applying default arrays", () => {
+        const resolved = resolveFanChartOptions();
+
+        resolved.cssFiles.push("fan.css");
+
+        expect(resolved.cssFiles).toContain("fan.css");
+        expect(FAN_CHART_BASE_DEFAULTS.cssFiles).toHaveLength(0);
+        expect(FAN_CHART_DEFAULTS.cssFiles).toHaveLength(0);
     });
 });

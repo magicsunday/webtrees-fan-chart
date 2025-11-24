@@ -9,15 +9,7 @@ import { createRendererActions } from "./renderer-factory";
 
 /**
  * @typedef {ReturnType<typeof createRendererActions>} RendererActions
- * @typedef {{
- *     onRender?: (handler: () => void) => void,
- *     onResize?: (handler: () => void) => void,
- *     onCenter?: (handler: () => void) => void,
- *     onExport?: (handler: (type: string) => void) => void,
- *     onExportPNG?: (handler: () => void) => void,
- *     onExportSVG?: (handler: () => void) => void,
- *     onUpdate?: (handler: (url: string) => void) => void,
- * }} ControlCallbacks
+ * @typedef {import("./custom/fan-chart-definitions").FanChartControlCallbacks} ControlCallbacks
  * @typedef {import("./custom/fan-chart-options").FanChartOptions} FanChartOptions
  */
 
