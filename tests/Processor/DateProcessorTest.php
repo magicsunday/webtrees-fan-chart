@@ -1,0 +1,117 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+namespace MagicSunday\Webtrees\FanChart\Test\Processor;
+
+use Fisharebest\Webtrees\Date;
+use Fisharebest\Webtrees\Date\AbstractCalendarDate;
+use Fisharebest\Webtrees\Family;
+use Fisharebest\Webtrees\Individual;
+use Illuminate\Support\Collection;
+use MagicSunday\Webtrees\FanChart\Processor\DateProcessor;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+
+#[CoversClass(DateProcessor::class)]
+/**
+ * Validates date processing for individuals and family relationships.
+ */
+final class DateProcessorTest extends TestCase
+{
+    /**
+     * Ensures the lifetime description uses both birth and death years when available.
+     */
+    #[Test]
+    public function lifetimeDescriptionPrefersBothBirthAndDeathYears(): void
+    {
+        $individual = $this->createConfiguredIndividual();
+        $processor  = new DateProcessor($individual);
+
+        self::assertSame('1900-1950', $processor->getLifetimeDescription());
+    }
+
+    /**
+     * Ensures marriage dates decode HTML content for individuals and their parents.
+     */
+    #[Test]
+    public function marriageDatesDecodeHtml(): void
+    {
+        $individual = $this->createConfiguredIndividual();
+        $processor  = new DateProcessor($individual);
+
+        self::assertSame('1 JAN 1930', $processor->getMarriageDate());
+        self::assertSame('1 JAN 1880', $processor->getMarriageDateOfParents());
+    }
+
+    /**
+     * Creates an individual mock with configurable life events.
+     */
+    private function createConfiguredIndividual(
+        bool $isDead = true,
+        bool $withBirth = true,
+        bool $withDeath = true,
+    ): Individual {
+        $birthDate = $this->createDate(1900, '<span>1 JAN 1900</span>', $withBirth);
+        $deathDate = $this->createDate(1950, '<span>31 DEC 1950</span>', $withDeath);
+
+        $marriageDate   = $this->createDate(1930, '<span>1 JAN 1930</span>', true);
+        $parentMarriage = $this->createDate(1880, '<span>1 JAN 1880</span>', true);
+        $spouseFamily   = $this->createConfiguredFamily($marriageDate);
+        $parentFamily   = $this->createConfiguredFamily($parentMarriage);
+
+        $individual = $this->createMock(Individual::class);
+        $individual->method('getBirthDate')->willReturn($birthDate);
+        $individual->method('getDeathDate')->willReturn($deathDate);
+        $individual->method('isDead')->willReturn($isDead);
+        $individual->method('spouseFamilies')->willReturn($this->createCollection($spouseFamily));
+        $individual->method('childFamilies')->willReturn($this->createCollection($parentFamily));
+
+        return $individual;
+    }
+
+    /**
+     * Creates a date mock with provided display and validation state.
+     */
+    private function createDate(int $year, string $display, bool $ok): Date
+    {
+        $minimumDate = $this->createMock(AbstractCalendarDate::class);
+        $minimumDate->method('year')->willReturn($year);
+
+        $date = $this->createMock(Date::class);
+        $date->method('minimumDate')->willReturn($minimumDate);
+        $date->method('display')->willReturn($display);
+        $date->method('isOK')->willReturn($ok);
+
+        return $date;
+    }
+
+    /**
+     * Creates a collection containing the provided family when present.
+     *
+     * @return Collection<int, Family>
+     */
+    private function createCollection(?Family $family): Collection
+    {
+        return new Collection($family instanceof Family ? [$family] : []);
+    }
+
+    /**
+     * Creates a family mock with a preset marriage date.
+     */
+    private function createConfiguredFamily(Date $marriageDate): Family
+    {
+        $family = $this->createMock(Family::class);
+        $family->method('getMarriageDate')->willReturn($marriageDate);
+
+        return $family;
+    }
+}

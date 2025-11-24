@@ -52,6 +52,11 @@
             "MagicSunday\\Webtrees\\FanChart\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "MagicSunday\\Webtrees\\FanChart\\Test\\": "tests/"
+        }
+    },
     "scripts": {
         "module:build": [
             "### Remove any left over files",

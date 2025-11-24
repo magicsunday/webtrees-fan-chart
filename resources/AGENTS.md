@@ -3,8 +3,9 @@
 ## Overview
 - Instructions for assets under `resources/` (JS, CSS, translations, views).
 - Decision Log:
-  - 2025-02-11: Documented rollup-based build steps and alignment with PHP module guidelines for assets.
-  - 2025-02-12: Documented JavaScript test location (`resources/js/tests`) and required commands after JS changes.
+  - 2025-11-20: Documented rollup-based build steps and alignment with PHP module guidelines for assets.
+  - 2025-11-21: Documented JavaScript test location (`resources/js/tests`) and required commands after JS changes.
+  - 2025-11-22: Reinforced vanilla-JS preference (D3 only external) plus concise, documented code expectations.
   - 2025-11-23: Playwright browsers must be installed (`npx playwright install --with-deps`) so `npm test` can run without download errors.
 
 ## Setup/env
@@ -21,6 +22,7 @@
 ## Code style
 - Use modern ES modules and avoid nested ternaries; prefer small, pure functions and descriptive naming.
 - Keep translations and templates consistent with PHP naming; avoid embedding secrets or API keys in client code.
+- Keep classes and functions concise; document intent with English JSDoc or inline comments at complex logic, and avoid external JavaScript libraries beyond D3 (vanilla JS otherwise).
 
 ## Security
 - Do not bundle secrets; sanitize user-provided data before rendering and avoid logging sensitive values in the browser.
@@ -39,3 +41,4 @@
 
 ## House Rules
 - Keep assets lightweight and accessible; aim for WCAG 2.2 AA where applicable and avoid unused bundles.
+- Prefer enums or constants for shared codes and avoid magic values in JS.

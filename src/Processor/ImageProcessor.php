@@ -15,6 +15,9 @@ use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\MediaFile;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 
+use function is_string;
+use function sprintf;
+
 /**
  * Class ImageProcessor.
  *
@@ -79,12 +82,18 @@ class ImageProcessor
                 $returnSilhouettes
                 && ($this->individual->tree()->getPreference('USE_SILHOUETTE') !== '')
             ) {
-                return $this->module->assetUrl(
+                if (method_exists($this->module, 'assetUrl') === false) {
+                    return '';
+                }
+
+                $silhouette = $this->module->assetUrl(
                     sprintf(
                         'images/silhouette-%s.svg',
                         $this->individual->sex()
                     )
                 );
+
+                return is_string($silhouette) ? $silhouette : '';
             }
         }
 

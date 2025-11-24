@@ -59,6 +59,13 @@ trait ModuleCustomTrait
     {
         $languageFile = $this->resourcesFolder() . 'lang/' . $language . '/messages.mo';
 
-        return file_exists($languageFile) ? (new Translation($languageFile))->asArray() : [];
+        if (file_exists($languageFile) === false) {
+            return [];
+        }
+
+        /** @var array<string, string> $translations */
+        $translations = (new Translation($languageFile))->asArray();
+
+        return $translations;
     }
 }
