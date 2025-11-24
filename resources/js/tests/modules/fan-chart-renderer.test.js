@@ -4,6 +4,7 @@ const selectMock       = jest.fn();
 const layoutMock       = jest.fn();
 const viewLayerMock    = jest.fn();
 const exportMock       = jest.fn();
+const dataLoaderMock   = jest.fn();
 const updateConstructor = jest.fn();
 const parentNode = { contains: jest.fn(() => false) };
 let addEventListenerSpy;
@@ -13,6 +14,14 @@ class StubLayoutEngine {
     {
         this.configuration       = configuration;
         this.initializeHierarchy = jest.fn();
+    }
+}
+
+class StubDataLoader {
+    constructor(...args)
+    {
+        dataLoaderMock(...args);
+        this.fetchHierarchy = jest.fn();
     }
 }
 
@@ -73,6 +82,11 @@ await jest.unstable_mockModule("resources/js/modules/custom/export-service", () 
     }),
 }));
 
+await jest.unstable_mockModule("resources/js/modules/custom/data-loader", () => ({
+    __esModule: true,
+    default: jest.fn((...args) => new StubDataLoader(...args)),
+}));
+
 await jest.unstable_mockModule("resources/js/modules/custom/update", () => ({
     __esModule: true,
     default: StubUpdate,
@@ -95,6 +109,7 @@ describe("FanChartRenderer", () => {
         layoutMock.mockClear();
         viewLayerMock.mockClear();
         exportMock.mockClear();
+        dataLoaderMock.mockClear();
         updateConstructor.mockClear();
         addEventListenerSpy = jest.spyOn(document, "addEventListener");
         document.fullscreenElement = null;
@@ -144,12 +159,32 @@ describe("FanChartRenderer", () => {
         const renderer = new FanChartRenderer({ ...baseOptions, d3: { select: selectMock } });
 
         renderer.render();
-
+        
         renderer._viewLayer.updateCallback("/update");
 
         expect(updateConstructor).toHaveBeenCalledWith(renderer._viewLayer.svg, baseOptions.configuration, renderer._layoutEngine, expect.anything());
         expect(renderer._viewLayer.bindClickEventListener).toHaveBeenCalledTimes(1);
         expect(renderer._update.update).toHaveBeenCalledWith("/update", expect.any(Function));
+    });
+
+    it("prefers injected loader and export services over defaults", () => {
+        const customExportService = { export: jest.fn() };
+        const customDataLoader = { fetchHierarchy: jest.fn() };
+        const renderer = new FanChartRenderer({
+            ...baseOptions,
+            d3: { select: selectMock },
+            exportService: customExportService,
+            dataLoader: customDataLoader,
+        });
+
+        renderer.render();
+        renderer.export("svg");
+        renderer.update("/custom");
+
+        expect(exportMock).not.toHaveBeenCalled();
+        expect(dataLoaderMock).not.toHaveBeenCalled();
+        expect(customExportService.export).toHaveBeenCalledWith("svg", renderer._viewLayer.svg);
+        expect(updateConstructor).toHaveBeenCalledWith(renderer._viewLayer.svg, baseOptions.configuration, renderer._layoutEngine, customDataLoader);
     });
 
     it("recalculates the view box when the fullscreen container changes", () => {

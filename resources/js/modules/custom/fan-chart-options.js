@@ -37,6 +37,10 @@ import * as defaultD3 from "../lib/d3";
  * @property {FanChartControlCallbacks} [controls] Callback map for integrating host-provided controls.
  * @property {import("./configuration").default} [configuration] Optional configuration instance.
  * @property {typeof import("../lib/d3")} [d3] D3 instance for rendering.
+ * @property {import("./service-contracts").FanChartViewLayer} [viewLayer] Optional view layer implementation.
+ * @property {import("./service-contracts").FanChartLayoutEngine} [layoutEngine] Optional layout engine implementation.
+ * @property {import("./service-contracts").FanChartDataLoader} [dataLoader] Optional data loader implementation.
+ * @property {import("./service-contracts").FanChartExportService} [exportService] Optional export service implementation.
  * @property {(handler: () => void) => void} [onRender] Legacy inline control registration.
  * @property {(handler: () => void) => void} [onResize] Legacy inline control registration.
  * @property {(handler: () => void) => void} [onCenter] Legacy inline control registration.
@@ -65,6 +69,10 @@ import * as defaultD3 from "../lib/d3";
  * @property {FanChartControlCallbacks|undefined} controls
  * @property {import("./configuration").default|undefined} configuration
  * @property {typeof import("../lib/d3")} d3
+ * @property {import("./service-contracts").FanChartViewLayer|undefined} viewLayer
+ * @property {import("./service-contracts").FanChartLayoutEngine|undefined} layoutEngine
+ * @property {import("./service-contracts").FanChartDataLoader|undefined} dataLoader
+ * @property {import("./service-contracts").FanChartExportService|undefined} exportService
  */
 
 const toStringArray = (value = []) => Array.isArray(value)
@@ -147,6 +155,10 @@ export const FAN_CHART_DEFAULTS = Object.freeze({
     controls: undefined,
     configuration: undefined,
     d3: defaultD3,
+    viewLayer: undefined,
+    layoutEngine: undefined,
+    dataLoader: undefined,
+    exportService: undefined,
 });
 
 /**
@@ -191,5 +203,9 @@ export const resolveFanChartOptions = (options = {}) => {
         controls: validatedControls,
         configuration: options.configuration,
         d3: options.d3 ?? defaults.d3,
+        viewLayer: options.viewLayer ?? defaults.viewLayer,
+        layoutEngine: options.layoutEngine ?? defaults.layoutEngine,
+        dataLoader: options.dataLoader ?? defaults.dataLoader,
+        exportService: options.exportService ?? defaults.exportService,
     };
 };
