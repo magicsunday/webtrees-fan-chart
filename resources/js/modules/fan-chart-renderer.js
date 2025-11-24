@@ -5,19 +5,15 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import DataLoader from "./custom/data-loader";
-import D3ChartExporter from "./custom/export/d3-chart-exporter";
 import { FAN_CHART_BASE_DEFAULTS } from "./custom/fan-chart-definitions";
-import LayoutEngine from "./custom/layout-engine";
-import ViewLayer from "./custom/view-layer";
 import Update from "./custom/update";
-import ViewportEventService from "./custom/viewport-event-service";
 
 /**
  * @typedef {import("./custom/service-contracts").FanChartLayoutEngine} FanChartLayoutEngine
  * @typedef {import("./custom/service-contracts").FanChartViewLayer} FanChartViewLayer
  * @typedef {import("./custom/service-contracts").FanChartDataLoader} FanChartDataLoader
  * @typedef {import("./custom/service-contracts").FanChartExportService} FanChartExportService
+ * @typedef {import("./custom/service-contracts").FanChartDependencies} FanChartDependencies
  */
 
 /**
@@ -26,26 +22,25 @@ import ViewportEventService from "./custom/viewport-event-service";
 export default class FanChartRenderer
 {
     /**
-     * @param {import("./custom/fan-chart-options").ResolvedFanChartOptions} options
+     * @param {object} options
+     * @param {import("./custom/service-contracts").FanChartD3} [options.d3]
+     * @param {string} options.selector
+     * @param {import("./custom/configuration").default} options.configuration
+     * @param {object} [options.data]
+     * @param {FanChartDependencies} options.services
      */
-    constructor(options) {
-        this._d3             = options.d3 ?? FAN_CHART_BASE_DEFAULTS.d3;
-        this._selector       = options.selector;
-        this._configuration  = options.configuration;
-        this._data           = options.data;
-        this._cssFiles       = options.cssFiles ?? [];
-        this._parent         = null;
-        this._viewLayer      = /** @type {FanChartViewLayer} */ (options.viewLayer ?? new ViewLayer(this._configuration));
-        this._layoutEngine   = /** @type {FanChartLayoutEngine} */ (options.layoutEngine ?? new LayoutEngine(this._configuration));
-        this._dataLoader     = /** @type {FanChartDataLoader} */ (options.dataLoader ?? new DataLoader());
-        this._chartExporter  = /** @type {FanChartExportService} */ (options.chartExporter ?? options.exportService ?? new D3ChartExporter(this._cssFiles));
-        this._viewportService = /** @type {import("./custom/service-contracts").ViewportEventService} */ (
-            options.viewportService ?? new ViewportEventService({
-                getContainer: () => this._parent,
-                onUpdateViewBox: () => this._viewLayer.updateViewBox(),
-                onCenter: () => this._viewLayer.center(),
-            })
-        );
+    constructor({ d3 = FAN_CHART_BASE_DEFAULTS.d3, selector, configuration, data, services }) {
+        this._d3            = d3;
+        this._selector      = selector;
+        this._configuration = configuration;
+        this._data          = data;
+        this._parent        = null;
+        this._services      = services;
+        this._viewLayer     = /** @type {FanChartViewLayer} */ (services.viewLayer);
+        this._layoutEngine  = /** @type {FanChartLayoutEngine} */ (services.layoutEngine);
+        this._dataLoader    = /** @type {FanChartDataLoader} */ (services.dataLoader);
+        this._chartExporter = /** @type {FanChartExportService} */ (services.chartExporter);
+        this._viewportService = /** @type {import("./custom/service-contracts").ViewportEventService} */ (services.viewportService);
     }
 
     /**

@@ -89,9 +89,6 @@ describe("createFanChart", () => {
 
         const rendererOptions = ctorArgs[0];
 
-        expect(rendererOptions.fanDegree).toBe(300);
-        expect(rendererOptions.fontScale).toBe(125);
-        expect(rendererOptions.innerArcs).toBe(2);
         expect(rendererOptions.configuration.fanDegree).toBe(300);
         expect(rendererOptions.configuration.fontScale).toBe(125);
         expect(rendererOptions.configuration.numberOfInnerCircles).toBe(2);

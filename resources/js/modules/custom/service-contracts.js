@@ -50,4 +50,13 @@
  * @typedef {ViewportEventService} FanChartViewportService
  */
 
+/**
+ * @typedef {object} FanChartDependencies
+ * @property {FanChartViewLayer} viewLayer
+ * @property {FanChartLayoutEngine} layoutEngine
+ * @property {FanChartDataLoader} dataLoader
+ * @property {FanChartExportService} chartExporter
+ * @property {FanChartViewportService} viewportService
+ */
+
 export {};
