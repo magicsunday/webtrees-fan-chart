@@ -1,70 +1,53 @@
 import { jest } from "@jest/globals";
+import Configuration from "resources/js/modules/custom/configuration";
 
-const eventHandlers = new Map();
+const renderMock     = jest.fn();
+const resizeMock     = jest.fn();
+const resetZoomMock  = jest.fn();
+const exportMock     = jest.fn();
+const updateMock     = jest.fn();
+const ctorArgs       = [];
 
-const selectMock = jest.fn((selector) => {
-    const selection = {
-        on: (event, handler) => {
-            eventHandlers.set(`${selector}:${event}`, handler);
+class RendererStub {
+    constructor(options)
+    {
+        ctorArgs.push(options);
+    }
 
-            return selection;
-        }
-    };
+    render = renderMock;
 
-    return selection;
+    resize = resizeMock;
+
+    resetZoom = resetZoomMock;
+
+    export = exportMock;
+
+    update = updateMock;
+}
+
+await jest.unstable_mockModule("resources/js/modules/fan-chart-renderer", () => ({
+    __esModule: true,
+    default: RendererStub,
+}));
+
+afterEach(() => {
+    ctorArgs.length = 0;
+    renderMock.mockClear();
+    resizeMock.mockClear();
+    resetZoomMock.mockClear();
+    exportMock.mockClear();
+    updateMock.mockClear();
+    document.body.innerHTML = "";
 });
 
-const chartInstances = [];
+afterAll(() => {
+    jest.resetModules();
+});
 
-class StubSvg {
-    constructor()
-    {
-        this.svgToImageMock = jest.fn();
-        this.export         = jest.fn(() => ({ svgToImage: this.svgToImageMock }));
-    }
-}
-
-class StubChart {
-    constructor(parent, configuration)
-    {
-        this.parent        = parent;
-        this.configuration = configuration;
-        this.dataValue     = null;
-
-        this.draw          = jest.fn();
-        this.center        = jest.fn();
-        this.update        = jest.fn();
-        this.updateViewBox = jest.fn();
-        this.svg           = new StubSvg();
-
-        chartInstances.push(this);
-    }
-
-    set data(value)
-    {
-        this.dataValue = value;
-    }
-
-    get data()
-    {
-        return this.dataValue;
-    }
-}
-
-await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
-    __esModule: true,
-    select: selectMock,
-}));
-
-await jest.unstable_mockModule("resources/js/modules/custom/chart", () => ({
-    __esModule: true,
-    default: StubChart,
-    chartInstances,
-}));
-
-const { FanChart } = await import("resources/js/modules/index");
+const { createFanChart, FanChart } = await import("resources/js/modules/index");
 
 const createOptions = (overrides = {}) => ({
+    selector: "#chart",
     labels: [],
     generations: 1,
     fanDegree: 180,
@@ -81,135 +64,104 @@ const createOptions = (overrides = {}) => ({
     ...overrides,
 });
 
-const ensureOrientationListeners = () => {
-    if (typeof screen.orientation.addEventListener !== "function") {
-        screen.orientation.addEventListener = jest.fn();
-    }
-};
+describe("createFanChart", () => {
+    it("constructs a renderer and renders immediately by default", () => {
+        const chart = createFanChart(createOptions());
 
-describe("FanChart", () => {
-    beforeEach(() => {
-        document.body.innerHTML = "";
-        eventHandlers.clear();
-        selectMock.mockClear();
-        chartInstances.length = 0;
-        ensureOrientationListeners();
-
-        if (screen.orientation?.addEventListener?.mockClear) {
-            screen.orientation.addEventListener.mockClear();
-        }
+        expect(chart.renderer).toBeInstanceOf(RendererStub);
+        expect(chart.actions).toBeDefined();
+        expect(renderMock).toHaveBeenCalledTimes(1);
     });
 
-    it("draws initial data during setup", () => {
-        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
-            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+    it("builds a configuration when none is provided", () => {
+        const chart = createFanChart(createOptions());
 
-        const sampleData = [{ id: "I1" }];
-
-        // eslint-disable-next-line no-new
-        new FanChart("#chart", createOptions({ data: sampleData }));
-
-        expect(chartInstances).toHaveLength(1);
-        expect(chartInstances[0].data).toBe(sampleData);
-        expect(chartInstances[0].draw).toHaveBeenCalledTimes(1);
+        expect(chart.renderer).toBeInstanceOf(RendererStub);
+        expect(ctorArgs[0].configuration).toBeInstanceOf(Configuration);
     });
 
-    it("triggers chart interactions from toolbar buttons", () => {
-        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
-            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+    it("applies numeric string options to the renderer and configuration", () => {
+        createFanChart(createOptions({
+            fanDegree: "300",
+            fontScale: "125",
+            innerArcs: "2",
+        }));
 
-        const cssFiles = ["fan.css"];
+        const rendererOptions = ctorArgs[0];
 
-        // eslint-disable-next-line no-new
-        new FanChart("#chart", createOptions({ cssFiles }));
-
-        const chart = chartInstances[0];
-
-        const centerHandler = eventHandlers.get("#centerButton:click");
-        expect(centerHandler).toBeInstanceOf(Function);
-        centerHandler();
-        expect(chart.center).toHaveBeenCalledTimes(1);
-
-        const exportPngHandler = eventHandlers.get("#exportPNG:click");
-        expect(exportPngHandler).toBeInstanceOf(Function);
-        exportPngHandler();
-        expect(chart.svg.export).toHaveBeenCalledWith("png");
-        expect(chart.svg.svgToImageMock).toHaveBeenCalledWith(chart.svg, "fan-chart.png");
-
-        const exportSvgHandler = eventHandlers.get("#exportSVG:click");
-        expect(exportSvgHandler).toBeInstanceOf(Function);
-        exportSvgHandler();
-        expect(chart.svg.export).toHaveBeenCalledWith("svg");
-        expect(chart.svg.svgToImageMock).toHaveBeenCalledWith(
-            chart.svg,
-            cssFiles,
-            "webtrees-fan-chart-container",
-            "fan-chart.svg",
-        );
+        expect(rendererOptions.configuration.fanDegree).toBe(300);
+        expect(rendererOptions.configuration.fontScale).toBe(125);
+        expect(rendererOptions.configuration.numberOfInnerCircles).toBe(2);
     });
 
-    it("delegates update requests to the chart", () => {
-        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
-            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+    it("forwards callbacks so the host can trigger renderer actions", () => {
+        const renderCallbacks = [];
+        const resizeCallbacks = [];
+        const centerCallbacks = [];
+        const exportCallbacks = [];
 
-        const fanChart = new FanChart("#chart", createOptions());
-        const chart    = chartInstances[0];
+        createFanChart(createOptions({
+            onRender: (callback) => renderCallbacks.push(callback),
+            onResize: (callback) => resizeCallbacks.push(callback),
+            onCenter: (callback) => centerCallbacks.push(callback),
+            onExport: (callback) => exportCallbacks.push(callback),
+        }));
 
-        fanChart.update("/update/url");
+        expect(renderMock).not.toHaveBeenCalled();
+        expect(renderCallbacks).toHaveLength(1);
+        expect(resizeCallbacks).toHaveLength(1);
+        expect(centerCallbacks).toHaveLength(1);
+        expect(exportCallbacks).toHaveLength(1);
 
-        expect(chart.update).toHaveBeenCalledWith("/update/url");
+        renderCallbacks[0]();
+        resizeCallbacks[0]();
+        centerCallbacks[0]();
+        exportCallbacks[0]("png");
+
+        expect(renderMock).toHaveBeenCalledTimes(1);
+        expect(resizeMock).toHaveBeenCalledTimes(1);
+        expect(resetZoomMock).toHaveBeenCalledTimes(1);
+        expect(exportMock).toHaveBeenCalledWith("png");
     });
 
-    it("keeps the viewBox in sync when fullscreen mode changes", () => {
-        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
-            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+    it("binds default controls located in the fullscreen container", () => {
+        document.body.innerHTML = `
+            <div class="webtrees-fan-fullscreen-container">
+                <div class="toolbar">
+                    <button id="centerButton" type="button"></button>
+                    <button id="exportPNG" type="button"></button>
+                    <button id="exportSVG" type="button"></button>
+                </div>
+                <div id="chart" class="webtrees-fan-chart-container"></div>
+            </div>
+        `;
 
-        const addEventListenerSpy = jest.spyOn(document, "addEventListener");
+        createFanChart(createOptions());
 
-        // eslint-disable-next-line no-new
-        new FanChart("#chart", createOptions());
+        resetZoomMock.mockClear();
+        exportMock.mockClear();
 
-        const chart = chartInstances[0];
+        document.querySelector("#centerButton").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        document.querySelector("#exportPNG").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        document.querySelector("#exportSVG").dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
-        const fullscreenCall = addEventListenerSpy.mock.calls.find(([event]) => event === "fullscreenchange");
-        expect(fullscreenCall?.[1]).toBeInstanceOf(Function);
-
-        const [ , fullscreenHandler ] = fullscreenCall;
-
-        document.fullscreenElement = document.createElement("div");
-        fullscreenHandler();
-        expect(document.body.hasAttribute("fullscreen")).toBe(true);
-        expect(chart.updateViewBox).toHaveBeenCalledTimes(1);
-
-        document.fullscreenElement = null;
-        fullscreenHandler();
-        expect(document.body.hasAttribute("fullscreen")).toBe(false);
-        expect(chart.updateViewBox).toHaveBeenCalledTimes(2);
-
-        addEventListenerSpy.mockRestore();
+        expect(resetZoomMock).toHaveBeenCalledTimes(1);
+        expect(exportMock).toHaveBeenNthCalledWith(1, "png");
+        expect(exportMock).toHaveBeenNthCalledWith(2, "svg");
     });
+});
 
-    it("updates the viewBox after device orientation changes", () => {
-        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
-            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+describe("FanChart factory", () => {
+    it("returns a chainable API compatible with constructor usage", () => {
+        const chart = new FanChart("#chart", createOptions());
 
-        const orientationListenerSpy = jest.spyOn(screen.orientation, "addEventListener");
+        expect(chart.renderer).toBeInstanceOf(RendererStub);
 
-        // eslint-disable-next-line no-new
-        new FanChart("#chart", createOptions());
+        chart.render().resize().center().export("png").update("/url").registerControls({ onRender: jest.fn() });
 
-        const changeCall = orientationListenerSpy.mock.calls.find(([event]) => event === "change");
-        expect(changeCall?.[1]).toBeInstanceOf(Function);
-
-        const [ , changeHandler ] = changeCall;
-
-        const chart = chartInstances[0];
-        chart.updateViewBox.mockClear();
-
-        changeHandler();
-
-        expect(chart.updateViewBox).toHaveBeenCalledTimes(1);
-
-        orientationListenerSpy.mockRestore();
+        expect(renderMock).toHaveBeenCalled();
+        expect(resizeMock).toHaveBeenCalled();
+        expect(resetZoomMock).toHaveBeenCalled();
+        expect(exportMock).toHaveBeenCalledWith("png");
     });
 });

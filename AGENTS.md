@@ -1,4 +1,4 @@
-<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2025-02-13 -->
+<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2025-11-24 -->
 
 ## Overview
 - This repository hosts the webtrees fan chart module; this file sets global defaults and indexes scoped instructions (nearest AGENTS.md takes precedence).
@@ -6,6 +6,8 @@
   - 2025-02-11: Added AGENTS.md scaffolding and documented required composer checks before commits.
   - 2025-02-12: Consolidated JavaScript tests under resources/js/tests and clarified test expectations (JS vs PHP tooling).
   - 2025-02-13: Captured conciseness, documentation, testing, and enum/value-object requirements plus vanilla-JS guidance.
+  - 2025-02-14: Aligned JavaScript documentation expectations with PHPDoc coverage (use JSDoc at the same level for JS files).
+  - 2025-11-24: Record the current date in each AGENTS.md `Last updated` field whenever instructions change.
 - Scoped guides: see [src/AGENTS.md](src/AGENTS.md) for PHP code and [resources/AGENTS.md](resources/AGENTS.md) for assets.
 
 ## Setup/env
@@ -26,6 +28,7 @@
 - Avoid mixed types, `empty()`, nested ternaries, redundant casts/braces, and dynamic static calls; prefer array helpers like `array_find`/`array_any`.
 - Keep classes and methods concise; use enums or typed constants instead of magic numbers/strings and prefer value objects over complex plain arrays to capture intermediates.
 - Provide explicit parentheses for complex conditional expressions; use expressive variable names and English inline comments only at complex logic.
+- Document JavaScript with JSDoc to the same extent PHP files require PHPDoc coverage.
 
 ## Security
 - Do not commit secrets or PII; rely on secret managers and keep .build outputs out of version control.
