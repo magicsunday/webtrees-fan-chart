@@ -4,6 +4,7 @@
 
 /**
  * @typedef {import("../lib/d3")} FanChartD3
+ * @typedef {import("./fan-chart-definitions").FanChartControlCallbacks} FanChartControlCallbacks
  */
 
 /**
