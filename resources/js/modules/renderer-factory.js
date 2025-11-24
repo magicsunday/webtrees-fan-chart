@@ -33,6 +33,8 @@ const buildDependencies = ({ configuration, resolvedOptions, getContainer }) => 
         chartExporter: resolvedOptions.chartExporter,
         exportService: resolvedOptions.exportService,
         viewportService: resolvedOptions.viewportService,
+        updateService: resolvedOptions.updateService,
+        updateServiceFactory: resolvedOptions.updateServiceFactory,
     },
     getContainer,
 });
