@@ -114,7 +114,7 @@ export default class Chart
 
         const fullscreenElement = document.fullscreenElement;
         const isFullscreen      = fullscreenElement !== null && fullscreenElement !== undefined;
-        const padding           = isFullscreen ? 0 : this.convertRemToPixels(MIN_PADDING);
+        const padding           = this.convertRemToPixels(MIN_PADDING);
 
         // Get bounding boxes
         let svgBoundingBox          = this.svg.visual.node().getBBox();
