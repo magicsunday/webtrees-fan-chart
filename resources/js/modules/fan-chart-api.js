@@ -5,13 +5,14 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import { createRenderer } from "./renderer-factory";
+import { buildRendererContext, createRendererActions, instantiateRenderer } from "./renderer-factory";
 import { wireRendererToControls } from "./ui-wiring";
 
 /**
  * @typedef {ReturnType<typeof import("./renderer-factory").createRendererActions>} RendererActions
  * @typedef {import("./fan-chart-renderer").default} FanChartRenderer
  * @typedef {import("./custom/fan-chart-options").FanChartOptions} FanChartOptions
+ * @typedef {ReturnType<typeof import("./renderer-factory").buildRendererContext>} RendererContext
  */
 
 /**
@@ -19,12 +20,20 @@ import { wireRendererToControls } from "./ui-wiring";
  * The adapter keeps renderer state untouched while wiring control callbacks.
  *
  * @param {FanChartOptions} [options] Fan chart configuration and host callbacks.
+ * @param {RendererContext|undefined} [context] Optional prebuilt renderer context to reuse dependencies and resolved options.
  * @returns {{ renderer: FanChartRenderer, actions: RendererActions }} Public adapter containing the renderer and bound actions.
  */
-export const createFanChartApi = (options = {}) => {
-    const { renderer, actions, resolvedOptions } = createRenderer(options);
+export const createFanChartApi = (options = {}, context) => {
+    let renderer;
+    const rendererContext = context ?? buildRendererContext(options, {
+        getContainer: () => renderer?._parent ?? null,
+    });
 
-    wireRendererToControls(actions, resolvedOptions);
+    renderer = instantiateRenderer(rendererContext);
+
+    const actions = createRendererActions(renderer);
+
+    wireRendererToControls(actions, rendererContext.resolvedOptions);
 
     return { renderer, actions };
 };
