@@ -276,12 +276,21 @@ describe("Chart", () => {
         expect(viewBoxCall.value).toEqual([-66, -66, 532, 432]);
     });
 
-    test("updateViewBox respects fullscreen dimensions", () => {
+    test("updateViewBox applies fullscreen padding", () => {
         const data = createHierarchyDatum();
         const parentSelection = createParentSelection({ width: 600, height: 450 });
         const chart = new Chart(parentSelection, createConfiguration());
         const getComputedStyleSpy = jest.spyOn(window, "getComputedStyle")
-            .mockReturnValue({ fontSize: "16px" });
+            .mockImplementation((element) => (element === document.documentElement
+                ? { fontSize: "16px" }
+                : {
+                    fontSize: "16px",
+                    paddingBottom: "10px",
+                    paddingLeft: "10px",
+                    paddingRight: "10px",
+                    paddingTop: "10px",
+                }
+            ));
 
         setSvgBoundingBox({ x: 0, y: 0, width: 400, height: 300 });
         chart.data = data;
@@ -299,7 +308,7 @@ describe("Chart", () => {
 
         expect(widthCall?.value).toBe(800);
         expect(heightCall?.value).toBe(600);
-        expect(viewBoxCall?.value).toEqual([0, 0, 400, 300]);
+        expect(viewBoxCall?.value).toEqual([-10, -10, 420, 320]);
 
         document.fullscreenElement = null;
         getComputedStyleSpy.mockRestore();

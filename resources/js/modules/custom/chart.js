@@ -103,6 +103,33 @@ export default class Chart
     }
 
     /**
+     * Resolve the padding that should surround the SVG viewBox.
+     *
+     * @param {boolean} isFullscreen Indicates whether the chart is displayed in fullscreen mode.
+     *
+     * @returns {{ horizontal: number, vertical: number }} Horizontal and vertical padding values.
+     */
+    resolvePadding(isFullscreen)
+    {
+        if (!isFullscreen) {
+            const padding = this.convertRemToPixels(MIN_PADDING);
+
+            return {
+                horizontal: padding,
+                vertical: padding,
+            };
+        }
+
+        const elementStyle = window.getComputedStyle(this.parent.node());
+        const parsePadding = (value) => Number.parseFloat(value ?? "0") || 0;
+
+        return {
+            horizontal: Math.max(parsePadding(elementStyle.paddingLeft), parsePadding(elementStyle.paddingRight)),
+            vertical: Math.max(parsePadding(elementStyle.paddingTop), parsePadding(elementStyle.paddingBottom)),
+        };
+    }
+
+    /**
      * Update/Calculate the viewBox attribute of the SVG element.
      */
     updateViewBox()
@@ -114,7 +141,7 @@ export default class Chart
 
         const fullscreenElement = document.fullscreenElement;
         const isFullscreen      = fullscreenElement !== null && fullscreenElement !== undefined;
-        const padding           = isFullscreen ? 0 : this.convertRemToPixels(MIN_PADDING);
+        const padding           = this.resolvePadding(isFullscreen);
 
         // Get bounding boxes
         let svgBoundingBox          = this.svg.visual.node().getBBox();
@@ -136,8 +163,8 @@ export default class Chart
         let offsetY = (viewBoxHeight - svgBoundingBox.height) >> 1;
 
         // Adjust view box dimensions by padding and offset
-        let viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - padding);
-        let viewBoxTop  = Math.ceil(svgBoundingBox.y - offsetY - padding);
+        let viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - padding.horizontal);
+        let viewBoxTop  = Math.ceil(svgBoundingBox.y - offsetY - padding.vertical);
 
         // In fullscreen mode, use the full available height
         // (buttonbar is now overlayed, so no offset needed)
@@ -149,8 +176,8 @@ export default class Chart
         }
 
         // Final width/height of view box
-        viewBoxWidth  = Math.ceil(viewBoxWidth + (padding << 1));
-        viewBoxHeight = Math.ceil(viewBoxHeight + (padding << 1));
+        viewBoxWidth  = Math.ceil(viewBoxWidth + (padding.horizontal * 2));
+        viewBoxHeight = Math.ceil(viewBoxHeight + (padding.vertical * 2));
 
         // Set view box attribute
         this.svg

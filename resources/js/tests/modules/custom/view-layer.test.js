@@ -56,13 +56,26 @@ describe("ViewLayer", () => {
         document.fullscreenElement = null;
     });
 
-    test("updateViewBox removes padding in fullscreen mode", () => {
+    test("updateViewBox applies fullscreen padding", () => {
         const viewLayer = new ViewLayer({});
         const parentSelection = createParentSelection({ width: 600, height: 450 });
         const fullscreenRect = { width: 800, height: 600 };
 
         viewLayer._parent = parentSelection;
         viewLayer._svg = new MockSvg();
+
+        const getComputedStyleSpy = jest.spyOn(window, "getComputedStyle").mockImplementation((element) => {
+            if (element === document.documentElement) {
+                return { fontSize: "16px" };
+            }
+
+            return {
+                paddingBottom: "10px",
+                paddingLeft: "10px",
+                paddingRight: "10px",
+                paddingTop: "10px",
+            };
+        });
 
         document.fullscreenElement = {
             getBoundingClientRect: () => fullscreenRect,
@@ -76,6 +89,8 @@ describe("ViewLayer", () => {
 
         expect(widthCall?.value).toBe(fullscreenRect.width);
         expect(heightCall?.value).toBe(fullscreenRect.height);
-        expect(viewBoxCall?.value).toEqual([0, 0, 400, 300]);
+        expect(viewBoxCall?.value).toEqual([-10, -10, 420, 320]);
+
+        getComputedStyleSpy.mockRestore();
     });
 });
