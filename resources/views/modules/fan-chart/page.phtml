@@ -152,6 +152,20 @@ function toggleMoreOptions(storage)
     }
 }
 
+/**
+ * Parses a stored value into a finite number.
+ *
+ * @param {unknown} value
+ *
+ * @returns {number|undefined}
+ */
+function toStoredNumber(value)
+{
+    const parsedValue = Number(value);
+
+    return Number.isFinite(parsedValue) ? parsedValue : undefined;
+}
+
 // Set up storage object
 const storage = new WebtreesFanChart.Storage("webtrees-fan-chart");
 
@@ -168,15 +182,18 @@ storage.register("fontScale");
 toggleMoreOptions(storage);
 
 // Set initial stored value for radio button group
-document.getElementById("fanDegreeOutput").value = parseInt(storage.read("fanDegree")) + "°";
+const storedFanDegree = toStoredNumber(storage.read("fanDegree"));
+const defaultFanDegree = Number.parseInt(document.getElementById("fanDegree").value, 10);
 
-const fanDegree               = storage.read("fanDegree");
+document.getElementById("fanDegreeOutput").value = `${storedFanDegree ?? defaultFanDegree}°`;
+
+const fanDegree               = storedFanDegree;
 const generations             = parseInt(storage.read("generations"));
 const hideEmptySegments       = storage.read("hideEmptySegments");
 const showColorGradients      = storage.read("showColorGradients");
 const showParentMarriageDates = storage.read("showParentMarriageDates");
-const innerArcs               = storage.read("innerArcs");
-const fontScale               = storage.read("fontScale");
+const innerArcs               = toStoredNumber(storage.read("innerArcs"));
+const fontScale               = toStoredNumber(storage.read("fontScale"));
 const ajaxUrl                 = getUrl(<?= json_encode($ajaxUrl) ?>, storage.read("generations"));
 
 document.getElementById("fan-chart-url")

@@ -35,6 +35,18 @@ describe("resolveFanChartOptions", () => {
         expect(resolved.controls).toBeUndefined();
     });
 
+    it("coerces numeric string options to finite numbers", () => {
+        const resolved = resolveFanChartOptions({
+            fanDegree: "275",
+            fontScale: "125.5",
+            innerArcs: "3",
+        });
+
+        expect(resolved.fanDegree).toBe(275);
+        expect(resolved.fontScale).toBeCloseTo(125.5);
+        expect(resolved.innerArcs).toBe(3);
+    });
+
     it("collects inline callbacks when no controls object is provided", () => {
         const onRender = jest.fn();
         const resolved = resolveFanChartOptions({ onRender });
