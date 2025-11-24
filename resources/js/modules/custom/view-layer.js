@@ -85,7 +85,7 @@ export default class ViewLayer
 
         const fullscreenElement = document.fullscreenElement;
         const isFullscreen      = fullscreenElement !== null && fullscreenElement !== undefined;
-        const padding           = isFullscreen ? 0 : this.convertRemToPixels(MIN_PADDING);
+        const padding           = this.convertRemToPixels(MIN_PADDING);
 
         let svgBoundingBox          = this._svg.visual.node().getBBox();
         let clientBoundingBox       = this._parent.node().getBoundingClientRect();
