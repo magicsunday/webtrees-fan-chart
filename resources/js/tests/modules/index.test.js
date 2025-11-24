@@ -5,6 +5,7 @@ const renderMock     = jest.fn();
 const resizeMock     = jest.fn();
 const resetZoomMock  = jest.fn();
 const exportMock     = jest.fn();
+const updateMock     = jest.fn();
 const ctorArgs       = [];
 
 class RendererStub {
@@ -20,6 +21,8 @@ class RendererStub {
     resetZoom = resetZoomMock;
 
     export = exportMock;
+
+    update = updateMock;
 }
 
 await jest.unstable_mockModule("resources/js/modules/fan-chart-renderer", () => ({
@@ -33,6 +36,7 @@ afterEach(() => {
     resizeMock.mockClear();
     resetZoomMock.mockClear();
     exportMock.mockClear();
+    updateMock.mockClear();
     document.body.innerHTML = "";
 });
 
@@ -40,7 +44,7 @@ afterAll(() => {
     jest.resetModules();
 });
 
-const { createFanChart } = await import("resources/js/modules/index");
+const { createFanChart, FanChart } = await import("resources/js/modules/index");
 
 const createOptions = (overrides = {}) => ({
     selector: "#chart",
@@ -62,15 +66,17 @@ const createOptions = (overrides = {}) => ({
 
 describe("createFanChart", () => {
     it("constructs a renderer and renders immediately by default", () => {
-        const renderer = createFanChart(createOptions());
+        const chart = createFanChart(createOptions());
 
-        expect(renderer).toBeInstanceOf(RendererStub);
+        expect(chart.renderer).toBeInstanceOf(RendererStub);
+        expect(chart.actions).toBeDefined();
         expect(renderMock).toHaveBeenCalledTimes(1);
     });
 
     it("builds a configuration when none is provided", () => {
-        createFanChart(createOptions());
+        const chart = createFanChart(createOptions());
 
+        expect(chart.renderer).toBeInstanceOf(RendererStub);
         expect(ctorArgs[0].configuration).toBeInstanceOf(Configuration);
     });
 
@@ -145,5 +151,20 @@ describe("createFanChart", () => {
         expect(resetZoomMock).toHaveBeenCalledTimes(1);
         expect(exportMock).toHaveBeenNthCalledWith(1, "png");
         expect(exportMock).toHaveBeenNthCalledWith(2, "svg");
+    });
+});
+
+describe("FanChart factory", () => {
+    it("returns a chainable API compatible with constructor usage", () => {
+        const chart = new FanChart("#chart", createOptions());
+
+        expect(chart.renderer).toBeInstanceOf(RendererStub);
+
+        chart.render().resize().center().export("png").update("/url").registerControls({ onRender: jest.fn() });
+
+        expect(renderMock).toHaveBeenCalled();
+        expect(resizeMock).toHaveBeenCalled();
+        expect(resetZoomMock).toHaveBeenCalled();
+        expect(exportMock).toHaveBeenCalledWith("png");
     });
 });

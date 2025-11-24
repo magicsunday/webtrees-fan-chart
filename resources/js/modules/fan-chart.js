@@ -5,77 +5,82 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import { createRenderer } from "./renderer-factory";
-import { registerCallbacks, wireRendererToControls } from "./ui-wiring";
+import createFanChartApi from "./fan-chart-api";
+import { registerCallbacks } from "./ui-wiring";
+
+/**
+ * @typedef {ReturnType<typeof import("./fan-chart-api").default>} FanChartApiAdapter
+ * @typedef {ReturnType<typeof buildFanChartHandle>} FanChartPublicApi
+ */
 
 /**
  * Create a fan chart renderer and wire host-provided controls to its actions.
  *
  * @param {import("./custom/fan-chart-options").FanChartOptions} options Fan chart configuration and control callbacks.
- * @returns {import("./fan-chart-renderer").default & { actions: ReturnType<typeof import("./renderer-factory").createRendererActions> }} Renderer exposing callable actions.
+ * @returns {FanChartPublicApi} Renderer-backed public API exposing callable actions.
  */
 export const createFanChart = (options = {}) => {
-    const { renderer, actions, resolvedOptions } = createRenderer(options);
-
-    wireRendererToControls(actions, resolvedOptions);
-
-    renderer.actions = actions;
-
-    return renderer;
+    return buildFanChartHandle(createFanChartApi(options));
 };
 
-export class FanChart
+/**
+ * Create an immutable, chainable API for interacting with the fan chart.
+ *
+ * @param {FanChartApiAdapter} adapter Renderer adapter containing stateful instances and actions.
+ * @returns {FanChartPublicApi} Chainable API exposing the renderer, actions, and control registration helpers.
+ */
+const buildFanChartHandle = ({ renderer, actions }) => {
+    const handle = {
+        renderer,
+        actions,
+        render: () => {
+            actions.render();
+
+            return handle;
+        },
+        resize: () => {
+            actions.resize();
+
+            return handle;
+        },
+        center: () => {
+            actions.center();
+
+            return handle;
+        },
+        export: (type) => {
+            actions.export(type);
+
+            return handle;
+        },
+        update: (url) => {
+            actions.update(url);
+
+            return handle;
+        },
+        registerControls: (callbacks) => {
+            registerCallbacks(callbacks, actions);
+
+            return handle;
+        },
+    };
+
+    return handle;
+};
+
+/**
+ * Factory exporting a chainable FanChart API.
+ *
+ * @param {string} selector CSS selector resolving the chart container.
+ * @param {import("./custom/fan-chart-options").FanChartOptions} [options] Optional fan chart configuration.
+ * @returns {FanChartPublicApi} Public API wrapper around the renderer and its actions.
+ */
+export function FanChart(selector, options = {})
 {
-    constructor(selector, options = {})
-    {
-        this.renderer = createFanChart({
-            ...options,
-            selector,
-        });
-        this.actions  = this.renderer.actions;
-    }
-
-    render()
-    {
-        this.actions.render();
-
-        return this;
-    }
-
-    resize()
-    {
-        this.actions.resize();
-
-        return this;
-    }
-
-    center()
-    {
-        this.actions.center();
-
-        return this;
-    }
-
-    export(type)
-    {
-        this.actions.export(type);
-
-        return this;
-    }
-
-    update(url)
-    {
-        this.actions.update(url);
-
-        return this;
-    }
-
-    registerControls(callbacks)
-    {
-        registerCallbacks(callbacks, this.actions);
-
-        return this;
-    }
+    return createFanChart({
+        ...options,
+        selector,
+    });
 }
 
 export default FanChart;
