@@ -51,12 +51,18 @@ const createParentSelection = ({ width, height }) => ({
     }),
 });
 
+const rootFontSize = "16px";
+
 describe("ViewLayer", () => {
+    beforeEach(() => {
+        window.getComputedStyle = jest.fn(() => ({ fontSize: rootFontSize }));
+    });
+
     afterEach(() => {
         document.fullscreenElement = null;
     });
 
-    test("updateViewBox removes padding in fullscreen mode", () => {
+    test("updateViewBox keeps padding in fullscreen mode", () => {
         const viewLayer = new ViewLayer({});
         const parentSelection = createParentSelection({ width: 600, height: 450 });
         const fullscreenRect = { width: 800, height: 600 };
@@ -76,6 +82,6 @@ describe("ViewLayer", () => {
 
         expect(widthCall?.value).toBe(fullscreenRect.width);
         expect(heightCall?.value).toBe(fullscreenRect.height);
-        expect(viewBoxCall?.value).toEqual([0, 0, 400, 300]);
+        expect(viewBoxCall?.value).toEqual([-16, -16, 432, 332]);
     });
 });
