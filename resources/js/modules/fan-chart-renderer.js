@@ -31,6 +31,7 @@ export default class FanChartRenderer
         this._layoutEngine   = new LayoutEngine(this._configuration);
         this._dataLoader     = new DataLoader();
         this._exportService  = new ExportService(this._cssFiles);
+        this._handleFullscreenChange = this.handleFullscreenChange.bind(this);
     }
 
     /**
@@ -44,6 +45,7 @@ export default class FanChartRenderer
         this._layoutEngine.initializeHierarchy(this._data);
         this._viewLayer.onUpdate((url) => this.update(url));
         this._viewLayer.render(this._parent, this._layoutEngine);
+        document.addEventListener("fullscreenchange", this._handleFullscreenChange);
 
         return this;
     }
@@ -54,6 +56,31 @@ export default class FanChartRenderer
     resize()
     {
         this._viewLayer.updateViewBox();
+    }
+
+    /**
+     * Reacts to changes of the fullscreen state and resizes the chart if the
+     * current view is affected.
+     */
+    handleFullscreenChange()
+    {
+        const fullscreenElement = document.fullscreenElement;
+        const parentNode        = this._parent?.node?.();
+
+        if (!parentNode) {
+            return;
+        }
+
+        const exitedFullscreen       = fullscreenElement === null;
+        const fullscreenContainsNode = fullscreenElement?.contains?.(parentNode) ?? false;
+        const nodeContainsFullscreen = parentNode.contains?.(fullscreenElement) ?? false;
+        const isFullscreenTarget = fullscreenElement === parentNode
+            || fullscreenContainsNode
+            || nodeContainsFullscreen;
+
+        if (exitedFullscreen || isFullscreenTarget) {
+            this.resize();
+        }
     }
 
     /**
