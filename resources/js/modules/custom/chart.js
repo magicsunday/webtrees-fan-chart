@@ -112,12 +112,14 @@ export default class Chart
             .attr("width", "100%")
             .attr("height", "100%");
 
-        const padding = this.convertRemToPixels(MIN_PADDING);
+        const fullscreenElement = document.fullscreenElement;
+        const isFullscreen      = fullscreenElement !== null && fullscreenElement !== undefined;
+        const padding           = isFullscreen ? 0 : this.convertRemToPixels(MIN_PADDING);
 
         // Get bounding boxes
         let svgBoundingBox          = this.svg.visual.node().getBBox();
         let clientBoundingBox       = this.parent.node().getBoundingClientRect();
-        const fullscreenBoundingBox = document.fullscreenElement?.getBoundingClientRect?.();
+        const fullscreenBoundingBox = isFullscreen ? fullscreenElement.getBoundingClientRect?.() : undefined;
         const containerBoundingBox  = fullscreenBoundingBox ?? clientBoundingBox;
 
         // View box should have at least the same width/height as the parent element
@@ -134,7 +136,7 @@ export default class Chart
 
         // In fullscreen mode, use the full available height
         // (buttonbar is now overlayed, so no offset needed)
-        if (document.fullscreenElement) {
+        if (isFullscreen) {
             // Set width/height attributes
             this.svg
                 .attr("width", containerBoundingBox.width)
