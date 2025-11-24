@@ -5,6 +5,8 @@ const layoutMock       = jest.fn();
 const viewLayerMock    = jest.fn();
 const exportMock       = jest.fn();
 const updateConstructor = jest.fn();
+const parentNode = { contains: jest.fn(() => false) };
+let addEventListenerSpy;
 
 class StubLayoutEngine {
     constructor(configuration)
@@ -87,12 +89,20 @@ const baseOptions = {
 
 describe("FanChartRenderer", () => {
     beforeEach(() => {
-        selectMock.mockReturnValue({ tag: "parent" });
+        parentNode.contains.mockReturnValue(false);
+        selectMock.mockReturnValue({ tag: "parent", node: () => parentNode });
         selectMock.mockClear();
         layoutMock.mockClear();
         viewLayerMock.mockClear();
         exportMock.mockClear();
         updateConstructor.mockClear();
+        addEventListenerSpy = jest.spyOn(document, "addEventListener");
+        document.fullscreenElement = null;
+    });
+
+    afterEach(() => {
+        addEventListenerSpy.mockRestore();
+        document.fullscreenElement = null;
     });
 
     it("renders with injected d3 and draws the chart", () => {
@@ -104,7 +114,7 @@ describe("FanChartRenderer", () => {
         expect(layoutMock).toHaveBeenCalledWith(baseOptions.configuration);
         expect(viewLayerMock).toHaveBeenCalledWith(baseOptions.configuration);
         expect(renderer._layoutEngine.initializeHierarchy).toHaveBeenCalledWith(baseOptions.data);
-        expect(renderer._viewLayer.render).toHaveBeenCalledWith({ tag: "parent" }, renderer._layoutEngine);
+        expect(renderer._viewLayer.render).toHaveBeenCalledWith({ tag: "parent", node: expect.any(Function) }, renderer._layoutEngine);
     });
 
     it("resizes and recenters the chart", () => {
@@ -139,5 +149,39 @@ describe("FanChartRenderer", () => {
         expect(updateConstructor).toHaveBeenCalledWith(renderer._viewLayer.svg, baseOptions.configuration, renderer._layoutEngine, expect.anything());
         expect(renderer._viewLayer.bindClickEventListener).toHaveBeenCalledTimes(1);
         expect(renderer._update.update).toHaveBeenCalledWith("/update", expect.any(Function));
+    });
+
+    it("recalculates the view box when the fullscreen container changes", () => {
+        const renderer = new FanChartRenderer({ ...baseOptions, d3: { select: selectMock } });
+
+        renderer.render();
+
+        const fullscreenHandler = addEventListenerSpy.mock.calls.find(([event]) => event === "fullscreenchange")?.[1];
+
+        expect(fullscreenHandler).toBeInstanceOf(Function);
+
+        document.fullscreenElement = { contains: jest.fn(() => true) };
+        fullscreenHandler();
+
+        document.fullscreenElement = null;
+        fullscreenHandler();
+
+        expect(renderer._viewLayer.updateViewBox).toHaveBeenCalledTimes(2);
+    });
+
+    it("ignores unrelated fullscreen changes", () => {
+        const renderer = new FanChartRenderer({ ...baseOptions, d3: { select: selectMock } });
+
+        renderer.render();
+
+        const fullscreenHandler = addEventListenerSpy.mock.calls.find(([event]) => event === "fullscreenchange")?.[1];
+
+        expect(fullscreenHandler).toBeInstanceOf(Function);
+
+        document.fullscreenElement = { contains: jest.fn(() => false) };
+        parentNode.contains.mockReturnValue(false);
+        fullscreenHandler();
+
+        expect(renderer._viewLayer.updateViewBox).not.toHaveBeenCalled();
     });
 });
