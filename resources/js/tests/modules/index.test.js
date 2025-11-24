@@ -73,6 +73,23 @@ describe("createFanChart", () => {
         expect(ctorArgs[0].configuration).toBeInstanceOf(Configuration);
     });
 
+    it("applies numeric string options to the renderer and configuration", () => {
+        createFanChart(createOptions({
+            fanDegree: "300",
+            fontScale: "125",
+            innerArcs: "2",
+        }));
+
+        const rendererOptions = ctorArgs[0];
+
+        expect(rendererOptions.fanDegree).toBe(300);
+        expect(rendererOptions.fontScale).toBe(125);
+        expect(rendererOptions.innerArcs).toBe(2);
+        expect(rendererOptions.configuration.fanDegree).toBe(300);
+        expect(rendererOptions.configuration.fontScale).toBe(125);
+        expect(rendererOptions.configuration.numberOfInnerCircles).toBe(2);
+    });
+
     it("forwards callbacks so the host can trigger renderer actions", () => {
         const renderCallbacks = [];
         const resizeCallbacks = [];
