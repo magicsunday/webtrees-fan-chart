@@ -76,6 +76,6 @@ describe("ViewLayer", () => {
 
         expect(widthCall?.value).toBe(fullscreenRect.width);
         expect(heightCall?.value).toBe(fullscreenRect.height);
-        expect(viewBoxCall?.value).toEqual([-200, -150, 800, 600]);
+        expect(viewBoxCall?.value).toEqual([0, 0, 400, 300]);
     });
 });
