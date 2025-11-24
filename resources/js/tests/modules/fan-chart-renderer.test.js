@@ -1,37 +1,44 @@
 import { jest } from "@jest/globals";
 
-const selectMock = jest.fn();
+const selectMock       = jest.fn();
+const layoutMock       = jest.fn();
+const viewLayerMock    = jest.fn();
+const exportMock       = jest.fn();
+const updateConstructor = jest.fn();
 
-class StubSvg {
-    constructor()
+class StubLayoutEngine {
+    constructor(configuration)
     {
-        this.svgToImageMock = jest.fn();
-        this.export         = jest.fn(() => ({ svgToImage: this.svgToImageMock }));
+        this.configuration       = configuration;
+        this.initializeHierarchy = jest.fn();
     }
 }
 
-class StubChart {
-    constructor(parent, configuration)
+class StubViewLayer {
+    constructor(configuration)
     {
-        this.parent        = parent;
-        this.configuration = configuration;
-        this.dataValue     = null;
-
-        this.draw          = jest.fn();
-        this.center        = jest.fn();
-        this.update        = jest.fn();
-        this.updateViewBox = jest.fn();
-        this.svg           = new StubSvg();
+        this.configuration        = configuration;
+        this.render               = jest.fn();
+        this.updateViewBox        = jest.fn();
+        this.center               = jest.fn();
+        this.onUpdate             = jest.fn((callback) => { this.updateCallback = callback; });
+        this.bindClickEventListener = jest.fn();
+        this.svg                  = { tag: "svg" };
     }
+}
 
-    set data(value)
+class StubExportService {
+    constructor()
     {
-        this.dataValue = value;
+        this.export = jest.fn();
     }
+}
 
-    get data()
+class StubUpdate {
+    constructor(...args)
     {
-        return this.dataValue;
+        updateConstructor(...args);
+        this.update = jest.fn((url, callback) => callback());
     }
 }
 
@@ -40,9 +47,33 @@ await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
     select: selectMock,
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/chart", () => ({
+await jest.unstable_mockModule("resources/js/modules/custom/layout-engine", () => ({
     __esModule: true,
-    default: StubChart,
+    default: jest.fn((...args) => {
+        layoutMock(...args);
+        return new StubLayoutEngine(...args);
+    }),
+}));
+
+await jest.unstable_mockModule("resources/js/modules/custom/view-layer", () => ({
+    __esModule: true,
+    default: jest.fn((...args) => {
+        viewLayerMock(...args);
+        return new StubViewLayer(...args);
+    }),
+}));
+
+await jest.unstable_mockModule("resources/js/modules/custom/export-service", () => ({
+    __esModule: true,
+    default: jest.fn((...args) => {
+        exportMock(...args);
+        return new StubExportService(...args);
+    }),
+}));
+
+await jest.unstable_mockModule("resources/js/modules/custom/update", () => ({
+    __esModule: true,
+    default: StubUpdate,
 }));
 
 const { default: FanChartRenderer } = await import("resources/js/modules/fan-chart-renderer");
@@ -58,6 +89,10 @@ describe("FanChartRenderer", () => {
     beforeEach(() => {
         selectMock.mockReturnValue({ tag: "parent" });
         selectMock.mockClear();
+        layoutMock.mockClear();
+        viewLayerMock.mockClear();
+        exportMock.mockClear();
+        updateConstructor.mockClear();
     });
 
     it("renders with injected d3 and draws the chart", () => {
@@ -66,9 +101,10 @@ describe("FanChartRenderer", () => {
         renderer.render();
 
         expect(selectMock).toHaveBeenCalledWith("#chart");
-        expect(renderer._chart).toBeInstanceOf(StubChart);
-        expect(renderer._chart.data).toEqual(baseOptions.hierarchyData);
-        expect(renderer._chart.draw).toHaveBeenCalledTimes(1);
+        expect(layoutMock).toHaveBeenCalledWith(baseOptions.configuration);
+        expect(viewLayerMock).toHaveBeenCalledWith(baseOptions.configuration);
+        expect(renderer._layoutEngine.initializeHierarchy).toHaveBeenCalledWith(baseOptions.hierarchyData);
+        expect(renderer._viewLayer.render).toHaveBeenCalledWith({ tag: "parent" }, renderer._layoutEngine);
     });
 
     it("resizes and recenters the chart", () => {
@@ -78,8 +114,8 @@ describe("FanChartRenderer", () => {
         renderer.resize();
         renderer.resetZoom();
 
-        expect(renderer._chart.updateViewBox).toHaveBeenCalledTimes(1);
-        expect(renderer._chart.center).toHaveBeenCalledTimes(1);
+        expect(renderer._viewLayer.updateViewBox).toHaveBeenCalledTimes(1);
+        expect(renderer._viewLayer.center).toHaveBeenCalledTimes(1);
     });
 
     it("exports png and svg variants", () => {
@@ -89,14 +125,19 @@ describe("FanChartRenderer", () => {
         renderer.export("png");
         renderer.export("svg");
 
-        expect(renderer._chart.svg.export).toHaveBeenCalledWith("png");
-        expect(renderer._chart.svg.svgToImageMock).toHaveBeenCalledWith(renderer._chart.svg, "fan-chart.png");
-        expect(renderer._chart.svg.export).toHaveBeenCalledWith("svg");
-        expect(renderer._chart.svg.svgToImageMock).toHaveBeenCalledWith(
-            renderer._chart.svg,
-            baseOptions.cssFiles,
-            "webtrees-fan-chart-container",
-            "fan-chart.svg",
-        );
+        expect(renderer._exportService.export).toHaveBeenCalledWith("png", renderer._viewLayer.svg);
+        expect(renderer._exportService.export).toHaveBeenCalledWith("svg", renderer._viewLayer.svg);
+    });
+
+    it("delegates updates through the view layer callback", () => {
+        const renderer = new FanChartRenderer({ ...baseOptions, d3: { select: selectMock } });
+
+        renderer.render();
+
+        renderer._viewLayer.updateCallback("/update");
+
+        expect(updateConstructor).toHaveBeenCalledWith(renderer._viewLayer.svg, baseOptions.configuration, renderer._layoutEngine, expect.anything());
+        expect(renderer._viewLayer.bindClickEventListener).toHaveBeenCalledTimes(1);
+        expect(renderer._update.update).toHaveBeenCalledWith("/update", expect.any(Function));
     });
 });

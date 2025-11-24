@@ -394,6 +394,13 @@ const createArcFactory = () => ({
     createOverlayArc: jest.fn(() => ({})),
 });
 
+const createLayoutEngine = (hierarchy, arcFactory = createArcFactory()) => ({
+    hierarchy,
+    arcFactory,
+    geometry: {},
+    initializeHierarchy: (data) => hierarchy.init(data),
+});
+
 beforeEach(() => {
     jsonMock.mockReset();
     timerMock.mockClear();
@@ -408,10 +415,11 @@ beforeEach(() => {
 
 describe("Update", () => {
     test("removes existing handlers before fetching and updates titles", async () => {
-        const svg         = createSvgWithPersons(["1"]);
-        const hierarchy   = new HierarchyStub();
+        const svg           = createSvgWithPersons(["1"]);
+        const hierarchy     = new HierarchyStub();
+        const layoutEngine  = createLayoutEngine(hierarchy);
         const configuration = defaultConfiguration();
-        const update      = new Update(svg, configuration, hierarchy, createArcFactory());
+        const update        = new Update(svg, configuration, layoutEngine);
         const titleHtml   = "<strong>Updated</strong>";
         const callback    = jest.fn();
 
@@ -440,8 +448,9 @@ describe("Update", () => {
     test("assigns classes based on data and applies transition styles", async () => {
         const svg           = createSvgWithPersons(["1"]);
         const hierarchy     = new HierarchyStub();
+        const layoutEngine  = createLayoutEngine(hierarchy);
         const configuration = defaultConfiguration();
-        const update        = new Update(svg, configuration, hierarchy, createArcFactory());
+        const update        = new Update(svg, configuration, layoutEngine);
         const callback      = jest.fn();
 
         jsonMock.mockResolvedValueOnce({
@@ -495,8 +504,9 @@ describe("Update", () => {
     test("hides empty segments and cleans up after transitions", async () => {
         const svg           = createSvgWithPersons(["1", "2"]);
         const hierarchy     = new HierarchyStub();
+        const layoutEngine  = createLayoutEngine(hierarchy);
         const configuration = defaultConfiguration({ hideEmptySegments: true });
-        const update        = new Update(svg, configuration, hierarchy, createArcFactory());
+        const update        = new Update(svg, configuration, layoutEngine);
         const callback      = jest.fn();
 
         jsonMock.mockResolvedValueOnce({
