@@ -117,6 +117,6 @@ describe("FanChartRenderer", () => {
             services.dataLoader,
         );
         expect(services.viewLayer.bindClickEventListener).toHaveBeenCalledTimes(1);
-        expect(renderer._update.update).toHaveBeenCalledWith("/update", expect.any(Function));
+        expect(renderer._updateService.update).toHaveBeenCalledWith("/update", expect.any(Function));
     });
 });
