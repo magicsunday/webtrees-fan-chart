@@ -5,12 +5,12 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as defaultD3 from "./lib/d3";
 import DataLoader from "./custom/data-loader";
 import ExportService from "./custom/export-service";
 import LayoutEngine from "./custom/layout-engine";
 import ViewLayer from "./custom/view-layer";
 import Update from "./custom/update";
+import * as defaultD3 from "./lib/d3";
 
 /**
  * Renders the fan chart.
@@ -18,25 +18,14 @@ import Update from "./custom/update";
 export default class FanChartRenderer
 {
     /**
-     * @param {Object} options
-     * @param {string} options.selector
-     * @param {Configuration} options.configuration
-     * @param {Object} options.hierarchyData
-     * @param {string[]} [options.cssFiles]
-     * @param {Object} [options.d3]
+     * @param {import("./custom/fan-chart-options").ResolvedFanChartOptions} options
      */
-    constructor({
-        selector,
-        configuration,
-        hierarchyData,
-        cssFiles = [],
-        d3 = defaultD3,
-    }) {
-        this._d3             = d3;
-        this._selector       = selector;
-        this._configuration  = configuration;
-        this._hierarchyData  = hierarchyData;
-        this._cssFiles       = cssFiles;
+    constructor(options) {
+        this._d3             = options.d3 ?? defaultD3;
+        this._selector       = options.selector;
+        this._configuration  = options.configuration;
+        this._data           = options.data;
+        this._cssFiles       = options.cssFiles ?? [];
         this._parent         = null;
         this._viewLayer      = new ViewLayer(this._configuration);
         this._layoutEngine   = new LayoutEngine(this._configuration);
@@ -52,7 +41,7 @@ export default class FanChartRenderer
     render()
     {
         this._parent = this._d3.select(this._selector);
-        this._layoutEngine.initializeHierarchy(this._hierarchyData);
+        this._layoutEngine.initializeHierarchy(this._data);
         this._viewLayer.onUpdate((url) => this.update(url));
         this._viewLayer.render(this._parent, this._layoutEngine);
 

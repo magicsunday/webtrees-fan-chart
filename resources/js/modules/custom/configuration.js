@@ -12,36 +12,28 @@
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
+import { FAN_CHART_DEFAULTS } from "./fan-chart-options";
+
 export default class Configuration
 {
     /**
      * Constructor.
      *
-     * @param {string[]} labels
-     * @param {number}   generations
-     * @param {number}   fanDegree
-     * @param {number}   fontScale
-     * @param {boolean}  hideEmptySegments
-     * @param {boolean}  showColorGradients
-     * @param {boolean}  showParentMarriageDates
-     * @param {boolean}  showImages
-     * @param {boolean}  showSilhouettes
-     * @param {boolean}  rtl
-     * @param {number}   innerArcs
+     * @param {import("./fan-chart-options").ResolvedFanChartOptions} options
      */
-    constructor(
-        labels,
-        generations = 6,
-        fanDegree = 210,
-        fontScale = 100,
-        hideEmptySegments = false,
-        showColorGradients = false,
-        showParentMarriageDates = false,
-        showImages = false,
-        showSilhouettes = false,
-        rtl = false,
-        innerArcs = 4
-    ) {
+    constructor({
+        labels = FAN_CHART_DEFAULTS.labels,
+        generations = FAN_CHART_DEFAULTS.generations,
+        fanDegree = FAN_CHART_DEFAULTS.fanDegree,
+        fontScale = FAN_CHART_DEFAULTS.fontScale,
+        hideEmptySegments = FAN_CHART_DEFAULTS.hideEmptySegments,
+        showColorGradients = FAN_CHART_DEFAULTS.showColorGradients,
+        showParentMarriageDates = FAN_CHART_DEFAULTS.showParentMarriageDates,
+        showImages = FAN_CHART_DEFAULTS.showImages,
+        showSilhouettes = FAN_CHART_DEFAULTS.showSilhouettes,
+        rtl = FAN_CHART_DEFAULTS.rtl,
+        innerArcs = FAN_CHART_DEFAULTS.innerArcs,
+    }) {
         // Default number of generations to display
         this._generations = generations;
 
