@@ -78,6 +78,8 @@ export default class FanChartRenderer
             || fullscreenContainsNode
             || nodeContainsFullscreen;
 
+        document.documentElement?.toggleAttribute("fullscreen", !exitedFullscreen && isFullscreenTarget);
+
         if (exitedFullscreen || isFullscreenTarget) {
             this.resize();
         }

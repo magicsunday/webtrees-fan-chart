@@ -98,6 +98,7 @@ describe("FanChartRenderer", () => {
         updateConstructor.mockClear();
         addEventListenerSpy = jest.spyOn(document, "addEventListener");
         document.fullscreenElement = null;
+        document.documentElement.removeAttribute("fullscreen");
     });
 
     afterEach(() => {
@@ -163,9 +164,11 @@ describe("FanChartRenderer", () => {
         document.fullscreenElement = { contains: jest.fn(() => true) };
         fullscreenHandler();
 
+        expect(document.documentElement.hasAttribute("fullscreen")).toBe(true);
         document.fullscreenElement = null;
         fullscreenHandler();
 
+        expect(document.documentElement.hasAttribute("fullscreen")).toBe(false);
         expect(renderer._viewLayer.updateViewBox).toHaveBeenCalledTimes(2);
     });
 
@@ -182,6 +185,7 @@ describe("FanChartRenderer", () => {
         parentNode.contains.mockReturnValue(false);
         fullscreenHandler();
 
+        expect(document.documentElement.hasAttribute("fullscreen")).toBe(false);
         expect(renderer._viewLayer.updateViewBox).not.toHaveBeenCalled();
     });
 });
