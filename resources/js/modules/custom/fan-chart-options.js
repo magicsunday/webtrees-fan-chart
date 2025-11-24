@@ -5,18 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as defaultD3 from "../lib/d3";
-
-/**
- * @typedef {Object} FanChartControlCallbacks
- * @property {(handler: () => void) => void} [onRender] Register a handler that triggers rendering.
- * @property {(handler: () => void) => void} [onResize] Register a handler that resizes the chart.
- * @property {(handler: () => void) => void} [onCenter] Register a handler that resets zoom and centers the chart.
- * @property {(handler: (type: string) => void) => void} [onExport] Register a handler for custom export triggers.
- * @property {(handler: () => void) => void} [onExportPNG] Register a handler for PNG export.
- * @property {(handler: () => void) => void} [onExportSVG] Register a handler for SVG export.
- * @property {(handler: (url: string) => void) => void} [onUpdate] Register a handler to refresh data from a URL.
- */
+import { FAN_CHART_BASE_DEFAULTS, FAN_CHART_CONTROL_KEYS } from "./fan-chart-definitions";
 
 /**
  * @typedef {Object} FanChartOptions
@@ -34,7 +23,7 @@ import * as defaultD3 from "../lib/d3";
  * @property {boolean} [rtl] Flag to switch text to right-to-left rendering.
  * @property {number} [innerArcs] Number of inner arcs reserved for the root person.
  * @property {Array<string>} [cssFiles] Additional CSS files to load.
- * @property {FanChartControlCallbacks} [controls] Callback map for integrating host-provided controls.
+ * @property {import("./fan-chart-definitions").FanChartControlCallbacks} [controls] Callback map for integrating host-provided controls.
  * @property {import("./configuration").default} [configuration] Optional configuration instance.
  * @property {typeof import("../lib/d3")} [d3] D3 instance for rendering.
  * @property {import("./service-contracts").FanChartViewLayer} [viewLayer] Optional view layer implementation.
@@ -79,10 +68,23 @@ import * as defaultD3 from "../lib/d3";
  * @property {import("./service-contracts").ViewportEventService|undefined} viewportService
  */
 
+/**
+ * Convert a value to an array of strings.
+ *
+ * @param {unknown} value Candidate value to normalize.
+ * @returns {Array<string>} Normalized string array.
+ */
 const toStringArray = (value = []) => Array.isArray(value)
     ? value.filter((item) => typeof item === "string")
     : [];
 
+/**
+ * Convert primitive input into a finite number.
+ *
+ * @param {unknown} value Candidate value to normalize.
+ * @param {number} fallback Number to return when the input is invalid.
+ * @returns {number} Finite numeric value.
+ */
 const toFiniteNumber = (value, fallback) => {
     if (typeof value === "number" && Number.isFinite(value)) {
         return value;
@@ -99,26 +101,29 @@ const toFiniteNumber = (value, fallback) => {
     return fallback;
 };
 
+/**
+ * Normalize a boolean-like value to a concrete boolean.
+ *
+ * @param {unknown} value Candidate value to normalize.
+ * @param {boolean} fallback Fallback boolean when the value is not usable.
+ * @returns {boolean} Resolved boolean flag.
+ */
 const toBoolean = (value, fallback) => typeof value === "boolean"
     ? value
     : fallback;
 
-const callbackKeys = [
-    "onRender",
-    "onResize",
-    "onCenter",
-    "onExport",
-    "onExportPNG",
-    "onExportSVG",
-    "onUpdate",
-];
-
+/**
+ * Normalize control callbacks so only supported handlers remain.
+ *
+ * @param {import("./fan-chart-definitions").FanChartControlCallbacks|undefined} controls Control callbacks.
+ * @returns {import("./fan-chart-definitions").FanChartControlCallbacks|undefined} Normalized control callbacks.
+ */
 const normalizeControls = (controls) => {
     if (!controls || typeof controls !== "object") {
         return undefined;
     }
 
-    const normalized = callbackKeys.reduce((map, key) => {
+    const normalized = FAN_CHART_CONTROL_KEYS.reduce((map, key) => {
         if (typeof controls[key] === "function") {
             map[key] = controls[key];
         }
@@ -129,8 +134,14 @@ const normalizeControls = (controls) => {
     return Object.keys(normalized).length > 0 ? normalized : undefined;
 };
 
+/**
+ * Capture inline callbacks provided directly on the options object.
+ *
+ * @param {FanChartOptions} options Fan chart options provided by the host.
+ * @returns {import("./fan-chart-definitions").FanChartControlCallbacks|undefined} Inline callback map.
+ */
 const extractInlineControls = (options) => {
-    const inlineControls = callbackKeys.reduce((map, key) => {
+    const inlineControls = FAN_CHART_CONTROL_KEYS.reduce((map, key) => {
         if (typeof options[key] === "function") {
             map[key] = options[key];
         }
@@ -142,7 +153,7 @@ const extractInlineControls = (options) => {
 };
 
 export const FAN_CHART_DEFAULTS = Object.freeze({
-    selector: "",
+    ...FAN_CHART_BASE_DEFAULTS,
     data: null,
     labels: [],
     generations: 6,
@@ -155,10 +166,10 @@ export const FAN_CHART_DEFAULTS = Object.freeze({
     showSilhouettes: false,
     rtl: false,
     innerArcs: 4,
-    cssFiles: [],
+    cssFiles: FAN_CHART_BASE_DEFAULTS.cssFiles,
     controls: undefined,
     configuration: undefined,
-    d3: defaultD3,
+    d3: FAN_CHART_BASE_DEFAULTS.d3,
     viewLayer: undefined,
     layoutEngine: undefined,
     dataLoader: undefined,
@@ -170,7 +181,7 @@ export const FAN_CHART_DEFAULTS = Object.freeze({
 /**
  * Returns a new instance of the default fan chart options.
  *
- * @returns {ResolvedFanChartOptions}
+ * @returns {ResolvedFanChartOptions} Deep copy of default fan chart options.
  */
 export const createDefaultFanChartOptions = () => ({
     ...FAN_CHART_DEFAULTS,
