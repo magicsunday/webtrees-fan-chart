@@ -13,6 +13,13 @@ import Update from "./custom/update";
 import * as defaultD3 from "./lib/d3";
 
 /**
+ * @typedef {import("./custom/service-contracts").FanChartLayoutEngine} FanChartLayoutEngine
+ * @typedef {import("./custom/service-contracts").FanChartViewLayer} FanChartViewLayer
+ * @typedef {import("./custom/service-contracts").FanChartDataLoader} FanChartDataLoader
+ * @typedef {import("./custom/service-contracts").FanChartExportService} FanChartExportService
+ */
+
+/**
  * Renders the fan chart.
  */
 export default class FanChartRenderer
@@ -27,10 +34,10 @@ export default class FanChartRenderer
         this._data           = options.data;
         this._cssFiles       = options.cssFiles ?? [];
         this._parent         = null;
-        this._viewLayer      = new ViewLayer(this._configuration);
-        this._layoutEngine   = new LayoutEngine(this._configuration);
-        this._dataLoader     = new DataLoader();
-        this._exportService  = new ExportService(this._cssFiles);
+        this._viewLayer      = /** @type {FanChartViewLayer} */ (options.viewLayer ?? new ViewLayer(this._configuration));
+        this._layoutEngine   = /** @type {FanChartLayoutEngine} */ (options.layoutEngine ?? new LayoutEngine(this._configuration));
+        this._dataLoader     = /** @type {FanChartDataLoader} */ (options.dataLoader ?? new DataLoader());
+        this._exportService  = /** @type {FanChartExportService} */ (options.exportService ?? new ExportService(this._cssFiles));
         this._handleFullscreenChange = this.handleFullscreenChange.bind(this);
     }
 
