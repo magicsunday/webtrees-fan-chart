@@ -6,6 +6,7 @@
  */
 
 import Configuration from "./custom/configuration";
+import { createDefaultDependencies } from "./custom/dependencies";
 import { resolveFanChartOptions } from "./custom/fan-chart-options";
 import FanChartRenderer from "./fan-chart-renderer";
 
@@ -48,9 +49,27 @@ export const createRendererActions = (renderer) => ({
 export const createRenderer = (options = {}, hooks = {}) => {
     const resolvedOptions = resolveFanChartOptions(options);
     const configuration   = createConfiguration(resolvedOptions);
-    const renderer = new FanChartRenderer({
-        ...resolvedOptions,
+    let renderer;
+    const services = createDefaultDependencies({
         configuration,
+        cssFiles: resolvedOptions.cssFiles,
+        overrides: {
+            viewLayer: resolvedOptions.viewLayer,
+            layoutEngine: resolvedOptions.layoutEngine,
+            dataLoader: resolvedOptions.dataLoader,
+            chartExporter: resolvedOptions.chartExporter,
+            exportService: resolvedOptions.exportService,
+            viewportService: resolvedOptions.viewportService,
+        },
+        getContainer: () => renderer?._parent ?? null,
+    });
+    renderer = new FanChartRenderer({
+        d3: resolvedOptions.d3,
+        selector: resolvedOptions.selector,
+        configuration,
+        data: resolvedOptions.data,
+        cssFiles: resolvedOptions.cssFiles,
+        services,
     });
 
     hooks.onCreated?.(renderer);
