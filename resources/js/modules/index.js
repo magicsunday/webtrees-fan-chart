@@ -6,6 +6,7 @@
  */
 
 export { createFanChart, FanChart } from "./fan-chart";
+export { default as createFanChartApi } from "./fan-chart-api";
 export { createDefaultFanChartOptions, FAN_CHART_DEFAULTS, resolveFanChartOptions } from "./custom/fan-chart-options";
 export { default as FanChartRenderer } from "./fan-chart-renderer";
 export { default } from "./fan-chart";
