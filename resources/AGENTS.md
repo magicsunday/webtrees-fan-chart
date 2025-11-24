@@ -1,4 +1,4 @@
-<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2025-11-23 -->
+<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2025-11-24 -->
 
 ## Overview
 - Instructions for assets under `resources/` (JS, CSS, translations, views).
@@ -7,6 +7,8 @@
   - 2025-11-21: Documented JavaScript test location (`resources/js/tests`) and required commands after JS changes.
   - 2025-11-22: Reinforced vanilla-JS preference (D3 only external) plus concise, documented code expectations.
   - 2025-11-23: Playwright browsers must be installed (`npx playwright install --with-deps`) so `npm test` can run without download errors.
+  - 2025-11-24: Require JSDoc documentation for JavaScript to match PHPDoc coverage expected in PHP files.
+  - 2025-11-24: Keep the `Last updated` stamp current whenever modifying any AGENTS.md instructions.
 
 ## Setup/env
 - Install Node.js dependencies with `npm install`; rollup configuration lives in `rollup.config.js` and uses ES modules.
@@ -23,6 +25,7 @@
 - Use modern ES modules and avoid nested ternaries; prefer small, pure functions and descriptive naming.
 - Keep translations and templates consistent with PHP naming; avoid embedding secrets or API keys in client code.
 - Keep classes and functions concise; document intent with English JSDoc or inline comments at complex logic, and avoid external JavaScript libraries beyond D3 (vanilla JS otherwise).
+- Apply JSDoc across JavaScript code to the same depth PHPDoc is required for PHP files.
 
 ## Security
 - Do not bundle secrets; sanitize user-provided data before rendering and avoid logging sensitive values in the browser.
