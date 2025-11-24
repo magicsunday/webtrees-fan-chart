@@ -6,23 +6,12 @@
  */
 
 import Configuration from "./custom/configuration";
+import { resolveFanChartOptions } from "./custom/fan-chart-options";
 import FanChartRenderer from "./fan-chart-renderer";
 
 const createConfiguration = (options) => options.configuration instanceof Configuration
     ? options.configuration
-    : new Configuration(
-        options.labels,
-        options.generations,
-        options.fanDegree,
-        options.fontScale,
-        options.hideEmptySegments,
-        options.showColorGradients,
-        options.showParentMarriageDates,
-        options.showImages,
-        options.showSilhouettes,
-        options.rtl,
-        options.innerArcs,
-    );
+    : new Configuration(options);
 
 const forwardCallback = (callback, handler) => {
     if (typeof callback === "function") {
@@ -40,6 +29,52 @@ const createRendererActions = (renderer) => ({
     update: (url) => renderer.update(url),
 });
 
+const resolveContainer = (selector) => {
+    if (typeof document === "undefined") {
+        return undefined;
+    }
+
+    if (!selector) {
+        return document;
+    }
+
+    const chartElement = document.querySelector(selector);
+
+    return chartElement?.closest(".webtrees-fan-chart-container") ?? chartElement ?? document;
+};
+
+const createDefaultControls = (selector) => {
+    const container = resolveContainer(selector);
+
+    if (!container) {
+        return undefined;
+    }
+
+    const bindingsAvailable = ["centerButton", "exportPNG", "exportSVG"].some((id) =>
+        container.querySelector(`#${id}`)
+    );
+
+    if (!bindingsAvailable) {
+        return undefined;
+    }
+
+    const bind = (id, handler) => {
+        const element = container.querySelector(`#${id}`);
+
+        if (element && typeof handler === "function") {
+            element.addEventListener("click", handler);
+        }
+    };
+
+    const controls = {
+        onCenter: (handler) => bind("centerButton", handler),
+        onExportPNG: (handler) => bind("exportPNG", handler),
+        onExportSVG: (handler) => bind("exportSVG", handler),
+    };
+
+    return controls;
+};
+
 const registerCallbacks = (callbacks, actions) => {
     if (!callbacks) {
         return;
@@ -55,52 +90,21 @@ const registerCallbacks = (callbacks, actions) => {
 };
 
 /**
- * @typedef {Object} FanChartControlCallbacks
- * @property {(handler: () => void) => void} [onRender] Register a handler that triggers rendering.
- * @property {(handler: () => void) => void} [onResize] Register a handler that resizes the chart.
- * @property {(handler: () => void) => void} [onCenter] Register a handler that resets zoom and centers the chart.
- * @property {(handler: (type: string) => void) => void} [onExport] Register a handler for custom export triggers.
- * @property {(handler: () => void) => void} [onExportPNG] Register a handler for PNG export.
- * @property {(handler: () => void) => void} [onExportSVG] Register a handler for SVG export.
- * @property {(handler: (url: string) => void) => void} [onUpdate] Register a handler to refresh data from a URL.
- */
-
-/**
- * @typedef {Object} FanChartOptions
- * @property {string} selector CSS selector targeting the chart container.
- * @property {Object} [data] Hierarchy data object for the fan chart.
- * @property {Configuration} [configuration] Optional configuration instance.
- * @property {Array<string>} [cssFiles] Additional CSS files to load.
- * @property {FanChartControlCallbacks} [controls] Callback map for integrating host-provided controls.
- * @property {Function} [d3] D3 instance for rendering.
- */
-
-/**
  * Create a fan chart renderer and wire host-provided controls to its actions.
  *
- * @param {FanChartOptions} options Fan chart configuration and control callbacks.
+ * @param {import("./custom/fan-chart-options").FanChartOptions} options Fan chart configuration and control callbacks.
  * @returns {FanChartRenderer & { actions: ReturnType<typeof createRendererActions> }} Renderer exposing callable actions.
  */
 export const createFanChart = (options = {}) => {
-    const configuration = createConfiguration(options);
-    const renderer      = new FanChartRenderer({
-        selector: options.selector,
+    const resolvedOptions = resolveFanChartOptions(options);
+    const configuration   = createConfiguration(resolvedOptions);
+    const renderer = new FanChartRenderer({
+        ...resolvedOptions,
         configuration,
-        hierarchyData: options.data,
-        cssFiles: options.cssFiles || [],
-        d3: options.d3,
     });
 
     const actions = createRendererActions(renderer);
-    const callbacks = options.controls ?? {
-        onRender: options.onRender,
-        onResize: options.onResize,
-        onCenter: options.onCenter,
-        onExport: options.onExport,
-        onExportPNG: options.onExportPNG,
-        onExportSVG: options.onExportSVG,
-        onUpdate: options.onUpdate,
-    };
+    const callbacks = resolvedOptions.controls ?? createDefaultControls(resolvedOptions.selector);
 
     registerCallbacks(callbacks, actions);
 
@@ -167,5 +171,6 @@ export class FanChart
     }
 }
 
+export { createDefaultFanChartOptions, FAN_CHART_DEFAULTS, resolveFanChartOptions } from "./custom/fan-chart-options";
 export { FanChartRenderer };
 export default FanChart;
