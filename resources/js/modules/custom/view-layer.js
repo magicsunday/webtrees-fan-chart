@@ -83,11 +83,13 @@ export default class ViewLayer
             .attr("width", "100%")
             .attr("height", "100%");
 
-        const padding = this.convertRemToPixels(MIN_PADDING);
+        const fullscreenElement = document.fullscreenElement;
+        const isFullscreen      = fullscreenElement !== null && fullscreenElement !== undefined;
+        const padding           = isFullscreen ? 0 : this.convertRemToPixels(MIN_PADDING);
 
         let svgBoundingBox          = this._svg.visual.node().getBBox();
         let clientBoundingBox       = this._parent.node().getBoundingClientRect();
-        const fullscreenBoundingBox = document.fullscreenElement?.getBoundingClientRect?.();
+        const fullscreenBoundingBox = isFullscreen ? fullscreenElement.getBoundingClientRect?.() : undefined;
         const containerBoundingBox  = fullscreenBoundingBox ?? clientBoundingBox;
 
         let viewBoxWidth  = Math.max(containerBoundingBox.width, svgBoundingBox.width);
@@ -99,7 +101,7 @@ export default class ViewLayer
         let viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - padding);
         let viewBoxTop  = Math.ceil(svgBoundingBox.y - offsetY - padding);
 
-        if (document.fullscreenElement) {
+        if (isFullscreen) {
             this._svg
                 .attr("width", containerBoundingBox.width)
                 .attr("height", containerBoundingBox.height);
