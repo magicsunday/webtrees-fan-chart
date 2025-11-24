@@ -71,9 +71,21 @@ const toStringArray = (value = []) => Array.isArray(value)
     ? value.filter((item) => typeof item === "string")
     : [];
 
-const toFiniteNumber = (value, fallback) => (typeof value === "number" && Number.isFinite(value))
-    ? value
-    : fallback;
+const toFiniteNumber = (value, fallback) => {
+    if (typeof value === "number" && Number.isFinite(value)) {
+        return value;
+    }
+
+    if (typeof value === "string" && value.trim() !== "") {
+        const parsed = Number(value);
+
+        if (Number.isFinite(parsed)) {
+            return parsed;
+        }
+    }
+
+    return fallback;
+};
 
 const toBoolean = (value, fallback) => typeof value === "boolean"
     ? value
