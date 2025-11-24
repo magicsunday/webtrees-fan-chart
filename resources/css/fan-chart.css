@@ -236,7 +236,8 @@ div.tooltip .date {
 
 /* Fullscreen */
 [fullscreen] .webtrees-fan-fullscreen-container .wt-page-content {
-    padding: 0;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 [fullscreen] .webtrees-fan-fullscreen-container .btn-toolbar {
@@ -265,6 +266,6 @@ div.tooltip .date {
 }
 
 [fullscreen] .webtrees-fan-chart-container {
-    min-height: 100dvh;
-    max-height: 100dvh;
+    min-height: calc(100dvh - 20px);
+    max-height: calc(100dvh - 20px);
 }
