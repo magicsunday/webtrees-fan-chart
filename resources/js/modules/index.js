@@ -40,7 +40,17 @@ const resolveContainer = (selector) => {
 
     const chartElement = document.querySelector(selector);
 
-    return chartElement?.closest(".webtrees-fan-chart-container") ?? chartElement ?? document;
+    if (!chartElement) {
+        return document;
+    }
+
+    const fullscreenContainer = chartElement.closest(".webtrees-fan-fullscreen-container");
+
+    if (fullscreenContainer) {
+        return fullscreenContainer;
+    }
+
+    return chartElement.closest(".webtrees-fan-chart-container") ?? chartElement;
 };
 
 const createDefaultControls = (selector) => {

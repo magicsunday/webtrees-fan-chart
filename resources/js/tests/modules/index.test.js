@@ -33,6 +33,7 @@ afterEach(() => {
     resizeMock.mockClear();
     resetZoomMock.mockClear();
     exportMock.mockClear();
+    document.body.innerHTML = "";
 });
 
 afterAll(() => {
@@ -118,5 +119,31 @@ describe("createFanChart", () => {
         expect(resizeMock).toHaveBeenCalledTimes(1);
         expect(resetZoomMock).toHaveBeenCalledTimes(1);
         expect(exportMock).toHaveBeenCalledWith("png");
+    });
+
+    it("binds default controls located in the fullscreen container", () => {
+        document.body.innerHTML = `
+            <div class="webtrees-fan-fullscreen-container">
+                <div class="toolbar">
+                    <button id="centerButton" type="button"></button>
+                    <button id="exportPNG" type="button"></button>
+                    <button id="exportSVG" type="button"></button>
+                </div>
+                <div id="chart" class="webtrees-fan-chart-container"></div>
+            </div>
+        `;
+
+        createFanChart(createOptions());
+
+        resetZoomMock.mockClear();
+        exportMock.mockClear();
+
+        document.querySelector("#centerButton").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        document.querySelector("#exportPNG").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        document.querySelector("#exportSVG").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+        expect(resetZoomMock).toHaveBeenCalledTimes(1);
+        expect(exportMock).toHaveBeenNthCalledWith(1, "png");
+        expect(exportMock).toHaveBeenNthCalledWith(2, "svg");
     });
 });
