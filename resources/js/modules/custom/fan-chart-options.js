@@ -32,6 +32,8 @@ import { FAN_CHART_BASE_DEFAULTS, FAN_CHART_CONTROL_KEYS } from "./fan-chart-def
  * @property {import("./service-contracts").ChartExporter} [chartExporter] Optional chart exporter implementation.
  * @property {import("./service-contracts").FanChartExportService} [exportService] Optional export service implementation.
  * @property {import("./service-contracts").ViewportEventService} [viewportService] Optional viewport service implementation.
+ * @property {import("./service-contracts").FanChartUpdateService} [updateService] Optional update service implementation.
+ * @property {import("./service-contracts").FanChartUpdateServiceFactory} [updateServiceFactory] Optional update service factory.
  * @property {(handler: () => void) => void} [onRender] Legacy inline control registration.
  * @property {(handler: () => void) => void} [onResize] Legacy inline control registration.
  * @property {(handler: () => void) => void} [onCenter] Legacy inline control registration.
@@ -66,6 +68,8 @@ import { FAN_CHART_BASE_DEFAULTS, FAN_CHART_CONTROL_KEYS } from "./fan-chart-def
  * @property {import("./service-contracts").ChartExporter|undefined} chartExporter
  * @property {import("./service-contracts").FanChartExportService|undefined} exportService
  * @property {import("./service-contracts").ViewportEventService|undefined} viewportService
+ * @property {import("./service-contracts").FanChartUpdateService|undefined} updateService
+ * @property {import("./service-contracts").FanChartUpdateServiceFactory|undefined} updateServiceFactory
  */
 
 /**
@@ -176,6 +180,8 @@ export const FAN_CHART_DEFAULTS = Object.freeze({
     chartExporter: undefined,
     exportService: undefined,
     viewportService: undefined,
+    updateService: undefined,
+    updateServiceFactory: undefined,
 });
 
 /**
@@ -226,5 +232,7 @@ export const resolveFanChartOptions = (options = {}) => {
         chartExporter: options.chartExporter ?? options.exportService ?? defaults.chartExporter,
         exportService: options.exportService ?? defaults.exportService,
         viewportService: options.viewportService ?? defaults.viewportService,
+        updateService: options.updateService ?? defaults.updateService,
+        updateServiceFactory: options.updateServiceFactory ?? defaults.updateServiceFactory,
     };
 };

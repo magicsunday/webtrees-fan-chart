@@ -14,6 +14,8 @@ import Update from "./custom/update";
  * @typedef {import("./custom/service-contracts").FanChartDataLoader} FanChartDataLoader
  * @typedef {import("./custom/service-contracts").FanChartExportService} FanChartExportService
  * @typedef {import("./custom/service-contracts").FanChartDependencies} FanChartDependencies
+ * @typedef {import("./custom/service-contracts").FanChartUpdateService} FanChartUpdateService
+ * @typedef {import("./custom/service-contracts").FanChartUpdateServiceFactory} FanChartUpdateServiceFactory
  */
 
 /**
@@ -28,6 +30,8 @@ export default class FanChartRenderer
      * @param {import("./custom/configuration").default} options.configuration
      * @param {object} [options.data]
      * @param {FanChartDependencies} options.services
+     * @param {FanChartUpdateService} [options.services.updateService]
+     * @param {FanChartUpdateServiceFactory} [options.services.updateServiceFactory]
      */
     constructor({ d3 = FAN_CHART_BASE_DEFAULTS.d3, selector, configuration, data, services }) {
         this._d3            = d3;
@@ -36,6 +40,8 @@ export default class FanChartRenderer
         this._data          = data;
         this._parent        = null;
         this._services      = services;
+        this._updateService = services.updateService ?? null;
+        this._updateFactory = services.updateServiceFactory ?? null;
         this._viewLayer     = /** @type {FanChartViewLayer} */ (services.viewLayer);
         this._layoutEngine  = /** @type {FanChartLayoutEngine} */ (services.layoutEngine);
         this._dataLoader    = /** @type {FanChartDataLoader} */ (services.dataLoader);
@@ -92,8 +98,19 @@ export default class FanChartRenderer
      */
     update(url)
     {
-        this._update = new Update(this._viewLayer.svg, this._configuration, this._layoutEngine, this._dataLoader);
+        if (!this._updateService && this._updateFactory) {
+            this._updateService = this._updateFactory({
+                svg: this._viewLayer.svg,
+                configuration: this._configuration,
+                layoutEngine: this._layoutEngine,
+                dataLoader: this._dataLoader,
+            });
+        }
 
-        this._update.update(url, () => this._viewLayer.bindClickEventListener());
+        if (!this._updateService) {
+            this._updateService = new Update(this._viewLayer.svg, this._configuration, this._layoutEngine, this._dataLoader);
+        }
+
+        this._updateService.update(url, () => this._viewLayer.bindClickEventListener());
     }
 }

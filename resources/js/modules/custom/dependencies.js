@@ -8,6 +8,7 @@
 import DataLoader from "./data-loader";
 import D3ChartExporter from "./export/d3-chart-exporter";
 import LayoutEngine from "./layout-engine";
+import Update from "./update";
 import ViewLayer from "./view-layer";
 import ViewportEventService from "./viewport-event-service";
 
@@ -36,6 +37,8 @@ export const createDefaultDependencies = ({ configuration, cssFiles, overrides =
         onUpdateViewBox: () => viewLayer.updateViewBox(),
         onCenter: () => viewLayer.center(),
     });
+    const updateServiceFactory = overrides.updateServiceFactory ?? (() => new Update(viewLayer.svg, configuration, layoutEngine, dataLoader));
+    const updateService = overrides.updateService ?? undefined;
 
     return {
         viewLayer,
@@ -43,6 +46,8 @@ export const createDefaultDependencies = ({ configuration, cssFiles, overrides =
         dataLoader,
         chartExporter,
         viewportService,
+        updateService,
+        updateServiceFactory,
     };
 };
 

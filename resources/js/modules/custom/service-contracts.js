@@ -51,12 +51,31 @@
  */
 
 /**
+ * @typedef {object} FanChartUpdateService
+ * @property {(url: string, callback: () => void) => void} update Update the chart using a provided URL.
+ */
+
+/**
+ * @typedef {object} FanChartUpdateFactoryContext
+ * @property {import("./configuration").default} configuration Renderer configuration.
+ * @property {FanChartLayoutEngine} layoutEngine Layout engine used for the chart.
+ * @property {FanChartDataLoader} dataLoader Data loader responsible for fetching hierarchies.
+ * @property {import("./svg").default|null} svg Current SVG instance attached to the renderer.
+ */
+
+/**
+ * @typedef {(context: FanChartUpdateFactoryContext) => FanChartUpdateService} FanChartUpdateServiceFactory
+ */
+
+/**
  * @typedef {object} FanChartDependencies
  * @property {FanChartViewLayer} viewLayer
  * @property {FanChartLayoutEngine} layoutEngine
  * @property {FanChartDataLoader} dataLoader
  * @property {FanChartExportService} chartExporter
  * @property {FanChartViewportService} viewportService
+ * @property {FanChartUpdateService|undefined} [updateService]
+ * @property {FanChartUpdateServiceFactory|undefined} [updateServiceFactory]
  */
 
 export {};
