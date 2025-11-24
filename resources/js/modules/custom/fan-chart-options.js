@@ -40,7 +40,9 @@ import * as defaultD3 from "../lib/d3";
  * @property {import("./service-contracts").FanChartViewLayer} [viewLayer] Optional view layer implementation.
  * @property {import("./service-contracts").FanChartLayoutEngine} [layoutEngine] Optional layout engine implementation.
  * @property {import("./service-contracts").FanChartDataLoader} [dataLoader] Optional data loader implementation.
+ * @property {import("./service-contracts").ChartExporter} [chartExporter] Optional chart exporter implementation.
  * @property {import("./service-contracts").FanChartExportService} [exportService] Optional export service implementation.
+ * @property {import("./service-contracts").ViewportEventService} [viewportService] Optional viewport service implementation.
  * @property {(handler: () => void) => void} [onRender] Legacy inline control registration.
  * @property {(handler: () => void) => void} [onResize] Legacy inline control registration.
  * @property {(handler: () => void) => void} [onCenter] Legacy inline control registration.
@@ -72,7 +74,9 @@ import * as defaultD3 from "../lib/d3";
  * @property {import("./service-contracts").FanChartViewLayer|undefined} viewLayer
  * @property {import("./service-contracts").FanChartLayoutEngine|undefined} layoutEngine
  * @property {import("./service-contracts").FanChartDataLoader|undefined} dataLoader
+ * @property {import("./service-contracts").ChartExporter|undefined} chartExporter
  * @property {import("./service-contracts").FanChartExportService|undefined} exportService
+ * @property {import("./service-contracts").ViewportEventService|undefined} viewportService
  */
 
 const toStringArray = (value = []) => Array.isArray(value)
@@ -158,7 +162,9 @@ export const FAN_CHART_DEFAULTS = Object.freeze({
     viewLayer: undefined,
     layoutEngine: undefined,
     dataLoader: undefined,
+    chartExporter: undefined,
     exportService: undefined,
+    viewportService: undefined,
 });
 
 /**
@@ -206,6 +212,8 @@ export const resolveFanChartOptions = (options = {}) => {
         viewLayer: options.viewLayer ?? defaults.viewLayer,
         layoutEngine: options.layoutEngine ?? defaults.layoutEngine,
         dataLoader: options.dataLoader ?? defaults.dataLoader,
+        chartExporter: options.chartExporter ?? options.exportService ?? defaults.chartExporter,
         exportService: options.exportService ?? defaults.exportService,
+        viewportService: options.viewportService ?? defaults.viewportService,
     };
 };
