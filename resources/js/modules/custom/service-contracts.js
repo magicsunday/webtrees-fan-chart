@@ -7,6 +7,18 @@
  */
 
 /**
+ * @typedef {object} ChartExporter
+ * @property {(type: string, chart: unknown) => void} export Export the provided chart representation.
+ */
+
+/**
+ * @typedef {object} ViewportEventService
+ * @property {() => void} register Register resize and fullscreen listeners.
+ * @property {() => void} resize Trigger recalculation of the view box.
+ * @property {() => void} center Reset zoom and center the chart.
+ */
+
+/**
  * @typedef {object} FanChartViewLayer
  * @property {(callback: (url: string) => void) => void} onUpdate Register an update callback.
  * @property {(parent: import("../lib/d3").Selection, layoutEngine: FanChartLayoutEngine) => void} render Render the view layer.
@@ -30,8 +42,11 @@
  */
 
 /**
- * @typedef {object} FanChartExportService
- * @property {(type: string, svg: import("./svg").default|null) => void} export Export the given SVG.
+ * @typedef {ChartExporter} FanChartExportService
+ */
+
+/**
+ * @typedef {ViewportEventService} FanChartViewportService
  */
 
 export {};
