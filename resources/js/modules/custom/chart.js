@@ -126,6 +126,11 @@ export default class Chart
         let viewBoxWidth  = Math.max(containerBoundingBox.width, svgBoundingBox.width);
         let viewBoxHeight = Math.max(containerBoundingBox.height, svgBoundingBox.height);
 
+        if (isFullscreen) {
+            viewBoxWidth  = svgBoundingBox.width;
+            viewBoxHeight = svgBoundingBox.height;
+        }
+
         // Calculate offset to center chart inside svg
         let offsetX = (viewBoxWidth - svgBoundingBox.width) >> 1;
         let offsetY = (viewBoxHeight - svgBoundingBox.height) >> 1;
