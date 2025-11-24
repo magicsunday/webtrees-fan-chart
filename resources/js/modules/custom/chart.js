@@ -115,18 +115,14 @@ export default class Chart
         const padding = this.convertRemToPixels(MIN_PADDING);
 
         // Get bounding boxes
-        let svgBoundingBox    = this.svg.visual.node().getBBox();
-        let clientBoundingBox = this.parent.node().getBoundingClientRect();
+        let svgBoundingBox          = this.svg.visual.node().getBBox();
+        let clientBoundingBox       = this.parent.node().getBoundingClientRect();
+        const fullscreenBoundingBox = document.fullscreenElement?.getBoundingClientRect?.();
+        const containerBoundingBox  = fullscreenBoundingBox ?? clientBoundingBox;
 
         // View box should have at least the same width/height as the parent element
-        let viewBoxWidth  = Math.max(clientBoundingBox.width, svgBoundingBox.width);
-        let viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height);
-
-        // View box should have at least the same width/height as the parent element
-        if (document.fullscreenElement) {
-            viewBoxWidth = Math.max(svgBoundingBox.width, Math.min(clientBoundingBox.width, svgBoundingBox.width));
-            viewBoxHeight = Math.max(svgBoundingBox.height, Math.min(clientBoundingBox.height, svgBoundingBox.height));
-        }
+        let viewBoxWidth  = Math.max(containerBoundingBox.width, svgBoundingBox.width);
+        let viewBoxHeight = Math.max(containerBoundingBox.height, svgBoundingBox.height);
 
         // Calculate offset to center chart inside svg
         let offsetX = (viewBoxWidth - svgBoundingBox.width) >> 1;
@@ -141,8 +137,8 @@ export default class Chart
         if (document.fullscreenElement) {
             // Set width/height attributes
             this.svg
-                .attr("width", clientBoundingBox.width)
-                .attr("height", clientBoundingBox.height);
+                .attr("width", containerBoundingBox.width)
+                .attr("height", containerBoundingBox.height);
         }
 
         // Final width/height of view box

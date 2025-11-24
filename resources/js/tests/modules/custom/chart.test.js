@@ -287,7 +287,9 @@ describe("Chart", () => {
         chart.data = data;
         chart.draw();
 
-        document.fullscreenElement = document.createElement("div");
+        document.fullscreenElement = {
+            getBoundingClientRect: () => ({ width: 800, height: 600 })
+        };
         chart.updateViewBox();
 
         const svg = mockSvgInstances[0];
@@ -295,9 +297,9 @@ describe("Chart", () => {
         const heightCall = svg.attrCalls.filter((call) => call.name === "height").pop();
         const viewBoxCall = svg.attrCalls.filter((call) => call.name === "viewBox").pop();
 
-        expect(widthCall?.value).toBe(600);
-        expect(heightCall?.value).toBe(450);
-        expect(viewBoxCall?.value).toEqual([-16, -16, 432, 332]);
+        expect(widthCall?.value).toBe(800);
+        expect(heightCall?.value).toBe(600);
+        expect(viewBoxCall?.value).toEqual([-216, -166, 832, 632]);
 
         document.fullscreenElement = null;
         getComputedStyleSpy.mockRestore();
