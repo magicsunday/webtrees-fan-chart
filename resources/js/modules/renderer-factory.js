@@ -23,6 +23,20 @@ const createConfiguration = (options) => options.configuration instanceof Config
     ? options.configuration
     : new Configuration(options);
 
+const buildDependencies = ({ configuration, resolvedOptions, getContainer }) => createDefaultDependencies({
+    configuration,
+    cssFiles: resolvedOptions.cssFiles,
+    overrides: {
+        viewLayer: resolvedOptions.viewLayer,
+        layoutEngine: resolvedOptions.layoutEngine,
+        dataLoader: resolvedOptions.dataLoader,
+        chartExporter: resolvedOptions.chartExporter,
+        exportService: resolvedOptions.exportService,
+        viewportService: resolvedOptions.viewportService,
+    },
+    getContainer,
+});
+
 /**
  * Map renderer methods to callable actions consumable by host controls.
  *
@@ -40,6 +54,42 @@ export const createRendererActions = (renderer) => ({
 });
 
 /**
+ * Resolve configuration, options, and dependencies without instantiating the renderer.
+ *
+ * @param {FanChartOptions} [options] Fan chart configuration and controls.
+ * @param {{ getContainer?: () => import("./lib/d3").Selection|null|undefined }} [hooks] Optional dependency hooks.
+ * @returns {{ configuration: Configuration, resolvedOptions: ReturnType<typeof resolveFanChartOptions>, dependencies: ReturnType<typeof createDefaultDependencies> }}
+ *     Renderer context with resolved configuration, options, and dependencies.
+ */
+export const buildRendererContext = (options = {}, hooks = {}) => {
+    const resolvedOptions = resolveFanChartOptions(options);
+    const configuration = createConfiguration(resolvedOptions);
+    const dependencies = buildDependencies({
+        configuration,
+        resolvedOptions,
+        getContainer: hooks.getContainer,
+    });
+
+    return { configuration, resolvedOptions, dependencies };
+};
+
+/**
+ * Create a renderer instance from a prebuilt context.
+ *
+ * @param {{ configuration: Configuration, resolvedOptions: ReturnType<typeof resolveFanChartOptions>, dependencies: ReturnType<typeof createDefaultDependencies> }} context
+ *     Renderer context containing configuration, resolved options, and dependencies.
+ * @returns {FanChartRenderer} Renderer instance created from the provided context.
+ */
+export const instantiateRenderer = (context) => new FanChartRenderer({
+    d3: context.resolvedOptions.d3,
+    selector: context.resolvedOptions.selector,
+    configuration: context.configuration,
+    data: context.resolvedOptions.data,
+    cssFiles: context.resolvedOptions.cssFiles,
+    services: context.dependencies,
+});
+
+/**
  * Create a renderer instance along with configurable action adapters.
  *
  * @param {FanChartOptions} options Fan chart configuration and controls.
@@ -47,30 +97,11 @@ export const createRendererActions = (renderer) => ({
  * @returns {{ renderer: FanChartRenderer, actions: RendererActions, resolvedOptions: ReturnType<typeof resolveFanChartOptions> }}
  */
 export const createRenderer = (options = {}, hooks = {}) => {
-    const resolvedOptions = resolveFanChartOptions(options);
-    const configuration   = createConfiguration(resolvedOptions);
     let renderer;
-    const services = createDefaultDependencies({
-        configuration,
-        cssFiles: resolvedOptions.cssFiles,
-        overrides: {
-            viewLayer: resolvedOptions.viewLayer,
-            layoutEngine: resolvedOptions.layoutEngine,
-            dataLoader: resolvedOptions.dataLoader,
-            chartExporter: resolvedOptions.chartExporter,
-            exportService: resolvedOptions.exportService,
-            viewportService: resolvedOptions.viewportService,
-        },
+    const context = buildRendererContext(options, {
         getContainer: () => renderer?._parent ?? null,
     });
-    renderer = new FanChartRenderer({
-        d3: resolvedOptions.d3,
-        selector: resolvedOptions.selector,
-        configuration,
-        data: resolvedOptions.data,
-        cssFiles: resolvedOptions.cssFiles,
-        services,
-    });
+    renderer = instantiateRenderer(context);
 
     hooks.onCreated?.(renderer);
 
@@ -80,6 +111,6 @@ export const createRenderer = (options = {}, hooks = {}) => {
     return {
         renderer,
         actions,
-        resolvedOptions,
+        resolvedOptions: context.resolvedOptions,
     };
 };
