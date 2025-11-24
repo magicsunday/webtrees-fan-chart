@@ -6,10 +6,11 @@
  */
 
 import DataLoader from "./custom/data-loader";
-import ExportService from "./custom/export-service";
+import D3ChartExporter from "./custom/export/d3-chart-exporter";
 import LayoutEngine from "./custom/layout-engine";
 import ViewLayer from "./custom/view-layer";
 import Update from "./custom/update";
+import ViewportEventService from "./custom/viewport-event-service";
 import * as defaultD3 from "./lib/d3";
 
 /**
@@ -37,8 +38,14 @@ export default class FanChartRenderer
         this._viewLayer      = /** @type {FanChartViewLayer} */ (options.viewLayer ?? new ViewLayer(this._configuration));
         this._layoutEngine   = /** @type {FanChartLayoutEngine} */ (options.layoutEngine ?? new LayoutEngine(this._configuration));
         this._dataLoader     = /** @type {FanChartDataLoader} */ (options.dataLoader ?? new DataLoader());
-        this._exportService  = /** @type {FanChartExportService} */ (options.exportService ?? new ExportService(this._cssFiles));
-        this._handleFullscreenChange = this.handleFullscreenChange.bind(this);
+        this._chartExporter  = /** @type {FanChartExportService} */ (options.chartExporter ?? options.exportService ?? new D3ChartExporter(this._cssFiles));
+        this._viewportService = /** @type {import("./custom/service-contracts").ViewportEventService} */ (
+            options.viewportService ?? new ViewportEventService({
+                getContainer: () => this._parent,
+                onUpdateViewBox: () => this._viewLayer.updateViewBox(),
+                onCenter: () => this._viewLayer.center(),
+            })
+        );
     }
 
     /**
@@ -52,7 +59,7 @@ export default class FanChartRenderer
         this._layoutEngine.initializeHierarchy(this._data);
         this._viewLayer.onUpdate((url) => this.update(url));
         this._viewLayer.render(this._parent, this._layoutEngine);
-        document.addEventListener("fullscreenchange", this._handleFullscreenChange);
+        this._viewportService.register();
 
         return this;
     }
@@ -62,34 +69,7 @@ export default class FanChartRenderer
      */
     resize()
     {
-        this._viewLayer.updateViewBox();
-    }
-
-    /**
-     * Reacts to changes of the fullscreen state and resizes the chart if the
-     * current view is affected.
-     */
-    handleFullscreenChange()
-    {
-        const fullscreenElement = document.fullscreenElement;
-        const parentNode        = this._parent?.node?.();
-
-        if (!parentNode) {
-            return;
-        }
-
-        const exitedFullscreen       = fullscreenElement === null;
-        const fullscreenContainsNode = fullscreenElement?.contains?.(parentNode) ?? false;
-        const nodeContainsFullscreen = parentNode.contains?.(fullscreenElement) ?? false;
-        const isFullscreenTarget = fullscreenElement === parentNode
-            || fullscreenContainsNode
-            || nodeContainsFullscreen;
-
-        document.documentElement?.toggleAttribute("fullscreen", !exitedFullscreen && isFullscreenTarget);
-
-        if (exitedFullscreen || isFullscreenTarget) {
-            this.resize();
-        }
+        this._viewportService.resize();
     }
 
     /**
@@ -97,7 +77,7 @@ export default class FanChartRenderer
      */
     resetZoom()
     {
-        this._viewLayer.center();
+        this._viewportService.center();
     }
 
     /**
@@ -107,7 +87,7 @@ export default class FanChartRenderer
      */
     export(type)
     {
-        this._exportService.export(type, this._viewLayer.svg);
+        this._chartExporter.export(type, this._viewLayer.svg);
     }
 
     /**

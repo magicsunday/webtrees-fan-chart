@@ -1,13 +1,13 @@
 import { jest } from "@jest/globals";
 
-const selectMock       = jest.fn();
-const layoutMock       = jest.fn();
-const viewLayerMock    = jest.fn();
-const exportMock       = jest.fn();
-const dataLoaderMock   = jest.fn();
-const updateConstructor = jest.fn();
-const parentNode = { contains: jest.fn(() => false) };
-let addEventListenerSpy;
+const selectMock         = jest.fn();
+const layoutMock         = jest.fn();
+const viewLayerMock      = jest.fn();
+const exporterMock       = jest.fn();
+const dataLoaderMock     = jest.fn();
+const updateConstructor  = jest.fn();
+const viewportCtorMock   = jest.fn();
+const parentNode         = { contains: jest.fn(() => false) };
 
 class StubLayoutEngine {
     constructor(configuration)
@@ -28,17 +28,17 @@ class StubDataLoader {
 class StubViewLayer {
     constructor(configuration)
     {
-        this.configuration        = configuration;
-        this.render               = jest.fn();
-        this.updateViewBox        = jest.fn();
-        this.center               = jest.fn();
-        this.onUpdate             = jest.fn((callback) => { this.updateCallback = callback; });
+        this.configuration          = configuration;
+        this.render                 = jest.fn();
+        this.updateViewBox          = jest.fn();
+        this.center                 = jest.fn();
+        this.onUpdate               = jest.fn((callback) => { this.updateCallback = callback; });
         this.bindClickEventListener = jest.fn();
-        this.svg                  = { tag: "svg" };
+        this.svg                    = { tag: "svg" };
     }
 }
 
-class StubExportService {
+class StubChartExporter {
     constructor()
     {
         this.export = jest.fn();
@@ -52,6 +52,9 @@ class StubUpdate {
         this.update = jest.fn((url, callback) => callback());
     }
 }
+
+const viewportServiceInstance = { register: jest.fn(), resize: jest.fn(), center: jest.fn() };
+let viewportOptions;
 
 await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
     __esModule: true,
@@ -74,11 +77,11 @@ await jest.unstable_mockModule("resources/js/modules/custom/view-layer", () => (
     }),
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/export-service", () => ({
+await jest.unstable_mockModule("resources/js/modules/custom/export/d3-chart-exporter", () => ({
     __esModule: true,
     default: jest.fn((...args) => {
-        exportMock(...args);
-        return new StubExportService(...args);
+        exporterMock(...args);
+        return new StubChartExporter(...args);
     }),
 }));
 
@@ -90,6 +93,15 @@ await jest.unstable_mockModule("resources/js/modules/custom/data-loader", () => 
 await jest.unstable_mockModule("resources/js/modules/custom/update", () => ({
     __esModule: true,
     default: StubUpdate,
+}));
+
+await jest.unstable_mockModule("resources/js/modules/custom/viewport-event-service", () => ({
+    __esModule: true,
+    default: jest.fn((options) => {
+        viewportOptions = options;
+        viewportCtorMock(options);
+        return viewportServiceInstance;
+    }),
 }));
 
 const { default: FanChartRenderer } = await import("resources/js/modules/fan-chart-renderer");
@@ -108,20 +120,16 @@ describe("FanChartRenderer", () => {
         selectMock.mockClear();
         layoutMock.mockClear();
         viewLayerMock.mockClear();
-        exportMock.mockClear();
+        exporterMock.mockClear();
         dataLoaderMock.mockClear();
         updateConstructor.mockClear();
-        addEventListenerSpy = jest.spyOn(document, "addEventListener");
-        document.fullscreenElement = null;
-        document.documentElement.removeAttribute("fullscreen");
+        viewportCtorMock.mockClear();
+        viewportServiceInstance.register.mockClear();
+        viewportServiceInstance.resize.mockClear();
+        viewportServiceInstance.center.mockClear();
     });
 
-    afterEach(() => {
-        addEventListenerSpy.mockRestore();
-        document.fullscreenElement = null;
-    });
-
-    it("renders with injected d3 and draws the chart", () => {
+    it("renders with injected d3, draws the chart, and registers viewport listeners", () => {
         const renderer = new FanChartRenderer({ ...baseOptions, d3: { select: selectMock } });
 
         renderer.render();
@@ -131,35 +139,41 @@ describe("FanChartRenderer", () => {
         expect(viewLayerMock).toHaveBeenCalledWith(baseOptions.configuration);
         expect(renderer._layoutEngine.initializeHierarchy).toHaveBeenCalledWith(baseOptions.data);
         expect(renderer._viewLayer.render).toHaveBeenCalledWith({ tag: "parent", node: expect.any(Function) }, renderer._layoutEngine);
+        expect(viewportCtorMock).toHaveBeenCalledWith({
+            getContainer: expect.any(Function),
+            onUpdateViewBox: expect.any(Function),
+            onCenter: expect.any(Function),
+        });
+        expect(viewportServiceInstance.register).toHaveBeenCalledTimes(1);
     });
 
-    it("resizes and recenters the chart", () => {
+    it("delegates resize and center actions to the viewport service", () => {
         const renderer = new FanChartRenderer({ ...baseOptions, d3: { select: selectMock } });
 
         renderer.render();
         renderer.resize();
         renderer.resetZoom();
 
-        expect(renderer._viewLayer.updateViewBox).toHaveBeenCalledTimes(1);
-        expect(renderer._viewLayer.center).toHaveBeenCalledTimes(1);
+        expect(viewportServiceInstance.resize).toHaveBeenCalledTimes(1);
+        expect(viewportServiceInstance.center).toHaveBeenCalledTimes(1);
     });
 
-    it("exports png and svg variants", () => {
+    it("exports png and svg variants via the configured exporter", () => {
         const renderer = new FanChartRenderer({ ...baseOptions, d3: { select: selectMock } });
 
         renderer.render();
         renderer.export("png");
         renderer.export("svg");
 
-        expect(renderer._exportService.export).toHaveBeenCalledWith("png", renderer._viewLayer.svg);
-        expect(renderer._exportService.export).toHaveBeenCalledWith("svg", renderer._viewLayer.svg);
+        expect(renderer._chartExporter.export).toHaveBeenCalledWith("png", renderer._viewLayer.svg);
+        expect(renderer._chartExporter.export).toHaveBeenCalledWith("svg", renderer._viewLayer.svg);
     });
 
     it("delegates updates through the view layer callback", () => {
         const renderer = new FanChartRenderer({ ...baseOptions, d3: { select: selectMock } });
 
         renderer.render();
-        
+
         renderer._viewLayer.updateCallback("/update");
 
         expect(updateConstructor).toHaveBeenCalledWith(renderer._viewLayer.svg, baseOptions.configuration, renderer._layoutEngine, expect.anything());
@@ -167,60 +181,42 @@ describe("FanChartRenderer", () => {
         expect(renderer._update.update).toHaveBeenCalledWith("/update", expect.any(Function));
     });
 
-    it("prefers injected loader and export services over defaults", () => {
+    it("prefers injected loader, exporters, and viewport services over defaults", () => {
         const customExportService = { export: jest.fn() };
         const customDataLoader = { fetchHierarchy: jest.fn() };
+        const customViewportService = { register: jest.fn(), resize: jest.fn(), center: jest.fn() };
         const renderer = new FanChartRenderer({
             ...baseOptions,
             d3: { select: selectMock },
-            exportService: customExportService,
+            chartExporter: customExportService,
             dataLoader: customDataLoader,
+            viewportService: customViewportService,
         });
 
         renderer.render();
         renderer.export("svg");
         renderer.update("/custom");
+        renderer.resize();
+        renderer.resetZoom();
 
-        expect(exportMock).not.toHaveBeenCalled();
+        expect(exporterMock).not.toHaveBeenCalled();
         expect(dataLoaderMock).not.toHaveBeenCalled();
         expect(customExportService.export).toHaveBeenCalledWith("svg", renderer._viewLayer.svg);
         expect(updateConstructor).toHaveBeenCalledWith(renderer._viewLayer.svg, baseOptions.configuration, renderer._layoutEngine, customDataLoader);
+        expect(customViewportService.register).toHaveBeenCalledTimes(1);
+        expect(customViewportService.resize).toHaveBeenCalledTimes(1);
+        expect(customViewportService.center).toHaveBeenCalledTimes(1);
     });
 
-    it("recalculates the view box when the fullscreen container changes", () => {
+    it("wires update and center callbacks into the viewport service", () => {
         const renderer = new FanChartRenderer({ ...baseOptions, d3: { select: selectMock } });
 
         renderer.render();
 
-        const fullscreenHandler = addEventListenerSpy.mock.calls.find(([event]) => event === "fullscreenchange")?.[1];
+        viewportOptions.onUpdateViewBox();
+        viewportOptions.onCenter();
 
-        expect(fullscreenHandler).toBeInstanceOf(Function);
-
-        document.fullscreenElement = { contains: jest.fn(() => true) };
-        fullscreenHandler();
-
-        expect(document.documentElement.hasAttribute("fullscreen")).toBe(true);
-        document.fullscreenElement = null;
-        fullscreenHandler();
-
-        expect(document.documentElement.hasAttribute("fullscreen")).toBe(false);
-        expect(renderer._viewLayer.updateViewBox).toHaveBeenCalledTimes(2);
-    });
-
-    it("ignores unrelated fullscreen changes", () => {
-        const renderer = new FanChartRenderer({ ...baseOptions, d3: { select: selectMock } });
-
-        renderer.render();
-
-        const fullscreenHandler = addEventListenerSpy.mock.calls.find(([event]) => event === "fullscreenchange")?.[1];
-
-        expect(fullscreenHandler).toBeInstanceOf(Function);
-
-        document.fullscreenElement = { contains: jest.fn(() => false) };
-        parentNode.contains.mockReturnValue(false);
-        fullscreenHandler();
-
-        expect(document.documentElement.hasAttribute("fullscreen")).toBe(false);
-        expect(renderer._viewLayer.updateViewBox).not.toHaveBeenCalled();
+        expect(renderer._viewLayer.updateViewBox).toHaveBeenCalledTimes(1);
+        expect(renderer._viewLayer.center).toHaveBeenCalledTimes(1);
     });
 });

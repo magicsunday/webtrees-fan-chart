@@ -6,9 +6,9 @@
  */
 
 /**
- * Handles exporting charts.
+ * D3-based chart exporter.
  */
-export default class ExportService
+export default class D3ChartExporter
 {
     /**
      * @param {string[]} cssFiles
@@ -22,7 +22,7 @@ export default class ExportService
      * Exports the given SVG instance.
      *
      * @param {string} type
-     * @param {Svg} svg
+     * @param {import("../svg").default|null} svg
      */
     export(type, svg)
     {
