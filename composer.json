@@ -112,9 +112,6 @@
         "ci:test:php:unit:coverage": [
             "XDEBUG_MODE=coverage phpunit --configuration phpunit.xml --coverage-html .build/coverage/"
         ],
-        "ci:compliance": [
-            "php scripts/analyze-exif-compliance.php 50"
-        ],
         "ci:test": [
             "@ci:test:php:lint",
             "@ci:test:php:phpstan",
