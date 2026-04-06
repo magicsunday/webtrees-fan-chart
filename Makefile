@@ -37,4 +37,4 @@ watch: ## Watch for changes and rebuild automatically
 	@$(COMPOSE_RUN) npm run watch
 
 clean: ## Remove node_modules
-	@rm -rf node_modules
+	@$(COMPOSE_RUN) rm -rf node_modules
