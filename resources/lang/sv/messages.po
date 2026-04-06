@@ -168,3 +168,27 @@ msgstr "Göm fler alternativ"
 
 #~ msgid "Presentation"
 #~ msgstr "Presentation"
+
+msgid "Right-click"
+msgstr "Högerklicka"
+
+msgid "Show details of a person"
+msgstr "Visa detaljer om en person"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + scrolla"
+
+msgid "Zoom in/out"
+msgstr "Zooma in/ut"
+
+msgid "Click and drag"
+msgstr "Klicka och dra"
+
+msgid "Move the chart"
+msgstr "Flytta diagrammet"
+
+msgid "Click on a person"
+msgstr "Klicka på en person"
+
+msgid "Reload chart for that person"
+msgstr "Ladda om diagrammet för den personen"

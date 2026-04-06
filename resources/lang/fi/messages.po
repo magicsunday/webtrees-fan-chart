@@ -162,3 +162,27 @@ msgstr ""
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr ""
+
+msgid "Right-click"
+msgstr "Napsauta hiiren oikealla painikkeella"
+
+msgid "Show details of a person"
+msgstr "Näytä henkilön tiedot"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + vieritys"
+
+msgid "Zoom in/out"
+msgstr "Lähennä/loitonna"
+
+msgid "Click and drag"
+msgstr "Napsauta ja vedä"
+
+msgid "Move the chart"
+msgstr "Siirrä kaaviota"
+
+msgid "Click on a person"
+msgstr "Napsauta henkilöä"
+
+msgid "Reload chart for that person"
+msgstr "Lataa kaavio uudelleen tälle henkilölle"

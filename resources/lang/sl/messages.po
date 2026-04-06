@@ -170,3 +170,27 @@ msgstr "Prikaži več možnosti"
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr "Skrij več možnosti"
+
+msgid "Right-click"
+msgstr "Desni klik"
+
+msgid "Show details of a person"
+msgstr "Prikaži podrobnosti o osebi"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + drsenje"
+
+msgid "Zoom in/out"
+msgstr "Povečaj/pomanjšaj"
+
+msgid "Click and drag"
+msgstr "Kliknite in povlecite"
+
+msgid "Move the chart"
+msgstr "Premakni diagram"
+
+msgid "Click on a person"
+msgstr "Kliknite na osebo"
+
+msgid "Reload chart for that person"
+msgstr "Ponovno naloži diagram za to osebo"

@@ -165,3 +165,27 @@ msgstr ""
 
 #~ msgid "Presentation"
 #~ msgstr "Hình thức trình bày"
+
+msgid "Right-click"
+msgstr "Nhấp chuột phải"
+
+msgid "Show details of a person"
+msgstr "Hiển thị thông tin chi tiết của một người"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + cuộn chuột"
+
+msgid "Zoom in/out"
+msgstr "Phóng to/Thu nhỏ"
+
+msgid "Click and drag"
+msgstr "Nhấp và kéo"
+
+msgid "Move the chart"
+msgstr "Di chuyển biểu đồ"
+
+msgid "Click on a person"
+msgstr "Nhấp vào một người"
+
+msgid "Reload chart for that person"
+msgstr "Tải lại biểu đồ cho người đó"

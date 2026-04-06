@@ -165,3 +165,27 @@ msgstr ""
 
 #~ msgid "Presentation"
 #~ msgstr "Voorlegging"
+
+msgid "Right-click"
+msgstr "Regskliek"
+
+msgid "Show details of a person"
+msgstr "Wys besonderhede van 'n persoon"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + blaai"
+
+msgid "Zoom in/out"
+msgstr "Zoom in/uit"
+
+msgid "Click and drag"
+msgstr "Klik en sleep"
+
+msgid "Move the chart"
+msgstr "Skuif die diagram"
+
+msgid "Click on a person"
+msgstr "Klik op 'n persoon"
+
+msgid "Reload chart for that person"
+msgstr "Herlaai diagram vir daardie persoon"

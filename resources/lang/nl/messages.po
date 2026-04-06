@@ -171,3 +171,27 @@ msgstr "Minder opties"
 
 #~ msgid "reset"
 #~ msgstr "herstellen"
+
+msgid "Right-click"
+msgstr "Rechtsklik"
+
+msgid "Show details of a person"
+msgstr "Details van een persoon tonen"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + scrollen"
+
+msgid "Zoom in/out"
+msgstr "In-/uitzoomen"
+
+msgid "Click and drag"
+msgstr "Klikken en slepen"
+
+msgid "Move the chart"
+msgstr "Diagram verplaatsen"
+
+msgid "Click on a person"
+msgstr "Klik op een persoon"
+
+msgid "Reload chart for that person"
+msgstr "Diagram voor die persoon herladen"

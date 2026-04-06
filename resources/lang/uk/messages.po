@@ -166,3 +166,27 @@ msgstr ""
 
 #~ msgid "Presentation"
 #~ msgstr "Вигляд"
+
+msgid "Right-click"
+msgstr "Клік правою кнопкою"
+
+msgid "Show details of a person"
+msgstr "Показати деталі про особу"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + прокрутка"
+
+msgid "Zoom in/out"
+msgstr "Збільшити/Зменшити"
+
+msgid "Click and drag"
+msgstr "Натисніть і перетягніть"
+
+msgid "Move the chart"
+msgstr "Перемістити діаграму"
+
+msgid "Click on a person"
+msgstr "Натисніть на особу"
+
+msgid "Reload chart for that person"
+msgstr "Перезавантажити діаграму для цієї особи"

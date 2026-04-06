@@ -169,3 +169,27 @@ msgstr "Verstecke weitere Optionen"
 
 #~ msgid "Presentation"
 #~ msgstr "Darstellung"
+
+msgid "Right-click"
+msgstr "Rechtsklick"
+
+msgid "Show details of a person"
+msgstr "Details einer Person anzeigen"
+
+msgid "Ctrl + scroll"
+msgstr "Strg + Scrollen"
+
+msgid "Zoom in/out"
+msgstr "Vergrößern/Verkleinern"
+
+msgid "Click and drag"
+msgstr "Klicken und Ziehen"
+
+msgid "Move the chart"
+msgstr "Diagramm verschieben"
+
+msgid "Click on a person"
+msgstr "Auf eine Person klicken"
+
+msgid "Reload chart for that person"
+msgstr "Diagramm für diese Person neu laden"

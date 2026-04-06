@@ -165,3 +165,27 @@ msgstr "Skrýt další volby"
 
 #~ msgid "Presentation"
 #~ msgstr "Prezentace"
+
+msgid "Right-click"
+msgstr "Klikněte pravým tlačítkem"
+
+msgid "Show details of a person"
+msgstr "Zobrazit podrobnosti o osobě"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + kolečko myši"
+
+msgid "Zoom in/out"
+msgstr "Přiblížení/Oddálení"
+
+msgid "Click and drag"
+msgstr "Klikněte a táhněte"
+
+msgid "Move the chart"
+msgstr "Přesunout diagram"
+
+msgid "Click on a person"
+msgstr "Klikněte na osobu"
+
+msgid "Reload chart for that person"
+msgstr "Načíst diagram pro tuto osobu znovu"

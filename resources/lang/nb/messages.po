@@ -165,3 +165,27 @@ msgstr "Skjul flere valg"
 
 #~ msgid "Presentation"
 #~ msgstr "Presentasjon"
+
+msgid "Right-click"
+msgstr "Høyreklikk"
+
+msgid "Show details of a person"
+msgstr "Vis detaljer om en person"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + rull"
+
+msgid "Zoom in/out"
+msgstr "Zoom inn/ut"
+
+msgid "Click and drag"
+msgstr "Klikk og dra"
+
+msgid "Move the chart"
+msgstr "Flytt diagrammet"
+
+msgid "Click on a person"
+msgstr "Klikk på en person"
+
+msgid "Reload chart for that person"
+msgstr "Last diagrammet på nytt for den personen"

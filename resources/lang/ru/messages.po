@@ -166,3 +166,27 @@ msgstr "Спрятать доп. опции"
 
 #~ msgid "Presentation"
 #~ msgstr "Отображение"
+
+msgid "Right-click"
+msgstr "Правый клик"
+
+msgid "Show details of a person"
+msgstr "Показать сведения о персоне"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + колёсико мыши"
+
+msgid "Zoom in/out"
+msgstr "Увеличить/Уменьшить"
+
+msgid "Click and drag"
+msgstr "Нажмите и перетащите"
+
+msgid "Move the chart"
+msgstr "Переместить диаграмму"
+
+msgid "Click on a person"
+msgstr "Нажмите на персону"
+
+msgid "Reload chart for that person"
+msgstr "Перезагрузить диаграмму для этой персоны"

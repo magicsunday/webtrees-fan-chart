@@ -162,3 +162,27 @@ msgstr ""
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr ""
+
+msgid "Right-click"
+msgstr "Right-click"
+
+msgid "Show details of a person"
+msgstr "Show details of a person"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + scroll"
+
+msgid "Zoom in/out"
+msgstr "Zoom in/out"
+
+msgid "Click and drag"
+msgstr "Click and drag"
+
+msgid "Move the chart"
+msgstr "Move the chart"
+
+msgid "Click on a person"
+msgstr "Click on a person"
+
+msgid "Reload chart for that person"
+msgstr "Reload chart for that person"

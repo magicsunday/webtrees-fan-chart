@@ -170,3 +170,27 @@ msgstr "Masquer les options"
 
 #~ msgid "reset"
 #~ msgstr "réinitialiser"
+
+msgid "Right-click"
+msgstr "Clic droit"
+
+msgid "Show details of a person"
+msgstr "Afficher les détails d'une personne"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + molette"
+
+msgid "Zoom in/out"
+msgstr "Zoom avant/arrière"
+
+msgid "Click and drag"
+msgstr "Cliquer et glisser"
+
+msgid "Move the chart"
+msgstr "Déplacer le diagramme"
+
+msgid "Click on a person"
+msgstr "Cliquer sur une personne"
+
+msgid "Reload chart for that person"
+msgstr "Recharger le diagramme pour cette personne"

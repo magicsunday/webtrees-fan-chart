@@ -163,3 +163,27 @@ msgstr ""
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr ""
+
+msgid "Right-click"
+msgstr "לחיצה ימנית"
+
+msgid "Show details of a person"
+msgstr "הצגת פרטי אדם"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + גלילה"
+
+msgid "Zoom in/out"
+msgstr "הגדלה/הקטנה"
+
+msgid "Click and drag"
+msgstr "לחיצה וגרירה"
+
+msgid "Move the chart"
+msgstr "הזזת התרשים"
+
+msgid "Click on a person"
+msgstr "לחיצה על אדם"
+
+msgid "Reload chart for that person"
+msgstr "טעינת התרשים מחדש עבור אותו אדם"

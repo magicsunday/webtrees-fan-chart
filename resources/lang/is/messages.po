@@ -167,3 +167,27 @@ msgstr "Fela fleiri valkosti"
 
 #~ msgid "Presentation"
 #~ msgstr "Kynning"
+
+msgid "Right-click"
+msgstr "Hægri-smella"
+
+msgid "Show details of a person"
+msgstr "Sýna upplýsingar um einstakling"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + skruna"
+
+msgid "Zoom in/out"
+msgstr "Þysja inn/út"
+
+msgid "Click and drag"
+msgstr "Smella og draga"
+
+msgid "Move the chart"
+msgstr "Færa línuritið"
+
+msgid "Click on a person"
+msgstr "Smella á einstakling"
+
+msgid "Reload chart for that person"
+msgstr "Endurhlaða línurit fyrir þann einstakling"

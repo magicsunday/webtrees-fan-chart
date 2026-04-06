@@ -165,3 +165,27 @@ msgstr ""
 
 #~ msgid "reset"
 #~ msgstr "重置"
+
+msgid "Right-click"
+msgstr "右鍵點擊"
+
+msgid "Show details of a person"
+msgstr "顯示某人的詳細資訊"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + 捲動"
+
+msgid "Zoom in/out"
+msgstr "放大/縮小"
+
+msgid "Click and drag"
+msgstr "點擊並拖曳"
+
+msgid "Move the chart"
+msgstr "移動圖表"
+
+msgid "Click on a person"
+msgstr "點擊某人"
+
+msgid "Reload chart for that person"
+msgstr "為該人重新載入圖表"

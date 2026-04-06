@@ -164,3 +164,27 @@ msgstr ""
 
 #~ msgid "Presentation"
 #~ msgstr "प्रस्तुतीकरण"
+
+msgid "Right-click"
+msgstr "राइट-क्लिक"
+
+msgid "Show details of a person"
+msgstr "किसी व्यक्ति का विवरण दिखाएँ"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + स्क्रॉल"
+
+msgid "Zoom in/out"
+msgstr "ज़ूम इन/आउट"
+
+msgid "Click and drag"
+msgstr "क्लिक करें और खींचें"
+
+msgid "Move the chart"
+msgstr "चार्ट को स्थानांतरित करें"
+
+msgid "Click on a person"
+msgstr "किसी व्यक्ति पर क्लिक करें"
+
+msgid "Reload chart for that person"
+msgstr "उस व्यक्ति के लिए चार्ट पुनः लोड करें"

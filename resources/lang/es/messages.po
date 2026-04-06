@@ -167,3 +167,27 @@ msgstr ""
 
 #~ msgid "Presentation"
 #~ msgstr "Presentación"
+
+msgid "Right-click"
+msgstr "Clic derecho"
+
+msgid "Show details of a person"
+msgstr "Mostrar detalles de una persona"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + scroll"
+
+msgid "Zoom in/out"
+msgstr "Acercar/Alejar"
+
+msgid "Click and drag"
+msgstr "Hacer clic y arrastrar"
+
+msgid "Move the chart"
+msgstr "Mover el diagrama"
+
+msgid "Click on a person"
+msgstr "Hacer clic en una persona"
+
+msgid "Reload chart for that person"
+msgstr "Recargar el diagrama para esa persona"

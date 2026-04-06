@@ -165,3 +165,27 @@ msgstr ""
 
 #~ msgid "Presentation"
 #~ msgstr "Prezentacija"
+
+msgid "Right-click"
+msgstr "Desni klik"
+
+msgid "Show details of a person"
+msgstr "Prikaži detalje o osobi"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + skrolovanje"
+
+msgid "Zoom in/out"
+msgstr "Uvećaj/Umanji"
+
+msgid "Click and drag"
+msgstr "Klikni i prevuci"
+
+msgid "Move the chart"
+msgstr "Pomeri dijagram"
+
+msgid "Click on a person"
+msgstr "Klikni na osobu"
+
+msgid "Reload chart for that person"
+msgstr "Ponovo učitaj dijagram za tu osobu"
