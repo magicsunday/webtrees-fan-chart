@@ -2,7 +2,11 @@ SHELL = /bin/bash
 
 .SILENT:
 
+# Do not print "Entering directory ..."
 MAKEFLAGS += --no-print-directory
+
+.PHONY: no_targets__ *
+	no_targets__:
 
 .DEFAULT_GOAL := help
 
@@ -22,19 +26,10 @@ COMPOSE_BIN := $(shell \
 
 COMPOSE_RUN := $(COMPOSE_BIN) run --rm node
 
-.PHONY: help build watch install clean
+# Includes
+-include Make/*.mk
+-include Make/**/*.mk
 
-help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
-
-install: ## Install node dependencies
-	@$(COMPOSE_RUN) npm install
-
-build: ## Build JavaScript bundles
-	@$(COMPOSE_RUN) npm run prepare
-
-watch: ## Watch for changes and rebuild automatically
-	@$(COMPOSE_RUN) npm run watch
-
-clean: ## Remove node_modules
-	@$(COMPOSE_RUN) rm -rf node_modules
+# Argument fix workaround
+%:
+	@:
