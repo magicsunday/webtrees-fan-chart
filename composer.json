@@ -1,13 +1,19 @@
 {
     "name": "magicsunday/webtrees-fan-chart",
-    "description": "This modules provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.",
+    "description": "This module provides an SVG ancestor fan chart for the webtrees genealogy application.",
     "license": "GPL-3.0-or-later",
     "type": "webtrees-module",
     "keywords": [
         "webtrees",
         "module",
-        "fan",
-        "chart"
+        "fan-chart",
+        "chart",
+        "svg",
+        "d3",
+        "genealogy",
+        "ancestors",
+        "family-tree",
+        "visualization"
     ],
     "authors": [
         {
