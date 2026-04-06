@@ -1,0 +1,57 @@
+name: Feature request
+description: Suggest a new feature or improvement
+title: "[FEATURE] "
+labels: ["enhancement"]
+assignees:
+  - magicsunday
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an improvement! A clear description helps us understand and plan the feature.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of the desired feature
+      description: Describe the feature or customization as specifically as possible.
+      placeholder: "Add an option to display birth and death places below the person's name."
+    validations:
+      required: true
+
+  - type: textarea
+    id: purpose
+    attributes:
+      label: Purpose
+      description: Why is this feature useful? What problem does it solve?
+      placeholder: "This would help users quickly identify where ancestors lived without clicking on each person."
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use cases
+      description: Describe how the feature would be used in practice. Screenshots or mockups are welcome.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Nice to have
+        - Important for my workflow
+        - Critical / blocking
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical
+    attributes:
+      label: Technical details
+      description: Any technical requirements, dependencies, or suggestions for implementation?
+    validations:
+      required: false

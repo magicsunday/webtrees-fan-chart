@@ -1,0 +1,123 @@
+name: Bug report
+description: Report a bug to help us improve the module
+title: "[BUG] "
+labels: ["bug"]
+assignees:
+  - magicsunday
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! Please fill in the following details so we can investigate the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of the problem
+      description: Describe what happened and how the error manifests itself.
+      placeholder: "After clicking on a person, the chart shows a blank area instead of updating."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Explain what you expected to happen.
+      placeholder: "The chart should update and show the selected person's ancestors."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List all steps necessary to reproduce the error.
+      placeholder: |
+        1. Open the chart for any individual
+        2. Click on a person in the second generation
+        3. Observe the blank area
+    validations:
+      required: true
+
+  - type: textarea
+    id: errors
+    attributes:
+      label: Error messages or screenshots
+      description: |
+        If an error message appears, copy the full text. Screenshots also help.
+
+        **Important:** Please check your browser's developer console (press F12, then click the "Console" tab) for JavaScript errors and paste them here. Many chart issues only show errors in the console, not on the page itself.
+      placeholder: |
+        Browser console output (F12 > Console):
+        Uncaught TypeError: ...
+
+        Screenshot:
+        [Drag and drop or paste an image here]
+    validations:
+      required: false
+
+  - type: input
+    id: webtrees-version
+    attributes:
+      label: Webtrees version
+      description: Which version of webtrees are you using?
+      placeholder: "2.2.5"
+    validations:
+      required: true
+
+  - type: input
+    id: module-version
+    attributes:
+      label: Module version
+      description: Which version of the module are you using? (Check the control panel or composer.json)
+      placeholder: "3.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation-method
+    attributes:
+      label: Installation method
+      description: How did you install the module?
+      options:
+        - Manual (ZIP download into modules_v4)
+        - Composer
+        - Git clone
+        - Docker (webtrees-docker)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and operating system
+      placeholder: "Chrome 125 on Windows 11"
+    validations:
+      required: true
+
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      placeholder: "8.3"
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional information
+      description: Any special circumstances? Was the module working before a change or update?
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log files
+      description: Check the webtrees logs or server logs for related entries.
+      render: shell
+    validations:
+      required: false
