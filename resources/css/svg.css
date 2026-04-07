@@ -21,6 +21,19 @@
     stroke-width: 1px;
 }
 
+.webtrees-fan-chart-container svg g.marriageGroup g.marriage-arc path {
+    fill: rgb(250, 250, 250);
+    stroke: rgb(225, 225, 225);
+    stroke-width: 1px;
+}
+
+.webtrees-fan-chart-container svg g.marriageGroup .date {
+    fill: rgb(50, 50, 50);
+    font-weight: normal;
+    direction: ltr;
+    unicode-bidi: plaintext;
+}
+
 .webtrees-fan-chart-container svg g.person.available g.arc path {
     fill: rgb(250, 250, 250);
 }

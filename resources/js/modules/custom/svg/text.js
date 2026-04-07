@@ -232,19 +232,8 @@ export default class Text
             this.transformOuterText(parent, datum);
         }
 
-        // Marriage date
-        if (this._configuration.showParentMarriageDates && datum.children && (datum.depth < 5)) {
-            const parentId = d3.select(parent.node().parentNode).attr("id");
-            const pathId = this.createPathDefinition(parentId, Text.TEXT_SLOT.MARRIAGE_DATE, positions.get(Text.TEXT_SLOT.MARRIAGE_DATE), datum);
-            const textPath = parent
-                .append("text")
-                .append("textPath")
-                .attr("href", "#" + pathId)
-                .attr("startOffset", "25%")
-                .attr("class", "date");
-
-            this.addMarriageDate(textPath, datum);
-        }
+        // Note: Marriage dates are rendered separately in the marriage arc layer (chart.js),
+        // not as part of individual person labels.
     }
 
     /**
@@ -596,12 +585,19 @@ export default class Text
         let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
         let startAngle      = this._geometry.startAngle(data.depth, data.x0);
         let endAngle        = this._geometry.endAngle(data.depth, data.x1);
-        let relativeRadius  = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, position));
+        let relativeRadius;
 
-        // Special treatment for center marriage date position
-        if (this._configuration.showParentMarriageDates && (slot === Text.TEXT_SLOT.MARRIAGE_DATE) && (data.depth < 1)) {
-            startAngle = this._geometry.calcAngle(data.x0);
-            endAngle   = this._geometry.calcAngle(data.x1);
+        if (slot === Text.TEXT_SLOT.MARRIAGE_DATE) {
+            // Place text at center of gap between this generation and the next
+            relativeRadius = (this._geometry.outerRadius(data.depth) + this._geometry.innerRadius(data.depth + 1)) / 2;
+
+            // For the center circle use calcAngle to respect the fan degree
+            if (data.depth < 1) {
+                startAngle = this._geometry.calcAngle(data.x0);
+                endAngle   = this._geometry.calcAngle(data.x1);
+            }
+        } else {
+            relativeRadius = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, position));
         }
 
         // Create an arc generator for path segments

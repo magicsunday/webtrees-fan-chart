@@ -10,6 +10,7 @@ import Hierarchy from "./hierarchy";
 import Overlay from "../lib/chart/overlay";
 import Svg from "./svg";
 import Person from "./svg/person";
+import Geometry from "./svg/geometry";
 import Gradient from "./gradient";
 import Update from "./update";
 
@@ -215,8 +216,112 @@ export default class Chart
                 new Person(that._svg, that._configuration, person, d);
             });
 
+        // Marriage arc layer (separate from persons so hover does not affect them)
+        if (this._configuration.showParentMarriageDates) {
+            this.drawMarriageArcs();
+        }
+
         this.updateViewBox();
         this.bindClickEventListener();
+    }
+
+    /**
+     * Draws marriage arcs in the gap between generations. Each arc spans the
+     * angular range of a person who has parents shown in the chart. The arc
+     * is always drawn (for visual consistency), and the marriage date text
+     * is added when available.
+     *
+     * @private
+     */
+    drawMarriageArcs()
+    {
+        let geometry = new Geometry(this._configuration);
+        let marriageGroup = this._svg.visual
+            .append("g")
+            .attr("class", "marriageGroup");
+
+        // All nodes that have children (= parents shown) and are within display range
+        const nodes = this._hierarchy.nodes.filter(
+            datum => datum.children && datum.depth < 5
+        );
+
+        const arcPadding = 2;
+
+        nodes.forEach(datum => {
+            const innerR = geometry.outerRadius(datum.depth) + arcPadding;
+            const outerR = geometry.innerRadius(datum.depth + 1) - arcPadding;
+
+            if (outerR <= innerR) {
+                return;
+            }
+
+            // For the center circle use calcAngle to respect the fan degree
+            let startAngle = (datum.depth < 1)
+                ? geometry.calcAngle(datum.x0)
+                : geometry.startAngle(datum.depth, datum.x0);
+
+            let endAngle = (datum.depth < 1)
+                ? geometry.calcAngle(datum.x1)
+                : geometry.endAngle(datum.depth, datum.x1);
+
+            // Visual arc
+            let arcGenerator = d3.arc()
+                .startAngle(startAngle)
+                .endAngle(endAngle)
+                .innerRadius(innerR)
+                .outerRadius(outerR)
+                .padAngle(0)
+                .padRadius(0)
+                .cornerRadius(this._configuration.cornerRadius);
+
+            let arcGroup = marriageGroup
+                .append("g")
+                .attr("class", "marriage-arc");
+
+            arcGroup
+                .append("path")
+                .attr("d", arcGenerator);
+
+            // Marriage date text (only if date is available)
+            if (datum.data.data.marriageDateOfParents) {
+                const midRadius = (innerR + outerR) / 2;
+
+                // Text path at the midpoint of the gap
+                let textPathGenerator = d3.arc()
+                    .startAngle(startAngle)
+                    .endAngle(endAngle)
+                    .innerRadius(midRadius)
+                    .outerRadius(midRadius);
+
+                let pathId = "marriage-path-" + datum.id;
+
+                this._svg.defs
+                    .append("path")
+                    .attr("id", pathId)
+                    .attr("d", textPathGenerator);
+
+                // Use the same font size calculation as person labels
+                let fontSize = this._configuration.fontSize;
+
+                if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
+                    fontSize += 1;
+                }
+
+                fontSize = (fontSize - datum.depth) * this._configuration.fontScale / 100.0;
+
+                arcGroup
+                    .append("text")
+                    .attr("text-anchor", "middle")
+                    .attr("dominant-baseline", "central")
+                    .style("font-size", fontSize + "px")
+                    .append("textPath")
+                    .attr("href", "#" + pathId)
+                    .attr("startOffset", "25%")
+                    .attr("class", "date")
+                    .append("tspan")
+                    .text("\u26AD " + datum.data.data.marriageDateOfParents);
+            }
+        });
     }
 
     /**

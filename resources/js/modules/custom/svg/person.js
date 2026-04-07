@@ -208,7 +208,7 @@ export default class Person
         // .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth - 2)
         // .outerRadius((data) => this._geometry.outerRadius(data.depth) - 1);
 
-        arcGenerator.padAngle(this._configuration.padAngle)
+        arcGenerator.padAngle(this.getArcPadAngle(datum))
             .padRadius(this._configuration.padRadius)
         //     .cornerRadius(this._configuration.cornerRadius - 2)
             ;
@@ -257,7 +257,7 @@ export default class Person
             .innerRadius(this._geometry.innerRadius(datum.depth))
             .outerRadius(this._geometry.outerRadius(datum.depth));
 
-        arcGenerator.padAngle(this._configuration.padAngle)
+        arcGenerator.padAngle(this.getArcPadAngle(datum))
             .padRadius(this._configuration.padRadius)
             .cornerRadius(this._configuration.cornerRadius);
 
@@ -307,6 +307,26 @@ export default class Person
             .append("g")
             .attr("class", "wt-chart-box-name name")
             .style("font-size", this.getFontSize(children) + "px");
+    }
+
+    /**
+     * Returns the pad angle for a person's arc. When marriage arcs are shown,
+     * spouse segments (sharing the same parent) use no padding so they appear
+     * as a single joined block.
+     *
+     * @param {Object} datum The D3 data object
+     *
+     * @return {number}
+     *
+     * @private
+     */
+    getArcPadAngle(datum)
+    {
+        if (this._configuration.showParentMarriageDates && datum.parent) {
+            return 0;
+        }
+
+        return this._configuration.padAngle;
     }
 
     /**
