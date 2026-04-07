@@ -39,6 +39,9 @@ export default class Text
      */
     createLabels(parent, datum)
     {
+        // Calculate dynamic slot positions based on which content is present
+        const positions = this.calculateSlotPositions(datum);
+
         // Inner labels
         if (this.isInnerLabel(datum)) {
             const parentId = d3.select(parent.node().parentNode).attr("id");
@@ -48,9 +51,13 @@ export default class Text
             // chart will not be drawn correctly in Inkscape (actually this is not necessary, the browsers
             // display the chart correctly).
 
+            const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+
             nameGroups.forEach((nameGroup, index) => {
-                const availableWidth = this.getAvailableWidth(datum, index);
-                const pathId = this.createPathDefinition(parentId, index, datum);
+                const slot     = nameSlots[index];
+                const position = positions.get(slot);
+                const availableWidth = this.getAvailableWidth(datum, position);
+                const pathId = this.createPathDefinition(parentId, slot, position, datum);
                 const textPath = parent
                     .append("text")
                     .append("textPath")
@@ -69,8 +76,10 @@ export default class Text
 
             // Alternative names
             if (datum.data.data.alternativeName !== "") {
-                const pathId = this.createPathDefinition(parentId, 2, datum);
-                const availableWidth = this.getAvailableWidth(datum, 2);
+                const slot     = Text.TEXT_SLOT.ALTERNATIVE_NAME;
+                const position = positions.get(slot);
+                const pathId = this.createPathDefinition(parentId, slot, position, datum);
+                const availableWidth = this.getAvailableWidth(datum, position);
                 const nameGroup = this.createAlternativeNamesData(datum);
 
                 const textPath = parent
@@ -93,29 +102,35 @@ export default class Text
 
             // Birth and death date
             if (datum.data.data.timespan !== "") {
-                const pathId = this.createPathDefinition(parentId, 3, datum);
-                const textPath = parent
-                    .append("text")
-                    .append("textPath")
-                    .attr("href", "#" + pathId)
-                    .attr("startOffset", "25%")
-                    .attr("class", "date");
+                const timespanLines = datum.data.data.timespan.split("\n");
+                const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
 
-                textPath.append("title")
-                    .text(datum.data.data.timespan);
+                timespanLines.forEach((line, lineIndex) => {
+                    const slot     = dateSlots[lineIndex];
+                    const position = positions.get(slot);
+                    const pathId = this.createPathDefinition(parentId, slot, position, datum);
+                    const textPath = parent
+                        .append("text")
+                        .append("textPath")
+                        .attr("href", "#" + pathId)
+                        .attr("startOffset", "25%")
+                        .attr("class", "date");
 
-                // Create a <tspan> element for the time span
-                const tspan = textPath.append("tspan")
-                    .text(datum.data.data.timespan);
+                    textPath.append("title")
+                        .text(line);
 
-                const availableWidth = this.getAvailableWidth(datum, 3);
+                    const tspan = textPath.append("tspan")
+                        .text(line);
 
-                if (this.getTextLength(textPath) > availableWidth) {
-                    textPath.selectAll("tspan")
-                        .each(this.truncateDate(textPath, availableWidth));
+                    const availableWidth = this.getAvailableWidth(datum, position);
 
-                    tspan.text(tspan.text() + "\u2026");
-                }
+                    if (this.getTextLength(textPath) > availableWidth) {
+                        textPath.selectAll("tspan")
+                            .each(this.truncateDate(textPath, availableWidth));
+
+                        tspan.text(tspan.text() + "\u2026");
+                    }
+                });
             }
 
         // Outer labels
@@ -124,7 +139,7 @@ export default class Text
             // not distinguish between first name, last name and dates
             if (datum.depth >= 7) {
                 const [first, ...last] = this.createNamesData(datum);
-                const availableWidth = this.getAvailableWidth(datum, 0);
+                const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.FIRST_NAMES));
 
                 // Merge the firstname and lastname groups, as we display the whole name in one line
                 const combined = [].concat(first, typeof last[0] !== "undefined" ? last[0] : []);
@@ -143,9 +158,10 @@ export default class Text
                 );
             } else {
                 const nameGroups = this.createNamesData(datum);
+                const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
 
                 nameGroups.forEach((nameGroup, index) => {
-                    const availableWidth = this.getAvailableWidth(datum, index);
+                    const availableWidth = this.getAvailableWidth(datum, positions.get(nameSlots[index]));
                     const text = parent
                         .append("text")
                         .attr("dy", "2px");
@@ -162,7 +178,7 @@ export default class Text
 
                 // Alternative name
                 if (datum.data.data.alternativeName !== "") {
-                    const availableWidth = this.getAvailableWidth(datum, 2);
+                    const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.ALTERNATIVE_NAME));
                     const nameGroup = this.createAlternativeNamesData(datum);
 
                     const text = parent
@@ -183,28 +199,31 @@ export default class Text
 
                 // Birth and death date
                 if (datum.depth < 6) {
-                    // Birth and death date
                     if (datum.data.data.timespan !== "") {
-                        const text = parent
-                            .append("text")
-                            .attr("class", "date")
-                            .attr("dy", "7px");
+                        const timespanLines = datum.data.data.timespan.split("\n");
+                        const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
 
-                        text.append("title")
-                            .text(datum.data.data.timespan);
+                        timespanLines.forEach((line, lineIndex) => {
+                            const text = parent
+                                .append("text")
+                                .attr("class", "date")
+                                .attr("dy", "7px");
 
-                        // Create a <tspan> element for the time span
-                        const tspan = text.append("tspan")
-                            .text(datum.data.data.timespan);
+                            text.append("title")
+                                .text(line);
 
-                        const availableWidth = this.getAvailableWidth(datum, 2);
+                            const tspan = text.append("tspan")
+                                .text(line);
 
-                        if (this.getTextLength(text) > availableWidth) {
-                            text.selectAll("tspan")
-                                .each(this.truncateDate(text, availableWidth));
+                            const availableWidth = this.getAvailableWidth(datum, positions.get(dateSlots[lineIndex]));
 
-                            tspan.text(tspan.text() + "\u2026");
-                        }
+                            if (this.getTextLength(text) > availableWidth) {
+                                text.selectAll("tspan")
+                                    .each(this.truncateDate(text, availableWidth));
+
+                                tspan.text(tspan.text() + "\u2026");
+                            }
+                        });
                     }
                 }
             }
@@ -216,7 +235,7 @@ export default class Text
         // Marriage date
         if (this._configuration.showParentMarriageDates && datum.children && (datum.depth < 5)) {
             const parentId = d3.select(parent.node().parentNode).attr("id");
-            const pathId = this.createPathDefinition(parentId, 4, datum);
+            const pathId = this.createPathDefinition(parentId, Text.TEXT_SLOT.MARRIAGE_DATE, positions.get(Text.TEXT_SLOT.MARRIAGE_DATE), datum);
             const textPath = parent
                 .append("text")
                 .append("textPath")
@@ -565,9 +584,9 @@ export default class Text
      *
      * @return {string} The id of the newly created path element
      */
-    createPathDefinition(parentId, index, data)
+    createPathDefinition(parentId, slot, position, data)
     {
-        let pathId = "path-" + parentId + "-" + index;
+        let pathId = "path-" + parentId + "-" + slot.index;
 
         // If definition already exists, return the existing path ID
         if (this._svg.defs.select("path#" + pathId).node()) {
@@ -577,10 +596,10 @@ export default class Text
         let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
         let startAngle      = this._geometry.startAngle(data.depth, data.x0);
         let endAngle        = this._geometry.endAngle(data.depth, data.x1);
-        let relativeRadius  = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, index));
+        let relativeRadius  = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, position));
 
         // Special treatment for center marriage date position
-        if (this._configuration.showParentMarriageDates && (index === 4) && (data.depth < 1)) {
+        if (this._configuration.showParentMarriageDates && (slot === Text.TEXT_SLOT.MARRIAGE_DATE) && (data.depth < 1)) {
             startAngle = this._geometry.calcAngle(data.x0);
             endAngle   = this._geometry.calcAngle(data.x1);
         }
@@ -631,20 +650,128 @@ export default class Text
     }
 
     /**
-     * Get the relative position offsets in percent for different text lines (firstName, lastName, dates).
+     * Text slot definitions for positioning text lines within an arc segment.
+     * Each slot has a numeric index (used for unique path IDs) and relative
+     * radius offsets in percent (0 = inner, 100 = outer) for normal and
+     * flipped label orientations.
+     *
+     * @type {Object<string, {index: number, normal: number, flipped: number}>}
+     */
+    /**
+     * Text slot identifiers used for unique path IDs.
+     *
+     * @type {Object<string, {index: number}>}
+     */
+    static TEXT_SLOT = {
+        FIRST_NAMES:      { index: 0 },
+        LAST_NAMES:       { index: 1 },
+        ALTERNATIVE_NAME: { index: 2 },
+        DATE_LINE_1:      { index: 3 },
+        DATE_LINE_2:      { index: 4 },
+        MARRIAGE_DATE:    { index: 5 },
+    };
+
+    /**
+     * Calculates text positions grouped by semantic relationship. Names
+     * (first, last, alternative) form one group, dates another. Items within
+     * a group use tighter spacing; groups are separated by a wider gap.
+     * The result is vertically centered in the available arc space.
+     *
+     * @param {Object} datum The D3 data object
+     *
+     * @return {Map<Object, {normal: number, flipped: number}>}
+     */
+    calculateSlotPositions(datum)
+    {
+        // Build semantic groups: names, alternative name, dates
+        const nameGroup = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+        const altGroup   = [];
+        const dateGroup  = [];
+
+        if (datum.data.data.alternativeName !== "") {
+            altGroup.push(Text.TEXT_SLOT.ALTERNATIVE_NAME);
+        }
+
+        if (datum.data.data.timespan !== "") {
+            const lines = datum.data.data.timespan.split("\n");
+            dateGroup.push(Text.TEXT_SLOT.DATE_LINE_1);
+
+            if (lines.length > 1) {
+                dateGroup.push(Text.TEXT_SLOT.DATE_LINE_2);
+            }
+        }
+
+        const groups = [nameGroup];
+
+        if (altGroup.length > 0) {
+            groups.push(altGroup);
+        }
+
+        if (dateGroup.length > 0) {
+            groups.push(dateGroup);
+        }
+
+        // Spacing within a group (tight) vs. between groups (wide)
+        const intraGroupSpacing = 14;
+        const interGroupSpacing = 20;
+
+        // Total vertical extent of all groups
+        let totalHeight = 0;
+
+        groups.forEach((group, gi) => {
+            totalHeight += (group.length - 1) * intraGroupSpacing;
+
+            if (gi < groups.length - 1) {
+                totalHeight += interGroupSpacing;
+            }
+        });
+
+        // Center within usable range (0 = inner edge, 100 = outer edge)
+        const rangeMin = 10;
+        const rangeMax = 82;
+        const rangeMid = (rangeMin + rangeMax) / 2;
+        let currentPos = rangeMid + (totalHeight / 2);
+
+        const positions = new Map();
+
+        groups.forEach((group, gi) => {
+            group.forEach((slot, si) => {
+                positions.set(slot, {
+                    normal:  currentPos,
+                    flipped: 100 - currentPos,
+                });
+
+                if (si < group.length - 1) {
+                    currentPos -= intraGroupSpacing;
+                }
+            });
+
+            if (gi < groups.length - 1) {
+                currentPos -= interGroupSpacing;
+            }
+        });
+
+        // Marriage date is always at a fixed position outside the arc
+        positions.set(Text.TEXT_SLOT.MARRIAGE_DATE, {
+            normal:  120,
+            flipped: 125,
+        });
+
+        return positions;
+    }
+
+    /**
+     * Get the relative position offset in percent for a text slot.
      *   => (0 = inner radius, 100 = outer radius)
      *
-     * @param {boolean} positionFlipped TRUE if the labels should be flipped for easier reading
-     * @param {number}  index           The index position of element in parent container. Required to create a unique path id.
+     * @param {boolean}                           positionFlipped TRUE if the labels should be flipped
+     * @param {{normal: number, flipped: number}} position        The calculated position for this slot
      *
      * @return {number}
      */
-    getTextOffset(positionFlipped, index)
+    getTextOffset(positionFlipped, position)
     {
-        // First names, Last name, Alternative name, Date, Parent marriage date
-        return positionFlipped
-            ? [23, 40, 62, 84, 125][index]
-            : [73, 56, 34, 12, 120][index];
+        return positionFlipped ? position.flipped : position.normal;
     }
 
     /**
@@ -658,7 +785,7 @@ export default class Text
      *
      * @private
      */
-    getAvailableWidth(data, index)
+    getAvailableWidth(data, position)
     {
         // Outer arcs
         if (data.depth > this._configuration.numberOfInnerCircles) {
@@ -674,7 +801,7 @@ export default class Text
             let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
 
             // Calculate length of the arc
-            availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, index));
+            availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, position));
         }
 
         return availableWidth - (this._configuration.textPadding * 2)
