@@ -64,14 +64,14 @@ export default class Configuration
         this.centerCircleRadius = 100;
 
         // Height of each inner circle arc
-        this.innerArcHeight = 100;
+        this.innerArcHeight = 115;
 
         // Height of each outer circle arc
-        this.outerArcHeight = 160;
+        this.outerArcHeight = 175;
 
         if (showParentMarriageDates) {
-            this.innerArcHeight = this.circlePadding + 110;
-            this.outerArcHeight = this.circlePadding + 110;
+            this.innerArcHeight = this.circlePadding + 125;
+            this.outerArcHeight = this.circlePadding + 125;
         }
 
         // Width of the colored arc above each single person arc
