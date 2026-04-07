@@ -1,0 +1,201 @@
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
+import * as d3 from "../../lib/d3";
+import Geometry from "./geometry";
+
+/**
+ * This class handles the creation of the marriage arc elements of the chart.
+ * It follows the same structure as the Person class.
+ *
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/webtrees-fan-chart/
+ */
+export default class Marriage
+{
+    /**
+     * Constructor.
+     *
+     * @param {Svg}           svg
+     * @param {Configuration} configuration The application configuration
+     * @param {Selection}     marriage
+     * @param {Object}        datum
+     */
+    constructor(svg, configuration, marriage, datum)
+    {
+        this._svg           = svg;
+        this._configuration = configuration;
+        this._geometry      = new Geometry(this._configuration);
+
+        this.init(marriage, datum);
+    }
+
+    /**
+     * Initialize the required elements.
+     *
+     * @param {Selection} marriage
+     * @param {Object}    datum
+     */
+    init(marriage, datum)
+    {
+        let hasChildren = datum.children
+            && datum.children.some(child => child.data.data.xref !== "");
+
+        if (marriage.classed("new") && this._configuration.hideEmptySegments) {
+            this.addArc(marriage, datum);
+        } else {
+            if (!marriage.classed("new")
+                && !marriage.classed("update")
+                && !marriage.classed("remove")
+                && (hasChildren || !this._configuration.hideEmptySegments)
+            ) {
+                this.addArc(marriage, datum);
+            }
+        }
+
+        if (!marriage.classed("remove")) {
+            this.addLabel(marriage, datum);
+        }
+    }
+
+    /**
+     * Appends the arc element to the marriage element.
+     *
+     * @param {Selection} marriage The parent element
+     * @param {Object}    datum    The D3 data object
+     *
+     * @private
+     */
+    addArc(marriage, datum)
+    {
+        let innerR = this._geometry.outerRadius(datum.depth);
+        let outerR = this._geometry.innerRadius(datum.depth + 1);
+
+        if (outerR <= innerR) {
+            return;
+        }
+
+        let startAngle = (datum.depth < 1)
+            ? this._geometry.calcAngle(datum.x0)
+            : this._geometry.startAngle(datum.depth, datum.x0);
+
+        let endAngle = (datum.depth < 1)
+            ? this._geometry.calcAngle(datum.x1)
+            : this._geometry.endAngle(datum.depth, datum.x1);
+
+        let arcGenerator = d3.arc()
+            .startAngle(startAngle)
+            .endAngle(endAngle)
+            .innerRadius(innerR)
+            .outerRadius(outerR)
+            .padAngle(0)
+            .padRadius(0)
+            .cornerRadius(this._configuration.cornerRadius);
+
+        let arcGroup = marriage
+            .append("g")
+            .attr("class", "arc");
+
+        let path = arcGroup
+            .append("path")
+            .attr("d", arcGenerator);
+
+        // Hide arc initially if it's new during chart update
+        if (marriage.classed("new")) {
+            path.style("opacity", 1e-6);
+        }
+    }
+
+    /**
+     * Appends the label (marriage date text) to the marriage element.
+     *
+     * @param {Selection} marriage The parent element
+     * @param {Object}    datum    The D3 data object
+     *
+     * @private
+     */
+    addLabel(marriage, datum)
+    {
+        if (!datum.data.data.marriageDateOfParents) {
+            return;
+        }
+
+        let innerR = this._geometry.outerRadius(datum.depth);
+        let outerR = this._geometry.innerRadius(datum.depth + 1);
+
+        if (outerR <= innerR) {
+            return;
+        }
+
+        let startAngle = (datum.depth < 1)
+            ? this._geometry.calcAngle(datum.x0)
+            : this._geometry.startAngle(datum.depth, datum.x0);
+
+        let endAngle = (datum.depth < 1)
+            ? this._geometry.calcAngle(datum.x1)
+            : this._geometry.endAngle(datum.depth, datum.x1);
+
+        let midRadius = (innerR + outerR) / 2;
+
+        let textPathGenerator = d3.arc()
+            .startAngle(startAngle)
+            .endAngle(endAngle)
+            .innerRadius(midRadius)
+            .outerRadius(midRadius);
+
+        let marriageId = marriage.attr("id");
+        let pathId     = "path-" + marriageId;
+
+        // Only create path definition if it doesn't exist yet
+        if (!this._svg.defs.select("path#" + pathId).node()) {
+            this._svg.defs
+                .append("path")
+                .attr("id", pathId)
+                .attr("d", textPathGenerator);
+        }
+
+        let labelGroup = marriage
+            .append("g")
+            .attr("class", "name")
+            .style("font-size", this.getFontSize(datum) + "px");
+
+        // Hide immediately during updates to prevent visual flash
+        if (marriage.classed("update")) {
+            labelGroup.style("opacity", 1e-6);
+        }
+
+        labelGroup
+            .append("text")
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "central")
+            .append("textPath")
+            .attr("href", "#" + pathId)
+            .attr("startOffset", "25%")
+            .attr("class", "date")
+            .append("tspan")
+            .text("\u26AD " + datum.data.data.marriageDateOfParents);
+    }
+
+    /**
+     * Get the scaled font size (same calculation as Person).
+     *
+     * @param {Object} datum The D3 data object
+     *
+     * @return {number}
+     */
+    getFontSize(datum)
+    {
+        let fontSize = this._configuration.fontSize;
+
+        if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
+            fontSize += 1;
+        }
+
+        return ((fontSize - datum.depth) * this._configuration.fontScale / 100.0);
+    }
+}

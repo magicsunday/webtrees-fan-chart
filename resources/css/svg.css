@@ -17,25 +17,32 @@
 
 .webtrees-fan-chart-container svg g.person g.arc path {
     fill: rgb(235, 235, 235);
+    stroke: none;
+}
+
+.webtrees-fan-chart-container svg g.marriage g.arc path {
+    fill: rgb(250, 250, 250);
+    stroke: none;
+}
+
+.webtrees-fan-chart-container svg g.person.available g.arc path,
+.webtrees-fan-chart-container svg g.marriage.available g.arc path {
+    fill: rgb(250, 250, 250);
+}
+
+.webtrees-fan-chart-container svg g.separatorGroup line {
     stroke: rgb(225, 225, 225);
     stroke-width: 1px;
 }
 
-.webtrees-fan-chart-container svg g.marriageGroup g.marriage-arc path {
-    fill: rgb(250, 250, 250);
-    stroke: rgb(225, 225, 225);
-    stroke-width: 1px;
+.webtrees-fan-chart-container svg g.person.available.hover g.arc path {
+    fill: rgb(245, 245, 245);
+    stroke: rgb(200, 200, 200);
+    stroke-width: 1.5px;
 }
 
-.webtrees-fan-chart-container svg g.marriageGroup .date {
-    fill: rgb(50, 50, 50);
-    font-weight: normal;
-    direction: ltr;
-    unicode-bidi: plaintext;
-}
-
-.webtrees-fan-chart-container svg g.person.available g.arc path {
-    fill: rgb(250, 250, 250);
+.webtrees-fan-chart-container svg g.person.available.hover g.color path {
+    filter: saturate(1.5) brightness(0.92);
 }
 
 .webtrees-fan-chart-container svg g.name .wt-chart-box-name-alt {

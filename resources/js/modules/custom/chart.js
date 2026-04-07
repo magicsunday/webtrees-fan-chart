@@ -10,6 +10,7 @@ import Hierarchy from "./hierarchy";
 import Overlay from "../lib/chart/overlay";
 import Svg from "./svg";
 import Person from "./svg/person";
+import Marriage from "./svg/marriage";
 import Geometry from "./svg/geometry";
 import Gradient from "./gradient";
 import Update from "./update";
@@ -221,8 +222,55 @@ export default class Chart
             this.drawMarriageArcs();
         }
 
+        // Radial separator lines between family branches
+        this.drawFamilySeparators();
+
         this.updateViewBox();
         this.bindClickEventListener();
+    }
+
+    /**
+     * Draws radial separator lines between different family branches at
+     * each generation level. Lines are drawn only between non-spouse
+     * segments (where the parent differs).
+     *
+     * @private
+     */
+    drawFamilySeparators()
+    {
+        let geometry = new Geometry(this._configuration);
+        let separatorGroup = this._svg.visual.select("g.separatorGroup");
+
+        if (separatorGroup.empty()) {
+            separatorGroup = this._svg.visual.append("g").attr("class", "separatorGroup");
+        }
+
+        const maxDepth = this._configuration.generations;
+
+        for (let depth = 1; depth <= maxDepth; depth++) {
+            const nodesAtDepth = this._hierarchy.nodes
+                .filter(datum => datum.depth === depth && datum.data.data.xref !== "")
+                .sort((a, b) => a.x0 - b.x0);
+
+            for (let i = 0; i < nodesAtDepth.length - 1; i++) {
+                const current = nodesAtDepth[i];
+                const next    = nodesAtDepth[i + 1];
+
+                // Only draw separator between different families
+                if (current.parent !== next.parent) {
+                    const angle  = geometry.calcAngle(current.x1);
+                    const innerR = geometry.innerRadius(depth);
+                    const outerR = geometry.outerRadius(depth);
+
+                    separatorGroup
+                        .append("line")
+                        .attr("x1", innerR * Math.sin(angle))
+                        .attr("y1", -innerR * Math.cos(angle))
+                        .attr("x2", outerR * Math.sin(angle))
+                        .attr("y2", -outerR * Math.cos(angle));
+                }
+            }
+        }
     }
 
     /**
@@ -235,93 +283,45 @@ export default class Chart
      */
     drawMarriageArcs()
     {
-        let geometry = new Geometry(this._configuration);
-        let marriageGroup = this._svg.visual
-            .append("g")
-            .attr("class", "marriageGroup");
+        let that = this;
+
+        let marriageGroup = this._svg.visual.select("g.marriageGroup");
+
+        if (marriageGroup.empty()) {
+            marriageGroup = this._svg.visual.append("g").attr("class", "marriageGroup");
+        }
 
         // All nodes that have children (= parents shown) and are within display range
         const nodes = this._hierarchy.nodes.filter(
-            datum => datum.children && datum.depth < 5
+            datum => datum.children
+                && datum.depth < 5
+                && datum.children.some(child => child.data.data.xref !== "")
         );
 
-        const arcPadding = 2;
+        // D3 data join: same pattern as person elements
+        marriageGroup
+            .selectAll("g.marriage")
+            .data(nodes, (datum) => datum.id)
+            .enter()
+            .append("g")
+            .attr("class", "marriage")
+            .attr("id", (datum) => "marriage-" + datum.id);
 
-        nodes.forEach(datum => {
-            const innerR = geometry.outerRadius(datum.depth) + arcPadding;
-            const outerR = geometry.innerRadius(datum.depth + 1) - arcPadding;
+        // Create a new selection in order to leave the previous enter() selection
+        marriageGroup
+            .selectAll("g.marriage")
+            .each(function (datum) {
+                let marriage = d3.select(this);
 
-            if (outerR <= innerR) {
-                return;
-            }
+                let hasChildren = datum.children
+                    && datum.children.some(child => child.data.data.xref !== "");
 
-            // For the center circle use calcAngle to respect the fan degree
-            let startAngle = (datum.depth < 1)
-                ? geometry.calcAngle(datum.x0)
-                : geometry.startAngle(datum.depth, datum.x0);
-
-            let endAngle = (datum.depth < 1)
-                ? geometry.calcAngle(datum.x1)
-                : geometry.endAngle(datum.depth, datum.x1);
-
-            // Visual arc
-            let arcGenerator = d3.arc()
-                .startAngle(startAngle)
-                .endAngle(endAngle)
-                .innerRadius(innerR)
-                .outerRadius(outerR)
-                .padAngle(0)
-                .padRadius(0)
-                .cornerRadius(this._configuration.cornerRadius);
-
-            let arcGroup = marriageGroup
-                .append("g")
-                .attr("class", "marriage-arc");
-
-            arcGroup
-                .append("path")
-                .attr("d", arcGenerator);
-
-            // Marriage date text (only if date is available)
-            if (datum.data.data.marriageDateOfParents) {
-                const midRadius = (innerR + outerR) / 2;
-
-                // Text path at the midpoint of the gap
-                let textPathGenerator = d3.arc()
-                    .startAngle(startAngle)
-                    .endAngle(endAngle)
-                    .innerRadius(midRadius)
-                    .outerRadius(midRadius);
-
-                let pathId = "marriage-path-" + datum.id;
-
-                this._svg.defs
-                    .append("path")
-                    .attr("id", pathId)
-                    .attr("d", textPathGenerator);
-
-                // Use the same font size calculation as person labels
-                let fontSize = this._configuration.fontSize;
-
-                if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
-                    fontSize += 1;
+                if (!hasChildren) {
+                    return;
                 }
 
-                fontSize = (fontSize - datum.depth) * this._configuration.fontScale / 100.0;
-
-                arcGroup
-                    .append("text")
-                    .attr("text-anchor", "middle")
-                    .attr("dominant-baseline", "central")
-                    .style("font-size", fontSize + "px")
-                    .append("textPath")
-                    .attr("href", "#" + pathId)
-                    .attr("startOffset", "25%")
-                    .attr("class", "date")
-                    .append("tspan")
-                    .text("\u26AD " + datum.data.data.marriageDateOfParents);
-            }
-        });
+                new Marriage(that._svg, that._configuration, marriage, datum);
+            });
     }
 
     /**
@@ -337,6 +337,14 @@ export default class Chart
 
         // Trigger method on click
         persons.on("click", this.personClick.bind(this));
+
+        // Set available on marriage arcs that have content
+        this._svg
+            .select("g.marriageGroup")
+            .selectAll("g.marriage")
+            .filter((datum) => datum.data.data.marriageDateOfParents !== "")
+            // .filter(function () { return this.querySelector("g.arc"); })
+            .classed("available", true);
     }
 
     /**
@@ -374,6 +382,29 @@ export default class Chart
     {
         let update = new Update(this._svg, this._configuration, this._hierarchy);
 
-        update.update(url, () => this.bindClickEventListener());
+        update.update(
+            url,
+            () => this.redrawOverlayLayers(),
+            () => this.bindClickEventListener()
+        );
+    }
+
+    /**
+     * Removes and redraws the overlay layers (marriage arcs, separators).
+     *
+     * @private
+     */
+    redrawOverlayLayers()
+    {
+        // Separators: mark old, draw new
+        this._svg.visual.selectAll("g.separatorGroup line")
+            .classed("old", true);
+
+        this.drawFamilySeparators();
+
+        // // Marriage arcs: data join creates new groups for nodes not yet in the DOM
+        // if (this._configuration.showParentMarriageDates) {
+        //     this.drawMarriageArcs();
+        // }
     }
 }

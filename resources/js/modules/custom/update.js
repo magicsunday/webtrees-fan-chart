@@ -7,6 +7,7 @@
 
 import * as d3 from "../lib/d3";
 import Person from "./svg/person";
+import Marriage from "./svg/marriage";
 
 /**
  * This class handles the visual update of all text and path elements.
@@ -39,7 +40,7 @@ export default class Update
      *
      * @public
      */
-    update(url, callback)
+    update(url, redrawOverlays, callback)
     {
         let that = this;
 
@@ -71,8 +72,8 @@ export default class Update
             // Initialize the new loaded data
             this._hierarchy.init(data.data);
 
-            // Flag all elements which are subject to change
-            let persons = this._svg
+            // Flag all person elements which are subject to change
+            this._svg
                 .selectAll("g.person")
                 .data(this._hierarchy.nodes, (datum) => datum.id)
                 .each(function (datum) {
@@ -91,10 +92,47 @@ export default class Update
                     new Person(that._svg, that._configuration, person, datum);
                 });
 
-            // Hide all new labels of not removed elements
+            // Flag all marriage elements which are subject to change (same pattern as persons)
+            if (this._configuration.showParentMarriageDates) {
+                this._svg
+                    .selectAll("g.marriage")
+                    .data(this._hierarchy.nodes, (datum) => datum.id)
+                    .each(function (datum) {
+                        let hasChildren = datum.children
+                            && datum.children.some(child => child.data.data.xref !== "");
+
+                        let empty = !hasChildren;
+                        let marriage = d3.select(this);
+
+                        marriage.classed("remove", empty)
+                            .classed("update", !empty && marriage.classed("available"))
+                            .classed("new", !empty && !marriage.classed("available"));
+
+                        if (!marriage.classed("new")) {
+                            marriage.selectAll("g.name")
+                                .classed("old", true);
+                        }
+
+                        new Marriage(that._svg, that._configuration, marriage, datum);
+                    });
+            }
+
+            // Mark old separator lines + draw new ones
+            redrawOverlays();
+
+            // Hide all new elements
             this._svg
                 .selectAll("g.person:not(.remove)")
                 .selectAll("g.name:not(.old), g.color:not(.old)")
+                .style("opacity", 1e-6);
+
+            this._svg
+                .selectAll("g.marriage:not(.remove)")
+                .selectAll("g.name:not(.old)")
+                .style("opacity", 1e-6);
+
+            this._svg
+                .selectAll("g.separatorGroup line:not(.old)")
                 .style("opacity", 1e-6);
 
             // Create transition instance
@@ -102,31 +140,65 @@ export default class Update
                 .duration(this._configuration.updateDuration)
                 .call(this.endAll, () => this.updateDone(callback));
 
-            // Fade out old arc
+            // Fade out old person arcs
             this._svg
                 .selectAll("g.person.remove g.arc path")
                 .transition(t)
                 .style("fill", () => this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)")
                 .style("opacity", () => this._configuration.hideEmptySegments ? 1e-6 : null);
 
-            // Fade in new arcs
+            this._svg
+                .selectAll("g.marriage.remove g.arc path")
+                .transition(t)
+                .style("fill", () => this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)")
+                .style("opacity", () => this._configuration.hideEmptySegments ? 1e-6 : null);
+
+            // Fade in new person arcs
             this._svg
                 .selectAll("g.person.new g.arc path")
                 .transition(t)
                 .style("fill", "rgb(250, 250, 250)")
                 .style("opacity", () => this._configuration.hideEmptySegments ? 1 : null);
 
-            // Fade out all old labels and color group
+            this._svg
+                .selectAll("g.marriage.new g.arc path")
+                .transition(t)
+                .style("fill", "rgb(250, 250, 250)")
+                .style("opacity", () => this._configuration.hideEmptySegments ? 1 : null);
+
+            // Fade out all old elements
             this._svg
                 .selectAll("g.person.update, g.person.remove")
                 .selectAll("g.name.old, g.color.old")
                 .transition(t)
                 .style("opacity", 1e-6);
 
-            // Fade in all new labels and color group
+            this._svg
+                .selectAll("g.marriage.update, g.marriage.remove")
+                .selectAll("g.name.old")
+                .transition(t)
+                .style("opacity", 1e-6);
+
+            this._svg
+                .selectAll("g.separatorGroup line.old")
+                .transition(t)
+                .style("opacity", 1e-6);
+
+            // Fade in all new elements
             this._svg
                 .selectAll("g.person:not(.remove)")
                 .selectAll("g.name:not(.old), g.color:not(.old)")
+                .transition(t)
+                .style("opacity", 1);
+
+            this._svg
+                .selectAll("g.marriage:not(.remove)")
+                .selectAll("g.name:not(.old)")
+                .transition(t)
+                .style("opacity", 1);
+
+            this._svg
+                .selectAll("g.separatorGroup line:not(.old)")
                 .transition(t)
                 .style("opacity", 1);
         });
@@ -147,6 +219,11 @@ export default class Update
                 .selectAll("g.person.remove")
                 .selectAll("g.arc")
                 .remove();
+
+            this._svg
+                .selectAll("g.marriage.remove")
+                .selectAll("g.arc")
+                .remove();
         }
 
         // Remove styles so CSS classes may work correct, Uses a small timer as animation seems not
@@ -158,6 +235,14 @@ export default class Update
 
             this._svg
                 .selectAll("g.person g.name, g.person g.color")
+                .style("opacity", null);
+
+            this._svg
+                .selectAll("g.marriage g.arc path")
+                .attr("style", null);
+
+            this._svg
+                .selectAll("g.marriage g.name")
                 .style("opacity", null);
 
             t.stop();
@@ -172,8 +257,46 @@ export default class Update
             .remove();
 
         this._svg
+            .selectAll("g.marriage.new, g.marriage.update, g.marriage.remove")
+            .classed("new", false)
+            .classed("update", false)
+            .classed("remove", false)
+            .selectAll("g.name.old")
+            .remove();
+
+        this._svg
             .selectAll("g.person.available")
             .classed("available", false);
+
+        this._svg
+            .selectAll("g.marriage.available")
+            .classed("available", false);
+
+        this._svg
+            .selectAll("g.separatorGroup line.old")
+            .remove();
+
+        this._svg
+            .selectAll("g.separatorGroup line")
+            .style("opacity", null);
+
+        // // Remove empty groups (those that were "remove")
+        // this._svg
+        //     .selectAll("g.marriage")
+        //     .each(function () {
+        //         if (!this.querySelector("g.arc")) {
+        //             this.remove();
+        //         }
+        //     });
+        //
+        // // Remove orphaned path definitions
+        // this._svg.defs.get()
+        //     .selectAll("path[id^='path-marriage-']")
+        //     .each(function () {
+        //         if (!document.querySelector("textPath[href='#" + this.id + "']")) {
+        //             this.remove();
+        //         }
+        //     });
 
         // Execute callback function after everything is done
         callback();

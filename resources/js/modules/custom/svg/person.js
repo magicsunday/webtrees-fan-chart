@@ -217,6 +217,11 @@ export default class Person
             .append("g")
             .attr("class", "color");
 
+        // Hide immediately during updates to prevent visual flash
+        if (person.classed("update")) {
+            color.style("opacity", 1e-6);
+        }
+
         let path = color.append("path")
             .attr("fill", () => {
                 if (this._configuration.showColorGradients) {
@@ -303,10 +308,17 @@ export default class Person
      */
     addLabelToPerson(parent, children)
     {
-        return parent
+        let label = parent
             .append("g")
             .attr("class", "wt-chart-box-name name")
             .style("font-size", this.getFontSize(children) + "px");
+
+        // Hide immediately during updates to prevent visual flash
+        if (parent.classed("update")) {
+            label.style("opacity", 1e-6);
+        }
+
+        return label;
     }
 
     /**
