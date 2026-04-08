@@ -7,7 +7,8 @@
 
 import * as d3 from "../../lib/d3";
 import Geometry from "./geometry";
-import Text from "./text";
+import TooltipRenderer from "./tooltip-renderer";
+import LabelRenderer from "./label-renderer";
 import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
 
 /**
@@ -59,135 +60,15 @@ export default class Person
         if (datum.data.data.xref !== "") {
             this.addTitleToPerson(person, datum.data.data.name);
 
-            // Append labels (initial hidden)
-            let text  = new Text(this._svg, this._configuration);
-            let label = this.addLabelToPerson(person, datum);
+            // Append labels with text content
+            let labelRenderer = new LabelRenderer(this._svg, this._configuration);
+            labelRenderer.addLabel(person, datum);
 
-            text.createLabels(label, datum);
             this.addColorGroup(person, datum);
 
-            const that = this;
-
-            // Hovering
-            person
-                .on("contextmenu", (event, datum) => {
-                    if (this._svg.div.property("active")) {
-                        this._svg.div
-                            .transition()
-                            .duration(200)
-                            .style("opacity", 0);
-
-                        this._svg.div.property("active", false);
-                        event.preventDefault();
-                    } else {
-                        this._svg.div.property("active", true);
-                        this.setTooltipHtml(datum);
-
-                        event.preventDefault();
-                    }
-                })
-                // Handles the event when a pointing device initially enters an element.
-                .on("mouseenter", (event, datum) => {
-                    if (datum.data.data.xref === "") {
-                        this._svg.div
-                            .style("opacity", 0);
-                    }
-
-                    this.setTooltipHtml(datum);
-                })
-                // Handles the event when a pointing device leaves an element.
-                .on("mouseleave", (event, datum) => {
-                    if (datum.data.data.xref === "") {
-                        this._svg.div
-                            .style("opacity", 0);
-                    }
-                })
-                // Handles the event when a pointing device is moved around an element.
-                .on("mousemove", (event, datum) => {
-                    this._svg.div
-                        .style("left", (event.pageX) + "px")
-                        .style("top", (event.pageY - 30) + "px");
-                })
-                // Handles the event when a pointing device is moved onto an element.
-                .on("mouseover", function (event, datum) {
-                    const elements = person.nodes();
-                    const index    = elements.indexOf(this);
-
-                    // Use raise() to move element to the top, as in SVG the last element is always the
-                    // one drawn on top of the others.
-                    d3.select(elements[index])
-                        .classed("hover", true)
-                        .raise();
-                })
-                // Handles the event when a pointing device is moved off an element.
-                .on("mouseout", function (event, datum) {
-                    const elements = person.nodes();
-                    const index    = elements.indexOf(this);
-
-                    d3.select(elements[index])
-                        .classed("hover", false);
-                });
-        }
-    }
-
-    /**
-     *
-     * @param {Object} datum The D3 data object
-     */
-    setTooltipHtml(datum)
-    {
-        // Ignore empty elements
-        if (datum.data.data.xref === "") {
-            return;
-        }
-
-        let image = "";
-
-        // Show individual image or silhouette (depending on tree configuration)
-        if (this._configuration.showImages) {
-            if (datum.data.data.thumbnail) {
-                image = "<div class=\"image\">";
-                image += "<img src=\"" + datum.data.data.thumbnail + "\" alt=\"\" />";
-                image += "</div>";
-            } else {
-                if (this._configuration.showSilhouettes) {
-                    image = "<div class=\"image\">";
-                    image += "<i class=\"icon-silhouette icon-silhouette-" + datum.data.data.sex.toLowerCase() + " wt-icon-flip-rtl\" ></i>";
-                    image += "</div>";
-                }
-            }
-        }
-
-        const dates = datum.data.data.birth || datum.data.data.marriageDate || datum.data.data.death;
-
-        this._svg.div
-            .html(
-                image
-                + "<div class=\"text\">"
-                    + "<div class=\"name\">" + datum.data.data.name + "</div>"
-                    + (dates
-                        ? "<table>"
-                            + (datum.data.data.birth
-                            ? ("<tr class=\"date\"><th>\u2605</th><td>" + datum.data.data.birth + "</td></tr>")
-                            : "")
-                            + (datum.data.data.marriageDate
-                            ? ("<tr class=\"date\"><th>\u26AD</th><td>" + datum.data.data.marriageDate + "</td></tr>")
-                            : "")
-                            + (datum.data.data.death
-                            ? ("<tr class=\"date\"><th>\u2020</th><td>" + datum.data.data.death + "</td></tr>")
-                            : "")
-                        + "</table>"
-                    : "")
-                + "</div>"
-            )
-            .style("left", (event.pageX) + "px")
-            .style("top", (event.pageY - 30) + "px");
-
-        if (this._svg.div.property("active")) {
-            this._svg.div
-                .transition()
-                .duration(200)
-                .style("opacity", 1);
+            // Bind tooltip and hover events
+            let tooltipRenderer = new TooltipRenderer(this._svg, this._configuration);
+            tooltipRenderer.bindEvents(person, datum);
         }
     }
 
@@ -297,31 +178,6 @@ export default class Person
     }
 
     /**
-     * Append labels (initial hidden).
-     *
-     * @param {Selection} parent The parent element used to append the label element too
-     * @param {Object}    datum  The D3 data object
-     *
-     * @return {Selection} Newly added label element
-     *
-     * @private
-     */
-    addLabelToPerson(parent, children)
-    {
-        let label = parent
-            .append("g")
-            .attr("class", "wt-chart-box-name name")
-            .style("font-size", this.getFontSize(children) + "px");
-
-        // Hide immediately during updates to prevent visual flash
-        if (parent.classed("update")) {
-            label.style("opacity", 1e-6);
-        }
-
-        return label;
-    }
-
-    /**
      * Returns the pad angle for a person's arc. When marriage arcs are shown,
      * spouse segments (sharing the same parent) use no padding so they appear
      * as a single joined block.
@@ -339,17 +195,5 @@ export default class Person
         }
 
         return this._configuration.padAngle;
-    }
-
-    /**
-     * Get the scaled font size.
-     *
-     * @param {Object} datum The D3 data object
-     *
-     * @return {number}
-     */
-    getFontSize(datum)
-    {
-        return this._geometry.getFontSize(datum);
     }
 }
