@@ -10,8 +10,8 @@ describe("Configuration", () => {
         expect(config.fanDegree).toBe(210);
         expect(config.fontScale).toBe(100);
         expect(config.circlePadding).toBe(0);
-        expect(config.innerArcHeight).toBe(100);
-        expect(config.outerArcHeight).toBe(160);
+        expect(config.innerArcHeight).toBe(115);
+        expect(config.outerArcHeight).toBe(175);
         expect(config.padRadius).toBe(0);
         expect(config.padDistance).toBe(0);
     });
@@ -45,8 +45,8 @@ describe("Configuration", () => {
         expect(configuration.circlePadding).toBe(0);
         expect(configuration.padRadius).toBe(0);
         expect(configuration.padDistance).toBe(0);
-        expect(configuration.innerArcHeight).toBe(100);
-        expect(configuration.outerArcHeight).toBe(160);
+        expect(configuration.innerArcHeight).toBe(115);
+        expect(configuration.outerArcHeight).toBe(175);
     });
 
     it("adjusts padding and arc sizes when marriage dates are shown", () => {
@@ -62,8 +62,8 @@ describe("Configuration", () => {
         );
 
         expect(config.circlePadding).toBe(40);
-        expect(config.innerArcHeight).toBe(150);
-        expect(config.outerArcHeight).toBe(150);
+        expect(config.innerArcHeight).toBe(165);
+        expect(config.outerArcHeight).toBe(165);
         expect(config.padRadius).toBe(400);
         expect(config.padDistance).toBeCloseTo(12, 5);
         expect(config.generations).toBe(6);
@@ -89,8 +89,8 @@ describe("Configuration", () => {
         expect(configuration.circlePadding).toBe(40);
         expect(configuration.padRadius).toBe(400);
         expect(configuration.padDistance).toBeCloseTo(12);
-        expect(configuration.innerArcHeight).toBe(150);
-        expect(configuration.outerArcHeight).toBe(150);
+        expect(configuration.innerArcHeight).toBe(165);
+        expect(configuration.outerArcHeight).toBe(165);
         expect(configuration.showParentMarriageDates).toBe(true);
         expect(configuration.rtl).toBe(true);
     });

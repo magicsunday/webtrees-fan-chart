@@ -135,17 +135,22 @@ describe("Text", () => {
     it("calculates available width using arc geometry for inner labels", () => {
         const text = new Text(svgStub, createConfiguration());
         const datum = createDatum();
+        const position = { normal: 73, flipped: 23 };
 
-        const availableWidth = text.getAvailableWidth(datum, 0);
+        const availableWidth = text.getAvailableWidth(datum, position);
 
-        expect(availableWidth).toBeCloseTo((Math.PI * text._geometry.relativeRadius(datum.depth, 73)) - 23);
+        const positionFlipped = text.isPositionFlipped(datum.depth, datum.x0, datum.x1);
+        const offset = positionFlipped ? position.flipped : position.normal;
+
+        expect(availableWidth).toBeCloseTo((Math.PI * text._geometry.relativeRadius(datum.depth, offset)) - 23);
     });
 
     it("calculates available width for outer arcs without geometry", () => {
         const text = new Text(svgStub, createConfiguration());
         const datum = createDatum({ depth: 4 });
+        const position = { normal: 73, flipped: 23 };
 
-        const availableWidth = text.getAvailableWidth(datum, 0);
+        const availableWidth = text.getAvailableWidth(datum, position);
 
         expect(availableWidth).toBe(150 - 20 - 5);
     });
