@@ -678,8 +678,8 @@ export default class Text
 
         // Spacing within a group (tight) vs. between groups (wide), in percent
         // of the arc height. Tuned relative to the base font size (22px).
-        const intraGroupSpacing = 16;
-        const interGroupSpacing = 24;
+        let intraGroupSpacing = 16;
+        let interGroupSpacing = 24;
 
         // Total vertical extent of all groups
         let totalHeight = 0;
@@ -692,9 +692,21 @@ export default class Text
             }
         });
 
-        // Center within usable range (0 = inner edge, 100 = outer edge)
+        // Center within usable range (0 = inner edge, 100 = outer edge).
+        // rangeMax accounts for the color arc strip at the outer edge.
         const rangeMin = 10;
         const rangeMax = 82;
+        const availableHeight = rangeMax - rangeMin;
+
+        // Compress spacing proportionally if content exceeds the safe zone
+        if (totalHeight > availableHeight) {
+            const scale = availableHeight / totalHeight;
+            intraGroupSpacing *= scale;
+            interGroupSpacing *= scale;
+
+            totalHeight = availableHeight;
+        }
+
         const rangeMid = (rangeMin + rangeMax) / 2;
         let currentPos = rangeMid + (totalHeight / 2);
 
