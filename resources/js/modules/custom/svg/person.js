@@ -344,18 +344,12 @@ export default class Person
     /**
      * Get the scaled font size.
      *
-     * @param {Object} children The The D3 data object
+     * @param {Object} datum The D3 data object
      *
      * @return {number}
      */
-    getFontSize(children)
+    getFontSize(datum)
     {
-        let fontSize = this._configuration.fontSize;
-
-        if (children.depth >= (this._configuration.numberOfInnerCircles + 1)) {
-            fontSize += 1;
-        }
-
-        return ((fontSize - children.depth) * this._configuration.fontScale / 100.0);
+        return this._geometry.getFontSize(datum);
     }
 }

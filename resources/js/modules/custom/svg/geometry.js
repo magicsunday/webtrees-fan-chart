@@ -200,4 +200,23 @@ export default class Geometry
         return (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0))
             * this.relativeRadius(datum.depth, position);
     }
+
+    /**
+     * Get the scaled font size for a given depth. Outer circles (beyond the
+     * inner circle count) get a +1 bump before the depth is subtracted.
+     *
+     * @param {Object} datum The D3 data object
+     *
+     * @return {number}
+     */
+    getFontSize(datum)
+    {
+        let fontSize = this._configuration.fontSize;
+
+        if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
+            fontSize += 1;
+        }
+
+        return ((fontSize - datum.depth) * this._configuration.fontScale / 100.0);
+    }
 }

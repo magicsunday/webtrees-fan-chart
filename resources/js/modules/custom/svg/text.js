@@ -404,21 +404,6 @@ export default class Text
     }
 
     /**
-     * Creates a single <tspan> element for the marriage date and append it to the parent element.
-     *
-     * @param {Selection} parent The parent (<text> or <textPath>) element to which the <tspan> elements are to be attached
-     * @param {Object}    datum  The D3 data object containing the individual data
-     */
-    addMarriageDate(parent, datum)
-    {
-        // Create a <tspan> element for the parent marriage date
-        if (datum.data.data.marriageDateOfParents) {
-            parent.append("tspan")
-                .text("\u26AD " + datum.data.data.marriageDateOfParents);
-        }
-    }
-
-    /**
      * Truncates the list of names.
      *
      * @param {LabelElementData[]} names          The names array
@@ -577,9 +562,10 @@ export default class Text
     {
         let pathId = "path-" + parentId + "-" + slot.index;
 
-        // If definition already exists, return the existing path ID
+        // If path already exists (update case), create a new one with a unique ID
+        // so old text keeps its path during fade-out and new text gets correct position
         if (this._svg.defs.select("path#" + pathId).node()) {
-            return pathId;
+            pathId = pathId + "-" + this._svg.defs.get().selectAll("path[id^='" + pathId + "']").size();
         }
 
         let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
@@ -587,18 +573,7 @@ export default class Text
         let endAngle        = this._geometry.endAngle(data.depth, data.x1);
         let relativeRadius;
 
-        if (slot === Text.TEXT_SLOT.MARRIAGE_DATE) {
-            // Place text at center of gap between this generation and the next
-            relativeRadius = (this._geometry.outerRadius(data.depth) + this._geometry.innerRadius(data.depth + 1)) / 2;
-
-            // For the center circle use calcAngle to respect the fan degree
-            if (data.depth < 1) {
-                startAngle = this._geometry.calcAngle(data.x0);
-                endAngle   = this._geometry.calcAngle(data.x1);
-            }
-        } else {
-            relativeRadius = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, position));
-        }
+        relativeRadius = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, position));
 
         // Create an arc generator for path segments
         let arcGenerator = d3.arc()
@@ -633,26 +608,21 @@ export default class Text
      */
     isPositionFlipped(depth, x0, x1)
     {
-        if ((this._configuration.fanDegree !== 360) || (depth <= 1)) {
+        if ((this._configuration.fanDegree <= 270) || (depth <= 1)) {
             return false;
         }
 
         const startAngle = this._geometry.startAngle(depth, x0);
         const endAngle   = this._geometry.endAngle(depth, x1);
 
-        // Flip names for better readability depending on position in chart
-        return ((startAngle >= (90 * MATH_DEG2RAD)) && (endAngle <= (180 * MATH_DEG2RAD)))
-            || ((startAngle >= (-180 * MATH_DEG2RAD)) && (endAngle <= (-90 * MATH_DEG2RAD)));
+        // Flip names when the arc midpoint is in the bottom half of the chart
+        const midAngle   = (startAngle + endAngle) / 2;
+        const pi2        = Math.PI * 2;
+        const normalized = ((midAngle % pi2) + pi2) % pi2;
+
+        return (normalized > (90 * MATH_DEG2RAD)) && (normalized < (270 * MATH_DEG2RAD));
     }
 
-    /**
-     * Text slot definitions for positioning text lines within an arc segment.
-     * Each slot has a numeric index (used for unique path IDs) and relative
-     * radius offsets in percent (0 = inner, 100 = outer) for normal and
-     * flipped label orientations.
-     *
-     * @type {Object<string, {index: number, normal: number, flipped: number}>}
-     */
     /**
      * Text slot identifiers used for unique path IDs.
      *
@@ -664,7 +634,6 @@ export default class Text
         ALTERNATIVE_NAME: { index: 2 },
         DATE_LINE_1:      { index: 3 },
         DATE_LINE_2:      { index: 4 },
-        MARRIAGE_DATE:    { index: 5 },
     };
 
     /**
@@ -707,9 +676,10 @@ export default class Text
             groups.push(dateGroup);
         }
 
-        // Spacing within a group (tight) vs. between groups (wide)
-        const intraGroupSpacing = 14;
-        const interGroupSpacing = 20;
+        // Spacing within a group (tight) vs. between groups (wide), in percent
+        // of the arc height. Tuned relative to the base font size (22px).
+        const intraGroupSpacing = 16;
+        const interGroupSpacing = 24;
 
         // Total vertical extent of all groups
         let totalHeight = 0;
@@ -745,12 +715,6 @@ export default class Text
             if (gi < groups.length - 1) {
                 currentPos -= interGroupSpacing;
             }
-        });
-
-        // Marriage date is always at a fixed position outside the arc
-        positions.set(Text.TEXT_SLOT.MARRIAGE_DATE, {
-            normal:  120,
-            flipped: 125,
         });
 
         return positions;
@@ -820,9 +784,10 @@ export default class Text
         let countElements = textElements.size();
         let offset = 1.0;
 
-        // Special offsets for shifting the text around depending on the depth
+        // Empirically tuned rotation multipliers per depth level. These depend
+        // on innerArcHeight/outerArcHeight and must be adjusted if those change.
         switch (datum.depth) {
-            case 0: offset = 1.5; break;
+            case 0: offset = Math.max(1.5, countElements * 0.5); break;
             case 1: offset = 6.5; break;
             case 2: offset = 3.5; break;
             case 3: offset = 2.2; break;
@@ -840,8 +805,9 @@ export default class Text
 
             // The name of center person should not be rotated in any way
             if (datum.depth === 0) {
-                // TODO Depends on font-size
-                d3.select(this).attr("dy", (offsetRotate * 15) + (15 / 2) + "px");
+                const fontSize = (that._configuration.fontSize - datum.depth) * that._configuration.fontScale / 100.0;
+
+                d3.select(this).attr("dy", (offsetRotate * fontSize) + (fontSize / 2) + "px");
             } else {
                 d3.select(this).attr("transform", function () {
                     let dx        = datum.x1 - datum.x0;

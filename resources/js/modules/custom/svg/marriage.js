@@ -151,13 +151,17 @@ export default class Marriage
         let marriageId = marriage.attr("id");
         let pathId     = "path-" + marriageId;
 
-        // Only create path definition if it doesn't exist yet
-        if (!this._svg.defs.select("path#" + pathId).node()) {
-            this._svg.defs
-                .append("path")
-                .attr("id", pathId)
-                .attr("d", textPathGenerator);
+        // During updates, old text still references the old path definition.
+        // Create a new path with a unique ID so old and new text render at
+        // their respective positions during the cross-fade.
+        if (this._svg.defs.select("path#" + pathId).node()) {
+            pathId += "-" + marriage.selectAll("g.name").size();
         }
+
+        this._svg.defs
+            .append("path")
+            .attr("id", pathId)
+            .attr("d", textPathGenerator);
 
         let labelGroup = marriage
             .append("g")
@@ -182,7 +186,7 @@ export default class Marriage
     }
 
     /**
-     * Get the scaled font size (same calculation as Person).
+     * Get the scaled font size.
      *
      * @param {Object} datum The D3 data object
      *
@@ -190,12 +194,6 @@ export default class Marriage
      */
     getFontSize(datum)
     {
-        let fontSize = this._configuration.fontSize;
-
-        if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
-            fontSize += 1;
-        }
-
-        return ((fontSize - datum.depth) * this._configuration.fontScale / 100.0);
+        return this._geometry.getFontSize(datum);
     }
 }
