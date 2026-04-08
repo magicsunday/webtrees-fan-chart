@@ -195,17 +195,17 @@ msgstr "Ricarica il diagramma per quella persona"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
 msgid "Birth and death date precision"
-msgstr ""
+msgstr "Precisione delle date di nascita e morte"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
 msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr ""
+msgstr "Mostra le date complete di nascita e morte per le prime generazioni in base alla precisione della data di matrimonio."
 
 #: src/Configuration.php:191
 msgid "Years only"
-msgstr ""
+msgstr "Solo anni"
 
 #: src/Configuration.php:195
 #, php-format
 msgid "Show full dates up to generation %s"
-msgstr ""
+msgstr "Mostra date complete fino alla generazione %s"

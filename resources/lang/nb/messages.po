@@ -192,17 +192,17 @@ msgstr "Last diagrammet på nytt for den personen"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
 msgid "Birth and death date precision"
-msgstr ""
+msgstr "Presisjon for fødsels- og dødsdatoer"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
 msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr ""
+msgstr "Vis fullstendige fødsels- og dødsdatoer for tidlige generasjoner for å matche presisjonen til ekteskapsdatoen."
 
 #: src/Configuration.php:191
 msgid "Years only"
-msgstr ""
+msgstr "Kun årstall"
 
 #: src/Configuration.php:195
 #, php-format
 msgid "Show full dates up to generation %s"
-msgstr ""
+msgstr "Vis fullstendige datoer til generasjon %s"

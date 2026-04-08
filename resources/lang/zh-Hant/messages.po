@@ -192,17 +192,17 @@ msgstr "為該人重新載入圖表"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
 msgid "Birth and death date precision"
-msgstr ""
+msgstr "出生和死亡日期精確度"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
 msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr ""
+msgstr "為早期世代顯示完整的出生和死亡日期，以配合婚姻日期的精確度。"
 
 #: src/Configuration.php:191
 msgid "Years only"
-msgstr ""
+msgstr "僅顯示年份"
 
 #: src/Configuration.php:195
 #, php-format
 msgid "Show full dates up to generation %s"
-msgstr ""
+msgstr "顯示完整日期至第 %s 代"

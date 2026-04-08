@@ -191,17 +191,17 @@ msgstr "उस व्यक्ति के लिए चार्ट पुन�
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
 msgid "Birth and death date precision"
-msgstr ""
+msgstr "जन्म और मृत्यु तिथि सटीकता"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
 msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr ""
+msgstr "विवाह तिथि सटीकता से मिलान करने के लिए प्रारंभिक पीढ़ियों के लिए पूर्ण जन्म और मृत्यु तिथियाँ दिखाएँ।"
 
 #: src/Configuration.php:191
 msgid "Years only"
-msgstr ""
+msgstr "केवल वर्ष"
 
 #: src/Configuration.php:195
 #, php-format
 msgid "Show full dates up to generation %s"
-msgstr ""
+msgstr "पीढ़ी %s तक पूर्ण तिथियाँ दिखाएँ"

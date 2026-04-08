@@ -189,17 +189,17 @@ msgstr "Lataa kaavio uudelleen tälle henkilölle"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
 msgid "Birth and death date precision"
-msgstr ""
+msgstr "Syntymä- ja kuolinpäivämäärien tarkkuus"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
 msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr ""
+msgstr "Näytä tarkat syntymä- ja kuolinpäivämäärät varhaisille sukupolville avioliittopäivämäärän tarkkuuden mukaisesti."
 
 #: src/Configuration.php:191
 msgid "Years only"
-msgstr ""
+msgstr "Vain vuodet"
 
 #: src/Configuration.php:195
 #, php-format
 msgid "Show full dates up to generation %s"
-msgstr ""
+msgstr "Näytä tarkat päivämäärät sukupolveen %s asti"

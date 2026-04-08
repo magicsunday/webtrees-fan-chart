@@ -192,17 +192,17 @@ msgstr "Herlaai diagram vir daardie persoon"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
 msgid "Birth and death date precision"
-msgstr ""
+msgstr "Geboortedatum en sterfdatum presisie"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
 msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr ""
+msgstr "Wys volledige geboorte- en sterfdatums vir vroeë generasies om by die huweliksdatum presisie te pas."
 
 #: src/Configuration.php:191
 msgid "Years only"
-msgstr ""
+msgstr "Slegs jare"
 
 #: src/Configuration.php:195
 #, php-format
 msgid "Show full dates up to generation %s"
-msgstr ""
+msgstr "Wys volledige datums tot generasie %s"

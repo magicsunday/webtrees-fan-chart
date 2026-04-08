@@ -194,17 +194,17 @@ msgstr "Endurhlaða línurit fyrir þann einstakling"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
 msgid "Birth and death date precision"
-msgstr ""
+msgstr "Nákvæmni fæðingar- og dánardaga"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
 msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr ""
+msgstr "Sýna fulla fæðingar- og dánardaga fyrir fyrstu kynslóðir til að samsvara nákvæmni hjónabandsdags."
 
 #: src/Configuration.php:191
 msgid "Years only"
-msgstr ""
+msgstr "Aðeins ár"
 
 #: src/Configuration.php:195
 #, php-format
 msgid "Show full dates up to generation %s"
-msgstr ""
+msgstr "Sýna fulla dagsetningar til kynslóðar %s"
