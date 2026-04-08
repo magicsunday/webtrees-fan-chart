@@ -335,6 +335,17 @@ export default class Chart
             .selectAll("g.marriage")
             .filter((datum) => !!datum.data.data.marriageDateOfParents)
             .classed("available", true);
+
+        // Mark empty marriage arcs (no parents shown) for CSS styling
+        this._svg
+            .select("g.marriageGroup")
+            .selectAll("g.marriage")
+            .each(function (datum) {
+                let hasChildren = datum.children
+                    && datum.children.some(child => child.data.data.xref !== "");
+
+                d3.select(this).classed("empty", !hasChildren);
+            });
     }
 
     /**

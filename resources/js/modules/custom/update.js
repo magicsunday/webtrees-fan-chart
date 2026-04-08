@@ -278,6 +278,10 @@ export default class Update
             .classed("available", false);
 
         this._svg
+            .selectAll("g.marriage.empty")
+            .classed("empty", false);
+
+        this._svg
             .selectAll("g.separatorGroup line.old")
             .remove();
 

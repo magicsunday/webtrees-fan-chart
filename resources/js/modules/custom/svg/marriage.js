@@ -58,6 +58,7 @@ export default class Marriage
             }
         }
 
+
         if (!marriage.classed("remove")) {
             this.addLabel(marriage, datum);
         }
