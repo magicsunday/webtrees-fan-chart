@@ -80,6 +80,11 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/person", () => (
     default: personConstructor,
 }));
 
+await jest.unstable_mockModule("resources/js/modules/custom/svg/marriage", () => ({
+    __esModule: true,
+    default: jest.fn(() => ({})),
+}));
+
 const { default: Update } = await import("resources/js/modules/custom/update");
 
 const flushPromises = () => new Promise((resolve) => {
@@ -159,6 +164,10 @@ class ChildSelection {
         });
 
         return this;
+    }
+
+    selectAll(selector) {
+        return this.svg.createChildSelection(selector, this.targets.map(({ person }) => person));
     }
 
     remove() {
@@ -247,11 +256,25 @@ class SvgStub {
     constructor(persons = []) {
         this.personById = new Map(persons.map((person) => [person.id, person]));
         this.eventLog   = [];
+        this.defs       = {
+            get: () => ({
+                selectAll: () => ({
+                    each: () => ({})
+                })
+            })
+        };
     }
 
     selectAll(selector) {
-        const hasPersonSelector = selector.includes("g.person");
-        const hasChildSelector  = /g\.arc|g\.name|g\.color|title/.test(selector);
+        const hasPersonSelector   = selector.includes("g.person");
+        const hasMarriageSelector = selector.includes("g.marriage");
+        const hasSeparatorSelector = selector.includes("g.separatorGroup");
+        const hasChildSelector    = /g\.arc|g\.name|g\.color|title/.test(selector);
+
+        // Marriage and separator selectors return empty selections (no marriage/separator elements in test)
+        if (hasMarriageSelector || hasSeparatorSelector) {
+            return new ChildSelection([], this);
+        }
 
         if (hasPersonSelector && hasChildSelector) {
             const persons = this.filterPersons(selector);
@@ -385,6 +408,8 @@ const createSvgWithPersons = (availableIds = []) => {
 
 const defaultConfiguration = (overrides = {}) => ({
     hideEmptySegments: false,
+    showParentMarriageDates: false,
+    generations: 6,
     updateDuration: 100,
     ...overrides,
 });
@@ -417,7 +442,7 @@ describe("Update", () => {
             title: titleHtml,
         });
 
-        update.update("/update", callback);
+        update.update("/update", jest.fn(), callback);
 
         expect(svg.eventLog).toEqual([
             { event: "click", handler: null },
@@ -443,7 +468,7 @@ describe("Update", () => {
             data: createNodes(),
         });
 
-        update.update("/update", callback);
+        update.update("/update", jest.fn(), callback);
         await flushPromises();
 
         const [transition] = transitionInstances;
@@ -498,7 +523,7 @@ describe("Update", () => {
             data: createNodes(),
         });
 
-        update.update("/update", callback);
+        update.update("/update", jest.fn(), callback);
         await flushPromises();
 
         const [transition] = transitionInstances;

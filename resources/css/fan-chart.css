@@ -148,10 +148,12 @@
 }
 
 /* Unset any style from our transition helper classes */
-.webtrees-fan-chart-container svg .new,
-.webtrees-fan-chart-container svg .remove,
-.webtrees-fan-chart-container svg .update,
-.webtrees-fan-chart-container svg .old {
+.webtrees-fan-chart-container svg g.person.new,
+.webtrees-fan-chart-container svg g.person.remove,
+.webtrees-fan-chart-container svg g.person.update,
+.webtrees-fan-chart-container svg g.marriage.new,
+.webtrees-fan-chart-container svg g.marriage.remove,
+.webtrees-fan-chart-container svg g.marriage.update {
     all: unset;
 }
 
@@ -160,8 +162,6 @@
 }
 
 .webtrees-fan-chart-container svg .person.hover {
-    filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.3));
-    filter: url('#drop-shadow');
 }
 
 div.tooltip {

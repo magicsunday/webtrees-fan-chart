@@ -93,6 +93,10 @@ trait ModuleConfigTrait
             'default_hidePngExport',
             (string) $configuration->getHidePngExport()
         );
+        $this->setPreference(
+            'default_detailedDateGenerations',
+            (string) $configuration->getDetailedDateGenerations()
+        );
 
         FlashMessages::addMessage(
             I18N::translate(

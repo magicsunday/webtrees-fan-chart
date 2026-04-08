@@ -55,17 +55,15 @@ trait ModuleCustomTrait
         return self::CUSTOM_SUPPORT_URL;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function customTranslations(string $language): array
     {
         $languageFile = $this->resourcesFolder() . 'lang/' . $language . '/messages.mo';
-
-        if (file_exists($languageFile) === false) {
-            return [];
-        }
+        $translations = file_exists($languageFile) ? (new Translation($languageFile))->asArray() : [];
 
         /** @var array<string, string> $translations */
-        $translations = (new Translation($languageFile))->asArray();
-
         return $translations;
     }
 }

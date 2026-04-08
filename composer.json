@@ -120,6 +120,9 @@
         "ci:test:php:unit:coverage": [
             "XDEBUG_MODE=coverage phpunit --configuration phpunit.xml --coverage-html .build/coverage/"
         ],
+        "ci:test:js:unit": [
+            "SKIP_EXPORT_BUILD=true node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests --ignore=resources/js/tests/export"
+        ],
         "ci:compliance": [
             "php scripts/analyze-exif-compliance.php 50"
         ],
@@ -129,6 +132,7 @@
             "@ci:test:php:rector",
             "@ci:test:php:cpd",
             "@ci:test:php:unit",
+            "@ci:test:js:unit",
             "@ci:test:php:cgl"
         ],
         "post-update-cmd": [

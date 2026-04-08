@@ -191,3 +191,20 @@ msgstr "Hacer clic en una persona"
 
 msgid "Reload chart for that person"
 msgstr "Recargar el diagrama para esa persona"
+
+#: resources/views/modules/fan-chart/form/date-precision.phtml:22
+msgid "Birth and death date precision"
+msgstr "Precisión de fechas de nacimiento y defunción"
+
+#: resources/views/modules/fan-chart/form/date-precision.phtml:34
+msgid "Show full birth and death dates for early generations to match marriage date precision."
+msgstr "Mostrar fechas completas de nacimiento y defunción para las primeras generaciones, ajustándose a la precisión de la fecha de matrimonio."
+
+#: src/Configuration.php:191
+msgid "Years only"
+msgstr "Solo años"
+
+#: src/Configuration.php:195
+#, php-format
+msgid "Show full dates up to generation %s"
+msgstr "Mostrar fechas completas hasta la generación %s"

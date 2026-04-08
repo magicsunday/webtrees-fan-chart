@@ -189,3 +189,20 @@ msgstr "Nhấp vào một người"
 
 msgid "Reload chart for that person"
 msgstr "Tải lại biểu đồ cho người đó"
+
+#: resources/views/modules/fan-chart/form/date-precision.phtml:22
+msgid "Birth and death date precision"
+msgstr "Độ chính xác ngày sinh và ngày mất"
+
+#: resources/views/modules/fan-chart/form/date-precision.phtml:34
+msgid "Show full birth and death dates for early generations to match marriage date precision."
+msgstr "Hiển thị đầy đủ ngày sinh và ngày mất cho các thế hệ đầu tiên để phù hợp với độ chính xác của ngày kết hôn."
+
+#: src/Configuration.php:191
+msgid "Years only"
+msgstr "Chỉ năm"
+
+#: src/Configuration.php:195
+#, php-format
+msgid "Show full dates up to generation %s"
+msgstr "Hiển thị đầy đủ ngày tháng đến thế hệ %s"

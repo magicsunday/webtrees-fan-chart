@@ -65,6 +65,25 @@ class MockSvg {
         this.visual = {
             node: () => ({
                 getBBox: () => svgBoundingBox
+            }),
+            select: () => ({
+                empty: () => true,
+                selectAll: () => ({
+                    classed: () => ({})
+                })
+            }),
+            append: () => ({
+                attr: function() { return this; },
+                selectAll: () => ({
+                    data: () => ({
+                        enter: () => ({
+                            append: () => ({
+                                attr: function() { return this; }
+                            })
+                        })
+                    }),
+                    each: () => ({})
+                })
             })
         };
         this.attrCalls = [];
@@ -79,6 +98,19 @@ class MockSvg {
     select(selector) {
         if (selector === "g.personGroup") {
             return this.personGroup;
+        }
+
+        if (selector === "g.marriageGroup") {
+            const noopSelection = {
+                selectAll: () => noopSelection,
+                filter: () => noopSelection,
+                classed: () => noopSelection,
+                on: () => noopSelection,
+                data: () => ({ enter: () => ({ append: () => ({ attr: function() { return this; } }) }) }),
+                each: () => noopSelection
+            };
+
+            return noopSelection;
         }
 
         return null;
@@ -128,11 +160,32 @@ await jest.unstable_mockModule("resources/js/modules/custom/update", () => ({
     }))
 }));
 
+await jest.unstable_mockModule("resources/js/modules/custom/svg/marriage", () => ({
+    __esModule: true,
+    default: jest.fn(() => ({}))
+}));
+
+await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () => ({
+    __esModule: true,
+    default: class {
+        startAngle() { return 0; }
+        endAngle() { return 0; }
+        innerRadius() { return 0; }
+        outerRadius() { return 0; }
+        calcAngle() { return 0; }
+        centerRadius() { return 0; }
+        arcLength() { return 100; }
+        relativeRadius() { return 50; }
+        scale() { return 0; }
+    }
+}));
+
 const { default: Chart } = await import("resources/js/modules/custom/chart");
 
 const createConfiguration = (overrides = {}) => ({
     hideEmptySegments: false,
     showColorGradients: false,
+    showParentMarriageDates: false,
     generations: 2,
     rtl: false,
     labels: {
@@ -175,6 +228,7 @@ const createHierarchyDatum = () => ({
         isAltRtl: false,
         sex: "M",
         timespan: "",
+        marriageDateOfParents: "",
     },
     parents: [
         {
@@ -192,6 +246,7 @@ const createHierarchyDatum = () => ({
                 isAltRtl: false,
                 sex: "M",
                 timespan: "",
+                marriageDateOfParents: "",
             }
         },
         {
@@ -209,6 +264,7 @@ const createHierarchyDatum = () => ({
                 isAltRtl: false,
                 sex: "F",
                 timespan: "",
+                marriageDateOfParents: "",
             }
         }
     ]

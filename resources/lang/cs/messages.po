@@ -189,3 +189,20 @@ msgstr "Klikněte na osobu"
 
 msgid "Reload chart for that person"
 msgstr "Načíst diagram pro tuto osobu znovu"
+
+#: resources/views/modules/fan-chart/form/date-precision.phtml:22
+msgid "Birth and death date precision"
+msgstr "Přesnost data narození a úmrtí"
+
+#: resources/views/modules/fan-chart/form/date-precision.phtml:34
+msgid "Show full birth and death dates for early generations to match marriage date precision."
+msgstr "Zobrazit úplná data narození a úmrtí pro rané generace, aby odpovídala přesnosti data sňatku."
+
+#: src/Configuration.php:191
+msgid "Years only"
+msgstr "Pouze roky"
+
+#: src/Configuration.php:195
+#, php-format
+msgid "Show full dates up to generation %s"
+msgstr "Zobrazit úplná data do generace %s"

@@ -141,8 +141,12 @@ class DataFacade
         Individual $individual,
     ): NodeData {
         $nameProcessor  = new NameProcessor($individual);
-        $dateProcessor  = new DateProcessor($individual);
         $imageProcessor = new ImageProcessor($this->module, $individual);
+        $dateProcessor  = new DateProcessor(
+            $individual,
+            $generation,
+            $this->configuration->getDetailedDateGenerations(),
+        );
 
         $fullNN          = $nameProcessor->getFullName();
         $alternativeName = $nameProcessor->getAlternateName($individual);
@@ -183,13 +187,17 @@ class DataFacade
      */
     private function getUpdateRoute(Individual $individual): string
     {
-        return route('module', [
-            'module'      => $this->module->name(),
-            'action'      => 'update',
-            'xref'        => $individual->xref(),
-            'tree'        => $individual->tree()->name(),
-            'generations' => $this->configuration->getGenerations(),
-        ]);
+        return route(
+            'module',
+            [
+                'module'                  => $this->module->name(),
+                'action'                  => 'update',
+                'xref'                    => $individual->xref(),
+                'tree'                    => $individual->tree()->name(),
+                'generations'             => $this->configuration->getGenerations(),
+                'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
+            ]
+        );
     }
 
     /**

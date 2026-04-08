@@ -43,7 +43,7 @@ export default class Configuration
         innerArcs = 4
     ) {
         // Default number of generations to display
-        this._generations = generations;
+        this._generations = Number(generations);
 
         // Padding in pixel between each generation circle
         this.circlePadding = 0;
@@ -61,17 +61,17 @@ export default class Configuration
         this._numberOfInnerCircles = innerArcs;
 
         // Radius of the innermost circle
-        this.centerCircleRadius = 100;
+        this.centerCircleRadius = 115;
 
         // Height of each inner circle arc
-        this.innerArcHeight = 100;
+        this.innerArcHeight = 115;
 
         // Height of each outer circle arc
-        this.outerArcHeight = 160;
+        this.outerArcHeight = 175;
 
         if (showParentMarriageDates) {
-            this.innerArcHeight = this.circlePadding + 110;
-            this.outerArcHeight = this.circlePadding + 110;
+            this.innerArcHeight = this.circlePadding + 125;
+            this.outerArcHeight = this.circlePadding + 125;
         }
 
         // Width of the colored arc above each single person arc
@@ -81,7 +81,7 @@ export default class Configuration
         this.textPadding = 8;
 
         // Default font size, color and scaling
-        this._fontSize  = 18;
+        this._fontSize  = 22;
         this._fontScale = fontScale;
 
         this._hideEmptySegments  = hideEmptySegments;
@@ -94,7 +94,7 @@ export default class Configuration
         this.updateDuration = 1250;
 
         // Default degrees of the fan chart
-        this._fanDegree = fanDegree;
+        this._fanDegree = Number(fanDegree);
 
         this.rtl    = rtl;
         this.labels = labels;
