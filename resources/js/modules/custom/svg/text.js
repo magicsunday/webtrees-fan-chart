@@ -694,8 +694,8 @@ export default class Text
 
         // Center within usable range (0 = inner edge, 100 = outer edge).
         // rangeMax accounts for the color arc strip at the outer edge.
-        const rangeMin = 10;
-        const rangeMax = 82;
+        const rangeMin = 5;
+        const rangeMax = 78;
         const availableHeight = rangeMax - rangeMin;
 
         // Compress spacing proportionally if content exceeds the safe zone
@@ -799,7 +799,7 @@ export default class Text
         // Empirically tuned rotation multipliers per depth level. These depend
         // on innerArcHeight/outerArcHeight and must be adjusted if those change.
         switch (datum.depth) {
-            case 0: offset = Math.max(1.5, countElements * 0.5); break;
+            case 0: offset = Math.max(1.0, countElements * 0.4); break;
             case 1: offset = 6.5; break;
             case 2: offset = 3.5; break;
             case 3: offset = 2.2; break;
@@ -817,9 +817,18 @@ export default class Text
 
             // The name of center person should not be rotated in any way
             if (datum.depth === 0) {
-                const fontSize = (that._configuration.fontSize - datum.depth) * that._configuration.fontScale / 100.0;
+                const fontSize = that._geometry.getFontSize(datum);
 
-                d3.select(this).attr("dy", (offsetRotate * fontSize) + (fontSize / 2) + "px");
+                // Use the standard linear distribution, then pull names closer
+                // together and push dates apart for visual grouping
+                const isDate = d3.select(this).classed("date");
+                const groupShift = fontSize * 0.15;
+
+                d3.select(this).attr("dy",
+                    (offsetRotate * fontSize) + (fontSize / 2)
+                    + (isDate ? groupShift : -groupShift)
+                    + "px"
+                );
             } else {
                 d3.select(this).attr("transform", function () {
                     let dx        = datum.x1 - datum.x0;

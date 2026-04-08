@@ -61,7 +61,7 @@ export default class Configuration
         this._numberOfInnerCircles = innerArcs;
 
         // Radius of the innermost circle
-        this.centerCircleRadius = 100;
+        this.centerCircleRadius = 115;
 
         // Height of each inner circle arc
         this.innerArcHeight = 115;
