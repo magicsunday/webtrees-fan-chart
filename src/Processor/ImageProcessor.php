@@ -74,7 +74,7 @@ class ImageProcessor
         ) {
             $mediaFile = $this->individual->findHighlightedMediaFile();
 
-            if ($mediaFile instanceof MediaFile) {
+            if ($mediaFile instanceof MediaFile && ($mediaFile->isExternal() || $mediaFile->fileExists())) {
                 return $mediaFile->imageUrl($width, $height, 'contain');
             }
 
