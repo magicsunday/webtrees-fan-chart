@@ -6,6 +6,22 @@
  */
 
 /**
+ * Coerce a value to a finite number, returning the fallback if the
+ * result is NaN or Infinity. Handles strings from HTML inputs safely.
+ *
+ * @param {*}      value    The value to coerce
+ * @param {number} fallback Default if value is not a finite number
+ *
+ * @return {number}
+ */
+export function toFiniteNumber(value, fallback = 0)
+{
+    const n = Number(value);
+
+    return Number.isFinite(n) ? n : fallback;
+}
+
+/**
  * This class handles the configuration of the application.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
@@ -43,7 +59,7 @@ export default class Configuration
         innerArcs = 4
     ) {
         // Default number of generations to display
-        this._generations = Number(generations);
+        this._generations = toFiniteNumber(generations, 6);
 
         // Padding in pixel between each generation circle
         this.circlePadding = 0;
@@ -94,7 +110,7 @@ export default class Configuration
         this.updateDuration = 1250;
 
         // Default degrees of the fan chart
-        this._fanDegree = Number(fanDegree);
+        this._fanDegree = toFiniteNumber(fanDegree, 210);
 
         this.rtl    = rtl;
         this.labels = labels;
