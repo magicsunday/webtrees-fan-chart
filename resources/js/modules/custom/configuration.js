@@ -43,7 +43,7 @@ export default class Configuration
         innerArcs = 4
     ) {
         // Default number of generations to display
-        this._generations = generations;
+        this._generations = Number(generations);
 
         // Padding in pixel between each generation circle
         this.circlePadding = 0;
@@ -81,7 +81,7 @@ export default class Configuration
         this.textPadding = 8;
 
         // Default font size, color and scaling
-        this._fontSize  = 18;
+        this._fontSize  = 22;
         this._fontScale = fontScale;
 
         this._hideEmptySegments  = hideEmptySegments;
@@ -94,7 +94,7 @@ export default class Configuration
         this.updateDuration = 1250;
 
         // Default degrees of the fan chart
-        this._fanDegree = fanDegree;
+        this._fanDegree = Number(fanDegree);
 
         this.rtl    = rtl;
         this.labels = labels;
