@@ -260,7 +260,10 @@ export default class Chart
                 if (current.parent !== next.parent) {
                     const angle  = geometry.calcAngle(current.x1);
                     const innerR = geometry.innerRadius(depth);
-                    const outerR = geometry.outerRadius(depth);
+                    // Extend through the marriage arc gap to the next generation
+                    const outerR = (this._configuration.showParentMarriageDates && depth < this._configuration.generations - 1)
+                        ? geometry.innerRadius(depth + 1)
+                        : geometry.outerRadius(depth);
 
                     separatorGroup
                         .append("line")
