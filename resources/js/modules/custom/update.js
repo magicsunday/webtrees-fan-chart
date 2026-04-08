@@ -94,9 +94,14 @@ export default class Update
 
             // Flag all marriage elements which are subject to change (same pattern as persons)
             if (this._configuration.showParentMarriageDates) {
+                let marriageNodes = this._hierarchy.nodes.filter(
+                    datum => datum.children
+                        && datum.depth < this._configuration.generations - 1
+                );
+
                 this._svg
                     .selectAll("g.marriage")
-                    .data(this._hierarchy.nodes, (datum) => datum.id)
+                    .data(marriageNodes, (datum) => datum.id)
                     .each(function (datum) {
                         let hasChildren = datum.children
                             && datum.children.some(child => child.data.data.xref !== "");
@@ -280,23 +285,14 @@ export default class Update
             .selectAll("g.separatorGroup line")
             .style("opacity", null);
 
-        // // Remove empty groups (those that were "remove")
-        // this._svg
-        //     .selectAll("g.marriage")
-        //     .each(function () {
-        //         if (!this.querySelector("g.arc")) {
-        //             this.remove();
-        //         }
-        //     });
-        //
-        // // Remove orphaned path definitions
-        // this._svg.defs.get()
-        //     .selectAll("path[id^='path-marriage-']")
-        //     .each(function () {
-        //         if (!document.querySelector("textPath[href='#" + this.id + "']")) {
-        //             this.remove();
-        //         }
-        //     });
+        // Remove orphaned path definitions (both person and marriage paths)
+        this._svg.defs.get()
+            .selectAll("path[id^='path-person-'], path[id^='path-marriage-']")
+            .each(function () {
+                if (!document.querySelector("textPath[href='#" + this.id + "']")) {
+                    this.remove();
+                }
+            });
 
         // Execute callback function after everything is done
         callback();

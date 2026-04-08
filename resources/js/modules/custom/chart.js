@@ -291,11 +291,10 @@ export default class Chart
             marriageGroup = this._svg.visual.append("g").attr("class", "marriageGroup");
         }
 
-        // All nodes that have children (= parents shown) and are within display range
+        // All nodes that have children and are within display range
         const nodes = this._hierarchy.nodes.filter(
             datum => datum.children
-                && datum.depth < 5
-                && datum.children.some(child => child.data.data.xref !== "")
+                && datum.depth < this._configuration.generations - 1
         );
 
         // D3 data join: same pattern as person elements
@@ -312,14 +311,6 @@ export default class Chart
             .selectAll("g.marriage")
             .each(function (datum) {
                 let marriage = d3.select(this);
-
-                let hasChildren = datum.children
-                    && datum.children.some(child => child.data.data.xref !== "");
-
-                if (!hasChildren) {
-                    return;
-                }
-
                 new Marriage(that._svg, that._configuration, marriage, datum);
             });
     }
@@ -342,8 +333,7 @@ export default class Chart
         this._svg
             .select("g.marriageGroup")
             .selectAll("g.marriage")
-            .filter((datum) => datum.data.data.marriageDateOfParents !== "")
-            // .filter(function () { return this.querySelector("g.arc"); })
+            .filter((datum) => !!datum.data.data.marriageDateOfParents)
             .classed("available", true);
     }
 
@@ -402,9 +392,5 @@ export default class Chart
 
         this.drawFamilySeparators();
 
-        // // Marriage arcs: data join creates new groups for nodes not yet in the DOM
-        // if (this._configuration.showParentMarriageDates) {
-        //     this.drawMarriageArcs();
-        // }
     }
 }
