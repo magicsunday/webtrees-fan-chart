@@ -53,8 +53,6 @@ class NameProcessor
 
     /**
      * The individual.
-     *
-     * @var Individual
      */
     private Individual $individual;
 
@@ -67,8 +65,6 @@ class NameProcessor
 
     /**
      * The DOM xpath processor.
-     *
-     * @var DOMXPath
      */
     private DOMXPath $xPath;
 

@@ -30,8 +30,6 @@ class VersionInformation
 {
     /**
      * The module.
-     *
-     * @var ModuleCustomInterface
      */
     private ModuleCustomInterface $module;
 

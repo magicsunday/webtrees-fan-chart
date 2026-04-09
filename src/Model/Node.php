@@ -22,9 +22,6 @@ use JsonSerializable;
  */
 class Node implements JsonSerializable
 {
-    /**
-     * @var NodeData
-     */
     protected NodeData $data;
 
     /**

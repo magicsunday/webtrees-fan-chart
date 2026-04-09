@@ -28,16 +28,12 @@ class PlaceProcessor
 {
     /**
      * The individual.
-     *
-     * @var Individual
      */
     private Individual $individual;
 
     /**
      * Number of hierarchical place parts to display in arcs
      * (1 = lowest/parish, 0 = full place name).
-     *
-     * @var int
      */
     private int $placeParts;
 

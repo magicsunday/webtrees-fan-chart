@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Processor;
 
 use Fisharebest\Webtrees\Date;
-use Fisharebest\Webtrees\Date\AbstractCalendarDate;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\Individual;
+use MagicSunday\Webtrees\FanChart\Model\Symbols;
 
 /**
  * Class DateProcessor.
@@ -27,22 +27,16 @@ class DateProcessor
 {
     /**
      * The individual.
-     *
-     * @var Individual
      */
     private Individual $individual;
 
     /**
      * The birthdate of the individual.
-     *
-     * @var Date
      */
     private Date $birthDate;
 
     /**
      * The death date of the individual.
-     *
-     * @var Date
      */
     private Date $deathDate;
 
@@ -109,7 +103,6 @@ class DateProcessor
      */
     private function getYear(Date $date): int
     {
-        /** @var AbstractCalendarDate $minimumDate */
         $minimumDate = $date->minimumDate();
 
         return $minimumDate->year();
@@ -217,19 +210,19 @@ class DateProcessor
             $birth = $this->getLifeEventDate($this->birthDate);
             $death = $this->getLifeEventDate($this->deathDate);
 
-            return '* ' . $birth . "\n" . '† ' . $death;
+            return Symbols::SYMBOL_BIRTH . ' ' . $birth . "\n" . Symbols::SYMBOL_DEATH . ' ' . $death;
         }
 
         if ($this->birthDate->isOK()) {
-            return '* ' . $this->getLifeEventDate($this->birthDate);
+            return Symbols::SYMBOL_BIRTH . ' ' . $this->getLifeEventDate($this->birthDate);
         }
 
         if ($this->deathDate->isOK()) {
-            return '† ' . $this->getLifeEventDate($this->deathDate);
+            return Symbols::SYMBOL_DEATH . ' ' . $this->getLifeEventDate($this->deathDate);
         }
 
         if ($this->individual->isDead()) {
-            return '†';
+            return Symbols::SYMBOL_DEATH;
         }
 
         return '';
@@ -270,7 +263,7 @@ class DateProcessor
         // so the JS can show the ⚭ symbol without a date, to
         // distinguish from unmarried partners (no MARR fact at all)
         if (($family !== null) && $family->facts(['MARR'])->isNotEmpty()) {
-            return '?';
+            return Symbols::MARRIAGE_DATE_UNKNOWN;
         }
 
         return '';

@@ -29,15 +29,11 @@ class ImageProcessor
 {
     /**
      * The module.
-     *
-     * @var ModuleCustomInterface
      */
     private ModuleCustomInterface $module;
 
     /**
      * The individual.
-     *
-     * @var Individual
      */
     private Individual $individual;
 

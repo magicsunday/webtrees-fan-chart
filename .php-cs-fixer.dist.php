@@ -41,8 +41,7 @@ return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
     ->setParallelConfig(new PhpCsFixer\Runner\Parallel\ParallelConfig(4, 8))
     ->setRules([
-        '@PSR12'                          => true,
-        '@PER-CS2.0'                      => true,
+        '@PER-CS2x0'                      => true,
         '@Symfony'                        => true,
 
         // Additional custom rules
@@ -55,6 +54,9 @@ return (new PhpCsFixer\Config())
             'comment_type' => 'PHPDoc',
             'location'     => 'after_open',
             'separate'     => 'both',
+        ],
+        'method_argument_space'           => [
+            'on_multiline' => 'ensure_fully_multiline',
         ],
         'phpdoc_to_comment'               => false,
         'phpdoc_no_alias_tag'             => false,
@@ -86,8 +88,12 @@ return (new PhpCsFixer\Config())
         ],
         'binary_operator_spaces'          => [
             'operators' => [
-                '='  => 'align_single_space_minimal',
-                '=>' => 'align_single_space_minimal',
+                '='   => 'align_single_space_minimal',
+                '=>'  => 'align_single_space_minimal',
+                '+='  => 'align_single_space_minimal',
+                '-='  => 'align_single_space_minimal',
+                '.='  => 'align_single_space_minimal',
+                '??=' => 'align_single_space_minimal',
             ],
         ],
         'yoda_style'                      => [
@@ -98,14 +104,25 @@ return (new PhpCsFixer\Config())
         ],
         'blank_line_before_statement'     => [
             'statements' => [
-                'return',
+                'break',
+                'continue',
+                'for',
+                'foreach',
                 'if',
+                'return',
+                'switch',
                 'throw',
+                'try',
+                'while',
             ],
         ],
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
+            ->exclude([
+                '.build',
+                'node_modules',
+            ])
             ->in([
                 __DIR__ . '/src/',
                 __DIR__ . '/tests/',

@@ -56,41 +56,21 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
 
     private const string ROUTE_DEFAULT_URL = '/tree/{tree}/webtrees-fan-chart/{xref}';
 
-    /**
-     * @var string
-     */
     private const string GITHUB_REPO = 'magicsunday/webtrees-fan-chart';
 
-    /**
-     * @var string
-     */
     public const string CUSTOM_AUTHOR = 'Rico Sonntag';
 
-    /**
-     * @var string
-     */
     public const string CUSTOM_VERSION = '3.0.1-dev';
 
-    /**
-     * @var string
-     */
     public const string CUSTOM_SUPPORT_URL = 'https://github.com/' . self::GITHUB_REPO . '/issues';
 
-    /**
-     * @var string
-     */
     public const string CUSTOM_LATEST_VERSION = 'https://api.github.com/repos/' . self::GITHUB_REPO . '/releases/latest';
 
     /**
      * The configuration instance.
-     *
-     * @var Configuration
      */
     private Configuration $configuration;
 
-    /**
-     * @var DataFacade
-     */
     private DataFacade $dataFacade;
 
     /**

@@ -9,17 +9,13 @@
 
 declare(strict_types=1);
 
-use Rector\CodeQuality\Rector\ClassMethod\LocallyCalledStaticMethodToNonStaticRector;
 use Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUselessParamTagRector;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUselessReturnTagRector;
-use Rector\DeadCode\Rector\Property\RemoveUselessVarTagRector;
-use Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector;
-use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
+use Rector\DeadCode\Rector\Stmt\RemoveUnreachableStatementRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
-use Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByMethodCallTypeRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
@@ -60,6 +56,8 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->cacheDirectory(__DIR__ . '/.build/cache/.rector.cache');
     $rectorConfig->containerCacheDirectory(__DIR__ . '/.build/cache/.rector.container.cache');
 
+    $rectorConfig->phpVersion(80300);
+
     // Define what rule sets will be applied
     $rectorConfig->sets([
         SetList::CODE_QUALITY,
@@ -68,20 +66,19 @@ return static function (RectorConfig $rectorConfig): void {
         SetList::EARLY_RETURN,
         SetList::INSTANCEOF,
         SetList::PRIVATIZATION,
-        SetList::STRICT_BOOLEANS,
         SetList::TYPE_DECLARATION,
+        SetList::TYPE_DECLARATION_DOCBLOCKS,
         LevelSetList::UP_TO_PHP_83,
     ]);
 
     // Skip some rules
     $rectorConfig->skip([
         CatchExceptionNameMatchingTypeRector::class,
-        ClassPropertyAssignToConstructorPromotionRector::class,
-        LocallyCalledStaticMethodToNonStaticRector::class,
-        ParamTypeByMethodCallTypeRector::class,
-        ReadOnlyPropertyRector::class,
+        RemoveUnreachableStatementRector::class,
         RemoveUselessParamTagRector::class,
         RemoveUselessReturnTagRector::class,
-        RemoveUselessVarTagRector::class,
+        \Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector::class,
+        \Rector\Privatization\Rector\Property\PrivatizeFinalClassPropertyRector::class,
+        \Rector\Php81\Rector\Property\ReadOnlyPropertyRector::class,
     ]);
 };

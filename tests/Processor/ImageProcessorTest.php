@@ -140,6 +140,9 @@ final class ImageProcessorTest extends TestCase
                 return '';
             }
 
+            /**
+             * @return array{}
+             */
             public function customTranslations(string $language): array
             {
                 return [];

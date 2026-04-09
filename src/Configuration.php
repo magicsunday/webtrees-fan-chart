@@ -28,79 +28,57 @@ class Configuration
 {
     /**
      * The default number of generations to display.
-     *
-     * @var int
      */
     private const int DEFAULT_GENERATIONS = 6;
 
     /**
      * Minimum number of displayable generations.
-     *
-     * @var int
      */
     private const int MIN_GENERATIONS = 2;
 
     /**
      * Maximum number of displayable generations.
-     *
-     * @var int
      */
     private const int MAX_GENERATIONS = 10;
 
     /**
      * The default number of inner levels.
-     *
-     * @var int
      */
     private const int DEFAULT_INNER_ARCS = 3;
 
     /**
      * Minimum number of displayable inner levels.
-     *
-     * @var int
      */
     private const int MIN_INNER_ARCS = 0;
 
     /**
      * Maximum number of displayable inner levels.
-     *
-     * @var int
      */
     private const int MAX_INNER_ARCS = 5;
 
     /**
      * The default fan chart degree.
-     *
-     * @var int
      */
     private const int FAN_DEGREE_DEFAULT = 210;
 
     /**
      * The default font size scaling factor in percent.
-     *
-     * @var int
      */
     private const int FONT_SCALE_DEFAULT = 100;
 
     /**
      * The default color for the paternal lineage (blue).
-     *
-     * @var string
      */
     public const string PATERNAL_COLOR_DEFAULT = '#70a9cf';
 
     /**
      * The default color for the maternal lineage (pink).
-     *
-     * @var string
      */
     public const string MATERNAL_COLOR_DEFAULT = '#d06f94';
 
     /**
      * The default number of place hierarchy parts to display.
      * 1 = lowest level (parish/city), 0 = full place name.
-     *
-     * @var int
      */
     private const int DEFAULT_PLACE_PARTS = 1;
 
@@ -121,8 +99,6 @@ class Configuration
 
     /**
      * The current request instance.
-     *
-     * @var ServerRequestInterface
      */
     private ServerRequestInterface $request;
 

@@ -105,7 +105,7 @@ class DateProcessorTest extends TestCase
      *
      * @param string $compactDate The compact formatted date (DD.MM.YYYY)
      * @param bool   $isOk        Whether the date is considered valid
-     * @param int    $year         The calendar year to return
+     * @param int    $year        The calendar year to return
      *
      * @return Date
      */

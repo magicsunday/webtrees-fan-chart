@@ -34,15 +34,11 @@ class DataFacade
 {
     /**
      * The module.
-     *
-     * @var ModuleCustomInterface
      */
     private ModuleCustomInterface $module;
 
     /**
      * The configuration instance.
-     *
-     * @var Configuration
      */
     private Configuration $configuration;
 

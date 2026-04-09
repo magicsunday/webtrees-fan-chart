@@ -132,11 +132,11 @@
         ],
         "ci:test": [
             "@ci:test:php:lint",
+            "@ci:test:js:lint",
             "@ci:test:php:phpstan",
             "@ci:test:php:rector",
             "@ci:test:php:cpd",
             "@ci:test:php:unit",
-            "@ci:test:js:lint",
             "@ci:test:js:unit",
             "@ci:test:php:cgl"
         ],
