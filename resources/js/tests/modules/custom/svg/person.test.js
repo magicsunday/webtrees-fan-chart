@@ -45,6 +45,14 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
         endAngle() { return 0; }
         innerRadius() { return 0; }
         outerRadius() { return 0; }
+        getFontSize() { return 14; }
+    }
+}));
+
+await jest.unstable_mockModule("resources/js/modules/custom/svg/label-renderer", () => ({
+    __esModule: true,
+    default: class {
+        addLabel() { return {}; }
     }
 }));
 
@@ -129,7 +137,6 @@ describe("Person tooltips", () => {
     beforeEach(() => {
         jest.spyOn(Person.prototype, "addArcToPerson").mockImplementation(() => {});
         jest.spyOn(Person.prototype, "addTitleToPerson").mockImplementation(() => {});
-        jest.spyOn(Person.prototype, "addLabelToPerson").mockImplementation(() => ({}));
         jest.spyOn(Person.prototype, "addColorGroup").mockImplementation(() => {});
     });
 
@@ -137,18 +144,18 @@ describe("Person tooltips", () => {
         const { personSelection } = createPersonSelection();
         const { div, htmlCalls } = createDivSelection();
 
-        const person = new Person({ div }, { hideEmptySegments: false }, personSelection, {
+        new Person({ div }, { hideEmptySegments: false }, personSelection, {
             ...baseDatum,
             data: { data: { xref: "" } }
         });
 
-        person.setTooltipHtml({ data: { data: { xref: "" } } });
-
+        // No event handlers should be bound for empty xref
+        expect(personSelection.on).not.toHaveBeenCalled();
         expect(htmlCalls).toHaveLength(0);
     });
 
     it("renders the thumbnail when images are enabled", () => {
-        const { personSelection } = createPersonSelection();
+        const { personSelection, handlers } = createPersonSelection();
         const { div, htmlCalls, styleCalls } = createDivSelection();
         const datum = {
             ...baseDatum,
@@ -160,16 +167,15 @@ describe("Person tooltips", () => {
             }
         };
 
-        global.event = { pageX: 120, pageY: 80 };
-
-        const person = new Person(
+        new Person(
             { div },
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
             personSelection,
             datum
         );
 
-        person.setTooltipHtml(datum);
+        // Trigger mouseenter to set tooltip HTML
+        handlers.mouseenter({ pageX: 120, pageY: 80 });
 
         expect(htmlCalls[0]).toContain("thumb.jpg");
         expect(htmlCalls[0]).not.toContain("icon-silhouette");
@@ -181,7 +187,7 @@ describe("Person tooltips", () => {
     });
 
     it("renders a silhouette when no thumbnail is present", () => {
-        const { personSelection } = createPersonSelection();
+        const { personSelection, handlers } = createPersonSelection();
         const { div, htmlCalls } = createDivSelection();
         const datum = {
             ...baseDatum,
@@ -194,16 +200,14 @@ describe("Person tooltips", () => {
             }
         };
 
-        global.event = { pageX: 200, pageY: 100 };
-
-        const person = new Person(
+        new Person(
             { div },
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
             personSelection,
             datum
         );
 
-        person.setTooltipHtml(datum);
+        handlers.mouseenter({ pageX: 200, pageY: 100 });
 
         expect(htmlCalls[0]).toContain("icon-silhouette-f");
     });
@@ -222,7 +226,6 @@ describe("Person interactions", () => {
 
         jest.spyOn(Person.prototype, "addArcToPerson").mockImplementation(() => {});
         jest.spyOn(Person.prototype, "addTitleToPerson").mockImplementation(() => {});
-        jest.spyOn(Person.prototype, "addLabelToPerson").mockImplementation(() => ({}));
         jest.spyOn(Person.prototype, "addColorGroup").mockImplementation(() => {});
 
         new Person(
@@ -248,14 +251,14 @@ describe("Person interactions", () => {
         }));
         divSelection.transition = transitionSpy;
 
-        handlers.contextmenu({ preventDefault: jest.fn() }, datum);
+        handlers.contextmenu({ preventDefault: jest.fn() });
 
         expect(divSelection.property).toHaveBeenCalledWith("active", false);
         expect(transitionSpy).toHaveBeenCalled();
     });
 
     it("positions tooltip on mouse move", () => {
-        handlers.mousemove({ pageX: 15, pageY: 45 }, datum);
+        handlers.mousemove({ pageX: 15, pageY: 45 });
 
         expect(divSelection.style).toHaveBeenCalledWith("left", "15px");
         expect(divSelection.style).toHaveBeenCalledWith("top", "15px");
@@ -263,10 +266,9 @@ describe("Person interactions", () => {
 
     it("updates hover classes on mouse over/out", () => {
         const node = {};
-        personSelection.nodes.mockReturnValue([node]);
 
-        handlers.mouseover.call(node, {}, datum);
-        handlers.mouseout.call(node, {}, datum);
+        handlers.mouseover({ currentTarget: node });
+        handlers.mouseout({ currentTarget: node });
 
         expect(selectMock).toHaveBeenCalledWith(node);
         expect(hoverClassCalls).toEqual([

@@ -30,14 +30,18 @@ class TransitionStub {
     }
 
     register(count = 1) {
+        // Fire start handlers immediately during registration,
+        // mimicking D3's scheduling that starts transitions before
+        // the next macrotask (so endAll's setTimeout fallback
+        // sees activeCount > 0 for non-empty selections)
+        for (let i = 0; i < count; i++) {
+            this.handlers.start.forEach((handler) => handler());
+        }
+
         this.registered += count;
     }
 
     complete() {
-        for (let index = 0; index < this.registered; index += 1) {
-            this.handlers.start.forEach((handler) => handler());
-        }
-
         for (let index = 0; index < this.registered; index += 1) {
             this.handlers.end.forEach((handler) => handler());
         }
@@ -107,6 +111,10 @@ class PersonSelection {
         this.domElement = { __selection: this };
     }
 
+    datum() {
+        return this.data;
+    }
+
     classed(name, value) {
         if (value === undefined) {
             return Boolean(this.classes[name]);
@@ -121,6 +129,13 @@ class PersonSelection {
         this.eventCalls.push({ event, handler });
 
         return this;
+    }
+
+    select() {
+        return {
+            style: () => {},
+            empty: () => true
+        };
     }
 
     selectAll(selector) {
@@ -161,6 +176,38 @@ class ChildSelection {
             if (name === "style") {
                 person.children.arc.attrStyle = attrValue;
             }
+        });
+
+        return this;
+    }
+
+    each(callback) {
+        this.targets.forEach(({ person, type }) => {
+            const arcPathEl = {
+                closest: () => person.domElement,
+                __selection: {
+                    transition: (t) => {
+                        t.register(1);
+
+                        const chain = {
+                            style: (name, value) => {
+                                const resolved = typeof value === "function" ? value() : value;
+                                person.children[type].styles[name] = resolved;
+                                return chain;
+                            }
+                        };
+
+                        return chain;
+                    },
+                    select: () => ({
+                        style: (name, value) => {
+                            person.children[type].styles[name] = value;
+                        }
+                    })
+                }
+            };
+
+            callback.call(arcPathEl);
         });
 
         return this;
@@ -408,6 +455,7 @@ const createSvgWithPersons = (availableIds = []) => {
 
 const defaultConfiguration = (overrides = {}) => ({
     hideEmptySegments: false,
+    showFamilyColors: false,
     showParentMarriageDates: false,
     generations: 6,
     updateDuration: 100,
@@ -471,6 +519,10 @@ describe("Update", () => {
         update.update("/update", jest.fn(), callback);
         await flushPromises();
 
+        // Drain endAll's setTimeout fallback while transitions are still
+        // active so it correctly sees activeCount > 0 and does nothing.
+        await flushPromises();
+
         const [transition] = transitionInstances;
 
         expect(Array.from(svg.personById.values()).map((person) => ({
@@ -524,6 +576,10 @@ describe("Update", () => {
         });
 
         update.update("/update", jest.fn(), callback);
+        await flushPromises();
+
+        // Drain endAll's setTimeout fallback while transitions are still
+        // active so it correctly sees activeCount > 0 and does nothing.
         await flushPromises();
 
         const [transition] = transitionInstances;

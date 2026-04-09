@@ -25,6 +25,7 @@ describe("Configuration", () => {
             true,
             true,
             false,
+            false,
             true,
             false,
             false,
@@ -58,6 +59,7 @@ describe("Configuration", () => {
             100,
             false,
             false,
+            false,
             true
         );
 
@@ -77,6 +79,7 @@ describe("Configuration", () => {
             4,
             210,
             90,
+            false,
             false,
             false,
             true,
@@ -102,6 +105,7 @@ describe("Configuration", () => {
             6,
             210,
             100,
+            false,
             false,
             false,
             false,

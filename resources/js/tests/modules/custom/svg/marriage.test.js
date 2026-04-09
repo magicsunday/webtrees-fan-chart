@@ -23,6 +23,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
         innerRadius(depth) { return 50 + depth * 100; }
         outerRadius(depth) { return 100 + depth * 100; }
         calcAngle() { return 0; }
+        isPositionFlipped() { return false; }
         getFontSize(datum) {
             let fontSize = this._configuration.fontSize;
             if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
@@ -59,6 +60,7 @@ const createMarriageSelection = (classes = {}) => {
             style: jest.fn().mockReturnThis(),
             append: jest.fn(() => createAppendable()),
             text: jest.fn().mockReturnThis(),
+            node: jest.fn(() => ({ getComputedTextLength: () => 0 })),
             className: ""
         };
         return el;
@@ -73,6 +75,7 @@ const createMarriageSelection = (classes = {}) => {
             return group;
         }),
         attr: jest.fn(() => "marriage-0"),
+        select: jest.fn(() => ({ empty: () => true })),
         selectAll: jest.fn(() => ({ size: () => 0 }))
     };
 
@@ -160,8 +163,8 @@ describe("Marriage", () => {
 
         const marriage = new Marriage(svg, config, selection, datum);
 
-        // (22 - 2) * 100 / 100.0 = 20
-        expect(marriage.getFontSize(datum)).toBe(20);
+        // getFontSize now uses depth+1 internally: (22 - 3) * 100 / 100.0 = 19
+        expect(marriage.getFontSize(datum)).toBe(19);
     });
 
     it("adds 1 to font size for outer circles", () => {
@@ -172,8 +175,8 @@ describe("Marriage", () => {
 
         const marriage = new Marriage(svg, config, selection, datum);
 
-        // depth 4 >= numberOfInnerCircles + 1 (4), so fontSize = 23
-        // (23 - 4) * 100 / 100.0 = 19
-        expect(marriage.getFontSize(datum)).toBe(19);
+        // getFontSize now uses depth+1 internally: depth 5 >= numberOfInnerCircles + 1 (4), so fontSize = 23
+        // (23 - 5) * 100 / 100.0 = 18
+        expect(marriage.getFontSize(datum)).toBe(18);
     });
 });
