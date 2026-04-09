@@ -38,7 +38,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "8.3 - 8.6",
+        "php": "8.3 - 8.5",
         "ext-dom": "*",
         "ext-json": "*",
         "fisharebest/webtrees": "~2.2.0 || dev-main",
