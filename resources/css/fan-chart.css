@@ -167,10 +167,10 @@
 div.tooltip {
     position: absolute;
     text-align: center;
-    width: auto;
-    max-width: 500px;
+    width: max-content;
+    max-width: calc(100vw - 40px);
     height: auto;
-    padding: 15px 5px;
+    padding: 15px 15px;
     font: 12px sans-serif;
     background: rgb(240, 240, 240);
     border: 2px solid rgb(127, 127, 127);
@@ -218,8 +218,9 @@ div.tooltip table th {
 }
 
 div.tooltip table td {
-    text-align: right;
+    text-align: left;
     padding: 0 0 0 5px;
+    white-space: nowrap;
 }
 
 div.tooltip .name {
@@ -232,6 +233,13 @@ div.tooltip .name {
 div.tooltip .date {
     font-size: 14px;
     color: rgb(127, 127, 127);
+}
+
+div.tooltip .place td {
+    font-size: 12px;
+    font-style: italic;
+    color: rgb(127, 127, 127);
+    padding-top: 0;
 }
 
 /* Fullscreen */

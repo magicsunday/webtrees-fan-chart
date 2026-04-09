@@ -58,7 +58,16 @@
 
 .webtrees-fan-chart-container svg g.name .date {
     fill: rgb(50, 50, 50);
+    font-size: 85%;
     font-weight: normal;
+    direction: ltr;
+    unicode-bidi: plaintext;
+}
+
+.webtrees-fan-chart-container svg g.name .place {
+    fill: rgb(90, 90, 90);
+    font-weight: normal;
+    font-style: italic;
     direction: ltr;
     unicode-bidi: plaintext;
 }

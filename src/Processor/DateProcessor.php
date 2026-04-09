@@ -167,7 +167,7 @@ class DateProcessor
      */
     public function getBirthDate(): string
     {
-        return $this->formatDate($this->birthDate);
+        return $this->getLifeEventDate($this->birthDate);
     }
 
     /**
@@ -177,7 +177,54 @@ class DateProcessor
      */
     public function getDeathDate(): string
     {
-        return $this->formatDate($this->deathDate);
+        return $this->getLifeEventDate($this->deathDate);
+    }
+
+    /**
+     * Returns the full compact birth date (DD.MM.YYYY), regardless of
+     * the generation detail setting. Used for tooltip display.
+     *
+     * @return string
+     */
+    public function getBirthDateFull(): string
+    {
+        if ($this->birthDate->isOK()) {
+            return $this->formatCompactDate($this->birthDate);
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the full compact death date (DD.MM.YYYY), regardless of
+     * the generation detail setting. Used for tooltip display.
+     *
+     * @return string
+     */
+    public function getDeathDateFull(): string
+    {
+        if ($this->deathDate->isOK()) {
+            return $this->formatCompactDate($this->deathDate);
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the full compact marriage date (DD.MM.YYYY), regardless
+     * of the generation detail setting. Used for tooltip display.
+     *
+     * @return string
+     */
+    public function getMarriageDateFull(): string
+    {
+        $family = $this->individual->spouseFamilies()->first();
+
+        if (($family !== null) && $family->getMarriageDate()->isOK()) {
+            return $this->formatCompactDate($family->getMarriageDate());
+        }
+
+        return '';
     }
 
     /**
@@ -201,27 +248,19 @@ class DateProcessor
                 return '* ' . $birth . "\n" . '† ' . $death;
             }
 
-            return $birth . '-' . $death;
+            return '* ' . $birth . "\n" . '† ' . $death;
         }
 
         if ($this->birthDate->isOK()) {
-            $birth = $this->getLifeEventDate($this->birthDate);
-
-            return $isDetailed
-                ? '* ' . $birth
-                : I18N::translate('Born: %s', $birth);
+            return '* ' . $this->getLifeEventDate($this->birthDate);
         }
 
         if ($this->deathDate->isOK()) {
-            $death = $this->getLifeEventDate($this->deathDate);
-
-            return $isDetailed
-                ? '† ' . $death
-                : I18N::translate('Died: %s', $death);
+            return '† ' . $this->getLifeEventDate($this->deathDate);
         }
 
         if ($this->individual->isDead()) {
-            return I18N::translate('Deceased');
+            return '†';
         }
 
         return '';
