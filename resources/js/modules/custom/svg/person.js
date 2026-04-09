@@ -73,7 +73,7 @@ export default class Person {
                     ? 360
                     : (datum.x1 - datum.x0) * 360;
 
-                if ((imageSize >= 28) && (angularWidth >= 20)) {
+                if ((imageSize >= 28) && (angularWidth >= 10)) {
                     datum.data.data.imageSize = imageSize;
                 }
             }
