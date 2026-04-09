@@ -32,7 +32,13 @@ export default class Export {
             }
 
             return fetch(href)
-                .then(response => response.blob())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(response.status);
+                    }
+
+                    return response.blob();
+                })
                 .then(blob => new Promise(resolve => {
                     const reader = new FileReader();
                     reader.onloadend = () => {

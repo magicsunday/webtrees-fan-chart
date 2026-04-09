@@ -244,9 +244,6 @@ export default class Person {
                 .attr("fill", "none")
                 .attr("stroke", "rgb(120, 120, 120)")
                 .attr("stroke-width", 1);
-
-            // Store for text positioning in transformOuterText
-            datum.data.data.imageSize = imageSize;
         } else {
             // Inner arcs: use measured text width to center image+text block.
             const startAngle = this._geometry.startAngle(datum.depth, datum.x0);
