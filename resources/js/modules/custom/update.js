@@ -94,7 +94,7 @@ export default class Update {
                         .classed("new", !empty && !person.classed("available"));
 
                     if (!person.classed("new")) {
-                        person.selectAll("g.name, g.color, title")
+                        person.selectAll("g.name, g.color, g.image, title")
                             .classed("old", true);
                     }
 
@@ -137,7 +137,7 @@ export default class Update {
             // Hide all new elements
             this._svg
                 .selectAll("g.person:not(.remove)")
-                .selectAll("g.name:not(.old), g.color:not(.old)")
+                .selectAll("g.name:not(.old), g.color:not(.old), g.image:not(.old)")
                 .style("opacity", 1e-6);
 
             this._svg
@@ -234,7 +234,7 @@ export default class Update {
             // Fade out all old elements
             this._svg
                 .selectAll("g.person.update, g.person.remove")
-                .selectAll("g.name.old, g.color.old")
+                .selectAll("g.name.old, g.color.old, g.image.old")
                 .transition(transition)
                 .style("opacity", 1e-6);
 
@@ -252,7 +252,7 @@ export default class Update {
             // Fade in all new elements
             this._svg
                 .selectAll("g.person:not(.remove)")
-                .selectAll("g.name:not(.old), g.color:not(.old)")
+                .selectAll("g.name:not(.old), g.color:not(.old), g.image:not(.old)")
                 .transition(transition)
                 .style("opacity", 1);
 
@@ -313,7 +313,7 @@ export default class Update {
             }
 
             this._svg
-                .selectAll("g.person g.name, g.person g.color")
+                .selectAll("g.person g.name, g.person g.color, g.person g.image")
                 .style("opacity", null);
 
             this._svg
@@ -348,7 +348,7 @@ export default class Update {
             .classed("new", false)
             .classed("update", false)
             .classed("remove", false)
-            .selectAll("g.name.old, g.color.old, title.old")
+            .selectAll("g.name.old, g.color.old, g.image.old, title.old")
             .remove();
 
         this._svg
@@ -384,6 +384,15 @@ export default class Update {
             .selectAll("path[id^='path-person-'], path[id^='path-marriage-']")
             .each(function () {
                 if (!document.querySelector("textPath[href='#" + this.id + "']")) {
+                    this.remove();
+                }
+            });
+
+        // Remove orphaned clip paths from old images
+        this._svg.defs.get()
+            .selectAll("clipPath[id^='clip-image-']")
+            .each(function () {
+                if (!document.querySelector("image[clip-path='url(#" + this.id + ")']")) {
                     this.remove();
                 }
             });

@@ -45,6 +45,8 @@ export default class Text {
             const parentId = d3.select(parent.node().parentNode).attr("id");
             const nameGroups = this.createNamesData(datum);
 
+            let textStartOffset = "25%";
+
             // The textPath element must be contained individually in a text element, otherwise the exported
             // chart will not be drawn correctly in Inkscape (actually this is not necessary, the browsers
             // display the chart correctly).
@@ -60,7 +62,7 @@ export default class Text {
                     .append("text")
                     .append("textPath")
                     .attr("href", "#" + pathId)
-                    .attr("startOffset", "25%");
+                    .attr("startOffset", textStartOffset);
 
                 this.addNameElements(
                     textPath,
@@ -84,7 +86,7 @@ export default class Text {
                     .append("text")
                     .append("textPath")
                     .attr("href", "#" + pathId)
-                    .attr("startOffset", "25%")
+                    .attr("startOffset", textStartOffset)
                     .classed("wt-chart-box-name-alt", true)
                     .classed("rtl", datum.data.data.isAltRtl);
 
@@ -111,7 +113,7 @@ export default class Text {
                         .append("text")
                         .append("textPath")
                         .attr("href", "#" + pathId)
-                        .attr("startOffset", "25%")
+                        .attr("startOffset", textStartOffset)
                         .attr("class", "date");
 
                     textPath.append("title")
@@ -749,8 +751,17 @@ export default class Text {
             availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, position));
         }
 
-        return availableWidth - (this._configuration.textPadding * 2)
+        availableWidth = availableWidth - (this._configuration.textPadding * 2)
             - (this._configuration.padDistance / 2);
+
+        // Reduce available width when an image is present
+        let imageSize = data.data.data.imageSize || 0;
+
+        if (imageSize > 0) {
+            availableWidth -= (imageSize + 10);
+        }
+
+        return availableWidth;
     }
 
     /**
@@ -775,17 +786,27 @@ export default class Text {
                 .domain([0, countElements - 1])
                 .range([-offset, offset]);
 
+            const fontSize   = that._geometry.getFontSize(datum);
+            const imageSize  = datum.data.data.imageSize || 0;
+            const imageGap   = imageSize > 0 ? 6 : 0;
+            const lineHeight = fontSize * 1.3;
+
+            // Total content height: image + gap + text lines
+            const textHeight  = countElements * lineHeight;
+            const totalHeight = imageSize + imageGap + textHeight;
+
+            // Start Y: center everything vertically in the circle
+            let currentY = -(totalHeight / 2) + imageSize + imageGap + (lineHeight / 2);
+
             textElements.each(function (ignore, i) {
-                const offsetRotate = mapIndexToOffset(i) * that._configuration.fontScale / 100.0;
-                const fontSize = that._geometry.getFontSize(datum);
                 const isDate = d3.select(this).classed("date");
-                const groupShift = fontSize * 0.15;
+                const groupShift = fontSize * 0.1;
 
                 d3.select(this).attr("dy",
-                    (offsetRotate * fontSize) + (fontSize / 2)
-                    + (isDate ? groupShift : -groupShift)
-                    + "px",
+                    currentY + (isDate ? groupShift : -groupShift) + "px"
                 );
+
+                currentY += lineHeight;
             });
 
             return;
