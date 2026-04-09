@@ -20,8 +20,7 @@
 # Fan chart
 This module provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.
 
-![210 Degree chart with opened contextmenu](assets/fan-chart-210-contextmenu.png)
-![210 Degree chart with color gradients and hidden empty segments](assets/fan-chart-210-gradient.png)
+![210 Degree fan chart with family branch colors](assets/fan-chart-210-color.png)
 
 
 ## Installation
@@ -91,6 +90,13 @@ installed fan chart module) and save your settings.
 ## Usage
 At the charts' menu, you will find a new link called `Fan chart`. Use the provided configuration options
 to adjust the layout of the charts according to your needs.
+
+**Family colors** — Enable "Show family colors" to color arcs by family branch. Each parent couple shares
+the same color, with paternal and maternal base colors configurable via color pickers. Colors transition
+smoothly when navigating between individuals.
+
+**Marriage dates** — Enable "Show parent marriage dates" to display marriage dates between generation arcs.
+Dates use compact format for inner generations and year-only for outer generations.
 
 Right-clicking on an individual opens a tooltip providing more detailed information of the current individual.
 
