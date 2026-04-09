@@ -55,7 +55,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->disableParallel();
     $rectorConfig->cacheDirectory(__DIR__ . '/.build/cache/.rector.cache');
     $rectorConfig->containerCacheDirectory(__DIR__ . '/.build/cache/.rector.container.cache');
-
     $rectorConfig->phpVersion(80300);
 
     // Define what rule sets will be applied
