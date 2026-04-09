@@ -148,6 +148,7 @@ export default class PngExport extends Export {
         };
 
         this.cloneSvg(svg.node())
+            .then(newSvg => this.inlineImages(newSvg))
             .then(newSvg => {
                 this.copyStylesInline(svg.node(), newSvg);
 

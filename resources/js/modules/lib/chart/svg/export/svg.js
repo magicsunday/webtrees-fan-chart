@@ -268,6 +268,7 @@ export default class SvgExport extends Export {
             .then(clone => clone.cloneNode(false))
             .then(clone => this.cloneStyles(node, clone, null))
             .then(clone => this.cloneChildren(node, clone))
+            .then(clone => this.inlineImages(clone))
             .then(clone => this.convertToObjectUrl(clone))
             .then(objectUrl => this.cleanUp(objectUrl))
             .then(objectUrl => this.triggerDownload(objectUrl, fileName))
