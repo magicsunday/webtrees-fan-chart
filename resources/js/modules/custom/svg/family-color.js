@@ -113,7 +113,7 @@ export default class FamilyColor
         // so both parents of the same child share the same hue.
         let refNode = datum;
 
-        if (datum.depth >= 2 && datum.parent) {
+        if ((datum.depth >= 2) && datum.parent) {
             refNode = datum.parent;
         }
 
@@ -151,36 +151,36 @@ export default class FamilyColor
 
         hex = hex.replace(/^#/, "");
 
-        const r = parseInt(hex.substring(0, 2), 16) / 255;
-        const g = parseInt(hex.substring(2, 4), 16) / 255;
-        const b = parseInt(hex.substring(4, 6), 16) / 255;
+        const red   = parseInt(hex.substring(0, 2), 16) / 255;
+        const green = parseInt(hex.substring(2, 4), 16) / 255;
+        const blue  = parseInt(hex.substring(4, 6), 16) / 255;
 
-        const max   = Math.max(r, g, b);
-        const min   = Math.min(r, g, b);
+        const max   = Math.max(red, green, blue);
+        const min   = Math.min(red, green, blue);
         const delta = max - min;
 
-        let h = 0;
-        let s = 0;
-        let l = (max + min) / 2;
+        let hue        = 0;
+        let saturation = 0;
+        let lightness  = (max + min) / 2;
 
         if (delta !== 0) {
-            s = l > 0.5
+            saturation = lightness > 0.5
                 ? delta / (2 - max - min)
                 : delta / (max + min);
 
-            if (max === r) {
-                h = ((g - b) / delta + (g < b ? 6 : 0)) * 60;
-            } else if (max === g) {
-                h = ((b - r) / delta + 2) * 60;
+            if (max === red) {
+                hue = ((green - blue) / delta + ((green < blue) ? 6 : 0)) * 60;
+            } else if (max === green) {
+                hue = ((blue - red) / delta + 2) * 60;
             } else {
-                h = ((r - g) / delta + 4) * 60;
+                hue = ((red - green) / delta + 4) * 60;
             }
         }
 
         return [
-            Math.round(h),
-            Math.round(s * 100),
-            Math.round(l * 100)
+            Math.round(hue),
+            Math.round(saturation * 100),
+            Math.round(lightness * 100)
         ];
     }
 

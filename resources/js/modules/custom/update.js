@@ -108,7 +108,7 @@ export default class Update
             if (this._configuration.showParentMarriageDates) {
                 let marriageNodes = this._hierarchy.nodes.filter(
                     datum => datum.children
-                        && datum.depth < this._configuration.generations - 1
+                        && (datum.depth < (this._configuration.generations - 1))
                 );
 
                 this._svg
@@ -153,20 +153,20 @@ export default class Update
                 .style("opacity", 1e-6);
 
             // Create transition instance
-            let t = d3.transition()
+            let transition = d3.transition()
                 .duration(this._configuration.updateDuration)
                 .call(this.endAll, () => this.updateDone(callback));
 
             // Fade out removed person arcs
             this._svg
                 .selectAll("g.person.remove g.arc path")
-                .transition(t)
+                .transition(transition)
                 .style("fill", () => this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)")
                 .style("opacity", () => this._configuration.hideEmptySegments ? 1e-6 : null);
 
             this._svg
                 .selectAll("g.marriage.remove g.arc path")
-                .transition(t)
+                .transition(transition)
                 .style("fill", () => this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)")
                 .style("opacity", () => this._configuration.hideEmptySegments ? 1e-6 : null);
 
@@ -182,7 +182,7 @@ export default class Update
                         : "rgb(250, 250, 250)";
 
                     d3.select(this)
-                        .transition(t)
+                        .transition(transition)
                         .style("fill", target)
                         .style("opacity", () => that._configuration.hideEmptySegments ? 1 : null);
                 });
@@ -196,7 +196,7 @@ export default class Update
 
                         if (datum && datum.data.data.familyColor) {
                             d3.select(this)
-                                .transition(t)
+                                .transition(transition)
                                 .style("fill", datum.data.data.familyColor);
                         }
                     });
@@ -213,7 +213,7 @@ export default class Update
                     let target = color || "rgb(250, 250, 250)";
 
                     d3.select(this)
-                        .transition(t)
+                        .transition(transition)
                         .style("fill", target)
                         .style("opacity", () => that._configuration.hideEmptySegments ? 1 : null);
                 });
@@ -228,7 +228,7 @@ export default class Update
 
                         if (color) {
                             d3.select(this)
-                                .transition(t)
+                                .transition(transition)
                                 .style("fill", color);
                         }
                     });
@@ -238,36 +238,36 @@ export default class Update
             this._svg
                 .selectAll("g.person.update, g.person.remove")
                 .selectAll("g.name.old, g.color.old")
-                .transition(t)
+                .transition(transition)
                 .style("opacity", 1e-6);
 
             this._svg
                 .selectAll("g.marriage.update, g.marriage.remove")
                 .selectAll("g.name.old")
-                .transition(t)
+                .transition(transition)
                 .style("opacity", 1e-6);
 
             this._svg
                 .selectAll("g.separatorGroup line.old")
-                .transition(t)
+                .transition(transition)
                 .style("opacity", 1e-6);
 
             // Fade in all new elements
             this._svg
                 .selectAll("g.person:not(.remove)")
                 .selectAll("g.name:not(.old), g.color:not(.old)")
-                .transition(t)
+                .transition(transition)
                 .style("opacity", 1);
 
             this._svg
                 .selectAll("g.marriage:not(.remove)")
                 .selectAll("g.name:not(.old)")
-                .transition(t)
+                .transition(transition)
                 .style("opacity", 1);
 
             this._svg
                 .selectAll("g.separatorGroup line:not(.old)")
-                .transition(t)
+                .transition(transition)
                 .style("opacity", 1);
         });
     }
@@ -296,7 +296,7 @@ export default class Update
 
         // Remove styles so CSS classes may work correct, Uses a small timer as animation seems not
         // to be done already if the point is reached
-        let t = d3.timer(() => {
+        let cleanupTimer = d3.timer(() => {
             this._svg
                 .selectAll("g.person g.arc path")
                 .attr("style", null);
@@ -344,7 +344,7 @@ export default class Update
                 .selectAll("g.marriage g.name")
                 .style("opacity", null);
 
-            t.stop();
+            cleanupTimer.stop();
         }, 10);
 
         this._svg
@@ -406,12 +406,12 @@ export default class Update
      */
     endAll(transition, callback)
     {
-        let n = 0;
+        let activeCount = 0;
 
         transition
-            .on("start", () => ++n)
+            .on("start", () => ++activeCount)
             .on("end", () => {
-                if (!--n) {
+                if (!--activeCount) {
                     callback.apply(transition);
                 }
             });
@@ -420,7 +420,7 @@ export default class Update
         // setTimeout defers to after the current event-loop tick so D3
         // has had a chance to schedule any transitions first.
         setTimeout(() => {
-            if (n === 0) {
+            if (activeCount === 0) {
                 callback.apply(transition);
             }
         }, 0);

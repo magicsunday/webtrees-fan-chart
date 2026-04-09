@@ -379,8 +379,8 @@ export default class Text
         parent.selectAll("tspan")
             .data(data)
             .enter()
-            .call((g) => {
-                g.append("tspan")
+            .call((enterSelection) => {
+                enterSelection.append("tspan")
                     .text(datum => datum.label)
                     // Add some spacing between the elements
                     .attr("dx", (datum, index) => {
@@ -695,7 +695,7 @@ export default class Text
         groups.forEach((group, gi) => {
             totalHeight += (group.length - 1) * intraGroupSpacing;
 
-            if (gi < groups.length - 1) {
+            if (gi < (groups.length - 1)) {
                 totalHeight += interGroupSpacing;
             }
         });
@@ -727,12 +727,12 @@ export default class Text
                     flipped: 100 - currentPos,
                 });
 
-                if (si < group.length - 1) {
+                if (si < (group.length - 1)) {
                     currentPos -= intraGroupSpacing;
                 }
             });
 
-            if (gi < groups.length - 1) {
+            if (gi < (groups.length - 1)) {
                 currentPos -= interGroupSpacing;
             }
         });
@@ -872,7 +872,7 @@ export default class Text
         textElements.each(function () {
             if (d3.select(this).classed("date")) {
                 // Start a new group for the first date
-                if (groups[groups.length - 1].items.length > 0
+                if ((groups[groups.length - 1].items.length > 0)
                     && !groups[groups.length - 1].isDate
                 ) {
                     groups.push({ items: [], isDate: true });
@@ -903,7 +903,7 @@ export default class Text
         groups.forEach((group, gi) => {
             totalDeg += (group.items.length - 1) * intraGapDeg;
 
-            if (gi < groups.length - 1) {
+            if (gi < (groups.length - 1)) {
                 totalDeg += interGapDeg;
             }
         });
@@ -912,7 +912,7 @@ export default class Text
         let angularSpanDeg = (datum.x1 - datum.x0) * 360;
         let maxDeg = angularSpanDeg * 0.5;
 
-        if (totalDeg > maxDeg && totalDeg > 0) {
+        if ((totalDeg > maxDeg) && (totalDeg > 0)) {
             let scale = maxDeg / totalDeg;
             intraGapDeg *= scale;
             interGapDeg *= scale;
@@ -928,12 +928,12 @@ export default class Text
             group.items.forEach((element, si) => {
                 positions.push(currentPos);
 
-                if (si < group.items.length - 1) {
+                if (si < (group.items.length - 1)) {
                     currentPos += intraGapDeg;
                 }
             });
 
-            if (gi < groups.length - 1) {
+            if (gi < (groups.length - 1)) {
                 currentPos += interGapDeg;
             }
         });

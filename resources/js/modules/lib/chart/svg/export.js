@@ -28,10 +28,10 @@ export default class Export
             cancelable: true
         });
 
-        let a = document.createElement("a");
-        a.setAttribute("download", fileName);
-        a.setAttribute("href", imgURI);
-        a.setAttribute("target", "_blank");
-        a.dispatchEvent(event);
+        let anchor = document.createElement("a");
+        anchor.setAttribute("download", fileName);
+        anchor.setAttribute("href", imgURI);
+        anchor.setAttribute("target", "_blank");
+        anchor.dispatchEvent(event);
     }
 }

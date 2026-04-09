@@ -93,7 +93,7 @@ export default class Zoom
                 return event.touches.length === 2;
             }
 
-            return (!event.ctrlKey || event.type === 'wheel') && !event.button;
+            return (!event.ctrlKey || (event.type === 'wheel')) && !event.button;
         });
     }
 

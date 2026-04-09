@@ -81,8 +81,8 @@ export default class Hierarchy
             .descendants();
 
         // Assign a unique ID to each node
-        this._nodes.forEach((d, i) => {
-            d.id = i;
+        this._nodes.forEach((node, i) => {
+            node.id = i;
         });
     }
 

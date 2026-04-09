@@ -207,14 +207,14 @@ export default class Chart
         // Create a new selection in order to leave the previous enter() selection
         personGroup
             .selectAll("g.person")
-            .each(function (d) {
+            .each(function (datum) {
                 let person = d3.select(this);
 
                 if (that._configuration.showFamilyColors) {
-                    d.data.data.familyColor = familyColor.getColor(d);
+                    datum.data.data.familyColor = familyColor.getColor(datum);
                 }
 
-                new Person(that._svg, that._configuration, person, d);
+                new Person(that._svg, that._configuration, person, datum);
             });
 
         // Marriage arc layer (separate from persons so hover does not affect them)
@@ -249,10 +249,10 @@ export default class Chart
 
         for (let depth = 1; depth <= maxDepth; depth++) {
             const nodesAtDepth = this._hierarchy.nodes
-                .filter(datum => datum.depth === depth && datum.data.data.xref !== "")
-                .sort((a, b) => a.x0 - b.x0);
+                .filter(datum => (datum.depth === depth) && (datum.data.data.xref !== ""))
+                .sort((left, right) => left.x0 - right.x0);
 
-            for (let i = 0; i < nodesAtDepth.length - 1; i++) {
+            for (let i = 0; i < (nodesAtDepth.length - 1); i++) {
                 const current = nodesAtDepth[i];
                 const next    = nodesAtDepth[i + 1];
 
@@ -261,7 +261,7 @@ export default class Chart
                     const angle  = geometry.calcAngle(current.x1);
                     const innerR = geometry.innerRadius(depth);
                     // Extend through the marriage arc gap to the next generation
-                    const outerR = (this._configuration.showParentMarriageDates && depth < this._configuration.generations - 1)
+                    const outerR = (this._configuration.showParentMarriageDates && (depth < (this._configuration.generations - 1)))
                         ? geometry.innerRadius(depth + 1)
                         : geometry.outerRadius(depth);
 
@@ -297,7 +297,7 @@ export default class Chart
         // All nodes that have children and are within display range
         const nodes = this._hierarchy.nodes.filter(
             datum => datum.children
-                && datum.depth < this._configuration.generations - 1
+                && (datum.depth < (this._configuration.generations - 1))
         );
 
         // D3 data join: same pattern as person elements
