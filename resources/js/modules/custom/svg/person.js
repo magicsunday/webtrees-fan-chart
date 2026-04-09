@@ -104,21 +104,17 @@ export default class Person
         }
 
         let path = color.append("path")
-            .attr("fill", () => {
-                if (this._configuration.showColorGradients) {
-                    // Innermost circle (first generation)
-                    if (!datum.depth) {
-                        return "rgb(225, 225, 225)";
-                    }
-
-                    return "url(#grad-" + datum.id + ")";
-                }
-
-                return null;
-            })
             .attr("d", arcGenerator);
 
-        if (!this._configuration.showColorGradients) {
+        if (this._configuration.showFamilyColors) {
+            // Light gray strip when family colors fill the arcs
+            path.style("fill", "rgb(215, 215, 215)");
+        } else {
+            // Sex-based color on the strip
+            if (!datum.depth) {
+                path.attr("fill", "rgb(225, 225, 225)");
+            }
+
             path.attr(
                 "class",
                 datum.data.data.sex === SEX_FEMALE ? "female" : (datum.data.data.sex === SEX_MALE ? "male" : "unknown")
@@ -155,6 +151,14 @@ export default class Person
         let path = arcGroup
             .append("path")
             .attr("d", arcGenerator);
+
+        // Apply family-branch color to the arc fill (inline style
+        // overrides the CSS rules that set fill on arc paths).
+        // During updates, new arcs skip the immediate fill so the
+        // D3 transition can fade from gray to the family color.
+        if (datum.data.data.familyColor && !person.classed("new")) {
+            path.style("fill", datum.data.data.familyColor);
+        }
 
         // Hide arc initially if its new during chart update
         if (person.classed("new")) {

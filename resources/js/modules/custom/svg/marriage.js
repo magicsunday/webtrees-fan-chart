@@ -7,6 +7,7 @@
 
 import * as d3 from "../../lib/d3";
 import Geometry from "./geometry";
+import FamilyColor from "./family-color";
 
 /**
  * This class handles the creation of the marriage arc elements of the chart.
@@ -74,6 +75,11 @@ export default class Marriage
      */
     addArc(marriage, datum)
     {
+        // Reuse existing arc if present (during updates)
+        if (!marriage.select("g.arc").empty()) {
+            return;
+        }
+
         let innerR = this._geometry.outerRadius(datum.depth);
         let outerR = this._geometry.innerRadius(datum.depth + 1);
 
@@ -105,6 +111,12 @@ export default class Marriage
         let path = arcGroup
             .append("path")
             .attr("d", arcGenerator);
+
+        let parentColor = FamilyColor.getMarriageColor(datum);
+
+        if (parentColor && !marriage.classed("new")) {
+            path.style("fill", parentColor);
+        }
 
         // Hide arc initially if it's new during chart update
         if (marriage.classed("new")) {

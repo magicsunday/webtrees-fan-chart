@@ -8,6 +8,7 @@
 import * as d3 from "../lib/d3";
 import Person from "./svg/person";
 import Marriage from "./svg/marriage";
+import FamilyColor from "./svg/family-color";
 
 /**
  * This class handles the visual update of all text and path elements.
@@ -71,6 +72,17 @@ export default class Update
 
             // Initialize the new loaded data
             this._hierarchy.init(data.data);
+
+            // Compute family colors for all hierarchy nodes upfront
+            // (must happen before person/marriage loops since marriage
+            // arcs reference their children's familyColor)
+            let familyColor = new FamilyColor(this._configuration);
+
+            if (this._configuration.showFamilyColors) {
+                this._hierarchy.nodes.forEach(
+                    (datum) => datum.data.data.familyColor = familyColor.getColor(datum)
+                );
+            }
 
             // Flag all person elements which are subject to change
             this._svg
@@ -145,7 +157,7 @@ export default class Update
                 .duration(this._configuration.updateDuration)
                 .call(this.endAll, () => this.updateDone(callback));
 
-            // Fade out old person arcs
+            // Fade out removed person arcs
             this._svg
                 .selectAll("g.person.remove g.arc path")
                 .transition(t)
@@ -158,18 +170,69 @@ export default class Update
                 .style("fill", () => this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)")
                 .style("opacity", () => this._configuration.hideEmptySegments ? 1e-6 : null);
 
-            // Fade in new person arcs
+            // Fade in new person arcs (fill + opacity in one transition
+            // so D3 does not replace a prior transition on the same element)
             this._svg
                 .selectAll("g.person.new g.arc path")
-                .transition(t)
-                .style("fill", "rgb(250, 250, 250)")
-                .style("opacity", () => this._configuration.hideEmptySegments ? 1 : null);
+                .each(function () {
+                    let person = d3.select(this.closest("g.person"));
+                    let datum  = person.datum();
+                    let target = (that._configuration.showFamilyColors && datum && datum.data.data.familyColor)
+                        ? datum.data.data.familyColor
+                        : "rgb(250, 250, 250)";
 
+                    d3.select(this)
+                        .transition(t)
+                        .style("fill", target)
+                        .style("opacity", () => that._configuration.hideEmptySegments ? 1 : null);
+                });
+
+            // Transition family colors on updated (existing) arcs
+            if (this._configuration.showFamilyColors) {
+                this._svg
+                    .selectAll("g.person.update g.arc path")
+                    .each(function () {
+                        let datum = d3.select(this.closest("g.person")).datum();
+
+                        if (datum && datum.data.data.familyColor) {
+                            d3.select(this)
+                                .transition(t)
+                                .style("fill", datum.data.data.familyColor);
+                        }
+                    });
+            }
+
+            // Fade in new marriage arcs
             this._svg
                 .selectAll("g.marriage.new g.arc path")
-                .transition(t)
-                .style("fill", "rgb(250, 250, 250)")
-                .style("opacity", () => this._configuration.hideEmptySegments ? 1 : null);
+                .each(function () {
+                    let datum  = d3.select(this.closest("g.marriage")).datum();
+                    let color  = that._configuration.showFamilyColors
+                        ? FamilyColor.getMarriageColor(datum)
+                        : null;
+                    let target = color || "rgb(250, 250, 250)";
+
+                    d3.select(this)
+                        .transition(t)
+                        .style("fill", target)
+                        .style("opacity", () => that._configuration.hideEmptySegments ? 1 : null);
+                });
+
+            // Transition family colors on updated marriage arcs
+            if (this._configuration.showFamilyColors) {
+                this._svg
+                    .selectAll("g.marriage.update g.arc path")
+                    .each(function () {
+                        let datum = d3.select(this.closest("g.marriage")).datum();
+                        let color = FamilyColor.getMarriageColor(datum);
+
+                        if (color) {
+                            d3.select(this)
+                                .transition(t)
+                                .style("fill", color);
+                        }
+                    });
+            }
 
             // Fade out all old elements
             this._svg
@@ -238,6 +301,21 @@ export default class Update
                 .selectAll("g.person g.arc path")
                 .attr("style", null);
 
+            // Re-apply family-branch colors after clearing transition styles
+            if (this._configuration.showFamilyColors) {
+                this._svg
+                    .selectAll("g.person")
+                    .each(function () {
+                        let datum = d3.select(this).datum();
+
+                        if (datum && datum.data.data.familyColor) {
+                            d3.select(this)
+                                .select("g.arc path")
+                                .style("fill", datum.data.data.familyColor);
+                        }
+                    });
+            }
+
             this._svg
                 .selectAll("g.person g.name, g.person g.color")
                 .style("opacity", null);
@@ -245,6 +323,22 @@ export default class Update
             this._svg
                 .selectAll("g.marriage g.arc path")
                 .attr("style", null);
+
+            // Re-apply parents' family colors on marriage arcs
+            if (this._configuration.showFamilyColors) {
+                this._svg
+                    .selectAll("g.marriage")
+                    .each(function () {
+                        let datum = d3.select(this).datum();
+                        let color = FamilyColor.getMarriageColor(datum);
+
+                        if (color) {
+                            d3.select(this)
+                                .select("g.arc path")
+                                .style("fill", color);
+                        }
+                    });
+            }
 
             this._svg
                 .selectAll("g.marriage g.name")

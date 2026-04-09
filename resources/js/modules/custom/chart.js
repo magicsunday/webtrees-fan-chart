@@ -12,7 +12,7 @@ import Svg from "./svg";
 import Person from "./svg/person";
 import Marriage from "./svg/marriage";
 import Geometry from "./svg/geometry";
-import Gradient from "./gradient";
+import FamilyColor from "./svg/family-color";
 import Update from "./update";
 
 const MIN_HEIGHT  = 500;
@@ -185,7 +185,7 @@ export default class Chart
         this._svg.initEvents(this._overlay);
 
         let personGroup = this._svg.select("g.personGroup");
-        let gradient = new Gradient(this._svg, this._configuration);
+        let familyColor = new FamilyColor(this._configuration);
         let that = this;
 
          personGroup
@@ -210,8 +210,8 @@ export default class Chart
             .each(function (d) {
                 let person = d3.select(this);
 
-                if (that._configuration.showColorGradients) {
-                    gradient.init(d);
+                if (that._configuration.showFamilyColors) {
+                    d.data.data.familyColor = familyColor.getColor(d);
                 }
 
                 new Person(that._svg, that._configuration, person, d);
