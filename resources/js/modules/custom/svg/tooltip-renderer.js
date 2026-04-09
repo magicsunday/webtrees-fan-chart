@@ -108,23 +108,34 @@ export default class TooltipRenderer
             }
         }
 
-        const dates = datum.data.data.birth || datum.data.data.marriageDate || datum.data.data.death;
+        // Use full compact dates for tooltip (always DD.MM.YYYY
+        // regardless of what the arc shows)
+        const birthDate     = datum.data.data.birthDateFull || datum.data.data.birth || "";
+        const deathDate     = datum.data.data.deathDateFull || datum.data.data.death || "";
+        const marriageDate  = datum.data.data.marriageDateFull || datum.data.data.marriageDate || "";
+        const birthPlace    = datum.data.data.birthPlace || "";
+        const deathPlace    = datum.data.data.deathPlace || "";
+        const marriagePlace = datum.data.data.marriagePlace || "";
+        const hasData       = birthDate || marriageDate || deathDate;
 
         this._svg.div
             .html(
                 image
                 + "<div class=\"text\">"
                     + "<div class=\"name\">" + datum.data.data.name + "</div>"
-                    + (dates
+                    + (hasData
                         ? "<table>"
-                            + (datum.data.data.birth
-                            ? ("<tr class=\"date\"><th>\u2605</th><td>" + datum.data.data.birth + "</td></tr>")
+                            + (birthDate
+                            ? ("<tr class=\"date\"><th>\u2605</th><td>" + birthDate + "</td></tr>")
+                                + (birthPlace ? "<tr class=\"place\"><th></th><td>" + birthPlace + "</td></tr>" : "")
                             : "")
-                            + (datum.data.data.marriageDate
-                            ? ("<tr class=\"date\"><th>\u26AD</th><td>" + datum.data.data.marriageDate + "</td></tr>")
+                            + (marriageDate
+                            ? ("<tr class=\"date\"><th>\u26AD</th><td>" + marriageDate + "</td></tr>")
+                                + (marriagePlace ? "<tr class=\"place\"><th></th><td>" + marriagePlace + "</td></tr>" : "")
                             : "")
-                            + (datum.data.data.death
-                            ? ("<tr class=\"date\"><th>\u2020</th><td>" + datum.data.data.death + "</td></tr>")
+                            + (deathDate
+                            ? ("<tr class=\"date\"><th>\u2020</th><td>" + deathDate + "</td></tr>")
+                                + (deathPlace ? "<tr class=\"place\"><th></th><td>" + deathPlace + "</td></tr>" : "")
                             : "")
                         + "</table>"
                     : "")

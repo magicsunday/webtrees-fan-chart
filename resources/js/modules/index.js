@@ -51,6 +51,7 @@ export class FanChart
             options.fontScale,
             options.hideEmptySegments,
             options.showFamilyColors,
+            options.showPlaces,
             options.showParentMarriageDates,
             options.showImages,
             options.showSilhouettes,

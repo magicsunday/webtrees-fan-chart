@@ -186,16 +186,39 @@ export default class Marriage
             labelGroup.style("opacity", 1e-6);
         }
 
-        labelGroup
+        let text = labelGroup
             .append("text")
             .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "central")
+            .attr("dominant-baseline", "central");
+
+        let textPath = text
             .append("textPath")
             .attr("href", "#" + pathId)
             .attr("startOffset", "25%")
-            .attr("class", "date")
+            .attr("class", "date");
+
+        let tspan = textPath
             .append("tspan")
             .text("\u26AD " + datum.data.data.marriageDateOfParents);
+
+        // Truncate if text overflows the arc (with padding on both sides)
+        let arcLength = ((endAngle - startAngle) * midRadius) - 24;
+
+        if (tspan.node().getComputedTextLength() > arcLength) {
+            let label = tspan.text();
+
+            while ((tspan.node().getComputedTextLength() > arcLength) && (label.length > 1)) {
+                label = label.slice(0, -1).trim();
+                tspan.text(label);
+            }
+
+            // Remove trailing dot if present
+            if (label[label.length - 1] === ".") {
+                label = label.slice(0, -1).trim();
+            }
+
+            tspan.text(label + "\u2026");
+        }
     }
 
     /**
@@ -207,6 +230,10 @@ export default class Marriage
      */
     getFontSize(datum)
     {
-        return this._geometry.getFontSize(datum);
+        // Use the parents' depth (datum.depth + 1) for font sizing
+        // since the marriage arc visually belongs to the parent generation
+        return this._geometry.getFontSize(
+            Object.assign({}, datum, { depth: datum.depth + 1 })
+        );
     }
 }

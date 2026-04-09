@@ -53,6 +53,7 @@ export default class Configuration
      * @param {number}   fontScale
      * @param {boolean}  hideEmptySegments
      * @param {boolean}  showFamilyColors
+     * @param {boolean}  showPlaces
      * @param {boolean}  showParentMarriageDates
      * @param {boolean}  showImages
      * @param {boolean}  showSilhouettes
@@ -68,6 +69,7 @@ export default class Configuration
         fontScale = 100,
         hideEmptySegments = false,
         showFamilyColors = false,
+        showPlaces = false,
         showParentMarriageDates = false,
         showImages = false,
         showSilhouettes = false,
@@ -120,6 +122,7 @@ export default class Configuration
 
         this._hideEmptySegments  = hideEmptySegments;
         this._showFamilyColors = showFamilyColors;
+        this._showPlaces = showPlaces;
         this._showParentMarriageDates = showParentMarriageDates;
         this._showImages = showImages;
         this._showSilhouettes = showSilhouettes;
@@ -235,6 +238,16 @@ export default class Configuration
     set showFamilyColors(value)
     {
         this._showFamilyColors = value;
+    }
+
+    /**
+     * Returns whether to show or hide place names.
+     *
+     * @return {boolean}
+     */
+    get showPlaces()
+    {
+        return this._showPlaces;
     }
 
     /**
