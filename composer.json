@@ -78,6 +78,7 @@
             "rm -f webtrees-fan-chart/.gitignore",
             "rm -f webtrees-fan-chart/composer.json",
             "rm -f webtrees-fan-chart/package.json",
+            "rm -f webtrees-fan-chart/eslint.config.js",
             "rm -f webtrees-fan-chart/rollup.config.js",
             "rm -f webtrees-fan-chart/phpstan.neon",
             "rm -f webtrees-fan-chart/phpstan-baseline.neon",
@@ -120,6 +121,9 @@
         "ci:test:php:unit:coverage": [
             "XDEBUG_MODE=coverage phpunit --configuration phpunit.xml --coverage-html .build/coverage/"
         ],
+        "ci:test:js:lint": [
+            "npm run lint"
+        ],
         "ci:test:js:unit": [
             "SKIP_EXPORT_BUILD=true node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests --ignore=resources/js/tests/export"
         ],
@@ -132,6 +136,7 @@
             "@ci:test:php:rector",
             "@ci:test:php:cpd",
             "@ci:test:php:unit",
+            "@ci:test:js:lint",
             "@ci:test:js:unit",
             "@ci:test:php:cgl"
         ],
