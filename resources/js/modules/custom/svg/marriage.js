@@ -197,9 +197,13 @@ export default class Marriage
             .attr("startOffset", "25%")
             .attr("class", "date");
 
+        let marriageText = (datum.data.data.marriageDateOfParents === "?")
+            ? "\u26AD"
+            : "\u26AD " + datum.data.data.marriageDateOfParents;
+
         let tspan = textPath
             .append("tspan")
-            .text("\u26AD " + datum.data.data.marriageDateOfParents);
+            .text(marriageText);
 
         // Truncate if text overflows the arc (with padding on both sides)
         let arcLength = ((endAngle - startAngle) * midRadius) - 24;

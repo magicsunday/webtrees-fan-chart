@@ -297,6 +297,13 @@ class DateProcessor
             return $this->getMarriageEventDate($family->getMarriageDate());
         }
 
+        // Marriage fact exists but without a date — return a marker
+        // so the JS can show the ⚭ symbol without a date, to
+        // distinguish from unmarried partners (no MARR fact at all)
+        if (($family !== null) && $family->facts(['MARR'])->isNotEmpty()) {
+            return '?';
+        }
+
         return '';
     }
 
