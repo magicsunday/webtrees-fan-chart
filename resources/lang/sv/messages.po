@@ -40,20 +40,6 @@ msgstr "Använd Ctrl + rullen för att zooma in vyn"
 msgid "Move the view with two fingers"
 msgstr "Flytta vyn med två fingrar"
 
-#: src/Processor/DateProcessor.php:129
-#, php-format
-msgid "Born: %s"
-msgstr "Född: %s"
-
-#: src/Processor/DateProcessor.php:133
-#, php-format
-msgid "Died: %s"
-msgstr "Död: %s"
-
-#: src/Processor/DateProcessor.php:137
-msgid "Deceased"
-msgstr "Död"
-
 #: src/Traits/ModuleConfigTrait.php:99
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -155,6 +141,28 @@ msgstr "Faderlig"
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Maternal"
 msgstr "Moderlig"
+
+msgid "Show places"
+msgstr "Visa platser"
+
+msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
+msgstr "Visar födelse- och dödsplatser i de inre generationsbågarna. Välj detaljnivå nedan."
+
+msgid "Full place name"
+msgstr "Fullständigt platsnamn"
+
+msgid "Lowest level (e.g. parish)"
+msgstr "Lägsta nivå (t.ex. församling)"
+
+msgid "Lowest two levels"
+msgstr "Två lägsta nivåer"
+
+msgid "Lowest three levels"
+msgstr "Tre lägsta nivåer"
+
+#: src/Module.php:282
+msgid "in"
+msgstr "i"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"

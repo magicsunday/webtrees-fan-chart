@@ -37,20 +37,6 @@ msgstr "Gebruik Ctrl + scroll om in te zoomen op de weergave"
 msgid "Move the view with two fingers"
 msgstr "Verplaats de weergave met twee vingers"
 
-#: src/Processor/DateProcessor.php:129
-#, php-format
-msgid "Born: %s"
-msgstr "Geboren: %s"
-
-#: src/Processor/DateProcessor.php:133
-#, php-format
-msgid "Died: %s"
-msgstr "Overleden: %s"
-
-#: src/Processor/DateProcessor.php:137
-msgid "Deceased"
-msgstr "Overleden"
-
 #: src/Traits/ModuleConfigTrait.php:99
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -153,6 +139,28 @@ msgstr "Vaderlijk"
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Maternal"
 msgstr "Moederlijk"
+
+msgid "Show places"
+msgstr "Plaatsen tonen"
+
+msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
+msgstr "Toont geboorte- en overlijdensplaatsen in de binnenste generatiebogen. Kies hieronder het detailniveau."
+
+msgid "Full place name"
+msgstr "Volledige plaatsnaam"
+
+msgid "Lowest level (e.g. parish)"
+msgstr "Laagste niveau (bijv. parochie)"
+
+msgid "Lowest two levels"
+msgstr "Laagste twee niveaus"
+
+msgid "Lowest three levels"
+msgstr "Laagste drie niveaus"
+
+#: src/Module.php:282
+msgid "in"
+msgstr "in"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"

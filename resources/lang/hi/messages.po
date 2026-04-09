@@ -36,20 +36,6 @@ msgstr "Ctrl + Scroll से ज़ूम इन करें"
 msgid "Move the view with two fingers"
 msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
 
-#: src/Processor/DateProcessor.php:129
-#, php-format
-msgid "Born: %s"
-msgstr "जन्म: %s"
-
-#: src/Processor/DateProcessor.php:133
-#, php-format
-msgid "Died: %s"
-msgstr "मृत्यु: %s"
-
-#: src/Processor/DateProcessor.php:137
-msgid "Deceased"
-msgstr "मृतक"
-
 #: src/Traits/ModuleConfigTrait.php:99
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -151,6 +137,28 @@ msgstr "पैतृक"
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Maternal"
 msgstr "मातृक"
+
+msgid "Show places"
+msgstr "स्थान दिखाएँ"
+
+msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
+msgstr "आंतरिक पीढ़ी चापों में जन्म और मृत्यु स्थान प्रदर्शित करता है। नीचे विवरण का स्तर चुनें।"
+
+msgid "Full place name"
+msgstr "पूरा स्थान नाम"
+
+msgid "Lowest level (e.g. parish)"
+msgstr "सबसे निचला स्तर (जैसे पल्ली)"
+
+msgid "Lowest two levels"
+msgstr "सबसे निचले दो स्तर"
+
+msgid "Lowest three levels"
+msgstr "सबसे निचले तीन स्तर"
+
+#: src/Module.php:282
+msgid "in"
+msgstr "में"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"

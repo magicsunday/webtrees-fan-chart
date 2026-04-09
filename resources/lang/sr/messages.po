@@ -37,20 +37,6 @@ msgstr "Користите CTRL + скрол да бисте зумирали п
 msgid "Move the view with two fingers"
 msgstr "Померите поглед са два прста"
 
-#: src/Processor/DateProcessor.php:129
-#, php-format
-msgid "Born: %s"
-msgstr "Рођен: %s"
-
-#: src/Processor/DateProcessor.php:133
-#, php-format
-msgid "Died: %s"
-msgstr "Умро: %s"
-
-#: src/Processor/DateProcessor.php:137
-msgid "Deceased"
-msgstr "Преминули"
-
 #: src/Traits/ModuleConfigTrait.php:99
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -152,6 +138,28 @@ msgstr "Очев"
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Maternal"
 msgstr "Мајчин"
+
+msgid "Show places"
+msgstr "Прикажи места"
+
+msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
+msgstr "Приказује места рођења и смрти у унутрашњим луковима генерација. Изаберите ниво детаља испод."
+
+msgid "Full place name"
+msgstr "Пуно име места"
+
+msgid "Lowest level (e.g. parish)"
+msgstr "Најнижи ниво (нпр. парохија)"
+
+msgid "Lowest two levels"
+msgstr "Најнижа два нивоа"
+
+msgid "Lowest three levels"
+msgstr "Најнижа три нивоа"
+
+#: src/Module.php:282
+msgid "in"
+msgstr "у"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"

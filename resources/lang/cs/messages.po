@@ -37,20 +37,6 @@ msgstr "Pomocí Ctrl + kolečko zvětšit pohled"
 msgid "Move the view with two fingers"
 msgstr "Přemístit pohled dvěma prsty"
 
-#: src/Processor/DateProcessor.php:129
-#, php-format
-msgid "Born: %s"
-msgstr "Narozen/a: %s"
-
-#: src/Processor/DateProcessor.php:133
-#, php-format
-msgid "Died: %s"
-msgstr "Zemřel/a: %s"
-
-#: src/Processor/DateProcessor.php:137
-msgid "Deceased"
-msgstr "Zesnulý/á"
-
 #: src/Traits/ModuleConfigTrait.php:99
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -152,6 +138,28 @@ msgstr "Otcovský"
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Maternal"
 msgstr "Mateřský"
+
+msgid "Show places"
+msgstr "Zobrazit místa"
+
+msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
+msgstr "Zobrazí místa narození a úmrtí ve vnitřních obloukech generací. Níže zvolte úroveň podrobností."
+
+msgid "Full place name"
+msgstr "Úplný název místa"
+
+msgid "Lowest level (e.g. parish)"
+msgstr "Nejnižší úroveň (např. farnost)"
+
+msgid "Lowest two levels"
+msgstr "Nejnižší dvě úrovně"
+
+msgid "Lowest three levels"
+msgstr "Nejnižší tři úrovně"
+
+#: src/Module.php:282
+msgid "in"
+msgstr "v"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"

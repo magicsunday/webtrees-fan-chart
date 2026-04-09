@@ -37,20 +37,6 @@ msgstr "按住Ctrl键滚动鼠标滚轮放大缩小"
 msgid "Move the view with two fingers"
 msgstr "用两个手指移动视图"
 
-#: src/Processor/DateProcessor.php:129
-#, php-format
-msgid "Born: %s"
-msgstr ""
-
-#: src/Processor/DateProcessor.php:133
-#, php-format
-msgid "Died: %s"
-msgstr ""
-
-#: src/Processor/DateProcessor.php:137
-msgid "Deceased"
-msgstr ""
-
 #: src/Traits/ModuleConfigTrait.php:99
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -150,6 +136,28 @@ msgstr "父系"
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Maternal"
 msgstr "母系"
+
+msgid "Show places"
+msgstr "显示地点"
+
+msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
+msgstr "在内层世代弧线中显示出生和死亡地点。请在下方选择详细程度。"
+
+msgid "Full place name"
+msgstr "完整地名"
+
+msgid "Lowest level (e.g. parish)"
+msgstr "最低层级（如教区）"
+
+msgid "Lowest two levels"
+msgstr "最低两个层级"
+
+msgid "Lowest three levels"
+msgstr "最低三个层级"
+
+#: src/Module.php:282
+msgid "in"
+msgstr "在"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"

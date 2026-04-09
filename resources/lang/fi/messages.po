@@ -37,20 +37,6 @@ msgstr "Zoomaa näkymää käyttämällä ohjausnäppäintä (Ctrl) + rullauslai
 msgid "Move the view with two fingers"
 msgstr "Siirrä näkymä kahdella sormella"
 
-#: src/Processor/DateProcessor.php:129
-#, php-format
-msgid "Born: %s"
-msgstr ""
-
-#: src/Processor/DateProcessor.php:133
-#, php-format
-msgid "Died: %s"
-msgstr ""
-
-#: src/Processor/DateProcessor.php:137
-msgid "Deceased"
-msgstr ""
-
 #: src/Traits/ModuleConfigTrait.php:99
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -152,6 +138,28 @@ msgstr "Isänpuoleinen"
 #: resources/views/modules/fan-chart/form/layout.phtml:53
 msgid "Maternal"
 msgstr "Äidinpuoleinen"
+
+msgid "Show places"
+msgstr "Näytä paikat"
+
+msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
+msgstr "Näyttää syntymä- ja kuolinpaikat sisemmissä sukupolven kaarissa. Valitse yksityiskohtien taso alta."
+
+msgid "Full place name"
+msgstr "Koko paikannimi"
+
+msgid "Lowest level (e.g. parish)"
+msgstr "Alin taso (esim. seurakunta)"
+
+msgid "Lowest two levels"
+msgstr "Kaksi alinta tasoa"
+
+msgid "Lowest three levels"
+msgstr "Kolme alinta tasoa"
+
+#: src/Module.php:282
+msgid "in"
+msgstr "in"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
