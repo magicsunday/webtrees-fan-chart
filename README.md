@@ -66,12 +66,12 @@ Then follow the steps described in [configuration](#configuration) and [usage](#
 If you are using the development version of Webtrees (main branch), you may also need to install the development
 version of the module. For this, please use the following command:
 ```
-composer require magicsunday/webtrees-fan-chart:dev-master --update-no-dev
+composer require magicsunday/webtrees-fan-chart:dev-main --update-no-dev
 ```
 
 
 ### Using Git
-If you are using ``git``, you could also clone the current master branch directly into your ``modules_v4`` directory
+If you are using ``git``, you could also clone the current main branch directly into your ``modules_v4`` directory
 by calling:
 
 ```shell
