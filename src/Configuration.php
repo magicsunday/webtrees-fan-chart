@@ -281,7 +281,7 @@ class Configuration
                 'hideEmptySegments',
                 (bool) $this->module->getPreference(
                     'default_hideEmptySegments',
-                    '0'
+                    '1'
                 )
             );
     }
@@ -304,7 +304,7 @@ class Configuration
                 'showFamilyColors',
                 (bool) $this->module->getPreference(
                     'default_showFamilyColors',
-                    '0'
+                    '1'
                 )
             );
     }
