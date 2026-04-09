@@ -784,23 +784,29 @@ export default class Text {
             const imageSize = datum.data.data.imageSize || 0;
 
             if (imageSize > 0) {
-                // Image present: use absolute positioning to center image + text block
+                // Image present: use absolute positioning to center image + text block.
+                // Tight spacing within groups (name/date), larger gap between groups.
                 const imageGap = 6;
-                const lineHeight = fontSize * 1.3;
-                const textHeight = countElements * lineHeight;
+                const innerLineHeight = fontSize * 0.95;
+                const groupGap = fontSize * 0.45;
+                const textHeight = (countElements * innerLineHeight) + groupGap;
                 const totalHeight = imageSize + imageGap + textHeight;
 
-                let currentY = -(totalHeight / 2) + imageSize + imageGap + (lineHeight / 2);
+                let currentY = -(totalHeight / 2) + imageSize + imageGap + (innerLineHeight / 2);
+                let prevIsDate = false;
 
                 textElements.each(function () {
                     const isDate = d3.select(this).classed("date");
-                    const groupShift = fontSize * 0.1;
 
-                    d3.select(this).attr("dy",
-                        currentY + (isDate ? groupShift : -groupShift) + "px",
-                    );
+                    // Add group gap when switching from names to dates
+                    if (isDate && !prevIsDate) {
+                        currentY += groupGap;
+                    }
 
-                    currentY += lineHeight;
+                    d3.select(this).attr("dy", currentY + "px");
+
+                    currentY += innerLineHeight;
+                    prevIsDate = isDate;
                 });
             } else {
                 // No image: use original index-based offset positioning
