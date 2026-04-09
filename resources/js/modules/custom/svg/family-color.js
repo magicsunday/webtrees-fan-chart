@@ -47,6 +47,11 @@ export default class FamilyColor
      */
     getColor(datum)
     {
+        // Empty segments keep their default gray appearance
+        if (datum.data.data.xref === "") {
+            return null;
+        }
+
         // Fixed reference so colors at a given depth stay identical
         // regardless of how many generations are displayed.
         const maxGenerations = 10;
