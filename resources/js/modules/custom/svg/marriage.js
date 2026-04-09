@@ -18,8 +18,7 @@ import {SYMBOL_MARRIAGE} from "../hierarchy";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Marriage
-{
+export default class Marriage {
     /**
      * Constructor.
      *
@@ -28,11 +27,10 @@ export default class Marriage
      * @param {Selection}     marriage
      * @param {Object}        datum
      */
-    constructor(svg, configuration, marriage, datum)
-    {
-        this._svg           = svg;
+    constructor(svg, configuration, marriage, datum) {
+        this._svg = svg;
         this._configuration = configuration;
-        this._geometry      = new Geometry(this._configuration);
+        this._geometry = new Geometry(this._configuration);
 
         this.init(marriage, datum);
     }
@@ -43,9 +41,8 @@ export default class Marriage
      * @param {Selection} marriage
      * @param {Object}    datum
      */
-    init(marriage, datum)
-    {
-        let hasChildren = datum.children
+    init(marriage, datum) {
+        const hasChildren = datum.children
             && datum.children.some(child => child.data.data.xref !== "");
 
         if (marriage.classed("new") && this._configuration.hideEmptySegments) {
@@ -74,29 +71,28 @@ export default class Marriage
      *
      * @private
      */
-    addArc(marriage, datum)
-    {
+    addArc(marriage, datum) {
         // Reuse existing arc if present (during updates)
         if (!marriage.select("g.arc").empty()) {
             return;
         }
 
-        let innerR = this._geometry.outerRadius(datum.depth);
-        let outerR = this._geometry.innerRadius(datum.depth + 1);
+        const innerR = this._geometry.outerRadius(datum.depth);
+        const outerR = this._geometry.innerRadius(datum.depth + 1);
 
         if (outerR <= innerR) {
             return;
         }
 
-        let startAngle = (datum.depth < 1)
+        const startAngle = (datum.depth < 1)
             ? this._geometry.calcAngle(datum.x0)
             : this._geometry.startAngle(datum.depth, datum.x0);
 
-        let endAngle = (datum.depth < 1)
+        const endAngle = (datum.depth < 1)
             ? this._geometry.calcAngle(datum.x1)
             : this._geometry.endAngle(datum.depth, datum.x1);
 
-        let arcGenerator = d3.arc()
+        const arcGenerator = d3.arc()
             .startAngle(startAngle)
             .endAngle(endAngle)
             .innerRadius(innerR)
@@ -105,15 +101,15 @@ export default class Marriage
             .padRadius(0)
             .cornerRadius(this._configuration.cornerRadius);
 
-        let arcGroup = marriage
+        const arcGroup = marriage
             .append("g")
             .attr("class", "arc");
 
-        let path = arcGroup
+        const path = arcGroup
             .append("path")
             .attr("d", arcGenerator);
 
-        let parentColor = FamilyColor.getMarriageColor(datum);
+        const parentColor = FamilyColor.getMarriageColor(datum);
 
         if (parentColor && !marriage.classed("new")) {
             path.style("fill", parentColor);
@@ -133,41 +129,40 @@ export default class Marriage
      *
      * @private
      */
-    addLabel(marriage, datum)
-    {
+    addLabel(marriage, datum) {
         if (!datum.data.data.marriageDateOfParents) {
             return;
         }
 
-        let innerR = this._geometry.outerRadius(datum.depth);
-        let outerR = this._geometry.innerRadius(datum.depth + 1);
+        const innerR = this._geometry.outerRadius(datum.depth);
+        const outerR = this._geometry.innerRadius(datum.depth + 1);
 
         if (outerR <= innerR) {
             return;
         }
 
-        let startAngle = (datum.depth < 1)
+        const startAngle = (datum.depth < 1)
             ? this._geometry.calcAngle(datum.x0)
             : this._geometry.startAngle(datum.depth, datum.x0);
 
-        let endAngle = (datum.depth < 1)
+        const endAngle = (datum.depth < 1)
             ? this._geometry.calcAngle(datum.x1)
             : this._geometry.endAngle(datum.depth, datum.x1);
 
-        let midRadius = (innerR + outerR) / 2;
+        const midRadius = (innerR + outerR) / 2;
 
         // Flip text direction in the bottom half of 360° charts
         // so marriage dates read left-to-right like person labels
-        let flipped = this._geometry.isPositionFlipped(datum.depth, datum.x0, datum.x1);
+        const flipped = this._geometry.isPositionFlipped(datum.depth, datum.x0, datum.x1);
 
-        let textPathGenerator = d3.arc()
+        const textPathGenerator = d3.arc()
             .startAngle(flipped ? endAngle : startAngle)
             .endAngle(flipped ? startAngle : endAngle)
             .innerRadius(midRadius)
             .outerRadius(midRadius);
 
-        let marriageId = marriage.attr("id");
-        let pathId     = "path-" + marriageId;
+        const marriageId = marriage.attr("id");
+        let pathId = "path-" + marriageId;
 
         // During updates, old text still references the old path definition.
         // Create a new path with a unique ID so old and new text render at
@@ -181,7 +176,7 @@ export default class Marriage
             .attr("id", pathId)
             .attr("d", textPathGenerator);
 
-        let labelGroup = marriage
+        const labelGroup = marriage
             .append("g")
             .attr("class", "name")
             .style("font-size", this.getFontSize(datum) + "px");
@@ -191,27 +186,27 @@ export default class Marriage
             labelGroup.style("opacity", 1e-6);
         }
 
-        let text = labelGroup
+        const text = labelGroup
             .append("text")
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "central");
 
-        let textPath = text
+        const textPath = text
             .append("textPath")
             .attr("href", "#" + pathId)
             .attr("startOffset", "25%")
             .attr("class", "date");
 
-        let marriageText = (datum.data.data.marriageDateOfParents === "?")
+        const marriageText = (datum.data.data.marriageDateOfParents === "?")
             ? SYMBOL_MARRIAGE
             : SYMBOL_MARRIAGE + " " + datum.data.data.marriageDateOfParents;
 
-        let tspan = textPath
+        const tspan = textPath
             .append("tspan")
             .text(marriageText);
 
         // Truncate if text overflows the arc (with padding on both sides)
-        let arcLength = ((endAngle - startAngle) * midRadius) - 24;
+        const arcLength = ((endAngle - startAngle) * midRadius) - 24;
 
         if (tspan.node().getComputedTextLength() > arcLength) {
             let label = tspan.text();
@@ -237,12 +232,11 @@ export default class Marriage
      *
      * @return {number}
      */
-    getFontSize(datum)
-    {
+    getFontSize(datum) {
         // Use the parents' depth (datum.depth + 1) for font sizing
         // since the marriage arc visually belongs to the parent generation
         return this._geometry.getFontSize(
-            Object.assign({}, datum, { depth: datum.depth + 1 })
+            Object.assign({}, datum, { depth: datum.depth + 1 }),
         );
     }
 }

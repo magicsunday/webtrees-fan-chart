@@ -15,17 +15,15 @@ import {SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_MARRIAGE} from "../hierarchy";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class TooltipRenderer
-{
+export default class TooltipRenderer {
     /**
      * Constructor.
      *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      */
-    constructor(svg, configuration)
-    {
-        this._svg           = svg;
+    constructor(svg, configuration) {
+        this._svg = svg;
         this._configuration = configuration;
     }
 
@@ -35,8 +33,7 @@ export default class TooltipRenderer
      * @param {Selection} person The person element to bindEvents events to
      * @param {Object}    datum  The D3 data object
      */
-    bindEvents(person, datum)
-    {
+    bindEvents(person, datum) {
         if (datum.data.data.xref === "") {
             return;
         }
@@ -85,8 +82,7 @@ export default class TooltipRenderer
      * @param {Event}  event The triggering mouse event
      * @param {Object} datum The D3 data object
      */
-    setTooltipHtml(event, datum)
-    {
+    setTooltipHtml(event, datum) {
         // Ignore empty elements
         if (datum.data.data.xref === "") {
             return;
@@ -111,13 +107,13 @@ export default class TooltipRenderer
 
         // Use full compact dates for tooltip (always DD.MM.YYYY
         // regardless of what the arc shows)
-        const birthDate     = datum.data.data.birthDateFull || datum.data.data.birth || "";
-        const deathDate     = datum.data.data.deathDateFull || datum.data.data.death || "";
-        const marriageDate  = datum.data.data.marriageDateFull || datum.data.data.marriageDate || "";
-        const birthPlace    = datum.data.data.birthPlace || "";
-        const deathPlace    = datum.data.data.deathPlace || "";
+        const birthDate = datum.data.data.birthDateFull || datum.data.data.birth || "";
+        const deathDate = datum.data.data.deathDateFull || datum.data.data.death || "";
+        const marriageDate = datum.data.data.marriageDateFull || datum.data.data.marriageDate || "";
+        const birthPlace = datum.data.data.birthPlace || "";
+        const deathPlace = datum.data.data.deathPlace || "";
         const marriagePlace = datum.data.data.marriagePlace || "";
-        const hasData       = birthDate || marriageDate || deathDate;
+        const hasData = birthDate || marriageDate || deathDate;
 
         this._svg.div
             .html(
@@ -127,20 +123,20 @@ export default class TooltipRenderer
                     + (hasData
                         ? "<table>"
                             + (birthDate
-                            ? ("<tr class=\"date\"><th>" + SYMBOL_BIRTH + "</th><td>" + birthDate + "</td></tr>")
+                                ? ("<tr class=\"date\"><th>" + SYMBOL_BIRTH + "</th><td>" + birthDate + "</td></tr>")
                                 + (birthPlace ? "<tr class=\"place\"><th></th><td>" + birthPlace + "</td></tr>" : "")
-                            : "")
+                                : "")
                             + (marriageDate
-                            ? ("<tr class=\"date\"><th>" + SYMBOL_MARRIAGE + "</th><td>" + marriageDate + "</td></tr>")
+                                ? ("<tr class=\"date\"><th>" + SYMBOL_MARRIAGE + "</th><td>" + marriageDate + "</td></tr>")
                                 + (marriagePlace ? "<tr class=\"place\"><th></th><td>" + marriagePlace + "</td></tr>" : "")
-                            : "")
+                                : "")
                             + (deathDate
-                            ? ("<tr class=\"date\"><th>" + SYMBOL_DEATH + "</th><td>" + deathDate + "</td></tr>")
+                                ? ("<tr class=\"date\"><th>" + SYMBOL_DEATH + "</th><td>" + deathDate + "</td></tr>")
                                 + (deathPlace ? "<tr class=\"place\"><th></th><td>" + deathPlace + "</td></tr>" : "")
-                            : "")
+                                : "")
                         + "</table>"
-                    : "")
-                + "</div>"
+                        : "")
+                + "</div>",
             )
             .style("left", (event.pageX) + "px")
             .style("top", (event.pageY - 30) + "px");

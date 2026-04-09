@@ -22,16 +22,14 @@ const MAX_ZOOM = 20.0;
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Zoom
-{
+export default class Zoom {
     /**
      * Constructor.
      *
      * @param {Selection} parent The selected D3 parent element container
      */
-    constructor(parent)
-    {
-        this._zoom   = null;
+    constructor(parent) {
+        this._zoom = null;
         this._parent = parent;
 
         this.init();
@@ -42,8 +40,7 @@ export default class Zoom
      *
      * @private
      */
-    init()
-    {
+    init() {
         // Setup zoom and pan
         this._zoom = d3.zoom();
 
@@ -74,6 +71,7 @@ export default class Zoom
                     if ((transform.k <= MIN_ZOOM) && (event.deltaY > 0)) {
                         // Prevent browser page zoom while holding down the control key
                         event.preventDefault();
+
                         return false;
                     }
 
@@ -81,6 +79,7 @@ export default class Zoom
                     if ((transform.k >= MAX_ZOOM) && (event.deltaY < 0)) {
                         // Prevent browser page zoom while holding down the control key
                         event.preventDefault();
+
                         return false;
                     }
                 }
@@ -93,7 +92,7 @@ export default class Zoom
                 return event.touches.length === 2;
             }
 
-            return (!event.ctrlKey || (event.type === 'wheel')) && !event.button;
+            return (!event.ctrlKey || (event.type === "wheel")) && !event.button;
         });
     }
 
@@ -102,8 +101,7 @@ export default class Zoom
      *
      * @returns {d3.zoom}
      */
-    get()
-    {
+    get() {
         return this._zoom;
     }
 }

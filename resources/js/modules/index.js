@@ -16,8 +16,7 @@ import Chart from "./custom/chart";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export class FanChart
-{
+export class FanChart {
     /**
      * Constructor.
      *
@@ -38,10 +37,9 @@ export class FanChart
      * @param {string[]} options.cssFiles
      * @param {Data[]}   options.data
      */
-    constructor(selector, options)
-    {
+    constructor(selector, options) {
         this._selector = selector;
-        this._parent   = d3.select(this._selector);
+        this._parent = d3.select(this._selector);
 
         // Set up configuration
         this._configuration = new Configuration(
@@ -58,7 +56,7 @@ export class FanChart
             options.rtl,
             options.innerArcs,
             options.paternalColor,
-            options.maternalColor
+            options.maternalColor,
         );
 
         this._cssFiles = options.cssFiles;
@@ -75,16 +73,14 @@ export class FanChart
      *
      * @return {Configuration}
      */
-    get configuration()
-    {
+    get configuration() {
         return this._configuration;
     }
 
     /**
      * @private
      */
-    init()
-    {
+    init() {
         // Bind click event on center button
         d3.select("#centerButton")
             .on("click", () => this._chart.center());
@@ -103,8 +99,7 @@ export class FanChart
     /**
      * Add event listeners.
      */
-    addEventListeners()
-    {
+    addEventListeners() {
         // Listen for fullscreen change event
         document.addEventListener(
             "fullscreenchange",
@@ -117,7 +112,7 @@ export class FanChart
                 }
 
                 this._chart.updateViewBox();
-            }
+            },
         );
 
         // Listen for orientation change event
@@ -133,8 +128,7 @@ export class FanChart
      *
      * @param {string} url The update url
      */
-    update(url)
-    {
+    update(url) {
         this._chart.update(url);
     }
 
@@ -143,8 +137,7 @@ export class FanChart
      *
      * @param {Object} data The JSON encoded chart data
      */
-    draw(data)
-    {
+    draw(data) {
         this._chart.data = data;
         this._chart.draw();
     }
@@ -154,10 +147,9 @@ export class FanChart
      *
      * @private
      */
-    exportPNG()
-    {
+    exportPNG() {
         this._chart.svg
-            .export('png')
+            .export("png")
             .svgToImage(this._chart.svg, "fan-chart.png");
     }
 
@@ -166,15 +158,14 @@ export class FanChart
      *
      * @private
      */
-    exportSVG()
-    {
+    exportSVG() {
         this._chart.svg
-            .export('svg')
+            .export("svg")
             .svgToImage(
                 this._chart.svg,
                 this._cssFiles,
                 "webtrees-fan-chart-container",
-                "fan-chart.svg"
+                "fan-chart.svg",
             );
     }
 }

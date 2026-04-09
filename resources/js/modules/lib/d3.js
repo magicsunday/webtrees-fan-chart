@@ -18,35 +18,35 @@ https://github.com/d3/d3-zoom
 */
 
 export {
-    json, text
+    json, text,
 } from "d3-fetch";
 
 export {
-    Node, hierarchy, partition, tree
+    Node, hierarchy, partition, tree,
 } from "d3-hierarchy";
 
 export {
-    path
+    path,
 } from "d3-path";
 
 export {
-    scaleLinear
+    scaleLinear,
 } from "d3-scale";
 
 export {
-    select, selectAll
+    select, selectAll,
 } from "d3-selection";
 
 export {
-    timer
+    timer,
 } from "d3-timer";
 
 export {
-    arc
+    arc,
 } from "d3-shape";
 
 export {
-    transition
+    transition,
 } from "d3-transition";
 
 export * from "d3-zoom";

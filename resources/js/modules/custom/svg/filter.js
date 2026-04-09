@@ -12,15 +12,13 @@
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Filter
-{
+export default class Filter {
     /**
      * Constructor.
      *
      * @param {Selection} defs The selected D3 parent element container
      */
-    constructor(defs)
-    {
+    constructor(defs) {
         // Create the <svg:defs> element
         this._element = defs;
 
@@ -28,7 +26,7 @@ export default class Filter
 
         // Chrome still does not support filtering SVG elements using CSS other than the root
         // https://bugs.chromium.org/p/chromium/issues/detail?id=109224
-        let filter = this._element
+        const filter = this._element
             .append("filter")
             .attr("id", "drop-shadow");
 
@@ -45,8 +43,7 @@ export default class Filter
      *
      * @return {Selection}
      */
-    get()
-    {
+    get() {
         return this._element;
     }
 }

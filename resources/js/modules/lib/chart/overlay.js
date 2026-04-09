@@ -12,15 +12,13 @@
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Overlay
-{
+export default class Overlay {
     /**
      * Constructor.
      *
      * @param {Selection} parent The selected D3 parent element container
      */
-    constructor(parent)
-    {
+    constructor(parent) {
         // Create the tooltip overlay container
         this._element = parent
             .append("div")
@@ -35,8 +33,7 @@ export default class Overlay
      * @param {number}   duration Duration of transition in msec
      * @param {Function} callback Callback method to execute on end of transition
      */
-    show(text, duration = 0, callback = null)
-    {
+    show(text, duration = 0, callback = null) {
         // Remove any previously added <p> element
         this._element
             .select("p")
@@ -64,8 +61,7 @@ export default class Overlay
      * @param {number} delay    Delay in milliseconds to wait before transition should start
      * @param {number} duration Duration of transition in milliseconds
      */
-    hide(delay = 0, duration = 0)
-    {
+    hide(delay = 0, duration = 0) {
         this._element
             .transition()
             .delay(delay)
@@ -78,8 +74,7 @@ export default class Overlay
      *
      * @returns {Selection}
      */
-    get()
-    {
+    get() {
         return this._element;
     }
 }

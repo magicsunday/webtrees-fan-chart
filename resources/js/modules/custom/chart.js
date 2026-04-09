@@ -15,8 +15,8 @@ import Geometry from "./svg/geometry";
 import FamilyColor from "./svg/family-color";
 import Update from "./update";
 
-const MIN_HEIGHT  = 500;
-const MIN_PADDING = 1;   // Minimum padding around view box in "rem"
+const MIN_HEIGHT = 500;
+const MIN_PADDING = 1; // Minimum padding around view box in "rem"
 
 /**
  * This class handles the overall chart creation.
@@ -25,20 +25,18 @@ const MIN_PADDING = 1;   // Minimum padding around view box in "rem"
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Chart
-{
+export default class Chart {
     /**
      * Constructor.
      *
      * @param {Selection}     parent        The selected D3 parent element container
      * @param {Configuration} configuration The application configuration
      */
-    constructor(parent, configuration)
-    {
+    constructor(parent, configuration) {
         this._configuration = configuration;
-        this._parent        = parent;
-        this._hierarchy     = new Hierarchy(this._configuration);
-        this._data          = {};
+        this._parent = parent;
+        this._hierarchy = new Hierarchy(this._configuration);
+        this._data = {};
     }
 
     /**
@@ -46,8 +44,7 @@ export default class Chart
      *
      * @returns {Svg}
      */
-    get svg()
-    {
+    get svg() {
         return this._svg;
     }
 
@@ -56,8 +53,7 @@ export default class Chart
      *
      * @returns {Selection}
      */
-    get parent()
-    {
+    get parent() {
         return this._parent;
     }
 
@@ -66,8 +62,7 @@ export default class Chart
      *
      * @returns {Object}
      */
-    get data()
-    {
+    get data() {
         return this._data;
     }
 
@@ -76,8 +71,7 @@ export default class Chart
      *
      * @param {Object} value The chart data
      */
-    set data(value)
-    {
+    set data(value) {
         this._data = value;
 
         // Create the hierarchical data structure
@@ -91,16 +85,14 @@ export default class Chart
      *
      * @returns {number}
      */
-    convertRemToPixels(rem)
-    {
+    convertRemToPixels(rem) {
         return rem * parseFloat(window.getComputedStyle(document.documentElement).fontSize);
     }
 
     /**
      * Update/Calculate the viewBox attribute of the SVG element.
      */
-    updateViewBox()
-    {
+    updateViewBox() {
         // Set width/height attributes
         this.svg
             .attr("width", "100%")
@@ -109,11 +101,11 @@ export default class Chart
         const padding = this.convertRemToPixels(MIN_PADDING);
 
         // Get bounding boxes
-        let svgBoundingBox    = this.svg.visual.node().getBBox();
-        let clientBoundingBox = this.parent.node().getBoundingClientRect();
+        const svgBoundingBox = this.svg.visual.node().getBBox();
+        const clientBoundingBox = this.parent.node().getBoundingClientRect();
 
         // View box should have at least the same width/height as the parent element
-        let viewBoxWidth  = Math.max(clientBoundingBox.width, svgBoundingBox.width);
+        let viewBoxWidth = Math.max(clientBoundingBox.width, svgBoundingBox.width);
         let viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height);
 
         // View box should have at least the same width/height as the parent element
@@ -123,12 +115,12 @@ export default class Chart
         }
 
         // Calculate offset to center chart inside svg
-        let offsetX = (viewBoxWidth - svgBoundingBox.width) >> 1;
-        let offsetY = (viewBoxHeight - svgBoundingBox.height) >> 1;
+        const offsetX = (viewBoxWidth - svgBoundingBox.width) >> 1;
+        const offsetY = (viewBoxHeight - svgBoundingBox.height) >> 1;
 
         // Adjust view box dimensions by padding and offset
-        let viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - padding);
-        let viewBoxTop  = Math.ceil(svgBoundingBox.y - offsetY - padding);
+        const viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - padding);
+        const viewBoxTop = Math.ceil(svgBoundingBox.y - offsetY - padding);
 
         // In fullscreen mode, use the full available height
         // (buttonbar is now overlayed, so no offset needed)
@@ -140,7 +132,7 @@ export default class Chart
         }
 
         // Final width/height of view box
-        viewBoxWidth  = Math.ceil(viewBoxWidth + (padding << 1));
+        viewBoxWidth = Math.ceil(viewBoxWidth + (padding << 1));
         viewBoxHeight = Math.ceil(viewBoxHeight + (padding << 1));
 
         // Set view box attribute
@@ -151,16 +143,15 @@ export default class Chart
                     viewBoxLeft,
                     viewBoxTop,
                     viewBoxWidth,
-                    viewBoxHeight
-                ]
+                    viewBoxHeight,
+                ],
             );
     }
 
     /**
      * Resets the chart to initial zoom level and position.
      */
-    center()
-    {
+    center() {
         this.svg
             .transition()
             .duration(750)
@@ -170,8 +161,7 @@ export default class Chart
     /**
      * This method draws the chart.
      */
-    draw()
-    {
+    draw() {
         // Remove previously created content
         this._parent.html("");
 
@@ -184,11 +174,11 @@ export default class Chart
         // Init the <svg> events
         this._svg.initEvents(this._overlay);
 
-        let personGroup = this._svg.select("g.personGroup");
-        let familyColor = new FamilyColor(this._configuration);
-        let that = this;
+        const personGroup = this._svg.select("g.personGroup");
+        const familyColor = new FamilyColor(this._configuration);
+        const that = this;
 
-         personGroup
+        personGroup
             .selectAll("g.person")
             .data(this._hierarchy.nodes, (datum) => datum.id)
             .enter()
@@ -197,8 +187,8 @@ export default class Chart
                     // Filter out all empty records, but only if we hide empty segments
                     // otherwise the arcs won't be drawn correctly
                     return (datum.data.data.xref !== "")
-                         || !this._configuration.hideEmptySegments
-                }
+                         || !this._configuration.hideEmptySegments;
+                },
             )
             .append("g")
             .attr("class", "person")
@@ -208,7 +198,7 @@ export default class Chart
         personGroup
             .selectAll("g.person")
             .each(function (datum) {
-                let person = d3.select(this);
+                const person = d3.select(this);
 
                 if (that._configuration.showFamilyColors) {
                     datum.data.data.familyColor = familyColor.getColor(datum);
@@ -236,9 +226,8 @@ export default class Chart
      *
      * @private
      */
-    drawFamilySeparators()
-    {
-        let geometry = new Geometry(this._configuration);
+    drawFamilySeparators() {
+        const geometry = new Geometry(this._configuration);
         let separatorGroup = this._svg.visual.select("g.separatorGroup");
 
         if (separatorGroup.empty()) {
@@ -254,11 +243,11 @@ export default class Chart
 
             for (let i = 0; i < (nodesAtDepth.length - 1); i++) {
                 const current = nodesAtDepth[i];
-                const next    = nodesAtDepth[i + 1];
+                const next = nodesAtDepth[i + 1];
 
                 // Only draw separator between different families
                 if (current.parent !== next.parent) {
-                    const angle  = geometry.calcAngle(current.x1);
+                    const angle = geometry.calcAngle(current.x1);
                     const innerR = geometry.innerRadius(depth);
                     // Extend through the marriage arc gap to the next generation
                     const outerR = (this._configuration.showParentMarriageDates && (depth < (this._configuration.generations - 1)))
@@ -284,9 +273,8 @@ export default class Chart
      *
      * @private
      */
-    drawMarriageArcs()
-    {
-        let that = this;
+    drawMarriageArcs() {
+        const that = this;
 
         let marriageGroup = this._svg.visual.select("g.marriageGroup");
 
@@ -297,7 +285,7 @@ export default class Chart
         // All nodes that have children and are within display range
         const nodes = this._hierarchy.nodes.filter(
             datum => datum.children
-                && (datum.depth < (this._configuration.generations - 1))
+                && (datum.depth < (this._configuration.generations - 1)),
         );
 
         // D3 data join: same pattern as person elements
@@ -313,7 +301,7 @@ export default class Chart
         marriageGroup
             .selectAll("g.marriage")
             .each(function (datum) {
-                let marriage = d3.select(this);
+                const marriage = d3.select(this);
                 new Marriage(that._svg, that._configuration, marriage, datum);
             });
     }
@@ -321,9 +309,8 @@ export default class Chart
     /**
      * This method binds a "click" event listeners to a "person" element.
      */
-    bindClickEventListener()
-    {
-        let persons = this._svg
+    bindClickEventListener() {
+        const persons = this._svg
             .select("g.personGroup")
             .selectAll("g.person")
             .filter((datum) => datum.data.data.xref !== "")
@@ -344,7 +331,7 @@ export default class Chart
             .select("g.marriageGroup")
             .selectAll("g.marriage")
             .each(function (datum) {
-                let hasChildren = datum.children
+                const hasChildren = datum.children
                     && datum.children.some(child => child.data.data.xref !== "");
 
                 d3.select(this).classed("empty", !hasChildren);
@@ -359,8 +346,7 @@ export default class Chart
      *
      * @private
      */
-    personClick(event, datum)
-    {
+    personClick(event, datum) {
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
         (datum.depth === 0) ? this.redirectToIndividual(datum.data.data.url) : this.update(datum.data.data.updateUrl);
     }
@@ -372,8 +358,7 @@ export default class Chart
      *
      * @private
      */
-    redirectToIndividual(url)
-    {
+    redirectToIndividual(url) {
         window.open(url, "_blank");
     }
 
@@ -382,14 +367,13 @@ export default class Chart
      *
      * @param {string} url The update URL
      */
-    update(url)
-    {
-        let update = new Update(this._svg, this._configuration, this._hierarchy);
+    update(url) {
+        const update = new Update(this._svg, this._configuration, this._hierarchy);
 
         update.update(
             url,
             () => this.redrawOverlayLayers(),
-            () => this.bindClickEventListener()
+            () => this.bindClickEventListener(),
         );
     }
 
@@ -398,8 +382,7 @@ export default class Chart
      *
      * @private
      */
-    redrawOverlayLayers()
-    {
+    redrawOverlayLayers() {
         // Separators: mark old, draw new
         this._svg.visual.selectAll("g.separatorGroup line")
             .classed("old", true);

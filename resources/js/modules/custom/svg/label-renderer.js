@@ -15,19 +15,17 @@ import Text from "./text";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class LabelRenderer
-{
+export default class LabelRenderer {
     /**
      * Constructor.
      *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      */
-    constructor(svg, configuration)
-    {
-        this._svg           = svg;
+    constructor(svg, configuration) {
+        this._svg = svg;
         this._configuration = configuration;
-        this._geometry      = new Geometry(this._configuration);
+        this._geometry = new Geometry(this._configuration);
     }
 
     /**
@@ -38,9 +36,8 @@ export default class LabelRenderer
      *
      * @return {Selection} Newly added label element
      */
-    addLabel(parent, datum)
-    {
-        let label = parent
+    addLabel(parent, datum) {
+        const label = parent
             .append("g")
             .attr("class", "wt-chart-box-name name")
             .style("font-size", this._geometry.getFontSize(datum) + "px");
@@ -50,7 +47,7 @@ export default class LabelRenderer
             label.style("opacity", 1e-6);
         }
 
-        let text = new Text(this._svg, this._configuration);
+        const text = new Text(this._svg, this._configuration);
         text.createLabels(label, datum);
 
         return label;

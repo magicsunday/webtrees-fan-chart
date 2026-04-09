@@ -20,8 +20,7 @@ import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class FamilyColor
-{
+export default class FamilyColor {
     /**
      * Saturation decrease per generation (percentage points).
      * @type {number}
@@ -46,8 +45,7 @@ export default class FamilyColor
      *
      * @param {Configuration} configuration The application configuration
      */
-    constructor(configuration)
-    {
+    constructor(configuration) {
         this._configuration = configuration;
 
         // Convert the configured hex colors to HSL once
@@ -65,8 +63,7 @@ export default class FamilyColor
      *
      * @private
      */
-    static _depthBounds(baseHsl)
-    {
+    static _depthBounds(baseHsl) {
         const span = FamilyColor.MAX_GENERATIONS_REF - 1;
 
         return {
@@ -84,8 +81,7 @@ export default class FamilyColor
      *
      * @return {string|null} HSL color string, or null for the root node
      */
-    getColor(datum)
-    {
+    getColor(datum) {
         // Empty segments keep their default gray appearance
         if (datum.data.data.xref === "") {
             return null;
@@ -118,12 +114,12 @@ export default class FamilyColor
         }
 
         const refMidpoint = (refNode.x0 + refNode.x1) / 2;
-        const isPaternal  = refMidpoint < 0.5;
+        const isPaternal = refMidpoint < 0.5;
 
         // Derive hue from the configured base color ± 30° spread
         const baseHsl = isPaternal ? this._paternalHsl : this._maternalHsl;
-        const half    = isPaternal ? refMidpoint / 0.5 : (refMidpoint - 0.5) / 0.5;
-        const hue     = ((baseHsl[0] + (half - 0.5) * 60) % 360 + 360) % 360;
+        const half = isPaternal ? refMidpoint / 0.5 : (refMidpoint - 0.5) / 0.5;
+        const hue = ((baseHsl[0] + (half - 0.5) * 60) % 360 + 360) % 360;
 
         const {minSaturation, maxLightness} = FamilyColor._depthBounds(baseHsl);
 
@@ -143,25 +139,24 @@ export default class FamilyColor
      *
      * @return {number[]} [hue (0-360), saturation (0-100), lightness (0-100)]
      */
-    static hexToHsl(hex)
-    {
+    static hexToHsl(hex) {
         if (!/^#?[0-9a-fA-F]{6}$/.test(hex)) {
             return [0, 0, 50];
         }
 
         hex = hex.replace(/^#/, "");
 
-        const red   = parseInt(hex.substring(0, 2), 16) / 255;
+        const red = parseInt(hex.substring(0, 2), 16) / 255;
         const green = parseInt(hex.substring(2, 4), 16) / 255;
-        const blue  = parseInt(hex.substring(4, 6), 16) / 255;
+        const blue = parseInt(hex.substring(4, 6), 16) / 255;
 
-        const max   = Math.max(red, green, blue);
-        const min   = Math.min(red, green, blue);
+        const max = Math.max(red, green, blue);
+        const min = Math.min(red, green, blue);
         const delta = max - min;
 
-        let hue        = 0;
+        let hue = 0;
         let saturation = 0;
-        let lightness  = (max + min) / 2;
+        const lightness = (max + min) / 2;
 
         if (delta !== 0) {
             saturation = lightness > 0.5
@@ -180,7 +175,7 @@ export default class FamilyColor
         return [
             Math.round(hue),
             Math.round(saturation * 100),
-            Math.round(lightness * 100)
+            Math.round(lightness * 100),
         ];
     }
 
@@ -194,8 +189,7 @@ export default class FamilyColor
      *
      * @return {string|null}
      */
-    static getMarriageColor(datum)
-    {
+    static getMarriageColor(datum) {
         if (datum.depth === 0) {
             return datum.data.data.familyColor || null;
         }

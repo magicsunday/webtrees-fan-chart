@@ -14,17 +14,15 @@ import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Gradient
-{
+export default class Gradient {
     /**
      * Constructor.
      *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      */
-    constructor(svg, configuration)
-    {
-        this._svg           = svg;
+    constructor(svg, configuration) {
+        this._svg = svg;
         this._configuration = configuration;
     }
 
@@ -35,8 +33,7 @@ export default class Gradient
      *
      * @return {void}
      */
-    init(datum)
-    {
+    init(datum) {
         if (datum.depth < 1) {
             return;
         }
@@ -54,7 +51,7 @@ export default class Gradient
             datum.data.data.colors = [ color1, color2 ];
         } else {
             // Calculate subsequent gradient colors
-            let blendedColor = [
+            const blendedColor = [
                 Math.ceil((datum.parent.data.data.colors[0][0] + datum.parent.data.data.colors[1][0]) / 2.0),
                 Math.ceil((datum.parent.data.data.colors[0][1] + datum.parent.data.data.colors[1][1]) / 2.0),
                 Math.ceil((datum.parent.data.data.colors[0][2] + datum.parent.data.data.colors[1][2]) / 2.0),
@@ -70,7 +67,7 @@ export default class Gradient
         }
 
         // Add a new radial gradient
-        let newGrad = this._svg.defs
+        const newGrad = this._svg.defs
             .append("svg:linearGradient")
             .attr("id", "grad-" + datum.id);
 

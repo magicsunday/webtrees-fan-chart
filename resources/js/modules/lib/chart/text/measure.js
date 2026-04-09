@@ -17,14 +17,13 @@ let measureCanvas = null;
  *
  * @returns {number}
  */
-export default function(text, fontFamily, fontSize, fontWeight = 400)
-{
+export default function(text, fontFamily, fontSize, fontWeight = 400) {
     if (measureCanvas === null) {
         measureCanvas = document.createElement("canvas");
     }
 
     const context = measureCanvas.getContext("2d");
-    const font = `${fontWeight || ''} ${fontSize} ${fontFamily}`;
+    const font = `${fontWeight || ""} ${fontSize} ${fontFamily}`;
 
     if (context.font !== font) {
         context.font = font;

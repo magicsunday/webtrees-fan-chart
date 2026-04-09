@@ -14,8 +14,7 @@ import Export from "../export";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class PngExport extends Export
-{
+export default class PngExport extends Export {
     /**
      * Copies recursively all the styles from the list of container elements from the source
      * to the destination node.
@@ -23,19 +22,18 @@ export default class PngExport extends Export
      * @param {Element} sourceNode
      * @param {Element} destinationNode
      */
-    copyStylesInline(sourceNode, destinationNode)
-    {
-        let containerElements = ["svg", "g", "text", "textPath"];
+    copyStylesInline(sourceNode, destinationNode) {
+        const containerElements = ["svg", "g", "text", "textPath"];
 
         for (let i = 0; i < destinationNode.children.length; ++i) {
-            let element = destinationNode.children[i];
+            const element = destinationNode.children[i];
 
             if (containerElements.indexOf(element.tagName) !== -1) {
                 this.copyStylesInline(sourceNode.children[i], element);
                 continue;
             }
 
-            let computedStyle = window.getComputedStyle(sourceNode.children[i]);
+            const computedStyle = window.getComputedStyle(sourceNode.children[i]);
 
             for (let j = 0; j < computedStyle.length; ++j) {
                 element.style.setProperty(computedStyle[j], computedStyle.getPropertyValue(computedStyle[j]));
@@ -50,18 +48,17 @@ export default class PngExport extends Export
      *
      * @returns {number[]}
      */
-    calculateViewBox(svg)
-    {
+    calculateViewBox(svg) {
         // Get bounding box
         const boundingBox = svg.getBBox();
-        const padding     = 50;   // Padding on each side
+        const padding = 50; // Padding on each side
 
         // Return calculated view box
         return [
             boundingBox.x - padding,
             boundingBox.y - padding,
             boundingBox.width + (padding * 2),
-            boundingBox.height + (padding * 2)
+            boundingBox.height + (padding * 2),
         ];
     }
 
@@ -72,10 +69,9 @@ export default class PngExport extends Export
      *
      * @returns {HTMLCanvasElement}
      */
-    createCanvas(width, height)
-    {
-        let canvas    = document.createElement("canvas");
-        canvas.width  = width;
+    createCanvas(width, height) {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
         canvas.height = height;
 
         return canvas;
@@ -90,18 +86,17 @@ export default class PngExport extends Export
      *
      * @returns {Promise<String>}
      */
-    convertToDataUrl(svg, width, height)
-    {
+    convertToDataUrl(svg, width, height) {
         return new Promise(resolve => {
-            let data    = (new XMLSerializer()).serializeToString(svg);
-            let DOMURL  = window.URL || window.webkitURL || window;
-            let svgBlob = new Blob([ data ], { type: "image/svg+xml;charset=utf-8" });
-            let url     = DOMURL.createObjectURL(svgBlob);
-            let img     = new Image();
+            const data = (new XMLSerializer()).serializeToString(svg);
+            const DOMURL = window.URL || window.webkitURL || window;
+            const svgBlob = new Blob([ data ], { type: "image/svg+xml;charset=utf-8" });
+            const url = DOMURL.createObjectURL(svgBlob);
+            const img = new Image();
 
             img.onload = () => {
-                let canvas = this.createCanvas(width, height);
-                let ctx    = canvas.getContext("2d");
+                const canvas = this.createCanvas(width, height);
+                const ctx = canvas.getContext("2d");
 
                 ctx.fillStyle = "rgb(255,255,255)";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -109,7 +104,7 @@ export default class PngExport extends Export
 
                 DOMURL.revokeObjectURL(url);
 
-                let imgURI = canvas
+                const imgURI = canvas
                     .toDataURL("image/png")
                     .replace("image/png", "image/octet-stream");
 
@@ -127,13 +122,12 @@ export default class PngExport extends Export
      *
      * @returns {Promise<SVGGraphicsElement>}
      */
-    cloneSvg(svg)
-    {
+    cloneSvg(svg) {
         return new Promise(resolve => {
-            let newSvg = svg.cloneNode(true);
+            const newSvg = svg.cloneNode(true);
 
             resolve(newSvg);
-        })
+        });
     }
 
     /**
@@ -142,16 +136,15 @@ export default class PngExport extends Export
      * @param {Svg}    svg      The source SVG object
      * @param {string} fileName The file name
      */
-    svgToImage(svg, fileName)
-    {
+    svgToImage(svg, fileName) {
         // 300 DPI (good quality for printing) / 96 DPI (common browser)
         //let scale = 300 / dpi();
 
         // Paper sizes (width, height) in pixel at 300 DPI/PPI
         const paperSize = {
-            'A3': [4960, 3508],
-            'A4': [3508, 2480],
-            'A5': [2480, 1748]
+            "A3": [4960, 3508],
+            "A4": [3508, 2480],
+            "A5": [2480, 1748],
         };
 
         this.cloneSvg(svg.node())
@@ -159,8 +152,8 @@ export default class PngExport extends Export
                 this.copyStylesInline(svg.node(), newSvg);
 
                 const viewBox = this.calculateViewBox(svg.node());
-                const width   = Math.max(paperSize['A3'][0], viewBox[2]);
-                const height  = Math.max(paperSize['A3'][1], viewBox[3]);
+                const width = Math.max(paperSize["A3"][0], viewBox[2]);
+                const height = Math.max(paperSize["A3"][1], viewBox[3]);
 
                 newSvg.setAttribute("width", "" + width);
                 newSvg.setAttribute("height", "" + height);

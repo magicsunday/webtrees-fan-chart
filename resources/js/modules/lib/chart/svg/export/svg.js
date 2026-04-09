@@ -14,47 +14,45 @@ import Export from "../export";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class SvgExport extends Export
-{
-    constructor()
-    {
+export default class SvgExport extends Export {
+    constructor() {
         super();
 
         // Styles to ignore
         this._obsoleteStyles = [
-            'd',
-            'cursor',
-            'user-select',
-            'block-size',
-            'inline-size',
-            'width',
-            'height',
-            'column-rule-color',
-            'vertical-align',
-            'border-collapse',
-            'border-spacing',
-            'place-content',
-            'place-items',
-            'place-self',
-            'bottom',
-            'top',
-            'right',
-            'left',
-            'column-fill',
-            'gap',
-            'column-rule-style',
-            'column-rule-width',
-            'column-span',
-            'empty-cells',
-            'flex',
-            'flex-flow',
-            'grid-area',
-            'order',
-            'shape-image-threshold',
-            'shape-margin',
-            'shape-outside',
-            'table-layout',
-            'z-index'
+            "d",
+            "cursor",
+            "user-select",
+            "block-size",
+            "inline-size",
+            "width",
+            "height",
+            "column-rule-color",
+            "vertical-align",
+            "border-collapse",
+            "border-spacing",
+            "place-content",
+            "place-items",
+            "place-self",
+            "bottom",
+            "top",
+            "right",
+            "left",
+            "column-fill",
+            "gap",
+            "column-rule-style",
+            "column-rule-width",
+            "column-span",
+            "empty-cells",
+            "flex",
+            "flex-flow",
+            "grid-area",
+            "order",
+            "shape-image-threshold",
+            "shape-margin",
+            "shape-outside",
+            "table-layout",
+            "z-index",
         ];
 
         this._defaultStyles = {};
@@ -67,16 +65,15 @@ export default class SvgExport extends Export
      *
      * @returns {Node}
      */
-    createSandbox(node)
-    {
-        this._sandbox = document.createElement('iframe');
-        this._sandbox.style.visibility = 'hidden';
-        this._sandbox.style.position = 'fixed';
+    createSandbox(node) {
+        this._sandbox = document.createElement("iframe");
+        this._sandbox.style.visibility = "hidden";
+        this._sandbox.style.position = "fixed";
 
         document.body.appendChild(this._sandbox);
 
         this._sandbox.contentWindow.document.write(
-            '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Sandbox</title></head><body></body></html>'
+            '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Sandbox</title></head><body></body></html>',
         );
 
         return node;
@@ -90,20 +87,20 @@ export default class SvgExport extends Export
      *
      * @returns {CSSStyleDeclaration}
      */
-    getDefaultComputedStyle(source)
-    {
+    getDefaultComputedStyle(source) {
         if (this._defaultStyles[source.tagName]) {
             return this._defaultStyles[source.tagName];
         }
 
         const defaultElement = this._sandbox.contentWindow.document.createElement(source.tagName);
-        defaultElement.textContent = '\u200b';
+        defaultElement.textContent = "\u200b";
 
         this._sandbox.contentWindow.document.body.appendChild(defaultElement);
         const defaultStyleDeclaration = this._sandbox.contentWindow.getComputedStyle(defaultElement);
         this._sandbox.contentWindow.document.body.removeChild(defaultElement);
 
         this._defaultStyles[source.tagName] = defaultStyleDeclaration;
+
         return this._defaultStyles[source.tagName];
     }
 
@@ -116,8 +113,7 @@ export default class SvgExport extends Export
      *
      * @returns {Node}
      */
-    cloneStyles(source, target, parentStyleDeclaration)
-    {
+    cloneStyles(source, target, parentStyleDeclaration) {
         if (!(target instanceof Element)) {
             return Promise.resolve(target);
         }
@@ -130,7 +126,7 @@ export default class SvgExport extends Export
             .from(sourceStyleDeclaration)
             .forEach((name) => {
                 // Ignore CSS variables
-                if (name.startsWith('--')) {
+                if (name.startsWith("--")) {
                     return;
                 }
 
@@ -158,7 +154,7 @@ export default class SvgExport extends Export
                     }
 
                     // Force font family as native font stack may not work with Inkscape
-                    if (name === 'font-family') {
+                    if (name === "font-family") {
                         targetStyle.setProperty(name, '"Segoe UI", Arial, sans-serif');
                     }
                 }
@@ -176,8 +172,7 @@ export default class SvgExport extends Export
      *
      * @returns {Promise<Node>}
      */
-    createNodeDuplicate(source, sourceStyleDeclaration)
-    {
+    createNodeDuplicate(source, sourceStyleDeclaration) {
         return Promise
             .resolve(source)
             .then(clone => clone.cloneNode(false))
@@ -193,8 +188,7 @@ export default class SvgExport extends Export
      *
      * @returns {Promise<Node>}
      */
-    cloneChildren(source, target)
-    {
+    cloneChildren(source, target) {
         let done = Promise.resolve();
 
         if (source.childNodes.length !== 0) {
@@ -224,8 +218,7 @@ export default class SvgExport extends Export
      *
      * @returns {Promise<String>}
      */
-    convertToObjectUrl(svg)
-    {
+    convertToObjectUrl(svg) {
         return new Promise(resolve => {
             const data = (new XMLSerializer()).serializeToString(svg);
             const domURL = window.URL || window.webkitURL || window;
@@ -248,8 +241,7 @@ export default class SvgExport extends Export
      *
      * @returns {string}
      */
-    cleanUp(objectUrl)
-    {
+    cleanUp(objectUrl) {
         // Remove the sandbox
         if (this._sandbox) {
             document.body.removeChild(this._sandbox);
@@ -267,9 +259,8 @@ export default class SvgExport extends Export
      * @param {string}   containerClassName The container class name
      * @param {string}   fileName           The output file name
      */
-    svgToImage(svg, cssFiles, containerClassName, fileName)
-    {
-        let node = svg.node();
+    svgToImage(svg, cssFiles, containerClassName, fileName) {
+        const node = svg.node();
 
         Promise
             .resolve(node)

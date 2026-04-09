@@ -18,8 +18,7 @@ import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Person
-{
+export default class Person {
     /**
      * Constructor.
      *
@@ -28,11 +27,10 @@ export default class Person
      * @param {Selection}     person
      * @param {Object}        children
      */
-    constructor(svg, configuration, person, children)
-    {
-        this._svg           = svg;
+    constructor(svg, configuration, person, children) {
+        this._svg = svg;
         this._configuration = configuration;
-        this._geometry      = new Geometry(this._configuration);
+        this._geometry = new Geometry(this._configuration);
 
         this.init(person, children);
     }
@@ -43,8 +41,7 @@ export default class Person
      * @param {Selection} person
      * @param {Object}    datum
      */
-    init(person, datum)
-    {
+    init(person, datum) {
         if (person.classed("new") && this._configuration.hideEmptySegments) {
             this.addArcToPerson(person, datum);
         } else {
@@ -61,13 +58,13 @@ export default class Person
             this.addTitleToPerson(person, datum.data.data.name);
 
             // Append labels with text content
-            let labelRenderer = new LabelRenderer(this._svg, this._configuration);
+            const labelRenderer = new LabelRenderer(this._svg, this._configuration);
             labelRenderer.addLabel(person, datum);
 
             this.addColorGroup(person, datum);
 
             // Bind tooltip and hover events
-            let tooltipRenderer = new TooltipRenderer(this._svg, this._configuration);
+            const tooltipRenderer = new TooltipRenderer(this._svg, this._configuration);
             tooltipRenderer.bindEvents(person, datum);
         }
     }
@@ -78,10 +75,9 @@ export default class Person
      * @param {Selection} person
      * @param {Object}    data   The D3 data object
      */
-    addColorGroup(person, datum)
-    {
+    addColorGroup(person, datum) {
         // Arc generator
-        let arcGenerator = d3.arc()
+        const arcGenerator = d3.arc()
             .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
             .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
             .innerRadius(this._geometry.outerRadius(datum.depth) - this._configuration.colorArcWidth)
@@ -92,9 +88,9 @@ export default class Person
         arcGenerator.padAngle(this.getArcPadAngle(datum))
             .padRadius(this._configuration.padRadius)
         //     .cornerRadius(this._configuration.cornerRadius - 2)
-            ;
+        ;
 
-        let color = person
+        const color = person
             .append("g")
             .attr("class", "color");
 
@@ -103,7 +99,7 @@ export default class Person
             color.style("opacity", 1e-6);
         }
 
-        let path = color.append("path")
+        const path = color.append("path")
             .attr("d", arcGenerator);
 
         if (this._configuration.showFamilyColors) {
@@ -117,7 +113,7 @@ export default class Person
 
             path.attr(
                 "class",
-                datum.data.data.sex === SEX_FEMALE ? "female" : (datum.data.data.sex === SEX_MALE ? "male" : "unknown")
+                datum.data.data.sex === SEX_FEMALE ? "female" : (datum.data.data.sex === SEX_MALE ? "male" : "unknown"),
             );
         }
     }
@@ -130,10 +126,9 @@ export default class Person
      *
      * @private
      */
-    addArcToPerson(person, datum)
-    {
+    addArcToPerson(person, datum) {
         // Create arc generator
-        let arcGenerator = d3.arc()
+        const arcGenerator = d3.arc()
             .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
             .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
             .innerRadius(this._geometry.innerRadius(datum.depth))
@@ -144,11 +139,11 @@ export default class Person
             .cornerRadius(this._configuration.cornerRadius);
 
         // Append arc
-        let arcGroup = person
+        const arcGroup = person
             .append("g")
             .attr("class", "arc");
 
-        let path = arcGroup
+        const path = arcGroup
             .append("path")
             .attr("d", arcGenerator);
 
@@ -174,8 +169,7 @@ export default class Person
      *
      * @private
      */
-    addTitleToPerson(person, value)
-    {
+    addTitleToPerson(person, value) {
         person
             .insert("title", ":first-child")
             .text(value);
@@ -192,8 +186,7 @@ export default class Person
      *
      * @private
      */
-    getArcPadAngle(datum)
-    {
+    getArcPadAngle(datum) {
         if (this._configuration.showParentMarriageDates && datum.parent) {
             return 0;
         }

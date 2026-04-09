@@ -14,8 +14,7 @@
  *
  * @return {number}
  */
-export function toFiniteNumber(value, fallback = 0)
-{
+export function toFiniteNumber(value, fallback = 0) {
     const numericValue = Number(value);
 
     return Number.isFinite(numericValue) ? numericValue : fallback;
@@ -28,21 +27,20 @@ export function toFiniteNumber(value, fallback = 0)
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Configuration
-{
+export default class Configuration {
     /**
      * Default color for the paternal lineage.
      *
      * @type {string}
      */
-    static PATERNAL_COLOR_DEFAULT = '#70a9cf';
+    static PATERNAL_COLOR_DEFAULT = "#70a9cf";
 
     /**
      * Default color for the maternal lineage.
      *
      * @type {string}
      */
-    static MATERNAL_COLOR_DEFAULT = '#d06f94';
+    static MATERNAL_COLOR_DEFAULT = "#d06f94";
 
     /**
      * Constructor.
@@ -76,7 +74,7 @@ export default class Configuration
         rtl = false,
         innerArcs = 4,
         paternalColor = Configuration.PATERNAL_COLOR_DEFAULT,
-        maternalColor = Configuration.MATERNAL_COLOR_DEFAULT
+        maternalColor = Configuration.MATERNAL_COLOR_DEFAULT,
     ) {
         // Default number of generations to display
         this._generations = toFiniteNumber(generations, 6);
@@ -117,10 +115,10 @@ export default class Configuration
         this.textPadding = 8;
 
         // Default font size, color and scaling
-        this._fontSize  = 22;
+        this._fontSize = 22;
         this._fontScale = fontScale;
 
-        this._hideEmptySegments  = hideEmptySegments;
+        this._hideEmptySegments = hideEmptySegments;
         this._showFamilyColors = showFamilyColors;
         this._showPlaces = showPlaces;
         this._showParentMarriageDates = showParentMarriageDates;
@@ -133,7 +131,7 @@ export default class Configuration
         // Default degrees of the fan chart
         this._fanDegree = toFiniteNumber(fanDegree, 210);
 
-        this.rtl    = rtl;
+        this.rtl = rtl;
         this.labels = labels;
 
         this._paternalColor = paternalColor;
@@ -145,8 +143,7 @@ export default class Configuration
      *
      * @return {number}
      */
-    get generations()
-    {
+    get generations() {
         return this._generations;
     }
 
@@ -155,8 +152,7 @@ export default class Configuration
      *
      * @param {number} value The number of generations to display
      */
-    set generations(value)
-    {
+    set generations(value) {
         this._generations = value;
     }
 
@@ -165,8 +161,7 @@ export default class Configuration
      *
      * @return {number}
      */
-    get fanDegree()
-    {
+    get fanDegree() {
         return this._fanDegree;
     }
 
@@ -175,8 +170,7 @@ export default class Configuration
      *
      * @param {number} value The degrees of the fan chart
      */
-    set fanDegree(value)
-    {
+    set fanDegree(value) {
         this._fanDegree = value;
     }
 
@@ -185,8 +179,7 @@ export default class Configuration
      *
      * @return {number}
      */
-    get fontScale()
-    {
+    get fontScale() {
         return this._fontScale;
     }
 
@@ -195,8 +188,7 @@ export default class Configuration
      *
      * @param {number} value The font scaling
      */
-    set fontScale(value)
-    {
+    set fontScale(value) {
         this._fontScale = value;
     }
 
@@ -205,8 +197,7 @@ export default class Configuration
      *
      * @return {boolean}
      */
-    get hideEmptySegments()
-    {
+    get hideEmptySegments() {
         return this._hideEmptySegments;
     }
 
@@ -215,8 +206,7 @@ export default class Configuration
      *
      * @param {boolean} value Either true or false
      */
-    set hideEmptySegments(value)
-    {
+    set hideEmptySegments(value) {
         this._hideEmptySegments = value;
     }
 
@@ -225,8 +215,7 @@ export default class Configuration
      *
      * @return {boolean}
      */
-    get showFamilyColors()
-    {
+    get showFamilyColors() {
         return this._showFamilyColors;
     }
 
@@ -235,8 +224,7 @@ export default class Configuration
      *
      * @param {boolean} value Either true or false
      */
-    set showFamilyColors(value)
-    {
+    set showFamilyColors(value) {
         this._showFamilyColors = value;
     }
 
@@ -245,8 +233,7 @@ export default class Configuration
      *
      * @return {boolean}
      */
-    get showPlaces()
-    {
+    get showPlaces() {
         return this._showPlaces;
     }
 
@@ -255,8 +242,7 @@ export default class Configuration
      *
      * @return {boolean}
      */
-    get showParentMarriageDates()
-    {
+    get showParentMarriageDates() {
         return this._showParentMarriageDates;
     }
 
@@ -265,8 +251,7 @@ export default class Configuration
      *
      * @param {boolean} value Either true or false
      */
-    set showParentMarriageDates(value)
-    {
+    set showParentMarriageDates(value) {
         this._showParentMarriageDates = value;
     }
 
@@ -275,8 +260,7 @@ export default class Configuration
      *
      * @return {boolean}
      */
-    get showImages()
-    {
+    get showImages() {
         return this._showImages;
     }
 
@@ -285,8 +269,7 @@ export default class Configuration
      *
      * @return {boolean}
      */
-    get showSilhouettes()
-    {
+    get showSilhouettes() {
         return this._showSilhouettes;
     }
 
@@ -295,8 +278,7 @@ export default class Configuration
      *
      * @return {number}
      */
-    get numberOfInnerCircles()
-    {
+    get numberOfInnerCircles() {
         return this._numberOfInnerCircles;
     }
 
@@ -305,8 +287,7 @@ export default class Configuration
      *
      * @param {number} value The number of inner arcs
      */
-    set numberOfInnerCircles(value)
-    {
+    set numberOfInnerCircles(value) {
         this._numberOfInnerCircles = value;
     }
 
@@ -315,8 +296,7 @@ export default class Configuration
      *
      * @return {number}
      */
-    get fontSize()
-    {
+    get fontSize() {
         return this._fontSize;
     }
 
@@ -325,8 +305,7 @@ export default class Configuration
      *
      * @return {string}
      */
-    get paternalColor()
-    {
+    get paternalColor() {
         return this._paternalColor;
     }
 
@@ -335,8 +314,7 @@ export default class Configuration
      *
      * @return {string}
      */
-    get maternalColor()
-    {
+    get maternalColor() {
         return this._maternalColor;
     }
 }

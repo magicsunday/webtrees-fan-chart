@@ -12,23 +12,21 @@
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Export
-{
+export default class Export {
     /**
      * Triggers the download by creating a new anchor element and simulate a mouse click on it.
      *
      * @param {string} imgURI   The image URI data stream
      * @param {string} fileName The file name to use in the download dialog
      */
-    triggerDownload(imgURI, fileName)
-    {
-        let event = new MouseEvent("click", {
+    triggerDownload(imgURI, fileName) {
+        const event = new MouseEvent("click", {
             view: window,
             bubbles: false,
-            cancelable: true
+            cancelable: true,
         });
 
-        let anchor = document.createElement("a");
+        const anchor = document.createElement("a");
         anchor.setAttribute("download", fileName);
         anchor.setAttribute("href", imgURI);
         anchor.setAttribute("target", "_blank");

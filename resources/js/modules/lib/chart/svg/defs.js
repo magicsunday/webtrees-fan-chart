@@ -12,15 +12,13 @@
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Defs
-{
+export default class Defs {
     /**
      * Constructor.
      *
      * @param {Selection} svg The selected D3 parent element container
      */
-    constructor(svg)
-    {
+    constructor(svg) {
         // Create the <svg:defs> element
         this._element = svg.append("defs");
     }
@@ -30,8 +28,7 @@ export default class Defs
      *
      * @returns {selection}
      */
-    get()
-    {
+    get() {
         return this._element;
     }
 
@@ -40,8 +37,7 @@ export default class Defs
      *
      * @returns {Selection}
      */
-    select(select)
-    {
+    select(select) {
         return this._element.select(select);
     }
 
@@ -50,8 +46,7 @@ export default class Defs
      *
      * @returns {Selection}
      */
-    append(name)
-    {
+    append(name) {
         return this._element.append(name);
     }
 }

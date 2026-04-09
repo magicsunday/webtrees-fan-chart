@@ -7,7 +7,7 @@
 
 import * as d3 from "../../lib/d3";
 import Geometry, {MATH_DEG2RAD, MATH_RAD2DEG} from "./geometry";
-import measureText from "../../lib/chart/text/measure"
+import measureText from "../../lib/chart/text/measure";
 
 /**
  * The class handles all the text and path elements.
@@ -16,8 +16,7 @@ import measureText from "../../lib/chart/text/measure"
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Text
-{
+export default class Text {
     /**
      * Constructor.
      *
@@ -25,11 +24,10 @@ export default class Text
      * @param {Configuration} configuration The application configuration
      * @param {Geometry}      [geometry]    Optional geometry instance (created from config if omitted)
      */
-    constructor(svg, configuration, geometry)
-    {
-        this._svg           = svg;
+    constructor(svg, configuration, geometry) {
+        this._svg = svg;
         this._configuration = configuration;
-        this._geometry      = geometry || new Geometry(this._configuration);
+        this._geometry = geometry || new Geometry(this._configuration);
     }
 
     /**
@@ -38,8 +36,7 @@ export default class Text
      * @param {Selection} parent The parent element to which the elements are to be attached
      * @param {Object}    datum  The D3 data object
      */
-    createLabels(parent, datum)
-    {
+    createLabels(parent, datum) {
         // Calculate dynamic slot positions based on which content is present
         const positions = this.calculateSlotPositions(datum);
 
@@ -55,7 +52,7 @@ export default class Text
             const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
 
             nameGroups.forEach((nameGroup, index) => {
-                const slot     = nameSlots[index];
+                const slot = nameSlots[index];
                 const position = positions.get(slot);
                 const availableWidth = this.getAvailableWidth(datum, position);
                 const pathId = this.createPathDefinition(parentId, slot, position, datum);
@@ -70,14 +67,14 @@ export default class Text
                     this.truncateNamesData(
                         textPath,
                         nameGroup,
-                        availableWidth
-                    )
+                        availableWidth,
+                    ),
                 );
             });
 
             // Alternative names
             if (datum.data.data.alternativeName !== "") {
-                const slot     = Text.TEXT_SLOT.ALTERNATIVE_NAME;
+                const slot = Text.TEXT_SLOT.ALTERNATIVE_NAME;
                 const position = positions.get(slot);
                 const pathId = this.createPathDefinition(parentId, slot, position, datum);
                 const availableWidth = this.getAvailableWidth(datum, position);
@@ -96,8 +93,8 @@ export default class Text
                     this.truncateNamesData(
                         textPath,
                         nameGroup,
-                        availableWidth
-                    )
+                        availableWidth,
+                    ),
                 );
             }
 
@@ -107,7 +104,7 @@ export default class Text
                 const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
 
                 timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
-                    const slot     = dateSlots[lineIndex];
+                    const slot = dateSlots[lineIndex];
                     const position = positions.get(slot);
                     const pathId = this.createPathDefinition(parentId, slot, position, datum);
                     const textPath = parent
@@ -145,7 +142,7 @@ export default class Text
                 // Merge the firstname and lastname groups, as we display the whole name in one line
                 const combined = [].concat(first, typeof last[0] !== "undefined" ? last[0] : []);
 
-                let text1 = parent
+                const text1 = parent
                     .append("text")
                     .attr("dominant-baseline", "middle");
 
@@ -154,8 +151,8 @@ export default class Text
                     this.truncateNamesData(
                         text1,
                         combined,
-                        availableWidth
-                    )
+                        availableWidth,
+                    ),
                 );
             } else {
                 const nameGroups = this.createNamesData(datum);
@@ -172,8 +169,8 @@ export default class Text
                         this.truncateNamesData(
                             text,
                             nameGroup,
-                            availableWidth
-                        )
+                            availableWidth,
+                        ),
                     );
                 });
 
@@ -193,8 +190,8 @@ export default class Text
                         this.truncateNamesData(
                             text,
                             nameGroup,
-                            availableWidth
-                        )
+                            availableWidth,
+                        ),
                     );
                 }
 
@@ -253,23 +250,22 @@ export default class Text
      *
      * @private
      */
-    createNamesData(datum)
-    {
+    createNamesData(datum) {
         /** @var {LabelElementData[][]} names */
-        let names = {};
+        const names = {};
         /** @var {LabelElementData[]} firstnames */
-        let firstnames = {};
+        const firstnames = {};
         /** @var {LabelElementData[]} lastnames */
-        let lastnames = {};
+        const lastnames = {};
         let minPosFirstnames = Number.MAX_SAFE_INTEGER;
         let minPosLastnames = Number.MAX_SAFE_INTEGER;
 
         let firstnameOffset = 0;
-        let firstnameMap = new Map();
+        const firstnameMap = new Map();
 
         // Iterate over the individual name components and determine their position in the overall
         // name and insert the component at the corresponding position in the result object.
-        for (let i in datum.data.data.firstNames) {
+        for (const i in datum.data.data.firstNames) {
             const pos = datum.data.data.name.indexOf(datum.data.data.firstNames[i], firstnameOffset);
 
             if (pos !== -1) {
@@ -285,8 +281,8 @@ export default class Text
                         label: datum.data.data.firstNames[i],
                         isPreferred: datum.data.data.firstNames[i] === datum.data.data.preferredName,
                         isLastName: false,
-                        isNameRtl: datum.data.data.isNameRtl
-                    }
+                        isNameRtl: datum.data.data.isNameRtl,
+                    },
                 );
             }
         }
@@ -294,9 +290,9 @@ export default class Text
         names[minPosFirstnames] = [...firstnameMap].map(([, value]) => ( value ));
 
         let lastnameOffset = 0;
-        let lastnameMap = new Map();
+        const lastnameMap = new Map();
 
-        for (let i in datum.data.data.lastNames) {
+        for (const i in datum.data.data.lastNames) {
             let pos;
 
             // Check if last name already exists in first names list, in case first name equals last name
@@ -321,8 +317,8 @@ export default class Text
                         label: datum.data.data.lastNames[i],
                         isPreferred: false,
                         isLastName: true,
-                        isNameRtl: datum.data.data.isNameRtl
-                    }
+                        isNameRtl: datum.data.data.isNameRtl,
+                    },
                 );
             }
         }
@@ -342,9 +338,8 @@ export default class Text
      *
      * @private
      */
-    createAlternativeNamesData(datum)
-    {
-        let words = datum.data.data.alternativeName.split(/\s+/);
+    createAlternativeNamesData(datum) {
+        const words = datum.data.data.alternativeName.split(/\s+/);
 
         /** @var {LabelElementData[]} names */
         let names = [];
@@ -356,9 +351,9 @@ export default class Text
                     label: word,
                     isPreferred: false,
                     isLastName: false,
-                    isNameRtl: datum.data.data.isAltRtl
-                }
-            })
+                    isNameRtl: datum.data.data.isAltRtl,
+                };
+            }),
         );
 
         return names;
@@ -374,8 +369,7 @@ export default class Text
      *
      * @private
      */
-    addNameElements(parent, data)
-    {
+    addNameElements(parent, data) {
         parent.selectAll("tspan")
             .data(data)
             .enter()
@@ -403,9 +397,8 @@ export default class Text
      *
      * @private
      */
-    truncateNamesData(parent, names, availableWidth)
-    {
-        const fontSize   = parent.style("font-size");
+    truncateNamesData(parent, names, availableWidth) {
+        const fontSize = parent.style("font-size");
         const fontWeight = parent.style("font-weight");
 
         return this.truncateNames(names, fontSize, fontWeight, availableWidth);
@@ -423,8 +416,7 @@ export default class Text
      *
      * @private
      */
-    truncateNames(names, fontSize, fontWeight, availableWidth)
-    {
+    truncateNames(names, fontSize, fontWeight, availableWidth) {
         let text = names.map(item => item.label).join(" ");
 
         return names
@@ -438,7 +430,7 @@ export default class Text
                     if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
                         // Keep only the first letter
                         name.label = name.label.slice(0, 1) + ".";
-                        text       = names.map(item => item.label).join(" ");
+                        text = names.map(item => item.label).join(" ");
                     }
                 }
 
@@ -450,7 +442,7 @@ export default class Text
                     if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
                         // Keep only the first letter
                         name.label = name.label.slice(0, 1) + ".";
-                        text       = names.map(item => item.label).join(" ");
+                        text = names.map(item => item.label).join(" ");
                     }
                 }
 
@@ -462,7 +454,7 @@ export default class Text
                     if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
                         // Keep only the first letter
                         name.label = name.label.slice(0, 1) + ".";
-                        text       = names.map(item => item.label).join(" ");
+                        text = names.map(item => item.label).join(" ");
                     }
                 }
 
@@ -483,8 +475,7 @@ export default class Text
      *
      * @private
      */
-    measureText(text, fontSize, fontWeight = 400)
-    {
+    measureText(text, fontSize, fontWeight = 400) {
         const fontFamily = this._svg.style("font-family");
 
         return measureText(text, fontFamily, fontSize, fontWeight);
@@ -496,14 +487,13 @@ export default class Text
      * @param {Selection} parent         The parent (<text> or <textPath>) element containing the <tspan> child elements
      * @param {number}    availableWidth The total available width the text could take
      */
-    truncateDate(parent, availableWidth)
-    {
-        let that = this;
+    truncateDate(parent, availableWidth) {
+        const that = this;
 
         return function () {
             let textLength = that.getTextLength(parent);
-            let tspan      = d3.select(this);
-            let text       = tspan.text();
+            const tspan = d3.select(this);
+            let text = tspan.text();
 
             // Repeat removing the last char until the width matches
             while ((textLength > availableWidth) && (text.length > 1)) {
@@ -530,8 +520,7 @@ export default class Text
      *
      * @returns {number}
      */
-    getTextLength(parent)
-    {
+    getTextLength(parent) {
         let totalWidth = 0;
 
         // Calculate the total used width of all <tspan> elements
@@ -551,8 +540,7 @@ export default class Text
      *
      * @return {boolean}
      */
-    isInnerLabel(data)
-    {
+    isInnerLabel(data) {
         // Note: The center element does not belong to the inner labels!
         return ((data.depth > 0) && (data.depth <= this._configuration.numberOfInnerCircles));
     }
@@ -566,8 +554,7 @@ export default class Text
      *
      * @return {string} The id of the newly created path element
      */
-    createPathDefinition(parentId, slot, position, data)
-    {
+    createPathDefinition(parentId, slot, position, data) {
         let pathId = "path-" + parentId + "-" + slot.index;
 
         // If path already exists (update case), create a new one with a unique ID
@@ -576,15 +563,15 @@ export default class Text
             pathId = pathId + "-" + this._svg.defs.get().selectAll("path[id^='" + pathId + "']").size();
         }
 
-        let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
-        let startAngle      = this._geometry.startAngle(data.depth, data.x0);
-        let endAngle        = this._geometry.endAngle(data.depth, data.x1);
+        const positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
+        const startAngle = this._geometry.startAngle(data.depth, data.x0);
+        const endAngle = this._geometry.endAngle(data.depth, data.x1);
         let relativeRadius;
 
         relativeRadius = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, position));
 
         // Create an arc generator for path segments
-        let arcGenerator = d3.arc()
+        const arcGenerator = d3.arc()
             .startAngle(positionFlipped ? endAngle : startAngle)
             .endAngle(positionFlipped ? startAngle : endAngle)
             .innerRadius(relativeRadius)
@@ -614,8 +601,7 @@ export default class Text
      *
      * @return {boolean}
      */
-    isPositionFlipped(depth, x0, x1)
-    {
+    isPositionFlipped(depth, x0, x1) {
         return this._geometry.isPositionFlipped(depth, x0, x1);
     }
 
@@ -642,12 +628,11 @@ export default class Text
      *
      * @return {Map<Object, {normal: number, flipped: number}>}
      */
-    calculateSlotPositions(datum)
-    {
+    calculateSlotPositions(datum) {
         // Build semantic groups: names, alternative name, dates
         const nameGroup = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
-        const altGroup   = [];
-        const dateGroup  = [];
+        const altGroup = [];
+        const dateGroup = [];
 
         if (datum.data.data.alternativeName !== "") {
             altGroup.push(Text.TEXT_SLOT.ALTERNATIVE_NAME);
@@ -737,8 +722,7 @@ export default class Text
      *
      * @return {number}
      */
-    getTextOffset(positionFlipped, position)
-    {
+    getTextOffset(positionFlipped, position) {
         return positionFlipped ? position.flipped : position.normal;
     }
 
@@ -753,8 +737,7 @@ export default class Text
      *
      * @private
      */
-    getAvailableWidth(data, position)
-    {
+    getAvailableWidth(data, position) {
         // Outer arcs
         if (data.depth > this._configuration.numberOfInnerCircles) {
             return this._configuration.outerArcHeight
@@ -766,7 +749,7 @@ export default class Text
         let availableWidth = (this._configuration.centerCircleRadius * 2) - (this._configuration.centerCircleRadius * 0.15);
 
         if (data.depth >= 1) {
-            let positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
+            const positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
 
             // Calculate length of the arc
             availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, position));
@@ -785,17 +768,16 @@ export default class Text
      *
      * @public
      */
-    transformOuterText(parent, datum)
-    {
-        let that = this;
-        let textElements = parent.selectAll("text");
-        let countElements = textElements.size();
+    transformOuterText(parent, datum) {
+        const that = this;
+        const textElements = parent.selectAll("text");
+        const countElements = textElements.size();
 
         // Center person: vertical stacking via dy
         if (datum.depth === 0) {
-            let offset = Math.max(1.0, countElements * 0.4);
+            const offset = Math.max(1.0, countElements * 0.4);
 
-            let mapIndexToOffset = d3.scaleLinear()
+            const mapIndexToOffset = d3.scaleLinear()
                 .domain([0, countElements - 1])
                 .range([-offset, offset]);
 
@@ -808,7 +790,7 @@ export default class Text
                 d3.select(this).attr("dy",
                     (offsetRotate * fontSize) + (fontSize / 2)
                     + (isDate ? groupShift : -groupShift)
-                    + "px"
+                    + "px",
                 );
             });
 
@@ -817,15 +799,15 @@ export default class Text
 
         // Outer labels: use semantic group spacing (same logic as inner
         // labels in calculateSlotPositions) but in angular degrees.
-        let angularPositions = this.calculateOuterSlotPositions(datum, textElements);
+        const angularPositions = this.calculateOuterSlotPositions(datum, textElements);
 
         textElements.each(function (ignore, i) {
-            let offsetRotate = angularPositions[i] * that._configuration.fontScale / 100.0;
+            const offsetRotate = angularPositions[i] * that._configuration.fontScale / 100.0;
 
             d3.select(this).attr("transform", function () {
-                let dx        = datum.x1 - datum.x0;
-                let angle     = that._geometry.scale(datum.x0 + (dx / 2)) * MATH_RAD2DEG;
-                let rotate    = angle - (offsetRotate * (angle > 0 ? -1 : 1));
+                const dx = datum.x1 - datum.x0;
+                const angle = that._geometry.scale(datum.x0 + (dx / 2)) * MATH_RAD2DEG;
+                let rotate = angle - (offsetRotate * (angle > 0 ? -1 : 1));
                 let translate = (that._geometry.centerRadius(datum.depth) - (that._configuration.colorArcWidth / 2.0));
 
                 if (angle > 0) {
@@ -852,10 +834,9 @@ export default class Text
      *
      * @return {number[]} Angular offset in degrees for each text element
      */
-    calculateOuterSlotPositions(datum, textElements)
-    {
+    calculateOuterSlotPositions(datum, textElements) {
         // Build element groups: [names...], [dates...]
-        let groups = [{ items: [], isDate: false }];
+        const groups = [{ items: [], isDate: false }];
 
         textElements.each(function () {
             if (d3.select(this).classed("date")) {
@@ -873,14 +854,14 @@ export default class Text
         });
 
         // Convert pixel-based spacing to degrees at this radius
-        let fontSize     = this._geometry.getFontSize(datum);
-        let centerRadius = this._geometry.centerRadius(datum.depth);
-        let degPerPixel  = MATH_RAD2DEG / centerRadius;
+        const fontSize = this._geometry.getFontSize(datum);
+        const centerRadius = this._geometry.centerRadius(datum.depth);
+        const degPerPixel = MATH_RAD2DEG / centerRadius;
 
         // Same ratio as inner labels: intraGroup = 16/73 of available,
         // interGroup = 24/73. Convert to pixel gap then to degrees.
-        let intraGapPx = fontSize * 1.05;
-        let interGapPx = fontSize * 1.3;
+        const intraGapPx = fontSize * 1.05;
+        const interGapPx = fontSize * 1.3;
 
         let intraGapDeg = intraGapPx * degPerPixel;
         let interGapDeg = interGapPx * degPerPixel;
@@ -897,11 +878,11 @@ export default class Text
         });
 
         // Cap to 50% of angular span, compress proportionally if needed
-        let angularSpanDeg = (datum.x1 - datum.x0) * 360;
-        let maxDeg = angularSpanDeg * 0.5;
+        const angularSpanDeg = (datum.x1 - datum.x0) * 360;
+        const maxDeg = angularSpanDeg * 0.5;
 
         if ((totalDeg > maxDeg) && (totalDeg > 0)) {
-            let scale = maxDeg / totalDeg;
+            const scale = maxDeg / totalDeg;
             intraGapDeg *= scale;
             interGapDeg *= scale;
             totalDeg = maxDeg;
@@ -910,7 +891,7 @@ export default class Text
         // Center and assign positions (names at negative = inner side,
         // dates at positive = outer side, matching the old convention)
         let currentPos = -(totalDeg / 2);
-        let positions = [];
+        const positions = [];
 
         groups.forEach((group, gi) => {
             group.items.forEach((element, si) => {

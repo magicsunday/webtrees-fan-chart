@@ -19,15 +19,13 @@ const MATH_PI2 = Math.PI * 2;
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Geometry
-{
+export default class Geometry {
     /**
      * Constructor.
      *
      * @param {Configuration} configuration The application configuration
      */
-    constructor(configuration)
-    {
+    constructor(configuration) {
         this._configuration = configuration;
     }
 
@@ -36,8 +34,7 @@ export default class Geometry
      *
      * @private
      */
-    get startPi()
-    {
+    get startPi() {
         if (this._configuration.fanDegree === 90) {
             return 0;
         }
@@ -50,8 +47,7 @@ export default class Geometry
      *
      * @private
      */
-    get endPi()
-    {
+    get endPi() {
         if (this._configuration.fanDegree === 90) {
             return (this._configuration.fanDegree * MATH_DEG2RAD);
         }
@@ -64,8 +60,7 @@ export default class Geometry
      *
      * @return {number}
      */
-    get scale()
-    {
+    get scale() {
         return d3.scaleLinear().range([this.startPi, this.endPi]);
     }
 
@@ -76,8 +71,7 @@ export default class Geometry
      *
      * @return {number}
      */
-    innerRadius(depth)
-    {
+    innerRadius(depth) {
         if (depth === 0) {
             return 0;
         }
@@ -101,8 +95,7 @@ export default class Geometry
      *
      * @return {number}
      */
-    outerRadius(depth)
-    {
+    outerRadius(depth) {
         if (depth === 0) {
             return this._configuration.centerCircleRadius;
         }
@@ -126,8 +119,7 @@ export default class Geometry
      *
      * @return {number}
      */
-    centerRadius(depth)
-    {
+    centerRadius(depth) {
         return (this.innerRadius(depth) + this.outerRadius(depth)) / 2;
     }
 
@@ -140,9 +132,9 @@ export default class Geometry
      *
      * @return {number}
      */
-    relativeRadius(depth, position)
-    {
+    relativeRadius(depth, position) {
         const outer = this.outerRadius(depth);
+
         return outer - ((100 - position) * (outer - this.innerRadius(depth)) / 100);
     }
 
@@ -153,8 +145,7 @@ export default class Geometry
      *
      * @return {number}
      */
-    calcAngle(value)
-    {
+    calcAngle(value) {
         return Math.max(this.startPi, Math.min(this.endPi, this.scale(value)));
     }
 
@@ -166,8 +157,7 @@ export default class Geometry
      *
      * @return {number}
      */
-    startAngle(depth, x0)
-    {
+    startAngle(depth, x0) {
         // Starting from the left edge (x0) of the rectangle
         return (depth === 0) ? 0 : this.calcAngle(x0);
     }
@@ -180,8 +170,7 @@ export default class Geometry
      *
      * @return {number}
      */
-    endAngle(depth, x1)
-    {
+    endAngle(depth, x1) {
         // Starting from the right edge (x1) of the rectangle
         return (depth === 0) ? MATH_PI2 : this.calcAngle(x1);
     }
@@ -195,8 +184,7 @@ export default class Geometry
      *
      * @return {number}
      */
-    arcLength(datum, position)
-    {
+    arcLength(datum, position) {
         return (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0))
             * this.relativeRadius(datum.depth, position);
     }
@@ -209,8 +197,7 @@ export default class Geometry
      *
      * @return {number}
      */
-    getFontSize(datum)
-    {
+    getFontSize(datum) {
         let fontSize = this._configuration.fontSize;
 
         if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
@@ -223,11 +210,11 @@ export default class Geometry
         // width of the segment. Uses 80% of angular width to leave visual
         // padding and account for descenders / em-box centering offset.
         if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
-            let angularWidth = (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0)) * this.centerRadius(datum.depth);
+            const angularWidth = (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0)) * this.centerRadius(datum.depth);
 
             // Depth >= 7 merges first + last name into 1 line; others use 2
-            let lines  = datum.depth >= 7 ? 1 : 2;
-            let maxFont = (angularWidth * 0.55) / lines;
+            const lines = datum.depth >= 7 ? 1 : 2;
+            const maxFont = (angularWidth * 0.55) / lines;
 
             scaled = Math.min(scaled, maxFont);
         }
@@ -245,16 +232,15 @@ export default class Geometry
      *
      * @return {boolean}
      */
-    isPositionFlipped(depth, x0, x1)
-    {
+    isPositionFlipped(depth, x0, x1) {
         if ((this._configuration.fanDegree <= 270) || (depth < 1)) {
             return false;
         }
 
         const startAngle = this.startAngle(depth, x0);
-        const endAngle   = this.endAngle(depth, x1);
-        const midAngle   = (startAngle + endAngle) / 2;
-        const pi2        = Math.PI * 2;
+        const endAngle = this.endAngle(depth, x1);
+        const midAngle = (startAngle + endAngle) / 2;
+        const pi2 = Math.PI * 2;
         const normalized = ((midAngle % pi2) + pi2) % pi2;
 
         return (normalized > (90 * MATH_DEG2RAD)) && (normalized < (270 * MATH_DEG2RAD));

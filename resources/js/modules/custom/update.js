@@ -17,8 +17,7 @@ import FamilyColor from "./svg/family-color";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class Update
-{
+export default class Update {
     /**
      * Constructor.
      *
@@ -26,11 +25,10 @@ export default class Update
      * @param {Configuration} configuration The application configuration
      * @param {Hierarchy}     hierarchy
      */
-    constructor(svg, configuration, hierarchy)
-    {
-        this._svg           = svg;
+    constructor(svg, configuration, hierarchy) {
+        this._svg = svg;
         this._configuration = configuration;
-        this._hierarchy     = hierarchy;
+        this._hierarchy = hierarchy;
     }
 
     /**
@@ -41,9 +39,8 @@ export default class Update
      *
      * @public
      */
-    update(url, redrawOverlays, callback)
-    {
-        let that = this;
+    update(url, redrawOverlays, callback) {
+        const that = this;
 
         this._svg
             .selectAll("g.person")
@@ -53,21 +50,21 @@ export default class Update
             .on("mouseout", null);
 
         d3.json(
-            url
+            url,
         ).then((data) => {
             // Update the page title if provided in response
             if (data.title) {
                 // Update the page header with HTML content
-                const pageTitle = document.querySelector('.wt-page-title');
+                const pageTitle = document.querySelector(".wt-page-title");
 
                 if (pageTitle) {
                     pageTitle.innerHTML = data.title;
                 }
 
                 // Update the browser tab title with text only (strip HTML tags)
-                const tempDiv = document.createElement('div');
+                const tempDiv = document.createElement("div");
                 tempDiv.innerHTML = data.title;
-                document.title = tempDiv.textContent || tempDiv.innerText || '';
+                document.title = tempDiv.textContent || tempDiv.innerText || "";
             }
 
             // Initialize the new loaded data
@@ -76,11 +73,11 @@ export default class Update
             // Compute family colors for all hierarchy nodes upfront
             // (must happen before person/marriage loops since marriage
             // arcs reference their children's familyColor)
-            let familyColor = new FamilyColor(this._configuration);
+            const familyColor = new FamilyColor(this._configuration);
 
             if (this._configuration.showFamilyColors) {
                 this._hierarchy.nodes.forEach(
-                    (datum) => datum.data.data.familyColor = familyColor.getColor(datum)
+                    (datum) => datum.data.data.familyColor = familyColor.getColor(datum),
                 );
             }
 
@@ -89,8 +86,8 @@ export default class Update
                 .selectAll("g.person")
                 .data(this._hierarchy.nodes, (datum) => datum.id)
                 .each(function (datum) {
-                    let empty  = datum.data.data.xref === "";
-                    let person = d3.select(this);
+                    const empty = datum.data.data.xref === "";
+                    const person = d3.select(this);
 
                     person.classed("remove", empty)
                         .classed("update", !empty && person.classed("available"))
@@ -106,20 +103,20 @@ export default class Update
 
             // Flag all marriage elements which are subject to change (same pattern as persons)
             if (this._configuration.showParentMarriageDates) {
-                let marriageNodes = this._hierarchy.nodes.filter(
+                const marriageNodes = this._hierarchy.nodes.filter(
                     datum => datum.children
-                        && (datum.depth < (this._configuration.generations - 1))
+                        && (datum.depth < (this._configuration.generations - 1)),
                 );
 
                 this._svg
                     .selectAll("g.marriage")
                     .data(marriageNodes, (datum) => datum.id)
                     .each(function (datum) {
-                        let hasChildren = datum.children
+                        const hasChildren = datum.children
                             && datum.children.some(child => child.data.data.xref !== "");
 
-                        let empty = !hasChildren;
-                        let marriage = d3.select(this);
+                        const empty = !hasChildren;
+                        const marriage = d3.select(this);
 
                         marriage.classed("remove", empty)
                             .classed("update", !empty && marriage.classed("available"))
@@ -153,7 +150,7 @@ export default class Update
                 .style("opacity", 1e-6);
 
             // Create transition instance
-            let transition = d3.transition()
+            const transition = d3.transition()
                 .duration(this._configuration.updateDuration)
                 .call(this.endAll, () => this.updateDone(callback));
 
@@ -175,9 +172,9 @@ export default class Update
             this._svg
                 .selectAll("g.person.new g.arc path")
                 .each(function () {
-                    let person = d3.select(this.closest("g.person"));
-                    let datum  = person.datum();
-                    let target = (that._configuration.showFamilyColors && datum && datum.data.data.familyColor)
+                    const person = d3.select(this.closest("g.person"));
+                    const datum = person.datum();
+                    const target = (that._configuration.showFamilyColors && datum && datum.data.data.familyColor)
                         ? datum.data.data.familyColor
                         : "rgb(250, 250, 250)";
 
@@ -192,7 +189,7 @@ export default class Update
                 this._svg
                     .selectAll("g.person.update g.arc path")
                     .each(function () {
-                        let datum = d3.select(this.closest("g.person")).datum();
+                        const datum = d3.select(this.closest("g.person")).datum();
 
                         if (datum && datum.data.data.familyColor) {
                             d3.select(this)
@@ -206,11 +203,11 @@ export default class Update
             this._svg
                 .selectAll("g.marriage.new g.arc path")
                 .each(function () {
-                    let datum  = d3.select(this.closest("g.marriage")).datum();
-                    let color  = that._configuration.showFamilyColors
+                    const datum = d3.select(this.closest("g.marriage")).datum();
+                    const color = that._configuration.showFamilyColors
                         ? FamilyColor.getMarriageColor(datum)
                         : null;
-                    let target = color || "rgb(250, 250, 250)";
+                    const target = color || "rgb(250, 250, 250)";
 
                     d3.select(this)
                         .transition(transition)
@@ -223,8 +220,8 @@ export default class Update
                 this._svg
                     .selectAll("g.marriage.update g.arc path")
                     .each(function () {
-                        let datum = d3.select(this.closest("g.marriage")).datum();
-                        let color = FamilyColor.getMarriageColor(datum);
+                        const datum = d3.select(this.closest("g.marriage")).datum();
+                        const color = FamilyColor.getMarriageColor(datum);
 
                         if (color) {
                             d3.select(this)
@@ -279,8 +276,7 @@ export default class Update
      *
      * @private
      */
-    updateDone(callback)
-    {
+    updateDone(callback) {
         // Remove arc if segments should be hidden
         if (this._configuration.hideEmptySegments) {
             this._svg
@@ -296,7 +292,7 @@ export default class Update
 
         // Remove styles so CSS classes may work correct, Uses a small timer as animation seems not
         // to be done already if the point is reached
-        let cleanupTimer = d3.timer(() => {
+        const cleanupTimer = d3.timer(() => {
             this._svg
                 .selectAll("g.person g.arc path")
                 .attr("style", null);
@@ -306,7 +302,7 @@ export default class Update
                 this._svg
                     .selectAll("g.person")
                     .each(function () {
-                        let datum = d3.select(this).datum();
+                        const datum = d3.select(this).datum();
 
                         if (datum && datum.data.data.familyColor) {
                             d3.select(this)
@@ -329,8 +325,8 @@ export default class Update
                 this._svg
                     .selectAll("g.marriage")
                     .each(function () {
-                        let datum = d3.select(this).datum();
-                        let color = FamilyColor.getMarriageColor(datum);
+                        const datum = d3.select(this).datum();
+                        const color = FamilyColor.getMarriageColor(datum);
 
                         if (color) {
                             d3.select(this)
@@ -404,8 +400,7 @@ export default class Update
      *
      * @private
      */
-    endAll(transition, callback)
-    {
+    endAll(transition, callback) {
         let activeCount = 0;
 
         transition

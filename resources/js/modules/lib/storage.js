@@ -12,16 +12,14 @@
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export class Storage
-{
+export class Storage {
     /**
      * Constructor.
      *
      * @param {string} name The name of the storage
      */
-    constructor(name)
-    {
-        this._name    = name;
+    constructor(name) {
+        this._name = name;
         this._storage = JSON.parse(localStorage.getItem(this._name)) || {};
     }
 
@@ -30,18 +28,17 @@ export class Storage
      *
      * @param {string} name The ID of an HTML element
      */
-    register(name)
-    {
+    register(name) {
         // Use "querySelector" here as the ID of checkbox elements may additionally contain a hyphen and the value
         // Query checked elements (radio and checkbox) separately
-        let input = document.querySelector('input[id^="' + name + '"]:checked, select[id^="' + name + '"]')
+        const input = document.querySelector('input[id^="' + name + '"]:checked, select[id^="' + name + '"]')
             || document.querySelector('input[id^="' + name + '"]');
 
         if (input === null) {
             return;
         }
 
-        let storedValue = this.read(name);
+        const storedValue = this.read(name);
 
         if (storedValue !== null) {
             if (input.type && (input.type === "radio")) {
@@ -63,7 +60,7 @@ export class Storage
             .forEach(
                 (input) => input.addEventListener("input", (event) => {
                     this.onInput(event.target);
-                })
+                }),
             );
     }
 
@@ -72,8 +69,7 @@ export class Storage
      *
      * @param {EventTarget|HTMLInputElement} element The HTML input element
      */
-    onInput(element)
-    {
+    onInput(element) {
         if (element.type && (element.type === "checkbox")) {
             this.write(element.name, element.checked);
         } else {
@@ -88,8 +84,7 @@ export class Storage
      *
      * @returns {null|String|Boolean|Number}
      */
-    read(name)
-    {
+    read(name) {
         if (this._storage.hasOwnProperty(name)) {
             return this._storage[name];
         }
@@ -103,16 +98,14 @@ export class Storage
      * @param {string}                name  The id or name of an HTML element
      * @param {string|Boolean|Number} value The value to store
      */
-    write(name, value)
-    {
+    write(name, value) {
         this._storage[name] = value;
 
         try {
             localStorage.setItem(this._name, JSON.stringify(this._storage));
-        }
-        catch (exception) {
+        } catch (exception) {
             console.log(
-                "There wasn't enough space to store '" + name + "' with value '" + value + "' in the local storage."
+                "There wasn't enough space to store '" + name + "' with value '" + value + "' in the local storage.",
             );
         }
     }

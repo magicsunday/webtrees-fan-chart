@@ -15,20 +15,17 @@ import SvgExport from "./export/svg";
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-export default class ExportFactory
-{
-    constructor()
-    {
+export default class ExportFactory {
+    constructor() {
         this._exportClass = null;
     }
 
-    setExportClass(type)
-    {
+    setExportClass(type) {
         switch (type) {
-            case 'png':
+            case "png":
                 this._exportClass = PngExport;
                 break;
-            case 'svg':
+            case "svg":
                 this._exportClass = SvgExport;
                 break;
             default:
@@ -36,14 +33,13 @@ export default class ExportFactory
         }
     };
 
-    createExport(type)
-    {
+    createExport(type) {
         this.setExportClass(type);
 
         switch (type) {
-            case 'png':
+            case "png":
                 return new this._exportClass();
-            case 'svg':
+            case "svg":
                 return new this._exportClass();
         }
     };
