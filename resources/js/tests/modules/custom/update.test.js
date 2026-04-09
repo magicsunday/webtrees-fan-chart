@@ -105,6 +105,7 @@ class PersonSelection {
             arc: { removed: false, styles: {}, attrStyle: undefined },
             name: { old: false, styles: {}, removed: false },
             color: { old: false, styles: {}, removed: false },
+            image: { old: false, styles: {}, removed: false },
             title: { old: false, removed: false },
         };
         this.eventCalls = [];
@@ -316,7 +317,7 @@ class SvgStub {
         const hasPersonSelector   = selector.includes("g.person");
         const hasMarriageSelector = selector.includes("g.marriage");
         const hasSeparatorSelector = selector.includes("g.separatorGroup");
-        const hasChildSelector    = /g\.arc|g\.name|g\.color|title/.test(selector);
+        const hasChildSelector    = /g\.arc|g\.name|g\.color|g\.image|title/.test(selector);
 
         // Marriage and separator selectors return empty selections (no marriage/separator elements in test)
         if (hasMarriageSelector || hasSeparatorSelector) {
@@ -398,6 +399,10 @@ class SvgStub {
                     return "color";
                 }
 
+                if (item.includes("g.image")) {
+                    return "image";
+                }
+
                 if (item.includes("g.arc path") || item.includes("g.arc")) {
                     return "arc";
                 }
@@ -456,6 +461,7 @@ const createSvgWithPersons = (availableIds = []) => {
 const defaultConfiguration = (overrides = {}) => ({
     hideEmptySegments: false,
     showFamilyColors: false,
+    showNames: true,
     showParentMarriageDates: false,
     generations: 6,
     updateDuration: 100,

@@ -27,6 +27,7 @@ describe("Configuration", () => {
             false,
             false,
             true,
+            true,
             false,
             false,
             3
@@ -39,6 +40,7 @@ describe("Configuration", () => {
         expect(configuration.showFamilyColors).toBe(true);
         expect(configuration.showParentMarriageDates).toBe(false);
         expect(configuration.showImages).toBe(true);
+        expect(configuration.showNames).toBe(true);
         expect(configuration.showSilhouettes).toBe(false);
         expect(configuration.numberOfInnerCircles).toBe(3);
         expect(configuration.rtl).toBe(false);
@@ -86,6 +88,7 @@ describe("Configuration", () => {
             false,
             true,
             true,
+            true,
             5
         );
 
@@ -110,6 +113,7 @@ describe("Configuration", () => {
             false,
             false,
             false,
+            true,
             false,
             true
         );
