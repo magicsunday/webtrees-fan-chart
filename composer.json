@@ -116,10 +116,10 @@
             "npx jscpd --config .jscpd.json"
         ],
         "ci:test:php:unit": [
-            "phpunit --configuration phpunit.xml"
+            "phpunit --configuration phpunit.xml --display-all-issues"
         ],
         "ci:test:php:unit:coverage": [
-            "XDEBUG_MODE=coverage phpunit --configuration phpunit.xml --coverage-html .build/coverage/"
+            "XDEBUG_MODE=coverage phpunit --configuration phpunit.xml --display-all-issues --coverage-html .build/coverage/"
         ],
         "ci:test:js:lint": [
             "npm run lint"
