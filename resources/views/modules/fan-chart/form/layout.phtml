@@ -59,6 +59,30 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         <div class="mt-3">
             <?=
                 view($moduleName . '::modules/components/checkbox', [
+                    'name'      => 'showPlaces',
+                    'label'     => I18N::translate('Show places'),
+                    'checked'   => $configuration->getShowPlaces(),
+                    'unchecked' => '0',
+                ])
+            ?>
+            <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
+                <?= I18N::translate('Displays birth and death places in inner generation arcs. Choose the level of detail below.') ?>
+            </small>
+            <div class="ps-4 mt-2">
+                <?=
+                    view('components/select', [
+                        'name'     => 'placeParts',
+                        'selected' => $configuration->getPlaceParts(),
+                        'options'  => $configuration->getPlacePartsList(),
+                        'class'    => 'form-control-sm',
+                    ])
+                ?>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <?=
+                view($moduleName . '::modules/components/checkbox', [
                     'name'      => 'showParentMarriageDates',
                     'label'     => I18N::translate('Show parent marriage dates'),
                     'checked'   => $configuration->getShowParentMarriageDates(),

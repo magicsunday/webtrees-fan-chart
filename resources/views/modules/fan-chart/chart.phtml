@@ -67,6 +67,10 @@ new WebtreesFanChart.FanChart(
             return (typeof maternalColor !== "undefined" && maternalColor !== null) ? maternalColor : <?= json_encode($configuration->getMaternalColor()) ?>;
         },
 
+        get showPlaces() {
+            return (typeof showPlaces !== "undefined" && showPlaces !== null) ? showPlaces : <?= json_encode($configuration->getShowPlaces()) ?>;
+        },
+
         get showParentMarriageDates() {
             return (typeof showParentMarriageDates !== "undefined" && showParentMarriageDates !== null) ? showParentMarriageDates : <?= json_encode($configuration->getShowParentMarriageDates()) ?>;
         },

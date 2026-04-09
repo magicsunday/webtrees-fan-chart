@@ -97,6 +97,14 @@ class Configuration
     public const string MATERNAL_COLOR_DEFAULT = '#d06f94';
 
     /**
+     * The default number of place hierarchy parts to display.
+     * 1 = lowest level (parish/city), 0 = full place name.
+     *
+     * @var int
+     */
+    private const int DEFAULT_PLACE_PARTS = 1;
+
+    /**
      * The default number of generations for which detailed life event dates are displayed.
      */
     private const int DEFAULT_DETAILED_DATE_GENERATIONS = 3;
@@ -307,6 +315,68 @@ class Configuration
                     '1'
                 )
             );
+    }
+
+    /**
+     * Returns whether to show place names or not.
+     *
+     * @return bool
+     */
+    public function getShowPlaces(): bool
+    {
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->boolean(
+                'showPlaces',
+                (bool) $this->module->getPreference(
+                    'default_showPlaces',
+                    '0'
+                )
+            );
+    }
+
+    /**
+     * Returns the number of place hierarchy parts to display.
+     *
+     * @return int
+     */
+    public function getPlaceParts(): int
+    {
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->isBetween(0, 5)
+            ->integer(
+                'placeParts',
+                (int) $this->module->getPreference(
+                    'default_placeParts',
+                    (string) self::DEFAULT_PLACE_PARTS
+                )
+            );
+    }
+
+    /**
+     * Returns a list of possible place part options.
+     *
+     * @return string[]
+     */
+    public function getPlacePartsList(): array
+    {
+        return [
+            0 => I18N::translate('Full place name'),
+            1 => I18N::translate('Lowest level (e.g. parish)'),
+            2 => I18N::translate('Lowest two levels'),
+            3 => I18N::translate('Lowest three levels'),
+        ];
     }
 
     /**

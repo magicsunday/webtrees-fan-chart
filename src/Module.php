@@ -194,6 +194,8 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
                         'fontScale'               => $validator->integer('fontScale', 100),
                         'hideEmptySegments'       => $validator->boolean('hideEmptySegments', false),
                         'showFamilyColors'        => $validator->boolean('showFamilyColors', false),
+                        'showPlaces'              => $validator->boolean('showPlaces', false),
+                        'placeParts'              => $validator->integer('placeParts', 1),
                         'showParentMarriageDates' => $validator->boolean('showParentMarriageDates', false),
                         'innerArcs'               => $validator->integer('innerArcs', 3),
                         'paternalColor'           => $validator->string('paternalColor', Configuration::PATERNAL_COLOR_DEFAULT),
@@ -295,6 +297,8 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
                 'ajax'                    => true,
                 'generations'             => $this->configuration->getGenerations(),
                 'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
+                'showPlaces'              => $this->configuration->getShowPlaces(),
+                'placeParts'              => $this->configuration->getPlaceParts(),
                 'xref'                    => $xref,
             ]
         );
