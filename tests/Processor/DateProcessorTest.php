@@ -65,7 +65,7 @@ class DateProcessorTest extends TestCase
             2
         );
 
-        self::assertSame("* 1980\n† 2020", $processor->getLifetimeDescription());
+        self::assertSame("1980\u{2013}2020", $processor->getLifetimeDescription());
     }
 
     #[Test]

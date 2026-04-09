@@ -193,6 +193,22 @@ class DateProcessor
      */
     public function getLifetimeDescription(): string
     {
+        // Detailed generations: symbols on separate lines (* 12.09.1977 \n † 24.02.2006)
+        if ($this->generation <= $this->detailedDateGenerations) {
+            return $this->getDetailedLifetimeDescription();
+        }
+
+        // Outer generations: compact single-line format (1977–2006)
+        return $this->getCompactLifetimeDescription();
+    }
+
+    /**
+     * Returns a detailed two-line lifetime description with genealogical symbols.
+     *
+     * @return string
+     */
+    private function getDetailedLifetimeDescription(): string
+    {
         if ($this->birthDate->isOK() && $this->deathDate->isOK()) {
             $birth = $this->getLifeEventDate($this->birthDate);
             $death = $this->getLifeEventDate($this->deathDate);
@@ -206,6 +222,35 @@ class DateProcessor
 
         if ($this->deathDate->isOK()) {
             return Symbols::SYMBOL_DEATH . ' ' . $this->getLifeEventDate($this->deathDate);
+        }
+
+        if ($this->individual->isDead()) {
+            return Symbols::SYMBOL_DEATH;
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns a compact single-line lifetime description (e.g. "1875–1932").
+     *
+     * @return string
+     */
+    private function getCompactLifetimeDescription(): string
+    {
+        $birthYear = $this->birthDate->isOK() ? $this->getYear($this->birthDate) : 0;
+        $deathYear = $this->deathDate->isOK() ? $this->getYear($this->deathDate) : 0;
+
+        if (($birthYear > 0) && ($deathYear > 0)) {
+            return $birthYear . "\u{2013}" . $deathYear;
+        }
+
+        if ($birthYear > 0) {
+            return Symbols::SYMBOL_BIRTH . ' ' . $birthYear;
+        }
+
+        if ($deathYear > 0) {
+            return Symbols::SYMBOL_DEATH . ' ' . $deathYear;
         }
 
         if ($this->individual->isDead()) {
