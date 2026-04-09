@@ -26,42 +26,29 @@ use MagicSunday\Webtrees\FanChart\Model\Symbols;
 class DateProcessor
 {
     /**
-     * The individual.
-     */
-    private Individual $individual;
-
-    /**
      * The birthdate of the individual.
      */
-    private Date $birthDate;
+    private readonly Date $birthDate;
 
     /**
      * The death date of the individual.
      */
-    private Date $deathDate;
-
-    /**
-     * The generation the individual belongs to.
-     */
-    private int $generation;
-
-    /**
-     * The number of generations using detailed birth and death dates.
-     */
-    private int $detailedDateGenerations;
+    private readonly Date $deathDate;
 
     /**
      * Constructor.
      *
-     * @param Individual $individual The individual to process
+     * @param Individual $individual              The individual to process
+     * @param int        $generation              The generation the individual belongs to
+     * @param int        $detailedDateGenerations The number of generations using detailed birth and death dates
      */
-    public function __construct(Individual $individual, int $generation, int $detailedDateGenerations)
-    {
-        $this->individual              = $individual;
-        $this->birthDate               = $this->individual->getBirthDate();
-        $this->deathDate               = $this->individual->getDeathDate();
-        $this->generation              = $generation;
-        $this->detailedDateGenerations = $detailedDateGenerations;
+    public function __construct(
+        private readonly Individual $individual,
+        private readonly int $generation,
+        private readonly int $detailedDateGenerations,
+    ) {
+        $this->birthDate = $this->individual->getBirthDate();
+        $this->deathDate = $this->individual->getDeathDate();
     }
 
     /**

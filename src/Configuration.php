@@ -93,25 +93,15 @@ class Configuration
     private const int MIN_DETAILED_DATE_GENERATIONS = 0;
 
     /**
-     * The calling module.
-     */
-    private AbstractModule $module;
-
-    /**
-     * The current request instance.
-     */
-    private ServerRequestInterface $request;
-
-    /**
      * Configuration constructor.
      *
      * @param ServerRequestInterface $request
      * @param AbstractModule         $module
      */
-    public function __construct(ServerRequestInterface $request, AbstractModule $module)
-    {
-        $this->request = $request;
-        $this->module  = $module;
+    public function __construct(
+        private readonly ServerRequestInterface $request,
+        private readonly AbstractModule $module,
+    ) {
     }
 
     /**

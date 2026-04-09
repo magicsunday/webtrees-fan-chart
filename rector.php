@@ -76,8 +76,5 @@ return static function (RectorConfig $rectorConfig): void {
         RemoveUnreachableStatementRector::class,
         RemoveUselessParamTagRector::class,
         RemoveUselessReturnTagRector::class,
-        \Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector::class,
-        \Rector\Privatization\Rector\Property\PrivatizeFinalClassPropertyRector::class,
-        \Rector\Php81\Rector\Property\ReadOnlyPropertyRector::class,
     ]);
 };

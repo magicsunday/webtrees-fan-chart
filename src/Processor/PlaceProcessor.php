@@ -27,26 +27,15 @@ use Fisharebest\Webtrees\Place;
 class PlaceProcessor
 {
     /**
-     * The individual.
-     */
-    private Individual $individual;
-
-    /**
-     * Number of hierarchical place parts to display in arcs
-     * (1 = lowest/parish, 0 = full place name).
-     */
-    private int $placeParts;
-
-    /**
      * Constructor.
      *
      * @param Individual $individual The individual to process
      * @param int        $placeParts Number of place hierarchy parts to show in arcs (0 = full)
      */
-    public function __construct(Individual $individual, int $placeParts)
-    {
-        $this->individual = $individual;
-        $this->placeParts = $placeParts;
+    public function __construct(
+        private readonly Individual $individual,
+        private readonly int $placeParts,
+    ) {
     }
 
     /**

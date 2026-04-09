@@ -71,8 +71,6 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      */
     private Configuration $configuration;
 
-    private DataFacade $dataFacade;
-
     /**
      * Constructor.
      *
@@ -81,11 +79,9 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      */
     public function __construct(
         ChartService $chartService,
-        DataFacade $dataFacade,
+        private DataFacade $dataFacade,
     ) {
         parent::__construct($chartService);
-
-        $this->dataFacade = $dataFacade;
     }
 
     /**
@@ -269,8 +265,10 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      *
      * @return string
      */
-    private function getAjaxRoute(Individual $individual, string $xref): string
-    {
+    private function getAjaxRoute(
+        Individual $individual,
+        string $xref,
+    ): string {
         return $this->chartUrl(
             $individual,
             [

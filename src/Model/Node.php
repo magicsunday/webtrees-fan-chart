@@ -22,8 +22,6 @@ use JsonSerializable;
  */
 class Node implements JsonSerializable
 {
-    protected NodeData $data;
-
     /**
      * The list of parents.
      *
@@ -36,9 +34,8 @@ class Node implements JsonSerializable
      *
      * @param NodeData $data
      */
-    public function __construct(NodeData $data)
+    public function __construct(protected NodeData $data)
     {
-        $this->data = $data;
     }
 
     /**

@@ -91,8 +91,10 @@ class DataFacade
      *
      * @return Node|null
      */
-    private function buildTreeStructure(?Individual $individual, int $generation = 1): ?Node
-    {
+    private function buildTreeStructure(
+        ?Individual $individual,
+        int $generation = 1,
+    ): ?Node {
         // Maximum generation reached
         if ((!$individual instanceof Individual) || ($generation > $this->configuration->getGenerations())) {
             return null;
@@ -232,8 +234,12 @@ class DataFacade
      *
      * @return string
      */
-    private function appendPlaces(string $timespan, string $birthPlace, string $deathPlace, int $generation): string
-    {
+    private function appendPlaces(
+        string $timespan,
+        string $birthPlace,
+        string $deathPlace,
+        int $generation,
+    ): string {
         if (!$this->configuration->getShowPlaces()) {
             return $timespan;
         }
@@ -271,8 +277,11 @@ class DataFacade
      *
      * @return string
      */
-    private function appendPlaceToLine(string $dateLine, string $place, int $generation): string
-    {
+    private function appendPlaceToLine(
+        string $dateLine,
+        string $place,
+        int $generation,
+    ): string {
         if (!$this->configuration->getShowPlaces()) {
             return $dateLine;
         }

@@ -29,18 +29,12 @@ use function is_array;
 class VersionInformation
 {
     /**
-     * The module.
-     */
-    private ModuleCustomInterface $module;
-
-    /**
      * Constructor.
      *
      * @param ModuleCustomInterface $module The module
      */
-    public function __construct(ModuleCustomInterface $module)
+    public function __construct(private readonly ModuleCustomInterface $module)
     {
-        $this->module = $module;
     }
 
     /**

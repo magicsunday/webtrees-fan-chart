@@ -28,25 +28,15 @@ use function sprintf;
 class ImageProcessor
 {
     /**
-     * The module.
-     */
-    private ModuleCustomInterface $module;
-
-    /**
-     * The individual.
-     */
-    private Individual $individual;
-
-    /**
      * Constructor.
      *
      * @param ModuleCustomInterface $module     The module
      * @param Individual            $individual The individual to process
      */
-    public function __construct(ModuleCustomInterface $module, Individual $individual)
-    {
-        $this->module     = $module;
-        $this->individual = $individual;
+    public function __construct(
+        private readonly ModuleCustomInterface $module,
+        private readonly Individual $individual,
+    ) {
     }
 
     /**

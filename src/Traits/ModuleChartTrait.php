@@ -41,8 +41,10 @@ trait ModuleChartTrait
         return I18N::translate('Fan chart of %s', $individual->fullName());
     }
 
-    public function chartUrl(Individual $individual, array $parameters = []): string
-    {
+    public function chartUrl(
+        Individual $individual,
+        array $parameters = [],
+    ): string {
         return route(
             self::ROUTE_DEFAULT,
             [

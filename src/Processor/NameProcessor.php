@@ -52,11 +52,6 @@ class NameProcessor
     private const string XPATH_PREFERRED_NAME = '//span[@class="NAME"]//span[@class="starredname"]/text()';
 
     /**
-     * The individual.
-     */
-    private Individual $individual;
-
-    /**
      * The individual's primary name array.
      *
      * @var string[]
@@ -66,7 +61,7 @@ class NameProcessor
     /**
      * The DOM xpath processor.
      */
-    private DOMXPath $xPath;
+    private readonly DOMXPath $xPath;
 
     /**
      * Constructor.
@@ -76,11 +71,10 @@ class NameProcessor
      * @param bool            $useMarriedName TRUE to return the married name instead of the primary one
      */
     public function __construct(
-        Individual $individual,
+        private readonly Individual $individual,
         ?Individual $spouse = null,
         bool $useMarriedName = false,
     ) {
-        $this->individual  = $individual;
         $this->primaryName = $this->extractPrimaryName($spouse, $useMarriedName);
 
         // The formatted name of the individual (containing HTML) is the input to the xpath processor
