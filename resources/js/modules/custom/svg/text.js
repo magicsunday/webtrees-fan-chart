@@ -6,7 +6,7 @@
  */
 
 import * as d3 from "../../lib/d3";
-import Geometry, {MATH_DEG2RAD, MATH_RAD2DEG} from "./geometry";
+import Geometry, {MATH_RAD2DEG} from "./geometry";
 import measureText from "../../lib/chart/text/measure";
 
 /**
@@ -253,10 +253,6 @@ export default class Text {
     createNamesData(datum) {
         /** @var {LabelElementData[][]} names */
         const names = {};
-        /** @var {LabelElementData[]} firstnames */
-        const firstnames = {};
-        /** @var {LabelElementData[]} lastnames */
-        const lastnames = {};
         let minPosFirstnames = Number.MAX_SAFE_INTEGER;
         let minPosLastnames = Number.MAX_SAFE_INTEGER;
 
@@ -566,9 +562,7 @@ export default class Text {
         const positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
         const startAngle = this._geometry.startAngle(data.depth, data.x0);
         const endAngle = this._geometry.endAngle(data.depth, data.x1);
-        let relativeRadius;
-
-        relativeRadius = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, position));
+        const relativeRadius = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, position));
 
         // Create an arc generator for path segments
         const arcGenerator = d3.arc()

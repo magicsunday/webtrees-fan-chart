@@ -23,7 +23,7 @@
         "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
         "test:exports": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runTestsByPath resources/js/tests/export.integration.test.js resources/js/tests/export.large.integration.test.js",
         "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
-        "lint": "eslint resources/js/modules/",
+        "lint": "eslint --max-warnings 0 resources/js/modules/",
         "lint:fix": "eslint --fix resources/js/modules/"
     },
     "devDependencies": {

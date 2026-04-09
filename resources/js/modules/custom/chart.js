@@ -15,7 +15,6 @@ import Geometry from "./svg/geometry";
 import FamilyColor from "./svg/family-color";
 import Update from "./update";
 
-const MIN_HEIGHT = 500;
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
 
 /**

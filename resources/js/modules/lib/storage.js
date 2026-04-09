@@ -103,7 +103,7 @@ export class Storage {
 
         try {
             localStorage.setItem(this._name, JSON.stringify(this._storage));
-        } catch (exception) {
+        } catch (_exception) {
             console.log(
                 "There wasn't enough space to store '" + name + "' with value '" + value + "' in the local storage.",
             );
