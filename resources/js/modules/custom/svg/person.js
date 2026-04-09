@@ -73,7 +73,17 @@ export default class Person {
                     ? this._configuration.centerCircleRadius * 2
                     : this._geometry.outerRadius(datum.depth) - this._geometry.innerRadius(datum.depth);
 
-                const imageSize = Math.min(arcHeight * 0.4, 55);
+                let imageSize;
+
+                if (this._configuration.showNames) {
+                    imageSize = Math.min(arcHeight * 0.4, 55);
+                } else {
+                    const arcWidth = (datum.depth === 0)
+                        ? arcHeight
+                        : (this._geometry.endAngle(datum.depth, datum.x1) - this._geometry.startAngle(datum.depth, datum.x0)) * this._geometry.innerRadius(datum.depth);
+
+                    imageSize = Math.min(arcHeight, arcWidth) * 0.8;
+                }
 
                 // Check angular width — skip image if arc segment is too narrow
                 const angularWidth = (datum.depth === 0)
@@ -243,12 +253,10 @@ export default class Person {
             const endAngle = this._geometry.endAngle(datum.depth, datum.x1);
             const centerRadius = this._geometry.centerRadius(datum.depth);
 
-            const totalBlock = imageSize + gap + textWidth;
-            const blockShift = totalBlock / 2;
-            const imageCenterOffset = blockShift - (imageSize / 2);
-
-            // Convert pixel offset to angular offset
-            const shiftAngle = imageCenterOffset / centerRadius;
+            // When text is present, shift image left to center image+text block
+            const shiftAngle = (textWidth > 0)
+                ? ((textWidth + gap) / 2) / centerRadius
+                : 0;
 
             const midAngle = (startAngle + endAngle) / 2;
             const flipped = this._geometry.isPositionFlipped(datum.depth, datum.x0, datum.x1);

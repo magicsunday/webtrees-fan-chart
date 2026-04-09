@@ -233,7 +233,9 @@ export default class Chart {
             separatorGroup = this._svg.visual.append("g").attr("class", "separatorGroup");
         }
 
-        const maxDepth = this._configuration.generations;
+        const maxDepth = !this._configuration.showNames
+            ? Math.min(this._configuration.generations, this._configuration.numberOfInnerCircles)
+            : this._configuration.generations;
 
         for (let depth = 1; depth <= maxDepth; depth++) {
             const nodesAtDepth = this._hierarchy.nodes
@@ -248,8 +250,14 @@ export default class Chart {
                 if (current.parent !== next.parent) {
                     const angle = geometry.calcAngle(current.x1);
                     const innerR = geometry.innerRadius(depth);
-                    // Extend through the marriage arc gap to the next generation
-                    const outerR = (this._configuration.showParentMarriageDates && (depth < (this._configuration.generations - 1)))
+
+                    // Extend through the marriage arc gap only when the
+                    // marriage arc at this depth is actually visible
+                    const marriageVisible = this._configuration.showParentMarriageDates
+                        && (depth < (this._configuration.generations - 1))
+                        && (this._configuration.showNames || (depth < this._configuration.numberOfInnerCircles));
+
+                    const outerR = marriageVisible
                         ? geometry.innerRadius(depth + 1)
                         : geometry.outerRadius(depth);
 
