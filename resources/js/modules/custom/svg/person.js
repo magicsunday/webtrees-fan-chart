@@ -68,18 +68,25 @@ export default class Person {
 
                 const imageSize = Math.min(arcHeight * 0.4, 55);
 
-                if (imageSize >= 16) {
+                // Check angular width — skip image if arc segment is too narrow
+                const angularWidth = (datum.depth === 0)
+                    ? 360
+                    : (datum.x1 - datum.x0) * 360;
+
+                if ((imageSize >= 28) && (angularWidth >= 20)) {
                     datum.data.data.imageSize = imageSize;
                 }
             }
 
             // Render labels (text layout uses imageSize if set above)
-            const labelRenderer = new LabelRenderer(this._svg, this._configuration);
-            labelRenderer.addLabel(person, datum);
+            if (this._configuration.showNames) {
+                const labelRenderer = new LabelRenderer(this._svg, this._configuration);
+                labelRenderer.addLabel(person, datum);
+            }
 
-            // Place image after text is rendered, using getBBox for exact sizing
+            // Place image after text is rendered
             if (datum.data.data.imageSize) {
-                this.addImageToPerson(person, datum);
+                this.addImageToPerson(person, datum, this._configuration.showNames);
             }
 
             this.addColorGroup(person, datum);
@@ -146,41 +153,46 @@ export default class Person {
      * Center node: image above the text, horizontally centered.
      * Inner arcs: image left of the text block, both centered on arc.
      *
-     * @param {Selection} person The parent element
-     * @param {Object}    datum  The D3 data object
+     * @param {Selection} person    The parent element
+     * @param {Object}    datum     The D3 data object
+     * @param {boolean}   showNames Whether name labels are rendered
      *
      * @private
      */
-    addImageToPerson(person, datum)
-    {
-        let imageSize = datum.data.data.imageSize;
+    addImageToPerson(person, datum, showNames = true) {
+        const imageSize = datum.data.data.imageSize;
 
         if (!imageSize) {
             return;
         }
 
         // Select the NEW name group (not the old one being faded out)
-        let nameGroup = person.select("g.name:not(.old)");
+        const nameGroup = person.select("g.name:not(.old)");
         let textWidth = 0;
 
         nameGroup.selectAll("text").each(function () {
-            let lineLength = this.getComputedTextLength();
+            const lineLength = this.getComputedTextLength();
 
             if (lineLength > textWidth) {
                 textWidth = lineLength;
             }
         });
 
-        let clipId = "clip-image-" + datum.id;
-        let gap    = 10;
+        const clipId = "clip-image-" + datum.id + "-" + Date.now();
+        const gap = 10;
 
         if (datum.depth === 0) {
-            // Center node: image above text, both vertically centered
-            let textBBox    = nameGroup.node() ? nameGroup.node().getBBox() : null;
-            let textHeight  = textBBox ? textBBox.height : 50;
-            let imageGap    = 6;
-            let totalHeight = imageSize + imageGap + textHeight;
-            let centerY     = -(totalHeight / 2) + (imageSize / 2);
+            // Center node: image above text, or centered alone if no names shown
+            let centerY = 0;
+
+            if (showNames) {
+                const firstText = nameGroup.select("text");
+                const firstDy = parseFloat(firstText.attr("dy")) || 0;
+                const fontSize = this._geometry.getFontSize(datum);
+                const lineHeight = fontSize * 1.3;
+                const imageGap = 6;
+                centerY = firstDy - (lineHeight / 2) - imageGap - (imageSize / 2);
+            }
 
             this._svg.defs
                 .append("clipPath")
@@ -190,8 +202,14 @@ export default class Person {
                 .attr("cy", centerY)
                 .attr("r", imageSize / 2);
 
-            let imageGroup = person.append("g")
+            const imageGroup = person.append("g")
                 .attr("class", "image");
+
+            imageGroup.append("circle")
+                .attr("cx", 0)
+                .attr("cy", centerY)
+                .attr("r", imageSize / 2)
+                .attr("fill", "white");
 
             imageGroup.append("image")
                 .attr("href", datum.data.data.thumbnail)
@@ -200,7 +218,7 @@ export default class Person {
                 .attr("width", imageSize)
                 .attr("height", imageSize)
                 .attr("clip-path", "url(#" + clipId + ")")
-                .attr("preserveAspectRatio", "xMidYMid slice");
+                .attr("preserveAspectRatio", "xMidYMid meet");
 
             imageGroup.append("circle")
                 .attr("cx", 0)
@@ -214,27 +232,27 @@ export default class Person {
             datum.data.data.imageSize = imageSize;
         } else {
             // Inner arcs: use measured text width to center image+text block.
-            let startAngle   = this._geometry.startAngle(datum.depth, datum.x0);
-            let endAngle     = this._geometry.endAngle(datum.depth, datum.x1);
-            let centerRadius = this._geometry.centerRadius(datum.depth);
+            const startAngle = this._geometry.startAngle(datum.depth, datum.x0);
+            const endAngle = this._geometry.endAngle(datum.depth, datum.x1);
+            const centerRadius = this._geometry.centerRadius(datum.depth);
 
-            let totalBlock  = imageSize + gap + textWidth;
-            let blockShift  = totalBlock / 2;
-            let imageCenterOffset = blockShift - (imageSize / 2);
+            const totalBlock = imageSize + gap + textWidth;
+            const blockShift = totalBlock / 2;
+            const imageCenterOffset = blockShift - (imageSize / 2);
 
             // Convert pixel offset to angular offset
-            let shiftAngle = imageCenterOffset / centerRadius;
+            const shiftAngle = imageCenterOffset / centerRadius;
 
-            let midAngle = (startAngle + endAngle) / 2;
-            let flipped  = this._geometry.isPositionFlipped(datum.depth, datum.x0, datum.x1);
+            const midAngle = (startAngle + endAngle) / 2;
+            const flipped = this._geometry.isPositionFlipped(datum.depth, datum.x0, datum.x1);
 
-            let imageAngle = flipped
+            const imageAngle = flipped
                 ? midAngle + shiftAngle
                 : midAngle - shiftAngle;
 
-            let rotateDeg = imageAngle * (180 / Math.PI) + (flipped ? 180 : 0);
-            let posX = centerRadius * Math.sin(imageAngle);
-            let posY = -centerRadius * Math.cos(imageAngle);
+            const rotateDeg = imageAngle * (180 / Math.PI) + (flipped ? 180 : 0);
+            const posX = centerRadius * Math.sin(imageAngle);
+            const posY = -centerRadius * Math.cos(imageAngle);
 
             this._svg.defs
                 .append("clipPath")
@@ -244,12 +262,18 @@ export default class Person {
                 .attr("cy", 0)
                 .attr("r", imageSize / 2);
 
-            let imageGroup = person.append("g")
+            const imageGroup = person.append("g")
                 .attr("class", "image")
                 .attr("transform",
                     "translate(" + posX + "," + posY + ") "
-                    + "rotate(" + rotateDeg + ")"
+                    + "rotate(" + rotateDeg + ")",
                 );
+
+            imageGroup.append("circle")
+                .attr("cx", 0)
+                .attr("cy", 0)
+                .attr("r", imageSize / 2)
+                .attr("fill", "white");
 
             imageGroup.append("image")
                 .attr("href", datum.data.data.thumbnail)
@@ -258,7 +282,7 @@ export default class Person {
                 .attr("width", imageSize)
                 .attr("height", imageSize)
                 .attr("clip-path", "url(#" + clipId + ")")
-                .attr("preserveAspectRatio", "xMidYMid slice");
+                .attr("preserveAspectRatio", "xMidYMid meet");
 
             imageGroup.append("circle")
                 .attr("cx", 0)
@@ -269,12 +293,11 @@ export default class Person {
                 .attr("stroke-width", 1);
 
             // Shift the text right to make room for the image.
-            // Text left edge = block center + gap/2 from arc midpoint.
-            let textShiftPx = (imageSize / 2) + gap;
-            let textShiftPercent = (textShiftPx / (Math.abs(endAngle - startAngle) * centerRadius)) * 50;
+            const textShiftPx = (imageSize / 2) + gap;
+            const textShiftPercent = (textShiftPx / (Math.abs(endAngle - startAngle) * centerRadius)) * 50;
 
             nameGroup.selectAll("textPath").each(function () {
-                let currentOffset = parseFloat(d3.select(this).attr("startOffset")) || 25;
+                const currentOffset = parseFloat(d3.select(this).attr("startOffset")) || 25;
                 d3.select(this).attr("startOffset", (currentOffset + textShiftPercent).toFixed(1) + "%");
             });
         }

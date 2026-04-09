@@ -52,6 +52,7 @@ export class FanChart {
             options.showPlaces,
             options.showParentMarriageDates,
             options.showImages,
+            options.showNames,
             options.showSilhouettes,
             options.rtl,
             options.innerArcs,

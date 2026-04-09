@@ -90,19 +90,15 @@ export default class TooltipRenderer {
 
         let image = "";
 
-        // Show individual image or silhouette (depending on tree configuration)
-        if (this._configuration.showImages) {
-            if (datum.data.data.thumbnail) {
-                image = "<div class=\"image\">";
-                image += "<img src=\"" + datum.data.data.thumbnail + "\" alt=\"\" />";
-                image += "</div>";
-            } else {
-                if (this._configuration.showSilhouettes) {
-                    image = "<div class=\"image\">";
-                    image += "<i class=\"icon-silhouette icon-silhouette-" + datum.data.data.sex.toLowerCase() + " wt-icon-flip-rtl\" ></i>";
-                    image += "</div>";
-                }
-            }
+        // Always show individual image in overlay (independent of arc image setting)
+        if (datum.data.data.thumbnail) {
+            image = "<div class=\"image\">";
+            image += "<img src=\"" + datum.data.data.thumbnail + "\" alt=\"\" />";
+            image += "</div>";
+        } else if (this._configuration.showSilhouettes) {
+            image = "<div class=\"image\">";
+            image += "<i class=\"icon-silhouette icon-silhouette-" + datum.data.data.sex.toLowerCase() + " wt-icon-flip-rtl\" ></i>";
+            image += "</div>";
         }
 
         // Use full compact dates for tooltip (always DD.MM.YYYY
