@@ -220,3 +220,15 @@ msgstr "Slegs jare"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Wys volledige datums tot generasie %s"
+
+msgid "Show images"
+msgstr "Wys beelde"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "Vertoon miniatuurbeelde in die binneste boë en die middel van die diagram. Beelde word slegs vertoon as die boogsegment breed genoeg is."
+
+msgid "Show names"
+msgstr "Wys name"
+
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Vertoon name en datums in die diagramsegmente. Wanneer gedeaktiveer, word buitenste generasies buite die binneste boë versteek."

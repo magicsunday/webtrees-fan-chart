@@ -220,3 +220,15 @@ msgstr "Kun årstall"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Vis fullstendige datoer til generasjon %s"
+
+msgid "Show images"
+msgstr "Vis bilder"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "Viser miniatyrbilder i de indre buene og i midten av diagrammet. Bilder vises kun hvis buesegmentet er bredt nok."
+
+msgid "Show names"
+msgstr "Vis navn"
+
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Viser navn og datoer i diagramsegmentene. Når deaktivert, skjules ytre generasjoner utenfor de indre buene."

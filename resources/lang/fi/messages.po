@@ -217,3 +217,15 @@ msgstr "Vain vuodet"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Näytä tarkat päivämäärät sukupolveen %s asti"
+
+msgid "Show images"
+msgstr "Näytä kuvat"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "Näyttää pikkukuvat sisäkaarissa ja kaavion keskellä. Kuvat näytetään vain jos kaarisegmentti on riittävän leveä."
+
+msgid "Show names"
+msgstr "Näytä nimet"
+
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Näyttää nimet ja päivämäärät kaavion segmenteissä. Kun poistettu käytöstä, sisäkaarien ulkopuoliset sukupolvet piilotetaan."

@@ -220,3 +220,15 @@ msgstr "Само године"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Прикажи пуне датуме до генерације %s"
+
+msgid "Show images"
+msgstr "Прикажи слике"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "Приказује сличице у унутрашњим луковима и у средишту дијаграма. Слике се приказују само ако је сегмент лука довољно широк."
+
+msgid "Show names"
+msgstr "Прикажи имена"
+
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Приказује имена и датуме у сегментима дијаграма. Када је искључено, спољне генерације изван унутрашњих лукова су скривене."

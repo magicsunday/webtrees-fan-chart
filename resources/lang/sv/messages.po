@@ -223,3 +223,15 @@ msgstr "Endast år"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Visa fullständiga datum till generation %s"
+
+msgid "Show images"
+msgstr "Visa bilder"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "Visar miniatyrbilder i de inre bågarna och i mitten av diagrammet. Bilder visas bara om bågsegmentet är tillräckligt brett."
+
+msgid "Show names"
+msgstr "Visa namn"
+
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Visar namn och datum i diagramsegmenten. När inaktiverat döljs yttre generationer bortom de inre bågarna."

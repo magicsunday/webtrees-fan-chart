@@ -45,6 +45,8 @@ export default class Text {
             const parentId = d3.select(parent.node().parentNode).attr("id");
             const nameGroups = this.createNamesData(datum);
 
+            const textStartOffset = "25%";
+
             // The textPath element must be contained individually in a text element, otherwise the exported
             // chart will not be drawn correctly in Inkscape (actually this is not necessary, the browsers
             // display the chart correctly).
@@ -60,7 +62,7 @@ export default class Text {
                     .append("text")
                     .append("textPath")
                     .attr("href", "#" + pathId)
-                    .attr("startOffset", "25%");
+                    .attr("startOffset", textStartOffset);
 
                 this.addNameElements(
                     textPath,
@@ -84,7 +86,7 @@ export default class Text {
                     .append("text")
                     .append("textPath")
                     .attr("href", "#" + pathId)
-                    .attr("startOffset", "25%")
+                    .attr("startOffset", textStartOffset)
                     .classed("wt-chart-box-name-alt", true)
                     .classed("rtl", datum.data.data.isAltRtl);
 
@@ -111,7 +113,7 @@ export default class Text {
                         .append("text")
                         .append("textPath")
                         .attr("href", "#" + pathId)
-                        .attr("startOffset", "25%")
+                        .attr("startOffset", textStartOffset)
                         .attr("class", "date");
 
                     textPath.append("title")
@@ -749,8 +751,18 @@ export default class Text {
             availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, position));
         }
 
-        return availableWidth - (this._configuration.textPadding * 2)
+        availableWidth = availableWidth - (this._configuration.textPadding * 2)
             - (this._configuration.padDistance / 2);
+
+        // Reduce available width when an image is present.
+        // imageSize is pre-computed and set on the datum by Person.init() before labels are rendered.
+        const imageSize = data.data.data.imageSize || 0;
+
+        if (imageSize > 0) {
+            availableWidth -= (imageSize + 10);
+        }
+
+        return availableWidth;
     }
 
     /**
@@ -767,26 +779,71 @@ export default class Text {
         const textElements = parent.selectAll("text");
         const countElements = textElements.size();
 
-        // Center person: vertical stacking via dy
+        // Center person: vertical stacking via dy.
+        // imageSize is pre-computed and set on the datum by Person.init() before labels are rendered.
         if (datum.depth === 0) {
-            const offset = Math.max(1.0, countElements * 0.4);
+            const fontSize = that._geometry.getFontSize(datum);
+            const imageSize = datum.data.data.imageSize || 0;
 
-            const mapIndexToOffset = d3.scaleLinear()
-                .domain([0, countElements - 1])
-                .range([-offset, offset]);
+            if (imageSize > 0) {
+                // Image present: use absolute positioning to center image + text block.
+                // Tight spacing within groups (name/date), larger gap between groups.
+                const imageGap = 6;
+                const innerLineHeight = fontSize * 0.95;
+                const groupGap = fontSize * 0.45;
 
-            textElements.each(function (ignore, i) {
-                const offsetRotate = mapIndexToOffset(i) * that._configuration.fontScale / 100.0;
-                const fontSize = that._geometry.getFontSize(datum);
-                const isDate = d3.select(this).classed("date");
-                const groupShift = fontSize * 0.15;
+                // Only include group gap when both names and dates are present
+                let hasNames = false;
+                let hasDates = false;
 
-                d3.select(this).attr("dy",
-                    (offsetRotate * fontSize) + (fontSize / 2)
-                    + (isDate ? groupShift : -groupShift)
-                    + "px",
-                );
-            });
+                textElements.each(function () {
+                    if (d3.select(this).classed("date")) {
+                        hasDates = true;
+                    } else {
+                        hasNames = true;
+                    }
+                });
+
+                const actualGroupGap = (hasNames && hasDates) ? groupGap : 0;
+                const textHeight = (countElements * innerLineHeight) + actualGroupGap;
+                const totalHeight = imageSize + imageGap + textHeight;
+
+                let currentY = -(totalHeight / 2) + imageSize + imageGap + (innerLineHeight / 2);
+                let prevIsDate = false;
+
+                textElements.each(function () {
+                    const isDate = d3.select(this).classed("date");
+
+                    // Add group gap when switching from names to dates
+                    if (isDate && !prevIsDate) {
+                        currentY += groupGap;
+                    }
+
+                    d3.select(this).attr("dy", currentY + "px");
+
+                    currentY += innerLineHeight;
+                    prevIsDate = isDate;
+                });
+            } else {
+                // No image: use original index-based offset positioning
+                const offset = Math.max(1.0, countElements * 0.4);
+
+                const mapIndexToOffset = d3.scaleLinear()
+                    .domain([0, countElements - 1])
+                    .range([-offset, offset]);
+
+                textElements.each(function (_ignore, i) {
+                    const offsetRotate = mapIndexToOffset(i) * that._configuration.fontScale / 100.0;
+                    const isDate = d3.select(this).classed("date");
+                    const groupShift = fontSize * 0.15;
+
+                    d3.select(this).attr("dy",
+                        (offsetRotate * fontSize) + (fontSize / 2)
+                        + (isDate ? groupShift : -groupShift)
+                        + "px",
+                    );
+                });
+            }
 
             return;
         }

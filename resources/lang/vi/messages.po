@@ -220,3 +220,15 @@ msgstr "Chỉ năm"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Hiển thị đầy đủ ngày tháng đến thế hệ %s"
+
+msgid "Show images"
+msgstr "Hiển thị hình ảnh"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "Hiển thị hình thu nhỏ trong các cung bên trong và ở giữa biểu đồ. Hình ảnh chỉ hiển thị khi đoạn cung đủ rộng."
+
+msgid "Show names"
+msgstr "Hiển thị tên"
+
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Hiển thị tên và ngày tháng trong các phân đoạn biểu đồ. Khi tắt, các thế hệ bên ngoài vượt quá các cung bên trong sẽ bị ẩn."

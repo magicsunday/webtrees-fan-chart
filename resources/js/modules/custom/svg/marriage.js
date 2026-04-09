@@ -42,6 +42,13 @@ export default class Marriage {
      * @param {Object}    datum
      */
     init(marriage, datum) {
+        // Hide marriage arcs for outer generations when names are disabled
+        if (!this._configuration.showNames
+            && (datum.depth >= this._configuration.numberOfInnerCircles)
+        ) {
+            return;
+        }
+
         const hasChildren = datum.children
             && datum.children.some(child => child.data.data.xref !== "");
 

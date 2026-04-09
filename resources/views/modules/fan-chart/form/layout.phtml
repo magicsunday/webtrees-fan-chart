@@ -35,25 +35,29 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         <div class="mt-3">
             <?=
                 view($moduleName . '::modules/components/checkbox', [
-                    'name'      => 'showFamilyColors',
-                    'label'     => I18N::translate('Show family colors'),
-                    'checked'   => $configuration->getShowFamilyColors(),
+                    'name'      => 'showNames',
+                    'label'     => I18N::translate('Show names'),
+                    'checked'   => $configuration->getShowNames(),
                     'unchecked' => '0',
                 ])
             ?>
             <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
-                <?= I18N::translate('Colors the arcs by family branch. Each couple shares the same color, derived from the chosen base colors.') ?>
+                <?= I18N::translate('Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden.') ?>
             </small>
-            <div class="ps-4 mt-2 d-flex align-items-center gap-3">
-                <label class="d-flex align-items-center gap-1 mb-0">
-                    <input type="color" id="paternalColor" name="paternalColor" value="<?= e($configuration->getPaternalColor()) ?>">
-                    <?= I18N::translate('Paternal') ?>
-                </label>
-                <label class="d-flex align-items-center gap-1 mb-0">
-                    <input type="color" id="maternalColor" name="maternalColor" value="<?= e($configuration->getMaternalColor()) ?>">
-                    <?= I18N::translate('Maternal') ?>
-                </label>
-            </div>
+        </div>
+
+        <div class="mt-3">
+            <?=
+                view($moduleName . '::modules/components/checkbox', [
+                    'name'      => 'showImages',
+                    'label'     => I18N::translate('Show images'),
+                    'checked'   => $configuration->getShowImages(),
+                    'unchecked' => '0',
+                ])
+            ?>
+            <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
+                <?= I18N::translate('Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough.') ?>
+            </small>
         </div>
 
         <div class="mt-3">
@@ -89,6 +93,30 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                     'unchecked' => '0',
                 ])
             ?>
+        </div>
+
+        <div class="mt-3">
+            <?=
+                view($moduleName . '::modules/components/checkbox', [
+                    'name'      => 'showFamilyColors',
+                    'label'     => I18N::translate('Show family colors'),
+                    'checked'   => $configuration->getShowFamilyColors(),
+                    'unchecked' => '0',
+                ])
+            ?>
+            <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
+                <?= I18N::translate('Colors the arcs by family branch. Each couple shares the same color, derived from the chosen base colors.') ?>
+            </small>
+            <div class="ps-4 mt-2 d-flex align-items-center gap-3">
+                <label class="d-flex align-items-center gap-1 mb-0">
+                    <input type="color" id="paternalColor" name="paternalColor" value="<?= e($configuration->getPaternalColor()) ?>">
+                    <?= I18N::translate('Paternal') ?>
+                </label>
+                <label class="d-flex align-items-center gap-1 mb-0">
+                    <input type="color" id="maternalColor" name="maternalColor" value="<?= e($configuration->getMaternalColor()) ?>">
+                    <?= I18N::translate('Maternal') ?>
+                </label>
+            </div>
         </div>
     </div>
 </div>

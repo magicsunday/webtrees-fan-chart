@@ -168,7 +168,7 @@ class DataFacade
             ->setPreferredName($nameProcessor->getPreferredName())
             ->setAlternativeName($alternativeName)
             ->setIsAltRtl($this->isRtl($alternativeName))
-            ->setThumbnail($imageProcessor->getHighlightImageUrl(100, 100, false))
+            ->setThumbnail($imageProcessor->getHighlightImageUrl(100, 100))
             ->setSex($individual->sex())
             ->setBirth($dateProcessor->getBirthDate())
             ->setDeath($dateProcessor->getDeathDate())

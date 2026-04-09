@@ -54,6 +54,7 @@ export default class Configuration {
      * @param {boolean}  showPlaces
      * @param {boolean}  showParentMarriageDates
      * @param {boolean}  showImages
+     * @param {boolean}  showNames
      * @param {boolean}  showSilhouettes
      * @param {boolean}  rtl
      * @param {number}   innerArcs
@@ -70,6 +71,7 @@ export default class Configuration {
         showPlaces = false,
         showParentMarriageDates = false,
         showImages = false,
+        showNames = true,
         showSilhouettes = false,
         rtl = false,
         innerArcs = 4,
@@ -123,6 +125,7 @@ export default class Configuration {
         this._showPlaces = showPlaces;
         this._showParentMarriageDates = showParentMarriageDates;
         this._showImages = showImages;
+        this._showNames = showNames;
         this._showSilhouettes = showSilhouettes;
 
         // Duration of update animation if clicked on a person
@@ -262,6 +265,15 @@ export default class Configuration {
      */
     get showImages() {
         return this._showImages;
+    }
+
+    /**
+     * Returns TRUE if names and dates should be shown in the arcs otherwise FALSE.
+     *
+     * @return {boolean}
+     */
+    get showNames() {
+        return this._showNames;
     }
 
     /**

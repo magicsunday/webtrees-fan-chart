@@ -218,3 +218,15 @@ msgstr "僅顯示年份"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "顯示完整日期至第 %s 代"
+
+msgid "Show images"
+msgstr "顯示圖片"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "在內弧和圖表中心顯示縮略圖。僅當弧段足夠寬時才顯示圖片。"
+
+msgid "Show names"
+msgstr "顯示姓名"
+
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "在圖表扇區中顯示姓名和日期。禁用時，內弧之外的外部世代將被隱藏。"
