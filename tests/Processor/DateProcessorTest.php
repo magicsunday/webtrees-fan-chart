@@ -111,11 +111,11 @@ class DateProcessorTest extends TestCase
      */
     private function createDate(string $compactDate, bool $isOk, int $year): Date
     {
-        $calendarDate = $this->createMock(AbstractCalendarDate::class);
+        $calendarDate = self::createStub(AbstractCalendarDate::class);
         $calendarDate->method('year')->willReturn($year);
         $calendarDate->method('format')->willReturn($compactDate);
 
-        $date = $this->createMock(Date::class);
+        $date = self::createStub(Date::class);
         $date->method('minimumDate')->willReturn($calendarDate);
         $date->method('isOK')->willReturn($isOk);
 
@@ -133,7 +133,7 @@ class DateProcessorTest extends TestCase
      */
     private function createIndividual(Date $birthDate, Date $deathDate, bool $isDead = false): Individual
     {
-        $individual = $this->createMock(Individual::class);
+        $individual = self::createStub(Individual::class);
         $individual->method('getBirthDate')->willReturn($birthDate);
         $individual->method('getDeathDate')->willReturn($deathDate);
         $individual->method('isDead')->willReturn($isDead);

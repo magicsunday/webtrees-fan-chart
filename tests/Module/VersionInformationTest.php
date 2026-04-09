@@ -47,7 +47,7 @@ final class VersionInformationTest extends TestCase
 
         Registry::cache($factory);
 
-        $module = $this->createMock(ModuleCustomInterface::class);
+        $module = self::createStub(ModuleCustomInterface::class);
         $module->method('customModuleLatestVersionUrl')->willReturn('');
         $module->method('customModuleVersion')->willReturn('3.0.1');
         $module->method('name')->willReturn('webtrees-fan-chart');

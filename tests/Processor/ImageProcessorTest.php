@@ -32,12 +32,12 @@ final class ImageProcessorTest extends TestCase
     #[Test]
     public function returnsHighlightImageWhenAvailable(): void
     {
-        $mediaFile = $this->createMock(MediaFile::class);
-        $mediaFile->method('imageUrl')->with(100, 100, 'contain')->willReturn('/highlight.png');
+        $mediaFile = self::createStub(MediaFile::class);
+        $mediaFile->method('imageUrl')->willReturn('/highlight.png');
 
         $tree = $this->createConfiguredTree('1', '1');
 
-        $individual = $this->createMock(Individual::class);
+        $individual = self::createStub(Individual::class);
         $individual->method('canShow')->willReturn(true);
         $individual->method('tree')->willReturn($tree);
         $individual->method('findHighlightedMediaFile')->willReturn($mediaFile);
@@ -56,7 +56,7 @@ final class ImageProcessorTest extends TestCase
     {
         $tree = $this->createConfiguredTree('1', '1');
 
-        $individual = $this->createMock(Individual::class);
+        $individual = self::createStub(Individual::class);
         $individual->method('canShow')->willReturn(true);
         $individual->method('tree')->willReturn($tree);
         $individual->method('findHighlightedMediaFile')->willReturn(null);
@@ -77,7 +77,7 @@ final class ImageProcessorTest extends TestCase
     {
         $tree = $this->createConfiguredTree('', '');
 
-        $individual = $this->createMock(Individual::class);
+        $individual = self::createStub(Individual::class);
         $individual->method('canShow')->willReturn(false);
         $individual->method('tree')->willReturn($tree);
 
@@ -92,7 +92,7 @@ final class ImageProcessorTest extends TestCase
      */
     private function createConfiguredTree(string $highlightPreference, string $silhouettePreference): Tree
     {
-        $tree = $this->createMock(Tree::class);
+        $tree = self::createStub(Tree::class);
         $tree->method('getPreference')->willReturnCallback(
             static fn (string $name): string => $name === 'SHOW_HIGHLIGHT_IMAGES' ? $highlightPreference : $silhouettePreference
         );

@@ -199,7 +199,7 @@ final class ConfigurationTest extends TestCase
             )
         );
 
-        $chartService = $this->createMock(ChartService::class);
+        $chartService = self::createStub(ChartService::class);
         $module       = new Module($chartService, new DataFacade());
 
         $reflection = new ReflectionProperty(AbstractModule::class, 'name');

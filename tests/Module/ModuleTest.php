@@ -77,10 +77,10 @@ final class ModuleTest extends TestCase
         Registry::routeFactory($routeFactory);
         Registry::container($container);
 
-        $chartService = $this->createMock(ChartService::class);
+        $chartService = self::createStub(ChartService::class);
         $module       = new Module($chartService, new DataFacade());
-        $individual   = $this->createMock(Individual::class);
-        $tree         = $this->createMock(Tree::class);
+        $individual   = self::createStub(Individual::class);
+        $tree         = self::createStub(Tree::class);
 
         $locale     = Locale::create('en');
         $translator = new Translator([], $locale->pluralRule());

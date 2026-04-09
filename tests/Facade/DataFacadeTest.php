@@ -106,20 +106,20 @@ final class DataFacadeTest extends TestCase
         Registry::routeFactory($routeFactory);
         Registry::container($container);
 
-        $configuration = $this->createMock(Configuration::class);
+        $configuration = self::createStub(Configuration::class);
         $configuration->method('getGenerations')->willReturn(2);
 
-        $module = $this->createMock(ModuleCustomInterface::class);
+        $module = self::createStub(ModuleCustomInterface::class);
         $module->method('name')->willReturn('webtrees-fan-chart');
 
-        $childFamily  = $this->createMock(Family::class);
-        $spouseFamily = $this->createMock(Family::class);
+        $childFamily  = self::createStub(Family::class);
+        $spouseFamily = self::createStub(Family::class);
 
-        $tree = $this->createMock(Tree::class);
+        $tree = self::createStub(Tree::class);
         $tree->method('name')->willReturn('main');
         $tree->method('getPreference')->willReturn('1');
 
-        $root = $this->createMock(Individual::class);
+        $root = self::createStub(Individual::class);
         $root->method('xref')->willReturn('I1');
         $root->method('url')->willReturn('/individual/I1');
         $root->method('sex')->willReturn('M');
@@ -136,7 +136,7 @@ final class DataFacadeTest extends TestCase
         $root->method('childFamilies')->willReturn(new Collection([$childFamily]));
         $root->method('findHighlightedMediaFile')->willReturn(null);
 
-        $father = $this->createMock(Individual::class);
+        $father = self::createStub(Individual::class);
         $father->method('xref')->willReturn('I2');
         $father->method('url')->willReturn('/individual/I2');
         $father->method('sex')->willReturn('M');
@@ -153,7 +153,7 @@ final class DataFacadeTest extends TestCase
         $father->method('childFamilies')->willReturn(new Collection());
         $father->method('findHighlightedMediaFile')->willReturn(null);
 
-        $mother = $this->createMock(Individual::class);
+        $mother = self::createStub(Individual::class);
         $mother->method('xref')->willReturn('I3');
         $mother->method('url')->willReturn('/individual/I3');
         $mother->method('sex')->willReturn('F');

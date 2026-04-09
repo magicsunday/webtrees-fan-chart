@@ -57,7 +57,7 @@ final class NameProcessorTest extends TestCase
             ],
         ];
 
-        $individual = $this->createMock(Individual::class);
+        $individual = self::createStub(Individual::class);
         $individual->method('getAllNames')->willReturn($names);
         $individual->method('getPrimaryName')->willReturn(0);
         $individual->method('getSecondaryName')->willReturn(0);
@@ -131,7 +131,7 @@ final class NameProcessorTest extends TestCase
             ],
         ];
 
-        $individual = $this->createMock(Individual::class);
+        $individual = self::createStub(Individual::class);
         $individual->method('getAllNames')->willReturn($names);
         $individual->method('getPrimaryName')->willReturn(0);
         $individual->method('getSecondaryName')->willReturn(1);
