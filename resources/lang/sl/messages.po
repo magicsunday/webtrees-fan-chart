@@ -233,5 +233,5 @@ msgstr "Prikaže sličice v notranjih lokih in na sredini diagrama. Slike so pri
 msgid "Show names"
 msgstr "Pokaži imena"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "Prikaže imena in datume v segmentih diagrama."
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Prikaže imena in datume v segmentih diagrama. Ko je onemogočeno, so zunanje generacije zunaj notranjih lokov skrite."

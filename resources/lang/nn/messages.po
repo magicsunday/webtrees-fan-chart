@@ -230,5 +230,5 @@ msgstr "Viser miniatyrbilete i dei indre bogane og i midten av diagrammet. Bilet
 msgid "Show names"
 msgstr "Vis namn"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "Viser namn og datoar i diagramsegmenta."
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Viser namn og datoar i diagramsegmenta. Når deaktivert, vert ytre generasjonar utanfor dei indre bogane gøymde."

@@ -228,5 +228,5 @@ msgstr "在內弧和圖表中心顯示縮略圖。僅當弧段足夠寬時才顯
 msgid "Show names"
 msgstr "顯示姓名"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "在圖表扇區中顯示姓名和日期。"
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "在圖表扇區中顯示姓名和日期。禁用時，內弧之外的外部世代將被隱藏。"

@@ -231,5 +231,5 @@ msgstr "Mostra le miniature negli archi interni e al centro del diagramma. Le im
 msgid "Show names"
 msgstr "Mostra nomi"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "Mostra nomi e date nei segmenti del diagramma."
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Mostra nomi e date nei segmenti del diagramma. Se disattivato, le generazioni esterne oltre gli archi interni vengono nascoste."

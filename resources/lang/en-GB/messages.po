@@ -227,5 +227,5 @@ msgstr "Displays thumbnail images in the inner arcs and the centre of the chart.
 msgid "Show names"
 msgstr "Show names"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "Displays names and dates in the chart segments."
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."

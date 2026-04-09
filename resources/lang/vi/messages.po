@@ -230,5 +230,5 @@ msgstr "Hiển thị hình thu nhỏ trong các cung bên trong và ở giữa b
 msgid "Show names"
 msgstr "Hiển thị tên"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "Hiển thị tên và ngày tháng trong các phân đoạn biểu đồ."
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Hiển thị tên và ngày tháng trong các phân đoạn biểu đồ. Khi tắt, các thế hệ bên ngoài vượt quá các cung bên trong sẽ bị ẩn."

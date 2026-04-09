@@ -230,5 +230,5 @@ msgstr "Vertoon miniatuurbeelde in die binneste boë en die middel van die diagr
 msgid "Show names"
 msgstr "Wys name"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "Vertoon name en datums in die diagramsegmente."
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Vertoon name en datums in die diagramsegmente. Wanneer gedeaktiveer, word buitenste generasies buite die binneste boë versteek."

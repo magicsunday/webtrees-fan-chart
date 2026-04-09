@@ -231,5 +231,5 @@ msgstr "Відображає мініатюри у внутрішніх дуга
 msgid "Show names"
 msgstr "Показати імена"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "Відображає імена та дати в сегментах діаграми."
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Відображає імена та дати в сегментах діаграми. При вимкненні зовнішні покоління за межами внутрішніх дуг приховуються."

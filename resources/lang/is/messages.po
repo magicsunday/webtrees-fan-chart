@@ -230,5 +230,5 @@ msgstr "Sýnir smámyndir í innri bogum og miðju skýringarmyndarinnar. Myndir
 msgid "Show names"
 msgstr "Sýna nöfn"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "Sýnir nöfn og dagsetningar í hlutum skýringarmyndarinnar."
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Sýnir nöfn og dagsetningar í hlutum skýringarmyndarinnar. Þegar slökkt er á eru ytri kynslóðir utan innri boga faldar."

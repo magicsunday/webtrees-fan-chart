@@ -227,5 +227,5 @@ msgstr "Näyttää pikkukuvat sisäkaarissa ja kaavion keskellä. Kuvat näytet�
 msgid "Show names"
 msgstr "Näytä nimet"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "Näyttää nimet ja päivämäärät kaavion segmenteissä."
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Näyttää nimet ja päivämäärät kaavion segmenteissä. Kun poistettu käytöstä, sisäkaarien ulkopuoliset sukupolvet piilotetaan."

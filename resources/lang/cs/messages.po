@@ -230,5 +230,5 @@ msgstr "Zobrazí miniatury ve vnitřních obloucích a ve středu diagramu. Obr�
 msgid "Show names"
 msgstr "Zobrazit jména"
 
-msgid "Displays names and dates in the chart segments."
-msgstr "Zobrazí jména a data v segmentech diagramu."
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Zobrazí jména a data v segmentech diagramu. Při deaktivaci jsou vnější generace za vnitřními oblouky skryty."

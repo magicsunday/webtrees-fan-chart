@@ -42,6 +42,13 @@ export default class Person {
      * @param {Object}    datum
      */
     init(person, datum) {
+        // Hide outer generations when only images are shown (no names)
+        if (!this._configuration.showNames
+            && (datum.depth > this._configuration.numberOfInnerCircles)
+        ) {
+            return;
+        }
+
         if (person.classed("new") && this._configuration.hideEmptySegments) {
             this.addArcToPerson(person, datum);
         } else {
