@@ -147,7 +147,7 @@ export default class Text
 
                 let text1 = parent
                     .append("text")
-                    .attr("dy", "2px");
+                    .attr("dominant-baseline", "middle");
 
                 this.addNameElements(
                     text1,
@@ -165,7 +165,7 @@ export default class Text
                     const availableWidth = this.getAvailableWidth(datum, positions.get(nameSlots[index]));
                     const text = parent
                         .append("text")
-                        .attr("dy", "2px");
+                        .attr("dominant-baseline", "middle");
 
                     this.addNameElements(
                         text,
@@ -184,7 +184,7 @@ export default class Text
 
                     const text = parent
                         .append("text")
-                        .attr("dy", "5px")
+                        .attr("dominant-baseline", "middle")
                         .classed("wt-chart-box-name-alt", true)
                         .classed("rtl", datum.data.data.isAltRtl);
 
@@ -208,7 +208,7 @@ export default class Text
                             const text = parent
                                 .append("text")
                                 .attr("class", "date")
-                                .attr("dy", "7px");
+                                .attr("dominant-baseline", "middle");
 
                             text.append("title")
                                 .text(line);
@@ -227,6 +227,13 @@ export default class Text
                         });
                     }
                 }
+            }
+
+            // Remove underline decoration for outermost generations
+            // where it shifts the visual center and wastes space
+            if (datum.depth >= 8) {
+                parent.selectAll("tspan[text-decoration]")
+                    .attr("text-decoration", null);
             }
 
             // Rotate outer labels in the right position
@@ -795,33 +802,18 @@ export default class Text
         let that = this;
         let textElements = parent.selectAll("text");
         let countElements = textElements.size();
-        let offset = 1.0;
 
-        // Empirically tuned rotation multipliers per depth level. These depend
-        // on innerArcHeight/outerArcHeight and must be adjusted if those change.
-        switch (datum.depth) {
-            case 0: offset = Math.max(1.0, countElements * 0.4); break;
-            case 1: offset = 6.5; break;
-            case 2: offset = 3.5; break;
-            case 3: offset = 2.2; break;
-            case 4: offset = 1.9; break;
-            case 5: offset = 1.5; break;
-            case 6: offset = 0.5; break;
-        }
+        // Center person: vertical stacking via dy
+        if (datum.depth === 0) {
+            let offset = Math.max(1.0, countElements * 0.4);
 
-        let mapIndexToOffset = d3.scaleLinear()
-            .domain([0, countElements - 1])
-            .range([-offset, offset]);
+            let mapIndexToOffset = d3.scaleLinear()
+                .domain([0, countElements - 1])
+                .range([-offset, offset]);
 
-        textElements.each(function (ignore, i) {
-            const offsetRotate = mapIndexToOffset(i) * that._configuration.fontScale / 100.0;
-
-            // The name of center person should not be rotated in any way
-            if (datum.depth === 0) {
+            textElements.each(function (ignore, i) {
+                const offsetRotate = mapIndexToOffset(i) * that._configuration.fontScale / 100.0;
                 const fontSize = that._geometry.getFontSize(datum);
-
-                // Use the standard linear distribution, then pull names closer
-                // together and push dates apart for visual grouping
                 const isDate = d3.select(this).classed("date");
                 const groupShift = fontSize * 0.15;
 
@@ -830,23 +822,124 @@ export default class Text
                     + (isDate ? groupShift : -groupShift)
                     + "px"
                 );
+            });
+
+            return;
+        }
+
+        // Outer labels: use semantic group spacing (same logic as inner
+        // labels in calculateSlotPositions) but in angular degrees.
+        let angularPositions = this.calculateOuterSlotPositions(datum, textElements);
+
+        textElements.each(function (ignore, i) {
+            let offsetRotate = angularPositions[i] * that._configuration.fontScale / 100.0;
+
+            d3.select(this).attr("transform", function () {
+                let dx        = datum.x1 - datum.x0;
+                let angle     = that._geometry.scale(datum.x0 + (dx / 2)) * MATH_RAD2DEG;
+                let rotate    = angle - (offsetRotate * (angle > 0 ? -1 : 1));
+                let translate = (that._geometry.centerRadius(datum.depth) - (that._configuration.colorArcWidth / 2.0));
+
+                if (angle > 0) {
+                    rotate -= 90;
+                } else {
+                    translate = -translate;
+                    rotate += 90;
+                }
+
+                return "rotate(" + rotate + ") translate(" + translate + ")";
+            });
+        });
+    }
+
+    /**
+     * Calculates angular offsets for outer text elements using the same
+     * semantic grouping as calculateSlotPositions: names form one tight
+     * group, dates another, with a wider gap between groups. Positions
+     * are returned as degree offsets from the arc center, vertically
+     * centered within the available angular span.
+     *
+     * @param {Object}    datum        The D3 data object
+     * @param {Selection} textElements The text elements to position
+     *
+     * @return {number[]} Angular offset in degrees for each text element
+     */
+    calculateOuterSlotPositions(datum, textElements)
+    {
+        // Build element groups: [names...], [dates...]
+        let groups = [[]];
+
+        textElements.each(function () {
+            if (d3.select(this).classed("date")) {
+                // Start a new group for the first date
+                if (groups[groups.length - 1].length > 0
+                    && !groups[groups.length - 1].isDateGroup
+                ) {
+                    let dateGroup = [];
+                    dateGroup.isDateGroup = true;
+                    groups.push(dateGroup);
+                }
+
+                groups[groups.length - 1].push(this);
             } else {
-                d3.select(this).attr("transform", function () {
-                    let dx        = datum.x1 - datum.x0;
-                    let angle     = that._geometry.scale(datum.x0 + (dx / 2)) * MATH_RAD2DEG;
-                    let rotate    = angle - (offsetRotate * (angle > 0 ? -1 : 1));
-                    let translate = (that._geometry.centerRadius(datum.depth) - (that._configuration.colorArcWidth / 2.0));
-
-                    if (angle > 0) {
-                        rotate -= 90;
-                    } else {
-                        translate = -translate;
-                        rotate += 90;
-                    }
-
-                    return "rotate(" + rotate + ") translate(" + translate + ")";
-                });
+                groups[0].push(this);
             }
         });
+
+        // Convert pixel-based spacing to degrees at this radius
+        let fontSize     = this._geometry.getFontSize(datum);
+        let centerRadius = this._geometry.centerRadius(datum.depth);
+        let degPerPixel  = MATH_RAD2DEG / centerRadius;
+
+        // Same ratio as inner labels: intraGroup = 16/73 of available,
+        // interGroup = 24/73. Convert to pixel gap then to degrees.
+        let intraGapPx = fontSize * 1.05;
+        let interGapPx = fontSize * 1.3;
+
+        let intraGapDeg = intraGapPx * degPerPixel;
+        let interGapDeg = interGapPx * degPerPixel;
+
+        // Compute total height
+        let totalDeg = 0;
+
+        groups.forEach((group, gi) => {
+            totalDeg += (group.length - 1) * intraGapDeg;
+
+            if (gi < groups.length - 1) {
+                totalDeg += interGapDeg;
+            }
+        });
+
+        // Cap to 50% of angular span, compress proportionally if needed
+        let angularSpanDeg = (datum.x1 - datum.x0) * 360;
+        let maxDeg = angularSpanDeg * 0.5;
+
+        if (totalDeg > maxDeg && totalDeg > 0) {
+            let scale = maxDeg / totalDeg;
+            intraGapDeg *= scale;
+            interGapDeg *= scale;
+            totalDeg = maxDeg;
+        }
+
+        // Center and assign positions (names at negative = inner side,
+        // dates at positive = outer side, matching the old convention)
+        let currentPos = -(totalDeg / 2);
+        let positions = [];
+
+        groups.forEach((group, gi) => {
+            group.forEach((element, si) => {
+                positions.push(currentPos);
+
+                if (si < group.length - 1) {
+                    currentPos += intraGapDeg;
+                }
+            });
+
+            if (gi < groups.length - 1) {
+                currentPos += interGapDeg;
+            }
+        });
+
+        return positions;
     }
 }

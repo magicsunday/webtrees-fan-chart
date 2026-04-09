@@ -217,6 +217,21 @@ export default class Geometry
             fontSize += 1;
         }
 
-        return ((fontSize - datum.depth) * this._configuration.fontScale / 100.0);
+        let scaled = (fontSize - datum.depth) * this._configuration.fontScale / 100.0;
+
+        // For outer labels, cap font size so text fits within the angular
+        // width of the segment. Uses 80% of angular width to leave visual
+        // padding and account for descenders / em-box centering offset.
+        if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
+            let angularWidth = (datum.x1 - datum.x0) * 2 * Math.PI * this.centerRadius(datum.depth);
+
+            // Depth >= 7 merges first + last name into 1 line; others use 2
+            let lines  = datum.depth >= 7 ? 1 : 2;
+            let maxFont = (angularWidth * 0.55) / lines;
+
+            scaled = Math.min(scaled, maxFont);
+        }
+
+        return Math.max(1, scaled);
     }
 }
