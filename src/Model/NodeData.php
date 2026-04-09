@@ -157,6 +157,48 @@ class NodeData implements JsonSerializable
     protected string $timespan = '';
 
     /**
+     * Full compact birth date for tooltip display.
+     *
+     * @var string
+     */
+    protected string $birthDateFull = '';
+
+    /**
+     * Full compact death date for tooltip display.
+     *
+     * @var string
+     */
+    protected string $deathDateFull = '';
+
+    /**
+     * Full compact marriage date for tooltip display.
+     *
+     * @var string
+     */
+    protected string $marriageDateFull = '';
+
+    /**
+     * The formatted birth place.
+     *
+     * @var string
+     */
+    protected string $birthPlace = '';
+
+    /**
+     * The formatted death place.
+     *
+     * @var string
+     */
+    protected string $deathPlace = '';
+
+    /**
+     * The formatted marriage place.
+     *
+     * @var string
+     */
+    protected string $marriagePlace = '';
+
+    /**
      * The underlying individual instance. Only used internally.
      *
      * @var Individual|null
@@ -408,6 +450,78 @@ class NodeData implements JsonSerializable
     }
 
     /**
+     * @param string $birthPlace
+     *
+     * @return NodeData
+     */
+    public function setBirthDateFull(string $birthDateFull): NodeData
+    {
+        $this->birthDateFull = $birthDateFull;
+
+        return $this;
+    }
+
+    /**
+     * @param string $deathDateFull
+     *
+     * @return NodeData
+     */
+    public function setDeathDateFull(string $deathDateFull): NodeData
+    {
+        $this->deathDateFull = $deathDateFull;
+
+        return $this;
+    }
+
+    /**
+     * @param string $marriageDateFull
+     *
+     * @return NodeData
+     */
+    public function setMarriageDateFull(string $marriageDateFull): NodeData
+    {
+        $this->marriageDateFull = $marriageDateFull;
+
+        return $this;
+    }
+
+    /**
+     * @param string $birthPlace
+     *
+     * @return NodeData
+     */
+    public function setBirthPlace(string $birthPlace): NodeData
+    {
+        $this->birthPlace = $birthPlace;
+
+        return $this;
+    }
+
+    /**
+     * @param string $deathPlace
+     *
+     * @return NodeData
+     */
+    public function setDeathPlace(string $deathPlace): NodeData
+    {
+        $this->deathPlace = $deathPlace;
+
+        return $this;
+    }
+
+    /**
+     * @param string $marriagePlace
+     *
+     * @return NodeData
+     */
+    public function setMarriagePlace(string $marriagePlace): NodeData
+    {
+        $this->marriagePlace = $marriagePlace;
+
+        return $this;
+    }
+
+    /**
      * @return Individual|null
      */
     public function getIndividual(): ?Individual
@@ -454,6 +568,12 @@ class NodeData implements JsonSerializable
             'marriageDate'          => $this->marriageDate,
             'marriageDateOfParents' => $this->marriageDateOfParents,
             'timespan'              => $this->timespan,
+            'birthDateFull'         => $this->birthDateFull,
+            'deathDateFull'         => $this->deathDateFull,
+            'marriageDateFull'      => $this->marriageDateFull,
+            'birthPlace'            => $this->birthPlace,
+            'deathPlace'            => $this->deathPlace,
+            'marriagePlace'         => $this->marriagePlace,
         ];
     }
 }

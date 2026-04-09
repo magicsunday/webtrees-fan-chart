@@ -21,6 +21,7 @@ use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Processor\DateProcessor;
 use MagicSunday\Webtrees\FanChart\Processor\ImageProcessor;
 use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
+use MagicSunday\Webtrees\FanChart\Processor\PlaceProcessor;
 
 /**
  * Facade class to hide complex logic to generate the structure required to display the tree.
@@ -147,6 +148,10 @@ class DataFacade
             $generation,
             $this->configuration->getDetailedDateGenerations(),
         );
+        $placeProcessor = new PlaceProcessor(
+            $individual,
+            $this->configuration->getPlaceParts(),
+        );
 
         $fullNN          = $nameProcessor->getFullName();
         $alternativeName = $nameProcessor->getAlternateName($individual);
@@ -170,8 +175,27 @@ class DataFacade
             ->setBirth($dateProcessor->getBirthDate())
             ->setDeath($dateProcessor->getDeathDate())
             ->setMarriageDate($dateProcessor->getMarriageDate())
-            ->setMarriageDateOfParents($dateProcessor->getMarriageDateOfParents())
-            ->setTimespan($dateProcessor->getLifetimeDescription())
+            ->setMarriageDateOfParents(
+                $this->appendPlaceToLine(
+                    $dateProcessor->getMarriageDateOfParents(),
+                    $this->getMarriagePlaceShort($individual),
+                    $generation
+                )
+            )
+            ->setTimespan(
+                $this->appendPlaces(
+                    $dateProcessor->getLifetimeDescription(),
+                    $placeProcessor->getBirthPlaceShort(),
+                    $placeProcessor->getDeathPlaceShort(),
+                    $generation
+                )
+            )
+            ->setBirthDateFull($dateProcessor->getBirthDateFull())
+            ->setDeathDateFull($dateProcessor->getDeathDateFull())
+            ->setMarriageDateFull($dateProcessor->getMarriageDateFull())
+            ->setBirthPlace($placeProcessor->getBirthPlace())
+            ->setDeathPlace($placeProcessor->getDeathPlace())
+            ->setMarriagePlace($placeProcessor->getMarriagePlace())
             ->setIndividual($individual);
 
         return $treeData;
@@ -198,6 +222,105 @@ class DataFacade
                 'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
             ]
         );
+    }
+
+    /**
+     * Appends birth and death places to the timespan lines. Only
+     * applied for generations within the detailed date range where
+     * the arcs are wide enough to display the extra text.
+     *
+     * @param string $timespan   The formatted timespan (may contain \n)
+     * @param string $birthPlace The birth place
+     * @param string $deathPlace The death place
+     * @param int    $generation The generation depth
+     *
+     * @return string
+     */
+    private function appendPlaces(string $timespan, string $birthPlace, string $deathPlace, int $generation): string
+    {
+        if (!$this->configuration->getShowPlaces()) {
+            return $timespan;
+        }
+
+        // Only append places in detailed-date generations where arcs
+        // have enough width for the additional text
+        if ($generation > $this->configuration->getDetailedDateGenerations()) {
+            return $timespan;
+        }
+
+        if ($timespan === '') {
+            return $timespan;
+        }
+
+        $lines = explode("\n", $timespan);
+
+        if (isset($lines[0]) && ($birthPlace !== '')) {
+            $lines[0] .= ', ' . $birthPlace;
+        }
+
+        if (isset($lines[1]) && ($deathPlace !== '')) {
+            $lines[1] .= ', ' . $deathPlace;
+        }
+
+        return implode("\n", $lines);
+    }
+
+    /**
+     * Appends a place to a single date line. Only applied for
+     * generations within the detailed date range.
+     *
+     * @param string $dateLine   The date string
+     * @param string $place      The place name
+     * @param int    $generation The generation depth
+     *
+     * @return string
+     */
+    private function appendPlaceToLine(string $dateLine, string $place, int $generation): string
+    {
+        if (!$this->configuration->getShowPlaces()) {
+            return $dateLine;
+        }
+
+        if ($generation > $this->configuration->getDetailedDateGenerations()) {
+            return $dateLine;
+        }
+
+        if (($dateLine === '') || ($place === '')) {
+            return $dateLine;
+        }
+
+        return $dateLine . ', ' . $place;
+    }
+
+    /**
+     * Returns the short marriage place for the individual's parents
+     * (for arc text, respects placeParts setting).
+     *
+     * @param Individual $individual
+     *
+     * @return string
+     */
+    private function getMarriagePlaceShort(Individual $individual): string
+    {
+        $family = $individual->childFamilies()->first();
+
+        if ($family === null) {
+            return '';
+        }
+
+        $marriagePlace = $family->getMarriagePlace();
+
+        if ($marriagePlace->gedcomName() === '') {
+            return '';
+        }
+
+        $placeParts = $this->configuration->getPlaceParts();
+
+        if ($placeParts === 0) {
+            return $marriagePlace->gedcomName();
+        }
+
+        return $marriagePlace->firstParts($placeParts)->implode(', ');
     }
 
     /**
