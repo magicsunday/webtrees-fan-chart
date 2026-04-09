@@ -8,6 +8,7 @@
 import * as d3 from "../../lib/d3";
 import Geometry from "./geometry";
 import FamilyColor from "./family-color";
+import {SYMBOL_MARRIAGE} from "../hierarchy";
 
 /**
  * This class handles the creation of the marriage arc elements of the chart.
@@ -198,8 +199,8 @@ export default class Marriage
             .attr("class", "date");
 
         let marriageText = (datum.data.data.marriageDateOfParents === "?")
-            ? "\u26AD"
-            : "\u26AD " + datum.data.data.marriageDateOfParents;
+            ? SYMBOL_MARRIAGE
+            : SYMBOL_MARRIAGE + " " + datum.data.data.marriageDateOfParents;
 
         let tspan = textPath
             .append("tspan")

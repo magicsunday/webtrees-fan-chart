@@ -6,6 +6,7 @@
  */
 
 import * as d3 from "../../lib/d3";
+import {SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_MARRIAGE} from "../hierarchy";
 
 /**
  * This class handles the tooltip and mouse interaction for person elements.
@@ -126,15 +127,15 @@ export default class TooltipRenderer
                     + (hasData
                         ? "<table>"
                             + (birthDate
-                            ? ("<tr class=\"date\"><th>\u2605</th><td>" + birthDate + "</td></tr>")
+                            ? ("<tr class=\"date\"><th>" + SYMBOL_BIRTH + "</th><td>" + birthDate + "</td></tr>")
                                 + (birthPlace ? "<tr class=\"place\"><th></th><td>" + birthPlace + "</td></tr>" : "")
                             : "")
                             + (marriageDate
-                            ? ("<tr class=\"date\"><th>\u26AD</th><td>" + marriageDate + "</td></tr>")
+                            ? ("<tr class=\"date\"><th>" + SYMBOL_MARRIAGE + "</th><td>" + marriageDate + "</td></tr>")
                                 + (marriagePlace ? "<tr class=\"place\"><th></th><td>" + marriagePlace + "</td></tr>" : "")
                             : "")
                             + (deathDate
-                            ? ("<tr class=\"date\"><th>\u2020</th><td>" + deathDate + "</td></tr>")
+                            ? ("<tr class=\"date\"><th>" + SYMBOL_DEATH + "</th><td>" + deathDate + "</td></tr>")
                                 + (deathPlace ? "<tr class=\"place\"><th></th><td>" + deathPlace + "</td></tr>" : "")
                             : "")
                         + "</table>"
