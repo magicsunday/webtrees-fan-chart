@@ -156,9 +156,13 @@ export default class Marriage
 
         let midRadius = (innerR + outerR) / 2;
 
+        // Flip text direction in the bottom half of 360° charts
+        // so marriage dates read left-to-right like person labels
+        let flipped = this._geometry.isPositionFlipped(datum.depth, datum.x0, datum.x1);
+
         let textPathGenerator = d3.arc()
-            .startAngle(startAngle)
-            .endAngle(endAngle)
+            .startAngle(flipped ? endAngle : startAngle)
+            .endAngle(flipped ? startAngle : endAngle)
             .innerRadius(midRadius)
             .outerRadius(midRadius);
 

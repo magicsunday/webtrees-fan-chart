@@ -616,19 +616,7 @@ export default class Text
      */
     isPositionFlipped(depth, x0, x1)
     {
-        if ((this._configuration.fanDegree <= 270) || (depth <= 1)) {
-            return false;
-        }
-
-        const startAngle = this._geometry.startAngle(depth, x0);
-        const endAngle   = this._geometry.endAngle(depth, x1);
-
-        // Flip names when the arc midpoint is in the bottom half of the chart
-        const midAngle   = (startAngle + endAngle) / 2;
-        const pi2        = Math.PI * 2;
-        const normalized = ((midAngle % pi2) + pi2) % pi2;
-
-        return (normalized > (90 * MATH_DEG2RAD)) && (normalized < (270 * MATH_DEG2RAD));
+        return this._geometry.isPositionFlipped(depth, x0, x1);
     }
 
     /**

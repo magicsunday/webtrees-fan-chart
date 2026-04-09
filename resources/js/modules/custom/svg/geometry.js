@@ -234,4 +234,29 @@ export default class Geometry
 
         return Math.max(1, scaled);
     }
+
+    /**
+     * Check for the 360-degree chart if the current arc labels should
+     * be flipped for easier reading (bottom half of the chart).
+     *
+     * @param {number} depth The depth of the element inside the chart
+     * @param {number} x0    The left edge (x0) of the rectangle
+     * @param {number} x1    The right edge (x1) of the rectangle
+     *
+     * @return {boolean}
+     */
+    isPositionFlipped(depth, x0, x1)
+    {
+        if ((this._configuration.fanDegree <= 270) || (depth < 1)) {
+            return false;
+        }
+
+        const startAngle = this.startAngle(depth, x0);
+        const endAngle   = this.endAngle(depth, x1);
+        const midAngle   = (startAngle + endAngle) / 2;
+        const pi2        = Math.PI * 2;
+        const normalized = ((midAngle % pi2) + pi2) % pi2;
+
+        return (normalized > (90 * MATH_DEG2RAD)) && (normalized < (270 * MATH_DEG2RAD));
+    }
 }
