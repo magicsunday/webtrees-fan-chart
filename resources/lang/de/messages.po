@@ -136,18 +136,26 @@ msgid "Hide empty segments"
 msgstr "Verberge leere Segmente"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show color gradients"
-msgstr "Zeige Farbverläufe"
+msgid "Show family colors"
+msgstr "Familienfarben anzeigen"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:45
 msgid ""
-"Instead of the colors for men and women, a color gradient is displayed for "
-"the paternal and maternal lineage."
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
 msgstr ""
-"Anstelle der Farben für Männer und Frauen wird ein Farbverlauf für die "
-"väterliche und mütterliche Abstammung angezeigt."
+"Färbt die Bögen nach Familienzweig. Jedes Paar teilt sich die gleiche Farbe, "
+"abgeleitet von den gewählten Basisfarben."
+
+#: resources/views/modules/fan-chart/form/layout.phtml:49
+msgid "Paternal"
+msgstr "Väterlich"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Maternal"
+msgstr "Mütterlich"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Zeige die Heiratsdaten der Eltern an"
 
@@ -199,8 +207,8 @@ msgid "Birth and death date precision"
 msgstr "Geburts- und Sterbedatum Genauigkeit"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr "Zeige vollständige Geburts- und Sterbedaten für frühe Generationen, passend zur Genauigkeit der Heiratsdaten."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
+msgstr "Zeige vollständige Geburts- und Sterbedaten für frühe Generationen. Heiratsdaten zeigen ab Generation 7 nur das Jahr und werden ab Generation 9 ausgeblendet."
 
 #: src/Configuration.php:191
 msgid "Years only"

@@ -140,18 +140,26 @@ msgid "Hide empty segments"
 msgstr "Skrij prazne dele"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show color gradients"
-msgstr "Prikaži barvne prehode"
+msgid "Show family colors"
+msgstr "Prikaži družinske barve"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:45
 msgid ""
-"Instead of the colors for men and women, a color gradient is displayed for "
-"the paternal and maternal lineage."
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
 msgstr ""
-"Namesto barv za moške in ženske je prikazan barvni preliv za očetovo in "
-"materino linijo."
+"Obarva loke po družinski veji. Vsak par si deli isto "
+"barvo, izpeljano iz izbranih osnovnih barv."
+
+#: resources/views/modules/fan-chart/form/layout.phtml:49
+msgid "Paternal"
+msgstr "Očetov"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Maternal"
+msgstr "Materin"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Prikaži datum poroke staršev"
 
@@ -200,8 +208,8 @@ msgid "Birth and death date precision"
 msgstr "Natančnost datumov rojstva in smrti"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr "Prikaži polne datume rojstva in smrti za zgodnje generacije, da se ujemajo z natančnostjo datuma poroke."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
+msgstr "Prikaži polne datume rojstva in smrti za zgodnje generacije. Datumi poroke prikazujejo samo leto od generacije 7 naprej in so skriti od generacije 9 naprej."
 
 #: src/Configuration.php:191
 msgid "Years only"

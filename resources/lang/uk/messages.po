@@ -135,16 +135,26 @@ msgid "Hide empty segments"
 msgstr "Приховати порожні сегменти"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show color gradients"
-msgstr "Показати градієнт кольорів"
+msgid "Show family colors"
+msgstr "Показати кольори сімей"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:45
 msgid ""
-"Instead of the colors for men and women, a color gradient is displayed for "
-"the paternal and maternal lineage."
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
 msgstr ""
+"Розфарбовує дуги за сімейною гілкою. Кожна пара має спільний "
+"колір, отриманий з обраних базових кольорів."
+
+#: resources/views/modules/fan-chart/form/layout.phtml:49
+msgid "Paternal"
+msgstr "По батьківській лінії"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Maternal"
+msgstr "По материнській лінії"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Показати дати шлюбів"
 
@@ -196,8 +206,8 @@ msgid "Birth and death date precision"
 msgstr "Точність дат народження та смерті"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr "Показувати повні дати народження та смерті для ранніх поколінь відповідно до точності дати шлюбу."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
+msgstr "Показувати повні дати народження та смерті для ранніх поколінь. Дати шлюбу відображаються лише як рік починаючи з покоління 7 і приховуються починаючи з покоління 9."
 
 #: src/Configuration.php:191
 msgid "Years only"

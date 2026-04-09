@@ -134,16 +134,26 @@ msgid "Hide empty segments"
 msgstr "Ẩn vùng trống"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show color gradients"
-msgstr "Hiển thị màu viền"
+msgid "Show family colors"
+msgstr "Hiển thị màu gia đình"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:45
 msgid ""
-"Instead of the colors for men and women, a color gradient is displayed for "
-"the paternal and maternal lineage."
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
 msgstr ""
+"Tô màu các cung theo nhánh gia đình. Mỗi cặp chia sẻ "
+"cùng một màu, được tạo từ các màu cơ sở đã chọn."
+
+#: resources/views/modules/fan-chart/form/layout.phtml:49
+msgid "Paternal"
+msgstr "Bên nội"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Maternal"
+msgstr "Bên ngoại"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""
 
@@ -195,8 +205,8 @@ msgid "Birth and death date precision"
 msgstr "Độ chính xác ngày sinh và ngày mất"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr "Hiển thị đầy đủ ngày sinh và ngày mất cho các thế hệ đầu tiên để phù hợp với độ chính xác của ngày kết hôn."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
+msgstr "Hiển thị đầy đủ ngày sinh và ngày mất cho các thế hệ đầu tiên. Ngày kết hôn chỉ hiển thị năm từ thế hệ 7 và được ẩn từ thế hệ 9."
 
 #: src/Configuration.php:191
 msgid "Years only"

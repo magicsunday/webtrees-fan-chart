@@ -134,16 +134,24 @@ msgid "Hide empty segments"
 msgstr "隱藏空白扇段"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show color gradients"
-msgstr "顯示漸變色"
+msgid "Show family colors"
+msgstr "顯示家族顏色"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:45
 msgid ""
-"Instead of the colors for men and women, a color gradient is displayed for "
-"the paternal and maternal lineage."
-msgstr ""
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
+msgstr "按家族分支為弧形著色。每對夫婦共享相同的顏色，由所選的基礎顏色派生而來。"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:49
+msgid "Paternal"
+msgstr "父系"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Maternal"
+msgstr "母系"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""
 
@@ -195,8 +203,8 @@ msgid "Birth and death date precision"
 msgstr "出生和死亡日期精確度"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr "為早期世代顯示完整的出生和死亡日期，以配合婚姻日期的精確度。"
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
+msgstr "為早期世代顯示完整的出生和死亡日期。婚姻日期從第7代起僅顯示年份，從第9代起隱藏。"
 
 #: src/Configuration.php:191
 msgid "Years only"

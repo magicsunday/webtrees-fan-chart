@@ -134,16 +134,26 @@ msgid "Hide empty segments"
 msgstr "Skjul tomme segmenter"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show color gradients"
-msgstr "Vis fargegradienter"
+msgid "Show family colors"
+msgstr "Vis familiefarger"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:45
 msgid ""
-"Instead of the colors for men and women, a color gradient is displayed for "
-"the paternal and maternal lineage."
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
 msgstr ""
+"Fargelegger buene etter familiegren. Hvert par deler "
+"samme farge, utledet fra de valgte basisfargene."
+
+#: resources/views/modules/fan-chart/form/layout.phtml:49
+msgid "Paternal"
+msgstr "Farslinje"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Maternal"
+msgstr "Morslinje"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Vis dato for foreldres vielse"
 
@@ -195,8 +205,8 @@ msgid "Birth and death date precision"
 msgstr "Presisjon for fødsels- og dødsdatoer"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr "Vis fullstendige fødsels- og dødsdatoer for tidlige generasjoner for å matche presisjonen til ekteskapsdatoen."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
+msgstr "Vis fullstendige fødsels- og dødsdatoer for tidlige generasjoner. Ekteskapsdatoer viser kun årstall fra generasjon 7 og skjules fra generasjon 9."
 
 #: src/Configuration.php:191
 msgid "Years only"

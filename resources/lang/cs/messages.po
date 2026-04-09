@@ -134,16 +134,26 @@ msgid "Hide empty segments"
 msgstr "Skrýt prázdné segmenty"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show color gradients"
-msgstr "Zobrazit barevné segmenty"
+msgid "Show family colors"
+msgstr "Zobrazit barvy rodin"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:45
 msgid ""
-"Instead of the colors for men and women, a color gradient is displayed for "
-"the paternal and maternal lineage."
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
 msgstr ""
+"Obarví oblouky podle rodinné větve. Každý pár sdílí stejnou "
+"barvu odvozenou od zvolených základních barev."
+
+#: resources/views/modules/fan-chart/form/layout.phtml:49
+msgid "Paternal"
+msgstr "Otcovský"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Maternal"
+msgstr "Mateřský"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Zobrazit datum sňatku rodičů"
 
@@ -195,8 +205,8 @@ msgid "Birth and death date precision"
 msgstr "Přesnost data narození a úmrtí"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations to match marriage date precision."
-msgstr "Zobrazit úplná data narození a úmrtí pro rané generace, aby odpovídala přesnosti data sňatku."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
+msgstr "Zobrazit úplná data narození a úmrtí pro rané generace. Data sňatku se od generace 7 zobrazují pouze jako rok a od generace 9 jsou skryta."
 
 #: src/Configuration.php:191
 msgid "Years only"
