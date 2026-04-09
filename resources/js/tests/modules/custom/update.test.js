@@ -313,6 +313,14 @@ class SvgStub {
         };
     }
 
+    get() {
+        return {
+            selectAll: () => ({
+                each: () => ({})
+            })
+        };
+    }
+
     selectAll(selector) {
         const hasPersonSelector   = selector.includes("g.person");
         const hasMarriageSelector = selector.includes("g.marriage");

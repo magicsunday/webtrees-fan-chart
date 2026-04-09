@@ -80,7 +80,7 @@ export default class Person {
                 } else {
                     const arcWidth = (datum.depth === 0)
                         ? arcHeight
-                        : (this._geometry.endAngle(datum.depth, datum.x1) - this._geometry.startAngle(datum.depth, datum.x0)) * this._geometry.innerRadius(datum.depth);
+                        : (this._geometry.endAngle(datum.depth, datum.x1) - this._geometry.startAngle(datum.depth, datum.x0)) * this._geometry.centerRadius(datum.depth);
 
                     imageSize = Math.min(arcHeight, arcWidth) * 0.8;
                 }
@@ -305,11 +305,14 @@ export default class Person {
                 .attr("stroke-width", 1);
 
             // Shift the text right to make room for the image.
+            // Convert pixel shift to startOffset percentage: the text baseline
+            // starts at 25%, leaving 50 percentage points of arc length to work with.
             const textShiftPx = (imageSize / 2) + gap;
             const textShiftPercent = (textShiftPx / (Math.abs(endAngle - startAngle) * centerRadius)) * 50;
 
             nameGroup.selectAll("textPath").each(function () {
-                const currentOffset = parseFloat(d3.select(this).attr("startOffset")) || 25;
+                const raw = parseFloat(d3.select(this).attr("startOffset"));
+                const currentOffset = Number.isFinite(raw) ? raw : 25;
                 d3.select(this).attr("startOffset", (currentOffset + textShiftPercent).toFixed(1) + "%");
             });
         }

@@ -388,11 +388,25 @@ export default class Update {
                 }
             });
 
-        // Remove orphaned clip paths from old images
+        // Remove orphaned clip paths from old images.
+        // Build a Set of active clip IDs from visible images, then remove any
+        // clipPath not in the set. Avoids O(n*m) document.querySelector per clipPath.
+        const activeClipIds = new Set();
+
+        this._svg.get()
+            .selectAll("image[clip-path]")
+            .each(function () {
+                const match = this.getAttribute("clip-path").match(/url\(#(.+)\)/);
+
+                if (match) {
+                    activeClipIds.add(match[1]);
+                }
+            });
+
         this._svg.defs.get()
             .selectAll("clipPath[id^='clip-image-']")
             .each(function () {
-                if (!document.querySelector("image[clip-path='url(#" + this.id + ")']")) {
+                if (!activeClipIds.has(this.id)) {
                     this.remove();
                 }
             });

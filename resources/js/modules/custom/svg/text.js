@@ -754,7 +754,8 @@ export default class Text {
         availableWidth = availableWidth - (this._configuration.textPadding * 2)
             - (this._configuration.padDistance / 2);
 
-        // Reduce available width when an image is present
+        // Reduce available width when an image is present.
+        // imageSize is pre-computed and set on the datum by Person.init() before labels are rendered.
         const imageSize = data.data.data.imageSize || 0;
 
         if (imageSize > 0) {
@@ -778,7 +779,8 @@ export default class Text {
         const textElements = parent.selectAll("text");
         const countElements = textElements.size();
 
-        // Center person: vertical stacking via dy
+        // Center person: vertical stacking via dy.
+        // imageSize is pre-computed and set on the datum by Person.init() before labels are rendered.
         if (datum.depth === 0) {
             const fontSize = that._geometry.getFontSize(datum);
             const imageSize = datum.data.data.imageSize || 0;
@@ -789,7 +791,21 @@ export default class Text {
                 const imageGap = 6;
                 const innerLineHeight = fontSize * 0.95;
                 const groupGap = fontSize * 0.45;
-                const textHeight = (countElements * innerLineHeight) + groupGap;
+
+                // Only include group gap when both names and dates are present
+                let hasNames = false;
+                let hasDates = false;
+
+                textElements.each(function () {
+                    if (d3.select(this).classed("date")) {
+                        hasDates = true;
+                    } else {
+                        hasNames = true;
+                    }
+                });
+
+                const actualGroupGap = (hasNames && hasDates) ? groupGap : 0;
+                const textHeight = (countElements * innerLineHeight) + actualGroupGap;
                 const totalHeight = imageSize + imageGap + textHeight;
 
                 let currentY = -(totalHeight / 2) + imageSize + imageGap + (innerLineHeight / 2);

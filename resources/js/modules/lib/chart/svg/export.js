@@ -48,7 +48,8 @@ export default class Export {
                     reader.readAsDataURL(blob);
                 }))
                 .catch(() => {
-                    // Silently skip images that cannot be fetched
+                    // Remove href so exported file shows no broken image
+                    img.removeAttribute("href");
                 });
         });
 
