@@ -219,3 +219,15 @@ msgstr "केवल वर्ष"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "पीढ़ी %s तक पूर्ण तिथियाँ दिखाएँ"
+
+msgid "Show images"
+msgstr "छवियाँ दिखाएँ"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "आंतरिक चापों और चार्ट के केंद्र में लघुचित्र प्रदर्शित करता है। छवियाँ केवल तभी दिखाई जाती हैं जब चाप खंड पर्याप्त चौड़ा हो।"
+
+msgid "Show names"
+msgstr "नाम दिखाएँ"
+
+msgid "Displays names and dates in the chart segments."
+msgstr "चार्ट खंडों में नाम और तिथियाँ प्रदर्शित करता है।"

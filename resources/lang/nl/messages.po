@@ -224,3 +224,15 @@ msgstr "Alleen jaren"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Toon volledige data tot generatie %s"
+
+msgid "Show images"
+msgstr "Afbeeldingen tonen"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "Toont miniatuurafbeeldingen in de binnenste bogen en het midden van het diagram. Afbeeldingen worden alleen getoond als het boogsegment breed genoeg is."
+
+msgid "Show names"
+msgstr "Namen tonen"
+
+msgid "Displays names and dates in the chart segments."
+msgstr "Toont namen en datums in de diagramsegmenten."

@@ -220,3 +220,15 @@ msgstr "Aðeins ár"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Sýna fulla dagsetningar til kynslóðar %s"
+
+msgid "Show images"
+msgstr "Sýna myndir"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "Sýnir smámyndir í innri bogum og miðju skýringarmyndarinnar. Myndir birtast aðeins ef bogahlutinn er nógu breiður."
+
+msgid "Show names"
+msgstr "Sýna nöfn"
+
+msgid "Displays names and dates in the chart segments."
+msgstr "Sýnir nöfn og dagsetningar í hlutum skýringarmyndarinnar."

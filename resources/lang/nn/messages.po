@@ -220,3 +220,15 @@ msgstr "Berre årstal"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Vis fullstendige datoar til generasjon %s"
+
+msgid "Show images"
+msgstr "Vis bilete"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "Viser miniatyrbilete i dei indre bogane og i midten av diagrammet. Bilete vert berre viste viss bogesegmentet er breitt nok."
+
+msgid "Show names"
+msgstr "Vis namn"
+
+msgid "Displays names and dates in the chart segments."
+msgstr "Viser namn og datoar i diagramsegmenta."

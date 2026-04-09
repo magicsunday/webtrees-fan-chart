@@ -221,3 +221,15 @@ msgstr "Лише роки"
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Показати повні дати до покоління %s"
+
+msgid "Show images"
+msgstr "Показати зображення"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr "Відображає мініатюри у внутрішніх дугах та в центрі діаграми. Зображення показуються лише якщо сегмент дуги достатньо широкий."
+
+msgid "Show names"
+msgstr "Показати імена"
+
+msgid "Displays names and dates in the chart segments."
+msgstr "Відображає імена та дати в сегментах діаграми."
