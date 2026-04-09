@@ -155,10 +155,6 @@ msgstr "最低兩個層級"
 msgid "Lowest three levels"
 msgstr "最低三個層級"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "在"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""

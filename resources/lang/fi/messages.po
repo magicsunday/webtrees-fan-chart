@@ -157,10 +157,6 @@ msgstr "Kaksi alinta tasoa"
 msgid "Lowest three levels"
 msgstr "Kolme alinta tasoa"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "in"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""

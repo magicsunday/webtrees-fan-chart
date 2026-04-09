@@ -157,10 +157,6 @@ msgstr "Tvö lægstu stig"
 msgid "Lowest three levels"
 msgstr "Þrjú lægstu stig"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "í"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Sýna giftingardagsetningar foreldra"

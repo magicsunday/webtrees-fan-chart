@@ -157,10 +157,6 @@ msgstr "Najniža dva nivoa"
 msgid "Lowest three levels"
 msgstr "Najniža tri nivoa"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "u"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""

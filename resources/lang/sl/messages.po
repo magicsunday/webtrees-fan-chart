@@ -163,10 +163,6 @@ msgstr "Najnižji dve ravni"
 msgid "Lowest three levels"
 msgstr "Najnižje tri ravni"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "v"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Prikaži datum poroke staršev"

@@ -157,10 +157,6 @@ msgstr "To laveste nivåer"
 msgid "Lowest three levels"
 msgstr "Tre laveste nivåer"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "i"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Vis dato for foreldres vielse"

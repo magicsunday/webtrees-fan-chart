@@ -158,10 +158,6 @@ msgstr "Due livelli più bassi"
 msgid "Lowest three levels"
 msgstr "Tre livelli più bassi"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "a"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Mostra la data del matrimonio dei genitori"

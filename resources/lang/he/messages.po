@@ -158,10 +158,6 @@ msgstr "שתי הרמות הנמוכות ביותר"
 msgid "Lowest three levels"
 msgstr "שלוש הרמות הנמוכות ביותר"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "ב"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""

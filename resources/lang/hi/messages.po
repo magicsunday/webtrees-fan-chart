@@ -156,10 +156,6 @@ msgstr "सबसे निचले दो स्तर"
 msgid "Lowest three levels"
 msgstr "सबसे निचले तीन स्तर"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "में"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""

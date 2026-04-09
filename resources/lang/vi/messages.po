@@ -157,10 +157,6 @@ msgstr "Hai cấp thấp nhất"
 msgid "Lowest three levels"
 msgstr "Ba cấp thấp nhất"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "tại"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""

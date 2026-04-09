@@ -158,10 +158,6 @@ msgstr "Два найнижчих рівні"
 msgid "Lowest three levels"
 msgstr "Три найнижчих рівні"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "в"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Показати дати шлюбів"

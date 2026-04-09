@@ -159,10 +159,6 @@ msgstr "Unterste zwei Ebenen"
 msgid "Lowest three levels"
 msgstr "Unterste drei Ebenen"
 
-#: src/Module.php:282
-msgid "in"
-msgstr "in"
-
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Zeige die Heiratsdaten der Eltern an"
