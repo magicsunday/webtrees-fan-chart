@@ -40,9 +40,9 @@
 }
 
 .webtrees-fan-chart-container svg g.person.available.hover g.arc path {
-    fill: rgb(245, 245, 245);
     stroke: rgb(200, 200, 200);
     stroke-width: 1.5px;
+    filter: brightness(0.95);
 }
 
 .webtrees-fan-chart-container svg g.person.available.hover g.color path {
@@ -75,6 +75,3 @@
     fill: rgb(50, 50, 50);
 }
 
-.webtrees-fan-chart-container svg .wt-chart-box-name:hover:not(.wt-chart-box-name-alt) {
-    fill: var(--link-color-hover);
-}
