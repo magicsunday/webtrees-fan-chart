@@ -106,7 +106,7 @@ export default class Text
                 const timespanLines = datum.data.data.timespan.split("\n");
                 const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
 
-                timespanLines.forEach((line, lineIndex) => {
+                timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
                     const slot     = dateSlots[lineIndex];
                     const position = positions.get(slot);
                     const pathId = this.createPathDefinition(parentId, slot, position, datum);
@@ -204,7 +204,7 @@ export default class Text
                         const timespanLines = datum.data.data.timespan.split("\n");
                         const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
 
-                        timespanLines.forEach((line, lineIndex) => {
+                        timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
                             const text = parent
                                 .append("text")
                                 .attr("class", "date")
@@ -867,22 +867,20 @@ export default class Text
     calculateOuterSlotPositions(datum, textElements)
     {
         // Build element groups: [names...], [dates...]
-        let groups = [[]];
+        let groups = [{ items: [], isDate: false }];
 
         textElements.each(function () {
             if (d3.select(this).classed("date")) {
                 // Start a new group for the first date
-                if (groups[groups.length - 1].length > 0
-                    && !groups[groups.length - 1].isDateGroup
+                if (groups[groups.length - 1].items.length > 0
+                    && !groups[groups.length - 1].isDate
                 ) {
-                    let dateGroup = [];
-                    dateGroup.isDateGroup = true;
-                    groups.push(dateGroup);
+                    groups.push({ items: [], isDate: true });
                 }
 
-                groups[groups.length - 1].push(this);
+                groups[groups.length - 1].items.push(this);
             } else {
-                groups[0].push(this);
+                groups[0].items.push(this);
             }
         });
 
@@ -903,7 +901,7 @@ export default class Text
         let totalDeg = 0;
 
         groups.forEach((group, gi) => {
-            totalDeg += (group.length - 1) * intraGapDeg;
+            totalDeg += (group.items.length - 1) * intraGapDeg;
 
             if (gi < groups.length - 1) {
                 totalDeg += interGapDeg;
@@ -927,10 +925,10 @@ export default class Text
         let positions = [];
 
         groups.forEach((group, gi) => {
-            group.forEach((element, si) => {
+            group.items.forEach((element, si) => {
                 positions.push(currentPos);
 
-                if (si < group.length - 1) {
+                if (si < group.items.length - 1) {
                     currentPos += intraGapDeg;
                 }
             });

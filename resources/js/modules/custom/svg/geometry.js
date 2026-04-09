@@ -223,7 +223,7 @@ export default class Geometry
         // width of the segment. Uses 80% of angular width to leave visual
         // padding and account for descenders / em-box centering offset.
         if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
-            let angularWidth = (datum.x1 - datum.x0) * 2 * Math.PI * this.centerRadius(datum.depth);
+            let angularWidth = (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0)) * this.centerRadius(datum.depth);
 
             // Depth >= 7 merges first + last name into 1 line; others use 2
             let lines  = datum.depth >= 7 ? 1 : 2;

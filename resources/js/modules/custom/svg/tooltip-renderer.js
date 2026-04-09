@@ -58,18 +58,9 @@ export default class TooltipRenderer
                 }
             })
             .on("mouseenter", (event) => {
-                if (datum.data.data.xref === "") {
-                    this._svg.div
-                        .style("opacity", 0);
-                }
-
                 this.setTooltipHtml(event, datum);
             })
             .on("mouseleave", () => {
-                if (datum.data.data.xref === "") {
-                    this._svg.div
-                        .style("opacity", 0);
-                }
             })
             .on("mousemove", (event) => {
                 this._svg.div

@@ -415,5 +415,14 @@ export default class Update
                     callback.apply(transition);
                 }
             });
+
+        // Fire callback if no transitions started (empty selection).
+        // setTimeout defers to after the current event-loop tick so D3
+        // has had a chance to schedule any transitions first.
+        setTimeout(() => {
+            if (n === 0) {
+                callback.apply(transition);
+            }
+        }, 0);
     }
 }

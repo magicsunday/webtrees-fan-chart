@@ -23,6 +23,25 @@ import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
 export default class FamilyColor
 {
     /**
+     * Saturation decrease per generation (percentage points).
+     * @type {number}
+     */
+    static SATURATION_STEP = 3.5;
+
+    /**
+     * Lightness increase per generation (percentage points).
+     * @type {number}
+     */
+    static LIGHTNESS_STEP = 3;
+
+    /**
+     * Fixed generation reference so colors at a given depth stay
+     * identical regardless of how many generations are displayed.
+     * @type {number}
+     */
+    static MAX_GENERATIONS_REF = 10;
+
+    /**
      * Constructor.
      *
      * @param {Configuration} configuration The application configuration
@@ -34,6 +53,26 @@ export default class FamilyColor
         // Convert the configured hex colors to HSL once
         this._paternalHsl = FamilyColor.hexToHsl(configuration.paternalColor);
         this._maternalHsl = FamilyColor.hexToHsl(configuration.maternalColor);
+    }
+
+    /**
+     * Computes the min-saturation and max-lightness bounds for the
+     * given base HSL color across the full generation range.
+     *
+     * @param {number[]} baseHsl [h, s, l] base color
+     *
+     * @return {{minSaturation: number, maxLightness: number}}
+     *
+     * @private
+     */
+    static _depthBounds(baseHsl)
+    {
+        const span = FamilyColor.MAX_GENERATIONS_REF - 1;
+
+        return {
+            minSaturation: Math.max(20, baseHsl[1] - span * FamilyColor.SATURATION_STEP),
+            maxLightness:  Math.min(90, baseHsl[2] + span * FamilyColor.LIGHTNESS_STEP),
+        };
     }
 
     /**
@@ -52,12 +91,6 @@ export default class FamilyColor
             return null;
         }
 
-        // Fixed reference so colors at a given depth stay identical
-        // regardless of how many generations are displayed.
-        const maxGenerations = 10;
-        const saturationStep = 3.5;
-        const lightnessStep  = 3;
-
         // Center node: sex-based hue at depth 0 of the same curve
         if (datum.depth === 0) {
             let baseHsl;
@@ -70,10 +103,9 @@ export default class FamilyColor
                 return "hsl(0, 0%, 92%)";
             }
 
-            const minSaturation = Math.max(20, baseHsl[1] - (maxGenerations - 1) * saturationStep);
-            const maxLightness  = Math.min(90, baseHsl[2] + (maxGenerations - 1) * lightnessStep);
+            const {minSaturation, maxLightness} = FamilyColor._depthBounds(baseHsl);
 
-            return "hsl(" + baseHsl[0] + ", " + Math.max(10, minSaturation - saturationStep) + "%, " + Math.min(93, maxLightness + lightnessStep) + "%)";
+            return "hsl(" + baseHsl[0] + ", " + Math.max(10, minSaturation - FamilyColor.SATURATION_STEP) + "%, " + Math.min(93, maxLightness + FamilyColor.LIGHTNESS_STEP) + "%)";
         }
 
         // Depth 1: two main branches get their own hue from their own position.
@@ -86,21 +118,20 @@ export default class FamilyColor
         }
 
         const refMidpoint = (refNode.x0 + refNode.x1) / 2;
-        const ownMidpoint = (datum.x0 + datum.x1) / 2;
-        const isPaternal  = ownMidpoint < 0.5;
+        const isPaternal  = refMidpoint < 0.5;
 
         // Derive hue from the configured base color ± 30° spread
         const baseHsl = isPaternal ? this._paternalHsl : this._maternalHsl;
         const half    = isPaternal ? refMidpoint / 0.5 : (refMidpoint - 0.5) / 0.5;
-        const hue     = baseHsl[0] + (half - 0.5) * 60;
+        const hue     = ((baseHsl[0] + (half - 0.5) * 60) % 360 + 360) % 360;
+
+        const {minSaturation, maxLightness} = FamilyColor._depthBounds(baseHsl);
 
         // Saturation increases with depth (inner = pastel, outer = vivid)
-        const minSaturation = Math.max(20, baseHsl[1] - (maxGenerations - 1) * saturationStep);
-        const saturation    = minSaturation + (datum.depth - 1) * saturationStep;
+        const saturation = minSaturation + (datum.depth - 1) * FamilyColor.SATURATION_STEP;
 
         // Lightness decreases with depth (inner = light, outer = deeper)
-        const maxLightness = Math.min(90, baseHsl[2] + (maxGenerations - 1) * lightnessStep);
-        const lightness    = maxLightness - (datum.depth - 1) * lightnessStep;
+        const lightness = maxLightness - (datum.depth - 1) * FamilyColor.LIGHTNESS_STEP;
 
         return "hsl(" + hue + ", " + saturation + "%, " + lightness + "%)";
     }
@@ -114,6 +145,10 @@ export default class FamilyColor
      */
     static hexToHsl(hex)
     {
+        if (!/^#?[0-9a-fA-F]{6}$/.test(hex)) {
+            return [0, 0, 50];
+        }
+
         hex = hex.replace(/^#/, "");
 
         const r = parseInt(hex.substring(0, 2), 16) / 255;
