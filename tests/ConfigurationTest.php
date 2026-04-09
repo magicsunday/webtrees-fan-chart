@@ -64,7 +64,7 @@ final class ConfigurationTest extends TestCase
             'default_fontScale'               => '125',
             'default_fanDegree'               => '270',
             'default_hideEmptySegments'       => '1',
-            'default_showColorGradients'      => '1',
+            'default_showFamilyColors'        => '1',
             'default_showParentMarriageDates' => '1',
             'default_innerArcs'               => '2',
             'default_hideSvgExport'           => '1',
@@ -77,7 +77,7 @@ final class ConfigurationTest extends TestCase
         self::assertSame(125, $configuration->getFontScale());
         self::assertSame(270, $configuration->getFanDegree());
         self::assertTrue($configuration->getHideEmptySegments());
-        self::assertTrue($configuration->getShowColorGradients());
+        self::assertTrue($configuration->getShowFamilyColors());
         self::assertTrue($configuration->getShowParentMarriageDates());
         self::assertSame(2, $configuration->getInnerArcs());
         self::assertTrue($configuration->getHideSvgExport());
@@ -103,7 +103,7 @@ final class ConfigurationTest extends TestCase
             'fontScale'               => '140',
             'fanDegree'               => '300',
             'hideEmptySegments'       => '1',
-            'showColorGradients'      => '1',
+            'showFamilyColors'        => '1',
             'showParentMarriageDates' => '1',
             'innerArcs'               => '1',
             'hideSvgExport'           => '0',
@@ -115,7 +115,7 @@ final class ConfigurationTest extends TestCase
             'default_fontScale'               => '100',
             'default_fanDegree'               => '210',
             'default_hideEmptySegments'       => '0',
-            'default_showColorGradients'      => '0',
+            'default_showFamilyColors'        => '0',
             'default_showParentMarriageDates' => '0',
             'default_innerArcs'               => '3',
             'default_hideSvgExport'           => '0',
@@ -128,7 +128,7 @@ final class ConfigurationTest extends TestCase
         self::assertSame(140, $configuration->getFontScale());
         self::assertSame(300, $configuration->getFanDegree());
         self::assertTrue($configuration->getHideEmptySegments());
-        self::assertTrue($configuration->getShowColorGradients());
+        self::assertTrue($configuration->getShowFamilyColors());
         self::assertTrue($configuration->getShowParentMarriageDates());
         self::assertSame(1, $configuration->getInnerArcs());
         self::assertFalse($configuration->getHideSvgExport());

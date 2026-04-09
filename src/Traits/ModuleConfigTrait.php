@@ -78,8 +78,8 @@ trait ModuleConfigTrait
             (string) $configuration->getInnerArcs()
         );
         $this->setPreference(
-            'default_showColorGradients',
-            (string) $configuration->getShowColorGradients()
+            'default_showFamilyColors',
+            (string) $configuration->getShowFamilyColors()
         );
         $this->setPreference(
             'default_showParentMarriageDates',
@@ -92,6 +92,14 @@ trait ModuleConfigTrait
         $this->setPreference(
             'default_hidePngExport',
             (string) $configuration->getHidePngExport()
+        );
+        $this->setPreference(
+            'default_paternalColor',
+            $configuration->getPaternalColor()
+        );
+        $this->setPreference(
+            'default_maternalColor',
+            $configuration->getMaternalColor()
         );
         $this->setPreference(
             'default_detailedDateGenerations',

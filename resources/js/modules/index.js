@@ -29,7 +29,7 @@ export class FanChart
      * @param {number}   options.fanDegree
      * @param {number}   options.fontScale
      * @param {boolean}  options.hideEmptySegments
-     * @param {boolean}  options.showColorGradients
+     * @param {boolean}  options.showFamilyColors
      * @param {boolean}  options.showParentMarriageDates
      * @param {boolean}  options.showImages
      * @param {boolean}  options.showSilhouettes
@@ -50,12 +50,14 @@ export class FanChart
             options.fanDegree,
             options.fontScale,
             options.hideEmptySegments,
-            options.showColorGradients,
+            options.showFamilyColors,
             options.showParentMarriageDates,
             options.showImages,
             options.showSilhouettes,
             options.rtl,
-            options.innerArcs
+            options.innerArcs,
+            options.paternalColor,
+            options.maternalColor
         );
 
         this._cssFiles = options.cssFiles;

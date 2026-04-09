@@ -184,7 +184,7 @@ const { default: Chart } = await import("resources/js/modules/custom/chart");
 
 const createConfiguration = (overrides = {}) => ({
     hideEmptySegments: false,
-    showColorGradients: false,
+    showFamilyColors: false,
     showParentMarriageDates: false,
     generations: 2,
     rtl: false,

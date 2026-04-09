@@ -193,9 +193,11 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
                         'fanDegree'               => $validator->integer('fanDegree', 210),
                         'fontScale'               => $validator->integer('fontScale', 100),
                         'hideEmptySegments'       => $validator->boolean('hideEmptySegments', false),
-                        'showColorGradients'      => $validator->boolean('showColorGradients', false),
+                        'showFamilyColors'        => $validator->boolean('showFamilyColors', false),
                         'showParentMarriageDates' => $validator->boolean('showParentMarriageDates', false),
                         'innerArcs'               => $validator->integer('innerArcs', 3),
+                        'paternalColor'           => $validator->string('paternalColor', Configuration::PATERNAL_COLOR_DEFAULT),
+                        'maternalColor'           => $validator->string('maternalColor', Configuration::MATERNAL_COLOR_DEFAULT),
                         'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
                     ]
                 )

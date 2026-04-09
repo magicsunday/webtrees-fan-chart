@@ -35,15 +35,25 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         <div class="mt-3">
             <?=
                 view($moduleName . '::modules/components/checkbox', [
-                    'name'      => 'showColorGradients',
-                    'label'     => I18N::translate('Show color gradients'),
-                    'checked'   => $configuration->getShowColorGradients(),
+                    'name'      => 'showFamilyColors',
+                    'label'     => I18N::translate('Show family colors'),
+                    'checked'   => $configuration->getShowFamilyColors(),
                     'unchecked' => '0',
                 ])
             ?>
             <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
-                <?= I18N::translate('Instead of the colors for men and women, a color gradient is displayed for the paternal and maternal lineage.') ?>
+                <?= I18N::translate('Colors the arcs by family branch. Each couple shares the same color, derived from the chosen base colors.') ?>
             </small>
+            <div class="ps-4 mt-2 d-flex align-items-center gap-3">
+                <label class="d-flex align-items-center gap-1 mb-0">
+                    <input type="color" id="paternalColor" name="paternalColor" value="<?= e($configuration->getPaternalColor()) ?>">
+                    <?= I18N::translate('Paternal') ?>
+                </label>
+                <label class="d-flex align-items-center gap-1 mb-0">
+                    <input type="color" id="maternalColor" name="maternalColor" value="<?= e($configuration->getMaternalColor()) ?>">
+                    <?= I18N::translate('Maternal') ?>
+                </label>
+            </div>
         </div>
 
         <div class="mt-3">

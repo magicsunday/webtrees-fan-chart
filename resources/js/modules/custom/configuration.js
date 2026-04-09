@@ -31,6 +31,20 @@ export function toFiniteNumber(value, fallback = 0)
 export default class Configuration
 {
     /**
+     * Default color for the paternal lineage.
+     *
+     * @type {string}
+     */
+    static PATERNAL_COLOR_DEFAULT = '#70a9cf';
+
+    /**
+     * Default color for the maternal lineage.
+     *
+     * @type {string}
+     */
+    static MATERNAL_COLOR_DEFAULT = '#d06f94';
+
+    /**
      * Constructor.
      *
      * @param {string[]} labels
@@ -38,12 +52,14 @@ export default class Configuration
      * @param {number}   fanDegree
      * @param {number}   fontScale
      * @param {boolean}  hideEmptySegments
-     * @param {boolean}  showColorGradients
+     * @param {boolean}  showFamilyColors
      * @param {boolean}  showParentMarriageDates
      * @param {boolean}  showImages
      * @param {boolean}  showSilhouettes
      * @param {boolean}  rtl
      * @param {number}   innerArcs
+     * @param {string}   paternalColor
+     * @param {string}   maternalColor
      */
     constructor(
         labels,
@@ -51,12 +67,14 @@ export default class Configuration
         fanDegree = 210,
         fontScale = 100,
         hideEmptySegments = false,
-        showColorGradients = false,
+        showFamilyColors = false,
         showParentMarriageDates = false,
         showImages = false,
         showSilhouettes = false,
         rtl = false,
-        innerArcs = 4
+        innerArcs = 4,
+        paternalColor = Configuration.PATERNAL_COLOR_DEFAULT,
+        maternalColor = Configuration.MATERNAL_COLOR_DEFAULT
     ) {
         // Default number of generations to display
         this._generations = toFiniteNumber(generations, 6);
@@ -74,7 +92,7 @@ export default class Configuration
         this.cornerRadius = 0;
 
         // Number of circles, large enough to print text along an arc path
-        this._numberOfInnerCircles = innerArcs;
+        this._numberOfInnerCircles = toFiniteNumber(innerArcs, 4);
 
         // Radius of the innermost circle
         this.centerCircleRadius = 115;
@@ -101,7 +119,7 @@ export default class Configuration
         this._fontScale = fontScale;
 
         this._hideEmptySegments  = hideEmptySegments;
-        this._showColorGradients = showColorGradients;
+        this._showFamilyColors = showFamilyColors;
         this._showParentMarriageDates = showParentMarriageDates;
         this._showImages = showImages;
         this._showSilhouettes = showSilhouettes;
@@ -114,6 +132,9 @@ export default class Configuration
 
         this.rtl    = rtl;
         this.labels = labels;
+
+        this._paternalColor = paternalColor;
+        this._maternalColor = maternalColor;
     }
 
     /**
@@ -197,23 +218,23 @@ export default class Configuration
     }
 
     /**
-     * Returns whether to show or hide a color gradient above each arc or display male/female colors instead.
+     * Returns whether to show or hide family colors above each arc or display male/female colors instead.
      *
      * @return {boolean}
      */
-    get showColorGradients()
+    get showFamilyColors()
     {
-        return this._showColorGradients;
+        return this._showFamilyColors;
     }
 
     /**
-     * Sets whether to show or hide a color gradient above each arc or display male/female colors instead.
+     * Sets whether to show or hide family colors above each arc or display male/female colors instead.
      *
      * @param {boolean} value Either true or false
      */
-    set showColorGradients(value)
+    set showFamilyColors(value)
     {
-        this._showColorGradients = value;
+        this._showFamilyColors = value;
     }
 
     /**
@@ -284,5 +305,25 @@ export default class Configuration
     get fontSize()
     {
         return this._fontSize;
+    }
+
+    /**
+     * Returns the hex color for the paternal lineage.
+     *
+     * @return {string}
+     */
+    get paternalColor()
+    {
+        return this._paternalColor;
+    }
+
+    /**
+     * Returns the hex color for the maternal lineage.
+     *
+     * @return {string}
+     */
+    get maternalColor()
+    {
+        return this._maternalColor;
     }
 }

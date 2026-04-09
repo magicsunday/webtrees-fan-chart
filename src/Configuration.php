@@ -83,6 +83,20 @@ class Configuration
     private const int FONT_SCALE_DEFAULT = 100;
 
     /**
+     * The default color for the paternal lineage (blue).
+     *
+     * @var string
+     */
+    public const string PATERNAL_COLOR_DEFAULT = '#70a9cf';
+
+    /**
+     * The default color for the maternal lineage (pink).
+     *
+     * @var string
+     */
+    public const string MATERNAL_COLOR_DEFAULT = '#d06f94';
+
+    /**
      * The default number of generations for which detailed life event dates are displayed.
      */
     private const int DEFAULT_DETAILED_DATE_GENERATIONS = 3;
@@ -273,11 +287,11 @@ class Configuration
     }
 
     /**
-     * Returns whether to show color gradients or not.
+     * Returns whether to show family colors or not.
      *
      * @return bool
      */
-    public function getShowColorGradients(): bool
+    public function getShowFamilyColors(): bool
     {
         if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
             $validator = Validator::parsedBody($this->request);
@@ -287,9 +301,9 @@ class Configuration
 
         return $validator
             ->boolean(
-                'showColorGradients',
+                'showFamilyColors',
                 (bool) $this->module->getPreference(
-                    'default_showColorGradients',
+                    'default_showFamilyColors',
                     '0'
                 )
             );
@@ -400,6 +414,52 @@ class Configuration
                 (bool) $this->module->getPreference(
                     'default_hidePngExport',
                     '0'
+                )
+            );
+    }
+
+    /**
+     * Returns the color for the paternal lineage.
+     *
+     * @return string
+     */
+    public function getPaternalColor(): string
+    {
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->string(
+                'paternalColor',
+                $this->module->getPreference(
+                    'default_paternalColor',
+                    self::PATERNAL_COLOR_DEFAULT
+                )
+            );
+    }
+
+    /**
+     * Returns the color for the maternal lineage.
+     *
+     * @return string
+     */
+    public function getMaternalColor(): string
+    {
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->string(
+                'maternalColor',
+                $this->module->getPreference(
+                    'default_maternalColor',
+                    self::MATERNAL_COLOR_DEFAULT
                 )
             );
     }

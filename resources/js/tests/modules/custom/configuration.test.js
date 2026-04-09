@@ -35,7 +35,7 @@ describe("Configuration", () => {
         expect(configuration.fanDegree).toBe(180);
         expect(configuration.fontScale).toBe(120);
         expect(configuration.hideEmptySegments).toBe(true);
-        expect(configuration.showColorGradients).toBe(true);
+        expect(configuration.showFamilyColors).toBe(true);
         expect(configuration.showParentMarriageDates).toBe(false);
         expect(configuration.showImages).toBe(true);
         expect(configuration.showSilhouettes).toBe(false);

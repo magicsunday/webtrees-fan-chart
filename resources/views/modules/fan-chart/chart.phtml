@@ -55,8 +55,16 @@ new WebtreesFanChart.FanChart(
             return (typeof hideEmptySegments !== "undefined" && hideEmptySegments !== null) ? hideEmptySegments : <?= json_encode($configuration->getHideEmptySegments()) ?>;
         },
 
-        get showColorGradients() {
-            return (typeof showColorGradients !== "undefined" && showColorGradients !== null) ? showColorGradients : <?= json_encode($configuration->getShowColorGradients()) ?>;
+        get showFamilyColors() {
+            return (typeof showFamilyColors !== "undefined" && showFamilyColors !== null) ? showFamilyColors : <?= json_encode($configuration->getShowFamilyColors()) ?>;
+        },
+
+        get paternalColor() {
+            return (typeof paternalColor !== "undefined" && paternalColor !== null) ? paternalColor : <?= json_encode($configuration->getPaternalColor()) ?>;
+        },
+
+        get maternalColor() {
+            return (typeof maternalColor !== "undefined" && maternalColor !== null) ? maternalColor : <?= json_encode($configuration->getMaternalColor()) ?>;
         },
 
         get showParentMarriageDates() {

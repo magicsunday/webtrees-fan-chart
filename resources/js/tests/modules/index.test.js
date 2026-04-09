@@ -70,7 +70,7 @@ const createOptions = (overrides = {}) => ({
     fanDegree: 180,
     fontScale: 1,
     hideEmptySegments: false,
-    showColorGradients: false,
+    showFamilyColors: false,
     showParentMarriageDates: false,
     showImages: false,
     showSilhouettes: false,
