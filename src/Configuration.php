@@ -369,6 +369,52 @@ class Configuration
     }
 
     /**
+     * Returns whether to show images or not.
+     *
+     * @return bool
+     */
+    public function getShowImages(): bool
+    {
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->boolean(
+                'showImages',
+                (bool) $this->module->getPreference(
+                    'default_showImages',
+                    '0'
+                )
+            );
+    }
+
+    /**
+     * Returns whether to show names in arcs or not.
+     *
+     * @return bool
+     */
+    public function getShowNames(): bool
+    {
+        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
+            $validator = Validator::parsedBody($this->request);
+        } else {
+            $validator = Validator::queryParams($this->request);
+        }
+
+        return $validator
+            ->boolean(
+                'showNames',
+                (bool) $this->module->getPreference(
+                    'default_showNames',
+                    '1'
+                )
+            );
+    }
+
+    /**
      * Returns the number of inner arcs to display.
      *
      * @return int

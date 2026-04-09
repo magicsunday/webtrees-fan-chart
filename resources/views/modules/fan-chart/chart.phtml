@@ -79,13 +79,15 @@ new WebtreesFanChart.FanChart(
             return (typeof innerArcs !== "undefined" && innerArcs !== null) ? innerArcs : <?= json_encode($configuration->getInnerArcs()) ?>;
         },
 
-        //defaultColor: <?php //= json_encode($chartParams['defaultColor']) ?>//,
-        showImages: <?= json_encode($chartParams['showImages']) ?>,
-        showSilhouettes: <?= json_encode($chartParams['showSilhouettes']) ?>,
+        get showImages() {
+            return (typeof showImages !== "undefined" && showImages !== null) ? showImages : <?= json_encode($configuration->getShowImages()) ?>;
+        },
 
-        // defaultColor: data.defaultColor,
-        // showImages: data.showImages,
-        // showSilhouettes: data.showSilhouettes,
+        get showNames() {
+            return (typeof showNames !== "undefined" && showNames !== null) ? showNames : <?= json_encode($configuration->getShowNames()) ?>;
+        },
+
+        showSilhouettes: <?= json_encode($chartParams['showSilhouettes']) ?>,
         data: <?= json_encode($data) ?>
     }
 );
