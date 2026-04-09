@@ -237,10 +237,8 @@ class DateProcessor
         /** @var Family|null $family */
         $family = $this->individual->spouseFamilies()->first();
 
-        if ($family !== null) {
-            return $this->decodeValue(
-                $family->getMarriageDate()->display()
-            );
+        if ($family !== null && $family->getMarriageDate()->isOK()) {
+            return $this->getMarriageEventDate($family->getMarriageDate());
         }
 
         return '';
@@ -256,12 +254,37 @@ class DateProcessor
         /** @var Family|null $family */
         $family = $this->individual->childFamilies()->first();
 
-        if ($family !== null) {
-            return $this->decodeValue(
-                $family->getMarriageDate()->display()
-            );
+        if ($family !== null && $family->getMarriageDate()->isOK()) {
+            return $this->getMarriageEventDate($family->getMarriageDate());
         }
 
         return '';
+    }
+
+    /**
+     * Returns a formatted marriage date. Marriage arcs sit between the
+     * child (at this generation) and the parents (generation + 1), so
+     * the effective depth is one level deeper than the individual.
+     *
+     * @param Date $date The marriage date
+     *
+     * @return string
+     */
+    private function getMarriageEventDate(Date $date): string
+    {
+        // Marriage arcs sit one level deeper than the individual.
+        $effectiveDepth = $this->generation + 1;
+
+        // No space at all beyond generation 8
+        if ($effectiveDepth > 8) {
+            return '';
+        }
+
+        // Compact date up to generation 6, year only beyond
+        if ($effectiveDepth <= min($this->detailedDateGenerations, 6)) {
+            return $this->formatCompactDate($date);
+        }
+
+        return (string) $this->getYear($date);
     }
 }
