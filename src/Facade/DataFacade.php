@@ -254,7 +254,7 @@ class DataFacade
 
         $lines = explode("\n", $timespan);
 
-        if (isset($lines[0]) && ($birthPlace !== '')) {
+        if ($birthPlace !== '') {
             $lines[0] .= ', ' . $birthPlace;
         }
 

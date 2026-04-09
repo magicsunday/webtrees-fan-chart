@@ -14,7 +14,6 @@ namespace MagicSunday\Webtrees\FanChart\Processor;
 use Fisharebest\Webtrees\Date;
 use Fisharebest\Webtrees\Date\AbstractCalendarDate;
 use Fisharebest\Webtrees\Family;
-use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 
 /**
@@ -69,30 +68,6 @@ class DateProcessor
         $this->deathDate               = $this->individual->getDeathDate();
         $this->generation              = $generation;
         $this->detailedDateGenerations = $detailedDateGenerations;
-    }
-
-    /**
-     * Removes HTML tags and converts/decodes HTML entities to their corresponding characters.
-     *
-     * @param string $value The value to decode
-     *
-     * @return string
-     */
-    private function decodeValue(string $value): string
-    {
-        return html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
-    }
-
-    /**
-     * Formats the given date.
-     *
-     * @param Date $date The date to format
-     *
-     * @return string
-     */
-    private function formatDate(Date $date): string
-    {
-        return $this->decodeValue($date->display());
     }
 
     /**
@@ -238,15 +213,9 @@ class DateProcessor
      */
     public function getLifetimeDescription(): string
     {
-        $isDetailed = $this->generation <= $this->detailedDateGenerations;
-
         if ($this->birthDate->isOK() && $this->deathDate->isOK()) {
             $birth = $this->getLifeEventDate($this->birthDate);
             $death = $this->getLifeEventDate($this->deathDate);
-
-            if ($isDetailed) {
-                return '* ' . $birth . "\n" . '† ' . $death;
-            }
 
             return '* ' . $birth . "\n" . '† ' . $death;
         }

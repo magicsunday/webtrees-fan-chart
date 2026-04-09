@@ -450,7 +450,7 @@ class NodeData implements JsonSerializable
     }
 
     /**
-     * @param string $birthPlace
+     * @param string $birthDateFull
      *
      * @return NodeData
      */

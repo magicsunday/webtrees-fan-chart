@@ -39,18 +39,18 @@ class DateProcessorTest extends TestCase
     }
 
     #[Test]
-    public function itUsesFullDatesWithinConfiguredGenerations(): void
+    public function itUsesCompactDatesWithinConfiguredGenerations(): void
     {
         $processor = new DateProcessor(
             $this->createIndividual(
-                $this->createDate('1 Jan 1980', true, 1980),
-                $this->createDate('2 Feb 2020', true, 2020)
+                $this->createDate('01.01.1980', true, 1980),
+                $this->createDate('02.02.2020', true, 2020)
             ),
             2,
             3
         );
 
-        self::assertSame('1 Jan 1980-2 Feb 2020', $processor->getLifetimeDescription());
+        self::assertSame("* 01.01.1980\n† 02.02.2020", $processor->getLifetimeDescription());
     }
 
     #[Test]
@@ -58,14 +58,14 @@ class DateProcessorTest extends TestCase
     {
         $processor = new DateProcessor(
             $this->createIndividual(
-                $this->createDate('1 Jan 1980', true, 1980),
-                $this->createDate('2 Feb 2020', true, 2020)
+                $this->createDate('01.01.1980', true, 1980),
+                $this->createDate('02.02.2020', true, 2020)
             ),
             5,
             2
         );
 
-        self::assertSame('1980-2020', $processor->getLifetimeDescription());
+        self::assertSame("* 1980\n† 2020", $processor->getLifetimeDescription());
     }
 
     #[Test]
@@ -73,7 +73,7 @@ class DateProcessorTest extends TestCase
     {
         $processor = new DateProcessor(
             $this->createIndividual(
-                $this->createDate('1 Jan 1980', true, 1980),
+                $this->createDate('01.01.1980', true, 1980),
                 $this->createDate('', false, 0),
                 false
             ),
@@ -81,11 +81,11 @@ class DateProcessorTest extends TestCase
             4
         );
 
-        self::assertSame('Born: 1 Jan 1980', $processor->getLifetimeDescription());
+        self::assertSame('* 01.01.1980', $processor->getLifetimeDescription());
     }
 
     #[Test]
-    public function itMarksDeceasedWithoutDates(): void
+    public function itMarksDeceasedWithSymbol(): void
     {
         $processor = new DateProcessor(
             $this->createIndividual(
@@ -97,25 +97,25 @@ class DateProcessorTest extends TestCase
             4
         );
 
-        self::assertSame('Deceased', $processor->getLifetimeDescription());
+        self::assertSame('†', $processor->getLifetimeDescription());
     }
 
     /**
      * Creates a mock date instance with the given values.
      *
-     * @param string $display The formatted date string
-     * @param bool   $isOk    Whether the date is considered valid
-     * @param int    $year    The calendar year to return
+     * @param string $compactDate The compact formatted date (DD.MM.YYYY)
+     * @param bool   $isOk        Whether the date is considered valid
+     * @param int    $year         The calendar year to return
      *
      * @return Date
      */
-    private function createDate(string $display, bool $isOk, int $year): Date
+    private function createDate(string $compactDate, bool $isOk, int $year): Date
     {
         $calendarDate = $this->createMock(AbstractCalendarDate::class);
         $calendarDate->method('year')->willReturn($year);
+        $calendarDate->method('format')->willReturn($compactDate);
 
         $date = $this->createMock(Date::class);
-        $date->method('display')->willReturn($display);
         $date->method('minimumDate')->willReturn($calendarDate);
         $date->method('isOK')->willReturn($isOk);
 
