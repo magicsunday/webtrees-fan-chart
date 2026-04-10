@@ -179,10 +179,7 @@ final class DataFacadeTest extends TestCase
         $childFamily->method('getMarriageDate')->willReturn($this->createDate('1 JAN 1890'));
 
         $facade   = new DataFacade();
-        $rootNode = $facade
-            ->setModule($module)
-            ->setConfiguration($configuration)
-            ->createTreeStructure($root);
+        $rootNode = $facade->createTreeStructure($module, $configuration, $root);
 
         self::assertInstanceOf(Node::class, $rootNode);
 

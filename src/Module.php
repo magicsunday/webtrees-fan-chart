@@ -190,15 +190,11 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
         if ($ajax) {
             $this->layout = $this->name() . '::layouts/ajax';
 
-            $this->dataFacade
-                ->setModule($this)
-                ->setConfiguration($this->configuration);
-
             return $this->viewResponse(
                 $this->name() . '::modules/fan-chart/chart',
                 [
                     'id'                => uniqid(),
-                    'data'              => $this->dataFacade->createTreeStructure($individual),
+                    'data'              => $this->dataFacade->createTreeStructure($this, $this->configuration, $individual),
                     'configuration'     => $this->configuration,
                     'chartParams'       => $this->getChartParameters($individual),
                     'exportStylesheets' => $this->getExportStylesheets(),
@@ -332,13 +328,9 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
         $individual = Registry::individualFactory()->make($xref, $tree);
         $individual = Auth::checkIndividualAccess($individual, false, true);
 
-        $this->dataFacade
-            ->setModule($this)
-            ->setConfiguration($this->configuration);
-
         return response([
             'title' => $this->getPageTitle($individual),
-            'data'  => $this->dataFacade->createTreeStructure($individual),
+            'data'  => $this->dataFacade->createTreeStructure($this, $this->configuration, $individual),
         ]);
     }
 

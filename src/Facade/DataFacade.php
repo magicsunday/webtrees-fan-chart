@@ -49,38 +49,23 @@ class DataFacade
     private int $nodeId = 0;
 
     /**
-     * @param ModuleCustomInterface $module
-     *
-     * @return DataFacade
-     */
-    public function setModule(ModuleCustomInterface $module): DataFacade
-    {
-        $this->module = $module;
-
-        return $this;
-    }
-
-    /**
-     * @param Configuration $configuration
-     *
-     * @return DataFacade
-     */
-    public function setConfiguration(Configuration $configuration): DataFacade
-    {
-        $this->configuration = $configuration;
-
-        return $this;
-    }
-
-    /**
      * Creates the JSON tree structure.
      *
-     * @param Individual $individual
+     * @param ModuleCustomInterface $module
+     * @param Configuration         $configuration
+     * @param Individual            $individual
      *
      * @return Node|null
      */
-    public function createTreeStructure(Individual $individual): ?Node
-    {
+    public function createTreeStructure(
+        ModuleCustomInterface $module,
+        Configuration $configuration,
+        Individual $individual,
+    ): ?Node {
+        $this->module        = $module;
+        $this->configuration = $configuration;
+        $this->nodeId        = 0;
+
         return $this->buildTreeStructure($individual);
     }
 
