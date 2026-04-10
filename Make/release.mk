@@ -6,8 +6,8 @@
 
 MODULE_NAME := webtrees-fan-chart
 
-# Allow "make release 3.1.0" as shorthand for "make release VERSION=3.1.0"
-VERSION ?= $(filter-out release release-% dist,$(MAKECMDGOALS))
+# Extract version from arguments: "make release 3.1.0"
+VERSION := $(filter-out release release-% dist,$(MAKECMDGOALS))
 
 .PHONY: release release-check release-prepare release-publish release-bump dist
 
