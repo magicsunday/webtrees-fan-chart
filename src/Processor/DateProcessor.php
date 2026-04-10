@@ -116,6 +116,36 @@ class DateProcessor
     }
 
     /**
+     * Returns whether the individual is deceased.
+     *
+     * @return bool
+     */
+    public function isDead(): bool
+    {
+        return $this->individual->isDead();
+    }
+
+    /**
+     * Returns the formatted birth date string (without symbol).
+     *
+     * @return string
+     */
+    public function getFormattedBirthDate(): string
+    {
+        return $this->birthDate->isOK() ? $this->getLifeEventDate($this->birthDate) : '';
+    }
+
+    /**
+     * Returns the formatted death date string (without symbol).
+     *
+     * @return string
+     */
+    public function getFormattedDeathDate(): string
+    {
+        return $this->deathDate->isOK() ? $this->getLifeEventDate($this->deathDate) : '';
+    }
+
+    /**
      * Get the year of birth.
      *
      * @return int
@@ -256,7 +286,7 @@ class DateProcessor
      *
      * @return string
      */
-    private function getCompactLifetimeDescription(): string
+    public function getCompactLifetimeDescription(): string
     {
         $birthYear = $this->birthDate->isOK() ? $this->getYear($this->birthDate) : 0;
         $deathYear = $this->deathDate->isOK() ? $this->getYear($this->deathDate) : 0;

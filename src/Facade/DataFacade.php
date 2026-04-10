@@ -182,14 +182,7 @@ class DataFacade
                 )
             )
             ->setTimespan(
-                $this->appendPlaces(
-                    $dateProcessor->getLifetimeDescription(),
-                    $placeProcessor->getBirthPlaceShort(),
-                    $placeProcessor->getDeathPlaceShort(),
-                    $generation,
-                    $dateProcessor->hasBirthDate(),
-                    $dateProcessor->hasDeathDate(),
-                )
+                $this->buildTimespan($dateProcessor, $placeProcessor, $generation)
             )
             ->setBirthDateFull($dateProcessor->getBirthDateFull())
             ->setDeathDateFull($dateProcessor->getDeathDateFull())
@@ -228,93 +221,85 @@ class DataFacade
     }
 
     /**
-     * Appends birth and death places to the timespan lines. Only
-     * applied for generations within the detailed date range where
-     * the arcs are wide enough to display the extra text.
+     * Builds the timespan string from structured date and place data.
+     * For outer generations, returns a compact date-only format.
+     * For inner generations, assembles birth and death lines from
+     * individual event components.
      *
-     * @param string $timespan   The formatted timespan (may contain \n)
-     * @param string $birthPlace The birth place
-     * @param string $deathPlace The death place
-     * @param int    $generation The generation depth
+     * @param DateProcessor  $dateProcessor
+     * @param PlaceProcessor $placeProcessor
+     * @param int            $generation
      *
      * @return string
      */
-    private function appendPlaces(
-        string $timespan,
-        string $birthPlace,
-        string $deathPlace,
+    private function buildTimespan(
+        DateProcessor $dateProcessor,
+        PlaceProcessor $placeProcessor,
         int $generation,
-        bool $hasBirthDate,
-        bool $hasDeathDate,
     ): string {
-        if (!$this->configuration->getShowPlaces()) {
-            return $timespan;
-        }
-
-        // Only append places in detailed-date generations where arcs
-        // have enough width for the additional text
+        // Outer generations: compact single-line format (no places)
         if ($generation > $this->configuration->getDetailedDateGenerations()) {
-            return $timespan;
+            return $dateProcessor->getCompactLifetimeDescription();
         }
 
-        if (($birthPlace === '') && ($deathPlace === '')) {
-            return $timespan;
-        }
+        $showPlaces = $this->configuration->getShowPlaces();
 
-        $lines = ($timespan !== '') ? explode("\n", $timespan) : [];
+        $birthLine = $this->buildEventLine(
+            Symbols::SYMBOL_BIRTH,
+            $dateProcessor->getFormattedBirthDate(),
+            $showPlaces ? $placeProcessor->getBirthPlaceShort() : '',
+        );
 
-        // Both dates available: append places to their respective lines
-        if ($hasBirthDate && $hasDeathDate) {
-            if ($birthPlace !== '') {
-                $lines[0] .= ', ' . $birthPlace;
-            }
+        $deathLine = $this->buildEventLine(
+            Symbols::SYMBOL_DEATH,
+            $dateProcessor->getFormattedDeathDate(),
+            $showPlaces ? $placeProcessor->getDeathPlaceShort() : '',
+        );
 
-            if ($deathPlace !== '') {
-                $lines[1] .= ', ' . $deathPlace;
-            }
+        $lines = array_filter([$birthLine, $deathLine], static fn (string $line): bool => $line !== '');
 
+        if ($lines !== []) {
             return implode("\n", $lines);
         }
 
-        // Birth date only
-        if ($hasBirthDate) {
-            if ($birthPlace !== '') {
-                $lines[0] .= ', ' . $birthPlace;
-            }
-
-            if ($deathPlace !== '') {
-                $lines[] = Symbols::SYMBOL_DEATH . ' ' . $deathPlace;
-            }
-
-            return implode("\n", $lines);
+        // Deceased without any dates or places
+        if ($dateProcessor->isDead()) {
+            return Symbols::SYMBOL_DEATH;
         }
 
-        // Death date only
-        if ($hasDeathDate) {
-            if ($birthPlace !== '') {
-                array_unshift($lines, Symbols::SYMBOL_BIRTH . ' ' . $birthPlace);
-            }
+        return '';
+    }
 
-            if ($deathPlace !== '') {
-                $deathIndex = ($birthPlace !== '') ? 1 : 0;
-                $lines[$deathIndex] .= ', ' . $deathPlace;
-            }
-
-            return implode("\n", $lines);
+    /**
+     * Builds a single event line from a symbol, date, and place.
+     * Returns an empty string if both date and place are absent.
+     *
+     * @param string $symbol The genealogical symbol (e.g. * or †)
+     * @param string $date   The formatted date string
+     * @param string $place  The place name
+     *
+     * @return string
+     */
+    private function buildEventLine(
+        string $symbol,
+        string $date,
+        string $place,
+    ): string {
+        if (($date === '') && ($place === '')) {
+            return '';
         }
 
-        // No dates - show places with symbols
-        $result = [];
+        $line = $symbol;
 
-        if ($birthPlace !== '') {
-            $result[] = Symbols::SYMBOL_BIRTH . ' ' . $birthPlace;
+        if ($date !== '') {
+            $line .= ' ' . $date;
         }
 
-        if ($deathPlace !== '') {
-            $result[] = Symbols::SYMBOL_DEATH . ' ' . $deathPlace;
+        if ($place !== '') {
+            $line .= ($date !== '') ? ', ' . $place : ' ' . $place;
         }
 
-        return implode("\n", $result);
+        return $line;
     }
 
     /**
