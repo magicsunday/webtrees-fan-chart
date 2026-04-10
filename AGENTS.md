@@ -1,13 +1,5 @@
-<!-- Managed by agent: keep sections & order; edit content, not structure. Last updated: 2026-04-10 -->
-
 ## Overview
-- This repository hosts the webtrees fan chart module — an interactive SVG fan chart of an individual's ancestors using D3.js, installed as a Composer package inside webtrees.
-- Decision Log:
-  - 2025-02-11: Added AGENTS.md scaffolding and documented required composer checks before commits.
-  - 2025-02-12: Consolidated JavaScript tests under resources/js/tests and clarified test expectations (JS vs PHP tooling).
-  - 2025-02-13: Captured conciseness, documentation, testing, and enum/value-object requirements plus vanilla-JS guidance.
-  - 2026-04-10: Added architecture overview, data flow, key patterns, release pipeline, and Docker buildbox workflow.
-- Scoped guides: see [src/AGENTS.md](src/AGENTS.md) for PHP code and [resources/AGENTS.md](resources/AGENTS.md) for assets.
+This repository hosts the webtrees fan chart module — an interactive SVG fan chart of an individual's ancestors using D3.js, installed as a Composer package inside webtrees.
 
 ## Setup/env
 - PHP 8.3+ with extensions dom and json is required; composer installs dependencies into .build/vendor and binaries into .build/bin.
@@ -103,11 +95,9 @@ Pipeline: version bump → clean old bundles → npm ci → rollup → commit �
 - Bad: `class example { function run($x){ if(empty($x)) return; } } // no types/docs, uses empty()`
 
 ## When stuck
-- Check composer scripts (`composer run-script --list`) and the README for expected workflows; align new guidance with existing tooling.
-- Document deviations or new requirements in the Decision Log of the nearest AGENTS.md.
+- Check composer scripts (`composer run-script --list`) and the README for expected workflows.
 
 ## House Rules
 - Maintain strict typing and PHPStan level max alignment; update Rector or coding-standard configs when code style shifts.
 - Prefer interfaces where sensible; mark data-only classes as `readonly` and remove redundant modifiers or arguments.
-- Always update AGENTS.md files alongside behavior changes to avoid instruction drift.
 - Avoid external JavaScript libraries beyond D3; stick to vanilla JavaScript elsewhere.
