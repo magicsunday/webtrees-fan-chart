@@ -118,7 +118,11 @@ release-bump:
 	@git push origin main
 	@echo -e "${FGREEN} ✔${FRESET} Version bumped to $(NEXT)-dev"
 
+## Remove leftover release artifacts
+release-clean:
+	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip
+
 ## Full release pipeline
-release: release-prepare release-publish release-bump ## Create and publish a release (usage: make release 3.1.0)
+release: release-prepare release-publish release-bump release-clean ## Create and publish a release (usage: make release 3.1.0)
 	@echo ""
 	@echo -e "${FGREEN} ✔ Release $(VERSION) complete!${FRESET}"
