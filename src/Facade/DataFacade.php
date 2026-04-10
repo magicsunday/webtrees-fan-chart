@@ -177,7 +177,7 @@ class DataFacade
             ->setMarriageDateOfParents(
                 $this->appendPlaceToLine(
                     $dateProcessor->getMarriageDateOfParents(),
-                    $this->getMarriagePlaceShort($individual),
+                    $this->getParentsMarriagePlaceShort($individual, $placeProcessor),
                     $generation
                 )
             )
@@ -337,34 +337,25 @@ class DataFacade
     }
 
     /**
-     * Returns the short marriage place for the individual's parents
+     * Returns the short marriage place of the individual's parents
      * (for arc text, respects placeParts setting).
      *
-     * @param Individual $individual
+     * @param Individual     $individual
+     * @param PlaceProcessor $placeProcessor
      *
      * @return string
      */
-    private function getMarriagePlaceShort(Individual $individual): string
-    {
+    private function getParentsMarriagePlaceShort(
+        Individual $individual,
+        PlaceProcessor $placeProcessor,
+    ): string {
         $family = $individual->childFamilies()->first();
 
         if ($family === null) {
             return '';
         }
 
-        $marriagePlace = $family->getMarriagePlace();
-
-        if ($marriagePlace->gedcomName() === '') {
-            return '';
-        }
-
-        $placeParts = $this->configuration->getPlaceParts();
-
-        if ($placeParts === 0) {
-            return $marriagePlace->gedcomName();
-        }
-
-        return $marriagePlace->firstParts($placeParts)->implode(', ');
+        return $placeProcessor->shortPlaceName($family->getMarriagePlace());
     }
 
     /**

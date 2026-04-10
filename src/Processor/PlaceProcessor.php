@@ -114,7 +114,7 @@ class PlaceProcessor
      *
      * @return string
      */
-    private function shortPlaceName(Place $place): string
+    public function shortPlaceName(Place $place): string
     {
         $placeName = $place->gedcomName();
 
