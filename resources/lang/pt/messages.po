@@ -1,0 +1,230 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2024-12-22 13:03+0100\n"
+"PO-Revision-Date: 2026-04-10 12:44+0100\n"
+"Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
+"Language-Team: \n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.9\n"
+"X-Poedit-Basepath: ../../..\n"
+"X-Poedit-KeywordsList: translate\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: resources/views\n"
+
+#: src/Module.php:127 src/Module.php:243
+msgid "Fan chart"
+msgstr "Diagrama em leque"
+
+#: src/Module.php:137
+msgid "A fan chart of an individual’s ancestors."
+msgstr "Diagrama em leque dos ascendentes de um indivíduo."
+
+#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
+#, php-format
+msgid "Fan chart of %s"
+msgstr "Diagrama em leque de %s"
+
+#: src/Module.php:260
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Usar Ctrl + roda do rato para aproximar ou afastar"
+
+#: src/Module.php:261
+msgid "Move the view with two fingers"
+msgstr "Mover a vista com dois dedos"
+
+#: src/Traits/ModuleConfigTrait.php:99
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr "As preferências do módulo \"%s\" foram atualizadas."
+
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
+msgid "Re center"
+msgstr "Recentrar"
+
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr "Alternar entre vista em ecrã completo e vista normal"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:17
+msgid "Show help"
+msgstr "Mostrar ajuda"
+
+#: resources/views/modules/components/buttonbar/png-export-button.phtml:18
+msgid "Export as PNG"
+msgstr "Exportar como PNG"
+
+#: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
+msgid "Export as SVG"
+msgstr "Exportar como SVG"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
+msgstr "Painel de controlo"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr "Módulos"
+
+#: resources/views/modules/fan-chart/config.phtml:50
+msgid "General"
+msgstr "Geral"
+
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr "Esconder o botão \"Exportar como SVG\""
+
+#: resources/views/modules/fan-chart/config.phtml:66
+msgid "Hide the PNG export button"
+msgstr "Esconder o botão \"Exportar como PNG\""
+
+#: resources/views/modules/fan-chart/config.phtml:79
+msgid "save"
+msgstr "Guardar"
+
+#: resources/views/modules/fan-chart/config.phtml:84
+msgid "cancel"
+msgstr "Cancelar"
+
+#: resources/views/modules/fan-chart/form/fan-size.phtml:22
+msgid "Fan size"
+msgstr "Amplitude do leque"
+
+#: resources/views/modules/fan-chart/form/font-size.phtml:22
+msgid "Font size"
+msgstr "Tamanho da fonte"
+
+#: resources/views/modules/fan-chart/form/generations.phtml:22
+msgid "Generations"
+msgstr "Gerações"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
+msgid "Number of inner levels"
+msgstr "Número de níveis interiores"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
+msgid "Specifies the number of levels in which the text is written along an arc."
+msgstr "Especifica o número de níveis nos quais o texto apresentado acompanha o arco."
+
+#: resources/views/modules/fan-chart/form/layout.phtml:23
+msgid "Layout"
+msgstr "Disposição visual"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:29
+msgid "Hide empty segments"
+msgstr "Esconder os segmentos vazios"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:39
+msgid "Show family colors"
+msgstr "Coloração por ramo familiar"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:45
+msgid "Colors the arcs by family branch. Each couple shares the same color, derived from the chosen base colors."
+msgstr "Coloração dos arcos por ramo familiar. Cada casal partilha a mesma cor, derivada das cores base escolhidas."
+
+#: resources/views/modules/fan-chart/form/layout.phtml:49
+msgid "Paternal"
+msgstr "Paterno"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:53
+msgid "Maternal"
+msgstr "Materno"
+
+msgid "Show places"
+msgstr "Mostrar os locais"
+
+msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
+msgstr "Mostra os locais de nascimento e óbito nos arcos interiores da geração. Escolha o nível de detalhe a seguir."
+
+msgid "Full place name"
+msgstr "Nome completo do local"
+
+msgid "Lowest level (e.g. parish)"
+msgstr "Nível mais específico (ex: freguesia ou lugar)"
+
+msgid "Lowest two levels"
+msgstr "Dois níveis mais específicos"
+
+msgid "Lowest three levels"
+msgstr "Três níveis mais baixos"
+
+#: resources/views/modules/fan-chart/form/layout.phtml:62
+msgid "Show parent marriage dates"
+msgstr "Mostrar as datas de casamento dos pais"
+
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "Indivíduo"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "Visualizar"
+
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "Mostrar as opções adicionais"
+
+#: resources/views/modules/fan-chart/page.phtml:80
+msgid "Hide more options"
+msgstr "Esconder as opções adicionais"
+
+msgid "Right-click"
+msgstr "Right-click"
+
+msgid "Show details of a person"
+msgstr "Mostrar os detalhes de um indivíduo"
+
+msgid "Ctrl + scroll"
+msgstr "Ctrl + roda do rato"
+
+msgid "Zoom in/out"
+msgstr "Aproximar/afastar"
+
+msgid "Click and drag"
+msgstr "Clicar e arrastar"
+
+msgid "Move the chart"
+msgstr "Mover o diagrama"
+
+msgid "Click on a person"
+msgstr "Clicar num indivíduo"
+
+msgid "Reload chart for that person"
+msgstr "Recarregar o diagrama para esse indivíduo"
+
+#: resources/views/modules/fan-chart/form/date-precision.phtml:22
+msgid "Birth and death date precision"
+msgstr "Precisão das datas de nascimento e óbito"
+
+#: resources/views/modules/fan-chart/form/date-precision.phtml:34
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
+msgstr ""
+"Mostrar as datas de nascimento e óbito completas para as gerações mais recentes. As datas de casamento são representadas apenas pelo ano a partir "
+"da geração 7 e não são mostradas a partir da geração 9."
+
+#: src/Configuration.php:191
+msgid "Years only"
+msgstr "Apenas anos"
+
+#: src/Configuration.php:195
+#, php-format
+msgid "Show full dates up to generation %s"
+msgstr "Mostrar as datas completas até à geração %s"
+
+msgid "Show images"
+msgstr "Mostrar as imagens"
+
+msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgstr ""
+"Mostra imagens em miniatura dos arcos interiores e no centro do diagrama. As imagens apenas são mostradas se o segmento do arco tiver espaço "
+"suficiente."
+
+msgid "Show names"
+msgstr "Mostrar os nomes"
+
+msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgstr "Mostra nomes e datas nos segmentos do diagrama. Quando desativada, as gerações exteriores para além dos arcos interiores não são mostradas."
