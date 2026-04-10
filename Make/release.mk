@@ -14,7 +14,7 @@ VERSION := $(filter-out release release-% dist,$(MAKECMDGOALS))
 ## Check that VERSION is set and valid
 release-check:
 	@if [ -z "$(VERSION)" ]; then \
-		echo "Usage: make release VERSION=3.1.0"; \
+		echo "Usage: make release 3.1.0"; \
 		exit 1; \
 	fi
 	@if ! echo "$(VERSION)" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$$'; then \

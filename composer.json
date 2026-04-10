@@ -66,31 +66,6 @@
         }
     },
     "scripts": {
-        "module:build": [
-            "### Remove any left over files",
-            "rm -Rf webtrees-fan-chart/",
-            "### Checkout latest version of repository",
-            "git archive --prefix=webtrees-fan-chart/ HEAD --format=tar | tar -x",
-            "### Remove all not required files from archive",
-            "rm -rf webtrees-fan-chart/.github",
-            "rm -rf webtrees-fan-chart/resources/js/modules",
-            "rm -f webtrees-fan-chart/.gitattributes",
-            "rm -f webtrees-fan-chart/.gitignore",
-            "rm -f webtrees-fan-chart/composer.json",
-            "rm -f webtrees-fan-chart/package.json",
-            "rm -f webtrees-fan-chart/eslint.config.js",
-            "rm -f webtrees-fan-chart/rollup.config.js",
-            "rm -f webtrees-fan-chart/phpstan.neon",
-            "rm -f webtrees-fan-chart/phpstan-baseline.neon",
-            "rm -f webtrees-fan-chart/.php-cs-fixer.dist.php",
-            "rm -f webtrees-fan-chart/.phplint.yml",
-            "rm -f webtrees-fan-chart/rector.php",
-            "### Create archive",
-            "zip --quiet --recurse-paths --move -9 webtrees-fan-chart.zip webtrees-fan-chart"
-        ],
-        "module:check": [
-            "@ci:test"
-        ],
         "ci:cgl": [
             "php-cs-fixer fix --config .php-cs-fixer.dist.php --diff --verbose"
         ],
@@ -145,7 +120,5 @@
         ]
     },
     "scripts-descriptions": {
-        "module:build": "Create a distribution file (webtrees-fan-chart.zip)",
-        "module:check": "Run various static analysis tools"
     }
 }
