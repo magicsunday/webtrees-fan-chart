@@ -323,7 +323,7 @@ export default class Chart {
             .filter((datum) => datum.data.data.xref !== "")
             .classed("available", true);
 
-        // Trigger method on click
+        // Trigger method on click/touch
         persons.on("click", this.personClick.bind(this));
 
         // Set available on marriage arcs that have content

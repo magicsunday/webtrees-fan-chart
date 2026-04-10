@@ -393,7 +393,7 @@ export default class Update {
         // clipPath not in the set. Avoids O(n*m) document.querySelector per clipPath.
         const activeClipIds = new Set();
 
-        this._svg.get()
+        this._svg
             .selectAll("image[clip-path]")
             .each(function () {
                 const match = this.getAttribute("clip-path").match(/url\(#(.+)\)/);

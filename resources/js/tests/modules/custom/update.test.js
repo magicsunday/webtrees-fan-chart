@@ -327,8 +327,8 @@ class SvgStub {
         const hasSeparatorSelector = selector.includes("g.separatorGroup");
         const hasChildSelector    = /g\.arc|g\.name|g\.color|g\.image|title/.test(selector);
 
-        // Marriage and separator selectors return empty selections (no marriage/separator elements in test)
-        if (hasMarriageSelector || hasSeparatorSelector) {
+        // Image clip-path, marriage and separator selectors return empty selections
+        if (selector.includes("image[clip-path]") || hasMarriageSelector || hasSeparatorSelector) {
             return new ChildSelection([], this);
         }
 
