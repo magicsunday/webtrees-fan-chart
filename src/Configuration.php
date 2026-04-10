@@ -284,7 +284,7 @@ class Configuration
     public function getPlaceParts(): int
     {
         return $this->validator()
-            ->isBetween(0, 5)
+            ->isBetween(0, 3)
             ->integer(
                 'placeParts',
                 (int) $this->module->getPreference(
