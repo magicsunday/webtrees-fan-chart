@@ -31,8 +31,21 @@ release-check:
 dist:
 	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip
 	@git archive --prefix=$(MODULE_NAME)/ HEAD --format=tar | tar -x
-	@zip --quiet --recurse-paths --move -9 $(MODULE_NAME).zip $(MODULE_NAME)
+	@$(COMPOSE_RUN) sh -c "cd /app/$(MODULE_NAME) && zip --quiet --recurse-paths --move -9 /app/$(MODULE_NAME).zip ."
+	@rm -rf $(MODULE_NAME)/
 	@echo -e "${FGREEN} ✔${FRESET} $(MODULE_NAME).zip created"
+
+## Clean node_modules (may need root if created by different user)
+clean-node:
+	@if [ -d node_modules ]; then \
+		$(COMPOSE_RUN) rm -rf /app/node_modules 2>/dev/null || \
+		sudo rm -rf node_modules 2>/dev/null || \
+		rm -rf node_modules; \
+	fi
+
+## Build JS bundles via node container
+js-build: clean-node
+	@$(COMPOSE_RUN) sh -c "npm ci && npm run prepare"
 
 ## Prepare: update versions, pin webtrees, build JS, commit, tag, build zip
 release-prepare: release-check
@@ -41,7 +54,7 @@ release-prepare: release-check
 	@sed -i '0,/"version":/{s/"version": ".*"/"version": "$(VERSION)"/}' package.json
 	@sed -i 's/"fisharebest\/webtrees": "~2.2.0 || dev-main"/"fisharebest\/webtrees": "~2.2.0"/' composer.json
 	@echo -e "${FYELLOW}[2/4]${FRESET} Building JavaScript bundles..."
-	@$(COMPOSE_RUN) sh -c "rm -rf node_modules && npm ci && npm run prepare"
+	@$(MAKE) js-build
 	@echo -e "${FYELLOW}[3/4]${FRESET} Committing release and building archive..."
 	@git add -A
 	@git commit -m "Release $(VERSION)"
@@ -50,8 +63,8 @@ release-prepare: release-check
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) prepared"
 
 ## Publish: push, create GitHub release with zip.
-## Set NOTES_FILE to a markdown file to prepend custom highlights above
-## the auto-generated changelog. Example: make release-publish NOTES_FILE=RELEASE_NOTES.md
+## Set NOTES_FILE to a markdown file for custom release notes.
+## Example: make release-publish NOTES_FILE=RELEASE_NOTES.md
 release-publish:
 	@echo -e "${FYELLOW}[4/4]${FRESET} Publishing to GitHub..."
 	@git push origin main --tags
@@ -76,9 +89,9 @@ release-bump:
 	$(eval NEXT := $(shell echo "$(VERSION)" | awk -F. '{print $$1"."$$2"."$$3+1}'))
 	@echo -e "${FYELLOW}[+]${FRESET} Bumping to $(NEXT)-dev..."
 	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/" src/Module.php
-	@sed -i 's/"version": ".*"/"version": "$(NEXT)-dev"/' package.json
+	@sed -i '0,/"version":/{s/"version": ".*"/"version": "$(NEXT)-dev"/}' package.json
 	@sed -i 's/"fisharebest\/webtrees": "~2.2.0"/"fisharebest\/webtrees": "~2.2.0 || dev-main"/' composer.json
-	@$(COMPOSE_RUN) sh -c "rm -rf node_modules && npm ci && npm run prepare"
+	@$(MAKE) js-build
 	@git add -A
 	@git commit -m "Bump version to $(NEXT)-dev"
 	@git push origin main
