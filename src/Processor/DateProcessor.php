@@ -172,7 +172,7 @@ class DateProcessor
      */
     public function getBirthDate(): string
     {
-        return $this->getLifeEventDate($this->birthDate);
+        return $this->birthDate->isOK() ? $this->getLifeEventDate($this->birthDate) : '';
     }
 
     /**
@@ -182,7 +182,7 @@ class DateProcessor
      */
     public function getDeathDate(): string
     {
-        return $this->getLifeEventDate($this->deathDate);
+        return $this->deathDate->isOK() ? $this->getLifeEventDate($this->deathDate) : '';
     }
 
     /**
