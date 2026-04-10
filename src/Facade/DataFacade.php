@@ -283,7 +283,7 @@ class DataFacade
             }
 
             if ($deathPlace !== '') {
-                $lines[] = $deathPlace;
+                $lines[] = Symbols::SYMBOL_DEATH . ' ' . $deathPlace;
             }
 
             return implode("\n", $lines);
