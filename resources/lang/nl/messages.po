@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2024-12-22 13:03+0100\n"
-"PO-Revision-Date: 2024-12-22 20:01+0100\n"
+"PO-Revision-Date: 2026-04-10 07:09+0200\n"
 "Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.9\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: src\n"
@@ -107,10 +107,8 @@ msgid "Number of inner levels"
 msgstr "Aantal binnenste niveaus"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
-msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr ""
-"Geeft het aantal niveaus aan waarin de tekst langs een boog wordt geschreven."
+msgid "Specifies the number of levels in which the text is written along an arc."
+msgstr "Geeft het aantal niveaus aan waarin de tekst langs een boog wordt geschreven."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -118,19 +116,15 @@ msgstr "Indeling"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
-msgstr "Lege segmenten verbergen"
+msgstr "Verberg lege segmenten"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
 msgid "Show family colors"
-msgstr "Familiekleuren weergeven"
+msgstr "Toon familiekleuren"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:45
-msgid ""
-"Colors the arcs by family branch. Each couple shares the same color, derived "
-"from the chosen base colors."
-msgstr ""
-"Kleurt de bogen per familietak. Elk paar deelt dezelfde "
-"kleur, afgeleid van de gekozen basiskleuren."
+msgid "Colors the arcs by family branch. Each couple shares the same color, derived from the chosen base colors."
+msgstr "Kleurt de bogen per familietak. Elk paar deelt dezelfde kleur, afgeleid van de gekozen basiskleuren."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:49
 msgid "Paternal"
@@ -141,7 +135,7 @@ msgid "Maternal"
 msgstr "Moederlijk"
 
 msgid "Show places"
-msgstr "Plaatsen tonen"
+msgstr "Toon plaatsen"
 
 msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
 msgstr "Toont geboorte- en overlijdensplaatsen in de binnenste generatiebogen. Kies hieronder het detailniveau."
@@ -178,17 +172,11 @@ msgstr "Meer opties"
 msgid "Hide more options"
 msgstr "Minder opties"
 
-#~ msgid "Presentation"
-#~ msgstr "Weergave"
-
-#~ msgid "reset"
-#~ msgstr "herstellen"
-
 msgid "Right-click"
 msgstr "Rechtsklik"
 
 msgid "Show details of a person"
-msgstr "Details van een persoon tonen"
+msgstr "Toon details van een persoon"
 
 msgid "Ctrl + scroll"
 msgstr "Ctrl + scrollen"
@@ -226,13 +214,19 @@ msgid "Show full dates up to generation %s"
 msgstr "Toon volledige data tot generatie %s"
 
 msgid "Show images"
-msgstr "Afbeeldingen tonen"
+msgstr "Toon afbeeldingen"
 
 msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
 msgstr "Toont miniatuurafbeeldingen in de binnenste bogen en het midden van het diagram. Afbeeldingen worden alleen getoond als het boogsegment breed genoeg is."
 
 msgid "Show names"
-msgstr "Namen tonen"
+msgstr "Toon namen"
 
 msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
 msgstr "Toont namen en datums in de diagramsegmenten. Indien uitgeschakeld worden buitenste generaties voorbij de binnenste bogen verborgen."
+
+#~ msgid "Presentation"
+#~ msgstr "Weergave"
+
+#~ msgid "reset"
+#~ msgstr "herstellen"
