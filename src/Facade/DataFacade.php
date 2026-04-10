@@ -18,10 +18,10 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
+use MagicSunday\Webtrees\FanChart\Model\Symbols;
 use MagicSunday\Webtrees\FanChart\Processor\DateProcessor;
 use MagicSunday\Webtrees\FanChart\Processor\ImageProcessor;
 use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
-use MagicSunday\Webtrees\FanChart\Model\Symbols;
 use MagicSunday\Webtrees\FanChart\Processor\PlaceProcessor;
 
 /**
