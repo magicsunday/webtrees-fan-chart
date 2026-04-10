@@ -1,5 +1,8 @@
 # =============================================================================
-# TARGETS
+# Release pipeline
+#
+# Requires: git, node, npm, zip, gh (GitHub CLI)
+# Run inside the webtrees buildbox: make bash, then cd to the module directory.
 # =============================================================================
 
 #### Release
@@ -9,10 +12,25 @@ MODULE_NAME := webtrees-fan-chart
 # Extract version from arguments: "make release 3.1.0"
 VERSION := $(filter-out release release-% dist,$(MAKECMDGOALS))
 
-.PHONY: release release-check release-prepare release-publish release-bump dist
+REQUIRED_TOOLS := git node npm zip gh
 
-## Check that VERSION is set and valid
+.PHONY: release release-check release-prepare release-publish release-bump dist clean-js
+
+## Verify all required tools are available
 release-check:
+	@missing=""; \
+	for tool in $(REQUIRED_TOOLS); do \
+		if ! command -v $$tool >/dev/null 2>&1; then \
+			missing="$$missing $$tool"; \
+		fi; \
+	done; \
+	if [ -n "$$missing" ]; then \
+		echo "Error: Missing required tools:$$missing"; \
+		echo ""; \
+		echo "This command requires: $(REQUIRED_TOOLS)"; \
+		echo "Make sure all tools are available in your environment."; \
+		exit 1; \
+	fi
 	@if [ -z "$(VERSION)" ]; then \
 		echo "Usage: make release 3.1.0"; \
 		exit 1; \
@@ -25,32 +43,24 @@ release-check:
 		echo "Error: Working directory not clean. Commit or stash changes first."; \
 		exit 1; \
 	fi
-	@echo -e "${FGREEN} ✔${FRESET} Release checks passed for $(VERSION)"
-
-## Build distribution zip from git archive (respects .gitattributes export-ignore)
-dist:
-	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip
-	@git archive --prefix=$(MODULE_NAME)/ HEAD --format=tar | tar -x
-	@$(COMPOSE_RUN) sh -c "cd /app/$(MODULE_NAME) && zip --quiet --recurse-paths --move -9 /app/$(MODULE_NAME).zip ."
-	@rm -rf $(MODULE_NAME)/
-	@echo -e "${FGREEN} ✔${FRESET} $(MODULE_NAME).zip created"
-
-## Clean node_modules (may need root if created by different user)
-clean-node:
-	@if [ -d node_modules ]; then \
-		$(COMPOSE_RUN) rm -rf /app/node_modules 2>/dev/null || \
-		sudo rm -rf node_modules 2>/dev/null || \
-		rm -rf node_modules; \
+	@if ! gh auth status >/dev/null 2>&1; then \
+		echo "Error: Not authenticated with GitHub. Run 'gh auth login' first."; \
+		exit 1; \
 	fi
-
-## Build JS bundles via node container
-js-build: clean-node
-	@$(COMPOSE_RUN) sh -c "npm ci && npm run prepare"
+	@echo -e "${FGREEN} ✔${FRESET} Release checks passed for $(VERSION)"
 
 ## Remove old versioned JS bundles before building new ones
 clean-js:
 	@rm -f resources/js/$(MODULE_NAME)-*.js resources/js/$(MODULE_NAME)-*.min.js
 	@echo -e "${FGREEN} ✔${FRESET} Old JS bundles removed"
+
+## Build distribution zip from git archive (respects .gitattributes export-ignore)
+dist:
+	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip
+	@git archive --prefix=$(MODULE_NAME)/ HEAD --format=tar | tar -x
+	@cd $(MODULE_NAME) && zip --quiet --recurse-paths --move -9 ../$(MODULE_NAME).zip .
+	@rm -rf $(MODULE_NAME)/
+	@echo -e "${FGREEN} ✔${FRESET} $(MODULE_NAME).zip created"
 
 ## Prepare: update versions, pin webtrees, build JS, commit, tag, build zip
 release-prepare: release-check
@@ -61,7 +71,9 @@ release-prepare: release-check
 	@echo -e "${FYELLOW}[2/5]${FRESET} Removing old JS bundles..."
 	@$(MAKE) clean-js
 	@echo -e "${FYELLOW}[3/5]${FRESET} Building JavaScript bundles..."
-	@$(MAKE) js-build
+	@rm -rf node_modules
+	@npm ci --ignore-scripts
+	@npm run prepare
 	@echo -e "${FYELLOW}[4/5]${FRESET} Committing release and building archive..."
 	@git add -A
 	@git commit -m "Release $(VERSION)"
@@ -70,15 +82,15 @@ release-prepare: release-check
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) prepared"
 
 ## Publish: push, create GitHub release with zip.
-## Set NOTES_FILE to a markdown file for custom release notes.
-## Example: make release-publish NOTES_FILE=RELEASE_NOTES.md
+## Pass NOTES="..." for custom release notes, otherwise auto-generated.
+## Example: make release 3.1.1 NOTES="Bug fix release"
 release-publish:
 	@echo -e "${FYELLOW}[5/5]${FRESET} Publishing to GitHub..."
 	@git push origin main --tags
-	@if [ -n "$(NOTES_FILE)" ] && [ -f "$(NOTES_FILE)" ]; then \
+	@if [ -n "$(NOTES)" ]; then \
 		gh release create $(VERSION) \
 			--title "$(VERSION)" \
-			--notes-file "$(NOTES_FILE)" \
+			--notes "$(NOTES)" \
 			--target main \
 			$(MODULE_NAME).zip; \
 	else \
@@ -98,7 +110,9 @@ release-bump:
 	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/" src/Module.php
 	@sed -i '0,/"version":/{s/"version": ".*"/"version": "$(NEXT)-dev"/}' package.json
 	@sed -i 's/"fisharebest\/webtrees": "~2.2.0"/"fisharebest\/webtrees": "~2.2.0 || dev-main"/' composer.json
-	@$(MAKE) js-build
+	@rm -rf node_modules
+	@npm ci --ignore-scripts
+	@npm run prepare
 	@git add -A
 	@git commit -m "Bump version to $(NEXT)-dev"
 	@git push origin main
