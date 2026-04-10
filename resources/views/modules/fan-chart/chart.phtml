@@ -25,72 +25,70 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 <div class="webtrees-fan-chart-container" id="webtrees-fan-chart-container-<?= $id ?>"></div>
 
 <?php View::push('javascript'); ?>
-<script src="<?= e($javascript) ?>"></script>
-<?php View::endpush(); ?>
+<script type="module">
 
-<?php View::push('javascript'); ?>
-<script>
+import(<?= json_encode(e($javascript)) ?>).then((module) => {
+    const { FanChart } = module.default || module;
+    new FanChart(
+        "#webtrees-fan-chart-container-<?= $id ?>",
+        {
+            labels: <?= json_encode($chartParams['labels']) ?>,
+            rtl: <?= json_encode($chartParams['rtl']) ?>,
+            cssFiles: <?= json_encode($exportStylesheets) ?>,
 
-// Create chart instance
-new WebtreesFanChart.FanChart(
-    "#webtrees-fan-chart-container-<?= $id ?>",
-    {
-        labels: <?= json_encode($chartParams['labels']) ?>,
-        rtl: <?= json_encode($chartParams['rtl']) ?>,
-        cssFiles: <?= json_encode($exportStylesheets) ?>,
+            get generations() {
+                return (typeof generations !== "undefined" && generations !== null) ? generations : <?= $configuration->getGenerations() ?>
+            },
 
-        get generations() {
-            return (typeof generations !== "undefined" && generations !== null) ? generations : <?= $configuration->getGenerations() ?>
-        },
+            get fanDegree() {
+                return (typeof fanDegree !== "undefined" && fanDegree !== null) ? fanDegree : <?= json_encode($configuration->getFanDegree()) ?>;
+            },
 
-        get fanDegree() {
-            return (typeof fanDegree !== "undefined" && fanDegree !== null) ? fanDegree : <?= json_encode($configuration->getFanDegree()) ?>;
-        },
+            get fontScale() {
+                return (typeof fontScale !== "undefined" && fontScale !== null) ? fontScale : <?= json_encode($configuration->getFontScale()) ?>;
+            },
 
-        get fontScale() {
-            return (typeof fontScale !== "undefined" && fontScale !== null) ? fontScale : <?= json_encode($configuration->getFontScale()) ?>;
-        },
+            get hideEmptySegments() {
+                return (typeof hideEmptySegments !== "undefined" && hideEmptySegments !== null) ? hideEmptySegments : <?= json_encode($configuration->getHideEmptySegments()) ?>;
+            },
 
-        get hideEmptySegments() {
-            return (typeof hideEmptySegments !== "undefined" && hideEmptySegments !== null) ? hideEmptySegments : <?= json_encode($configuration->getHideEmptySegments()) ?>;
-        },
+            get showFamilyColors() {
+                return (typeof showFamilyColors !== "undefined" && showFamilyColors !== null) ? showFamilyColors : <?= json_encode($configuration->getShowFamilyColors()) ?>;
+            },
 
-        get showFamilyColors() {
-            return (typeof showFamilyColors !== "undefined" && showFamilyColors !== null) ? showFamilyColors : <?= json_encode($configuration->getShowFamilyColors()) ?>;
-        },
+            get paternalColor() {
+                return (typeof paternalColor !== "undefined" && paternalColor !== null) ? paternalColor : <?= json_encode($configuration->getPaternalColor()) ?>;
+            },
 
-        get paternalColor() {
-            return (typeof paternalColor !== "undefined" && paternalColor !== null) ? paternalColor : <?= json_encode($configuration->getPaternalColor()) ?>;
-        },
+            get maternalColor() {
+                return (typeof maternalColor !== "undefined" && maternalColor !== null) ? maternalColor : <?= json_encode($configuration->getMaternalColor()) ?>;
+            },
 
-        get maternalColor() {
-            return (typeof maternalColor !== "undefined" && maternalColor !== null) ? maternalColor : <?= json_encode($configuration->getMaternalColor()) ?>;
-        },
+            get showPlaces() {
+                return (typeof showPlaces !== "undefined" && showPlaces !== null) ? showPlaces : <?= json_encode($configuration->getShowPlaces()) ?>;
+            },
 
-        get showPlaces() {
-            return (typeof showPlaces !== "undefined" && showPlaces !== null) ? showPlaces : <?= json_encode($configuration->getShowPlaces()) ?>;
-        },
+            get showParentMarriageDates() {
+                return (typeof showParentMarriageDates !== "undefined" && showParentMarriageDates !== null) ? showParentMarriageDates : <?= json_encode($configuration->getShowParentMarriageDates()) ?>;
+            },
 
-        get showParentMarriageDates() {
-            return (typeof showParentMarriageDates !== "undefined" && showParentMarriageDates !== null) ? showParentMarriageDates : <?= json_encode($configuration->getShowParentMarriageDates()) ?>;
-        },
+            get innerArcs() {
+                return (typeof innerArcs !== "undefined" && innerArcs !== null) ? innerArcs : <?= json_encode($configuration->getInnerArcs()) ?>;
+            },
 
-        get innerArcs() {
-            return (typeof innerArcs !== "undefined" && innerArcs !== null) ? innerArcs : <?= json_encode($configuration->getInnerArcs()) ?>;
-        },
+            get showImages() {
+                return (typeof showImages !== "undefined" && showImages !== null) ? showImages : <?= json_encode($configuration->getShowImages()) ?>;
+            },
 
-        get showImages() {
-            return (typeof showImages !== "undefined" && showImages !== null) ? showImages : <?= json_encode($configuration->getShowImages()) ?>;
-        },
+            get showNames() {
+                return (typeof showNames !== "undefined" && showNames !== null) ? showNames : <?= json_encode($configuration->getShowNames()) ?>;
+            },
 
-        get showNames() {
-            return (typeof showNames !== "undefined" && showNames !== null) ? showNames : <?= json_encode($configuration->getShowNames()) ?>;
-        },
-
-        showSilhouettes: <?= json_encode($chartParams['showSilhouettes']) ?>,
-        data: <?= json_encode($data) ?>
-    }
-);
+            showSilhouettes: <?= json_encode($chartParams['showSilhouettes']) ?>,
+            data: <?= json_encode($data) ?>
+        }
+    );
+});
 
 </script>
 <?php View::endpush(); ?>
