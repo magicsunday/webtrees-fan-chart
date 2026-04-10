@@ -21,7 +21,7 @@ release-check:
 		echo "Error: VERSION must be semver (e.g. 3.1.0)"; \
 		exit 1; \
 	fi
-	@if [ -n "$$(git status --porcelain)" ]; then \
+	@if [ -n "$$(git status --porcelain --untracked-files=no)" ]; then \
 		echo "Error: Working directory not clean. Commit or stash changes first."; \
 		exit 1; \
 	fi
