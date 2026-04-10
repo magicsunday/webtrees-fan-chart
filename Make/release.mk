@@ -47,15 +47,22 @@ clean-node:
 js-build: clean-node
 	@$(COMPOSE_RUN) sh -c "npm ci && npm run prepare"
 
+## Remove old versioned JS bundles before building new ones
+clean-js:
+	@rm -f resources/js/$(MODULE_NAME)-*.js resources/js/$(MODULE_NAME)-*.min.js
+	@echo -e "${FGREEN} ✔${FRESET} Old JS bundles removed"
+
 ## Prepare: update versions, pin webtrees, build JS, commit, tag, build zip
 release-prepare: release-check
-	@echo -e "${FYELLOW}[1/4]${FRESET} Updating versions to $(VERSION)..."
+	@echo -e "${FYELLOW}[1/5]${FRESET} Updating versions to $(VERSION)..."
 	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(VERSION)'/" src/Module.php
 	@sed -i '0,/"version":/{s/"version": ".*"/"version": "$(VERSION)"/}' package.json
 	@sed -i 's/"fisharebest\/webtrees": "~2.2.0 || dev-main"/"fisharebest\/webtrees": "~2.2.0"/' composer.json
-	@echo -e "${FYELLOW}[2/4]${FRESET} Building JavaScript bundles..."
+	@echo -e "${FYELLOW}[2/5]${FRESET} Removing old JS bundles..."
+	@$(MAKE) clean-js
+	@echo -e "${FYELLOW}[3/5]${FRESET} Building JavaScript bundles..."
 	@$(MAKE) js-build
-	@echo -e "${FYELLOW}[3/4]${FRESET} Committing release and building archive..."
+	@echo -e "${FYELLOW}[4/5]${FRESET} Committing release and building archive..."
 	@git add -A
 	@git commit -m "Release $(VERSION)"
 	@git tag $(VERSION)
@@ -66,7 +73,7 @@ release-prepare: release-check
 ## Set NOTES_FILE to a markdown file for custom release notes.
 ## Example: make release-publish NOTES_FILE=RELEASE_NOTES.md
 release-publish:
-	@echo -e "${FYELLOW}[4/4]${FRESET} Publishing to GitHub..."
+	@echo -e "${FYELLOW}[5/5]${FRESET} Publishing to GitHub..."
 	@git push origin main --tags
 	@if [ -n "$(NOTES_FILE)" ] && [ -f "$(NOTES_FILE)" ]; then \
 		gh release create $(VERSION) \
