@@ -38,7 +38,7 @@ dist:
 release-prepare: release-check
 	@echo -e "${FYELLOW}[1/4]${FRESET} Updating versions to $(VERSION)..."
 	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(VERSION)'/" src/Module.php
-	@sed -i 's/"version": ".*"/"version": "$(VERSION)"/' package.json
+	@sed -i '0,/"version":/{s/"version": ".*"/"version": "$(VERSION)"/}' package.json
 	@sed -i 's/"fisharebest\/webtrees": "~2.2.0 || dev-main"/"fisharebest\/webtrees": "~2.2.0"/' composer.json
 	@echo -e "${FYELLOW}[2/4]${FRESET} Building JavaScript bundles..."
 	@$(COMPOSE_RUN) sh -c "rm -rf node_modules && npm ci && npm run prepare"
