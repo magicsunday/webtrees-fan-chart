@@ -189,7 +189,7 @@ final class DataFacadeTest extends TestCase
         $data           = $rootNode->getData();
         $serializedData = $data->jsonSerialize();
         self::assertSame('I1', $serializedData['xref']);
-        self::assertSame('/route/module?module=webtrees-fan-chart&action=update&xref=I1&tree=main&generations=2&detailedDateGenerations=0', $serializedData['updateUrl']);
+        self::assertSame('/route/module?module=webtrees-fan-chart&action=update&xref=I1&tree=main&generations=2&detailedDateGenerations=0&showPlaces=0&placeParts=0', $serializedData['updateUrl']);
 
         $serialized = $rootNode->jsonSerialize();
 

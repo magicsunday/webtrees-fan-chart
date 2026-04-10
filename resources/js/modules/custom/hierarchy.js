@@ -10,8 +10,8 @@ import * as d3 from "../lib/d3";
 export const SEX_MALE = "M";
 export const SEX_FEMALE = "F";
 
-export const SYMBOL_BIRTH    = "\u2605";
-export const SYMBOL_DEATH    = "\u2020";
+export const SYMBOL_BIRTH = "\u2605";
+export const SYMBOL_DEATH = "\u2020";
 export const SYMBOL_MARRIAGE = "\u26AD";
 export const SYMBOL_ELLIPSIS = "\u2026";
 
