@@ -6,7 +6,7 @@
  */
 
 import * as d3 from "../../lib/d3";
-import Geometry from "./geometry";
+import Geometry, {appendArc} from "./geometry";
 import FamilyColor from "./family-color";
 import {SYMBOL_MARRIAGE} from "../hierarchy";
 
@@ -108,24 +108,7 @@ export default class Marriage {
             .padRadius(0)
             .cornerRadius(this._configuration.cornerRadius);
 
-        const arcGroup = marriage
-            .append("g")
-            .attr("class", "arc");
-
-        const path = arcGroup
-            .append("path")
-            .attr("d", arcGenerator);
-
-        const parentColor = FamilyColor.getMarriageColor(datum);
-
-        if (parentColor && !marriage.classed("new")) {
-            path.style("fill", parentColor);
-        }
-
-        // Hide arc initially if it's new during chart update
-        if (marriage.classed("new")) {
-            path.style("opacity", 1e-6);
-        }
+        appendArc(marriage, arcGenerator, FamilyColor.getMarriageColor(datum));
     }
 
     /**

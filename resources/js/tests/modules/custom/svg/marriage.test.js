@@ -31,7 +31,10 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
             }
             return ((fontSize - datum.depth) * this._configuration.fontScale / 100.0);
         }
-    }
+    },
+    appendArc(parent) {
+        parent.append("g").attr("class", "arc").append("path");
+    },
 }));
 
 const { default: Marriage } = await import("resources/js/modules/custom/svg/marriage");

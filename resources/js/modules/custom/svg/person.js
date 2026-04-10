@@ -6,7 +6,7 @@
  */
 
 import * as d3 from "../../lib/d3";
-import Geometry from "./geometry";
+import Geometry, {appendArc} from "./geometry";
 import TooltipRenderer from "./tooltip-renderer";
 import LabelRenderer from "./label-renderer";
 import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
@@ -327,38 +327,16 @@ export default class Person {
      * @private
      */
     addArcToPerson(person, datum) {
-        // Create arc generator
         const arcGenerator = d3.arc()
             .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
             .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
             .innerRadius(this._geometry.innerRadius(datum.depth))
-            .outerRadius(this._geometry.outerRadius(datum.depth));
-
-        arcGenerator.padAngle(this.getArcPadAngle(datum))
+            .outerRadius(this._geometry.outerRadius(datum.depth))
+            .padAngle(this.getArcPadAngle(datum))
             .padRadius(this._configuration.padRadius)
             .cornerRadius(this._configuration.cornerRadius);
 
-        // Append arc
-        const arcGroup = person
-            .append("g")
-            .attr("class", "arc");
-
-        const path = arcGroup
-            .append("path")
-            .attr("d", arcGenerator);
-
-        // Apply family-branch color to the arc fill (inline style
-        // overrides the CSS rules that set fill on arc paths).
-        // During updates, new arcs skip the immediate fill so the
-        // D3 transition can fade from gray to the family color.
-        if (datum.data.data.familyColor && !person.classed("new")) {
-            path.style("fill", datum.data.data.familyColor);
-        }
-
-        // Hide arc initially if its new during chart update
-        if (person.classed("new")) {
-            path.style("opacity", 1e-6);
-        }
+        appendArc(person, arcGenerator, datum.data.data.familyColor);
     }
 
     /**

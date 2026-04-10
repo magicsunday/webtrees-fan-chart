@@ -46,7 +46,8 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
         innerRadius() { return 0; }
         outerRadius() { return 0; }
         getFontSize() { return 14; }
-    }
+    },
+    appendArc() {},
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/svg/label-renderer", () => ({
