@@ -230,13 +230,13 @@ class DataFacade
         $showPlaces = $this->configuration->getShowPlaces();
 
         $birthLine = $this->buildEventLine(
-            Symbols::SYMBOL_BIRTH,
+            Symbols::Birth->value,
             $dateProcessor->getFormattedBirthDate(),
             $showPlaces ? $placeProcessor->getBirthPlaceShort() : '',
         );
 
         $deathLine = $this->buildEventLine(
-            Symbols::SYMBOL_DEATH,
+            Symbols::Death->value,
             $dateProcessor->getFormattedDeathDate(),
             $showPlaces ? $placeProcessor->getDeathPlaceShort() : '',
         );
@@ -249,7 +249,7 @@ class DataFacade
 
         // Deceased without any dates or places
         if ($dateProcessor->isDead()) {
-            return Symbols::SYMBOL_DEATH;
+            return Symbols::Death->value;
         }
 
         return '';

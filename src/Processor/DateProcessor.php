@@ -263,19 +263,19 @@ class DateProcessor
             $birth = $this->getLifeEventDate($this->birthDate);
             $death = $this->getLifeEventDate($this->deathDate);
 
-            return Symbols::SYMBOL_BIRTH . ' ' . $birth . "\n" . Symbols::SYMBOL_DEATH . ' ' . $death;
+            return Symbols::Birth->value . ' ' . $birth . "\n" . Symbols::Death->value . ' ' . $death;
         }
 
         if ($this->birthDate->isOK()) {
-            return Symbols::SYMBOL_BIRTH . ' ' . $this->getLifeEventDate($this->birthDate);
+            return Symbols::Birth->value . ' ' . $this->getLifeEventDate($this->birthDate);
         }
 
         if ($this->deathDate->isOK()) {
-            return Symbols::SYMBOL_DEATH . ' ' . $this->getLifeEventDate($this->deathDate);
+            return Symbols::Death->value . ' ' . $this->getLifeEventDate($this->deathDate);
         }
 
         if ($this->individual->isDead()) {
-            return Symbols::SYMBOL_DEATH;
+            return Symbols::Death->value;
         }
 
         return '';
@@ -296,15 +296,15 @@ class DateProcessor
         }
 
         if ($birthYear > 0) {
-            return Symbols::SYMBOL_BIRTH . ' ' . $birthYear;
+            return Symbols::Birth->value . ' ' . $birthYear;
         }
 
         if ($deathYear > 0) {
-            return Symbols::SYMBOL_DEATH . ' ' . $deathYear;
+            return Symbols::Death->value . ' ' . $deathYear;
         }
 
         if ($this->individual->isDead()) {
-            return Symbols::SYMBOL_DEATH;
+            return Symbols::Death->value;
         }
 
         return '';
