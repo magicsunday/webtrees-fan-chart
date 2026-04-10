@@ -157,25 +157,25 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
         // Convert POST requests into GET requests for pretty URLs.
         // This also updates the name above the form, which won't get updated if only a POST request is used
         if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($request);
-
             return redirect(
                 route(
                     self::ROUTE_DEFAULT,
                     [
                         'tree'                    => $tree->name(),
-                        'xref'                    => $validator->string('xref', ''),
-                        'generations'             => $validator->integer('generations', 6),
-                        'fanDegree'               => $validator->integer('fanDegree', 210),
-                        'fontScale'               => $validator->integer('fontScale', 100),
-                        'hideEmptySegments'       => $validator->boolean('hideEmptySegments', false),
-                        'showFamilyColors'        => $validator->boolean('showFamilyColors', false),
-                        'showPlaces'              => $validator->boolean('showPlaces', false),
-                        'placeParts'              => $validator->integer('placeParts', 1),
-                        'showParentMarriageDates' => $validator->boolean('showParentMarriageDates', false),
-                        'innerArcs'               => $validator->integer('innerArcs', 3),
-                        'paternalColor'           => $validator->string('paternalColor', Configuration::PATERNAL_COLOR_DEFAULT),
-                        'maternalColor'           => $validator->string('maternalColor', Configuration::MATERNAL_COLOR_DEFAULT),
+                        'xref'                    => Validator::parsedBody($request)->string('xref', ''),
+                        'generations'             => $this->configuration->getGenerations(),
+                        'fanDegree'               => $this->configuration->getFanDegree(),
+                        'fontScale'               => $this->configuration->getFontScale(),
+                        'hideEmptySegments'       => $this->configuration->getHideEmptySegments() ? '1' : '0',
+                        'showFamilyColors'        => $this->configuration->getShowFamilyColors() ? '1' : '0',
+                        'showPlaces'              => $this->configuration->getShowPlaces() ? '1' : '0',
+                        'placeParts'              => $this->configuration->getPlaceParts(),
+                        'showParentMarriageDates' => $this->configuration->getShowParentMarriageDates() ? '1' : '0',
+                        'showImages'              => $this->configuration->getShowImages() ? '1' : '0',
+                        'showNames'               => $this->configuration->getShowNames() ? '1' : '0',
+                        'innerArcs'               => $this->configuration->getInnerArcs(),
+                        'paternalColor'           => $this->configuration->getPaternalColor(),
+                        'maternalColor'           => $this->configuration->getMaternalColor(),
                         'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
                     ]
                 )
