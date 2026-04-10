@@ -4,14 +4,13 @@ import terser from "@rollup/plugin-terser";
 import license from "rollup-plugin-license";
 
 export default [
-    // fan-chart.js
+    // fan-chart.js (ES module for dynamic import())
     {
         input: "resources/js/modules/index.js",
         output: [
             {
-                name: "WebtreesFanChart",
                 file: "resources/js/fan-chart-" + pkg.version + ".js",
-                format: "umd"
+                format: "es"
             }
         ],
         plugins: [
@@ -32,9 +31,8 @@ Version: <%= pkg.version %>`
         input: "resources/js/modules/index.js",
         output: [
             {
-                name: "WebtreesFanChart",
                 file: "resources/js/fan-chart-" + pkg.version + ".min.js",
-                format: "umd"
+                format: "es"
             }
         ],
         plugins: [

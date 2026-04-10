@@ -27,8 +27,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 <?php View::push('javascript'); ?>
 <script type="module">
 
-import(<?= json_encode(e($javascript)) ?>).then((module) => {
-    const { FanChart } = module.default || module;
+import(<?= json_encode($javascript) ?>).then(({ FanChart }) => {
     new FanChart(
         "#webtrees-fan-chart-container-<?= $id ?>",
         {
