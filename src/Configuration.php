@@ -105,19 +105,25 @@ class Configuration
     }
 
     /**
+     * Returns the request validator for the current request method.
+     *
+     * @return Validator
+     */
+    private function validator(): Validator
+    {
+        return $this->request->getMethod() === RequestMethodInterface::METHOD_POST
+            ? Validator::parsedBody($this->request)
+            : Validator::queryParams($this->request);
+    }
+
+    /**
      * Returns the number of generations to display.
      *
      * @return int
      */
     public function getGenerations(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->isBetween(self::MIN_GENERATIONS, self::MAX_GENERATIONS)
             ->integer(
                 'generations',
@@ -151,13 +157,7 @@ class Configuration
      */
     public function getDetailedDateGenerations(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->isBetween(self::MIN_DETAILED_DATE_GENERATIONS, self::MAX_GENERATIONS)
             ->integer(
                 'detailedDateGenerations',
@@ -196,13 +196,7 @@ class Configuration
      */
     public function getFontScale(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->isBetween(10, 200)
             ->integer(
                 'fontScale',
@@ -220,13 +214,7 @@ class Configuration
      */
     public function getFanDegree(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->isBetween(180, 360)
             ->integer(
                 'fanDegree',
@@ -244,13 +232,7 @@ class Configuration
      */
     public function getHideEmptySegments(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'hideEmptySegments',
                 (bool) $this->module->getPreference(
@@ -267,13 +249,7 @@ class Configuration
      */
     public function getShowFamilyColors(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'showFamilyColors',
                 (bool) $this->module->getPreference(
@@ -290,13 +266,7 @@ class Configuration
      */
     public function getShowPlaces(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'showPlaces',
                 (bool) $this->module->getPreference(
@@ -313,13 +283,7 @@ class Configuration
      */
     public function getPlaceParts(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->isBetween(0, 5)
             ->integer(
                 'placeParts',
@@ -352,13 +316,7 @@ class Configuration
      */
     public function getShowParentMarriageDates(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'showParentMarriageDates',
                 (bool) $this->module->getPreference(
@@ -375,13 +333,7 @@ class Configuration
      */
     public function getShowImages(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'showImages',
                 (bool) $this->module->getPreference(
@@ -398,13 +350,7 @@ class Configuration
      */
     public function getShowNames(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'showNames',
                 (bool) $this->module->getPreference(
@@ -421,13 +367,7 @@ class Configuration
      */
     public function getInnerArcs(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->isBetween(self::MIN_INNER_ARCS, self::MAX_INNER_ARCS)
             ->integer(
                 'innerArcs',
@@ -461,13 +401,7 @@ class Configuration
      */
     public function getHideSvgExport(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'hideSvgExport',
                 (bool) $this->module->getPreference(
@@ -484,13 +418,7 @@ class Configuration
      */
     public function getHidePngExport(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'hidePngExport',
                 (bool) $this->module->getPreference(
@@ -507,13 +435,7 @@ class Configuration
      */
     public function getPaternalColor(): string
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->string(
                 'paternalColor',
                 $this->module->getPreference(
@@ -530,13 +452,7 @@ class Configuration
      */
     public function getMaternalColor(): string
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->string(
                 'maternalColor',
                 $this->module->getPreference(
