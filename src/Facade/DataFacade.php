@@ -21,6 +21,7 @@ use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Processor\DateProcessor;
 use MagicSunday\Webtrees\FanChart\Processor\ImageProcessor;
 use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
+use MagicSunday\Webtrees\FanChart\Model\Symbols;
 use MagicSunday\Webtrees\FanChart\Processor\PlaceProcessor;
 
 /**
@@ -185,7 +186,9 @@ class DataFacade
                     $dateProcessor->getLifetimeDescription(),
                     $placeProcessor->getBirthPlaceShort(),
                     $placeProcessor->getDeathPlaceShort(),
-                    $generation
+                    $generation,
+                    $dateProcessor->hasBirthDate(),
+                    $dateProcessor->hasDeathDate(),
                 )
             )
             ->setBirthDateFull($dateProcessor->getBirthDateFull())
@@ -218,6 +221,8 @@ class DataFacade
                 'tree'                    => $individual->tree()->name(),
                 'generations'             => $this->configuration->getGenerations(),
                 'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
+                'showPlaces'              => $this->configuration->getShowPlaces() ? '1' : '0',
+                'placeParts'              => $this->configuration->getPlaceParts(),
             ]
         );
     }
@@ -239,6 +244,8 @@ class DataFacade
         string $birthPlace,
         string $deathPlace,
         int $generation,
+        bool $hasBirthDate,
+        bool $hasDeathDate,
     ): string {
         if (!$this->configuration->getShowPlaces()) {
             return $timespan;
@@ -250,21 +257,64 @@ class DataFacade
             return $timespan;
         }
 
-        if ($timespan === '') {
+        if (($birthPlace === '') && ($deathPlace === '')) {
             return $timespan;
         }
 
-        $lines = explode("\n", $timespan);
+        $lines = ($timespan !== '') ? explode("\n", $timespan) : [];
+
+        // Both dates available: append places to their respective lines
+        if ($hasBirthDate && $hasDeathDate) {
+            if ($birthPlace !== '') {
+                $lines[0] .= ', ' . $birthPlace;
+            }
+
+            if ($deathPlace !== '') {
+                $lines[1] .= ', ' . $deathPlace;
+            }
+
+            return implode("\n", $lines);
+        }
+
+        // Birth date only
+        if ($hasBirthDate) {
+            if ($birthPlace !== '') {
+                $lines[0] .= ', ' . $birthPlace;
+            }
+
+            if ($deathPlace !== '') {
+                $lines[] = $deathPlace;
+            }
+
+            return implode("\n", $lines);
+        }
+
+        // Death date only
+        if ($hasDeathDate) {
+            if ($birthPlace !== '') {
+                array_unshift($lines, Symbols::SYMBOL_BIRTH . ' ' . $birthPlace);
+            }
+
+            if ($deathPlace !== '') {
+                $deathIndex = ($birthPlace !== '') ? 1 : 0;
+                $lines[$deathIndex] .= ', ' . $deathPlace;
+            }
+
+            return implode("\n", $lines);
+        }
+
+        // No dates - show places with symbols
+        $result = [];
 
         if ($birthPlace !== '') {
-            $lines[0] .= ', ' . $birthPlace;
+            $result[] = Symbols::SYMBOL_BIRTH . ' ' . $birthPlace;
         }
 
-        if (isset($lines[1]) && ($deathPlace !== '')) {
-            $lines[1] .= ', ' . $deathPlace;
+        if ($deathPlace !== '') {
+            $result[] = Symbols::SYMBOL_DEATH . ' ' . $deathPlace;
         }
 
-        return implode("\n", $lines);
+        return implode("\n", $result);
     }
 
     /**
@@ -290,8 +340,12 @@ class DataFacade
             return $dateLine;
         }
 
-        if (($dateLine === '') || ($place === '')) {
+        if ($place === '') {
             return $dateLine;
+        }
+
+        if ($dateLine === '') {
+            return $place;
         }
 
         return $dateLine . ', ' . $place;

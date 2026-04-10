@@ -96,6 +96,26 @@ class DateProcessor
     }
 
     /**
+     * Returns whether the birth date is available.
+     *
+     * @return bool
+     */
+    public function hasBirthDate(): bool
+    {
+        return $this->birthDate->isOK();
+    }
+
+    /**
+     * Returns whether the death date is available.
+     *
+     * @return bool
+     */
+    public function hasDeathDate(): bool
+    {
+        return $this->deathDate->isOK();
+    }
+
+    /**
      * Get the year of birth.
      *
      * @return int

@@ -6,7 +6,7 @@
  */
 
 import * as d3 from "../../lib/d3";
-import {SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_MARRIAGE} from "../hierarchy";
+import {SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_ELLIPSIS, SYMBOL_MARRIAGE} from "../hierarchy";
 
 /**
  * This class handles the tooltip and mouse interaction for person elements.
@@ -109,7 +109,10 @@ export default class TooltipRenderer {
         const birthPlace = datum.data.data.birthPlace || "";
         const deathPlace = datum.data.data.deathPlace || "";
         const marriagePlace = datum.data.data.marriagePlace || "";
-        const hasData = birthDate || marriageDate || deathDate;
+        const hasBirth = birthDate || birthPlace;
+        const hasDeath = deathDate || deathPlace;
+        const hasMarriage = marriageDate || marriagePlace;
+        const hasData = hasBirth || hasMarriage || hasDeath;
 
         this._svg.div
             .html(
@@ -118,16 +121,16 @@ export default class TooltipRenderer {
                     + "<div class=\"name\">" + datum.data.data.name + "</div>"
                     + (hasData
                         ? "<table>"
-                            + (birthDate
-                                ? ("<tr class=\"date\"><th>" + SYMBOL_BIRTH + "</th><td>" + birthDate + "</td></tr>")
+                            + (hasBirth
+                                ? ("<tr class=\"date\"><th>" + SYMBOL_BIRTH + "</th><td>" + (birthDate || SYMBOL_ELLIPSIS) + "</td></tr>")
                                 + (birthPlace ? "<tr class=\"place\"><th></th><td>" + birthPlace + "</td></tr>" : "")
                                 : "")
-                            + (marriageDate
-                                ? ("<tr class=\"date\"><th>" + SYMBOL_MARRIAGE + "</th><td>" + marriageDate + "</td></tr>")
+                            + (hasMarriage
+                                ? ("<tr class=\"date\"><th>" + SYMBOL_MARRIAGE + "</th><td>" + (marriageDate || SYMBOL_ELLIPSIS) + "</td></tr>")
                                 + (marriagePlace ? "<tr class=\"place\"><th></th><td>" + marriagePlace + "</td></tr>" : "")
                                 : "")
-                            + (deathDate
-                                ? ("<tr class=\"date\"><th>" + SYMBOL_DEATH + "</th><td>" + deathDate + "</td></tr>")
+                            + (hasDeath
+                                ? ("<tr class=\"date\"><th>" + SYMBOL_DEATH + "</th><td>" + (deathDate || SYMBOL_ELLIPSIS) + "</td></tr>")
                                 + (deathPlace ? "<tr class=\"place\"><th></th><td>" + deathPlace + "</td></tr>" : "")
                                 : "")
                         + "</table>"

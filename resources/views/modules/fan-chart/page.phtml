@@ -111,12 +111,20 @@ use MagicSunday\Webtrees\FanChart\Configuration;
  *
  * @returns {String}
  */
-function getUrl(baseUrl, generations, detailedDateGenerations)
+function getUrl(baseUrl, generations, detailedDateGenerations, showPlaces, placeParts)
 {
     let url = new URL(baseUrl);
     url.searchParams.set("xref", document.getElementById('xref').value);
     url.searchParams.set("generations", generations);
     url.searchParams.set("detailedDateGenerations", detailedDateGenerations);
+
+    if (showPlaces !== null && showPlaces !== undefined) {
+        url.searchParams.set("showPlaces", showPlaces ? "1" : "0");
+    }
+
+    if (placeParts !== null && placeParts !== undefined) {
+        url.searchParams.set("placeParts", placeParts);
+    }
 
     return url.toString();
 }
@@ -192,7 +200,7 @@ const showNames               = storage.read("showNames");
 const innerArcs               = storage.read("innerArcs");
 const fontScale               = storage.read("fontScale");
 const detailedDateGenerations = storage.read("detailedDateGenerations") ?? <?= json_encode($configuration->getDetailedDateGenerations()) ?>;
-const ajaxUrl                 = getUrl(<?= json_encode($ajaxUrl) ?>, storage.read("generations"), detailedDateGenerations);
+const ajaxUrl                 = getUrl(<?= json_encode($ajaxUrl) ?>, storage.read("generations"), detailedDateGenerations, showPlaces, storage.read("placeParts"));
 
 document.getElementById("fan-chart-url")
     .setAttribute('data-wt-ajax-url', ajaxUrl);
