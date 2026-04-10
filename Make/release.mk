@@ -49,15 +49,25 @@ release-prepare: release-check
 	@$(MAKE) dist
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) prepared"
 
-## Publish: push, create GitHub release with zip
+## Publish: push, create GitHub release with zip.
+## Set NOTES_FILE to a markdown file to prepend custom highlights above
+## the auto-generated changelog. Example: make release-publish NOTES_FILE=RELEASE_NOTES.md
 release-publish:
 	@echo -e "${FYELLOW}[4/4]${FRESET} Publishing to GitHub..."
 	@git push origin main --tags
-	@gh release create $(VERSION) \
-		--title "$(VERSION)" \
-		--generate-notes \
-		--target main \
-		$(MODULE_NAME).zip
+	@if [ -n "$(NOTES_FILE)" ] && [ -f "$(NOTES_FILE)" ]; then \
+		gh release create $(VERSION) \
+			--title "$(VERSION)" \
+			--notes-file "$(NOTES_FILE)" \
+			--target main \
+			$(MODULE_NAME).zip; \
+	else \
+		gh release create $(VERSION) \
+			--title "$(VERSION)" \
+			--generate-notes \
+			--target main \
+			$(MODULE_NAME).zip; \
+	fi
 	@rm -f $(MODULE_NAME).zip
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) published"
 
