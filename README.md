@@ -91,14 +91,25 @@ installed fan chart module) and save your settings.
 At the charts' menu, you will find a new link called `Fan chart`. Use the provided configuration options
 to adjust the layout of the charts according to your needs.
 
-**Family colors** — Enable "Show family colors" to color arcs by family branch. Each parent couple shares
-the same color, with paternal and maternal base colors configurable via color pickers. Colors transition
-smoothly when navigating between individuals.
+Under "Show more options" you can configure the following layout settings:
+
+**Names** — Enable "Show names" to display names and dates in the chart segments. When disabled, outer
+generations beyond the inner arcs are hidden, leaving an image-only chart.
+
+**Images** — Enable "Show images" to display thumbnail images in the inner arcs and the center of the chart.
+Images are only shown if the arc segment is wide enough. Silhouette placeholders are used when no photo
+is available. The tooltip overlay always shows the full image regardless of this setting.
+
+**Places** — Enable "Show places" to display birth and death places in inner generation arcs. Choose the
+level of detail (full name, lowest level, lowest two/three levels).
 
 **Marriage dates** — Enable "Show parent marriage dates" to display marriage dates between generation arcs.
-Dates use compact format for inner generations and year-only for outer generations.
 
-Right-clicking on an individual opens a tooltip providing more detailed information of the current individual.
+**Family colors** — Enable "Show family colors" to color arcs by family branch. Each parent couple shares
+the same color, with paternal and maternal base colors configurable via color pickers.
+
+Right-clicking on an individual opens a tooltip providing detailed information including dates, places,
+and images.
 
 
 ## Development
