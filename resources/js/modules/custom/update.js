@@ -266,6 +266,11 @@ export default class Update {
                 .selectAll("g.separatorGroup line:not(.old)")
                 .transition(transition)
                 .style("opacity", 1);
+        }).catch((error) => {
+            console.error("Fan chart update failed:", error);
+
+            // Restore interactivity so the chart is not permanently locked
+            callback();
         });
     }
 
@@ -425,20 +430,24 @@ export default class Update {
      */
     endAll(transition, callback) {
         let activeCount = 0;
+        let started = false;
 
         transition
-            .on("start", () => ++activeCount)
+            .on("start", () => {
+                started = true;
+                ++activeCount;
+            })
             .on("end", () => {
                 if (!--activeCount) {
                     callback.apply(transition);
                 }
             });
 
-        // Fire callback if no transitions started (empty selection).
+        // Fire callback if no transitions were started (empty selection).
         // setTimeout defers to after the current event-loop tick so D3
         // has had a chance to schedule any transitions first.
         setTimeout(() => {
-            if (activeCount === 0) {
+            if (!started) {
                 callback.apply(transition);
             }
         }, 0);
