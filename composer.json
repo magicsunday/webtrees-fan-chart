@@ -118,7 +118,5 @@
         "post-update-cmd": [
             "npm install jscpd"
         ]
-    },
-    "scripts-descriptions": {
     }
 }
