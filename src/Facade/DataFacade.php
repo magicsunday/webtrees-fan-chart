@@ -25,7 +25,10 @@ use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
 use MagicSunday\Webtrees\FanChart\Processor\PlaceProcessor;
 
 /**
- * Facade class to hide complex logic to generate the structure required to display the tree.
+ * Assembles the nested Node tree passed to the JavaScript chart renderer.
+ * Coordinates the date, image, name, and place processors to build fully
+ * populated NodeData objects, then recursively links them into a parent/child
+ * hierarchy up to the configured generation depth.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -51,11 +54,13 @@ class DataFacade
     private int $nodeId = 0;
 
     /**
-     * Creates the JSON tree structure.
+     * Builds the complete Node tree rooted at the given individual and returns it
+     * ready for JSON serialisation. Resets the node counter on each call so IDs
+     * are always consecutive starting at 1.
      *
      * @param ModuleCustomInterface $module
      * @param Configuration         $configuration
-     * @param Individual            $individual
+     * @param Individual            $individual    The root individual (generation 1)
      *
      * @return Node|null
      */
@@ -72,10 +77,11 @@ class DataFacade
     }
 
     /**
-     * Recursively build the data array of the individual ancestors.
+     * Recursively constructs ancestor nodes. Returns null when the individual is
+     * absent or the generation ceiling has been reached.
      *
-     * @param Individual|null $individual The start person
-     * @param int             $generation The current generation
+     * @param Individual|null $individual
+     * @param int             $generation 1-based depth; stops when it exceeds getGenerations()
      *
      * @return Node|null
      */
@@ -116,10 +122,10 @@ class DataFacade
     }
 
     /**
-     * Get the node data required for display the chart.
+     * Populates a NodeData DTO from all processors for the given individual.
      *
-     * @param int        $generation The generation the person belongs to
-     * @param Individual $individual The current individual
+     * @param int        $generation 1-based generation depth, used to select date format
+     * @param Individual $individual
      *
      * @return NodeData
      */
@@ -183,8 +189,8 @@ class DataFacade
     }
 
     /**
-     * Get the raw update URL. The "xref" parameter must be the last one as the URL gets appended
-     * with the clicked individual id in order to load the required chart data.
+     * Builds the AJAX update route for an individual. The "xref" parameter is intentionally
+     * the last query param so the JS can replace it by appending a new xref when navigating.
      *
      * @param Individual $individual
      *
@@ -260,10 +266,10 @@ class DataFacade
     }
 
     /**
-     * Returns the year as a string for the given life event, or empty if unavailable.
+     * Returns the year for a birth or death event as a string, or empty if unavailable or zero.
      *
      * @param DateProcessor $dateProcessor
-     * @param bool          $isBirth       True for birth year, false for death year
+     * @param bool          $isBirth       True = birth year, false = death year
      *
      * @return string
      */
@@ -349,8 +355,8 @@ class DataFacade
     }
 
     /**
-     * Returns the short marriage place of the individual's parents
-     * (for arc text, respects placeParts setting).
+     * Returns the abbreviated marriage place of the individual's parents for use in arc text.
+     * Applies the configured placeParts truncation. Returns empty string if no parent family exists.
      *
      * @param Individual     $individual
      * @param PlaceProcessor $placeProcessor
@@ -371,9 +377,9 @@ class DataFacade
     }
 
     /**
-     * Returns whether the given text is in RTL style or not.
+     * Returns true when the dominant script of the given text runs right-to-left.
      *
-     * @param string $text The text to check
+     * @param string $text
      *
      * @return bool
      */

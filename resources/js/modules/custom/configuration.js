@@ -21,7 +21,9 @@ export function toFiniteNumber(value, fallback = 0) {
 }
 
 /**
- * This class handles the configuration of the application.
+ * Holds all runtime settings for the fan chart (arc counts, font sizes,
+ * feature flags, colors) and exposes them through typed getters and setters.
+ * Default values are applied when options are omitted or non-finite.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -134,8 +136,6 @@ export default class Configuration {
     }
 
     /**
-     * Returns the number of generations to display.
-     *
      * @return {number}
      */
     get generations() {
@@ -143,16 +143,14 @@ export default class Configuration {
     }
 
     /**
-     * Sets the number of generations to display.
-     *
-     * @param {number} value The number of generations to display
+     * @param {number} value
      */
     set generations(value) {
         this._generations = value;
     }
 
     /**
-     * Returns the degrees of the fan chart.
+     * Total angular span of the fan in degrees (e.g. 180, 210, 270, 360).
      *
      * @return {number}
      */
@@ -161,16 +159,14 @@ export default class Configuration {
     }
 
     /**
-     * Sets the degrees of the fan chart.
-     *
-     * @param {number} value The degrees of the fan chart
+     * @param {number} value
      */
     set fanDegree(value) {
         this._fanDegree = value;
     }
 
     /**
-     * Returns the font scaling.
+     * Font scaling factor as a percentage (100 = default size).
      *
      * @return {number}
      */
@@ -179,16 +175,14 @@ export default class Configuration {
     }
 
     /**
-     * Sets the font scaling.
-     *
-     * @param {number} value The font scaling
+     * @param {number} value
      */
     set fontScale(value) {
         this._fontScale = value;
     }
 
     /**
-     * Returns whether to show or hide empty chart segments.
+     * When true, arc segments for individuals with no data are removed from the DOM.
      *
      * @return {boolean}
      */
@@ -197,16 +191,14 @@ export default class Configuration {
     }
 
     /**
-     * Sets whether to show or hide empty chart segments.
-     *
-     * @param {boolean} value Either true or false
+     * @param {boolean} value
      */
     set hideEmptySegments(value) {
         this._hideEmptySegments = value;
     }
 
     /**
-     * Returns whether to show or hide family colors above each arc or display male/female colors instead.
+     * When true, arc fills use branch-based family colors instead of sex-based colors.
      *
      * @return {boolean}
      */
@@ -215,17 +207,13 @@ export default class Configuration {
     }
 
     /**
-     * Sets whether to show or hide family colors above each arc or display male/female colors instead.
-     *
-     * @param {boolean} value Either true or false
+     * @param {boolean} value
      */
     set showFamilyColors(value) {
         this._showFamilyColors = value;
     }
 
     /**
-     * Returns whether to show or hide place names.
-     *
      * @return {boolean}
      */
     get showPlaces() {
@@ -233,7 +221,8 @@ export default class Configuration {
     }
 
     /**
-     * Returns whether to show or hide the parent marriage dates.
+     * When true, a narrow arc between each pair of parent arcs shows the marriage date.
+     * Enabling this also increases arc height (circlePadding) to accommodate the extra band.
      *
      * @return {boolean}
      */
@@ -242,16 +231,14 @@ export default class Configuration {
     }
 
     /**
-     * Sets whether to show or hide the parent marriage dates.
-     *
-     * @param {boolean} value Either true or false
+     * @param {boolean} value
      */
     set showParentMarriageDates(value) {
         this._showParentMarriageDates = value;
     }
 
     /**
-     * Returns TRUE if individual image should be shown otherwise FALSE.
+     * When true, thumbnail images are rendered inside person arcs where space allows.
      *
      * @return {boolean}
      */
@@ -260,7 +247,7 @@ export default class Configuration {
     }
 
     /**
-     * Returns TRUE if names and dates should be shown in the arcs otherwise FALSE.
+     * When false, only images are rendered in the arcs and text labels are omitted.
      *
      * @return {boolean}
      */
@@ -269,7 +256,8 @@ export default class Configuration {
     }
 
     /**
-     * Returns TRUE if silhouette placeholder image should be shown otherwise FALSE.
+     * When true, a sex-specific silhouette icon is shown in the tooltip for
+     * individuals who have no thumbnail photo.
      *
      * @return {boolean}
      */
@@ -278,7 +266,9 @@ export default class Configuration {
     }
 
     /**
-     * Returns the number of inner arcs to display.
+     * Number of generations rendered as wide inner arcs (tall enough for
+     * text along the arc path). Generations beyond this threshold use the
+     * narrower outer-arc height.
      *
      * @return {number}
      */
@@ -287,16 +277,14 @@ export default class Configuration {
     }
 
     /**
-     * Sets the number of inner arcs to display.
-     *
-     * @param {number} value The number of inner arcs
+     * @param {number} value
      */
     set numberOfInnerCircles(value) {
         this._numberOfInnerCircles = value;
     }
 
     /**
-     * Returns the font size in pixel.
+     * Base font size in pixels before depth scaling and fontScale are applied.
      *
      * @return {number}
      */
@@ -305,7 +293,7 @@ export default class Configuration {
     }
 
     /**
-     * Returns the hex color for the paternal lineage.
+     * Hex color string for the paternal (father's) lineage.
      *
      * @return {string}
      */
@@ -314,7 +302,7 @@ export default class Configuration {
     }
 
     /**
-     * Returns the hex color for the maternal lineage.
+     * Hex color string for the maternal (mother's) lineage.
      *
      * @return {string}
      */

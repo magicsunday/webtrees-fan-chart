@@ -40,7 +40,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Fan chart module class.
+ * Entry point for the webtrees fan chart module. Registers the chart route, handles
+ * GET/POST chart requests, builds AJAX data responses via DataFacade, and wires in
+ * the module's custom translations, config page, and chart menu entries.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -72,8 +74,6 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     private Configuration $configuration;
 
     /**
-     * Constructor.
-     *
      * @param ChartService $chartService
      * @param DataFacade   $dataFacade
      */
@@ -85,9 +85,8 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * Initialization.
-     *
-     * @return void
+     * Registers the chart route, allows POST on it, and registers the Blade
+     * namespace and the custom chart view override.
      *
      * @throws ImmutableProperty
      * @throws RouteAlreadyExists
@@ -105,7 +104,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * How should this module be identified in the control panel, etc.?
+     * Returns the module title shown in the control panel and chart menus.
      *
      * @return string
      */
@@ -116,7 +115,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * A sentence describing what this module does.
+     * Returns a short description shown in the module list in the control panel.
      *
      * @return string
      */
@@ -127,7 +126,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * Where does this module store its resources?
+     * Returns the absolute path to this module's resources directory.
      *
      * @return string
      */
@@ -138,7 +137,9 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * Handles a request and produces a response.
+     * Handles the chart route. POST requests are redirected to a canonical GET URL
+     * so the browser address bar always reflects the current settings. GET requests
+     * render the page shell or, when the "ajax" flag is set, the inner chart partial.
      *
      * @param ServerRequestInterface $request
      *
@@ -221,9 +222,10 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * Returns the page title.
+     * Returns the localised page title. Falls back to the generic "Fan chart" label
+     * when the individual's name is hidden by privacy settings.
      *
-     * @param Individual $individual The individual used in the current chart
+     * @param Individual $individual
      *
      * @return string
      */
@@ -237,9 +239,10 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * Collects and returns the required chart data.
+     * Returns the static chart parameters passed to the JavaScript initialiser —
+     * RTL direction flag, image/silhouette visibility, and localised UI labels.
      *
-     * @param Individual $individual The individual used in the current chart
+     * @param Individual $individual
      *
      * @return array<string, bool|array<string, string>>
      */
@@ -257,6 +260,9 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
+     * Builds the AJAX chart URL embedded in the page shell. The JavaScript uses
+     * this URL to fetch the chart partial after the page has loaded.
+     *
      * @param Individual $individual
      * @param string     $xref
      *
@@ -280,9 +286,9 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * Returns TRUE if the individual image should be shown, otherwise FALSE.
+     * Returns true when highlight images are enabled for the tree and the individual is visible.
      *
-     * @param Individual $individual The individual used in the current chart
+     * @param Individual $individual
      *
      * @return bool
      */
@@ -293,9 +299,10 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * Returns TRUE if the silhouette images should be shown as alternative to the individual image, otherwise FALSE.
+     * Returns true when silhouette placeholders should be shown as a fallback when
+     * the individual has no highlight image. Requires showImages() to also be true.
      *
-     * @param Individual $individual The individual used in the current chart
+     * @param Individual $individual
      *
      * @return bool
      */
@@ -306,9 +313,10 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * Update action.
+     * AJAX action called by the JavaScript when the user clicks an ancestor to re-root the chart.
+     * Validates access, rebuilds the tree structure for the new individual, and returns JSON.
      *
-     * @param ServerRequestInterface $request The current HTTP request
+     * @param ServerRequestInterface $request
      *
      * @return ResponseInterface
      *
@@ -336,7 +344,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * Returns a list of used stylesheets with this module.
+     * Returns the asset URLs of the module's own stylesheets.
      *
      * @return array<string>
      */
@@ -349,7 +357,8 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     }
 
     /**
-     * Returns a list required stylesheets for the SVG export.
+     * Returns the stylesheets that must be inlined during SVG/PNG export —
+     * the active webtrees theme sheets plus the module's SVG-specific stylesheet.
      *
      * @return array<string>
      *

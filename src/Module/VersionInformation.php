@@ -20,7 +20,9 @@ use GuzzleHttp\Exception\GuzzleException;
 use function is_array;
 
 /**
- * Class VersionInformation.
+ * Fetches the latest published release version from GitHub and caches the result
+ * for 24 hours. Falls back gracefully to the locally installed version when the
+ * API is unreachable or returns an unexpected payload.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -29,19 +31,18 @@ use function is_array;
 class VersionInformation
 {
     /**
-     * Constructor.
-     *
-     * @param ModuleCustomInterface $module The module
+     * @param ModuleCustomInterface $module
      */
     public function __construct(private readonly ModuleCustomInterface $module)
     {
     }
 
     /**
-     * This method an extended version of ModuleCustomTrait::customModuleLatestVersion,
-     * allowing to automatically use the latest GitHub release version.
+     * Queries the GitHub Releases API for the latest tag name and caches it for 24 hours.
+     * Returns the current installed version when no update URL is configured, the API
+     * is unreachable, or the response does not contain a recognisable semver tag.
      *
-     * @return string The latest version number
+     * @return string
      *
      * @see \Fisharebest\Webtrees\Module\ModuleCustomTrait::customModuleLatestVersion
      */

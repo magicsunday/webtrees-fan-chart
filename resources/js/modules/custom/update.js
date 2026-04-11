@@ -11,7 +11,11 @@ import Marriage from "./svg/marriage";
 import FamilyColor from "./svg/family-color";
 
 /**
- * This class handles the visual update of all text and path elements.
+ * Handles the animated transition when the chart re-centers on a new individual.
+ * Fetches new hierarchy data via AJAX, classifies each person and marriage element
+ * as "new", "update", or "remove", then runs a cross-fade transition that fades
+ * out stale arcs and labels while fading in replacements. Cleans up orphaned
+ * path and clip-path definitions after the transition completes.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -32,12 +36,14 @@ export default class Update {
     }
 
     /**
-     * Update the chart with data loaded from AJAX.
+     * Loads new hierarchy data from the given URL, classifies DOM elements,
+     * runs the cross-fade transition, and invokes callbacks when done. The
+     * redrawOverlays callback is called mid-transition to swap separator lines;
+     * the callback is called after all transitions settle and cleanup is complete.
      *
-     * @param {string}   url      The update URL
-     * @param {Function} callback The callback method to execute after the update
-     *
-     * @public
+     * @param {string}   url            The JSON endpoint for the new center individual
+     * @param {Function} redrawOverlays Called before transition ends to redraw separator lines
+     * @param {Function} callback       Called after all transitions finish and DOM is cleaned up
      */
     update(url, redrawOverlays, callback) {
         this._svg
@@ -232,11 +238,12 @@ export default class Update {
     }
 
     /**
-     * Function is executed as callback after all transitions are done in update method.
+     * Post-transition cleanup: removes empty arc paths (when hideEmptySegments
+     * is set), strips inline transition styles, restores CSS-class-based family
+     * colors, removes update/new/remove class flags, purges orphaned path and
+     * clipPath definitions from SVG defs, and finally invokes the callback.
      *
-     * @param {Function} callback The callback method to execute after the update
-     *
-     * @private
+     * @param {Function} callback Called after all cleanup is finished
      */
     updateDone(callback) {
         // Reset tooltip pinned state so mouseleave works on newly rendered arcs
@@ -440,12 +447,13 @@ export default class Update {
     }
 
     /**
-     * Helper method to execute callback method after all transitions are done of a selection.
+     * Calls callback once after every pending transition in the selection has
+     * either ended or been interrupted. If no transitions were scheduled (empty
+     * selection), the callback fires asynchronously on the next event-loop tick
+     * so callers can always assume async delivery.
      *
-     * @param {Transition} transition D3 transition object
-     * @param {Function}   callback   Callback method
-     *
-     * @private
+     * @param {Transition} transition The D3 transition to monitor
+     * @param {Function}   callback   Invoked with the transition as `this` when all transitions settle
      */
     endAll(transition, callback) {
         let activeCount = 0;

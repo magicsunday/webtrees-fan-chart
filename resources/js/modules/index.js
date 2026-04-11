@@ -10,7 +10,8 @@ import Configuration from "./custom/configuration";
 import Chart from "./custom/chart";
 
 /**
- * The application class.
+ * Top-level entry point for the fan chart. Wires together the Configuration,
+ * Chart, and DOM event listeners, then performs the initial draw.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -18,10 +19,8 @@ import Chart from "./custom/chart";
  */
 export class FanChart {
     /**
-     * Constructor.
-     *
-     * @param {string} selector The CSS selector of the HTML element used to assign the chart too
-     * @param {Object} options  A list of options passed from outside to the application
+     * @param {string} selector The CSS selector of the container element to render the chart into
+     * @param {Object} options  Configuration values passed from the server-rendered page
      *
      * @param {Object<string, string>} options.labels
      * @param {number}   options.generations
@@ -54,8 +53,6 @@ export class FanChart {
     }
 
     /**
-     * Returns the configuration object.
-     *
      * @return {Configuration}
      */
     get configuration() {
@@ -63,7 +60,8 @@ export class FanChart {
     }
 
     /**
-     * @private
+     * Binds toolbar button clicks (center, export PNG, export SVG) and sets
+     * up fullscreen and orientation-change event listeners.
      */
     init() {
         // Bind click event on center button
@@ -82,7 +80,8 @@ export class FanChart {
     }
 
     /**
-     * Add event listeners.
+     * Registers fullscreen and screen-orientation change listeners that
+     * toggle the body "fullscreen" attribute and recalculate the SVG viewBox.
      */
     addEventListeners() {
         // Listen for fullscreen change event
@@ -109,18 +108,18 @@ export class FanChart {
     }
 
     /**
-     * Updates the chart.
+     * Re-centers the chart on the person at the given URL.
      *
-     * @param {string} url The update url
+     * @param {string} url The update URL returned by webtrees for the selected individual
      */
     update(url) {
         this._chart.update(url);
     }
 
     /**
-     * Draws the chart.
+     * Passes data to the chart and triggers the initial render.
      *
-     * @param {Object} data The JSON encoded chart data
+     * @param {Object} data The JSON-encoded chart data from the server
      */
     draw(data) {
         this._chart.data = data;
@@ -128,9 +127,7 @@ export class FanChart {
     }
 
     /**
-     * Exports the chart as PNG image and triggers a download.
-     *
-     * @private
+     * Serializes the SVG to a canvas at A3 resolution and triggers a PNG download.
      */
     exportPNG() {
         this._chart.svg
@@ -139,9 +136,8 @@ export class FanChart {
     }
 
     /**
-     * Exports the chart as SVG image and triggers a download.
-     *
-     * @private
+     * Deep-clones the SVG with all computed styles inlined, inlines external
+     * images as base64, and triggers an SVG file download.
      */
     exportSVG() {
         this._chart.svg

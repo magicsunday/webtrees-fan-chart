@@ -18,7 +18,9 @@ import Update from "./update";
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
 
 /**
- * This class handles the overall chart creation.
+ * Orchestrates the full fan chart lifecycle: builds the SVG, populates person
+ * and marriage arc groups from hierarchical data, draws separator lines between
+ * family branches, and delegates AJAX-driven updates with animated transitions.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -39,8 +41,6 @@ export default class Chart {
     }
 
     /**
-     * Returns the SVG instance.
-     *
      * @returns {Svg}
      */
     get svg() {
@@ -48,8 +48,6 @@ export default class Chart {
     }
 
     /**
-     * Returns the parent container.
-     *
      * @returns {Selection}
      */
     get parent() {
@@ -57,8 +55,6 @@ export default class Chart {
     }
 
     /**
-     * Returns the chart data.
-     *
      * @returns {Object}
      */
     get data() {
@@ -66,9 +62,9 @@ export default class Chart {
     }
 
     /**
-     * Sets the chart data.
+     * Assigns new chart data and rebuilds the D3 hierarchy from it.
      *
-     * @param {Object} value The chart data
+     * @param {Object} value The raw JSON data object from the server
      */
     set data(value) {
         this._data = value;
@@ -78,9 +74,9 @@ export default class Chart {
     }
 
     /**
-     * Convert relative root element's font-size into pixel size.
+     * Converts a rem value to pixels using the document root font size.
      *
-     * @param {number} rem The relative size
+     * @param {number} rem The value in rem units
      *
      * @returns {number}
      */
@@ -89,7 +85,9 @@ export default class Chart {
     }
 
     /**
-     * Update/Calculate the viewBox attribute of the SVG element.
+     * Recalculates and sets the SVG viewBox so the chart fills its container
+     * with a minimum 1 rem padding on every side. In fullscreen mode the SVG
+     * dimensions are set to the full client area.
      */
     updateViewBox() {
         // Set width/height attributes
@@ -142,7 +140,7 @@ export default class Chart {
     }
 
     /**
-     * Resets the chart to initial zoom level and position.
+     * Animates the chart back to its initial zoom level and pan position (identity transform).
      */
     center() {
         this.svg
@@ -152,7 +150,9 @@ export default class Chart {
     }
 
     /**
-     * This method draws the chart.
+     * Performs the full initial render: creates the SVG and overlay, draws all
+     * person arcs, marriage arcs, and family separator lines, then binds click
+     * event listeners.
      */
     draw() {
         // Remove previously created content
@@ -308,7 +308,9 @@ export default class Chart {
     }
 
     /**
-     * This method binds a "click" event listeners to a "person" element.
+     * Marks all persons with a non-empty xref as "available" (enabling hover
+     * styles) and binds the click handler. Also marks marriage arcs that have
+     * a date as "available" and empty ones as "empty" for CSS styling.
      */
     bindClickEventListener() {
         const persons = this._svg
@@ -340,12 +342,11 @@ export default class Chart {
     }
 
     /**
-     * Method triggers either the "update" or "individual" method on the click on an person.
+     * Handles a click on a person arc. Redirects to the individual page for
+     * the center node (depth 0); triggers a chart update for all other nodes.
      *
      * @param {Event}  event The current event
      * @param {Object} datum The D3 data object
-     *
-     * @private
      */
     personClick(event, datum) {
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
@@ -353,20 +354,19 @@ export default class Chart {
     }
 
     /**
-     * Redirects to the individual page.
+     * Opens the webtrees individual page in a new tab.
      *
-     * @param {string} url The individual URL
-     *
-     * @private
+     * @param {string} url The individual page URL
      */
     redirectToIndividual(url) {
         window.open(url, "_blank");
     }
 
     /**
-     * Updates the chart with the data of the selected individual.
+     * Fetches new hierarchy data for the given individual URL and animates
+     * the chart transition, then redraws overlay layers and rebinds events.
      *
-     * @param {string} url The update URL
+     * @param {string} url The update URL for the new center individual
      */
     update(url) {
         const update = new Update(this._svg, this._configuration, this._hierarchy);
@@ -379,9 +379,9 @@ export default class Chart {
     }
 
     /**
-     * Removes and redraws the overlay layers (marriage arcs, separators).
-     *
-     * @private
+     * Marks existing separator lines as "old" (for fade-out) and draws the
+     * separator lines for the incoming hierarchy. Called from Update.update()
+     * before the transition starts so old and new lines can cross-fade.
      */
     redrawOverlayLayers() {
         // Separators: mark old, draw new

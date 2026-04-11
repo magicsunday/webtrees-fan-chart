@@ -17,7 +17,9 @@ use Fisharebest\Webtrees\Individual;
 use MagicSunday\Webtrees\FanChart\Model\Symbols;
 
 /**
- * Class DateProcessor.
+ * Extracts and formats birth, death, and marriage dates from an Individual for use in
+ * chart arc labels and tooltips. Date granularity (full DD.MM.YYYY vs year-only) is
+ * determined by the individual's generation relative to the configured detail threshold.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -36,11 +38,9 @@ class DateProcessor
     private readonly Date $deathDate;
 
     /**
-     * Constructor.
-     *
-     * @param Individual $individual              The individual to process
-     * @param int        $generation              The generation the individual belongs to
-     * @param int        $detailedDateGenerations The number of generations using detailed birth and death dates
+     * @param Individual $individual
+     * @param int        $generation              1-based generation depth of this individual in the tree
+     * @param int        $detailedDateGenerations Generations at or below this depth show DD.MM.YYYY; others show year only
      */
     public function __construct(
         private readonly Individual $individual,
@@ -52,9 +52,10 @@ class DateProcessor
     }
 
     /**
-     * Formats the given date in a compact way (DD.MM.YYYY).
+     * Formats a Date as DD.MM.YYYY using its minimum date (earliest calendar date when
+     * the fact spans a range).
      *
-     * @param Date $date The date to format
+     * @param Date $date
      *
      * @return string
      */
@@ -66,9 +67,10 @@ class DateProcessor
     }
 
     /**
-     * Returns a formatted life event date, using detailed output for configured generations.
+     * Returns the date in full DD.MM.YYYY format for inner generations, or as a
+     * bare year for outer generations beyond the detail threshold.
      *
-     * @param Date $date The life event date
+     * @param Date $date
      *
      * @return string
      */
@@ -82,9 +84,10 @@ class DateProcessor
     }
 
     /**
-     * Returns the calendar year of the given date.
+     * Extracts the calendar year from the minimum date of a Date range.
+     * Returns 0 when the date has no year component.
      *
-     * @param Date $date The date to extract the year from
+     * @param Date $date
      *
      * @return int
      */
@@ -96,7 +99,7 @@ class DateProcessor
     }
 
     /**
-     * Returns whether the birth date is available.
+     * Returns true when the individual has a parseable birth date.
      *
      * @return bool
      */
@@ -106,7 +109,7 @@ class DateProcessor
     }
 
     /**
-     * Returns whether the death date is available.
+     * Returns true when the individual has a parseable death date.
      *
      * @return bool
      */
@@ -116,7 +119,8 @@ class DateProcessor
     }
 
     /**
-     * Returns whether the individual is deceased.
+     * Returns true when webtrees considers the individual to be deceased,
+     * even if no explicit death date is recorded.
      *
      * @return bool
      */
@@ -126,7 +130,8 @@ class DateProcessor
     }
 
     /**
-     * Returns the formatted birth date string (without symbol).
+     * Returns the generation-appropriate birth date string (no symbol prefix).
+     * Empty string when no valid birth date exists.
      *
      * @return string
      */
@@ -136,7 +141,8 @@ class DateProcessor
     }
 
     /**
-     * Returns the formatted death date string (without symbol).
+     * Returns the generation-appropriate death date string (no symbol prefix).
+     * Empty string when no valid death date exists.
      *
      * @return string
      */
@@ -146,7 +152,7 @@ class DateProcessor
     }
 
     /**
-     * Get the year of birth.
+     * Returns the four-digit birth year, or 0 if no birth date is recorded.
      *
      * @return int
      */
@@ -156,7 +162,7 @@ class DateProcessor
     }
 
     /**
-     * Get the year of death.
+     * Returns the four-digit death year, or 0 if no death date is recorded.
      *
      * @return int
      */
@@ -166,7 +172,7 @@ class DateProcessor
     }
 
     /**
-     * Returns the formatted birthdate without HTML tags.
+     * Returns the generation-appropriate birth date for arc display, or empty string if unavailable.
      *
      * @return string
      */
@@ -176,7 +182,7 @@ class DateProcessor
     }
 
     /**
-     * Returns the formatted death date without HTML tags.
+     * Returns the generation-appropriate death date for arc display, or empty string if unavailable.
      *
      * @return string
      */

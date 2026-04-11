@@ -8,7 +8,11 @@
 import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
 
 /**
- * This class handles the gradient coloring.
+ * Computes and registers SVG linearGradient definitions for each person arc.
+ * Generation 1 nodes start with a hard-coded two-color seed (blue/green for
+ * males, orange/yellow for females); deeper generations blend the two parent
+ * colors toward their midpoint, creating a smooth color progression across
+ * the tree.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -27,11 +31,11 @@ export default class Gradient {
     }
 
     /**
-     * Initializes the gradient fill.
+     * Assigns a two-stop RGB color pair to datum.data.data.colors and appends
+     * a matching linearGradient element to the SVG defs. No-ops for the root node
+     * (depth 0). Returns early without creating a definition if depth < 1.
      *
-     * @param {Object} datum D3 data object
-     *
-     * @return {void}
+     * @param {Object} datum D3 partition datum
      */
     init(datum) {
         if (datum.depth < 1) {

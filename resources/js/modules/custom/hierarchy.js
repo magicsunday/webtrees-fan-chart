@@ -16,7 +16,10 @@ export const SYMBOL_MARRIAGE = "\u26AD";
 export const SYMBOL_ELLIPSIS = "\u2026";
 
 /**
- * This class handles the hierarchical data.
+ * Transforms the flat JSON tree received from the server into a D3 partition
+ * hierarchy. Missing parents are filled in with empty placeholder nodes so
+ * every individual always has two parents up to the configured generation
+ * limit, keeping arc geometry consistent.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -35,9 +38,11 @@ export default class Hierarchy {
     }
 
     /**
-     * Initialize the hierarchical chart data.
+     * Builds the D3 hierarchy from raw JSON data, pads missing parent slots with
+     * empty nodes, applies a partition layout, and assigns sequential IDs. Must
+     * be called before accessing nodes or root.
      *
-     * @param {Object} datum The JSON encoded chart data
+     * @param {Object} datum The raw JSON chart data object from the server
      */
     init(datum) {
         // Construct root node from the hierarchical data
@@ -89,7 +94,8 @@ export default class Hierarchy {
     }
 
     /**
-     * Returns the nodes.
+     * Flat array of all partition nodes (root plus all descendants) in
+     * top-down order, each augmented with a unique sequential id.
      *
      * @return {Array}
      */
@@ -98,25 +104,23 @@ export default class Hierarchy {
     }
 
     /**
-     * Returns the root note.
+     * The D3 root node of the hierarchy (the center individual).
      *
      * @returns {Individual}
-     *
-     * @public
      */
     get root() {
         return this._root;
     }
 
     /**
-     * Create an empty child node object.
+     * Produces a minimal placeholder node so the partition layout always
+     * receives two parent slots. The returned object has the same shape as a
+     * real server node but with an empty xref and blank name fields.
      *
-     * @param {number} generation Generation of the node
-     * @param {string} sex        The sex of the individual
+     * @param {number} generation Depth of the placeholder in the tree
+     * @param {string} sex        SEX_MALE or SEX_FEMALE constant
      *
      * @return {Object}
-     *
-     * @private
      */
     createEmptyNode(generation, sex) {
         return {
