@@ -42,23 +42,7 @@ export class FanChart {
         this._parent = d3.select(this._selector);
 
         // Set up configuration
-        this._configuration = new Configuration(
-            options.labels,
-            options.generations,
-            options.fanDegree,
-            options.fontScale,
-            options.hideEmptySegments,
-            options.showFamilyColors,
-            options.showPlaces,
-            options.showParentMarriageDates,
-            options.showImages,
-            options.showNames,
-            options.showSilhouettes,
-            options.rtl,
-            options.innerArcs,
-            options.paternalColor,
-            options.maternalColor,
-        );
+        this._configuration = new Configuration(options);
 
         this._cssFiles = options.cssFiles;
 

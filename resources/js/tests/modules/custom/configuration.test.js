@@ -4,7 +4,7 @@ describe("Configuration", () => {
     const labels = ["child", "parent"];
 
     it("uses defaults when options are omitted", () => {
-        const config = new Configuration(labels);
+        const config = new Configuration({ labels });
 
         expect(config.generations).toBe(6);
         expect(config.fanDegree).toBe(210);
@@ -17,21 +17,17 @@ describe("Configuration", () => {
     });
 
     it("stores base values when marriage dates are hidden", () => {
-        const configuration = new Configuration(
+        const configuration = new Configuration({
             labels,
-            5,
-            180,
-            120,
-            true,
-            true,
-            false,
-            false,
-            true,
-            true,
-            false,
-            false,
-            3
-        );
+            generations: 5,
+            fanDegree: 180,
+            fontScale: 120,
+            hideEmptySegments: true,
+            showFamilyColors: true,
+            showImages: true,
+            showNames: true,
+            innerArcs: 3,
+        });
 
         expect(configuration.generations).toBe(5);
         expect(configuration.fanDegree).toBe(180);
@@ -53,17 +49,10 @@ describe("Configuration", () => {
     });
 
     it("adjusts padding and arc sizes when marriage dates are shown", () => {
-        const marriageLabels = ["ancestor", "spouse"];
-        const config = new Configuration(
-            marriageLabels,
-            6,
-            210,
-            100,
-            false,
-            false,
-            false,
-            true
-        );
+        const config = new Configuration({
+            labels: ["ancestor", "spouse"],
+            showParentMarriageDates: true,
+        });
 
         expect(config.circlePadding).toBe(40);
         expect(config.innerArcHeight).toBe(165);
@@ -76,21 +65,16 @@ describe("Configuration", () => {
     });
 
     it("expands spacing when parent marriage dates are shown", () => {
-        const configuration = new Configuration(
+        const configuration = new Configuration({
             labels,
-            4,
-            210,
-            90,
-            false,
-            false,
-            false,
-            true,
-            false,
-            true,
-            true,
-            true,
-            5
-        );
+            generations: 4,
+            fontScale: 90,
+            showParentMarriageDates: true,
+            showNames: true,
+            showSilhouettes: true,
+            rtl: true,
+            innerArcs: 5,
+        });
 
         expect(configuration.circlePadding).toBe(40);
         expect(configuration.padRadius).toBe(400);
@@ -103,20 +87,10 @@ describe("Configuration", () => {
 
     it("propagates labels and RTL preference for downstream renderers", () => {
         const rtlLabels = ["Self", "Parents", "Grandparents"];
-        const config = new Configuration(
-            rtlLabels,
-            6,
-            210,
-            100,
-            false,
-            false,
-            false,
-            false,
-            false,
-            true,
-            false,
-            true
-        );
+        const config = new Configuration({
+            labels: rtlLabels,
+            rtl: true,
+        });
 
         expect(config.rtl).toBe(true);
         expect(config.labels).toBe(rtlLabels);

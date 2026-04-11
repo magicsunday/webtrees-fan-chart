@@ -45,23 +45,24 @@ export default class Configuration {
     /**
      * Constructor.
      *
-     * @param {string[]} labels
-     * @param {number}   generations
-     * @param {number}   fanDegree
-     * @param {number}   fontScale
-     * @param {boolean}  hideEmptySegments
-     * @param {boolean}  showFamilyColors
-     * @param {boolean}  showPlaces
-     * @param {boolean}  showParentMarriageDates
-     * @param {boolean}  showImages
-     * @param {boolean}  showNames
-     * @param {boolean}  showSilhouettes
-     * @param {boolean}  rtl
-     * @param {number}   innerArcs
-     * @param {string}   paternalColor
-     * @param {string}   maternalColor
+     * @param {Object}   options
+     * @param {string[]} options.labels
+     * @param {number}   [options.generations=6]
+     * @param {number}   [options.fanDegree=210]
+     * @param {number}   [options.fontScale=100]
+     * @param {boolean}  [options.hideEmptySegments=false]
+     * @param {boolean}  [options.showFamilyColors=false]
+     * @param {boolean}  [options.showPlaces=false]
+     * @param {boolean}  [options.showParentMarriageDates=false]
+     * @param {boolean}  [options.showImages=false]
+     * @param {boolean}  [options.showNames=true]
+     * @param {boolean}  [options.showSilhouettes=false]
+     * @param {boolean}  [options.rtl=false]
+     * @param {number}   [options.innerArcs=4]
+     * @param {string}   [options.paternalColor]
+     * @param {string}   [options.maternalColor]
      */
-    constructor(
+    constructor({
         labels,
         generations = 6,
         fanDegree = 210,
@@ -77,16 +78,12 @@ export default class Configuration {
         innerArcs = 4,
         paternalColor = Configuration.PATERNAL_COLOR_DEFAULT,
         maternalColor = Configuration.MATERNAL_COLOR_DEFAULT,
-    ) {
+    } = {}) {
         // Default number of generations to display
         this._generations = toFiniteNumber(generations, 6);
 
         // Padding in pixel between each generation circle
-        this.circlePadding = 0;
-
-        if (showParentMarriageDates) {
-            this.circlePadding = 40;
-        }
+        this.circlePadding = showParentMarriageDates ? 40 : 0;
 
         this.padAngle = 0.03;
         this.padRadius = this.circlePadding * 10;
@@ -100,15 +97,10 @@ export default class Configuration {
         this.centerCircleRadius = 115;
 
         // Height of each inner circle arc
-        this.innerArcHeight = 115;
+        this.innerArcHeight = showParentMarriageDates ? this.circlePadding + 125 : 115;
 
         // Height of each outer circle arc
-        this.outerArcHeight = 175;
-
-        if (showParentMarriageDates) {
-            this.innerArcHeight = this.circlePadding + 125;
-            this.outerArcHeight = this.circlePadding + 125;
-        }
+        this.outerArcHeight = showParentMarriageDates ? this.circlePadding + 125 : 175;
 
         // Width of the colored arc above each single person arc
         this.colorArcWidth = 5;
