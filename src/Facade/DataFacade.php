@@ -333,7 +333,7 @@ class DataFacade
             return $dateLine;
         }
 
-        if ($generation > $this->configuration->getDetailedDateGenerations()) {
+        if ($generation > ($this->configuration->getInnerArcs() + 1)) {
             return $dateLine;
         }
 
