@@ -11,6 +11,7 @@ This repository hosts the webtrees fan chart module — an interactive SVG fan c
   ```
 - JS bundles are built via the node Docker container from the module directory: `make install`, `make build`.
 - After PHP or JS changes visible in the browser: `docker restart webtrees-phpfpm-1`.
+- After JS changes, always verify in the browser via Playwright before claiming success.
 
 ## Build & tests
 - **`composer ci:test` MUST run before every commit** — catches ESLint, PHPStan, PHP-CS-Fixer, Rector, PHPUnit, Jest, and CPD issues before they reach GitHub CI.
@@ -41,10 +42,11 @@ Module.php (entry point, registers routes)
 - **Facade/DataFacade.php** — Builds hierarchical Node tree. `buildTimespan()` assembles date+place lines from structured event data via `buildEventLine()`. `getUpdateRoute()` generates AJAX URL for person-click navigation.
 - **Processor/** — Each processor extracts one aspect from a webtrees Individual (dates, places, names, images).
 - **Model/Node, NodeData** — Tree node with JSON serialization for D3.
+- **Model/Symbols** — Backed enum for genealogical symbols (Birth, Death). Marriage symbol is JS-only.
 
 ### JS (`resources/js/modules/`)
 - **`index.js`** — Exports `FanChart` class (ES module entry point for Rollup).
-- **`custom/`** — Fan-chart-specific: `chart.js` (D3 partition layout, click handling), `update.js` (AJAX update, transitions), `hierarchy.js` (D3 hierarchy, symbol constants), `svg/` (person/text/marriage/tooltip rendering).
+- **`custom/`** — Fan-chart-specific: `chart.js` (D3 partition layout, click handling), `update.js` (AJAX update, transitions), `hierarchy.js` (D3 hierarchy, symbol constants), `svg/` (person/text/marriage/tooltip rendering), `svg/arc.js` (shared arc DOM helper).
 - **`lib/`** — Reusable base classes shared with pedigree/descendants chart modules: export, overlay, storage, zoom.
 
 ### Views (`resources/views/`)
@@ -57,6 +59,7 @@ These must be passed in both `getUrl()` (initial AJAX) and `getUpdateRoute()` (p
 - `generations`, `detailedDateGenerations`, `showPlaces`, `placeParts`
 - Other options (`showImages`, `showNames`, `hideEmptySegments`, etc.) are JS-only.
 - Boolean parameters must be sent as `"1"`/`"0"` — webtrees `Validator::boolean()` only accepts `'1'`, `'on'`, `true`, not the string `"true"`.
+- Places are displayed only for generations within the `innerArcs` boundary (not `detailedDateGenerations`).
 
 ## Key patterns
 - **ES module loading**: `import().then(({ FanChart }) => ...)` in `<script type="module">`, avoiding the `webtrees.load()` race condition.
@@ -64,40 +67,59 @@ These must be passed in both `getUrl()` (initial AJAX) and `getUpdateRoute()` (p
 - **Unique clipPath IDs**: `"clip-image-" + datum.id + "-" + Date.now()` prevents collisions during D3 transitions.
 - **Overlay independence**: Overlay popup always shows images/places regardless of form toggle states.
 - **Block template**: Overrides core `modules/charts/chart.phtml` — must stay in sync with webtrees core changes (e.g. VanillaJS conversion).
+- **Once-guard callback**: `endAll` + `.catch()` share a `callbackFired` flag to prevent double-invocation of `updateDone`.
+- **D3 interrupt handling**: `endAll` listens to both `"end"` and `"interrupt"` events so the callback fires even when transitions are cancelled.
 
 ## Release process
-Runs inside the buildbox (requires git, node, npm, zip, gh):
+Runs inside the buildbox (requires git, node, npm, jq, zip, gh):
 ```
-make release 3.1.1
-make release 3.1.1 NOTES="Bug fix release"
+make release 3.1.2
+make release 3.1.2 NOTES="Bug fix release"
 ```
-Pipeline: version bump → clean old bundles → npm ci → rollup → commit → tag → git archive → zip → gh release → bump to next dev.
+Pipeline: version bump (via `jq` for package.json, `sed` for Module.php) → clean old bundles (`git rm` + `rm`) → npm ci → rollup → commit → tag → git archive → zip → gh release → bump to next dev.
 
 ## Code style
-- Follow PSR-12, strict types, KISS, SOLID, DRY, YAGNI, GRASP, Law of Demeter, SoC, and convention over configuration.
-- Keep one class per PHP file with meaningful names; add English PHPDoc for every class and method describing intent and parameters.
-- Avoid mixed types, `empty()`, nested ternaries, redundant casts/braces, and dynamic static calls; prefer array helpers like `array_find`/`array_any`.
-- Keep classes and methods concise; use enums or typed constants instead of magic numbers/strings and prefer value objects over complex plain arrays to capture intermediates.
-- Provide explicit parentheses for complex conditional expressions; use expressive variable names and English inline comments only at complex logic.
+
+### PHP
+- Follow PSR-12 with `declare(strict_types=1)` in every file.
+- **No `mixed` types** — use specific types or union types.
+- **No `empty()`** — use explicit comparisons (`=== ''`, `=== []`, `=== null`).
+- Use enums or typed constants instead of magic numbers/strings.
+- Prefer value objects over complex plain arrays.
+- Provide explicit parentheses for complex conditional expressions.
+- Use expressive variable names; English inline comments only at complex logic.
+- Docblocks: Always multi-line format. Describe purpose, not just repeat the method name. Keep `@param` only when it adds information beyond type+name. Keep `@return` tags.
+
+### JavaScript
+- ES modules only; vanilla JS except D3.
+- **`@private`** on all non-public methods — this is the JS equivalent of PHP `private`.
+- **`@return`** on all getters and methods that return a value.
+- **No single-line docblocks** — always use multi-line `/**\n * text\n */` format.
+- Use `@return` (not `@returns`) for consistency.
+- Docblock order: description → `@param` → `@return` → `@private`.
+- Parenthesize arithmetic in comparisons: `if (si < (group.length - 1))`.
+- Parenthesize sub-conditions in compound booleans: `if ((a > 0) && (b < 1))`.
+- No single-letter variable names except loop iterators.
+- `for...of` on arrays (not `for...in`).
+- `Object.prototype.hasOwnProperty.call()` instead of direct `.hasOwnProperty()` for prototype-pollution safety.
 
 ## Security
 - Do not commit secrets or PII; rely on secret managers and keep .build outputs out of version control.
-- Update documentation and AGENTS.md files when behavior or configuration affecting security changes.
 
 ## PR/commit checklist
-- Use Conventional Commits; include ticket IDs in titles when available.
-- Keep PRs small and focused (~≤300 net LOC) with atomic commits; ensure coverage ≥90% on touched PHP paths.
-- Keep implementations minimal while satisfying requirements; prefer interfaces where contracts are needed and mark classes `readonly` when appropriate.
-
-## Good vs bad examples
-- Good: `readonly class ExampleService { /** ... */ public function handle(Request $request): Response { /* ... */ } }`
-- Good: `if (array_any($items, static fn ($item): bool => $item->isActive())) { /* ... */ }`
-- Bad: `class example { function run($x){ if(empty($x)) return; } } // no types/docs, uses empty()`
+- `composer ci:test` must pass before every commit.
+- Use Conventional Commits; include ticket IDs in titles when available (e.g. `Fixes #182`).
+- Keep PRs small and focused (~≤300 net LOC) with atomic commits.
+- Ensure coverage ≥90% on touched PHP paths.
+- After PR receives review comments: assess, fix, commit, reply with commit hash, resolve threads via GraphQL.
+- Never comment on GitHub issues/PRs without explicit user approval.
 
 ## When stuck
 - Check composer scripts (`composer run-script --list`) and the README for expected workflows.
 
 ## House Rules
-- Maintain strict typing and PHPStan level max alignment; update Rector or coding-standard configs when code style shifts.
-- Prefer interfaces where sensible; mark data-only classes as `readonly` and remove redundant modifiers or arguments.
-- Avoid external JavaScript libraries beyond D3; stick to vanilla JavaScript elsewhere.
+- Maintain strict typing and PHPStan level max alignment.
+- Prefer interfaces where sensible; mark data-only classes as `readonly`.
+- Avoid external JavaScript libraries beyond D3.
+- Always use Playwright to verify JS changes in the browser — don't just trust the tests.
+- Use `jq` (not `sed`) for JSON manipulation in build scripts — Alpine `sed` does not support GNU syntax.
