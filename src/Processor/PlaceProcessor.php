@@ -108,11 +108,14 @@ class PlaceProcessor
 
     /**
      * Returns a shortened place name according to the configured
-     * number of hierarchy parts.
+     * number of hierarchy parts. This method is stateless — it only
+     * uses the placeParts scalar, not any individual-specific state.
      *
      * @param Place $place
      *
      * @return string
+     *
+     * @internal Used by DataFacade for marriage place formatting
      */
     public function shortPlaceName(Place $place): string
     {
