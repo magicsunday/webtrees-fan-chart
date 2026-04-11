@@ -1,7 +1,6 @@
 import { jest } from "@jest/globals";
 
 const jsonMock = jest.fn();
-const timerStops = [];
 const transitionInstances = [];
 
 class TransitionStub {
@@ -56,15 +55,8 @@ const transitionMock = jest.fn(() => {
     return instance;
 });
 
-const timerMock = jest.fn((callback) => {
-    const stop  = jest.fn();
-    const timer = { stop };
-
-    timerStops.push(stop);
-
+const timeoutMock = jest.fn((callback) => {
     Promise.resolve().then(() => callback());
-
-    return timer;
 });
 
 const selectMock = jest.fn((target) => target?.__selection ?? null);
@@ -73,7 +65,7 @@ await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
     __esModule: true,
     json: jsonMock,
     select: selectMock,
-    timer: timerMock,
+    timeout: timeoutMock,
     transition: transitionMock,
 }));
 
@@ -478,10 +470,9 @@ const defaultConfiguration = (overrides = {}) => ({
 
 beforeEach(() => {
     jsonMock.mockReset();
-    timerMock.mockClear();
+    timeoutMock.mockClear();
     transitionMock.mockClear();
     transitionInstances.length = 0;
-    timerStops.length = 0;
     personConstructor.mockClear();
     selectMock.mockClear();
     document.title = "";
@@ -607,8 +598,7 @@ describe("Update", () => {
         transition.complete();
         await flushPromises();
 
-        expect(timerMock).toHaveBeenCalledTimes(1);
-        expect(timerStops[0]).toHaveBeenCalledTimes(1);
+        expect(timeoutMock).toHaveBeenCalledTimes(1);
 
         const persons = Array.from(svg.personById.values());
 

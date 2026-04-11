@@ -297,7 +297,7 @@ export default class Update {
 
         // Remove styles so CSS classes may work correct, Uses a small timer as animation seems not
         // to be done already if the point is reached
-        const cleanupTimer = d3.timer(() => {
+        d3.timeout(() => {
             this._svg
                 .selectAll("g.person g.arc path")
                 .attr("style", null);
@@ -345,7 +345,6 @@ export default class Update {
                 .selectAll("g.marriage g.name")
                 .style("opacity", null);
 
-            cleanupTimer.stop();
         }, 10);
 
         this._svg
