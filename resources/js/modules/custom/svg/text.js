@@ -169,7 +169,10 @@ export default class Text {
                 );
             }
 
+            // Depth 6+ outer arcs are too narrow for date text
             if (datum.depth < 6) {
+                // Outer labels use plain text elements — slot/position unused
+                // since positioning is handled by transformOuterText
                 this.renderTimespanLines(parent, datum, positions, (_slot) => parent
                     .append("text")
                     .attr("class", "date")
@@ -396,9 +399,11 @@ export default class Text {
      * @private
      */
     truncateNames(names, fontSize, fontWeight, availableWidth) {
-        let text = names.map(item => item.label).join(" ");
+        // Deep-clone to avoid mutating the caller's objects
+        const workNames = names.map(name => ({...name}));
+        let text = workNames.map(item => item.label).join(" ");
 
-        return [...names]
+        return workNames
             // Start truncating from the last element to the first one
             .reverse()
             .map((name) => {
@@ -409,7 +414,7 @@ export default class Text {
                     if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
                         // Keep only the first letter
                         name.label = name.label.slice(0, 1) + ".";
-                        text = names.map(item => item.label).join(" ");
+                        text = workNames.map(item => item.label).join(" ");
                     }
                 }
 
@@ -421,7 +426,7 @@ export default class Text {
                     if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
                         // Keep only the first letter
                         name.label = name.label.slice(0, 1) + ".";
-                        text = names.map(item => item.label).join(" ");
+                        text = workNames.map(item => item.label).join(" ");
                     }
                 }
 
@@ -433,7 +438,7 @@ export default class Text {
                     if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
                         // Keep only the first letter
                         name.label = name.label.slice(0, 1) + ".";
-                        text = names.map(item => item.label).join(" ");
+                        text = workNames.map(item => item.label).join(" ");
                     }
                 }
 
