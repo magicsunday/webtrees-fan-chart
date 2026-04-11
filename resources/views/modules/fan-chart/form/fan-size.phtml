@@ -13,16 +13,17 @@ use Fisharebest\Webtrees\I18N;
 use MagicSunday\Webtrees\FanChart\Configuration;
 
 /**
+ * @var string        $moduleName
  * @var Configuration $configuration
  */
 ?>
 
-<div class="row">
-    <label class="col-sm-3 col-form-label wt-page-options-label" for="fanDegree">
-        <?= I18N::translate('Fan size') ?>
-    </label>
-    <div class="col-sm-9 wt-page-options-value d-flex justify-content-between">
-        <input id="fanDegree" name="fanDegree" class="flex-grow-1 custom-range" type="range" value="<?= $configuration->getFanDegree() ?>" min="180" max="360" step="5">
-        <output id="fanDegreeOutput" name="fanDegreeOutput" class="custom-range-value wt-page-options-label ms-3"><?= $configuration->getFanDegree() ?>°</output>
-    </div>
-</div>
+<?= view($moduleName . '::modules/components/range-slider', [
+    'id'     => 'fanDegree',
+    'label'  => I18N::translate('Fan size'),
+    'value'  => $configuration->getFanDegree(),
+    'min'    => 180,
+    'max'    => 360,
+    'step'   => 5,
+    'suffix' => '°',
+]) ?>

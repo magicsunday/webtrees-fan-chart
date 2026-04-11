@@ -52,14 +52,14 @@ use MagicSunday\Webtrees\FanChart\Configuration;
             </div>
         </div>
 
-        <?= view($moduleName . '::modules/fan-chart/form/fan-size', ['configuration' => $configuration]) ?>
-        <?= view($moduleName . '::modules/fan-chart/form/generations', ['configuration' => $configuration]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/fan-size', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/generations', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
 
         <div class="collapse" id="showMoreOptions">
-            <?= view($moduleName . '::modules/fan-chart/form/layout', ['configuration' => $configuration, 'moduleName' => $moduleName]) ?>
-            <?= view($moduleName . '::modules/fan-chart/form/date-precision', ['configuration' => $configuration]) ?>
-            <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['configuration' => $configuration]) ?>
-            <?= view($moduleName . '::modules/fan-chart/form/font-size', ['configuration' => $configuration]) ?>
+            <?= view($moduleName . '::modules/fan-chart/form/layout', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+            <?= view($moduleName . '::modules/fan-chart/form/date-precision', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+            <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+            <?= view($moduleName . '::modules/fan-chart/form/font-size', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
         </div>
 
         <div class="row mt-3">
@@ -87,7 +87,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     </form>
 
     <div class="row webtrees-fan-fullscreen-container">
-        <?= view($moduleName . '::modules/components/buttonbar', ['configuration' => $configuration, 'moduleName' => $moduleName]) ?>
+        <?= view($moduleName . '::modules/components/buttonbar', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
 
         <div id="fan-chart-url" class="wt-ajax-load wt-page-content wt-chart wt-chart-fan mt-0"></div>
     </div>
@@ -184,11 +184,21 @@ storage.register("detailedDateGenerations");
 // Handle option toggle button
 toggleMoreOptions(storage);
 
-// Set initial stored value and live-update for the fan degree slider
-document.getElementById("fanDegreeOutput").value = (storage.read("fanDegree") ?? document.getElementById("fanDegree").value) + "°";
-document.getElementById("fanDegree").addEventListener("input", () => {
-    document.getElementById("fanDegreeOutput").value = document.getElementById("fanDegree").value + "°";
-});
+// Initialize range sliders with stored values and live-update output displays
+function initRangeSlider(id, suffix = "") {
+    const input  = document.getElementById(id);
+    const output = document.getElementById(id + "Output");
+
+    output.value = (storage.read(id) ?? input.value) + suffix;
+    input.addEventListener("input", () => {
+        output.value = input.value + suffix;
+    });
+}
+
+initRangeSlider("fanDegree", "°");
+initRangeSlider("generations");
+initRangeSlider("fontScale", "%");
+initRangeSlider("innerArcs");
 
 const fanDegree               = storage.read("fanDegree");
 const generations             = parseInt(storage.read("generations"));

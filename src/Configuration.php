@@ -201,7 +201,7 @@ class Configuration
     public function getFontScale(): int
     {
         return $this->validator()
-            ->isBetween(10, 200)
+            ->isBetween(50, 150)
             ->integer(
                 'fontScale',
                 (int) $this->module->getPreference(
