@@ -1,8 +1,14 @@
 # =============================================================================
 # Release pipeline
 #
-# Requires: git, node, npm, zip, gh (GitHub CLI)
-# Run inside the webtrees buildbox: make bash, then cd to the module directory.
+# Requires:
+#   git  — version control, tagging, archive
+#   node — JavaScript runtime for Rollup bundling
+#   npm  — package manager for JS dependencies
+#   jq   — JSON manipulation for package.json version updates
+#   zip  — creating distribution archives
+#   gh   — GitHub CLI for creating releases and pushing tags
+#   sed  — text substitution for PHP version strings
 # =============================================================================
 
 #### Release
@@ -12,9 +18,9 @@ MODULE_NAME := webtrees-fan-chart
 # Extract version from arguments: "make release 3.1.0"
 VERSION := $(filter-out release release-% dist,$(MAKECMDGOALS))
 
-REQUIRED_TOOLS := git node npm zip gh
+REQUIRED_TOOLS := git node npm jq zip gh sed
 
-.PHONY: release release-check release-prepare release-publish release-bump dist clean-js
+.PHONY: release release-check release-prepare release-publish release-bump dist clean-js release-clean
 
 ## Verify all required tools are available
 release-check:
@@ -66,7 +72,7 @@ dist:
 release-prepare: release-check
 	@echo -e "${FYELLOW}[1/5]${FRESET} Updating versions to $(VERSION)..."
 	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(VERSION)'/" src/Module.php
-	@sed -i '0,/"version":/{s/"version": ".*"/"version": "$(VERSION)"/}' package.json
+	@jq --arg v "$(VERSION)" '.version = $$v' package.json > package.json.tmp && mv package.json.tmp package.json
 	@sed -i 's/"fisharebest\/webtrees": "~2.2.0 || dev-main"/"fisharebest\/webtrees": "~2.2.0"/' composer.json
 	@echo -e "${FYELLOW}[2/5]${FRESET} Removing old JS bundles..."
 	@$(MAKE) clean-js
@@ -108,7 +114,7 @@ release-bump:
 	$(eval NEXT := $(shell echo "$(VERSION)" | awk -F. '{print $$1"."$$2"."$$3+1}'))
 	@echo -e "${FYELLOW}[+]${FRESET} Bumping to $(NEXT)-dev..."
 	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/" src/Module.php
-	@sed -i '0,/"version":/{s/"version": ".*"/"version": "$(NEXT)-dev"/}' package.json
+	@jq --arg v "$(NEXT)-dev" '.version = $$v' package.json > package.json.tmp && mv package.json.tmp package.json
 	@sed -i 's/"fisharebest\/webtrees": "~2.2.0"/"fisharebest\/webtrees": "~2.2.0 || dev-main"/' composer.json
 	@rm -rf node_modules
 	@npm ci --ignore-scripts
