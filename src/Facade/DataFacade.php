@@ -226,45 +226,9 @@ class DataFacade
     ): string {
         $showPlaces = $this->configuration->getShowPlaces();
 
-        // Outer generations: compact format with optional places
+        // Outer generations: compact single-line format (no places)
         if ($generation > $this->configuration->getDetailedDateGenerations()) {
-            if (!$showPlaces) {
-                return $dateProcessor->getCompactLifetimeDescription();
-            }
-
-            // With places: use two-line format (* year, place / † year, place)
-            // so both birth and death places can be shown
-            $birthYear = $dateProcessor->hasBirthDate()
-                ? (string) $dateProcessor->getBirthYear() : '';
-            $deathYear = $dateProcessor->hasDeathDate()
-                ? (string) $dateProcessor->getDeathYear() : '';
-
-            $birthLine = $this->buildEventLine(
-                Symbols::Birth->value,
-                $birthYear,
-                $placeProcessor->getBirthPlaceShort(),
-            );
-
-            $deathLine = $this->buildEventLine(
-                Symbols::Death->value,
-                $deathYear,
-                $placeProcessor->getDeathPlaceShort(),
-            );
-
-            $lines = array_filter(
-                [$birthLine, $deathLine],
-                static fn (string $line): bool => $line !== '',
-            );
-
-            if ($lines !== []) {
-                return implode("\n", $lines);
-            }
-
-            if ($dateProcessor->isDead()) {
-                return Symbols::Death->value;
-            }
-
-            return '';
+            return $dateProcessor->getCompactLifetimeDescription();
         }
 
         $birthLine = $this->buildEventLine(
