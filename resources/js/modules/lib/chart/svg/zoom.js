@@ -57,34 +57,11 @@ export default class Zoom {
         });
 
         // Add zoom filter
+        // scaleExtent([MIN_ZOOM, MAX_ZOOM]) already enforces zoom limits
         this._zoom.filter((event) => {
             // Allow "wheel" event only while the control key is pressed
             if (event.type === "wheel") {
-                if (!event.ctrlKey) {
-                    return false;
-                }
-
-                const transform = d3.zoomTransform(this);
-
-                if (transform.k) {
-                    // Prevent zooming below the lowest level
-                    if ((transform.k <= MIN_ZOOM) && (event.deltaY > 0)) {
-                        // Prevent browser page zoom while holding down the control key
-                        event.preventDefault();
-
-                        return false;
-                    }
-
-                    // Prevent zooming above highest level
-                    if ((transform.k >= MAX_ZOOM) && (event.deltaY < 0)) {
-                        // Prevent browser page zoom while holding down the control key
-                        event.preventDefault();
-
-                        return false;
-                    }
-                }
-
-                return true;
+                return event.ctrlKey;
             }
 
             // Allow touch events only with two fingers
