@@ -59,6 +59,9 @@ export default class TooltipRenderer {
                 this.setTooltipHtml(event, datum);
             })
             .on("mouseleave", () => {
+                if (!this._svg.div.property("active")) {
+                    this._svg.div.transition().duration(200).style("opacity", 0);
+                }
             })
             .on("mousemove", (event) => {
                 this._svg.div
