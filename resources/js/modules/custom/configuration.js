@@ -63,7 +63,7 @@ export default class Configuration {
      * @param {string}   [options.maternalColor]
      */
     constructor({
-        labels,
+        labels = [],
         generations = 6,
         fanDegree = 210,
         fontScale = 100,
