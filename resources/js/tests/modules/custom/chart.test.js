@@ -353,7 +353,7 @@ describe("Chart", () => {
 
         expect(widthCall?.value).toBe(600);
         expect(heightCall?.value).toBe(450);
-        expect(viewBoxCall?.value).toEqual([-16, -16, 432, 332]);
+        expect(viewBoxCall?.value).toEqual([-116, -91, 632, 482]);
 
         document.fullscreenElement = null;
         getComputedStyleSpy.mockRestore();
