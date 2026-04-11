@@ -57,8 +57,8 @@ release-check:
 
 ## Remove old versioned JS bundles before building new ones (filesystem + git)
 clean-js:
-	@git rm -f --ignore-unmatch resources/js/$(MODULE_NAME)-*.js resources/js/$(MODULE_NAME)-*.min.js >/dev/null 2>&1 || true
-	@rm -f resources/js/$(MODULE_NAME)-*.js resources/js/$(MODULE_NAME)-*.min.js
+	@git rm -f --ignore-unmatch resources/js/fan-chart-*.js resources/js/fan-chart-*.min.js >/dev/null 2>&1 || true
+	@rm -f resources/js/fan-chart-*.js resources/js/fan-chart-*.min.js
 	@echo -e "${FGREEN} ✔${FRESET} Old JS bundles removed"
 
 ## Build distribution zip from git archive (respects .gitattributes export-ignore)
