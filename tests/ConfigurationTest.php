@@ -150,6 +150,42 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
+     * Ensures placeParts values outside the allowed range 0-3 fall back to the default.
+     */
+    #[Test]
+    public function placePartsOutOfRangeFallsBackToDefault(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams(['placeParts' => '4']);
+
+        $module = $this->createModuleWithPreferences([
+            'default_placeParts' => '1',
+        ]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame(1, $configuration->getPlaceParts());
+    }
+
+    /**
+     * Ensures the maximum allowed placeParts value (3) is accepted.
+     */
+    #[Test]
+    public function placePartsMaximumValueIsAccepted(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams(['placeParts' => '3']);
+
+        $module = $this->createModuleWithPreferences([
+            'default_placeParts' => '1',
+        ]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame(3, $configuration->getPlaceParts());
+    }
+
+    /**
      * Confirms list getters expose complete ranges derived from default configuration.
      */
     #[Test]
