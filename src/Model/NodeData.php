@@ -26,136 +26,136 @@ class NodeData implements JsonSerializable
     /**
      * The unique ID of the individual.
      */
-    protected int $id = 0;
+    private int $id = 0;
 
     /**
      * The XREF of the individual.
      */
-    protected string $xref = '';
+    private string $xref = '';
 
     /**
      * The URL to this individual in webtrees.
      */
-    protected string $url = '';
+    private string $url = '';
 
     /**
      * The URL used to update the clicked entry in the tree with this individual.
      */
-    protected string $updateUrl = '';
+    private string $updateUrl = '';
 
     /**
      * The generation the individual belongs to.
      */
-    protected int $generation = 0;
+    private int $generation = 0;
 
     /**
      * The full name of the individual.
      */
-    protected string $name = '';
+    private string $name = '';
 
     /**
      * TRUE if the name is written right to left.
      */
-    protected bool $isNameRtl = false;
+    private bool $isNameRtl = false;
 
     /**
      * The list of first names.
      *
      * @var string[]
      */
-    protected array $firstNames = [];
+    private array $firstNames = [];
 
     /**
      * The list of last names.
      *
      * @var string[]
      */
-    protected array $lastNames = [];
+    private array $lastNames = [];
 
     /**
      * The extracted preferred name.
      */
-    protected string $preferredName = '';
+    private string $preferredName = '';
 
     /**
      * The alternative name.
      */
-    protected string $alternativeName = '';
+    private string $alternativeName = '';
 
     /**
      * TRUE if the alternative name is written right to left.
      */
-    protected bool $isAltRtl = false;
+    private bool $isAltRtl = false;
 
     /**
      * The URL of the individuals highlight image.
      */
-    protected string $thumbnail = '';
+    private string $thumbnail = '';
 
     /**
      * The sex of the individual.
      */
-    protected string $sex = 'U';
+    private string $sex = 'U';
 
     /**
      * The formatted birthdate without HTML tags.
      */
-    protected string $birth = '';
+    private string $birth = '';
 
     /**
      * The formatted death date without HTML tags.
      */
-    protected string $death = '';
+    private string $death = '';
 
     /**
      * The formatted marriage date without HTML tags.
      */
-    protected string $marriageDate = '';
+    private string $marriageDate = '';
 
     /**
      * The formatted marriage date of the parents without HTML tags.
      */
-    protected string $marriageDateOfParents = '';
+    private string $marriageDateOfParents = '';
 
     /**
      * The timespan label.
      */
-    protected string $timespan = '';
+    private string $timespan = '';
 
     /**
      * Full compact birth date for tooltip display.
      */
-    protected string $birthDateFull = '';
+    private string $birthDateFull = '';
 
     /**
      * Full compact death date for tooltip display.
      */
-    protected string $deathDateFull = '';
+    private string $deathDateFull = '';
 
     /**
      * Full compact marriage date for tooltip display.
      */
-    protected string $marriageDateFull = '';
+    private string $marriageDateFull = '';
 
     /**
      * The formatted birth place.
      */
-    protected string $birthPlace = '';
+    private string $birthPlace = '';
 
     /**
      * The formatted death place.
      */
-    protected string $deathPlace = '';
+    private string $deathPlace = '';
 
     /**
      * The formatted marriage place.
      */
-    protected string $marriagePlace = '';
+    private string $marriagePlace = '';
 
     /**
      * The underlying individual instance. Only used internally.
      */
-    protected ?Individual $individual = null;
+    private ?Individual $individual = null;
 
     /**
      * @return int
