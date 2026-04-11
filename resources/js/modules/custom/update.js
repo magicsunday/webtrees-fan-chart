@@ -40,8 +40,6 @@ export default class Update {
      * @public
      */
     update(url, redrawOverlays, callback) {
-        const that = this;
-
         this._svg
             .selectAll("g.person")
             .classed("hover", false)
@@ -89,6 +87,10 @@ export default class Update {
                     (datum) => datum.data.data.familyColor = familyColor.getColor(datum),
                 );
             }
+
+            // Alias for D3 .each(function() {}) callbacks that need both
+            // the class instance (that) and the DOM element (this)
+            const that = this;
 
             // Flag all person elements which are subject to change
             this._svg
