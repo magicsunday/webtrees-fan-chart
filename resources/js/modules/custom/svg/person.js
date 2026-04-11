@@ -6,7 +6,8 @@
  */
 
 import * as d3 from "../../lib/d3";
-import Geometry, {appendArc} from "./geometry";
+import {appendArc} from "./arc";
+import Geometry from "./geometry";
 import TooltipRenderer from "./tooltip-renderer";
 import LabelRenderer from "./label-renderer";
 import {SEX_FEMALE, SEX_MALE} from "../hierarchy";

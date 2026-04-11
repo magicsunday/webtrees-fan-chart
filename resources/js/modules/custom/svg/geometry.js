@@ -246,27 +246,3 @@ export default class Geometry {
         return (normalized > (90 * MATH_DEG2RAD)) && (normalized < (270 * MATH_DEG2RAD));
     }
 }
-
-/**
- * Appends an arc group with path to the given parent element.
- * Applies family color and initial opacity for new elements.
- *
- * @param {Selection} parent       The parent D3 selection (person or marriage group)
- * @param {Function}  arcGenerator The configured d3.arc() generator
- * @param {string}    [color]      Optional fill color for the arc path
- */
-export function appendArc(parent, arcGenerator, color) {
-    const arcGroup = parent
-        .append("g")
-        .attr("class", "arc");
-
-    const path = arcGroup
-        .append("path")
-        .attr("d", arcGenerator);
-
-    if (parent.classed("new")) {
-        path.style("opacity", 1e-6);
-    } else if (color) {
-        path.style("fill", color);
-    }
-}

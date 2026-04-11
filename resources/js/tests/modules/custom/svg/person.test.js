@@ -38,6 +38,11 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/text", () => ({
     }
 }));
 
+await jest.unstable_mockModule("resources/js/modules/custom/svg/arc", () => ({
+    __esModule: true,
+    appendArc() {},
+}));
+
 await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () => ({
     __esModule: true,
     default: class {
@@ -47,7 +52,6 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
         outerRadius() { return 0; }
         getFontSize() { return 14; }
     },
-    appendArc() {},
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/svg/label-renderer", () => ({

@@ -6,7 +6,8 @@
  */
 
 import * as d3 from "../../lib/d3";
-import Geometry, {appendArc} from "./geometry";
+import {appendArc} from "./arc";
+import Geometry from "./geometry";
 import FamilyColor from "./family-color";
 import {SYMBOL_MARRIAGE} from "../hierarchy";
 
