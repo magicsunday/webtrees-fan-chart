@@ -399,7 +399,9 @@ export default class Text {
      * @private
      */
     truncateNames(names, fontSize, fontWeight, availableWidth) {
-        // Deep-clone to avoid mutating the caller's objects
+        // Shallow clone each name object to avoid mutating the caller's data.
+        // This is safe because all LabelElementData fields are primitives
+        // (label: string, isPreferred: bool, isLastName: bool, isNameRtl: bool).
         const workNames = names.map(name => ({...name}));
         let text = workNames.map(item => item.label).join(" ");
 
