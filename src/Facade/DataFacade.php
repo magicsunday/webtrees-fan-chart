@@ -279,7 +279,7 @@ class DataFacade
 
         $year = $isBirth ? $dateProcessor->getBirthYear() : $dateProcessor->getDeathYear();
 
-        return (string) $year;
+        return ($year > 0) ? (string) $year : '';
     }
 
     /**
@@ -316,7 +316,7 @@ class DataFacade
 
     /**
      * Appends a place to a single date line. Only applied for
-     * generations within the detailed date range.
+     * generations within the inner arcs range.
      *
      * @param string $dateLine   The date string
      * @param string $place      The place name

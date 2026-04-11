@@ -23,7 +23,7 @@ export class FanChart {
      * @param {string} selector The CSS selector of the HTML element used to assign the chart too
      * @param {Object} options  A list of options passed from outside to the application
      *
-     * @param {string[]} options.labels
+     * @param {Object<string, string>} options.labels
      * @param {number}   options.generations
      * @param {number}   options.fanDegree
      * @param {number}   options.fontScale

@@ -1,7 +1,7 @@
 import Configuration from "resources/js/modules/custom/configuration";
 
 describe("Configuration", () => {
-    const labels = ["child", "parent"];
+    const labels = { zoom: "Zoom hint", move: "Move hint", 0: "Self", 1: "Parents" };
 
     it("uses defaults when options are omitted", () => {
         const config = new Configuration({ labels });
