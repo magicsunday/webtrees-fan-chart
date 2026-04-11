@@ -224,22 +224,24 @@ class DataFacade
         PlaceProcessor $placeProcessor,
         int $generation,
     ): string {
-        $showPlaces = $this->configuration->getShowPlaces();
+        $isDetailed = $generation <= $this->configuration->getDetailedDateGenerations();
+        $showPlaces = $this->configuration->getShowPlaces()
+            && ($generation <= ($this->configuration->getInnerArcs() + 1));
 
-        // Outer generations: compact single-line format (no places)
-        if ($generation > $this->configuration->getDetailedDateGenerations()) {
+        // Outer generations without places: compact single-line format
+        if (!$isDetailed && !$showPlaces) {
             return $dateProcessor->getCompactLifetimeDescription();
         }
 
         $birthLine = $this->buildEventLine(
             Symbols::Birth->value,
-            $dateProcessor->getFormattedBirthDate(),
+            $isDetailed ? $dateProcessor->getFormattedBirthDate() : $this->getYearString($dateProcessor, true),
             $showPlaces ? $placeProcessor->getBirthPlaceShort() : '',
         );
 
         $deathLine = $this->buildEventLine(
             Symbols::Death->value,
-            $dateProcessor->getFormattedDeathDate(),
+            $isDetailed ? $dateProcessor->getFormattedDeathDate() : $this->getYearString($dateProcessor, false),
             $showPlaces ? $placeProcessor->getDeathPlaceShort() : '',
         );
 
@@ -255,6 +257,29 @@ class DataFacade
         }
 
         return '';
+    }
+
+    /**
+     * Returns the year as a string for the given life event, or empty if unavailable.
+     *
+     * @param DateProcessor $dateProcessor
+     * @param bool          $isBirth       True for birth year, false for death year
+     *
+     * @return string
+     */
+    private function getYearString(
+        DateProcessor $dateProcessor,
+        bool $isBirth,
+    ): string {
+        $hasDate = $isBirth ? $dateProcessor->hasBirthDate() : $dateProcessor->hasDeathDate();
+
+        if (!$hasDate) {
+            return '';
+        }
+
+        $year = $isBirth ? $dateProcessor->getBirthYear() : $dateProcessor->getDeathYear();
+
+        return (string) $year;
     }
 
     /**
