@@ -296,6 +296,7 @@ class SvgStub {
     constructor(persons = []) {
         this.personById = new Map(persons.map((person) => [person.id, person]));
         this.eventLog   = [];
+        this.div        = { property: jest.fn() };
         this.defs       = {
             get: () => ({
                 selectAll: () => ({

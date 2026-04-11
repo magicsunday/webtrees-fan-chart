@@ -49,6 +49,15 @@ export default class Update {
             .on("mouseover", null)
             .on("mouseout", null);
 
+        // Guard callback to prevent double-invocation from endAll + catch race
+        let callbackFired = false;
+        const onceCallback = () => {
+            if (!callbackFired) {
+                callbackFired = true;
+                this.updateDone(callback);
+            }
+        };
+
         d3.json(
             url,
         ).then((data) => {
@@ -152,7 +161,7 @@ export default class Update {
             // Create transition instance
             const transition = d3.transition()
                 .duration(this._configuration.updateDuration)
-                .call(this.endAll, () => this.updateDone(callback));
+                .call(this.endAll, onceCallback);
 
             // Fade out removed arcs (person + marriage)
             this.fadeOutRemovedArcs(transition, "g.person.remove");
@@ -208,8 +217,15 @@ export default class Update {
         }).catch((error) => {
             console.error("Fan chart update failed:", error);
 
-            // Restore interactivity so the chart is not permanently locked
-            callback();
+            // Clean up stale CSS classes left by a partial update
+            this._svg
+                .selectAll("g.person, g.marriage")
+                .classed("new", false)
+                .classed("update", false)
+                .classed("remove", false);
+
+            // Restore interactivity via the once-guarded callback
+            onceCallback();
         });
     }
 
@@ -221,6 +237,9 @@ export default class Update {
      * @private
      */
     updateDone(callback) {
+        // Reset tooltip pinned state so mouseleave works on newly rendered arcs
+        this._svg.div.property("active", false);
+
         // Remove arc if segments should be hidden
         if (this._configuration.hideEmptySegments) {
             this._svg
