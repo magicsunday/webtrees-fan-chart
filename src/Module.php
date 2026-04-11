@@ -60,7 +60,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
 
     public const string CUSTOM_AUTHOR = 'Rico Sonntag';
 
-    public const string CUSTOM_VERSION = '3.1.2-dev';
+    public const string CUSTOM_VERSION = '3.1.2';
 
     public const string CUSTOM_SUPPORT_URL = 'https://github.com/' . self::GITHUB_REPO . '/issues';
 
