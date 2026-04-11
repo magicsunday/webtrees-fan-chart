@@ -117,6 +117,7 @@ release-bump:
 	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/" src/Module.php
 	@jq --arg v "$(NEXT)-dev" '.version = $$v' package.json > package.json.tmp && mv package.json.tmp package.json
 	@sed -i 's/"fisharebest\/webtrees": "~2.2.0"/"fisharebest\/webtrees": "~2.2.0 || dev-main"/' composer.json
+	@$(MAKE) clean-js
 	@rm -rf node_modules
 	@npm ci --ignore-scripts
 	@npm run prepare
