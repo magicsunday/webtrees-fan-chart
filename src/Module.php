@@ -161,7 +161,8 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
                 route(
                     self::ROUTE_DEFAULT,
                     [
-                        'tree'                    => $tree->name(),
+                        'tree' => $tree->name(),
+                        // xref identifies the individual, not a chart setting — read directly from POST body
                         'xref'                    => Validator::parsedBody($request)->string('xref', ''),
                         'generations'             => $this->configuration->getGenerations(),
                         'fanDegree'               => $this->configuration->getFanDegree(),
