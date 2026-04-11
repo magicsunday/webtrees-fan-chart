@@ -34,12 +34,14 @@ use MagicSunday\Webtrees\FanChart\Processor\PlaceProcessor;
 class DataFacade
 {
     /**
-     * The module.
+     * The module. Initialized by createTreeStructure() on each call.
+     * Accessing before createTreeStructure() throws "Uninitialized typed property".
      */
     private ModuleCustomInterface $module;
 
     /**
-     * The configuration instance.
+     * The configuration instance. Initialized by createTreeStructure() on each call.
+     * Accessing before createTreeStructure() throws "Uninitialized typed property".
      */
     private Configuration $configuration;
 
