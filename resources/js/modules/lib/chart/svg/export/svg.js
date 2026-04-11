@@ -71,7 +71,9 @@ export default class SvgExport extends Export {
      *
      * @param {Node} node The node being exported (passed through unchanged)
      *
-     * @returns {Node}
+     * @return {Node}
+     *
+     * @private
      */
     createSandbox(node) {
         this._sandbox = document.createElement("iframe");
@@ -94,7 +96,9 @@ export default class SvgExport extends Export {
      *
      * @param {Node|Element} source The element whose tag name is looked up
      *
-     * @returns {CSSStyleDeclaration}
+     * @return {CSSStyleDeclaration}
+     *
+     * @private
      */
     getDefaultComputedStyle(source) {
         if (this._defaultStyles[source.tagName]) {
@@ -123,7 +127,9 @@ export default class SvgExport extends Export {
      * @param {Node|Element}        target                 The cloned target element
      * @param {CSSStyleDeclaration} parentStyleDeclaration The computed style of the source's parent, for inheritance diffing
      *
-     * @returns {Node}
+     * @return {Node}
+     *
+     * @private
      */
     cloneStyles(source, target, parentStyleDeclaration) {
         if (!(target instanceof Element)) {
@@ -182,7 +188,9 @@ export default class SvgExport extends Export {
      * @param {Node}                source                 The element to duplicate
      * @param {CSSStyleDeclaration} sourceStyleDeclaration The computed style of source's parent
      *
-     * @returns {Promise<Node>}
+     * @return {Promise<Node>}
+     *
+     * @private
      */
     createNodeDuplicate(source, sourceStyleDeclaration) {
         return Promise
@@ -199,7 +207,9 @@ export default class SvgExport extends Export {
      * @param {Node} source The element whose children are cloned
      * @param {Node} target The element to append cloned children to
      *
-     * @returns {Promise<Node>}
+     * @return {Promise<Node>}
+     *
+     * @private
      */
     cloneChildren(source, target) {
         let done = Promise.resolve();
@@ -231,7 +241,9 @@ export default class SvgExport extends Export {
      *
      * @param {Node} svg The cloned, style-inlined SVG element
      *
-     * @returns {Promise<string>} Resolves to a blob object URL
+     * @return {Promise<string>} Resolves to a blob object URL
+     *
+     * @private
      */
     convertToObjectUrl(svg) {
         return new Promise(resolve => {
@@ -255,7 +267,9 @@ export default class SvgExport extends Export {
      *
      * @param {string} objectUrl The blob URL to pass through
      *
-     * @returns {string}
+     * @return {string}
+     *
+     * @private
      */
     cleanUp(objectUrl) {
         // Remove the sandbox

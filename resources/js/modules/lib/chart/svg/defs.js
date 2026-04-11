@@ -17,13 +17,18 @@
  */
 export default class Defs {
     /**
-     * * @param {Selection} svg The D3 selection of the parent <svg> element
+     * @param {Selection} svg The D3 selection of the parent <svg> element
      */
     constructor(svg) {
         // Create the <svg:defs> element
         this._element = svg.append("defs");
     }
 
+    /**
+     * Returns the <defs> D3 selection.
+     *
+     * @return {Selection}
+     */
     get() {
         return this._element;
     }
@@ -33,7 +38,7 @@ export default class Defs {
      *
      * @param {function|string} select CSS selector or D3 selector function
      *
-     * @returns {Selection}
+     * @return {Selection}
      */
     select(select) {
         return this._element.select(select);
@@ -44,7 +49,7 @@ export default class Defs {
      *
      * @param {string|function} name Tag name or D3 creator function
      *
-     * @returns {Selection}
+     * @return {Selection}
      */
     append(name) {
         return this._element.append(name);

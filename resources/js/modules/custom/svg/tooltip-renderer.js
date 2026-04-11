@@ -85,6 +85,8 @@ export default class TooltipRenderer {
      *
      * @param {Event}  event The triggering mouse event (used for cursor position)
      * @param {Object} datum The D3 partition datum
+     *
+     * @private
      */
     setTooltipHtml(event, datum) {
         // Ignore empty elements

@@ -38,14 +38,23 @@ export default class Chart {
         this._data = {};
     }
 
+    /**
+     * @return {Svg}
+     */
     get svg() {
         return this._svg;
     }
 
+    /**
+     * @return {Selection}
+     */
     get parent() {
         return this._parent;
     }
 
+    /**
+     * @return {Object}
+     */
     get data() {
         return this._data;
     }
@@ -67,7 +76,9 @@ export default class Chart {
      *
      * @param {number} rem The value in rem units
      *
-     * @returns {number}
+     * @return {number}
+     *
+     * @private
      */
     convertRemToPixels(rem) {
         return rem * parseFloat(window.getComputedStyle(document.documentElement).fontSize);
@@ -77,6 +88,8 @@ export default class Chart {
      * Recalculates and sets the SVG viewBox so the chart fills its container
      * with a minimum 1 rem padding on every side. In fullscreen mode the SVG
      * dimensions are set to the full client area.
+     *
+     * @private
      */
     updateViewBox() {
         // Set width/height attributes
@@ -207,6 +220,8 @@ export default class Chart {
      * Draws radial separator lines between different family branches at
      * each generation level. Lines are drawn only between non-spouse
      * segments (where the parent differs).
+     *
+     * @private
      */
     drawFamilySeparators() {
         const geometry = new Geometry(this._configuration);
@@ -260,6 +275,8 @@ export default class Chart {
      * angular range of a person who has parents shown in the chart. The arc
      * is always drawn (for visual consistency), and the marriage date text
      * is added when available.
+     *
+     * @private
      */
     drawMarriageArcs() {
         const that = this;
@@ -298,6 +315,8 @@ export default class Chart {
      * Marks all persons with a non-empty xref as "available" (enabling hover
      * styles) and binds the click handler. Also marks marriage arcs that have
      * a date as "available" and empty ones as "empty" for CSS styling.
+     *
+     * @private
      */
     bindClickEventListener() {
         const persons = this._svg
@@ -334,6 +353,8 @@ export default class Chart {
      *
      * @param {Event}  event The current event
      * @param {Object} datum The D3 data object
+     *
+     * @private
      */
     personClick(event, datum) {
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
@@ -344,6 +365,8 @@ export default class Chart {
      * Opens the webtrees individual page in a new tab.
      *
      * @param {string} url The individual page URL
+     *
+     * @private
      */
     redirectToIndividual(url) {
         window.open(url, "_blank");
@@ -369,6 +392,8 @@ export default class Chart {
      * Marks existing separator lines as "old" (for fade-out) and draws the
      * separator lines for the incoming hierarchy. Called from Update.update()
      * before the transition starts so old and new lines can cross-fade.
+     *
+     * @private
      */
     redrawOverlayLayers() {
         // Separators: mark old, draw new

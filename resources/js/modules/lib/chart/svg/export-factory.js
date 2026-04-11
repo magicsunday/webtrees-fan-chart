@@ -33,7 +33,7 @@ export default class ExportFactory {
      *
      * @param {string} type The export type ("png" or "svg")
      *
-     * @returns {PngExport|SvgExport}
+     * @return {PngExport|SvgExport}
      */
     createExport(type) {
         const ExportClass = ExportFactory.EXPORT_TYPES[type];

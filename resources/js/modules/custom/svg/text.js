@@ -58,6 +58,8 @@ export default class Text {
      * @param {Selection} parent
      * @param {Object}    datum
      * @param {Map}       positions
+     *
+     * @private
      */
     createInnerLabels(parent, datum, positions) {
         const parentId = d3.select(parent.node().parentNode).attr("id");
@@ -121,6 +123,8 @@ export default class Text {
      * @param {Selection} parent
      * @param {Object}    datum
      * @param {Map}       positions
+     *
+     * @private
      */
     createOuterLabels(parent, datum, positions) {
         if (datum.depth >= 7) {
@@ -197,6 +201,8 @@ export default class Text {
      * @param {Object}    datum
      * @param {Map}       positions        Slot-to-position map from calculateSlotPositions()
      * @param {Function}  createElement    Called as (slot, position) => container element
+     *
+     * @private
      */
     renderTimespanLines(parent, datum, positions, createElement) {
         if (datum.data.data.timespan === "") {
@@ -234,6 +240,8 @@ export default class Text {
      * @param {NameElementData} datum
      *
      * @return {LabelElementData[][]}
+     *
+     * @private
      */
     createNamesData(datum) {
         /**
@@ -319,6 +327,8 @@ export default class Text {
      * @param {NameElementData} datum
      *
      * @return {LabelElementData[]}
+     *
+     * @private
      */
     createAlternativeNamesData(datum) {
         return datum.data.data.alternativeName.split(/\s+/).map((word) => ({
@@ -336,6 +346,8 @@ export default class Text {
      *
      * @param {Selection}         parent The <text> or <textPath> element to append spans to
      * @param {LabelElementData[]} data  Array of name part descriptors
+     *
+     * @private
      */
     addNameElements(parent, data) {
         parent.selectAll("tspan")
@@ -363,6 +375,8 @@ export default class Text {
      * @param {number}             availableWidth Maximum pixel width for the combined name string
      *
      * @return {LabelElementData[]}
+     *
+     * @private
      */
     truncateNamesData(parent, names, availableWidth) {
         const fontSize = parent.style("font-size");
@@ -384,6 +398,8 @@ export default class Text {
      * @param {number}             availableWidth Maximum pixel width for the full name string
      *
      * @return {LabelElementData[]}
+     *
+     * @private
      */
     truncateNames(names, fontSize, fontWeight, availableWidth) {
         // Shallow clone each name object to avoid mutating the caller's data.
@@ -445,7 +461,9 @@ export default class Text {
      * @param {string} fontSize   CSS font-size string (e.g. "14px")
      * @param {string} fontWeight CSS font-weight (default 400)
      *
-     * @returns {number}
+     * @return {number}
+     *
+     * @private
      */
     measureText(text, fontSize, fontWeight = 400) {
         const fontFamily = this._svg.style("font-family");
@@ -462,6 +480,8 @@ export default class Text {
      * @param {number}    availableWidth Maximum pixel width before truncation kicks in
      *
      * @return {Function}
+     *
+     * @private
      */
     truncateDate(parent, availableWidth) {
         const that = this;
@@ -494,7 +514,9 @@ export default class Text {
      *
      * @param {Selection} parent The parent (<text> or <textPath>) element containing the <tspan> child elements
      *
-     * @returns {number}
+     * @return {number}
+     *
+     * @private
      */
     getTextLength(parent) {
         let totalWidth = 0;
@@ -513,6 +535,10 @@ export default class Text {
      * and for outer generations that use rotated plain text elements.
      *
      * @param {Object} data The D3 partition datum
+     *
+     * @return {boolean}
+     *
+     * @private
      */
     isInnerLabel(data) {
         // Note: The center element does not belong to the inner labels!
@@ -532,6 +558,8 @@ export default class Text {
      * @param {Object} data     The D3 partition datum
      *
      * @return {string} The id attribute of the newly created <path> element
+     *
+     * @private
      */
     createPathDefinition(parentId, slot, position, data) {
         let pathId = "path-" + parentId + "-" + slot.index;
@@ -575,6 +603,10 @@ export default class Text {
      * @param {number} depth The depth of the element inside the chart
      * @param {number} x0    The left edge (x0) of the rectangle
      * @param {number} x1    The right edge (x1) of the rectangle
+     *
+     * @return {boolean}
+     *
+     * @private
      */
     isPositionFlipped(depth, x0, x1) {
         return this._geometry.isPositionFlipped(depth, x0, x1);
@@ -602,6 +634,8 @@ export default class Text {
      * @param {Object} datum The D3 data object
      *
      * @return {Map<Object, {normal: number, flipped: number}>}
+     *
+     * @private
      */
     calculateSlotPositions(datum) {
         // Build semantic groups: names, alternative name, dates
@@ -696,6 +730,8 @@ export default class Text {
      * @param {{normal: number, flipped: number}} position        The calculated position for this slot
      *
      * @return {number}
+     *
+     * @private
      */
     getTextOffset(positionFlipped, position) {
         return positionFlipped ? position.flipped : position.normal;
@@ -711,7 +747,9 @@ export default class Text {
      * @param {Object}                            data     The D3 partition datum
      * @param {{normal: number, flipped: number}} position Radial slot position from calculateSlotPositions()
      *
-     * @returns {number}
+     * @return {number}
+     *
+     * @private
      */
     getAvailableWidth(data, position) {
         // Outer arcs
@@ -754,6 +792,8 @@ export default class Text {
      *
      * @param {Selection} parent The label <g> element whose <text> children to position
      * @param {Object}    datum  The D3 partition datum
+     *
+     * @private
      */
     transformOuterText(parent, datum) {
         const that = this;
@@ -865,6 +905,8 @@ export default class Text {
      * @param {Selection} textElements The text elements to position
      *
      * @return {number[]} Angular offset in degrees for each text element
+     *
+     * @private
      */
     calculateOuterSlotPositions(datum, textElements) {
         // Build element groups: [names...], [dates...]

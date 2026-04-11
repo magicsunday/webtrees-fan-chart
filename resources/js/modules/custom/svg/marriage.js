@@ -83,6 +83,8 @@ export default class Marriage {
      *
      * @param {Selection} marriage The <g class="marriage"> D3 selection
      * @param {Object}    datum    The D3 partition datum
+     *
+     * @private
      */
     addArc(marriage, datum) {
         // Reuse existing arc if present (during updates)
@@ -126,6 +128,8 @@ export default class Marriage {
      *
      * @param {Selection} marriage The <g class="marriage"> D3 selection
      * @param {Object}    datum    The D3 partition datum
+     *
+     * @private
      */
     addLabel(marriage, datum) {
         if (!datum.data.data.marriageDateOfParents) {
@@ -229,6 +233,10 @@ export default class Marriage {
      * generation, so the text should match parent-generation sizing.
      *
      * @param {Object} datum The D3 partition datum
+     *
+     * @return {number}
+     *
+     * @private
      */
     getFontSize(datum) {
         return this._geometry.getFontSize(

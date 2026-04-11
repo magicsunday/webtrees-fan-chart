@@ -31,7 +31,7 @@ use function is_array;
 class VersionInformation
 {
     /**
-     * * @param ModuleCustomInterface $module
+     * @param ModuleCustomInterface $module
      */
     public function __construct(private readonly ModuleCustomInterface $module)
     {

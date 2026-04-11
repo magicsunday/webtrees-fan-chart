@@ -42,7 +42,7 @@ export default class FamilyColor {
 
     /**
 
-     * * @param {Configuration} configuration The application configuration
+     * @param {Configuration} configuration The application configuration
 
      */
     constructor(configuration) {
@@ -61,6 +61,8 @@ export default class FamilyColor {
      * @param {number[]} baseHsl [hue, saturation, lightness] base color
      *
      * @return {{minSaturation: number, maxLightness: number}}
+     *
+     * @private
      */
     static _depthBounds(baseHsl) {
         const span = FamilyColor.MAX_GENERATIONS_REF - 1;

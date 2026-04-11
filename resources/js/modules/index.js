@@ -52,6 +52,9 @@ export class FanChart {
         this.draw(options.data);
     }
 
+    /**
+     * @return {Configuration}
+     */
     get configuration() {
         return this._configuration;
     }
@@ -79,6 +82,8 @@ export class FanChart {
     /**
      * Registers fullscreen and screen-orientation change listeners that
      * toggle the body "fullscreen" attribute and recalculate the SVG viewBox.
+     *
+     * @private
      */
     addEventListeners() {
         // Listen for fullscreen change event
@@ -126,7 +131,8 @@ export class FanChart {
     /**
 
      * * Serializes the SVG to a canvas at A3 resolution and triggers a PNG download.
-
+     *
+     * @private
      */
     exportPNG() {
         this._chart.svg
@@ -137,6 +143,8 @@ export class FanChart {
     /**
      * Deep-clones the SVG with all computed styles inlined, inlines external
      * images as base64, and triggers an SVG file download.
+     *
+     * @private
      */
     exportSVG() {
         this._chart.svg

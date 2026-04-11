@@ -17,7 +17,7 @@ let measureCanvas = null;
  * @param {string} fontSize   CSS font-size string (e.g. "14px")
  * @param {number} fontWeight CSS font-weight (default 400)
  *
- * @returns {number} Width of the text in pixels
+ * @return {number} Width of the text in pixels
  */
 export default function(text, fontFamily, fontSize, fontWeight = 400) {
     if (measureCanvas === null) {

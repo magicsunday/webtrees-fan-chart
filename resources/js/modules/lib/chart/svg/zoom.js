@@ -33,7 +33,7 @@ const MAX_ZOOM = 20.0;
  */
 export default class Zoom {
     /**
-     * * @param {Selection} parent The D3 selection of the visual group that receives the zoom transform
+     * @param {Selection} parent The D3 selection of the visual group that receives the zoom transform
      */
     constructor(parent) {
         this._zoom = null;
@@ -46,6 +46,8 @@ export default class Zoom {
      * Creates the D3 zoom behavior with scale limits, a custom wheel-delta
      * function, and a filter that restricts zoom to Ctrl+wheel and two-finger
      * touch, then attaches the transform listener to the parent group.
+     *
+     * @private
      */
     init() {
         // Setup zoom and pan
@@ -86,7 +88,7 @@ export default class Zoom {
      * Returns the configured d3-zoom behavior, ready to be passed to
      * selection.call() or zoom.transform().
      *
-     * @returns {d3.ZoomBehavior}
+     * @return {d3.ZoomBehavior}
      */
     get() {
         return this._zoom;

@@ -16,7 +16,7 @@
  */
 export default class Overlay {
     /**
-     * * @param {Selection} parent The D3 selection of the container element
+     * @param {Selection} parent The D3 selection of the container element
      */
     constructor(parent) {
         // Create the tooltip overlay container
@@ -70,6 +70,11 @@ export default class Overlay {
             .style("opacity", 1e-6);
     }
 
+    /**
+     * Returns the overlay <div> D3 selection.
+     *
+     * @return {Selection}
+     */
     get() {
         return this._element;
     }

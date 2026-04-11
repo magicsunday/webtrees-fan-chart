@@ -27,7 +27,7 @@ export const SYMBOL_ELLIPSIS = "\u2026";
  */
 export default class Hierarchy {
     /**
-     * * @param {Configuration} configuration The application configuration
+     * @param {Configuration} configuration The application configuration
      */
     constructor(configuration) {
         this._configuration = configuration;
@@ -94,11 +94,16 @@ export default class Hierarchy {
     /**
      * Flat array of all partition nodes (root plus all descendants) in
      * top-down order, each augmented with a unique sequential id.
+     *
+     * @return {Array}
      */
     get nodes() {
         return this._nodes;
     }
 
+    /**
+     * @return {Object}
+     */
     get root() {
         return this._root;
     }
@@ -112,6 +117,8 @@ export default class Hierarchy {
      * @param {string} sex        SEX_MALE or SEX_FEMALE constant
      *
      * @return {Object}
+     *
+     * @private
      */
     createEmptyNode(generation, sex) {
         return {

@@ -242,6 +242,8 @@ export default class Update {
      * clipPath definitions from SVG defs, and finally invokes the callback.
      *
      * @param {Function} callback Called after all cleanup is finished
+     *
+     * @private
      */
     updateDone(callback) {
         // Reset tooltip pinned state so mouseleave works on newly rendered arcs
@@ -352,6 +354,8 @@ export default class Update {
      *
      * @param {string}   groupSelector The group type selector (e.g. "g.person")
      * @param {Function} getColor      Extracts the color from a datum
+     *
+     * @private
      */
     restoreFamilyColors(groupSelector, getColor) {
         if (!this._configuration.showFamilyColors) {
@@ -377,6 +381,8 @@ export default class Update {
      *
      * @param {Transition} transition
      * @param {string}     selector   The group selector (e.g. "g.person.remove")
+     *
+     * @private
      */
     fadeOutRemovedArcs(transition, selector) {
         this._svg
@@ -392,6 +398,8 @@ export default class Update {
      * @param {Transition} transition
      * @param {string}     groupSelector The group type selector (e.g. "g.person")
      * @param {Function}   getColor      Extracts the color from a datum
+     *
+     * @private
      */
     fadeInNewArcs(transition, groupSelector, getColor) {
         const config = this._configuration;
@@ -416,6 +424,8 @@ export default class Update {
      * @param {Transition} transition
      * @param {string}     groupSelector The group type selector (e.g. "g.person")
      * @param {Function}   getColor      Extracts the color from a datum
+     *
+     * @private
      */
     transitionUpdatedArcs(transition, groupSelector, getColor) {
         if (!this._configuration.showFamilyColors) {
@@ -444,6 +454,8 @@ export default class Update {
      *
      * @param {Transition} transition The D3 transition to monitor
      * @param {Function}   callback   Invoked with the transition as `this` when all transitions settle
+     *
+     * @private
      */
     endAll(transition, callback) {
         let activeCount = 0;

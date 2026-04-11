@@ -23,7 +23,7 @@ export default class Export {
      *
      * @param {Node} svgNode The SVG element (or a clone) whose images to inline
      *
-     * @returns {Promise<Node>}
+     * @return {Promise<Node>}
      */
     inlineImages(svgNode) {
         const images = svgNode.querySelectorAll("image");

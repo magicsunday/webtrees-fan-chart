@@ -127,6 +127,8 @@ export default class Person {
      *
      * @param {Selection} person The <g class="person"> D3 selection
      * @param {Object}    datum  The D3 partition datum
+     *
+     * @private
      */
     addColorGroup(person, datum) {
         const arcGenerator = d3.arc()
@@ -175,6 +177,8 @@ export default class Person {
      * @param {Selection} person    The parent element
      * @param {Object}    datum     The D3 data object
      * @param {boolean}   showNames Whether name labels are rendered
+     *
+     * @private
      */
     addImageToPerson(person, datum, showNames = true) {
         const imageSize = datum.data.data.imageSize;
@@ -325,6 +329,8 @@ export default class Person {
      *
      * @param {Selection} person The <g class="person"> D3 selection
      * @param {Object}    datum  The D3 partition datum
+     *
+     * @private
      */
     addArcToPerson(person, datum) {
         const arcGenerator = d3.arc()
@@ -345,6 +351,8 @@ export default class Person {
      *
      * @param {Selection} person The <g class="person"> D3 selection
      * @param {string}    value  The individual's full name
+     *
+     * @private
      */
     addTitleToPerson(person, value) {
         person
@@ -359,6 +367,9 @@ export default class Person {
      *
      * @param {Object} datum The D3 data object
      *
+     * @return {number}
+     *
+     * @private
      */
     getArcPadAngle(datum) {
         if (this._configuration.showParentMarriageDates && datum.parent) {

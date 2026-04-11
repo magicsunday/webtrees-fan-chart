@@ -17,7 +17,7 @@
  */
 export class Storage {
     /**
-     * * @param {string} name The localStorage key under which all values are stored as a JSON object
+     * @param {string} name The localStorage key under which all values are stored as a JSON object
      */
     constructor(name) {
         this._name = name;
@@ -70,6 +70,8 @@ export class Storage {
      * boolean checked state is stored; for all other inputs the string value.
      *
      * @param {EventTarget|HTMLInputElement} element The input or select element
+     *
+     * @private
      */
     onInput(element) {
         if (element.type && (element.type === "checkbox")) {
@@ -85,7 +87,7 @@ export class Storage {
      *
      * @param {string} name The element id or name attribute used as storage key
      *
-     * @returns {null|string|boolean|number}
+     * @return {null|string|boolean|number}
      */
     read(name) {
         if (Object.prototype.hasOwnProperty.call(this._storage, name)) {

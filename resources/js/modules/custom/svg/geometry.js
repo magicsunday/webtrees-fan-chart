@@ -25,7 +25,7 @@ const MATH_PI2 = Math.PI * 2;
  */
 export default class Geometry {
     /**
-     * * @param {Configuration} configuration The application configuration
+     * @param {Configuration} configuration The application configuration
      */
     constructor(configuration) {
         this._configuration = configuration;
@@ -34,6 +34,8 @@ export default class Geometry {
     /**
      * Start angle of the fan in radians. For a 90° chart the fan begins at 0
      * (top); for all others it is centered on 0 (i.e. -fanDegree/2 radians).
+     *
+     * @return {number}
      */
     get startPi() {
         if (this._configuration.fanDegree === 90) {
@@ -46,6 +48,8 @@ export default class Geometry {
     /**
      * End angle of the fan in radians. Symmetric with startPi for centered fans;
      * equals fanDegree in radians for the 90° quarter-circle variant.
+     *
+     * @return {number}
      */
     get endPi() {
         if (this._configuration.fanDegree === 90) {
@@ -58,6 +62,8 @@ export default class Geometry {
     /**
      * D3 linear scale that maps D3 partition x-coordinates [0, 1] to the fan's
      * angular range [startPi, endPi] in radians.
+     *
+     * @return {Function}
      */
     get scale() {
         return d3.scaleLinear().range([this.startPi, this.endPi]);
@@ -69,6 +75,8 @@ export default class Geometry {
      * outer arcs beyond numberOfInnerCircles use outerArcHeight instead.
      *
      * @param {number} depth Hierarchy depth (0 = center node)
+     *
+     * @return {number}
      */
     innerRadius(depth) {
         if (depth === 0) {
@@ -92,6 +100,8 @@ export default class Geometry {
      * (depth 0) outer radius equals centerCircleRadius.
      *
      * @param {number} depth Hierarchy depth (0 = center node)
+     *
+     * @return {number}
      */
     outerRadius(depth) {
         if (depth === 0) {
@@ -115,6 +125,8 @@ export default class Geometry {
      * used for text path placement and image positioning.
      *
      * @param {number} depth Hierarchy depth
+     *
+     * @return {number}
      */
     centerRadius(depth) {
         return (this.innerRadius(depth) + this.outerRadius(depth)) / 2;
@@ -126,6 +138,8 @@ export default class Geometry {
      *
      * @param {number} depth    Hierarchy depth
      * @param {number} position Percentage within the arc band (0 = inner edge, 100 = outer edge)
+     *
+     * @return {number}
      */
     relativeRadius(depth, position) {
         const outer = this.outerRadius(depth);
@@ -137,6 +151,8 @@ export default class Geometry {
      * Converts a partition x-coordinate to radians, clamped to [startPi, endPi].
      *
      * @param {number} value Partition x-coordinate in [0, 1]
+     *
+     * @return {number}
      */
     calcAngle(value) {
         return Math.max(this.startPi, Math.min(this.endPi, this.scale(value)));
@@ -148,6 +164,8 @@ export default class Geometry {
      *
      * @param {number} depth Hierarchy depth
      * @param {number} x0    Left partition boundary of the node
+     *
+     * @return {number}
      */
     startAngle(depth, x0) {
         return (depth === 0) ? 0 : this.calcAngle(x0);
@@ -159,6 +177,8 @@ export default class Geometry {
      *
      * @param {number} depth Hierarchy depth
      * @param {number} x1    Right partition boundary of the node
+     *
+     * @return {number}
      */
     endAngle(depth, x1) {
         return (depth === 0) ? MATH_PI2 : this.calcAngle(x1);
@@ -170,6 +190,8 @@ export default class Geometry {
      *
      * @param {Object} datum    D3 partition datum (needs depth, x0, x1)
      * @param {number} position Percentage within the arc band (0 = inner, 100 = outer)
+     *
+     * @return {number}
      */
     arcLength(datum, position) {
         return (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0))
@@ -183,6 +205,8 @@ export default class Geometry {
      * segment width (80% for single-line arcs at depth ≥ 7).
      *
      * @param {Object} datum D3 partition datum (needs depth, x0, x1)
+     *
+     * @return {number}
      */
     getFontSize(datum) {
         let fontSize = this._configuration.fontSize;
@@ -218,6 +242,8 @@ export default class Geometry {
      * @param {number} depth Hierarchy depth
      * @param {number} x0    Left partition boundary of the node
      * @param {number} x1    Right partition boundary of the node
+     *
+     * @return {boolean}
      */
     isPositionFlipped(depth, x0, x1) {
         if ((this._configuration.fanDegree <= 270) || (depth < 1)) {

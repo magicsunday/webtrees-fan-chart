@@ -40,10 +40,16 @@ export default class Svg {
         this.init();
     }
 
+    /**
+     * @return {Defs}
+     */
     get defs() {
         return this._defs;
     }
 
+    /**
+     * @return {Zoom}
+     */
     get zoom() {
         return this._zoom;
     }
@@ -51,6 +57,8 @@ export default class Svg {
     /**
      * The inner <g> element that receives the D3 zoom transform. All chart
      * content (persons, marriages, separators) lives inside this group.
+     *
+     * @return {Selection}
      */
     get visual() {
         return this._visual;
@@ -59,6 +67,8 @@ export default class Svg {
     /**
      * The floating tooltip <div> element. Carries an "active" property that
      * is set to true when the tooltip is pinned open via right-click.
+     *
+     * @return {Selection}
      */
     get div() {
         return this._div;
@@ -67,6 +77,8 @@ export default class Svg {
     /**
      * Sets fixed SVG attributes (size, text rendering, namespace) and registers
      * the drop-shadow filter definition.
+     *
+     * @private
      */
     init() {
         // Add SVG element
@@ -154,6 +166,8 @@ export default class Svg {
      * blocking ancestor handlers from receiving the same click.
      *
      * @param {Event} event
+     *
+     * @private
      */
     doStopPropagation(event) {
         if (event.defaultPrevented) {
@@ -174,6 +188,11 @@ export default class Svg {
         return factory.createExport(type);
     }
 
+    /**
+     * Returns the underlying SVG DOM node.
+     *
+     * @return {SVGElement}
+     */
     node() {
         return this._element.node();
     }
@@ -183,7 +202,7 @@ export default class Svg {
      *
      * @param {function|string} select CSS selector or D3 selector function
      *
-     * @returns {Selection}
+     * @return {Selection}
      */
     select(select) {
         return this._element.select(select);
@@ -194,7 +213,7 @@ export default class Svg {
      *
      * @param {function|string|null} select CSS selector or D3 selector function
      *
-     * @returns {Selection}
+     * @return {Selection}
      */
     selectAll(select) {
         return this._element.selectAll(select);
@@ -205,7 +224,7 @@ export default class Svg {
      *
      * @param {string} name
      *
-     * @returns {string|this}
+     * @return {string|this}
      */
     style(_name) {
         return this._element.style(...arguments);
@@ -216,7 +235,7 @@ export default class Svg {
      *
      * @param {string} _name
      *
-     * @returns {string|this}
+     * @return {string|this}
      */
     attr(_name) {
         return this._element.attr(...arguments);
@@ -226,7 +245,7 @@ export default class Svg {
      * Creates a D3 transition on the SVG element. Used by Chart.center() to
      * animate the zoom reset.
      *
-     * @returns {Transition}
+     * @return {Transition}
      */
     transition() {
         return this._element.transition();

@@ -25,6 +25,8 @@ export default class PngExport extends Export {
      *
      * @param {Element} sourceNode      The original live SVG element
      * @param {Element} destinationNode The corresponding node in the clone
+     *
+     * @private
      */
     copyStylesInline(sourceNode, destinationNode) {
         const containerElements = ["svg", "g", "text", "textPath"];
@@ -51,7 +53,9 @@ export default class PngExport extends Export {
      *
      * @param {SVGGraphicsElement} svg The live SVG element (not the clone)
      *
-     * @returns {number[]} [x, y, width, height]
+     * @return {number[]} [x, y, width, height]
+     *
+     * @private
      */
     calculateViewBox(svg) {
         // Get bounding box
@@ -73,7 +77,9 @@ export default class PngExport extends Export {
      * @param {number} width  Canvas width in pixels
      * @param {number} height Canvas height in pixels
      *
-     * @returns {HTMLCanvasElement}
+     * @return {HTMLCanvasElement}
+     *
+     * @private
      */
     createCanvas(width, height) {
         const canvas = document.createElement("canvas");
@@ -92,7 +98,9 @@ export default class PngExport extends Export {
      * @param {number}             width  Canvas width in pixels
      * @param {number}             height Canvas height in pixels
      *
-     * @returns {Promise<string>} Resolves to a PNG data URL
+     * @return {Promise<string>} Resolves to a PNG data URL
+     *
+     * @private
      */
     convertToDataUrl(svg, width, height) {
         return new Promise(resolve => {
@@ -129,7 +137,9 @@ export default class PngExport extends Export {
      *
      * @param {SVGGraphicsElement} svg The live SVG element to clone
      *
-     * @returns {Promise<SVGGraphicsElement>}
+     * @return {Promise<SVGGraphicsElement>}
+     *
+     * @private
      */
     cloneSvg(svg) {
         return new Promise(resolve => {

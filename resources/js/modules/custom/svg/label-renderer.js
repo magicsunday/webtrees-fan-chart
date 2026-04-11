@@ -33,6 +33,8 @@ export default class LabelRenderer {
      *
      * @param {Selection} parent The person <g> element to append the label group to
      * @param {Object}    datum  The D3 partition datum
+     *
+     * @return {Selection}
      */
     addLabel(parent, datum) {
         const label = parent

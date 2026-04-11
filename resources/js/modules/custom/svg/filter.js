@@ -17,7 +17,7 @@
  */
 export default class Filter {
     /**
-     * * @param {Selection} defs The D3 selection of the SVG <defs> element
+     * @param {Selection} defs The D3 selection of the SVG <defs> element
      */
     constructor(defs) {
         // Create the <svg:defs> element
