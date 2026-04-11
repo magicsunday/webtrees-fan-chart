@@ -34,11 +34,6 @@ enum Symbols: string
     case Death = "\u{2020}";
 
     /**
-     * Marriage symbol (joined rings).
-     */
-    case Marriage = "\u{26AD}";
-
-    /**
      * Placeholder returned when a marriage fact exists but has no date.
      * The JS side checks for this sentinel to display the marriage symbol
      * without an accompanying date string.
