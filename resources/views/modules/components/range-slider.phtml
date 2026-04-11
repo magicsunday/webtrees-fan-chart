@@ -40,7 +40,8 @@ $suffix ??= '';
                    value="<?= e((string) $value) ?>"
                    min="<?= e((string) $min) ?>"
                    max="<?= e((string) $max) ?>"
-                   step="<?= e((string) $step) ?>">
+                   step="<?= e((string) $step) ?>"
+                   oninput="document.getElementById('<?= e($id) ?>Output').value = this.value + '<?= e($suffix) ?>'">
             <output id="<?= e($id) ?>Output"
                     name="<?= e($id) ?>Output"
                     class="custom-range-value wt-page-options-label ms-3"><?= e((string) $value) ?><?= e($suffix) ?></output>

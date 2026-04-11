@@ -184,15 +184,18 @@ storage.register("detailedDateGenerations");
 // Handle option toggle button
 toggleMoreOptions(storage);
 
-// Initialize range sliders with stored values and live-update output displays
+// Restore stored slider values from localStorage (the oninput handler
+// in the range-slider component handles live output updates)
 function initRangeSlider(id, suffix = "") {
-    const input  = document.getElementById(id);
-    const output = document.getElementById(id + "Output");
+    const stored = storage.read(id);
 
-    output.value = (storage.read(id) ?? input.value) + suffix;
-    input.addEventListener("input", () => {
-        output.value = input.value + suffix;
-    });
+    if (stored !== null) {
+        const input  = document.getElementById(id);
+        const output = document.getElementById(id + "Output");
+
+        input.value  = stored;
+        output.value = stored + suffix;
+    }
 }
 
 initRangeSlider("fanDegree", "°");
