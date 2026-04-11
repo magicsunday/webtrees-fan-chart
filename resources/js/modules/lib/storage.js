@@ -85,7 +85,7 @@ export class Storage {
      * @returns {null|String|Boolean|Number}
      */
     read(name) {
-        if (this._storage.hasOwnProperty(name)) {
+        if (Object.hasOwn(this._storage, name)) {
             return this._storage[name];
         }
 
