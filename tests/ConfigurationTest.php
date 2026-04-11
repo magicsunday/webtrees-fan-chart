@@ -28,10 +28,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-#[CoversClass(Configuration::class)]
 /**
  * Verifies that configuration handling honors defaults, validation, and selectable ranges.
  */
+#[CoversClass(Configuration::class)]
 final class ConfigurationTest extends TestCase
 {
     /**

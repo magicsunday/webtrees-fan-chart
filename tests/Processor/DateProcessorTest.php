@@ -23,10 +23,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-#[CoversClass(DateProcessor::class)]
 /**
  * Unit tests for the date processor used by the fan chart.
  */
+#[CoversClass(DateProcessor::class)]
 class DateProcessorTest extends TestCase
 {
     protected function setUp(): void

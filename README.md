@@ -97,7 +97,7 @@ Click **Show more options** to access additional settings:
 | **Show family colors** | Colors arcs by family branch. Paternal and maternal base colors are configurable via color pickers. |
 | **Birth and death date precision** | Choose between full dates (DD.MM.YYYY) for inner generations or years only for all generations. |
 | **Number of inner levels** | Controls how many generations use the wider inner-arc layout with text along the arc path. |
-| **Font size** | Scales the text size (10-200%). |
+| **Font size** | Scales the text size (50-150%). |
 
 **Interacting with the chart:**
 

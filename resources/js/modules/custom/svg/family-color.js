@@ -41,9 +41,7 @@ export default class FamilyColor {
     static MAX_GENERATIONS_REF = 10;
 
     /**
-
      * @param {Configuration} configuration The application configuration
-
      */
     constructor(configuration) {
         this._configuration = configuration;

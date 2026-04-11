@@ -69,7 +69,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
     public const string CUSTOM_LATEST_VERSION = 'https://api.github.com/repos/' . self::GITHUB_REPO . '/releases/latest';
 
     /**
-     * * The configuration instance.
+     * The configuration instance.
      */
     private Configuration $configuration;
 
@@ -367,9 +367,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
      */
     private function getExportStylesheets(): array
     {
-        /**
-         * @var ModuleThemeInterface $currentTheme
-         */
+        /** @var ModuleThemeInterface $currentTheme */
         $currentTheme  = Registry::container()->get(ModuleThemeInterface::class);
         $stylesheets   = $currentTheme->stylesheets();
         $stylesheets[] = $this->assetUrl('css/svg.css');

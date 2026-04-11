@@ -129,8 +129,7 @@ export class FanChart {
     }
 
     /**
-
-     * * Serializes the SVG to a canvas at A3 resolution and triggers a PNG download.
+     * Serializes the SVG to a canvas at A3 resolution and triggers a PNG download.
      *
      * @private
      */

@@ -38,10 +38,10 @@ use ReflectionProperty;
 
 use function array_map;
 
-#[CoversClass(DataFacade::class)]
 /**
  * Validates tree construction and data extraction performed by the facade.
  */
+#[CoversClass(DataFacade::class)]
 final class DataFacadeTest extends TestCase
 {
     /**

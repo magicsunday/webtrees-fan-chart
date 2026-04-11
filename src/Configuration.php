@@ -30,52 +30,52 @@ use Psr\Http\Message\ServerRequestInterface;
 class Configuration
 {
     /**
-     * * The default number of generations to display.
+     * The default number of generations to display.
      */
     private const int DEFAULT_GENERATIONS = 6;
 
     /**
-     * * Minimum number of displayable generations.
+     * Minimum number of displayable generations.
      */
     private const int MIN_GENERATIONS = 2;
 
     /**
-     * * Maximum number of displayable generations.
+     * Maximum number of displayable generations.
      */
     private const int MAX_GENERATIONS = 10;
 
     /**
-     * * The default number of inner levels.
+     * The default number of inner levels.
      */
     private const int DEFAULT_INNER_ARCS = 3;
 
     /**
-     * * Minimum number of displayable inner levels.
+     * Minimum number of displayable inner levels.
      */
     private const int MIN_INNER_ARCS = 0;
 
     /**
-     * * Maximum number of displayable inner levels.
+     * Maximum number of displayable inner levels.
      */
     private const int MAX_INNER_ARCS = 5;
 
     /**
-     * * The default fan chart degree.
+     * The default fan chart degree.
      */
     private const int FAN_DEGREE_DEFAULT = 210;
 
     /**
-     * * The default font size scaling factor in percent.
+     * The default font size scaling factor in percent.
      */
     private const int FONT_SCALE_DEFAULT = 100;
 
     /**
-     * * The default color for the paternal lineage (blue).
+     * The default color for the paternal lineage (blue).
      */
     public const string PATERNAL_COLOR_DEFAULT = '#70a9cf';
 
     /**
-     * * The default color for the maternal lineage (pink).
+     * The default color for the maternal lineage (pink).
      */
     public const string MATERNAL_COLOR_DEFAULT = '#d06f94';
 
@@ -86,12 +86,12 @@ class Configuration
     private const int DEFAULT_PLACE_PARTS = 1;
 
     /**
-     * * The default number of generations for which detailed life event dates are displayed.
+     * The default number of generations for which detailed life event dates are displayed.
      */
     private const int DEFAULT_DETAILED_DATE_GENERATIONS = 3;
 
     /**
-     * * Minimum number of generations showing detailed life event dates.
+     * Minimum number of generations showing detailed life event dates.
      */
     private const int MIN_DETAILED_DATE_GENERATIONS = 0;
 
@@ -194,7 +194,7 @@ class Configuration
     }
 
     /**
-     * Returns the font size scaling factor as a percentage (10–200).
+     * Returns the font size scaling factor as a percentage (50–150).
      *
      * @return int
      */

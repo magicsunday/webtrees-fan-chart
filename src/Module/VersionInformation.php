@@ -72,9 +72,7 @@ class VersionInformation
                         );
 
                         if (is_array($json)) {
-                            /**
-                             * @var string $version
-                             */
+                            /** @var string $version */
                             $version = $json['tag_name'] ?? '';
 
                             // Does the response look like a version?

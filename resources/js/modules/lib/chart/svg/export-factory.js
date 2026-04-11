@@ -34,6 +34,7 @@ export default class ExportFactory {
      * @param {string} type The export type ("png" or "svg")
      *
      * @return {PngExport|SvgExport}
+     * @throws {Error} When the type is not registered in EXPORT_TYPES
      */
     createExport(type) {
         const ExportClass = ExportFactory.EXPORT_TYPES[type];

@@ -28,12 +28,12 @@ use MagicSunday\Webtrees\FanChart\Model\Symbols;
 class DateProcessor
 {
     /**
-     * * The birthdate of the individual.
+     * The birthdate of the individual.
      */
     private readonly Date $birthDate;
 
     /**
-     * * The death date of the individual.
+     * The death date of the individual.
      */
     private readonly Date $deathDate;
 
@@ -324,9 +324,7 @@ class DateProcessor
      */
     public function getMarriageDate(): string
     {
-        /**
-         * @var Family|null $family
-         */
+        /** @var Family|null $family */
         $family = $this->individual->spouseFamilies()->first();
 
         if ($family !== null && $family->getMarriageDate()->isOK()) {
@@ -346,9 +344,7 @@ class DateProcessor
      */
     public function getMarriageDateOfParents(): string
     {
-        /**
-         * @var Family|null $family
-         */
+        /** @var Family|null $family */
         $family = $this->individual->childFamilies()->first();
 
         if ($family !== null && $family->getMarriageDate()->isOK()) {

@@ -142,9 +142,7 @@ export default class Chart {
     }
 
     /**
-
-     * * Animates the chart back to its initial zoom level and pan position (identity transform).
-
+     * Animates the chart back to its initial zoom level and pan position (identity transform).
      */
     center() {
         this.svg

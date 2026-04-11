@@ -80,9 +80,7 @@ trait ModuleCustomTrait
         $languageFile = $this->resourcesFolder() . 'lang/' . $language . '/messages.mo';
         $translations = file_exists($languageFile) ? (new Translation($languageFile))->asArray() : [];
 
-        /**
-         * @var array<string, string> $translations
-         */
+        /** @var array<string, string> $translations */
         return $translations;
     }
 }

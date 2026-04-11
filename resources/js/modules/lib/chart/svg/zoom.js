@@ -8,16 +8,12 @@
 import * as d3 from "./../../d3";
 
 /**
-
  * Minimum allowed zoom scale factor.
-
  */
 const MIN_ZOOM = 0.1;
 
 /**
-
  * Maximum allowed zoom scale factor.
-
  */
 const MAX_ZOOM = 20.0;
 

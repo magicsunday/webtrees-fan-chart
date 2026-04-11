@@ -29,28 +29,28 @@ use Fisharebest\Webtrees\Individual;
 class NameProcessor
 {
     /**
-     * * The full name identifier with name placeholders.
+     * The full name identifier with name placeholders.
      */
     private const string FULL_NAME_WITH_PLACEHOLDERS = 'fullNN';
 
     /**
-     * * The full name identifier.
+     * The full name identifier.
      */
     private const string FULL_NAME = 'full';
 
     /**
-     * * The XPath identifier to extract the first name parts (including the prefix).
+     * The XPath identifier to extract the first name parts (including the prefix).
      */
     private const string XPATH_FIRST_NAMES
         = '//text()[not(ancestor::q[@class="wt-nickname"]) and not(preceding::span[@class="SURN"] or ancestor::span[@class="SURN"])]';
 
     /**
-     * * The XPath identifier to extract the last name parts (surname + surname suffix).
+     * The XPath identifier to extract the last name parts (surname + surname suffix).
      */
     private const string XPATH_LAST_NAMES = '//span[@class="NAME"]//span[@class="SURN"]/text()|//span[@class="SURN"]/following::text()';
 
     /**
-     * * The XPath identifier to extract the starred name part.
+     * The XPath identifier to extract the starred name part.
      */
     private const string XPATH_PREFERRED_NAME = '//span[@class="NAME"]//span[@class="starredname"]/text()';
 
@@ -62,7 +62,7 @@ class NameProcessor
     private array $primaryName;
 
     /**
-     * * The DOM xpath processor.
+     * The DOM xpath processor.
      */
     private readonly DOMXPath $xPath;
 
@@ -223,9 +223,7 @@ class NameProcessor
         $names    = [];
 
         if ($nodeList !== false) {
-            /**
-             * @var DOMNode $node
-             */
+            /** @var DOMNode $node */
             foreach ($nodeList as $node) {
                 $names[] = $node->nodeValue ?? '';
             }

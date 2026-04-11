@@ -134,9 +134,7 @@ export default class Svg {
         }
 
         /**
-
          * @var {Selection} tooltip
-
          */
         const tooltip = d3.select("div.tooltip");
 

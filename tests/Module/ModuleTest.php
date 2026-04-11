@@ -29,10 +29,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-#[CoversClass(Module::class)]
 /**
  * Validates module metadata exposure and chart helpers.
  */
+#[CoversClass(Module::class)]
 final class ModuleTest extends TestCase
 {
     /**

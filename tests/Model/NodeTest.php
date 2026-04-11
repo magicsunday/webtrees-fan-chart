@@ -17,10 +17,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Node::class)]
 /**
  * Tests node serialization logic and parent handling.
  */
+#[CoversClass(Node::class)]
 final class NodeTest extends TestCase
 {
     /**
