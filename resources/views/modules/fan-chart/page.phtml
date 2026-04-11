@@ -185,7 +185,7 @@ storage.register("detailedDateGenerations");
 toggleMoreOptions(storage);
 
 // Set initial stored value and live-update for the fan degree slider
-document.getElementById("fanDegreeOutput").value = parseInt(storage.read("fanDegree")) + "°";
+document.getElementById("fanDegreeOutput").value = (storage.read("fanDegree") ?? document.getElementById("fanDegree").value) + "°";
 document.getElementById("fanDegree").addEventListener("input", () => {
     document.getElementById("fanDegreeOutput").value = document.getElementById("fanDegree").value + "°";
 });
