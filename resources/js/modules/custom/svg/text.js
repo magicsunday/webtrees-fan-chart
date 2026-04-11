@@ -244,11 +244,11 @@ export default class Text {
 
         // Iterate over the individual name components and determine their position in the overall
         // name and insert the component at the corresponding position in the result object.
-        for (const i in datum.data.data.firstNames) {
-            const pos = datum.data.data.name.indexOf(datum.data.data.firstNames[i], firstnameOffset);
+        for (const firstName of datum.data.data.firstNames) {
+            const pos = datum.data.data.name.indexOf(firstName, firstnameOffset);
 
             if (pos !== -1) {
-                firstnameOffset = pos + datum.data.data.firstNames[i].length;
+                firstnameOffset = pos + firstName.length;
 
                 if (pos < minPosFirstnames) {
                     minPosFirstnames = pos;
@@ -257,8 +257,8 @@ export default class Text {
                 firstnameMap.set(
                     pos,
                     {
-                        label: datum.data.data.firstNames[i],
-                        isPreferred: datum.data.data.firstNames[i] === datum.data.data.preferredName,
+                        label: firstName,
+                        isPreferred: firstName === datum.data.data.preferredName,
                         isLastName: false,
                         isNameRtl: datum.data.data.isNameRtl,
                     },
@@ -271,15 +271,15 @@ export default class Text {
         let lastnameOffset = 0;
         const lastnameMap = new Map();
 
-        for (const i in datum.data.data.lastNames) {
+        for (const lastName of datum.data.data.lastNames) {
             let pos;
 
             // Check if last name already exists in first names list, in case first name equals last name
             do {
-                pos = datum.data.data.name.indexOf(datum.data.data.lastNames[i], lastnameOffset);
+                pos = datum.data.data.name.indexOf(lastName, lastnameOffset);
 
                 if ((pos !== -1) && firstnameMap.has(pos)) {
-                    lastnameOffset += pos + datum.data.data.lastNames[i].length;
+                    lastnameOffset += pos + lastName.length;
                 }
             } while ((pos !== -1) && firstnameMap.has(pos));
 
@@ -293,7 +293,7 @@ export default class Text {
                 lastnameMap.set(
                     pos,
                     {
-                        label: datum.data.data.lastNames[i],
+                        label: lastName,
                         isPreferred: false,
                         isLastName: true,
                         isNameRtl: datum.data.data.isNameRtl,
@@ -398,7 +398,7 @@ export default class Text {
     truncateNames(names, fontSize, fontWeight, availableWidth) {
         let text = names.map(item => item.label).join(" ");
 
-        return names
+        return [...names]
             // Start truncating from the last element to the first one
             .reverse()
             .map((name) => {
