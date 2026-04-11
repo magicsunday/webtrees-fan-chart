@@ -184,8 +184,11 @@ storage.register("detailedDateGenerations");
 // Handle option toggle button
 toggleMoreOptions(storage);
 
-// Set initial stored value for radio button group
+// Set initial stored value and live-update for the fan degree slider
 document.getElementById("fanDegreeOutput").value = parseInt(storage.read("fanDegree")) + "°";
+document.getElementById("fanDegree").addEventListener("input", () => {
+    document.getElementById("fanDegreeOutput").value = document.getElementById("fanDegree").value + "°";
+});
 
 const fanDegree               = storage.read("fanDegree");
 const generations             = parseInt(storage.read("generations"));

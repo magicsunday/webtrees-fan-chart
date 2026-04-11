@@ -24,13 +24,5 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     <div class="col-sm-9 wt-page-options-value d-flex justify-content-between">
         <input id="fanDegree" name="fanDegree" class="flex-grow-1 custom-range" type="range" value="<?= $configuration->getFanDegree() ?>" min="180" max="360" step="5">
         <output id="fanDegreeOutput" name="fanDegreeOutput" class="custom-range-value wt-page-options-label ms-3"><?= $configuration->getFanDegree() ?>°</output>
-
-        <script>
-
-            document.getElementById("fanDegree").addEventListener("input", () => {
-                document.getElementById('fanDegreeOutput').value = document.getElementById("fanDegree").value + "°";
-            });
-
-        </script>
     </div>
 </div>
