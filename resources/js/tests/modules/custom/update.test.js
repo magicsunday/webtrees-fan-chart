@@ -638,6 +638,7 @@ describe("Update", () => {
         const configuration = defaultConfiguration();
         const update        = new Update(svg, configuration, hierarchy);
         const callback      = jest.fn();
+        const errorSpy      = jest.spyOn(console, "error").mockImplementation(() => {});
 
         jsonMock.mockRejectedValueOnce(new Error("network error"));
 
@@ -647,5 +648,8 @@ describe("Update", () => {
         await Promise.resolve();
 
         expect(callback).toHaveBeenCalledTimes(1);
+        expect(errorSpy).toHaveBeenCalledWith("Fan chart update failed:", expect.any(Error));
+
+        errorSpy.mockRestore();
     });
 });

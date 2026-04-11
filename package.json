@@ -19,10 +19,10 @@
   "scripts": {
     "prepare": "rollup --config rollup.config.js",
     "watch": "rollup --watch --config rollup.config.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
-    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-    "test:exports": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runTestsByPath resources/js/tests/export.integration.test.js resources/js/tests/export.large.integration.test.js",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test": "NODE_NO_WARNINGS=1 node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
+    "test:coverage": "NODE_NO_WARNINGS=1 node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "test:exports": "NODE_NO_WARNINGS=1 node --experimental-vm-modules node_modules/jest/bin/jest.js --runTestsByPath resources/js/tests/export.integration.test.js resources/js/tests/export.large.integration.test.js",
+    "test:watch": "NODE_NO_WARNINGS=1 node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "lint": "eslint --max-warnings 0 resources/js/modules/",
     "lint:fix": "eslint --fix resources/js/modules/"
   },
