@@ -37,210 +37,191 @@ export default class Text {
      * @param {Object}    datum  The D3 data object
      */
     createLabels(parent, datum) {
-        // Calculate dynamic slot positions based on which content is present
         const positions = this.calculateSlotPositions(datum);
 
-        // Inner labels
         if (this.isInnerLabel(datum)) {
-            const parentId = d3.select(parent.node().parentNode).attr("id");
-            const nameGroups = this.createNamesData(datum);
-
-            const textStartOffset = "25%";
-
-            // The textPath element must be contained individually in a text element, otherwise the exported
-            // chart will not be drawn correctly in Inkscape (actually this is not necessary, the browsers
-            // display the chart correctly).
-
-            const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
-
-            nameGroups.forEach((nameGroup, index) => {
-                const slot = nameSlots[index];
-                const position = positions.get(slot);
-                const availableWidth = this.getAvailableWidth(datum, position);
-                const pathId = this.createPathDefinition(parentId, slot, position, datum);
-                const textPath = parent
-                    .append("text")
-                    .append("textPath")
-                    .attr("href", "#" + pathId)
-                    .attr("startOffset", textStartOffset);
-
-                this.addNameElements(
-                    textPath,
-                    this.truncateNamesData(
-                        textPath,
-                        nameGroup,
-                        availableWidth,
-                    ),
-                );
-            });
-
-            // Alternative names
-            if (datum.data.data.alternativeName !== "") {
-                const slot = Text.TEXT_SLOT.ALTERNATIVE_NAME;
-                const position = positions.get(slot);
-                const pathId = this.createPathDefinition(parentId, slot, position, datum);
-                const availableWidth = this.getAvailableWidth(datum, position);
-                const nameGroup = this.createAlternativeNamesData(datum);
-
-                const textPath = parent
-                    .append("text")
-                    .append("textPath")
-                    .attr("href", "#" + pathId)
-                    .attr("startOffset", textStartOffset)
-                    .classed("wt-chart-box-name-alt", true)
-                    .classed("rtl", datum.data.data.isAltRtl);
-
-                this.addNameElements(
-                    textPath,
-                    this.truncateNamesData(
-                        textPath,
-                        nameGroup,
-                        availableWidth,
-                    ),
-                );
-            }
-
-            // Birth and death date
-            if (datum.data.data.timespan !== "") {
-                const timespanLines = datum.data.data.timespan.split("\n");
-                const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
-
-                timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
-                    const slot = dateSlots[lineIndex];
-                    const position = positions.get(slot);
-                    const pathId = this.createPathDefinition(parentId, slot, position, datum);
-                    const textPath = parent
-                        .append("text")
-                        .append("textPath")
-                        .attr("href", "#" + pathId)
-                        .attr("startOffset", textStartOffset)
-                        .attr("class", "date");
-
-                    textPath.append("title")
-                        .text(line);
-
-                    const tspan = textPath.append("tspan")
-                        .text(line);
-
-                    const availableWidth = this.getAvailableWidth(datum, position);
-
-                    if (this.getTextLength(textPath) > availableWidth) {
-                        textPath.selectAll("tspan")
-                            .each(this.truncateDate(textPath, availableWidth));
-
-                        tspan.text(tspan.text() + "\u2026");
-                    }
-                });
-            }
-
-        // Outer labels
+            this.createInnerLabels(parent, datum, positions);
         } else {
-            // The outermost circles show the complete name and do
-            // not distinguish between first name, last name and dates
-            if (datum.depth >= 7) {
-                const [first, ...last] = this.createNamesData(datum);
-                const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.FIRST_NAMES));
-
-                // Merge the firstname and lastname groups, as we display the whole name in one line
-                const combined = [].concat(first, typeof last[0] !== "undefined" ? last[0] : []);
-
-                const text1 = parent
-                    .append("text")
-                    .attr("dominant-baseline", "middle");
-
-                this.addNameElements(
-                    text1,
-                    this.truncateNamesData(
-                        text1,
-                        combined,
-                        availableWidth,
-                    ),
-                );
-            } else {
-                const nameGroups = this.createNamesData(datum);
-                const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
-
-                nameGroups.forEach((nameGroup, index) => {
-                    const availableWidth = this.getAvailableWidth(datum, positions.get(nameSlots[index]));
-                    const text = parent
-                        .append("text")
-                        .attr("dominant-baseline", "middle");
-
-                    this.addNameElements(
-                        text,
-                        this.truncateNamesData(
-                            text,
-                            nameGroup,
-                            availableWidth,
-                        ),
-                    );
-                });
-
-                // Alternative name
-                if (datum.data.data.alternativeName !== "") {
-                    const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.ALTERNATIVE_NAME));
-                    const nameGroup = this.createAlternativeNamesData(datum);
-
-                    const text = parent
-                        .append("text")
-                        .attr("dominant-baseline", "middle")
-                        .classed("wt-chart-box-name-alt", true)
-                        .classed("rtl", datum.data.data.isAltRtl);
-
-                    this.addNameElements(
-                        text,
-                        this.truncateNamesData(
-                            text,
-                            nameGroup,
-                            availableWidth,
-                        ),
-                    );
-                }
-
-                // Birth and death date
-                if (datum.depth < 6) {
-                    if (datum.data.data.timespan !== "") {
-                        const timespanLines = datum.data.data.timespan.split("\n");
-                        const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
-
-                        timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
-                            const text = parent
-                                .append("text")
-                                .attr("class", "date")
-                                .attr("dominant-baseline", "middle");
-
-                            text.append("title")
-                                .text(line);
-
-                            const tspan = text.append("tspan")
-                                .text(line);
-
-                            const availableWidth = this.getAvailableWidth(datum, positions.get(dateSlots[lineIndex]));
-
-                            if (this.getTextLength(text) > availableWidth) {
-                                text.selectAll("tspan")
-                                    .each(this.truncateDate(text, availableWidth));
-
-                                tspan.text(tspan.text() + "\u2026");
-                            }
-                        });
-                    }
-                }
-            }
-
-            // Remove underline decoration for outermost generations
-            // where it shifts the visual center and wastes space
-            if (datum.depth >= 8) {
-                parent.selectAll("tspan[text-decoration]")
-                    .attr("text-decoration", null);
-            }
-
-            // Rotate outer labels in the right position
-            this.transformOuterText(parent, datum);
+            this.createOuterLabels(parent, datum, positions);
         }
 
         // Note: Marriage dates are rendered separately in the marriage arc layer (chart.js),
         // not as part of individual person labels.
+    }
+
+    /**
+     * Creates labels for inner arc generations (text along arc paths).
+     *
+     * @param {Selection} parent
+     * @param {Object}    datum
+     * @param {Map}       positions
+     *
+     * @private
+     */
+    createInnerLabels(parent, datum, positions) {
+        const parentId = d3.select(parent.node().parentNode).attr("id");
+        const nameGroups = this.createNamesData(datum);
+        const textStartOffset = "25%";
+        const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+
+        nameGroups.forEach((nameGroup, index) => {
+            const slot = nameSlots[index];
+            const position = positions.get(slot);
+            const availableWidth = this.getAvailableWidth(datum, position);
+            const pathId = this.createPathDefinition(parentId, slot, position, datum);
+            const textPath = parent
+                .append("text")
+                .append("textPath")
+                .attr("href", "#" + pathId)
+                .attr("startOffset", textStartOffset);
+
+            this.addNameElements(
+                textPath,
+                this.truncateNamesData(textPath, nameGroup, availableWidth),
+            );
+        });
+
+        if (datum.data.data.alternativeName !== "") {
+            const slot = Text.TEXT_SLOT.ALTERNATIVE_NAME;
+            const position = positions.get(slot);
+            const pathId = this.createPathDefinition(parentId, slot, position, datum);
+            const availableWidth = this.getAvailableWidth(datum, position);
+            const nameGroup = this.createAlternativeNamesData(datum);
+
+            const textPath = parent
+                .append("text")
+                .append("textPath")
+                .attr("href", "#" + pathId)
+                .attr("startOffset", textStartOffset)
+                .classed("wt-chart-box-name-alt", true)
+                .classed("rtl", datum.data.data.isAltRtl);
+
+            this.addNameElements(
+                textPath,
+                this.truncateNamesData(textPath, nameGroup, availableWidth),
+            );
+        }
+
+        this.renderTimespanLines(parent, datum, positions, (slot, position) => {
+            const pathId = this.createPathDefinition(parentId, slot, position, datum);
+
+            return parent
+                .append("text")
+                .append("textPath")
+                .attr("href", "#" + pathId)
+                .attr("startOffset", textStartOffset)
+                .attr("class", "date");
+        });
+    }
+
+    /**
+     * Creates labels for outer arc generations (plain text elements).
+     *
+     * @param {Selection} parent
+     * @param {Object}    datum
+     * @param {Map}       positions
+     *
+     * @private
+     */
+    createOuterLabels(parent, datum, positions) {
+        if (datum.depth >= 7) {
+            const [first, ...last] = this.createNamesData(datum);
+            const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.FIRST_NAMES));
+            const combined = [].concat(first, typeof last[0] !== "undefined" ? last[0] : []);
+
+            const text = parent
+                .append("text")
+                .attr("dominant-baseline", "middle");
+
+            this.addNameElements(
+                text,
+                this.truncateNamesData(text, combined, availableWidth),
+            );
+        } else {
+            const nameGroups = this.createNamesData(datum);
+            const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+
+            nameGroups.forEach((nameGroup, index) => {
+                const availableWidth = this.getAvailableWidth(datum, positions.get(nameSlots[index]));
+                const text = parent
+                    .append("text")
+                    .attr("dominant-baseline", "middle");
+
+                this.addNameElements(
+                    text,
+                    this.truncateNamesData(text, nameGroup, availableWidth),
+                );
+            });
+
+            if (datum.data.data.alternativeName !== "") {
+                const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.ALTERNATIVE_NAME));
+                const nameGroup = this.createAlternativeNamesData(datum);
+
+                const text = parent
+                    .append("text")
+                    .attr("dominant-baseline", "middle")
+                    .classed("wt-chart-box-name-alt", true)
+                    .classed("rtl", datum.data.data.isAltRtl);
+
+                this.addNameElements(
+                    text,
+                    this.truncateNamesData(text, nameGroup, availableWidth),
+                );
+            }
+
+            if (datum.depth < 6) {
+                this.renderTimespanLines(parent, datum, positions, (_slot) => parent
+                    .append("text")
+                    .attr("class", "date")
+                    .attr("dominant-baseline", "middle"));
+            }
+        }
+
+        if (datum.depth >= 8) {
+            parent.selectAll("tspan[text-decoration]")
+                .attr("text-decoration", null);
+        }
+
+        this.transformOuterText(parent, datum);
+    }
+
+    /**
+     * Renders timespan date lines with truncation and ellipsis.
+     * The createElement callback produces the container element
+     * (textPath for inner labels, plain text for outer labels).
+     *
+     * @param {Selection} parent
+     * @param {Object}    datum
+     * @param {Map}       positions
+     * @param {Function}  createElement Callback (slot, position) => container element
+     *
+     * @private
+     */
+    renderTimespanLines(parent, datum, positions, createElement) {
+        if (datum.data.data.timespan === "") {
+            return;
+        }
+
+        const timespanLines = datum.data.data.timespan.split("\n");
+        const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
+
+        timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
+            const slot = dateSlots[lineIndex];
+            const position = positions.get(slot);
+            const container = createElement(slot, position);
+
+            container.append("title").text(line);
+
+            const tspan = container.append("tspan").text(line);
+            const availableWidth = this.getAvailableWidth(datum, position);
+
+            if (this.getTextLength(container) > availableWidth) {
+                container.selectAll("tspan")
+                    .each(this.truncateDate(container, availableWidth));
+
+                tspan.text(tspan.text() + "\u2026");
+            }
+        });
     }
 
     /**
