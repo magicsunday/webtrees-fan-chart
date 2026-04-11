@@ -27,30 +27,30 @@
     "lint:fix": "eslint --fix resources/js/modules/"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^16.0.3",
-    "@rollup/plugin-terser": "^1.0.0",
-    "@stylistic/eslint-plugin": "^5.10.0",
-    "d3-fetch": "^3.0.1",
-    "d3-hierarchy": "^3.1.2",
-    "d3-path": "^3.1.0",
-    "d3-scale": "^4.0.2",
-    "d3-selection": "^3.0.0",
-    "d3-shape": "^3.2.0",
-    "d3-timer": "^3.0.1",
-    "d3-transition": "^3.0.1",
-    "d3-zoom": "^3.0.0",
-    "eslint": "^10.2.0",
-    "globals": "^17.4.0",
-    "jest": "^30.3.0",
-    "jest-environment-jsdom": "^30.3.0",
-    "pixelmatch": "^7.1.0",
-    "playwright": "^1.59.1",
-    "pngjs": "^7.0.0",
-    "rollup": "^4.60.1",
-    "rollup-plugin-license": "^3.7.1"
+    "@rollup/plugin-node-resolve": "^16.0",
+    "@rollup/plugin-terser": "^1.0",
+    "@stylistic/eslint-plugin": "^5.0",
+    "d3-fetch": "^3.0",
+    "d3-hierarchy": "^3.0",
+    "d3-path": "^3.0",
+    "d3-scale": "^4.0",
+    "d3-selection": "^3.0",
+    "d3-shape": "^3.0",
+    "d3-timer": "^3.0",
+    "d3-transition": "^3.0",
+    "d3-zoom": "^3.0",
+    "eslint": "^10.0",
+    "globals": "^17.0",
+    "jest": "^30.0",
+    "jest-environment-jsdom": "^30.0",
+    "pixelmatch": "^7.0",
+    "playwright": "^1.0",
+    "pngjs": "^7.0",
+    "rollup": "^4.0",
+    "rollup-plugin-license": "^3.0"
   },
   "dependencies": {
     "jscpd": "^4.0.9",
-    "node": "^25.9.0"
+    "node": "^25.0"
   }
 }
