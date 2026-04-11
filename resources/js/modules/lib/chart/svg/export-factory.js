@@ -16,31 +16,28 @@ import SvgExport from "./export/svg";
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 export default class ExportFactory {
-    constructor() {
-        this._exportClass = null;
-    }
-
-    setExportClass(type) {
-        switch (type) {
-            case "png":
-                this._exportClass = PngExport;
-                break;
-            case "svg":
-                this._exportClass = SvgExport;
-                break;
-            default:
-                break;
-        }
+    /**
+     * @type {Object<string, Function>}
+     */
+    static EXPORT_TYPES = {
+        png: PngExport,
+        svg: SvgExport,
     };
 
+    /**
+     * Creates an export instance for the given type.
+     *
+     * @param {string} type The export type ("png" or "svg")
+     *
+     * @returns {PngExport|SvgExport}
+     */
     createExport(type) {
-        this.setExportClass(type);
+        const ExportClass = ExportFactory.EXPORT_TYPES[type];
 
-        switch (type) {
-            case "png":
-                return new this._exportClass();
-            case "svg":
-                return new this._exportClass();
+        if (!ExportClass) {
+            throw new Error(`Unknown export type: ${type}`);
         }
-    };
+
+        return new ExportClass();
+    }
 }

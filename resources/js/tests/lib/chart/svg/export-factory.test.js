@@ -32,10 +32,9 @@ describe("ExportFactory", () => {
         expect(exporter.type).toBe("svg");
     });
 
-    test("ignores unknown exporter", () => {
+    test("throws on unknown exporter", () => {
         const factory = new ExportFactory();
-        const exporter = factory.createExport("pdf");
 
-        expect(exporter).toBeUndefined();
+        expect(() => factory.createExport("pdf")).toThrow("Unknown export type: pdf");
     });
 });
