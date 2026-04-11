@@ -627,5 +627,25 @@ describe("Update", () => {
         ]);
 
         expect(callback).toHaveBeenCalledTimes(1);
+
+        // Verify tooltip active state is reset after update
+        expect(svg.div.property).toHaveBeenCalledWith("active", false);
+    });
+
+    test("restores interactivity and cleans CSS classes on fetch error", async () => {
+        const svg           = createSvgWithPersons(["1"]);
+        const hierarchy     = new HierarchyStub();
+        const configuration = defaultConfiguration();
+        const update        = new Update(svg, configuration, hierarchy);
+        const callback      = jest.fn();
+
+        jsonMock.mockRejectedValueOnce(new Error("network error"));
+
+        update.update("https://example.com/update", jest.fn(), callback);
+
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        await Promise.resolve();
+
+        expect(callback).toHaveBeenCalledTimes(1);
     });
 });
