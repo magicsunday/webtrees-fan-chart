@@ -20,10 +20,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(ImageProcessor::class)]
 /**
  * Verifies highlight image resolution based on permissions and configuration.
  */
+#[CoversClass(ImageProcessor::class)]
 final class ImageProcessorTest extends TestCase
 {
     /**

@@ -8,7 +8,12 @@
 import Export from "../export";
 
 /**
- * Export the chart as raw SVG image.
+ * Exports the fan chart as a standalone SVG file. Deep-clones the live SVG
+ * element while inlining all computed styles (excluding layout-only properties
+ * that are meaningless in a static file) so the exported SVG renders correctly
+ * in Inkscape and other viewers without the page stylesheet. External images
+ * are inlined as base64 data URIs. Uses a hidden iframe as a sandbox to obtain
+ * the browser's default style values for style-diffing.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -59,11 +64,16 @@ export default class SvgExport extends Export {
     }
 
     /**
-     * Create a sandbox, used to query the default styles of an element.
+     * Appends a hidden iframe to the document body that acts as a style sandbox.
+     * The sandbox is used by getDefaultComputedStyle() to determine which styles
+     * are browser defaults so they can be omitted from the exported SVG. Returns
+     * node unchanged so the method can be chained in the promise pipeline.
      *
-     * @param {Node} node
+     * @param {Node} node The node being exported (passed through unchanged)
      *
-     * @returns {Node}
+     * @return {Node}
+     *
+     * @private
      */
     createSandbox(node) {
         this._sandbox = document.createElement("iframe");
@@ -80,12 +90,15 @@ export default class SvgExport extends Export {
     }
 
     /**
-     * Returns the default style declaration of an element. To achieve this, a new element is created using
-     * the tag name and added to the sandbox.
+     * Returns the browser's default CSSStyleDeclaration for the given element's
+     * tag name by creating a clean instance of that element in the sandbox.
+     * Results are cached by tag name to avoid repeated DOM mutations.
      *
-     * @param {Node|Element} source
+     * @param {Node|Element} source The element whose tag name is looked up
      *
-     * @returns {CSSStyleDeclaration}
+     * @return {CSSStyleDeclaration}
+     *
+     * @private
      */
     getDefaultComputedStyle(source) {
         if (this._defaultStyles[source.tagName]) {
@@ -105,13 +118,18 @@ export default class SvgExport extends Export {
     }
 
     /**
-     * Clones the style information of the source node and appends it to the target node.
+     * Copies non-default, non-inherited computed styles from source to target.
+     * Skips CSS variables, layout-only properties (from _obsoleteStyles), and
+     * values that match either the browser default or the inherited parent value.
+     * Forces a specific font-family on text elements for Inkscape compatibility.
      *
-     * @param {Node|Element}        source
-     * @param {Node|Element}        target
-     * @param {CSSStyleDeclaration} parentStyleDeclaration
+     * @param {Node|Element}        source                 The live source element
+     * @param {Node|Element}        target                 The cloned target element
+     * @param {CSSStyleDeclaration} parentStyleDeclaration The computed style of the source's parent, for inheritance diffing
      *
-     * @returns {Node}
+     * @return {Node}
+     *
+     * @private
      */
     cloneStyles(source, target, parentStyleDeclaration) {
         if (!(target instanceof Element)) {
@@ -164,13 +182,15 @@ export default class SvgExport extends Export {
     }
 
     /**
-     * Clones the passed node and its child nodes. Then the duplicated style information is
-     * appended to the cloned node.
+     * Produces a deep clone of source with styles inlined: shallow-clones the
+     * node, recursively clones children, then calls cloneStyles().
      *
-     * @param {Node}                source
-     * @param {CSSStyleDeclaration} sourceStyleDeclaration
+     * @param {Node}                source                 The element to duplicate
+     * @param {CSSStyleDeclaration} sourceStyleDeclaration The computed style of source's parent
      *
-     * @returns {Promise<Node>}
+     * @return {Promise<Node>}
+     *
+     * @private
      */
     createNodeDuplicate(source, sourceStyleDeclaration) {
         return Promise
@@ -181,12 +201,15 @@ export default class SvgExport extends Export {
     }
 
     /**
-     * Clones all child nodes of the passed source parent node and adds the copy to the cloned parent.
+     * Sequentially duplicates each child of source (with inlined styles) and
+     * appends the clones to target. Returns target once all children are done.
      *
-     * @param {Node} source
-     * @param {Node} target
+     * @param {Node} source The element whose children are cloned
+     * @param {Node} target The element to append cloned children to
      *
-     * @returns {Promise<Node>}
+     * @return {Promise<Node>}
+     *
+     * @private
      */
     cloneChildren(source, target) {
         let done = Promise.resolve();
@@ -212,11 +235,15 @@ export default class SvgExport extends Export {
     }
 
     /**
-     * Converts the given SVG into an object URL. Resolves to the object URL.
+     * Serializes the SVG to an SVG Blob and creates an object URL for it.
+     * Resolves to the object URL once the browser has confirmed the Blob is
+     * readable by loading it into a temporary Image element.
      *
-     * @param {Node} svg The SVG element
+     * @param {Node} svg The cloned, style-inlined SVG element
      *
-     * @returns {Promise<String>}
+     * @return {Promise<string>} Resolves to a blob object URL
+     *
+     * @private
      */
     convertToObjectUrl(svg) {
         return new Promise(resolve => {
@@ -235,11 +262,14 @@ export default class SvgExport extends Export {
     }
 
     /**
-     * Performs a cleanup task.
+     * Removes the sandbox iframe from the document and returns the object URL
+     * unchanged so it can be piped into triggerDownload().
      *
-     * @param {string} objectUrl
+     * @param {string} objectUrl The blob URL to pass through
      *
-     * @returns {string}
+     * @return {string}
+     *
+     * @private
      */
     cleanUp(objectUrl) {
         // Remove the sandbox
@@ -252,12 +282,15 @@ export default class SvgExport extends Export {
     }
 
     /**
-     * Saves the given SVG as an SVG image file.
+     * Full SVG export pipeline: creates the style sandbox, deep-clones the
+     * element with inlined styles, inlines images, converts to an object URL,
+     * removes the sandbox, and triggers a download. Logs errors but does not
+     * re-throw.
      *
-     * @param {Svg}      svg                The source SVG object
-     * @param {string[]} cssFiles           The CSS files used together with the SVG
-     * @param {string}   containerClassName The container class name
-     * @param {string}   fileName           The output file name
+     * @param {Svg}      svg                The source Svg wrapper object
+     * @param {string[]} cssFiles           CSS files included in the page (currently unused, reserved for future embedding)
+     * @param {string}   containerClassName The outer container CSS class (currently unused, reserved for future use)
+     * @param {string}   fileName           The suggested download filename
      */
     svgToImage(svg, cssFiles, containerClassName, fileName) {
         const node = svg.node();

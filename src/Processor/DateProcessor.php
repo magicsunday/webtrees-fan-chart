@@ -17,7 +17,9 @@ use Fisharebest\Webtrees\Individual;
 use MagicSunday\Webtrees\FanChart\Model\Symbols;
 
 /**
- * Class DateProcessor.
+ * Extracts and formats birth, death, and marriage dates from an Individual for use in
+ * chart arc labels and tooltips. Date granularity (full DD.MM.YYYY vs year-only) is
+ * determined by the individual's generation relative to the configured detail threshold.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -36,11 +38,9 @@ class DateProcessor
     private readonly Date $deathDate;
 
     /**
-     * Constructor.
-     *
-     * @param Individual $individual              The individual to process
-     * @param int        $generation              The generation the individual belongs to
-     * @param int        $detailedDateGenerations The number of generations using detailed birth and death dates
+     * @param Individual $individual
+     * @param int        $generation              1-based generation depth of this individual in the tree
+     * @param int        $detailedDateGenerations Generations at or below this depth show DD.MM.YYYY; others show year only
      */
     public function __construct(
         private readonly Individual $individual,
@@ -52,9 +52,10 @@ class DateProcessor
     }
 
     /**
-     * Formats the given date in a compact way (DD.MM.YYYY).
+     * Formats a Date as DD.MM.YYYY using its minimum date (earliest calendar date when
+     * the fact spans a range).
      *
-     * @param Date $date The date to format
+     * @param Date $date
      *
      * @return string
      */
@@ -66,9 +67,10 @@ class DateProcessor
     }
 
     /**
-     * Returns a formatted life event date, using detailed output for configured generations.
+     * Returns the date in full DD.MM.YYYY format for inner generations, or as a
+     * bare year for outer generations beyond the detail threshold.
      *
-     * @param Date $date The life event date
+     * @param Date $date
      *
      * @return string
      */
@@ -82,9 +84,10 @@ class DateProcessor
     }
 
     /**
-     * Returns the calendar year of the given date.
+     * Extracts the calendar year from the minimum date of a Date range.
+     * Returns 0 when the date has no year component.
      *
-     * @param Date $date The date to extract the year from
+     * @param Date $date
      *
      * @return int
      */
@@ -96,7 +99,7 @@ class DateProcessor
     }
 
     /**
-     * Returns whether the birth date is available.
+     * Returns true when the individual has a parseable birth date.
      *
      * @return bool
      */
@@ -106,7 +109,7 @@ class DateProcessor
     }
 
     /**
-     * Returns whether the death date is available.
+     * Returns true when the individual has a parseable death date.
      *
      * @return bool
      */
@@ -116,7 +119,8 @@ class DateProcessor
     }
 
     /**
-     * Returns whether the individual is deceased.
+     * Returns true when webtrees considers the individual to be deceased,
+     * even if no explicit death date is recorded.
      *
      * @return bool
      */
@@ -126,7 +130,8 @@ class DateProcessor
     }
 
     /**
-     * Returns the formatted birth date string (without symbol).
+     * Returns the generation-appropriate birth date string (no symbol prefix).
+     * Empty string when no valid birth date exists.
      *
      * @return string
      */
@@ -136,7 +141,8 @@ class DateProcessor
     }
 
     /**
-     * Returns the formatted death date string (without symbol).
+     * Returns the generation-appropriate death date string (no symbol prefix).
+     * Empty string when no valid death date exists.
      *
      * @return string
      */
@@ -146,7 +152,7 @@ class DateProcessor
     }
 
     /**
-     * Get the year of birth.
+     * Returns the four-digit birth year, or 0 if no birth date is recorded.
      *
      * @return int
      */
@@ -156,7 +162,7 @@ class DateProcessor
     }
 
     /**
-     * Get the year of death.
+     * Returns the four-digit death year, or 0 if no death date is recorded.
      *
      * @return int
      */
@@ -166,23 +172,23 @@ class DateProcessor
     }
 
     /**
-     * Returns the formatted birthdate without HTML tags.
+     * Returns the generation-appropriate birth date for arc display, or empty string if unavailable.
      *
      * @return string
      */
     public function getBirthDate(): string
     {
-        return $this->getLifeEventDate($this->birthDate);
+        return $this->getFormattedBirthDate();
     }
 
     /**
-     * Returns the formatted death date without HTML tags.
+     * Returns the generation-appropriate death date for arc display, or empty string if unavailable.
      *
      * @return string
      */
     public function getDeathDate(): string
     {
-        return $this->getLifeEventDate($this->deathDate);
+        return $this->getFormattedDeathDate();
     }
 
     /**
@@ -233,11 +239,9 @@ class DateProcessor
     }
 
     /**
-     * Create the timespan label.
-     *
-     * Uses genealogical symbols (* for birth, † for death) and compact date format
-     * for detailed generations. Dates are placed on separate lines when detailed
-     * format is active.
+     * Returns the arc lifetime label combining birth and death with genealogical symbols.
+     * Inner generations receive a two-line detailed format ("* DD.MM.YYYY\n† DD.MM.YYYY");
+     * outer generations receive a compact single-line format ("1875–1932").
      *
      * @return string
      */
@@ -253,7 +257,9 @@ class DateProcessor
     }
 
     /**
-     * Returns a detailed two-line lifetime description with genealogical symbols.
+     * Returns a two-line birth/death description with symbols ("* date\n† date").
+     * Shows a lone symbol when only one event is known. Returns empty string
+     * when neither date is available and the individual is not deceased.
      *
      * @return string
      */
@@ -263,19 +269,19 @@ class DateProcessor
             $birth = $this->getLifeEventDate($this->birthDate);
             $death = $this->getLifeEventDate($this->deathDate);
 
-            return Symbols::SYMBOL_BIRTH . ' ' . $birth . "\n" . Symbols::SYMBOL_DEATH . ' ' . $death;
+            return Symbols::Birth->value . ' ' . $birth . "\n" . Symbols::Death->value . ' ' . $death;
         }
 
         if ($this->birthDate->isOK()) {
-            return Symbols::SYMBOL_BIRTH . ' ' . $this->getLifeEventDate($this->birthDate);
+            return Symbols::Birth->value . ' ' . $this->getLifeEventDate($this->birthDate);
         }
 
         if ($this->deathDate->isOK()) {
-            return Symbols::SYMBOL_DEATH . ' ' . $this->getLifeEventDate($this->deathDate);
+            return Symbols::Death->value . ' ' . $this->getLifeEventDate($this->deathDate);
         }
 
         if ($this->individual->isDead()) {
-            return Symbols::SYMBOL_DEATH;
+            return Symbols::Death->value;
         }
 
         return '';
@@ -296,22 +302,23 @@ class DateProcessor
         }
 
         if ($birthYear > 0) {
-            return Symbols::SYMBOL_BIRTH . ' ' . $birthYear;
+            return Symbols::Birth->value . ' ' . $birthYear;
         }
 
         if ($deathYear > 0) {
-            return Symbols::SYMBOL_DEATH . ' ' . $deathYear;
+            return Symbols::Death->value . ' ' . $deathYear;
         }
 
         if ($this->individual->isDead()) {
-            return Symbols::SYMBOL_DEATH;
+            return Symbols::Death->value;
         }
 
         return '';
     }
 
     /**
-     * Returns the marriage date of the individual.
+     * Returns the marriage date of the individual's own spouse family, formatted for arc display.
+     * Empty string when there is no spouse family or the marriage date is unknown.
      *
      * @return string
      */
@@ -328,7 +335,10 @@ class DateProcessor
     }
 
     /**
-     * Returns the marriage date of the parents.
+     * Returns the marriage date of the individual's parents for display in the arc between
+     * this individual's ring and the parent ring. Returns Symbols::MARRIAGE_DATE_UNKNOWN ("?")
+     * when a MARR fact exists but carries no date, so the JS can render the marriage symbol
+     * without a date string. Empty string when there is no parent family at all.
      *
      * @return string
      */
@@ -352,11 +362,12 @@ class DateProcessor
     }
 
     /**
-     * Returns a formatted marriage date. Marriage arcs sit between the
-     * child (at this generation) and the parents (generation + 1), so
-     * the effective depth is one level deeper than the individual.
+     * Formats a marriage date for the arc text, accounting for the fact that the
+     * marriage arc sits one generation deeper than the individual (effective depth = generation + 1).
+     * Returns empty when the effective depth exceeds 8 (no space available). Uses full
+     * DD.MM.YYYY up to generation 6, year-only beyond.
      *
-     * @param Date $date The marriage date
+     * @param Date $date
      *
      * @return string
      */

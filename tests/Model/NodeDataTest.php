@@ -16,10 +16,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(NodeData::class)]
 /**
  * Tests serialization of node data with all configured fields.
  */
+#[CoversClass(NodeData::class)]
 final class NodeDataTest extends TestCase
 {
     /**

@@ -13,21 +13,17 @@ use Fisharebest\Webtrees\I18N;
 use MagicSunday\Webtrees\FanChart\Configuration;
 
 /**
+ * @var string        $moduleName
  * @var Configuration $configuration
  */
 ?>
 
-<div class="row">
-    <label class="col-sm-3 col-form-label wt-page-options-label" for="fontScale">
-        <?= I18N::translate('Font size') ?>
-    </label>
-    <div class="col-sm-9 wt-page-options-value">
-        <div class="input-group input-group-sm">
-            <input class="form-control" type="text" name="fontScale" id="fontScale"
-                   maxlength="3" placeholder="100" value="<?= $configuration->getFontScale() ?>">
-            <div class="input-group-append">
-                <span class="input-group-text">%</span>
-            </div>
-        </div>
-    </div>
-</div>
+<?= view($moduleName . '::modules/components/range-slider', [
+    'id'     => 'fontScale',
+    'label'  => I18N::translate('Font size'),
+    'value'  => $configuration->getFontScale(),
+    'min'    => 50,
+    'max'    => 150,
+    'step'   => 5,
+    'suffix' => '%',
+]) ?>

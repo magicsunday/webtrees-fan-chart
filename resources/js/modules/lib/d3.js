@@ -38,7 +38,7 @@ export {
 } from "d3-selection";
 
 export {
-    timer,
+    timeout, timer,
 } from "d3-timer";
 
 export {

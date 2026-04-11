@@ -14,7 +14,9 @@ namespace MagicSunday\Webtrees\FanChart\Model;
 use JsonSerializable;
 
 /**
- * This class holds information about a node.
+ * Represents a single node in the ancestor tree. Wraps a NodeData payload and
+ * holds references to up to two parent Nodes (father, mother). The recursive
+ * structure is serialised to JSON for consumption by the D3 chart renderer.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -30,8 +32,6 @@ class Node implements JsonSerializable
     protected array $parents = [];
 
     /**
-     * Constructor.
-     *
      * @param NodeData $data
      */
     public function __construct(protected NodeData $data)
@@ -39,6 +39,8 @@ class Node implements JsonSerializable
     }
 
     /**
+     * Returns the data payload for this node.
+     *
      * @return NodeData
      */
     public function getData(): NodeData
@@ -47,6 +49,8 @@ class Node implements JsonSerializable
     }
 
     /**
+     * Appends a parent node (father or mother). Called at most twice per node.
+     *
      * @param Node $parent
      *
      * @return Node
@@ -59,7 +63,8 @@ class Node implements JsonSerializable
     }
 
     /**
-     * Returns the relevant data as an array.
+     * Serialises the node to an array for JSON output. The "parents" key is omitted
+     * when the node has no ancestors, keeping the payload compact.
      *
      * @return array<string, int|int[]|NodeData|Node[]>
      */

@@ -14,6 +14,13 @@ await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
     select: jest.fn()
 }));
 
+await jest.unstable_mockModule("resources/js/modules/custom/svg/arc", () => ({
+    __esModule: true,
+    appendArc(parent) {
+        parent.append("g").attr("class", "arc").append("path");
+    },
+}));
+
 await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () => ({
     __esModule: true,
     default: class {
@@ -31,7 +38,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
             }
             return ((fontSize - datum.depth) * this._configuration.fontScale / 100.0);
         }
-    }
+    },
 }));
 
 const { default: Marriage } = await import("resources/js/modules/custom/svg/marriage");

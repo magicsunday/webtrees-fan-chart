@@ -12,7 +12,11 @@ import Filter from "./svg/filter";
 import ExportFactory from "../lib/chart/svg/export-factory";
 
 /**
- * SVG class
+ * Creates and manages the root SVG element for the fan chart. Owns the
+ * <defs> block, the zoomable visual group, the floating tooltip div, and
+ * the drop-shadow filter. Exposes a thin proxy API (select, selectAll,
+ * attr, style, transition) so callers do not need to hold a reference to
+ * the raw D3 selection.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -20,8 +24,6 @@ import ExportFactory from "../lib/chart/svg/export-factory";
  */
 export default class Svg {
     /**
-     * Constructor.
-     *
      * @param {Selection}     parent        The selected D3 parent element container
      * @param {Configuration} configuration The application configuration
      */
@@ -39,8 +41,6 @@ export default class Svg {
     }
 
     /**
-     * Returns the SVG definition instance.
-     *
      * @return {Defs}
      */
     get defs() {
@@ -48,8 +48,6 @@ export default class Svg {
     }
 
     /**
-     * Returns the SVG definition instance.
-     *
      * @return {Zoom}
      */
     get zoom() {
@@ -57,7 +55,8 @@ export default class Svg {
     }
 
     /**
-     *
+     * The inner <g> element that receives the D3 zoom transform. All chart
+     * content (persons, marriages, separators) lives inside this group.
      *
      * @return {Selection}
      */
@@ -66,7 +65,8 @@ export default class Svg {
     }
 
     /**
-     * Returns the <div> container for the overlay tooltip.
+     * The floating tooltip <div> element. Carries an "active" property that
+     * is set to true when the tooltip is pinned open via right-click.
      *
      * @return {Selection}
      */
@@ -75,7 +75,8 @@ export default class Svg {
     }
 
     /**
-     * Initialize the <svg> element.
+     * Sets fixed SVG attributes (size, text rendering, namespace) and registers
+     * the drop-shadow filter definition.
      *
      * @private
      */
@@ -92,9 +93,11 @@ export default class Svg {
     }
 
     /**
-     * Initialiaze the <svg> element events.
+     * Binds SVG-level events: suppresses the context menu, shows the zoom/pan
+     * overlay hint on wheel and touch gestures, creates the tooltip div, appends
+     * the zoomable visual group, and attaches the D3 zoom behavior.
      *
-     * @param {Overlay} overlay
+     * @param {Overlay} overlay The overlay used for zoom/pan hint messages
      */
     initEvents(overlay) {
         this._element
@@ -130,7 +133,9 @@ export default class Svg {
             this._element.classed("rtl", true);
         }
 
-        /** @var {Selection} tooltip */
+        /**
+         * @var {Selection} tooltip
+         */
         const tooltip = d3.select("div.tooltip");
 
         if (tooltip.empty()) {
@@ -155,7 +160,8 @@ export default class Svg {
     }
 
     /**
-     * Prevent default click and stop propagation.
+     * Stops propagation when the event's default was already prevented,
+     * blocking ancestor handlers from receiving the same click.
      *
      * @param {Event} event
      *
@@ -168,63 +174,76 @@ export default class Svg {
     }
 
     /**
-     * Exports the chart as PNG image and triggers a download.
+     * Instantiates and returns the appropriate export handler for the given type.
      *
-     * @param {string} type The export file type (either "png" or "svg")
+     * @param {string} type "png" or "svg"
      *
      * @return {PngExport|SvgExport}
      */
-    export(type ) {
+    export(type) {
         const factory = new ExportFactory();
 
         return factory.createExport(type);
     }
 
     /**
-     * @returns {Node}
+     * Returns the underlying SVG DOM node.
+     *
+     * @return {SVGElement}
      */
     node() {
         return this._element.node();
     }
 
     /**
-     * @param {function|string} select
+     * Selects the first descendant of the SVG element matching the selector.
      *
-     * @returns {Selection}
+     * @param {function|string} select CSS selector or D3 selector function
+     *
+     * @return {Selection}
      */
     select(select) {
         return this._element.select(select);
     }
 
     /**
-     * @param {function|string|null} select
+     * Selects all descendants of the SVG element matching the selector.
      *
-     * @returns {Selection}
+     * @param {function|string|null} select CSS selector or D3 selector function
+     *
+     * @return {Selection}
      */
     selectAll(select) {
         return this._element.selectAll(select);
     }
 
     /**
+     * Gets or sets a CSS style on the SVG element. Proxies d3 selection.style().
+     *
      * @param {string} name
      *
-     * @returns {string|this}
+     * @return {string|this}
      */
     style(_name) {
         return this._element.style(...arguments);
     }
 
     /**
+     * Gets or sets an attribute on the SVG element. Proxies d3 selection.attr().
+     *
      * @param {string} _name
      *
-     * @returns {string|this}
+     * @return {string|this}
      */
     attr(_name) {
         return this._element.attr(...arguments);
     }
 
     /**
-     * @returns {Transition}
+     * Creates a D3 transition on the SVG element. Used by Chart.center() to
+     * animate the zoom reset.
+     *
+     * @return {Transition}
      */
     transition() {
         return this._element.transition();

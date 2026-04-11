@@ -17,7 +17,10 @@ use DOMXPath;
 use Fisharebest\Webtrees\Individual;
 
 /**
- * Class NameProcessor.
+ * Parses an individual's primary (or married) name from its HTML representation
+ * using DOMXPath, and exposes structured name parts — full name, first names,
+ * last names, preferred (starred) name, and alternative name — for use in
+ * chart arc labels and tooltips.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -64,11 +67,9 @@ class NameProcessor
     private readonly DOMXPath $xPath;
 
     /**
-     * Constructor.
-     *
-     * @param Individual      $individual     The individual to process
-     * @param Individual|null $spouse
-     * @param bool            $useMarriedName TRUE to return the married name instead of the primary one
+     * @param Individual      $individual
+     * @param Individual|null $spouse         When provided, the married name matching this spouse's surname is preferred
+     * @param bool            $useMarriedName When true, selects a _MARNM record instead of the primary name
      */
     public function __construct(
         private readonly Individual $individual,
@@ -82,9 +83,10 @@ class NameProcessor
     }
 
     /**
-     * Returns the DOMXPath instance.
+     * Parses the HTML name string into a DOMDocument and returns a DOMXPath
+     * instance for subsequent name-part extraction queries.
      *
-     * @param string $input The input used as xpath base
+     * @param string $input HTML-formatted name string from webtrees
      *
      * @return DOMXPath
      */
@@ -97,10 +99,12 @@ class NameProcessor
     }
 
     /**
-     * Extracts the primary name from the individual.
+     * Selects the appropriate name record from getAllNames(). When $useMarriedName is true,
+     * iterates to find a _MARNM record whose surname matches the spouse's; falls back to the
+     * primary name when no matching married name is found.
      *
      * @param Individual|null $spouse
-     * @param bool            $useMarriedName TRUE to return the married name instead of the primary one
+     * @param bool            $useMarriedName
      *
      * @return array<string, string>
      */
@@ -134,9 +138,10 @@ class NameProcessor
     }
 
     /**
-     * Returns the UTF-8 chars converted to HTML entities.
+     * Converts non-ASCII UTF-8 characters to numeric HTML entities so that
+     * DOMDocument::loadHTML() can parse them without a charset declaration.
      *
-     * @param string $input The input to encode
+     * @param string $input
      *
      * @return string
      */
@@ -146,7 +151,7 @@ class NameProcessor
     }
 
     /**
-     * Replace name placeholders.
+     * Replaces NOMEN_NESCIO and PRAENOMEN_NESCIO placeholders with "…" and trims whitespace.
      *
      * @param string $value
      *
@@ -167,8 +172,8 @@ class NameProcessor
     }
 
     /**
-     * Returns the full name of the individual without formatting of the individual parts of the name.
-     * All placeholders were removed as we do not need them in this module.
+     * Returns the full plain-text name with all webtrees placeholders replaced by "…".
+     * HTML formatting of name parts is intentionally stripped.
      *
      * @return string
      */
@@ -180,7 +185,8 @@ class NameProcessor
     }
 
     /**
-     * Splits a name into an array, removing all name placeholders.
+     * Splits each name string on spaces, flattens the results, and removes empty tokens.
+     * Returns a re-indexed array of individual name tokens.
      *
      * @param string[] $names
      *
@@ -204,9 +210,10 @@ class NameProcessor
     }
 
     /**
-     * Returns all name parts by given identifier.
+     * Executes an XPath query against the name DOM and returns the trimmed text
+     * nodes as a flat, cleaned token array.
      *
-     * @param string $expression The XPath expression to execute
+     * @param string $expression XPath expression targeting text nodes within the name HTML
      *
      * @return string[]
      */
@@ -229,7 +236,8 @@ class NameProcessor
     }
 
     /**
-     * Returns all assigned first names of the individual.
+     * Returns all given name tokens (excluding surname and nickname parts), split into
+     * individual words and ready for line-break layout in the chart arc.
      *
      * @return string[]
      */
@@ -239,7 +247,8 @@ class NameProcessor
     }
 
     /**
-     * Returns all assigned last names of the individual.
+     * Returns all surname tokens (SURN element and any following text), split into
+     * individual words for arc layout.
      *
      * @return string[]
      */
@@ -249,7 +258,8 @@ class NameProcessor
     }
 
     /**
-     * Returns the preferred name of the individual.
+     * Returns the starred (preferred) name part used to visually emphasise one given name
+     * in the arc. Empty string when no name part is marked as preferred.
      *
      * @return string
      */
@@ -267,7 +277,10 @@ class NameProcessor
     }
 
     /**
-     * Returns the alternative name of the individual.
+     * Returns the secondary (alternative) name when it differs from the primary name and
+     * the individual's name is visible under current privacy settings. Typically used to
+     * show a romanisation or transliteration alongside the primary script name.
+     * Returns empty string when the primary and secondary names are the same.
      *
      * @param Individual $individual
      *

@@ -13,22 +13,15 @@ use Fisharebest\Webtrees\I18N;
 use MagicSunday\Webtrees\FanChart\Configuration;
 
 /**
+ * @var string        $moduleName
  * @var Configuration $configuration
  */
 ?>
 
-<div class="row">
-    <label class="col-sm-3 col-form-label wt-page-options-label" for="generations">
-        <?= I18N::translate('Generations') ?>
-    </label>
-    <div class="col-sm-9 wt-page-options-value">
-        <?=
-            view('components/select', [
-                'name'     => 'generations',
-                'selected' => $configuration->getGenerations(),
-                'options'  => $configuration->getGenerationsList(),
-                'class'    => 'form-control-sm',
-            ])
-        ?>
-    </div>
-</div>
+<?= view($moduleName . '::modules/components/range-slider', [
+    'id'    => 'generations',
+    'label' => I18N::translate('Generations'),
+    'value' => $configuration->getGenerations(),
+    'min'   => 2,
+    'max'   => 10,
+]) ?>

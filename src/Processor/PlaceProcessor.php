@@ -15,10 +15,9 @@ use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Place;
 
 /**
- * Class PlaceProcessor.
- *
- * Extracts place information from an individual's life events and
- * returns place names for display in chart arcs and tooltips.
+ * Extracts birth, death, and marriage place names from an individual's life
+ * events. Returns both full GEDCOM place strings (for tooltips) and shortened
+ * versions truncated to a configurable number of hierarchy levels (for arc text).
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -27,8 +26,6 @@ use Fisharebest\Webtrees\Place;
 class PlaceProcessor
 {
     /**
-     * Constructor.
-     *
      * @param Individual $individual The individual to process
      * @param int        $placeParts Number of place hierarchy parts to show in arcs (0 = full)
      */
@@ -39,7 +36,7 @@ class PlaceProcessor
     }
 
     /**
-     * Returns the full birth place name (for tooltips).
+     * Returns the full GEDCOM birth place name for tooltip display.
      *
      * @return string
      */
@@ -49,7 +46,7 @@ class PlaceProcessor
     }
 
     /**
-     * Returns the full death place name (for tooltips).
+     * Returns the full GEDCOM death place name for tooltip display.
      *
      * @return string
      */
@@ -59,7 +56,8 @@ class PlaceProcessor
     }
 
     /**
-     * Returns the full marriage place name (for tooltips).
+     * Returns the full GEDCOM marriage place name (from the individual's first spouse family)
+     * for tooltip display. Empty string when no spouse family exists.
      *
      * @return string
      */
@@ -75,7 +73,8 @@ class PlaceProcessor
     }
 
     /**
-     * Returns the short birth place name (for arc text).
+     * Returns the birth place name truncated to the configured number of hierarchy levels,
+     * for use in arc text where space is limited.
      *
      * @return string
      */
@@ -85,7 +84,8 @@ class PlaceProcessor
     }
 
     /**
-     * Returns the short death place name (for arc text).
+     * Returns the death place name truncated to the configured number of hierarchy levels,
+     * for use in arc text where space is limited.
      *
      * @return string
      */
@@ -95,7 +95,7 @@ class PlaceProcessor
     }
 
     /**
-     * Returns the full GEDCOM place name.
+     * Returns the unmodified GEDCOM place name string.
      *
      * @param Place $place
      *
@@ -108,13 +108,16 @@ class PlaceProcessor
 
     /**
      * Returns a shortened place name according to the configured
-     * number of hierarchy parts.
+     * number of hierarchy parts. This method is stateless — it only
+     * uses the placeParts scalar, not any individual-specific state.
      *
      * @param Place $place
      *
      * @return string
+     *
+     * @internal Used by DataFacade for marriage place formatting
      */
-    private function shortPlaceName(Place $place): string
+    public function shortPlaceName(Place $place): string
     {
         $placeName = $place->gedcomName();
 

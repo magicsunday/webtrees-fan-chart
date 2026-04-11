@@ -6,7 +6,9 @@
  */
 
 /**
- * This class handles the tooltip overlay.
+ * Manages a semi-transparent <div class="overlay"> element placed over the chart
+ * to display instructional hints (e.g. "use Ctrl+scroll to zoom"). The overlay
+ * fades in when shown and fades out after a configurable delay.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -14,9 +16,7 @@
  */
 export default class Overlay {
     /**
-     * Constructor.
-     *
-     * @param {Selection} parent The selected D3 parent element container
+     * @param {Selection} parent The D3 selection of the container element
      */
     constructor(parent) {
         // Create the tooltip overlay container
@@ -27,11 +27,12 @@ export default class Overlay {
     }
 
     /**
-     * Stop any pending transition and hide overlay immediately.
+     * Replaces the overlay text and fades it in over the given duration.
+     * Invokes callback (if provided) once the fade-in transition ends.
      *
-     * @param {string}   text     Text to display in overlay
-     * @param {number}   duration Duration of transition in msec
-     * @param {Function} callback Callback method to execute on end of transition
+     * @param {string}        text     The hint message to display
+     * @param {number}        duration Fade-in duration in milliseconds (0 = immediate)
+     * @param {Function|null} callback Called at the end of the fade-in transition
      */
     show(text, duration = 0, callback = null) {
         // Remove any previously added <p> element
@@ -56,10 +57,10 @@ export default class Overlay {
     }
 
     /**
-     * Stop any pending transition and hide overlay immediately.
+     * Fades the overlay out after the given delay.
      *
-     * @param {number} delay    Delay in milliseconds to wait before transition should start
-     * @param {number} duration Duration of transition in milliseconds
+     * @param {number} delay    Milliseconds to wait before starting the fade-out
+     * @param {number} duration Fade-out duration in milliseconds (0 = immediate)
      */
     hide(delay = 0, duration = 0) {
         this._element
@@ -70,9 +71,9 @@ export default class Overlay {
     }
 
     /**
-     * Returns the internal element.
+     * Returns the overlay <div> D3 selection.
      *
-     * @returns {Selection}
+     * @return {Selection}
      */
     get() {
         return this._element;

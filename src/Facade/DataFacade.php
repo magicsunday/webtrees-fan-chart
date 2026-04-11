@@ -25,7 +25,10 @@ use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
 use MagicSunday\Webtrees\FanChart\Processor\PlaceProcessor;
 
 /**
- * Facade class to hide complex logic to generate the structure required to display the tree.
+ * Assembles the nested Node tree passed to the JavaScript chart renderer.
+ * Coordinates the date, image, name, and place processors to build fully
+ * populated NodeData objects, then recursively links them into a parent/child
+ * hierarchy up to the configured generation depth.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -34,12 +37,14 @@ use MagicSunday\Webtrees\FanChart\Processor\PlaceProcessor;
 class DataFacade
 {
     /**
-     * The module.
+     * The module. Initialized by createTreeStructure() on each call.
+     * Accessing before createTreeStructure() throws "Uninitialized typed property".
      */
     private ModuleCustomInterface $module;
 
     /**
-     * The configuration instance.
+     * The configuration instance. Initialized by createTreeStructure() on each call.
+     * Accessing before createTreeStructure() throws "Uninitialized typed property".
      */
     private Configuration $configuration;
 
@@ -49,46 +54,34 @@ class DataFacade
     private int $nodeId = 0;
 
     /**
+     * Builds the complete Node tree rooted at the given individual and returns it
+     * ready for JSON serialisation. Resets the node counter on each call so IDs
+     * are always consecutive starting at 1.
+     *
      * @param ModuleCustomInterface $module
-     *
-     * @return DataFacade
-     */
-    public function setModule(ModuleCustomInterface $module): DataFacade
-    {
-        $this->module = $module;
-
-        return $this;
-    }
-
-    /**
-     * @param Configuration $configuration
-     *
-     * @return DataFacade
-     */
-    public function setConfiguration(Configuration $configuration): DataFacade
-    {
-        $this->configuration = $configuration;
-
-        return $this;
-    }
-
-    /**
-     * Creates the JSON tree structure.
-     *
-     * @param Individual $individual
+     * @param Configuration         $configuration
+     * @param Individual            $individual    The root individual (generation 1)
      *
      * @return Node|null
      */
-    public function createTreeStructure(Individual $individual): ?Node
-    {
+    public function createTreeStructure(
+        ModuleCustomInterface $module,
+        Configuration $configuration,
+        Individual $individual,
+    ): ?Node {
+        $this->module        = $module;
+        $this->configuration = $configuration;
+        $this->nodeId        = 0;
+
         return $this->buildTreeStructure($individual);
     }
 
     /**
-     * Recursively build the data array of the individual ancestors.
+     * Recursively constructs ancestor nodes. Returns null when the individual is
+     * absent or the generation ceiling has been reached.
      *
-     * @param Individual|null $individual The start person
-     * @param int             $generation The current generation
+     * @param Individual|null $individual
+     * @param int             $generation 1-based depth; stops when it exceeds getGenerations()
      *
      * @return Node|null
      */
@@ -129,10 +122,10 @@ class DataFacade
     }
 
     /**
-     * Get the node data required for display the chart.
+     * Populates a NodeData DTO from all processors for the given individual.
      *
-     * @param int        $generation The generation the person belongs to
-     * @param Individual $individual The current individual
+     * @param int        $generation 1-based generation depth, used to select date format
+     * @param Individual $individual
      *
      * @return NodeData
      */
@@ -177,7 +170,7 @@ class DataFacade
             ->setMarriageDateOfParents(
                 $this->appendPlaceToLine(
                     $dateProcessor->getMarriageDateOfParents(),
-                    $this->getMarriagePlaceShort($individual),
+                    $this->getParentsMarriagePlaceShort($individual, $placeProcessor),
                     $generation
                 )
             )
@@ -196,8 +189,8 @@ class DataFacade
     }
 
     /**
-     * Get the raw update URL. The "xref" parameter must be the last one as the URL gets appended
-     * with the clicked individual id in order to load the required chart data.
+     * Builds the AJAX update route for an individual. The "xref" parameter is intentionally
+     * the last query param so the JS can replace it by appending a new xref when navigating.
      *
      * @param Individual $individual
      *
@@ -237,22 +230,24 @@ class DataFacade
         PlaceProcessor $placeProcessor,
         int $generation,
     ): string {
-        // Outer generations: compact single-line format (no places)
-        if ($generation > $this->configuration->getDetailedDateGenerations()) {
+        $isDetailed = $generation <= $this->configuration->getDetailedDateGenerations();
+        $showPlaces = $this->configuration->getShowPlaces()
+            && ($generation <= ($this->configuration->getInnerArcs() + 1));
+
+        // Outer generations without places: compact single-line format
+        if (!$isDetailed && !$showPlaces) {
             return $dateProcessor->getCompactLifetimeDescription();
         }
 
-        $showPlaces = $this->configuration->getShowPlaces();
-
         $birthLine = $this->buildEventLine(
-            Symbols::SYMBOL_BIRTH,
-            $dateProcessor->getFormattedBirthDate(),
+            Symbols::Birth->value,
+            $isDetailed ? $dateProcessor->getFormattedBirthDate() : $this->getYearString($dateProcessor, true),
             $showPlaces ? $placeProcessor->getBirthPlaceShort() : '',
         );
 
         $deathLine = $this->buildEventLine(
-            Symbols::SYMBOL_DEATH,
-            $dateProcessor->getFormattedDeathDate(),
+            Symbols::Death->value,
+            $isDetailed ? $dateProcessor->getFormattedDeathDate() : $this->getYearString($dateProcessor, false),
             $showPlaces ? $placeProcessor->getDeathPlaceShort() : '',
         );
 
@@ -264,10 +259,33 @@ class DataFacade
 
         // Deceased without any dates or places
         if ($dateProcessor->isDead()) {
-            return Symbols::SYMBOL_DEATH;
+            return Symbols::Death->value;
         }
 
         return '';
+    }
+
+    /**
+     * Returns the year for a birth or death event as a string, or empty if unavailable or zero.
+     *
+     * @param DateProcessor $dateProcessor
+     * @param bool          $isBirth       True = birth year, false = death year
+     *
+     * @return string
+     */
+    private function getYearString(
+        DateProcessor $dateProcessor,
+        bool $isBirth,
+    ): string {
+        $hasDate = $isBirth ? $dateProcessor->hasBirthDate() : $dateProcessor->hasDeathDate();
+
+        if (!$hasDate) {
+            return '';
+        }
+
+        $year = $isBirth ? $dateProcessor->getBirthYear() : $dateProcessor->getDeathYear();
+
+        return ($year > 0) ? (string) $year : '';
     }
 
     /**
@@ -304,7 +322,7 @@ class DataFacade
 
     /**
      * Appends a place to a single date line. Only applied for
-     * generations within the detailed date range.
+     * generations within the inner arcs range.
      *
      * @param string $dateLine   The date string
      * @param string $place      The place name
@@ -321,7 +339,7 @@ class DataFacade
             return $dateLine;
         }
 
-        if ($generation > $this->configuration->getDetailedDateGenerations()) {
+        if ($generation > ($this->configuration->getInnerArcs() + 1)) {
             return $dateLine;
         }
 
@@ -337,40 +355,31 @@ class DataFacade
     }
 
     /**
-     * Returns the short marriage place for the individual's parents
-     * (for arc text, respects placeParts setting).
+     * Returns the abbreviated marriage place of the individual's parents for use in arc text.
+     * Applies the configured placeParts truncation. Returns empty string if no parent family exists.
      *
-     * @param Individual $individual
+     * @param Individual     $individual
+     * @param PlaceProcessor $placeProcessor
      *
      * @return string
      */
-    private function getMarriagePlaceShort(Individual $individual): string
-    {
+    private function getParentsMarriagePlaceShort(
+        Individual $individual,
+        PlaceProcessor $placeProcessor,
+    ): string {
         $family = $individual->childFamilies()->first();
 
         if ($family === null) {
             return '';
         }
 
-        $marriagePlace = $family->getMarriagePlace();
-
-        if ($marriagePlace->gedcomName() === '') {
-            return '';
-        }
-
-        $placeParts = $this->configuration->getPlaceParts();
-
-        if ($placeParts === 0) {
-            return $marriagePlace->gedcomName();
-        }
-
-        return $marriagePlace->firstParts($placeParts)->implode(', ');
+        return $placeProcessor->shortPlaceName($family->getMarriagePlace());
     }
 
     /**
-     * Returns whether the given text is in RTL style or not.
+     * Returns true when the dominant script of the given text runs right-to-left.
      *
-     * @param string $text The text to check
+     * @param string $text
      *
      * @return bool
      */

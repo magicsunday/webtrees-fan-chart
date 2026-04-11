@@ -1,12 +1,11 @@
 import { jest } from "@jest/globals";
 
 const jsonMock = jest.fn();
-const timerStops = [];
 const transitionInstances = [];
 
 class TransitionStub {
     constructor() {
-        this.handlers = { start: [], end: [] };
+        this.handlers = { start: [], end: [], interrupt: [] };
         this.registered = 0;
         this.durationValue = null;
     }
@@ -56,15 +55,8 @@ const transitionMock = jest.fn(() => {
     return instance;
 });
 
-const timerMock = jest.fn((callback) => {
-    const stop  = jest.fn();
-    const timer = { stop };
-
-    timerStops.push(stop);
-
+const timeoutMock = jest.fn((callback) => {
     Promise.resolve().then(() => callback());
-
-    return timer;
 });
 
 const selectMock = jest.fn((target) => target?.__selection ?? null);
@@ -73,7 +65,7 @@ await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
     __esModule: true,
     json: jsonMock,
     select: selectMock,
-    timer: timerMock,
+    timeout: timeoutMock,
     transition: transitionMock,
 }));
 
@@ -304,6 +296,7 @@ class SvgStub {
     constructor(persons = []) {
         this.personById = new Map(persons.map((person) => [person.id, person]));
         this.eventLog   = [];
+        this.div        = { property: jest.fn() };
         this.defs       = {
             get: () => ({
                 selectAll: () => ({
@@ -478,10 +471,9 @@ const defaultConfiguration = (overrides = {}) => ({
 
 beforeEach(() => {
     jsonMock.mockReset();
-    timerMock.mockClear();
+    timeoutMock.mockClear();
     transitionMock.mockClear();
     transitionInstances.length = 0;
-    timerStops.length = 0;
     personConstructor.mockClear();
     selectMock.mockClear();
     document.title = "";
@@ -607,8 +599,7 @@ describe("Update", () => {
         transition.complete();
         await flushPromises();
 
-        expect(timerMock).toHaveBeenCalledTimes(1);
-        expect(timerStops[0]).toHaveBeenCalledTimes(1);
+        expect(timeoutMock).toHaveBeenCalledTimes(1);
 
         const persons = Array.from(svg.personById.values());
 
@@ -636,5 +627,29 @@ describe("Update", () => {
         ]);
 
         expect(callback).toHaveBeenCalledTimes(1);
+
+        // Verify tooltip active state is reset after update
+        expect(svg.div.property).toHaveBeenCalledWith("active", false);
+    });
+
+    test("restores interactivity and cleans CSS classes on fetch error", async () => {
+        const svg           = createSvgWithPersons(["1"]);
+        const hierarchy     = new HierarchyStub();
+        const configuration = defaultConfiguration();
+        const update        = new Update(svg, configuration, hierarchy);
+        const callback      = jest.fn();
+        const errorSpy      = jest.spyOn(console, "error").mockImplementation(() => {});
+
+        jsonMock.mockRejectedValueOnce(new Error("network error"));
+
+        update.update("https://example.com/update", jest.fn(), callback);
+
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        await Promise.resolve();
+
+        expect(callback).toHaveBeenCalledTimes(1);
+        expect(errorSpy).toHaveBeenCalledWith("Fan chart update failed:", expect.any(Error));
+
+        errorSpy.mockRestore();
     });
 });

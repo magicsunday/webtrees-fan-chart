@@ -21,10 +21,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
-#[CoversClass(VersionInformation::class)]
 /**
  * Confirms version information retrieval behaviour for the module.
  */
+#[CoversClass(VersionInformation::class)]
 final class VersionInformationTest extends TestCase
 {
     /**

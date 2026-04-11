@@ -6,13 +6,18 @@
  */
 
 import * as d3 from "../../lib/d3";
+import {appendArc} from "./arc";
 import Geometry from "./geometry";
 import TooltipRenderer from "./tooltip-renderer";
 import LabelRenderer from "./label-renderer";
 import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
 
 /**
- * This class handles the creation of the person elements of the chart.
+ * Renders all visual elements for a single person arc: the filled arc path,
+ * the SVG <title> for browser tooltips, the name/date label group, the
+ * circular thumbnail image (clipped to a circle), the thin color-indicator
+ * strip at the outer edge, and the hover/context-menu tooltip events.
+ * Respects the new / update / remove lifecycle class flags set by Update.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -20,12 +25,10 @@ import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
  */
 export default class Person {
     /**
-     * Constructor.
-     *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
-     * @param {Selection}     person
-     * @param {Object}        children
+     * @param {Selection}     person        The <g class="person"> D3 selection
+     * @param {Object}        children      The D3 partition datum for this person
      */
     constructor(svg, configuration, person, children) {
         this._svg = svg;
@@ -36,10 +39,12 @@ export default class Person {
     }
 
     /**
-     * Initialize the required elements.
+     * Builds all child elements of the person <g>. Skips outer generations when
+     * names are disabled. For nodes with data, pre-computes imageSize on the datum
+     * before calling LabelRenderer so text layout can account for the image width.
      *
-     * @param {Selection} person
-     * @param {Object}    datum
+     * @param {Selection} person The <g class="person"> D3 selection
+     * @param {Object}    datum  The D3 partition datum
      */
     init(person, datum) {
         // Hide outer generations when only images are shown (no names)
@@ -49,16 +54,17 @@ export default class Person {
             return;
         }
 
-        if (person.classed("new") && this._configuration.hideEmptySegments) {
+        const isNew = person.classed("new");
+        const isUpdate = person.classed("update");
+        const isRemove = person.classed("remove");
+        const hasData = datum.data.data.xref !== "";
+
+        if (isNew && this._configuration.hideEmptySegments) {
             this.addArcToPerson(person, datum);
-        } else {
-            if (!person.classed("new")
-                && !person.classed("update")
-                && !person.classed("remove")
-                && ((datum.data.data.xref !== "") || !this._configuration.hideEmptySegments)
-            ) {
-                this.addArcToPerson(person, datum);
-            }
+        } else if (!isNew && !isUpdate && !isRemove
+            && (hasData || !this._configuration.hideEmptySegments)
+        ) {
+            this.addArcToPerson(person, datum);
         }
 
         if (datum.data.data.xref !== "") {
@@ -115,25 +121,23 @@ export default class Person {
     }
 
     /**
-     * Adds a color overlay for each arc.
+     * Appends the thin color-indicator strip along the outer edge of the arc.
+     * When family colors fill the arc body the strip is light gray; otherwise
+     * it carries the sex-based CSS class (male / female / unknown).
      *
-     * @param {Selection} person
-     * @param {Object}    data   The D3 data object
+     * @param {Selection} person The <g class="person"> D3 selection
+     * @param {Object}    datum  The D3 partition datum
+     *
+     * @private
      */
     addColorGroup(person, datum) {
-        // Arc generator
         const arcGenerator = d3.arc()
             .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
             .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
             .innerRadius(this._geometry.outerRadius(datum.depth) - this._configuration.colorArcWidth)
-            .outerRadius(this._geometry.outerRadius(datum.depth) + 1);
-        // .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth - 2)
-        // .outerRadius((data) => this._geometry.outerRadius(data.depth) - 1);
-
-        arcGenerator.padAngle(this.getArcPadAngle(datum))
-            .padRadius(this._configuration.padRadius)
-        //     .cornerRadius(this._configuration.cornerRadius - 2)
-        ;
+            .outerRadius(this._geometry.outerRadius(datum.depth) + 1)
+            .padAngle(this.getArcPadAngle(datum))
+            .padRadius(this._configuration.padRadius);
 
         const color = person
             .append("g")
@@ -319,53 +323,34 @@ export default class Person {
     }
 
     /**
-     * Appends the arc element to the person element.
+     * Builds the d3.arc() generator for this person's segment using its depth,
+     * partition angles, and computed radii, then delegates rendering to
+     * appendArc() with the pre-computed family color (if any).
      *
-     * @param {Selection} person The parent element used to append the arc too
-     * @param {Object}    datum  The D3 data object
+     * @param {Selection} person The <g class="person"> D3 selection
+     * @param {Object}    datum  The D3 partition datum
      *
      * @private
      */
     addArcToPerson(person, datum) {
-        // Create arc generator
         const arcGenerator = d3.arc()
             .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
             .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
             .innerRadius(this._geometry.innerRadius(datum.depth))
-            .outerRadius(this._geometry.outerRadius(datum.depth));
-
-        arcGenerator.padAngle(this.getArcPadAngle(datum))
+            .outerRadius(this._geometry.outerRadius(datum.depth))
+            .padAngle(this.getArcPadAngle(datum))
             .padRadius(this._configuration.padRadius)
             .cornerRadius(this._configuration.cornerRadius);
 
-        // Append arc
-        const arcGroup = person
-            .append("g")
-            .attr("class", "arc");
-
-        const path = arcGroup
-            .append("path")
-            .attr("d", arcGenerator);
-
-        // Apply family-branch color to the arc fill (inline style
-        // overrides the CSS rules that set fill on arc paths).
-        // During updates, new arcs skip the immediate fill so the
-        // D3 transition can fade from gray to the family color.
-        if (datum.data.data.familyColor && !person.classed("new")) {
-            path.style("fill", datum.data.data.familyColor);
-        }
-
-        // Hide arc initially if its new during chart update
-        if (person.classed("new")) {
-            path.style("opacity", 1e-6);
-        }
+        appendArc(person, arcGenerator, datum.data.data.familyColor);
     }
 
     /**
-     * Add title element to the person element containing the full name of the individual.
+     * Inserts an SVG <title> as the first child of the person element so
+     * browsers show the full name as a native tooltip on hover.
      *
-     * @param {Selection} person The parent element used to append the title too
-     * @param {string}    value  The value to assign to the title
+     * @param {Selection} person The <g class="person"> D3 selection
+     * @param {string}    value  The individual's full name
      *
      * @private
      */

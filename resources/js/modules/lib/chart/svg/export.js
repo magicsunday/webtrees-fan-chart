@@ -6,7 +6,9 @@
  */
 
 /**
- * Base export class.
+ * Abstract base class for chart export. Provides shared helpers for inlining
+ * external images as base64 data URIs and for triggering a file download
+ * via a programmatically created anchor element.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -14,12 +16,14 @@
  */
 export default class Export {
     /**
-     * Converts all external <image> href attributes in the given SVG node
-     * to inline base64 data URIs so they survive serialization.
+     * Fetches each external <image href> in the SVG node and replaces it with
+     * a base64 data URI. Images that fail to load have their href removed so
+     * the exported file does not contain broken references. Resolves to the
+     * same svgNode once all fetches have settled.
      *
-     * @param {Node} svgNode The SVG (or cloned SVG) element
+     * @param {Node} svgNode The SVG element (or a clone) whose images to inline
      *
-     * @returns {Promise<Node>}
+     * @return {Promise<Node>}
      */
     inlineImages(svgNode) {
         const images = svgNode.querySelectorAll("image");
@@ -57,10 +61,11 @@ export default class Export {
     }
 
     /**
-     * Triggers the download by creating a new anchor element and simulate a mouse click on it.
+     * Initiates a file download by creating a temporary <a> element with the
+     * given href and filename, then dispatching a synthetic click on it.
      *
-     * @param {string} imgURI   The image URI data stream
-     * @param {string} fileName The file name to use in the download dialog
+     * @param {string} imgURI   The data URI or object URL to download
+     * @param {string} fileName The suggested filename shown in the save dialog
      */
     triggerDownload(imgURI, fileName) {
         const event = new MouseEvent("click", {

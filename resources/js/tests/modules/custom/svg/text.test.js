@@ -130,6 +130,10 @@ describe("Text", () => {
         expect(truncated.map((name) => name.label)).toEqual(["A.", "B."]);
         expect(parent.style).toHaveBeenCalledWith("font-size");
         expect(parent.style).toHaveBeenCalledWith("font-weight");
+
+        // Verify input was not mutated (deep-clone protection)
+        expect(nameGroup[0].label).toBe("Anna");
+        expect(nameGroup[1].label).toBe("Beatrice");
     });
 
     it("calculates available width using arc geometry for inner labels", () => {

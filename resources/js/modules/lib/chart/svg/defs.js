@@ -6,7 +6,10 @@
  */
 
 /**
- * SVG definition class
+ * Wraps the SVG <defs> element and exposes append, select, and get helpers
+ * so callers (Gradient, Text, Marriage, PngExport, …) can register path,
+ * clipPath, linearGradient, and filter definitions without holding a raw D3
+ * selection themselves.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -14,9 +17,7 @@
  */
 export default class Defs {
     /**
-     * Constructor.
-     *
-     * @param {Selection} svg The selected D3 parent element container
+     * @param {Selection} svg The D3 selection of the parent <svg> element
      */
     constructor(svg) {
         // Create the <svg:defs> element
@@ -24,27 +25,31 @@ export default class Defs {
     }
 
     /**
-     * Returns the internal element.
+     * Returns the <defs> D3 selection.
      *
-     * @returns {selection}
+     * @return {Selection}
      */
     get() {
         return this._element;
     }
 
     /**
-     * @param {function|string} select
+     * Selects the first child of <defs> matching the selector.
      *
-     * @returns {Selection}
+     * @param {function|string} select CSS selector or D3 selector function
+     *
+     * @return {Selection}
      */
     select(select) {
         return this._element.select(select);
     }
 
     /**
-     * @param {string|function} name
+     * Appends a new child element to <defs> and returns its D3 selection.
      *
-     * @returns {Selection}
+     * @param {string|function} name Tag name or D3 creator function
+     *
+     * @return {Selection}
      */
     append(name) {
         return this._element.append(name);

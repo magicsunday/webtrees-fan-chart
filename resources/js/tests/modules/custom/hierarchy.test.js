@@ -76,13 +76,16 @@ describe("Hierarchy.init", () => {
 
         hierarchy.init(rootDatum);
 
-        const parents = hierarchy.root.data.parents;
-        const parentGenerations = parents.map((parent) => parent.data.generation);
+        const children = hierarchy.root.children;
+        const childGenerations = children.map((child) => child.data.data.generation);
 
-        expect(parents).toHaveLength(2);
-        expect(parents.map((parent) => parent.data.sex)).toEqual([SEX_MALE, SEX_FEMALE]);
-        expect(parentGenerations.every((generation) => generation === 2)).toBe(true);
+        expect(children).toHaveLength(2);
+        expect(children.map((child) => child.data.data.sex)).toEqual([SEX_MALE, SEX_FEMALE]);
+        expect(childGenerations.every((generation) => generation === 2)).toBe(true);
         expect(hierarchy.nodes).toHaveLength(7);
+
+        // Verify original datum was not mutated
+        expect(rootDatum.parents).toBeUndefined();
     });
 
     test("completes single parent entries by adding the missing sex at the correct position", () => {
@@ -96,12 +99,12 @@ describe("Hierarchy.init", () => {
 
         hierarchy.init(rootDatum);
 
-        const parents = hierarchy.root.data.parents;
+        const children = hierarchy.root.children;
 
-        expect(parents).toHaveLength(2);
-        expect(parents[0].data.sex).toBe(SEX_MALE);
-        expect(parents[0].data.generation).toBe(2);
-        expect(parents[1]).toBe(existingParent);
+        expect(children).toHaveLength(2);
+        expect(children[0].data.data.sex).toBe(SEX_MALE);
+        expect(children[0].data.data.generation).toBe(2);
+        expect(children[1].data).toBe(existingParent);
     });
 
     test("stops generating parents when the configured generation depth is reached", () => {
@@ -110,11 +113,11 @@ describe("Hierarchy.init", () => {
 
         hierarchy.init(rootDatum);
 
-        const parents = hierarchy.root.data.parents;
+        const children = hierarchy.root.children;
 
-        expect(parents).toHaveLength(2);
-        expect(parents.every((parent) => parent.data.generation === 2)).toBe(true);
-        expect(parents.every((parent) => parent.parents === undefined)).toBe(true);
+        expect(children).toHaveLength(2);
+        expect(children.every((child) => child.data.data.generation === 2)).toBe(true);
+        expect(children.every((child) => child.children.length === 0)).toBe(true);
         expect(hierarchy.nodes).toHaveLength(3);
     });
 

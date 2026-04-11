@@ -23,10 +23,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-#[CoversClass(DateProcessor::class)]
 /**
  * Unit tests for the date processor used by the fan chart.
  */
+#[CoversClass(DateProcessor::class)]
 class DateProcessorTest extends TestCase
 {
     protected function setUp(): void
@@ -98,6 +98,39 @@ class DateProcessorTest extends TestCase
         );
 
         self::assertSame('†', $processor->getLifetimeDescription());
+    }
+
+    #[Test]
+    public function getBirthDateReturnsEmptyStringForInvalidDate(): void
+    {
+        $processor = new DateProcessor(
+            $this->createIndividual(
+                $this->createDate('', false, 0),
+                $this->createDate('02.02.2020', true, 2020)
+            ),
+            1,
+            4
+        );
+
+        self::assertSame('', $processor->getBirthDate());
+        self::assertSame('02.02.2020', $processor->getDeathDate());
+    }
+
+    #[Test]
+    public function getDeathDateReturnsEmptyStringForInvalidDate(): void
+    {
+        $processor = new DateProcessor(
+            $this->createIndividual(
+                $this->createDate('01.01.1980', true, 1980),
+                $this->createDate('', false, 0),
+                false
+            ),
+            1,
+            4
+        );
+
+        self::assertSame('01.01.1980', $processor->getBirthDate());
+        self::assertSame('', $processor->getDeathDate());
     }
 
     /**

@@ -9,38 +9,40 @@ import PngExport from "./export/png";
 import SvgExport from "./export/svg";
 
 /**
- * The file export factory.
+ * Instantiates the correct export handler (PNG or SVG) for a given type string.
+ * New export formats can be added by extending EXPORT_TYPES without modifying
+ * call sites.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 export default class ExportFactory {
-    constructor() {
-        this._exportClass = null;
-    }
-
-    setExportClass(type) {
-        switch (type) {
-            case "png":
-                this._exportClass = PngExport;
-                break;
-            case "svg":
-                this._exportClass = SvgExport;
-                break;
-            default:
-                break;
-        }
+    /**
+     * Registry mapping type strings to their export handler constructors.
+     *
+     * @type {Object<string, Function>}
+     */
+    static EXPORT_TYPES = {
+        png: PngExport,
+        svg: SvgExport,
     };
 
+    /**
+     * Creates an export instance for the given type.
+     *
+     * @param {string} type The export type ("png" or "svg")
+     *
+     * @return {PngExport|SvgExport}
+     * @throws {Error} When the type is not registered in EXPORT_TYPES
+     */
     createExport(type) {
-        this.setExportClass(type);
+        const ExportClass = ExportFactory.EXPORT_TYPES[type];
 
-        switch (type) {
-            case "png":
-                return new this._exportClass();
-            case "svg":
-                return new this._exportClass();
+        if (!ExportClass) {
+            throw new Error(`Unknown export type: ${type}`);
         }
-    };
+
+        return new ExportClass();
+    }
 }

@@ -29,22 +29,22 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 
 <form method="post">
     <div class="mb-3">
-        <?= view($moduleName . '::modules/fan-chart/form/fan-size', ['configuration' => $configuration]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/fan-size', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
     </div>
     <div class="mb-3">
-        <?= view($moduleName . '::modules/fan-chart/form/generations', ['configuration' => $configuration]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/generations', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
     </div>
     <div class="mb-3">
-        <?= view($moduleName . '::modules/fan-chart/form/layout', ['configuration' => $configuration, 'moduleName' => $moduleName]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/layout', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
     </div>
     <div class="mb-3">
-        <?= view($moduleName . '::modules/fan-chart/form/date-precision', ['configuration' => $configuration]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/date-precision', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
     </div>
     <div class="mb-3">
-        <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['configuration' => $configuration]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
     </div>
     <div class="mb-3">
-        <?= view($moduleName . '::modules/fan-chart/form/font-size', ['configuration' => $configuration]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/font-size', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
     </div>
 
     <div class="mb-3">

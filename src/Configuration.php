@@ -18,7 +18,10 @@ use Fisharebest\Webtrees\Validator;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Configuration class.
+ * Holds all user-configurable chart settings, reading values from the HTTP request
+ * (POST body or query params) and falling back to module-level preferences when absent.
+ * Provides clamped, type-safe accessors used by both the chart renderer and the admin
+ * configuration page.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -93,8 +96,6 @@ class Configuration
     private const int MIN_DETAILED_DATE_GENERATIONS = 0;
 
     /**
-     * Configuration constructor.
-     *
      * @param ServerRequestInterface $request
      * @param AbstractModule         $module
      */
@@ -105,19 +106,26 @@ class Configuration
     }
 
     /**
-     * Returns the number of generations to display.
+     * Returns the request validator appropriate for the current HTTP method —
+     * parsed body for POST, query params for everything else.
+     *
+     * @return Validator
+     */
+    private function validator(): Validator
+    {
+        return $this->request->getMethod() === RequestMethodInterface::METHOD_POST
+            ? Validator::parsedBody($this->request)
+            : Validator::queryParams($this->request);
+    }
+
+    /**
+     * Returns the number of ancestor generations to render, clamped to [MIN, MAX].
      *
      * @return int
      */
     public function getGenerations(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->isBetween(self::MIN_GENERATIONS, self::MAX_GENERATIONS)
             ->integer(
                 'generations',
@@ -129,7 +137,7 @@ class Configuration
     }
 
     /**
-     * Returns a list of possible selectable generations.
+     * Returns a localised label map keyed by generation count, suitable for select elements.
      *
      * @return string[]
      */
@@ -145,19 +153,14 @@ class Configuration
     }
 
     /**
-     * Returns the number of generations to display detailed birth and death dates for.
+     * Returns how many innermost generations show full DD.MM.YYYY dates.
+     * Generations beyond this threshold display year-only.
      *
      * @return int
      */
     public function getDetailedDateGenerations(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->isBetween(self::MIN_DETAILED_DATE_GENERATIONS, self::MAX_GENERATIONS)
             ->integer(
                 'detailedDateGenerations',
@@ -169,7 +172,8 @@ class Configuration
     }
 
     /**
-     * Returns a list of possible generation counts for detailed birth and death dates.
+     * Returns a localised label map for the detailed-date threshold selector.
+     * Key 0 maps to "Years only"; higher keys indicate the cutoff generation.
      *
      * @return string[]
      */
@@ -190,20 +194,14 @@ class Configuration
     }
 
     /**
-     * Returns the font scale to use.
+     * Returns the font size scaling factor as a percentage (50–150).
      *
      * @return int
      */
     public function getFontScale(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
-            ->isBetween(10, 200)
+        return $this->validator()
+            ->isBetween(50, 150)
             ->integer(
                 'fontScale',
                 (int) $this->module->getPreference(
@@ -214,19 +212,13 @@ class Configuration
     }
 
     /**
-     * Returns the fan degree to use.
+     * Returns the opening angle of the fan in degrees (180–360).
      *
      * @return int
      */
     public function getFanDegree(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->isBetween(180, 360)
             ->integer(
                 'fanDegree',
@@ -238,19 +230,13 @@ class Configuration
     }
 
     /**
-     * Returns whether to hide empty segments or not.
+     * Returns true when ancestor arcs with no data should be omitted from the chart.
      *
      * @return bool
      */
     public function getHideEmptySegments(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'hideEmptySegments',
                 (bool) $this->module->getPreference(
@@ -261,19 +247,13 @@ class Configuration
     }
 
     /**
-     * Returns whether to show family colors or not.
+     * Returns true when paternal/maternal lineage colouring is enabled.
      *
      * @return bool
      */
     public function getShowFamilyColors(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'showFamilyColors',
                 (bool) $this->module->getPreference(
@@ -284,19 +264,13 @@ class Configuration
     }
 
     /**
-     * Returns whether to show place names or not.
+     * Returns true when birth/death place names should be rendered in chart arcs.
      *
      * @return bool
      */
     public function getShowPlaces(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'showPlaces',
                 (bool) $this->module->getPreference(
@@ -307,20 +281,14 @@ class Configuration
     }
 
     /**
-     * Returns the number of place hierarchy parts to display.
+     * Returns the number of lowest place hierarchy levels to display (0 = full name, 1–3 = N lowest levels).
      *
      * @return int
      */
     public function getPlaceParts(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
-            ->isBetween(0, 5)
+        return $this->validator()
+            ->isBetween(0, 3)
             ->integer(
                 'placeParts',
                 (int) $this->module->getPreference(
@@ -331,7 +299,7 @@ class Configuration
     }
 
     /**
-     * Returns a list of possible place part options.
+     * Returns a localised label map for the place-parts selector (key 0 = full name).
      *
      * @return string[]
      */
@@ -346,19 +314,13 @@ class Configuration
     }
 
     /**
-     * Returns whether to show parent marriage dates or not.
+     * Returns true when the marriage date of an individual's parents should appear in arc text.
      *
      * @return bool
      */
     public function getShowParentMarriageDates(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'showParentMarriageDates',
                 (bool) $this->module->getPreference(
@@ -369,19 +331,13 @@ class Configuration
     }
 
     /**
-     * Returns whether to show images or not.
+     * Returns true when highlight images (or silhouettes) should be rendered inside arcs.
      *
      * @return bool
      */
     public function getShowImages(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'showImages',
                 (bool) $this->module->getPreference(
@@ -392,19 +348,13 @@ class Configuration
     }
 
     /**
-     * Returns whether to show names in arcs or not.
+     * Returns true when individual names should be rendered inside arc segments.
      *
      * @return bool
      */
     public function getShowNames(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'showNames',
                 (bool) $this->module->getPreference(
@@ -415,19 +365,13 @@ class Configuration
     }
 
     /**
-     * Returns the number of inner arcs to display.
+     * Returns the count of innermost arc rings that receive the wider "detailed" layout.
      *
      * @return int
      */
     public function getInnerArcs(): int
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->isBetween(self::MIN_INNER_ARCS, self::MAX_INNER_ARCS)
             ->integer(
                 'innerArcs',
@@ -439,7 +383,7 @@ class Configuration
     }
 
     /**
-     * Returns a list of possible selectable values for inner arcs.
+     * Returns a localised label map keyed by inner arc count, suitable for select elements.
      *
      * @return string[]
      */
@@ -455,19 +399,13 @@ class Configuration
     }
 
     /**
-     * Returns whether to hide the SVG export button or not.
+     * Returns true when the SVG download button should be hidden from the chart toolbar.
      *
      * @return bool
      */
     public function getHideSvgExport(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'hideSvgExport',
                 (bool) $this->module->getPreference(
@@ -478,19 +416,13 @@ class Configuration
     }
 
     /**
-     * Returns whether to hide the PNG export button or not.
+     * Returns true when the PNG download button should be hidden from the chart toolbar.
      *
      * @return bool
      */
     public function getHidePngExport(): bool
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->boolean(
                 'hidePngExport',
                 (bool) $this->module->getPreference(
@@ -501,19 +433,13 @@ class Configuration
     }
 
     /**
-     * Returns the color for the paternal lineage.
+     * Returns the CSS hex color used to tint paternal-side arc segments.
      *
      * @return string
      */
     public function getPaternalColor(): string
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->string(
                 'paternalColor',
                 $this->module->getPreference(
@@ -524,19 +450,13 @@ class Configuration
     }
 
     /**
-     * Returns the color for the maternal lineage.
+     * Returns the CSS hex color used to tint maternal-side arc segments.
      *
      * @return string
      */
     public function getMaternalColor(): string
     {
-        if ($this->request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $validator = Validator::parsedBody($this->request);
-        } else {
-            $validator = Validator::queryParams($this->request);
-        }
-
-        return $validator
+        return $this->validator()
             ->string(
                 'maternalColor',
                 $this->module->getPreference(

@@ -16,7 +16,10 @@ export const SYMBOL_MARRIAGE = "\u26AD";
 export const SYMBOL_ELLIPSIS = "\u2026";
 
 /**
- * This class handles the hierarchical data.
+ * Transforms the flat JSON tree received from the server into a D3 partition
+ * hierarchy. Missing parents are filled in with empty placeholder nodes so
+ * every individual always has two parents up to the configured generation
+ * limit, keeping arc geometry consistent.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -24,8 +27,6 @@ export const SYMBOL_ELLIPSIS = "\u2026";
  */
 export default class Hierarchy {
     /**
-     * Constructor.
-     *
      * @param {Configuration} configuration The application configuration
      */
     constructor(configuration) {
@@ -35,42 +36,44 @@ export default class Hierarchy {
     }
 
     /**
-     * Initialize the hierarchical chart data.
+     * Builds the D3 hierarchy from raw JSON data, pads missing parent slots with
+     * empty nodes, applies a partition layout, and assigns sequential IDs. Must
+     * be called before accessing nodes or root.
      *
-     * @param {Object} datum The JSON encoded chart data
+     * @param {Object} datum The raw JSON chart data object from the server
      */
     init(datum) {
-        // Get the greatest depth
-        // const getDepth       = ({parents}) => 1 + (parents ? Math.max(...parents.map(getDepth)) : 0);
-        // const maxGenerations = getDepth(datum);
-
         // Construct root node from the hierarchical data
         this._root = d3.hierarchy(
             datum,
             datum => {
+                // Build a parents array without mutating the original server JSON
+                let parents = datum.parents;
+
                 // Fill up the missing parents to the requested number of generations
-                // if (!datum.data.parents && (datum.data.generation < maxGenerations)) {
-                if (!datum.parents && (datum.data.generation < this._configuration.generations)) {
-                    datum.parents = [
+                if (!parents && (datum.data.generation < this._configuration.generations)) {
+                    parents = [
                         this.createEmptyNode(datum.data.generation + 1, SEX_MALE),
                         this.createEmptyNode(datum.data.generation + 1, SEX_FEMALE),
                     ];
                 }
 
                 // Add missing parent record if we got only one
-                if (datum.parents && (datum.parents.length < 2)) {
-                    if (datum.parents[0].data.sex === SEX_MALE) {
-                        datum.parents.push(
+                if (parents && (parents.length < 2)) {
+                    parents = [...parents];
+
+                    if (parents[0].data.sex === SEX_MALE) {
+                        parents.push(
                             this.createEmptyNode(datum.data.generation + 1, SEX_FEMALE),
                         );
                     } else {
-                        datum.parents.unshift(
+                        parents.unshift(
                             this.createEmptyNode(datum.data.generation + 1, SEX_MALE),
                         );
                     }
                 }
 
-                return datum.parents;
+                return parents;
             })
             // Calculate value properties of each node in the hierarchy
             .count();
@@ -89,7 +92,8 @@ export default class Hierarchy {
     }
 
     /**
-     * Returns the nodes.
+     * Flat array of all partition nodes (root plus all descendants) in
+     * top-down order, each augmented with a unique sequential id.
      *
      * @return {Array}
      */
@@ -98,21 +102,19 @@ export default class Hierarchy {
     }
 
     /**
-     * Returns the root note.
-     *
-     * @returns {Individual}
-     *
-     * @public
+     * @return {Object}
      */
     get root() {
         return this._root;
     }
 
     /**
-     * Create an empty child node object.
+     * Produces a minimal placeholder node so the partition layout always
+     * receives two parent slots. The returned object has the same shape as a
+     * real server node but with an empty xref and blank name fields.
      *
-     * @param {number} generation Generation of the node
-     * @param {string} sex        The sex of the individual
+     * @param {number} generation Depth of the placeholder in the tree
+     * @param {string} sex        SEX_MALE or SEX_FEMALE constant
      *
      * @return {Object}
      *

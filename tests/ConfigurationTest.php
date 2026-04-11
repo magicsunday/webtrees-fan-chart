@@ -28,10 +28,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-#[CoversClass(Configuration::class)]
 /**
  * Verifies that configuration handling honors defaults, validation, and selectable ranges.
  */
+#[CoversClass(Configuration::class)]
 final class ConfigurationTest extends TestCase
 {
     /**
@@ -66,9 +66,16 @@ final class ConfigurationTest extends TestCase
             'default_hideEmptySegments'       => '1',
             'default_showFamilyColors'        => '1',
             'default_showParentMarriageDates' => '1',
+            'default_showPlaces'              => '1',
+            'default_placeParts'              => '2',
+            'default_showImages'              => '1',
+            'default_showNames'               => '0',
             'default_innerArcs'               => '2',
             'default_hideSvgExport'           => '1',
             'default_hidePngExport'           => '1',
+            'default_detailedDateGenerations' => '5',
+            'default_paternalColor'           => '#aabbcc',
+            'default_maternalColor'           => '#ddeeff',
         ]);
 
         $configuration = new Configuration($request, $module);
@@ -79,9 +86,16 @@ final class ConfigurationTest extends TestCase
         self::assertTrue($configuration->getHideEmptySegments());
         self::assertTrue($configuration->getShowFamilyColors());
         self::assertTrue($configuration->getShowParentMarriageDates());
+        self::assertTrue($configuration->getShowPlaces());
+        self::assertSame(2, $configuration->getPlaceParts());
+        self::assertTrue($configuration->getShowImages());
+        self::assertFalse($configuration->getShowNames());
         self::assertSame(2, $configuration->getInnerArcs());
         self::assertTrue($configuration->getHideSvgExport());
         self::assertTrue($configuration->getHidePngExport());
+        self::assertSame(5, $configuration->getDetailedDateGenerations());
+        self::assertSame('#aabbcc', $configuration->getPaternalColor());
+        self::assertSame('#ddeeff', $configuration->getMaternalColor());
     }
 
     /**
@@ -104,10 +118,17 @@ final class ConfigurationTest extends TestCase
             'fanDegree'               => '300',
             'hideEmptySegments'       => '1',
             'showFamilyColors'        => '1',
+            'showPlaces'              => '1',
+            'placeParts'              => '2',
             'showParentMarriageDates' => '1',
+            'showImages'              => '1',
+            'showNames'               => '0',
             'innerArcs'               => '1',
             'hideSvgExport'           => '0',
             'hidePngExport'           => '1',
+            'detailedDateGenerations' => '4',
+            'paternalColor'           => '#112233',
+            'maternalColor'           => '#445566',
         ]);
 
         $module = $this->createModuleWithPreferences([
@@ -116,10 +137,17 @@ final class ConfigurationTest extends TestCase
             'default_fanDegree'               => '210',
             'default_hideEmptySegments'       => '0',
             'default_showFamilyColors'        => '0',
+            'default_showPlaces'              => '0',
+            'default_placeParts'              => '1',
             'default_showParentMarriageDates' => '0',
+            'default_showImages'              => '0',
+            'default_showNames'               => '1',
             'default_innerArcs'               => '3',
             'default_hideSvgExport'           => '0',
             'default_hidePngExport'           => '0',
+            'default_detailedDateGenerations' => '3',
+            'default_paternalColor'           => '#70a9cf',
+            'default_maternalColor'           => '#d06f94',
         ]);
 
         $configuration = new Configuration($request, $module);
@@ -129,10 +157,53 @@ final class ConfigurationTest extends TestCase
         self::assertSame(300, $configuration->getFanDegree());
         self::assertTrue($configuration->getHideEmptySegments());
         self::assertTrue($configuration->getShowFamilyColors());
+        self::assertTrue($configuration->getShowPlaces());
+        self::assertSame(2, $configuration->getPlaceParts());
         self::assertTrue($configuration->getShowParentMarriageDates());
+        self::assertTrue($configuration->getShowImages());
+        self::assertFalse($configuration->getShowNames());
         self::assertSame(1, $configuration->getInnerArcs());
         self::assertFalse($configuration->getHideSvgExport());
         self::assertTrue($configuration->getHidePngExport());
+        self::assertSame(4, $configuration->getDetailedDateGenerations());
+        self::assertSame('#112233', $configuration->getPaternalColor());
+        self::assertSame('#445566', $configuration->getMaternalColor());
+    }
+
+    /**
+     * Ensures placeParts values outside the allowed range 0-3 fall back to the default.
+     */
+    #[Test]
+    public function placePartsOutOfRangeFallsBackToDefault(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams(['placeParts' => '4']);
+
+        $module = $this->createModuleWithPreferences([
+            'default_placeParts' => '1',
+        ]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame(1, $configuration->getPlaceParts());
+    }
+
+    /**
+     * Ensures the maximum allowed placeParts value (3) is accepted.
+     */
+    #[Test]
+    public function placePartsMaximumValueIsAccepted(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams(['placeParts' => '3']);
+
+        $module = $this->createModuleWithPreferences([
+            'default_placeParts' => '1',
+        ]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame(3, $configuration->getPlaceParts());
     }
 
     /**

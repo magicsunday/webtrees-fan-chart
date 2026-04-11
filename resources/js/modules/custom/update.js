@@ -11,7 +11,11 @@ import Marriage from "./svg/marriage";
 import FamilyColor from "./svg/family-color";
 
 /**
- * This class handles the visual update of all text and path elements.
+ * Handles the animated transition when the chart re-centers on a new individual.
+ * Fetches new hierarchy data via AJAX, classifies each person and marriage element
+ * as "new", "update", or "remove", then runs a cross-fade transition that fades
+ * out stale arcs and labels while fading in replacements. Cleans up orphaned
+ * path and clip-path definitions after the transition completes.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -19,8 +23,6 @@ import FamilyColor from "./svg/family-color";
  */
 export default class Update {
     /**
-     * Constructor.
-     *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      * @param {Hierarchy}     hierarchy
@@ -32,22 +34,31 @@ export default class Update {
     }
 
     /**
-     * Update the chart with data loaded from AJAX.
+     * Loads new hierarchy data from the given URL, classifies DOM elements,
+     * runs the cross-fade transition, and invokes callbacks when done. The
+     * redrawOverlays callback is called mid-transition to swap separator lines;
+     * the callback is called after all transitions settle and cleanup is complete.
      *
-     * @param {string}   url      The update URL
-     * @param {Function} callback The callback method to execute after the update
-     *
-     * @public
+     * @param {string}   url            The JSON endpoint for the new center individual
+     * @param {Function} redrawOverlays Called before transition ends to redraw separator lines
+     * @param {Function} callback       Called after all transitions finish and DOM is cleaned up
      */
     update(url, redrawOverlays, callback) {
-        const that = this;
-
         this._svg
             .selectAll("g.person")
             .classed("hover", false)
             .on("click", null)
             .on("mouseover", null)
             .on("mouseout", null);
+
+        // Guard callback to prevent double-invocation from endAll + catch race
+        let callbackFired = false;
+        const onceCallback = () => {
+            if (!callbackFired) {
+                callbackFired = true;
+                this.updateDone(callback);
+            }
+        };
 
         d3.json(
             url,
@@ -80,6 +91,10 @@ export default class Update {
                     (datum) => datum.data.data.familyColor = familyColor.getColor(datum),
                 );
             }
+
+            // Alias for D3 .each(function() {}) callbacks that need both
+            // the class instance (that) and the DOM element (this)
+            const that = this;
 
             // Flag all person elements which are subject to change
             this._svg
@@ -152,84 +167,23 @@ export default class Update {
             // Create transition instance
             const transition = d3.transition()
                 .duration(this._configuration.updateDuration)
-                .call(this.endAll, () => this.updateDone(callback));
+                .call(this.endAll, onceCallback);
 
-            // Fade out removed person arcs
-            this._svg
-                .selectAll("g.person.remove g.arc path")
-                .transition(transition)
-                .style("fill", () => this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)")
-                .style("opacity", () => this._configuration.hideEmptySegments ? 1e-6 : null);
+            // Fade out removed arcs (person + marriage)
+            this.fadeOutRemovedArcs(transition, "g.person.remove");
+            this.fadeOutRemovedArcs(transition, "g.marriage.remove");
 
-            this._svg
-                .selectAll("g.marriage.remove g.arc path")
-                .transition(transition)
-                .style("fill", () => this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)")
-                .style("opacity", () => this._configuration.hideEmptySegments ? 1e-6 : null);
+            // Fade in new arcs with family colors
+            this.fadeInNewArcs(transition, "g.person", (datum) =>
+                datum?.data?.data?.familyColor || null);
+            this.fadeInNewArcs(transition, "g.marriage", (datum) =>
+                FamilyColor.getMarriageColor(datum));
 
-            // Fade in new person arcs (fill + opacity in one transition
-            // so D3 does not replace a prior transition on the same element)
-            this._svg
-                .selectAll("g.person.new g.arc path")
-                .each(function () {
-                    const person = d3.select(this.closest("g.person"));
-                    const datum = person.datum();
-                    const target = (that._configuration.showFamilyColors && datum && datum.data.data.familyColor)
-                        ? datum.data.data.familyColor
-                        : "rgb(250, 250, 250)";
-
-                    d3.select(this)
-                        .transition(transition)
-                        .style("fill", target)
-                        .style("opacity", () => that._configuration.hideEmptySegments ? 1 : null);
-                });
-
-            // Transition family colors on updated (existing) arcs
-            if (this._configuration.showFamilyColors) {
-                this._svg
-                    .selectAll("g.person.update g.arc path")
-                    .each(function () {
-                        const datum = d3.select(this.closest("g.person")).datum();
-
-                        if (datum && datum.data.data.familyColor) {
-                            d3.select(this)
-                                .transition(transition)
-                                .style("fill", datum.data.data.familyColor);
-                        }
-                    });
-            }
-
-            // Fade in new marriage arcs
-            this._svg
-                .selectAll("g.marriage.new g.arc path")
-                .each(function () {
-                    const datum = d3.select(this.closest("g.marriage")).datum();
-                    const color = that._configuration.showFamilyColors
-                        ? FamilyColor.getMarriageColor(datum)
-                        : null;
-                    const target = color || "rgb(250, 250, 250)";
-
-                    d3.select(this)
-                        .transition(transition)
-                        .style("fill", target)
-                        .style("opacity", () => that._configuration.hideEmptySegments ? 1 : null);
-                });
-
-            // Transition family colors on updated marriage arcs
-            if (this._configuration.showFamilyColors) {
-                this._svg
-                    .selectAll("g.marriage.update g.arc path")
-                    .each(function () {
-                        const datum = d3.select(this.closest("g.marriage")).datum();
-                        const color = FamilyColor.getMarriageColor(datum);
-
-                        if (color) {
-                            d3.select(this)
-                                .transition(transition)
-                                .style("fill", color);
-                        }
-                    });
-            }
+            // Transition family colors on updated arcs
+            this.transitionUpdatedArcs(transition, "g.person", (datum) =>
+                datum?.data?.data?.familyColor || null);
+            this.transitionUpdatedArcs(transition, "g.marriage", (datum) =>
+                FamilyColor.getMarriageColor(datum));
 
             // Fade out all old elements
             this._svg
@@ -266,17 +220,35 @@ export default class Update {
                 .selectAll("g.separatorGroup line:not(.old)")
                 .transition(transition)
                 .style("opacity", 1);
+        }).catch((error) => {
+            console.error("Fan chart update failed:", error);
+
+            // Clean up stale CSS classes left by a partial update
+            this._svg
+                .selectAll("g.person, g.marriage")
+                .classed("new", false)
+                .classed("update", false)
+                .classed("remove", false);
+
+            // Restore interactivity via the once-guarded callback
+            onceCallback();
         });
     }
 
     /**
-     * Function is executed as callback after all transitions are done in update method.
+     * Post-transition cleanup: removes empty arc paths (when hideEmptySegments
+     * is set), strips inline transition styles, restores CSS-class-based family
+     * colors, removes update/new/remove class flags, purges orphaned path and
+     * clipPath definitions from SVG defs, and finally invokes the callback.
      *
-     * @param {Function} callback The callback method to execute after the update
+     * @param {Function} callback Called after all cleanup is finished
      *
      * @private
      */
     updateDone(callback) {
+        // Reset tooltip pinned state so mouseleave works on newly rendered arcs
+        this._svg.div.property("active", false);
+
         // Remove arc if segments should be hidden
         if (this._configuration.hideEmptySegments) {
             this._svg
@@ -292,55 +264,17 @@ export default class Update {
 
         // Remove styles so CSS classes may work correct, Uses a small timer as animation seems not
         // to be done already if the point is reached
-        const cleanupTimer = d3.timer(() => {
-            this._svg
-                .selectAll("g.person g.arc path")
-                .attr("style", null);
+        d3.timeout(() => {
+            this._svg.selectAll("g.person g.arc path").attr("style", null);
+            this._svg.selectAll("g.marriage g.arc path").attr("style", null);
 
-            // Re-apply family-branch colors after clearing transition styles
-            if (this._configuration.showFamilyColors) {
-                this._svg
-                    .selectAll("g.person")
-                    .each(function () {
-                        const datum = d3.select(this).datum();
+            this.restoreFamilyColors("g.person", (datum) =>
+                datum?.data?.data?.familyColor || null);
+            this.restoreFamilyColors("g.marriage", (datum) =>
+                FamilyColor.getMarriageColor(datum));
 
-                        if (datum && datum.data.data.familyColor) {
-                            d3.select(this)
-                                .select("g.arc path")
-                                .style("fill", datum.data.data.familyColor);
-                        }
-                    });
-            }
-
-            this._svg
-                .selectAll("g.person g.name, g.person g.color, g.person g.image")
-                .style("opacity", null);
-
-            this._svg
-                .selectAll("g.marriage g.arc path")
-                .attr("style", null);
-
-            // Re-apply parents' family colors on marriage arcs
-            if (this._configuration.showFamilyColors) {
-                this._svg
-                    .selectAll("g.marriage")
-                    .each(function () {
-                        const datum = d3.select(this).datum();
-                        const color = FamilyColor.getMarriageColor(datum);
-
-                        if (color) {
-                            d3.select(this)
-                                .select("g.arc path")
-                                .style("fill", color);
-                        }
-                    });
-            }
-
-            this._svg
-                .selectAll("g.marriage g.name")
-                .style("opacity", null);
-
-            cleanupTimer.stop();
+            this._svg.selectAll("g.person g.name, g.person g.color, g.person g.image").style("opacity", null);
+            this._svg.selectAll("g.marriage g.name").style("opacity", null);
         }, 10);
 
         this._svg
@@ -416,29 +350,136 @@ export default class Update {
     }
 
     /**
-     * Helper method to execute callback method after all transitions are done of a selection.
+     * Re-applies family colors on arc paths after clearing transition styles.
      *
-     * @param {Transition} transition D3 transition object
-     * @param {Function}   callback   Callback method
+     * @param {string}   groupSelector The group type selector (e.g. "g.person")
+     * @param {Function} getColor      Extracts the color from a datum
+     *
+     * @private
+     */
+    restoreFamilyColors(groupSelector, getColor) {
+        if (!this._configuration.showFamilyColors) {
+            return;
+        }
+
+        this._svg
+            .selectAll(groupSelector)
+            .each(function () {
+                const datum = d3.select(this).datum();
+                const color = getColor(datum);
+
+                if (color) {
+                    d3.select(this)
+                        .select("g.arc path")
+                        .style("fill", color);
+                }
+            });
+    }
+
+    /**
+     * Fades out removed arc paths with a transition.
+     *
+     * @param {Transition} transition
+     * @param {string}     selector   The group selector (e.g. "g.person.remove")
+     *
+     * @private
+     */
+    fadeOutRemovedArcs(transition, selector) {
+        this._svg
+            .selectAll(`${selector} g.arc path`)
+            .transition(transition)
+            .style("fill", () => this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)")
+            .style("opacity", () => this._configuration.hideEmptySegments ? 1e-6 : null);
+    }
+
+    /**
+     * Fades in new arc paths with their family color.
+     *
+     * @param {Transition} transition
+     * @param {string}     groupSelector The group type selector (e.g. "g.person")
+     * @param {Function}   getColor      Extracts the color from a datum
+     *
+     * @private
+     */
+    fadeInNewArcs(transition, groupSelector, getColor) {
+        const config = this._configuration;
+
+        this._svg
+            .selectAll(`${groupSelector}.new g.arc path`)
+            .each(function () {
+                const datum = d3.select(this.closest(groupSelector)).datum();
+                const color = config.showFamilyColors ? getColor(datum) : null;
+                const target = color || "rgb(250, 250, 250)";
+
+                d3.select(this)
+                    .transition(transition)
+                    .style("fill", target)
+                    .style("opacity", () => config.hideEmptySegments ? 1 : null);
+            });
+    }
+
+    /**
+     * Transitions family colors on updated (existing) arc paths.
+     *
+     * @param {Transition} transition
+     * @param {string}     groupSelector The group type selector (e.g. "g.person")
+     * @param {Function}   getColor      Extracts the color from a datum
+     *
+     * @private
+     */
+    transitionUpdatedArcs(transition, groupSelector, getColor) {
+        if (!this._configuration.showFamilyColors) {
+            return;
+        }
+
+        this._svg
+            .selectAll(`${groupSelector}.update g.arc path`)
+            .each(function () {
+                const datum = d3.select(this.closest(groupSelector)).datum();
+                const color = getColor(datum);
+
+                if (color) {
+                    d3.select(this)
+                        .transition(transition)
+                        .style("fill", color);
+                }
+            });
+    }
+
+    /**
+     * Calls callback once after every pending transition in the selection has
+     * either ended or been interrupted. If no transitions were scheduled (empty
+     * selection), the callback fires asynchronously on the next event-loop tick
+     * so callers can always assume async delivery.
+     *
+     * @param {Transition} transition The D3 transition to monitor
+     * @param {Function}   callback   Invoked with the transition as `this` when all transitions settle
      *
      * @private
      */
     endAll(transition, callback) {
         let activeCount = 0;
+        let started = false;
+
+        const onComplete = () => {
+            if (!--activeCount) {
+                callback.apply(transition);
+            }
+        };
 
         transition
-            .on("start", () => ++activeCount)
-            .on("end", () => {
-                if (!--activeCount) {
-                    callback.apply(transition);
-                }
-            });
+            .on("start", () => {
+                started = true;
+                ++activeCount;
+            })
+            .on("end", onComplete)
+            .on("interrupt", onComplete);
 
-        // Fire callback if no transitions started (empty selection).
+        // Fire callback if no transitions were started (empty selection).
         // setTimeout defers to after the current event-loop tick so D3
         // has had a chance to schedule any transitions first.
         setTimeout(() => {
-            if (activeCount === 0) {
+            if (!started) {
                 callback.apply(transition);
             }
         }, 0);

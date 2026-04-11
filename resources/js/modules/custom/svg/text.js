@@ -10,7 +10,12 @@ import Geometry, {MATH_RAD2DEG} from "./geometry";
 import measureText from "../../lib/chart/text/measure";
 
 /**
- * The class handles all the text and path elements.
+ * Generates all text elements for a single person arc: first names, last names,
+ * alternative name, and date lines. Inner arcs (depth 1 to numberOfInnerCircles)
+ * render text along arc-shaped <path> definitions; outer arcs use rotated plain
+ * <text> elements. Slot positions are calculated to vertically center the full
+ * text block within the arc band with tighter intra-group and wider inter-group
+ * spacing. Long names and dates are truncated with an ellipsis to fit.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -18,8 +23,6 @@ import measureText from "../../lib/chart/text/measure";
  */
 export default class Text {
     /**
-     * Constructor.
-     *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      * @param {Geometry}      [geometry]    Optional geometry instance (created from config if omitted)
@@ -37,206 +40,12 @@ export default class Text {
      * @param {Object}    datum  The D3 data object
      */
     createLabels(parent, datum) {
-        // Calculate dynamic slot positions based on which content is present
         const positions = this.calculateSlotPositions(datum);
 
-        // Inner labels
         if (this.isInnerLabel(datum)) {
-            const parentId = d3.select(parent.node().parentNode).attr("id");
-            const nameGroups = this.createNamesData(datum);
-
-            const textStartOffset = "25%";
-
-            // The textPath element must be contained individually in a text element, otherwise the exported
-            // chart will not be drawn correctly in Inkscape (actually this is not necessary, the browsers
-            // display the chart correctly).
-
-            const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
-
-            nameGroups.forEach((nameGroup, index) => {
-                const slot = nameSlots[index];
-                const position = positions.get(slot);
-                const availableWidth = this.getAvailableWidth(datum, position);
-                const pathId = this.createPathDefinition(parentId, slot, position, datum);
-                const textPath = parent
-                    .append("text")
-                    .append("textPath")
-                    .attr("href", "#" + pathId)
-                    .attr("startOffset", textStartOffset);
-
-                this.addNameElements(
-                    textPath,
-                    this.truncateNamesData(
-                        textPath,
-                        nameGroup,
-                        availableWidth,
-                    ),
-                );
-            });
-
-            // Alternative names
-            if (datum.data.data.alternativeName !== "") {
-                const slot = Text.TEXT_SLOT.ALTERNATIVE_NAME;
-                const position = positions.get(slot);
-                const pathId = this.createPathDefinition(parentId, slot, position, datum);
-                const availableWidth = this.getAvailableWidth(datum, position);
-                const nameGroup = this.createAlternativeNamesData(datum);
-
-                const textPath = parent
-                    .append("text")
-                    .append("textPath")
-                    .attr("href", "#" + pathId)
-                    .attr("startOffset", textStartOffset)
-                    .classed("wt-chart-box-name-alt", true)
-                    .classed("rtl", datum.data.data.isAltRtl);
-
-                this.addNameElements(
-                    textPath,
-                    this.truncateNamesData(
-                        textPath,
-                        nameGroup,
-                        availableWidth,
-                    ),
-                );
-            }
-
-            // Birth and death date
-            if (datum.data.data.timespan !== "") {
-                const timespanLines = datum.data.data.timespan.split("\n");
-                const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
-
-                timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
-                    const slot = dateSlots[lineIndex];
-                    const position = positions.get(slot);
-                    const pathId = this.createPathDefinition(parentId, slot, position, datum);
-                    const textPath = parent
-                        .append("text")
-                        .append("textPath")
-                        .attr("href", "#" + pathId)
-                        .attr("startOffset", textStartOffset)
-                        .attr("class", "date");
-
-                    textPath.append("title")
-                        .text(line);
-
-                    const tspan = textPath.append("tspan")
-                        .text(line);
-
-                    const availableWidth = this.getAvailableWidth(datum, position);
-
-                    if (this.getTextLength(textPath) > availableWidth) {
-                        textPath.selectAll("tspan")
-                            .each(this.truncateDate(textPath, availableWidth));
-
-                        tspan.text(tspan.text() + "\u2026");
-                    }
-                });
-            }
-
-        // Outer labels
+            this.createInnerLabels(parent, datum, positions);
         } else {
-            // The outermost circles show the complete name and do
-            // not distinguish between first name, last name and dates
-            if (datum.depth >= 7) {
-                const [first, ...last] = this.createNamesData(datum);
-                const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.FIRST_NAMES));
-
-                // Merge the firstname and lastname groups, as we display the whole name in one line
-                const combined = [].concat(first, typeof last[0] !== "undefined" ? last[0] : []);
-
-                const text1 = parent
-                    .append("text")
-                    .attr("dominant-baseline", "middle");
-
-                this.addNameElements(
-                    text1,
-                    this.truncateNamesData(
-                        text1,
-                        combined,
-                        availableWidth,
-                    ),
-                );
-            } else {
-                const nameGroups = this.createNamesData(datum);
-                const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
-
-                nameGroups.forEach((nameGroup, index) => {
-                    const availableWidth = this.getAvailableWidth(datum, positions.get(nameSlots[index]));
-                    const text = parent
-                        .append("text")
-                        .attr("dominant-baseline", "middle");
-
-                    this.addNameElements(
-                        text,
-                        this.truncateNamesData(
-                            text,
-                            nameGroup,
-                            availableWidth,
-                        ),
-                    );
-                });
-
-                // Alternative name
-                if (datum.data.data.alternativeName !== "") {
-                    const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.ALTERNATIVE_NAME));
-                    const nameGroup = this.createAlternativeNamesData(datum);
-
-                    const text = parent
-                        .append("text")
-                        .attr("dominant-baseline", "middle")
-                        .classed("wt-chart-box-name-alt", true)
-                        .classed("rtl", datum.data.data.isAltRtl);
-
-                    this.addNameElements(
-                        text,
-                        this.truncateNamesData(
-                            text,
-                            nameGroup,
-                            availableWidth,
-                        ),
-                    );
-                }
-
-                // Birth and death date
-                if (datum.depth < 6) {
-                    if (datum.data.data.timespan !== "") {
-                        const timespanLines = datum.data.data.timespan.split("\n");
-                        const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
-
-                        timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
-                            const text = parent
-                                .append("text")
-                                .attr("class", "date")
-                                .attr("dominant-baseline", "middle");
-
-                            text.append("title")
-                                .text(line);
-
-                            const tspan = text.append("tspan")
-                                .text(line);
-
-                            const availableWidth = this.getAvailableWidth(datum, positions.get(dateSlots[lineIndex]));
-
-                            if (this.getTextLength(text) > availableWidth) {
-                                text.selectAll("tspan")
-                                    .each(this.truncateDate(text, availableWidth));
-
-                                tspan.text(tspan.text() + "\u2026");
-                            }
-                        });
-                    }
-                }
-            }
-
-            // Remove underline decoration for outermost generations
-            // where it shifts the visual center and wastes space
-            if (datum.depth >= 8) {
-                parent.selectAll("tspan[text-decoration]")
-                    .attr("text-decoration", null);
-            }
-
-            // Rotate outer labels in the right position
-            this.transformOuterText(parent, datum);
+            this.createOuterLabels(parent, datum, positions);
         }
 
         // Note: Marriage dates are rendered separately in the marriage arc layer (chart.js),
@@ -244,7 +53,189 @@ export default class Text {
     }
 
     /**
-     * Creates the data array for the names in top/bottom layout.
+     * Creates labels for inner arc generations (text along arc paths).
+     *
+     * @param {Selection} parent
+     * @param {Object}    datum
+     * @param {Map}       positions
+     *
+     * @private
+     */
+    createInnerLabels(parent, datum, positions) {
+        const parentId = d3.select(parent.node().parentNode).attr("id");
+        const nameGroups = this.createNamesData(datum);
+        const textStartOffset = "25%";
+        const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+
+        nameGroups.forEach((nameGroup, index) => {
+            const slot = nameSlots[index];
+            const position = positions.get(slot);
+            const availableWidth = this.getAvailableWidth(datum, position);
+            const pathId = this.createPathDefinition(parentId, slot, position, datum);
+            const textPath = parent
+                .append("text")
+                .append("textPath")
+                .attr("href", "#" + pathId)
+                .attr("startOffset", textStartOffset);
+
+            this.addNameElements(
+                textPath,
+                this.truncateNamesData(textPath, nameGroup, availableWidth),
+            );
+        });
+
+        if (datum.data.data.alternativeName !== "") {
+            const slot = Text.TEXT_SLOT.ALTERNATIVE_NAME;
+            const position = positions.get(slot);
+            const pathId = this.createPathDefinition(parentId, slot, position, datum);
+            const availableWidth = this.getAvailableWidth(datum, position);
+            const nameGroup = this.createAlternativeNamesData(datum);
+
+            const textPath = parent
+                .append("text")
+                .append("textPath")
+                .attr("href", "#" + pathId)
+                .attr("startOffset", textStartOffset)
+                .classed("wt-chart-box-name-alt", true)
+                .classed("rtl", datum.data.data.isAltRtl);
+
+            this.addNameElements(
+                textPath,
+                this.truncateNamesData(textPath, nameGroup, availableWidth),
+            );
+        }
+
+        this.renderTimespanLines(parent, datum, positions, (slot, position) => {
+            const pathId = this.createPathDefinition(parentId, slot, position, datum);
+
+            return parent
+                .append("text")
+                .append("textPath")
+                .attr("href", "#" + pathId)
+                .attr("startOffset", textStartOffset)
+                .attr("class", "date");
+        });
+    }
+
+    /**
+     * Creates labels for outer arc generations (plain text elements).
+     *
+     * @param {Selection} parent
+     * @param {Object}    datum
+     * @param {Map}       positions
+     *
+     * @private
+     */
+    createOuterLabels(parent, datum, positions) {
+        if (datum.depth >= 7) {
+            const nameGroups = this.createNamesData(datum);
+            const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.FIRST_NAMES));
+            const combined = nameGroups.flat();
+
+            const text = parent
+                .append("text")
+                .attr("dominant-baseline", "middle");
+
+            this.addNameElements(
+                text,
+                this.truncateNamesData(text, combined, availableWidth),
+            );
+        } else {
+            const nameGroups = this.createNamesData(datum);
+            const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+
+            nameGroups.forEach((nameGroup, index) => {
+                const availableWidth = this.getAvailableWidth(datum, positions.get(nameSlots[index]));
+                const text = parent
+                    .append("text")
+                    .attr("dominant-baseline", "middle");
+
+                this.addNameElements(
+                    text,
+                    this.truncateNamesData(text, nameGroup, availableWidth),
+                );
+            });
+
+            if (datum.data.data.alternativeName !== "") {
+                const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.ALTERNATIVE_NAME));
+                const nameGroup = this.createAlternativeNamesData(datum);
+
+                const text = parent
+                    .append("text")
+                    .attr("dominant-baseline", "middle")
+                    .classed("wt-chart-box-name-alt", true)
+                    .classed("rtl", datum.data.data.isAltRtl);
+
+                this.addNameElements(
+                    text,
+                    this.truncateNamesData(text, nameGroup, availableWidth),
+                );
+            }
+
+            // Depth 6+ outer arcs are too narrow for date text
+            if (datum.depth < 6) {
+                // Outer labels use plain text elements — slot/position unused
+                // since positioning is handled by transformOuterText
+                this.renderTimespanLines(parent, datum, positions, (_slot) => parent
+                    .append("text")
+                    .attr("class", "date")
+                    .attr("dominant-baseline", "middle"));
+            }
+        }
+
+        if (datum.depth >= 8) {
+            parent.selectAll("tspan[text-decoration]")
+                .attr("text-decoration", null);
+        }
+
+        this.transformOuterText(parent, datum);
+    }
+
+    /**
+     * Appends up to two date lines from datum.data.data.timespan to parent,
+     * truncating each with an ellipsis when it exceeds the available arc width.
+     * The createElement callback abstracts away the inner/outer difference:
+     * inner labels pass a textPath creator, outer labels pass a plain text creator.
+     *
+     * @param {Selection} parent
+     * @param {Object}    datum
+     * @param {Map}       positions        Slot-to-position map from calculateSlotPositions()
+     * @param {Function}  createElement    Called as (slot, position) => container element
+     *
+     * @private
+     */
+    renderTimespanLines(parent, datum, positions, createElement) {
+        if (datum.data.data.timespan === "") {
+            return;
+        }
+
+        const timespanLines = datum.data.data.timespan.split("\n");
+        const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
+
+        timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
+            const slot = dateSlots[lineIndex];
+            const position = positions.get(slot);
+            const container = createElement(slot, position);
+
+            container.append("title").text(line);
+
+            const tspan = container.append("tspan").text(line);
+            const availableWidth = this.getAvailableWidth(datum, position);
+
+            if (this.getTextLength(container) > availableWidth) {
+                container.selectAll("tspan")
+                    .each(this.truncateDate(container, availableWidth));
+
+                tspan.text(tspan.text() + "\u2026");
+            }
+        });
+    }
+
+    /**
+     * Splits the individual's name into two arrays: first names and last names,
+     * preserving the order they appear in the full name string. Each entry carries
+     * flags for preferred-name underline and last-name bold styling. Returns
+     * [firstNamesArray, lastNamesArray].
      *
      * @param {NameElementData} datum
      *
@@ -253,7 +244,9 @@ export default class Text {
      * @private
      */
     createNamesData(datum) {
-        /** @var {LabelElementData[][]} names */
+        /**
+         * @var {LabelElementData[][]} names
+         */
         const names = {};
         let minPosFirstnames = Number.MAX_SAFE_INTEGER;
         let minPosLastnames = Number.MAX_SAFE_INTEGER;
@@ -263,11 +256,11 @@ export default class Text {
 
         // Iterate over the individual name components and determine their position in the overall
         // name and insert the component at the corresponding position in the result object.
-        for (const i in datum.data.data.firstNames) {
-            const pos = datum.data.data.name.indexOf(datum.data.data.firstNames[i], firstnameOffset);
+        for (const firstName of datum.data.data.firstNames) {
+            const pos = datum.data.data.name.indexOf(firstName, firstnameOffset);
 
             if (pos !== -1) {
-                firstnameOffset = pos + datum.data.data.firstNames[i].length;
+                firstnameOffset = pos + firstName.length;
 
                 if (pos < minPosFirstnames) {
                     minPosFirstnames = pos;
@@ -276,8 +269,8 @@ export default class Text {
                 firstnameMap.set(
                     pos,
                     {
-                        label: datum.data.data.firstNames[i],
-                        isPreferred: datum.data.data.firstNames[i] === datum.data.data.preferredName,
+                        label: firstName,
+                        isPreferred: firstName === datum.data.data.preferredName,
                         isLastName: false,
                         isNameRtl: datum.data.data.isNameRtl,
                     },
@@ -290,15 +283,15 @@ export default class Text {
         let lastnameOffset = 0;
         const lastnameMap = new Map();
 
-        for (const i in datum.data.data.lastNames) {
+        for (const lastName of datum.data.data.lastNames) {
             let pos;
 
             // Check if last name already exists in first names list, in case first name equals last name
             do {
-                pos = datum.data.data.name.indexOf(datum.data.data.lastNames[i], lastnameOffset);
+                pos = datum.data.data.name.indexOf(lastName, lastnameOffset);
 
                 if ((pos !== -1) && firstnameMap.has(pos)) {
-                    lastnameOffset += pos + datum.data.data.lastNames[i].length;
+                    lastnameOffset = pos + lastName.length;
                 }
             } while ((pos !== -1) && firstnameMap.has(pos));
 
@@ -312,7 +305,7 @@ export default class Text {
                 lastnameMap.set(
                     pos,
                     {
-                        label: datum.data.data.lastNames[i],
+                        label: lastName,
                         isPreferred: false,
                         isLastName: true,
                         isNameRtl: datum.data.data.isNameRtl,
@@ -328,7 +321,8 @@ export default class Text {
     }
 
     /**
-     * Creates the data array for the alternative name.
+     * Splits the alternative name into per-word LabelElementData entries,
+     * each marked with the isAltRtl flag for correct bidirectional spacing.
      *
      * @param {NameElementData} datum
      *
@@ -337,33 +331,21 @@ export default class Text {
      * @private
      */
     createAlternativeNamesData(datum) {
-        const words = datum.data.data.alternativeName.split(/\s+/);
-
-        /** @var {LabelElementData[]} names */
-        let names = [];
-
-        // Append the alternative names
-        names = names.concat(
-            words.map((word) => {
-                return {
-                    label: word,
-                    isPreferred: false,
-                    isLastName: false,
-                    isNameRtl: datum.data.data.isAltRtl,
-                };
-            }),
-        );
-
-        return names;
+        return datum.data.data.alternativeName.split(/\s+/).map((word) => ({
+            label: word,
+            isPreferred: false,
+            isLastName: false,
+            isNameRtl: datum.data.data.isAltRtl,
+        }));
     }
 
     /**
-     * Creates a single <tspan> element for each single name and append it to the
-     * parent element. The "tspan" element containing the preferred name gets an
-     * additional underline style to highlight this one.
+     * Appends one <tspan> per name part to parent. Preferred names receive an
+     * underline decoration; last names receive the "lastName" CSS class. Adjacent
+     * name parts are spaced 0.25em apart (negated for RTL scripts).
      *
-     * @param {Selection}                       parent The parent element to which the <tspan> elements are to be attached
-     * @param {function(*): LabelElementData[]} data
+     * @param {Selection}         parent The <text> or <textPath> element to append spans to
+     * @param {LabelElementData[]} data  Array of name part descriptors
      *
      * @private
      */
@@ -385,11 +367,12 @@ export default class Text {
     }
 
     /**
-     * Creates the data array for the names.
+     * Reads the current font-size and font-weight from the parent element and
+     * delegates to truncateNames() with those metrics.
      *
-     * @param {Object}             parent
-     * @param {LabelElementData[]} names
-     * @param {number}             availableWidth
+     * @param {Selection}          parent         The <text> or <textPath> element whose font metrics to use
+     * @param {LabelElementData[]} names          The name parts to truncate
+     * @param {number}             availableWidth Maximum pixel width for the combined name string
      *
      * @return {LabelElementData[]}
      *
@@ -403,21 +386,29 @@ export default class Text {
     }
 
     /**
-     * Truncates the list of names.
+     * Reduces name parts to initial-letter abbreviations until the joined string
+     * fits within availableWidth. Abbreviation order: non-preferred given names
+     * first (least important), then the preferred given name, then last names
+     * (never dropped entirely). Works on a shallow clone so the caller's array
+     * is not mutated.
      *
-     * @param {LabelElementData[]} names          The names array
-     * @param {string}             fontSize       The font size
-     * @param {number}             fontWeight     The font weight
-     * @param {number}             availableWidth The available width
+     * @param {LabelElementData[]} names          Name parts to truncate
+     * @param {string}             fontSize       CSS font-size (e.g. "14px")
+     * @param {string}             fontWeight     CSS font-weight
+     * @param {number}             availableWidth Maximum pixel width for the full name string
      *
      * @return {LabelElementData[]}
      *
      * @private
      */
     truncateNames(names, fontSize, fontWeight, availableWidth) {
-        let text = names.map(item => item.label).join(" ");
+        // Shallow clone each name object to avoid mutating the caller's data.
+        // This is safe because all LabelElementData fields are primitives
+        // (label: string, isPreferred: bool, isLastName: bool, isNameRtl: bool).
+        const workNames = names.map(name => ({...name}));
+        let text = workNames.map(item => item.label).join(" ");
 
-        return names
+        return workNames
             // Start truncating from the last element to the first one
             .reverse()
             .map((name) => {
@@ -428,7 +419,7 @@ export default class Text {
                     if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
                         // Keep only the first letter
                         name.label = name.label.slice(0, 1) + ".";
-                        text = names.map(item => item.label).join(" ");
+                        text = workNames.map(item => item.label).join(" ");
                     }
                 }
 
@@ -440,7 +431,7 @@ export default class Text {
                     if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
                         // Keep only the first letter
                         name.label = name.label.slice(0, 1) + ".";
-                        text = names.map(item => item.label).join(" ");
+                        text = workNames.map(item => item.label).join(" ");
                     }
                 }
 
@@ -452,7 +443,7 @@ export default class Text {
                     if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
                         // Keep only the first letter
                         name.label = name.label.slice(0, 1) + ".";
-                        text = names.map(item => item.label).join(" ");
+                        text = workNames.map(item => item.label).join(" ");
                     }
                 }
 
@@ -463,13 +454,14 @@ export default class Text {
     }
 
     /**
-     * Measures the given text and return its width depending on the used font (including size and weight).
+     * Returns the pixel width of text rendered in the SVG's current font family
+     * at the given size and weight. Delegates to the shared canvas-based measure utility.
      *
      * @param {string} text
-     * @param {string} fontSize
-     * @param {number} fontWeight
+     * @param {string} fontSize   CSS font-size string (e.g. "14px")
+     * @param {string} fontWeight CSS font-weight (default 400)
      *
-     * @returns {number}
+     * @return {number}
      *
      * @private
      */
@@ -480,10 +472,16 @@ export default class Text {
     }
 
     /**
-     * Truncates a date value.
+     * Returns a callback suitable for use with D3's .each() that strips
+     * trailing characters from each <tspan> until the total text length of
+     * parent fits within availableWidth, removing a trailing period if present.
      *
-     * @param {Selection} parent         The parent (<text> or <textPath>) element containing the <tspan> child elements
-     * @param {number}    availableWidth The total available width the text could take
+     * @param {Selection} parent         The <text> or <textPath> containing the <tspan> children
+     * @param {number}    availableWidth Maximum pixel width before truncation kicks in
+     *
+     * @return {Function}
+     *
+     * @private
      */
     truncateDate(parent, availableWidth) {
         const that = this;
@@ -516,7 +514,9 @@ export default class Text {
      *
      * @param {Selection} parent The parent (<text> or <textPath>) element containing the <tspan> child elements
      *
-     * @returns {number}
+     * @return {number}
+     *
+     * @private
      */
     getTextLength(parent) {
         let totalWidth = 0;
@@ -530,13 +530,15 @@ export default class Text {
     }
 
     /**
-     * Returns TRUE if the depth of the element is in the inner range. So labels should
-     * be rendered along an arc path. Otherwise, returns FALSE to indicate the element
-     * is either the center one or an outer arc.
+     * Returns true for generations 1 to numberOfInnerCircles, which render
+     * text along curved arc paths. Returns false for the center node (depth 0)
+     * and for outer generations that use rotated plain text elements.
      *
-     * @param {Object} data The D3 data object
+     * @param {Object} data The D3 partition datum
      *
      * @return {boolean}
+     *
+     * @private
      */
     isInnerLabel(data) {
         // Note: The center element does not belong to the inner labels!
@@ -544,13 +546,20 @@ export default class Text {
     }
 
     /**
-     * Creates a new <path> definition and append it to the global definition list.
+     * Registers a circular arc <path> in SVG defs at the radial position for
+     * the given text slot. The path ID is derived from parentId and slot.index.
+     * During updates, if a path with that ID already exists, a numeric suffix
+     * is appended so old and new textPaths can coexist during the cross-fade.
+     * Reverses start/end angles for flipped labels in the bottom half of 360° charts.
      *
-     * @param {string} parentId The parent element id
-     * @param {number} index    Index position of an element in parent container. Required to create a unique path id.
-     * @param {Object} data     The D3 data object
+     * @param {string} parentId The ID of the parent person/marriage element
+     * @param {Object} slot     One of the TEXT_SLOT constants (carries .index for the path ID)
+     * @param {{normal: number, flipped: number}} position Radial percentage positions for this slot
+     * @param {Object} data     The D3 partition datum
      *
-     * @return {string} The id of the newly created path element
+     * @return {string} The id attribute of the newly created <path> element
+     *
+     * @private
      */
     createPathDefinition(parentId, slot, position, data) {
         let pathId = "path-" + parentId + "-" + slot.index;
@@ -596,6 +605,8 @@ export default class Text {
      * @param {number} x1    The right edge (x1) of the rectangle
      *
      * @return {boolean}
+     *
+     * @private
      */
     isPositionFlipped(depth, x0, x1) {
         return this._geometry.isPositionFlipped(depth, x0, x1);
@@ -623,6 +634,8 @@ export default class Text {
      * @param {Object} datum The D3 data object
      *
      * @return {Map<Object, {normal: number, flipped: number}>}
+     *
+     * @private
      */
     calculateSlotPositions(datum) {
         // Build semantic groups: names, alternative name, dates
@@ -717,19 +730,24 @@ export default class Text {
      * @param {{normal: number, flipped: number}} position        The calculated position for this slot
      *
      * @return {number}
+     *
+     * @private
      */
     getTextOffset(positionFlipped, position) {
         return positionFlipped ? position.flipped : position.normal;
     }
 
     /**
-     * Calculate the available text width. Depending on the depth of an entry in
-     * the chart the available width differs.
+     * Computes the maximum pixel width available for a text line at the given
+     * radial slot. Outer arcs use a fixed arc-height-based width; inner arcs
+     * use the arc chord length at the slot's radial percentage; the center
+     * circle uses a fraction of its diameter. Image presence further reduces
+     * the width by imageSize + 10 px gap.
      *
-     * @param {Object} data  The D3 data object
-     * @param {number} index The index position of element in parent container.
+     * @param {Object}                            data     The D3 partition datum
+     * @param {{normal: number, flipped: number}} position Radial slot position from calculateSlotPositions()
      *
-     * @returns {number} Calculated available width
+     * @return {number}
      *
      * @private
      */
@@ -766,13 +784,16 @@ export default class Text {
     }
 
     /**
-     * Transform the D3 <text> elements in the group. Rotate each <text> element depending on its offset,
-     * so that they are equally positioned inside the arc.
+     * Positions all <text> elements within the label group. For the center node
+     * (depth 0), stacks them vertically using dy offsets, accounting for a
+     * thumbnail image above the text when present. For outer arcs, applies a
+     * rotate+translate transform to align each line with the segment's angular
+     * center using semantic group spacing (see calculateOuterSlotPositions).
      *
-     * @param {Selection} parent The D3 parent group object
-     * @param {Object}    datum  The The D3 data object
+     * @param {Selection} parent The label <g> element whose <text> children to position
+     * @param {Object}    datum  The D3 partition datum
      *
-     * @public
+     * @private
      */
     transformOuterText(parent, datum) {
         const that = this;
@@ -884,6 +905,8 @@ export default class Text {
      * @param {Selection} textElements The text elements to position
      *
      * @return {number[]} Angular offset in degrees for each text element
+     *
+     * @private
      */
     calculateOuterSlotPositions(datum, textElements) {
         // Build element groups: [names...], [dates...]

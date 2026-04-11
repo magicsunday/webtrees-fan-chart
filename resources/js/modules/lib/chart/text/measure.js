@@ -8,14 +8,16 @@
 let measureCanvas = null;
 
 /**
- * Measures the given text and return its width depending on the used font (including size and weight).
+ * Returns the rendered pixel width of text using a lazily-created off-screen
+ * canvas. The canvas is reused across calls; the font property is only updated
+ * when it changes to avoid unnecessary state mutations.
  *
- * @param {string} text       The text whose length is to be determined
- * @param {string} fontFamily The font family used to calculate the length
- * @param {string} fontSize   The font size used to calculate the length
- * @param {number} fontWeight The font weight used to calculate the length
+ * @param {string} text       The text to measure
+ * @param {string} fontFamily CSS font-family string
+ * @param {string} fontSize   CSS font-size string (e.g. "14px")
+ * @param {number} fontWeight CSS font-weight (default 400)
  *
- * @returns {number}
+ * @return {number} Width of the text in pixels
  */
 export default function(text, fontFamily, fontSize, fontWeight = 400) {
     if (measureCanvas === null) {

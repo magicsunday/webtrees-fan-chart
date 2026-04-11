@@ -13,7 +13,11 @@ export const MATH_RAD2DEG = 180 / Math.PI;
 const MATH_PI2 = Math.PI * 2;
 
 /**
- * This class handles the geometric methods.
+ * All radial and angular geometry calculations for the fan chart. Converts
+ * D3 partition coordinates (depth, x0, x1) into pixel radii and radian
+ * angles, computes font sizes capped to the segment width, and determines
+ * whether outer-arc labels need to be flipped for the bottom half of a
+ * 360° chart.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -21,8 +25,6 @@ const MATH_PI2 = Math.PI * 2;
  */
 export default class Geometry {
     /**
-     * Constructor.
-     *
      * @param {Configuration} configuration The application configuration
      */
     constructor(configuration) {
@@ -30,9 +32,10 @@ export default class Geometry {
     }
 
     /**
-     * @return {number}
+     * Start angle of the fan in radians. For a 90° chart the fan begins at 0
+     * (top); for all others it is centered on 0 (i.e. -fanDegree/2 radians).
      *
-     * @private
+     * @return {number}
      */
     get startPi() {
         if (this._configuration.fanDegree === 90) {
@@ -43,9 +46,10 @@ export default class Geometry {
     }
 
     /**
-     * @return {number}
+     * End angle of the fan in radians. Symmetric with startPi for centered fans;
+     * equals fanDegree in radians for the 90° quarter-circle variant.
      *
-     * @private
+     * @return {number}
      */
     get endPi() {
         if (this._configuration.fanDegree === 90) {
@@ -56,18 +60,21 @@ export default class Geometry {
     }
 
     /**
-     * Scale the angles linear across the circle.
+     * D3 linear scale that maps D3 partition x-coordinates [0, 1] to the fan's
+     * angular range [startPi, endPi] in radians.
      *
-     * @return {number}
+     * @return {Function}
      */
     get scale() {
         return d3.scaleLinear().range([this.startPi, this.endPi]);
     }
 
     /**
-     * Get the inner radius depending on the depth of an element.
+     * Inner radius in pixels for the arc at the given depth. The center node
+     * (depth 0) has an inner radius of 0. Inner arcs use innerArcHeight;
+     * outer arcs beyond numberOfInnerCircles use outerArcHeight instead.
      *
-     * @param {number} depth The depth of the element inside the chart
+     * @param {number} depth Hierarchy depth (0 = center node)
      *
      * @return {number}
      */
@@ -89,9 +96,10 @@ export default class Geometry {
     }
 
     /**
-     * Get the outer radius depending on the depth of an element.
+     * Outer radius in pixels for the arc at the given depth. The center node
+     * (depth 0) outer radius equals centerCircleRadius.
      *
-     * @param {number} depth The depth of the element inside the chart
+     * @param {number} depth Hierarchy depth (0 = center node)
      *
      * @return {number}
      */
@@ -113,9 +121,10 @@ export default class Geometry {
     }
 
     /**
-     * Get the center radius.
+     * Midpoint radius between innerRadius and outerRadius at the given depth,
+     * used for text path placement and image positioning.
      *
-     * @param {number} depth The depth of the element inside the chart
+     * @param {number} depth Hierarchy depth
      *
      * @return {number}
      */
@@ -124,11 +133,11 @@ export default class Geometry {
     }
 
     /**
-     * Get an radius relative to the outer radius adjusted by the given
-     * position in percent.
+     * Interpolates between innerRadius and outerRadius by position percent.
+     * Used to place text paths at a specific vertical position within an arc band.
      *
-     * @param {number} depth    The depth of the element inside the chart
-     * @param {number} position Percent offset (0 = inner radius, 100 = outer radius)
+     * @param {number} depth    Hierarchy depth
+     * @param {number} position Percentage within the arc band (0 = inner edge, 100 = outer edge)
      *
      * @return {number}
      */
@@ -139,9 +148,9 @@ export default class Geometry {
     }
 
     /**
-     * Calculates the angle in radians.
+     * Converts a partition x-coordinate to radians, clamped to [startPi, endPi].
      *
-     * @param {number} value The starting point of the rectangle
+     * @param {number} value Partition x-coordinate in [0, 1]
      *
      * @return {number}
      */
@@ -150,37 +159,37 @@ export default class Geometry {
     }
 
     /**
-     * Gets the start angle in radians.
+     * Start angle in radians for an arc at the given depth. The center node
+     * always starts at 0; all others map x0 through calcAngle.
      *
-     * @param {number} depth The depth of the element inside the chart
-     * @param {number} x0    The left edge (x0) of the rectangle
+     * @param {number} depth Hierarchy depth
+     * @param {number} x0    Left partition boundary of the node
      *
      * @return {number}
      */
     startAngle(depth, x0) {
-        // Starting from the left edge (x0) of the rectangle
         return (depth === 0) ? 0 : this.calcAngle(x0);
     }
 
     /**
-     * Gets the end angle in radians.
+     * End angle in radians for an arc at the given depth. The center node
+     * always spans the full circle (2π); all others map x1 through calcAngle.
      *
-     * @param {number} depth The depth of the element inside the chart
-     * @param {number} x1    The right edge (x1) of the rectangle
+     * @param {number} depth Hierarchy depth
+     * @param {number} x1    Right partition boundary of the node
      *
      * @return {number}
      */
     endAngle(depth, x1) {
-        // Starting from the right edge (x1) of the rectangle
         return (depth === 0) ? MATH_PI2 : this.calcAngle(x1);
     }
 
     /**
-     * Get an radius relative to the outer radius adjusted by the given
-     * position in percent.
+     * Arc length in pixels at the given radial position inside the arc band.
+     * Used to determine whether truncated text fits within the segment.
      *
-     * @param {Object} datum    The D3 data object
-     * @param {number} position The percent offset (0 = inner radius, 100 = outer radius)
+     * @param {Object} datum    D3 partition datum (needs depth, x0, x1)
+     * @param {number} position Percentage within the arc band (0 = inner, 100 = outer)
      *
      * @return {number}
      */
@@ -190,10 +199,12 @@ export default class Geometry {
     }
 
     /**
-     * Get the scaled font size for a given depth. Outer circles (beyond the
-     * inner circle count) get a +1 bump before the depth is subtracted.
+     * Computes the effective font size in pixels for a node at datum.depth.
+     * Starts from the base fontSize, subtracts depth, applies fontScale, and
+     * for outer arcs caps the result so text fits within 55% of the angular
+     * segment width (80% for single-line arcs at depth ≥ 7).
      *
-     * @param {Object} datum The D3 data object
+     * @param {Object} datum D3 partition datum (needs depth, x0, x1)
      *
      * @return {number}
      */
@@ -223,12 +234,14 @@ export default class Geometry {
     }
 
     /**
-     * Check for the 360-degree chart if the current arc labels should
-     * be flipped for easier reading (bottom half of the chart).
+     * Returns true when the arc's midpoint falls in the bottom half of a full
+     * 360° chart (between 90° and 270°), indicating that text path direction
+     * should be reversed so labels read left-to-right instead of upside-down.
+     * Always returns false for fan degrees ≤ 270° or the center node.
      *
-     * @param {number} depth The depth of the element inside the chart
-     * @param {number} x0    The left edge (x0) of the rectangle
-     * @param {number} x1    The right edge (x1) of the rectangle
+     * @param {number} depth Hierarchy depth
+     * @param {number} x0    Left partition boundary of the node
+     * @param {number} x1    Right partition boundary of the node
      *
      * @return {boolean}
      */
