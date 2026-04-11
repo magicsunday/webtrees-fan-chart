@@ -6,7 +6,10 @@
  */
 
 /**
- * This class handles the storage of form values.
+ * Persists chart configuration form values to localStorage so settings survive
+ * a page reload. Each field is registered by its element ID; the stored value
+ * is restored to the input on page load, and an "input" event listener keeps
+ * it in sync thereafter.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -14,9 +17,7 @@
  */
 export class Storage {
     /**
-     * Constructor.
-     *
-     * @param {string} name The name of the storage
+     * * @param {string} name The localStorage key under which all values are stored as a JSON object
      */
     constructor(name) {
         this._name = name;
@@ -24,9 +25,13 @@ export class Storage {
     }
 
     /**
-     * Register an HTML element.
+     * Registers an input or select element by its ID prefix. If a stored value
+     * exists it is restored to the element; otherwise the current element value
+     * is written to storage. An "input" event listener is added to all matching
+     * elements so future changes are persisted automatically. Uses querySelector
+     * with a prefix match to support checkbox IDs that include the checked value.
      *
-     * @param {string} name The ID of an HTML element
+     * @param {string} name The element ID (or ID prefix for checkboxes/radios)
      */
     register(name) {
         // Use "querySelector" here as the ID of checkbox elements may additionally contain a hyphen and the value
@@ -61,9 +66,10 @@ export class Storage {
     }
 
     /**
-     * This method stores the value of an input element depending on its type.
+     * Persists the current value of an input to storage. For checkboxes the
+     * boolean checked state is stored; for all other inputs the string value.
      *
-     * @param {EventTarget|HTMLInputElement} element The HTML input element
+     * @param {EventTarget|HTMLInputElement} element The input or select element
      */
     onInput(element) {
         if (element.type && (element.type === "checkbox")) {
@@ -74,11 +80,12 @@ export class Storage {
     }
 
     /**
-     * Returns the stored value belonging to the HTML element id.
+     * Returns the value previously stored under the given key, or null if
+     * no entry exists.
      *
-     * @param {string} name The id or name of an HTML element
+     * @param {string} name The element id or name attribute used as storage key
      *
-     * @returns {null|String|Boolean|Number}
+     * @returns {null|string|boolean|number}
      */
     read(name) {
         if (Object.prototype.hasOwnProperty.call(this._storage, name)) {
@@ -89,10 +96,12 @@ export class Storage {
     }
 
     /**
-     * Stores a value to the given HTML element id.
+     * Persists a value under the given key and flushes the entire storage
+     * object to localStorage. Logs a warning (but does not throw) when
+     * localStorage quota is exceeded.
      *
-     * @param {string}                name  The id or name of an HTML element
-     * @param {string|Boolean|Number} value The value to store
+     * @param {string}                name  The element id or name attribute used as storage key
+     * @param {string|boolean|number} value The value to store
      */
     write(name, value) {
         this._storage[name] = value;

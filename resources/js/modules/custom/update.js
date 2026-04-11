@@ -23,8 +23,6 @@ import FamilyColor from "./svg/family-color";
  */
 export default class Update {
     /**
-     * Constructor.
-     *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      * @param {Hierarchy}     hierarchy
@@ -354,8 +352,6 @@ export default class Update {
      *
      * @param {string}   groupSelector The group type selector (e.g. "g.person")
      * @param {Function} getColor      Extracts the color from a datum
-     *
-     * @private
      */
     restoreFamilyColors(groupSelector, getColor) {
         if (!this._configuration.showFamilyColors) {
@@ -381,8 +377,6 @@ export default class Update {
      *
      * @param {Transition} transition
      * @param {string}     selector   The group selector (e.g. "g.person.remove")
-     *
-     * @private
      */
     fadeOutRemovedArcs(transition, selector) {
         this._svg
@@ -398,8 +392,6 @@ export default class Update {
      * @param {Transition} transition
      * @param {string}     groupSelector The group type selector (e.g. "g.person")
      * @param {Function}   getColor      Extracts the color from a datum
-     *
-     * @private
      */
     fadeInNewArcs(transition, groupSelector, getColor) {
         const config = this._configuration;
@@ -424,8 +416,6 @@ export default class Update {
      * @param {Transition} transition
      * @param {string}     groupSelector The group type selector (e.g. "g.person")
      * @param {Function}   getColor      Extracts the color from a datum
-     *
-     * @private
      */
     transitionUpdatedArcs(transition, groupSelector, getColor) {
         if (!this._configuration.showFamilyColors) {

@@ -41,9 +41,9 @@ export default class FamilyColor {
     static MAX_GENERATIONS_REF = 10;
 
     /**
-     * Constructor.
-     *
-     * @param {Configuration} configuration The application configuration
+
+     * * @param {Configuration} configuration The application configuration
+
      */
     constructor(configuration) {
         this._configuration = configuration;
@@ -54,14 +54,13 @@ export default class FamilyColor {
     }
 
     /**
-     * Computes the min-saturation and max-lightness bounds for the
-     * given base HSL color across the full generation range.
+     * Precomputes the saturation floor and lightness ceiling for the given
+     * base color across MAX_GENERATIONS_REF generations. Used by getColor()
+     * to keep the full generation range within a visually pleasing band.
      *
-     * @param {number[]} baseHsl [h, s, l] base color
+     * @param {number[]} baseHsl [hue, saturation, lightness] base color
      *
      * @return {{minSaturation: number, maxLightness: number}}
-     *
-     * @private
      */
     static _depthBounds(baseHsl) {
         const span = FamilyColor.MAX_GENERATIONS_REF - 1;

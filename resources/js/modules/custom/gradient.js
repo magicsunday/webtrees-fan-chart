@@ -20,8 +20,6 @@ import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
  */
 export default class Gradient {
     /**
-     * Constructor.
-     *
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      */

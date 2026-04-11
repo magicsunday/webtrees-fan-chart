@@ -45,8 +45,6 @@ export default class Configuration {
     static MATERNAL_COLOR_DEFAULT = "#d06f94";
 
     /**
-     * Constructor.
-     *
      * @param {Object}   options
      * @param {Object<string, string>} options.labels  Label strings keyed by name (e.g. zoom, move) and generation index
      * @param {number}   [options.generations=6]
@@ -135,87 +133,66 @@ export default class Configuration {
         this._maternalColor = maternalColor;
     }
 
-    /**
-     * @return {number}
-     */
     get generations() {
         return this._generations;
     }
 
-    /**
-     * @param {number} value
-     */
     set generations(value) {
         this._generations = value;
     }
 
     /**
+
      * Total angular span of the fan in degrees (e.g. 180, 210, 270, 360).
-     *
-     * @return {number}
+
      */
     get fanDegree() {
         return this._fanDegree;
     }
 
-    /**
-     * @param {number} value
-     */
     set fanDegree(value) {
         this._fanDegree = value;
     }
 
     /**
+
      * Font scaling factor as a percentage (100 = default size).
-     *
-     * @return {number}
+
      */
     get fontScale() {
         return this._fontScale;
     }
 
-    /**
-     * @param {number} value
-     */
     set fontScale(value) {
         this._fontScale = value;
     }
 
     /**
+
      * When true, arc segments for individuals with no data are removed from the DOM.
-     *
-     * @return {boolean}
+
      */
     get hideEmptySegments() {
         return this._hideEmptySegments;
     }
 
-    /**
-     * @param {boolean} value
-     */
     set hideEmptySegments(value) {
         this._hideEmptySegments = value;
     }
 
     /**
+
      * When true, arc fills use branch-based family colors instead of sex-based colors.
-     *
-     * @return {boolean}
+
      */
     get showFamilyColors() {
         return this._showFamilyColors;
     }
 
-    /**
-     * @param {boolean} value
-     */
     set showFamilyColors(value) {
         this._showFamilyColors = value;
     }
 
-    /**
-     * @return {boolean}
-     */
     get showPlaces() {
         return this._showPlaces;
     }
@@ -223,33 +200,28 @@ export default class Configuration {
     /**
      * When true, a narrow arc between each pair of parent arcs shows the marriage date.
      * Enabling this also increases arc height (circlePadding) to accommodate the extra band.
-     *
-     * @return {boolean}
      */
     get showParentMarriageDates() {
         return this._showParentMarriageDates;
     }
 
-    /**
-     * @param {boolean} value
-     */
     set showParentMarriageDates(value) {
         this._showParentMarriageDates = value;
     }
 
     /**
+
      * When true, thumbnail images are rendered inside person arcs where space allows.
-     *
-     * @return {boolean}
+
      */
     get showImages() {
         return this._showImages;
     }
 
     /**
+
      * When false, only images are rendered in the arcs and text labels are omitted.
-     *
-     * @return {boolean}
+
      */
     get showNames() {
         return this._showNames;
@@ -258,8 +230,6 @@ export default class Configuration {
     /**
      * When true, a sex-specific silhouette icon is shown in the tooltip for
      * individuals who have no thumbnail photo.
-     *
-     * @return {boolean}
      */
     get showSilhouettes() {
         return this._showSilhouettes;
@@ -269,43 +239,28 @@ export default class Configuration {
      * Number of generations rendered as wide inner arcs (tall enough for
      * text along the arc path). Generations beyond this threshold use the
      * narrower outer-arc height.
-     *
-     * @return {number}
      */
     get numberOfInnerCircles() {
         return this._numberOfInnerCircles;
     }
 
-    /**
-     * @param {number} value
-     */
     set numberOfInnerCircles(value) {
         this._numberOfInnerCircles = value;
     }
 
     /**
+
      * Base font size in pixels before depth scaling and fontScale are applied.
-     *
-     * @return {number}
+
      */
     get fontSize() {
         return this._fontSize;
     }
 
-    /**
-     * Hex color string for the paternal (father's) lineage.
-     *
-     * @return {string}
-     */
     get paternalColor() {
         return this._paternalColor;
     }
 
-    /**
-     * Hex color string for the maternal (mother's) lineage.
-     *
-     * @return {string}
-     */
     get maternalColor() {
         return this._maternalColor;
     }

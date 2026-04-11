@@ -49,7 +49,7 @@ class DataFacade
     private Configuration $configuration;
 
     /**
-     * The incremental node identifier.
+     * * The incremental node identifier.
      */
     private int $nodeId = 0;
 
@@ -98,7 +98,9 @@ class DataFacade
             $this->getNodeData($generation, $individual)
         );
 
-        /** @var Family|null $family */
+        /**
+         * @var Family|null $family
+         */
         $family = $individual->childFamilies()->first();
 
         if ($family === null) {

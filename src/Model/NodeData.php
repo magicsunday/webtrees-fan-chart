@@ -27,37 +27,37 @@ use JsonSerializable;
 class NodeData implements JsonSerializable
 {
     /**
-     * The unique ID of the individual.
+     * * The unique ID of the individual.
      */
     private int $id = 0;
 
     /**
-     * The XREF of the individual.
+     * * The XREF of the individual.
      */
     private string $xref = '';
 
     /**
-     * The URL to this individual in webtrees.
+     * * The URL to this individual in webtrees.
      */
     private string $url = '';
 
     /**
-     * The URL used to update the clicked entry in the tree with this individual.
+     * * The URL used to update the clicked entry in the tree with this individual.
      */
     private string $updateUrl = '';
 
     /**
-     * The generation the individual belongs to.
+     * * The generation the individual belongs to.
      */
     private int $generation = 0;
 
     /**
-     * The full name of the individual.
+     * * The full name of the individual.
      */
     private string $name = '';
 
     /**
-     * TRUE if the name is written right to left.
+     * * TRUE if the name is written right to left.
      */
     private bool $isNameRtl = false;
 
@@ -76,97 +76,95 @@ class NodeData implements JsonSerializable
     private array $lastNames = [];
 
     /**
-     * The extracted preferred name.
+     * * The extracted preferred name.
      */
     private string $preferredName = '';
 
     /**
-     * The alternative name.
+     * * The alternative name.
      */
     private string $alternativeName = '';
 
     /**
-     * TRUE if the alternative name is written right to left.
+     * * TRUE if the alternative name is written right to left.
      */
     private bool $isAltRtl = false;
 
     /**
-     * The URL of the individuals highlight image.
+     * * The URL of the individuals highlight image.
      */
     private string $thumbnail = '';
 
     /**
-     * The sex of the individual.
+     * * The sex of the individual.
      */
     private string $sex = 'U';
 
     /**
-     * The formatted birthdate without HTML tags.
+     * * The formatted birthdate without HTML tags.
      */
     private string $birth = '';
 
     /**
-     * The formatted death date without HTML tags.
+     * * The formatted death date without HTML tags.
      */
     private string $death = '';
 
     /**
-     * The formatted marriage date without HTML tags.
+     * * The formatted marriage date without HTML tags.
      */
     private string $marriageDate = '';
 
     /**
-     * The formatted marriage date of the parents without HTML tags.
+     * * The formatted marriage date of the parents without HTML tags.
      */
     private string $marriageDateOfParents = '';
 
     /**
-     * The timespan label.
+     * * The timespan label.
      */
     private string $timespan = '';
 
     /**
-     * Full compact birth date for tooltip display.
+     * * Full compact birth date for tooltip display.
      */
     private string $birthDateFull = '';
 
     /**
-     * Full compact death date for tooltip display.
+     * * Full compact death date for tooltip display.
      */
     private string $deathDateFull = '';
 
     /**
-     * Full compact marriage date for tooltip display.
+     * * Full compact marriage date for tooltip display.
      */
     private string $marriageDateFull = '';
 
     /**
-     * The formatted birth place.
+     * * The formatted birth place.
      */
     private string $birthPlace = '';
 
     /**
-     * The formatted death place.
+     * * The formatted death place.
      */
     private string $deathPlace = '';
 
     /**
-     * The formatted marriage place.
+     * * The formatted marriage place.
      */
     private string $marriagePlace = '';
 
     /**
-     * The underlying individual instance. Only used internally.
+     * * The underlying individual instance. Only used internally.
      */
     private ?Individual $individual = null;
 
-    /** @return int */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /** @return NodeData */
     public function setId(int $id): NodeData
     {
         $this->id = $id;
@@ -174,7 +172,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setXref(string $xref): NodeData
     {
         $this->xref = $xref;
@@ -182,7 +179,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setUrl(string $url): NodeData
     {
         $this->url = $url;
@@ -190,7 +186,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setUpdateUrl(string $updateUrl): NodeData
     {
         $this->updateUrl = $updateUrl;
@@ -198,7 +193,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setGeneration(int $generation): NodeData
     {
         $this->generation = $generation;
@@ -206,13 +200,11 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return string */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /** @return NodeData */
     public function setName(string $name): NodeData
     {
         $this->name = $name;
@@ -220,7 +212,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setIsNameRtl(bool $isNameRtl): NodeData
     {
         $this->isNameRtl = $isNameRtl;
@@ -230,8 +221,6 @@ class NodeData implements JsonSerializable
 
     /**
      * @param string[] $firstNames
-     *
-     * @return NodeData
      */
     public function setFirstNames(array $firstNames): NodeData
     {
@@ -242,8 +231,6 @@ class NodeData implements JsonSerializable
 
     /**
      * @param string[] $lastNames
-     *
-     * @return NodeData
      */
     public function setLastNames(array $lastNames): NodeData
     {
@@ -252,7 +239,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setPreferredName(string $preferredName): NodeData
     {
         $this->preferredName = $preferredName;
@@ -260,7 +246,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setAlternativeName(string $alternativeName): NodeData
     {
         $this->alternativeName = $alternativeName;
@@ -268,7 +253,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setIsAltRtl(bool $isAltRtl): NodeData
     {
         $this->isAltRtl = $isAltRtl;
@@ -276,7 +260,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setThumbnail(string $thumbnail): NodeData
     {
         $this->thumbnail = $thumbnail;
@@ -286,8 +269,6 @@ class NodeData implements JsonSerializable
 
     /**
      * Sets the GEDCOM sex code ("M", "F", or "U").
-     *
-     * @return NodeData
      */
     public function setSex(string $sex): NodeData
     {
@@ -296,7 +277,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setBirth(string $birth): NodeData
     {
         $this->birth = $birth;
@@ -304,7 +284,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setDeath(string $death): NodeData
     {
         $this->death = $death;
@@ -312,7 +291,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setMarriageDate(string $marriageDate): NodeData
     {
         $this->marriageDate = $marriageDate;
@@ -320,7 +298,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setMarriageDateOfParents(string $marriageDateOfParents): NodeData
     {
         $this->marriageDateOfParents = $marriageDateOfParents;
@@ -330,8 +307,6 @@ class NodeData implements JsonSerializable
 
     /**
      * Sets the pre-assembled lifetime label rendered inside the arc (may contain newlines).
-     *
-     * @return NodeData
      */
     public function setTimespan(string $timespan): NodeData
     {
@@ -340,7 +315,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setBirthDateFull(string $birthDateFull): NodeData
     {
         $this->birthDateFull = $birthDateFull;
@@ -348,7 +322,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setDeathDateFull(string $deathDateFull): NodeData
     {
         $this->deathDateFull = $deathDateFull;
@@ -356,7 +329,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setMarriageDateFull(string $marriageDateFull): NodeData
     {
         $this->marriageDateFull = $marriageDateFull;
@@ -364,7 +336,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setBirthPlace(string $birthPlace): NodeData
     {
         $this->birthPlace = $birthPlace;
@@ -372,7 +343,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setDeathPlace(string $deathPlace): NodeData
     {
         $this->deathPlace = $deathPlace;
@@ -380,7 +350,6 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
-    /** @return NodeData */
     public function setMarriagePlace(string $marriagePlace): NodeData
     {
         $this->marriagePlace = $marriagePlace;
@@ -400,8 +369,6 @@ class NodeData implements JsonSerializable
 
     /**
      * Stores the Individual reference for PHP-side use; excluded from JSON serialisation.
-     *
-     * @return NodeData
      */
     public function setIndividual(?Individual $individual): NodeData
     {

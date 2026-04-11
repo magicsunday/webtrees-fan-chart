@@ -9,7 +9,9 @@ import PngExport from "./export/png";
 import SvgExport from "./export/svg";
 
 /**
- * The file export factory.
+ * Instantiates the correct export handler (PNG or SVG) for a given type string.
+ * New export formats can be added by extending EXPORT_TYPES without modifying
+ * call sites.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -17,6 +19,8 @@ import SvgExport from "./export/svg";
  */
 export default class ExportFactory {
     /**
+     * Registry mapping type strings to their export handler constructors.
+     *
      * @type {Object<string, Function>}
      */
     static EXPORT_TYPES = {

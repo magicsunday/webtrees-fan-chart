@@ -6,12 +6,14 @@
  */
 
 /**
- * Appends an arc group with path to the given parent element.
- * Applies family color and initial opacity for new elements.
+ * Appends a <g class="arc"><path></g> structure to the given parent selection.
+ * For elements entering the chart (CSS class "new"), opacity starts at nearly
+ * zero so the Update transition can fade them in. For existing elements with a
+ * family color, the fill is applied immediately via inline style.
  *
- * @param {Selection} parent       The parent D3 selection (person or marriage group)
- * @param {Function}  arcGenerator The configured d3.arc() generator
- * @param {string|null|undefined} [color] Optional fill color for the arc path
+ * @param {Selection}             parent       The parent D3 selection (person or marriage <g>)
+ * @param {Function}              arcGenerator A configured d3.arc() generator
+ * @param {string|null|undefined} [color]      HSL fill color; omit to keep the default CSS fill
  */
 export function appendArc(parent, arcGenerator, color) {
     const arcGroup = parent

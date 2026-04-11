@@ -27,9 +27,7 @@ export const SYMBOL_ELLIPSIS = "\u2026";
  */
 export default class Hierarchy {
     /**
-     * Constructor.
-     *
-     * @param {Configuration} configuration The application configuration
+     * * @param {Configuration} configuration The application configuration
      */
     constructor(configuration) {
         this._configuration = configuration;
@@ -96,18 +94,11 @@ export default class Hierarchy {
     /**
      * Flat array of all partition nodes (root plus all descendants) in
      * top-down order, each augmented with a unique sequential id.
-     *
-     * @return {Array}
      */
     get nodes() {
         return this._nodes;
     }
 
-    /**
-     * The D3 root node of the hierarchy (the center individual).
-     *
-     * @returns {Individual}
-     */
     get root() {
         return this._root;
     }

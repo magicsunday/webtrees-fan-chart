@@ -24,8 +24,6 @@ import ExportFactory from "../lib/chart/svg/export-factory";
  */
 export default class Svg {
     /**
-     * Constructor.
-     *
      * @param {Selection}     parent        The selected D3 parent element container
      * @param {Configuration} configuration The application configuration
      */
@@ -42,16 +40,10 @@ export default class Svg {
         this.init();
     }
 
-    /**
-     * @return {Defs}
-     */
     get defs() {
         return this._defs;
     }
 
-    /**
-     * @return {Zoom}
-     */
     get zoom() {
         return this._zoom;
     }
@@ -59,8 +51,6 @@ export default class Svg {
     /**
      * The inner <g> element that receives the D3 zoom transform. All chart
      * content (persons, marriages, separators) lives inside this group.
-     *
-     * @return {Selection}
      */
     get visual() {
         return this._visual;
@@ -69,8 +59,6 @@ export default class Svg {
     /**
      * The floating tooltip <div> element. Carries an "active" property that
      * is set to true when the tooltip is pinned open via right-click.
-     *
-     * @return {Selection}
      */
     get div() {
         return this._div;
@@ -133,7 +121,11 @@ export default class Svg {
             this._element.classed("rtl", true);
         }
 
-        /** @var {Selection} tooltip */
+        /**
+
+         * @var {Selection} tooltip
+
+         */
         const tooltip = d3.select("div.tooltip");
 
         if (tooltip.empty()) {
@@ -182,17 +174,14 @@ export default class Svg {
         return factory.createExport(type);
     }
 
-    /**
-     * Returns the underlying SVG DOM node.
-     *
-     * @returns {Node}
-     */
     node() {
         return this._element.node();
     }
 
     /**
-     * @param {function|string} select
+     * Selects the first descendant of the SVG element matching the selector.
+     *
+     * @param {function|string} select CSS selector or D3 selector function
      *
      * @returns {Selection}
      */
@@ -201,7 +190,9 @@ export default class Svg {
     }
 
     /**
-     * @param {function|string|null} select
+     * Selects all descendants of the SVG element matching the selector.
+     *
+     * @param {function|string|null} select CSS selector or D3 selector function
      *
      * @returns {Selection}
      */
@@ -210,6 +201,8 @@ export default class Svg {
     }
 
     /**
+     * Gets or sets a CSS style on the SVG element. Proxies d3 selection.style().
+     *
      * @param {string} name
      *
      * @returns {string|this}
@@ -219,6 +212,8 @@ export default class Svg {
     }
 
     /**
+     * Gets or sets an attribute on the SVG element. Proxies d3 selection.attr().
+     *
      * @param {string} _name
      *
      * @returns {string|this}
@@ -228,6 +223,9 @@ export default class Svg {
     }
 
     /**
+     * Creates a D3 transition on the SVG element. Used by Chart.center() to
+     * animate the zoom reset.
+     *
      * @returns {Transition}
      */
     transition() {

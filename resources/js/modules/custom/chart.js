@@ -28,8 +28,6 @@ const MIN_PADDING = 1; // Minimum padding around view box in "rem"
  */
 export default class Chart {
     /**
-     * Constructor.
-     *
      * @param {Selection}     parent        The selected D3 parent element container
      * @param {Configuration} configuration The application configuration
      */
@@ -40,23 +38,14 @@ export default class Chart {
         this._data = {};
     }
 
-    /**
-     * @returns {Svg}
-     */
     get svg() {
         return this._svg;
     }
 
-    /**
-     * @returns {Selection}
-     */
     get parent() {
         return this._parent;
     }
 
-    /**
-     * @returns {Object}
-     */
     get data() {
         return this._data;
     }
@@ -140,7 +129,9 @@ export default class Chart {
     }
 
     /**
-     * Animates the chart back to its initial zoom level and pan position (identity transform).
+
+     * * Animates the chart back to its initial zoom level and pan position (identity transform).
+
      */
     center() {
         this.svg
@@ -216,8 +207,6 @@ export default class Chart {
      * Draws radial separator lines between different family branches at
      * each generation level. Lines are drawn only between non-spouse
      * segments (where the parent differs).
-     *
-     * @private
      */
     drawFamilySeparators() {
         const geometry = new Geometry(this._configuration);
@@ -271,8 +260,6 @@ export default class Chart {
      * angular range of a person who has parents shown in the chart. The arc
      * is always drawn (for visual consistency), and the marriage date text
      * is added when available.
-     *
-     * @private
      */
     drawMarriageArcs() {
         const that = this;

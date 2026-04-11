@@ -9,29 +9,27 @@ import * as d3 from "../../lib/d3";
 import {SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_ELLIPSIS, SYMBOL_MARRIAGE} from "../hierarchy";
 
 /**
- * This class handles the tooltip and mouse interaction for person elements.
+ * Binds hover and context-menu events to a person arc element and manages the
+ * floating tooltip div. The tooltip is shown on mouseenter and positioned on
+ * mousemove. A right-click toggles it "pinned" so it stays visible after the
+ * cursor leaves. The div's "active" property tracks the pinned state.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 export default class TooltipRenderer {
-    /**
-     * Constructor.
-     *
-     * @param {Svg}           svg
-     * @param {Configuration} configuration The application configuration
-     */
     constructor(svg, configuration) {
         this._svg = svg;
         this._configuration = configuration;
     }
 
     /**
-     * Binds all mouse and context-menu event listeners to a person element.
+     * Attaches contextmenu, mouseenter, mouseleave, mousemove, mouseover, and
+     * mouseout handlers to the person element. No-ops for empty persons (no xref).
      *
-     * @param {Selection} person The person element to bindEvents events to
-     * @param {Object}    datum  The D3 data object
+     * @param {Selection} person The <g class="person"> D3 selection
+     * @param {Object}    datum  The D3 partition datum
      */
     bindEvents(person, datum) {
         if (datum.data.data.xref === "") {
@@ -80,10 +78,13 @@ export default class TooltipRenderer {
     }
 
     /**
-     * Sets the tooltip HTML content and positions it near the cursor.
+     * Builds the tooltip HTML (thumbnail or silhouette icon, full name, and a
+     * table of birth / marriage / death facts with symbols) and positions the
+     * div near the cursor. When the tooltip is pinned (active = true), also
+     * fades it in. No-ops for empty persons.
      *
-     * @param {Event}  event The triggering mouse event
-     * @param {Object} datum The D3 data object
+     * @param {Event}  event The triggering mouse event (used for cursor position)
+     * @param {Object} datum The D3 partition datum
      */
     setTooltipHtml(event, datum) {
         // Ignore empty elements

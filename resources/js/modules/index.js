@@ -52,9 +52,6 @@ export class FanChart {
         this.draw(options.data);
     }
 
-    /**
-     * @return {Configuration}
-     */
     get configuration() {
         return this._configuration;
     }
@@ -127,7 +124,9 @@ export class FanChart {
     }
 
     /**
-     * Serializes the SVG to a canvas at A3 resolution and triggers a PNG download.
+
+     * * Serializes the SVG to a canvas at A3 resolution and triggers a PNG download.
+
      */
     exportPNG() {
         this._chart.svg

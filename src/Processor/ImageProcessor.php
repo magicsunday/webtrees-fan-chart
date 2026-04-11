@@ -19,7 +19,8 @@ use function is_string;
 use function sprintf;
 
 /**
- * Class ImageProcessor.
+ * Resolves the highlight image URL for an individual, falling back to a sex-specific
+ * silhouette asset when no media file is available and silhouettes are enabled.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -28,10 +29,8 @@ use function sprintf;
 class ImageProcessor
 {
     /**
-     * Constructor.
-     *
-     * @param ModuleCustomInterface $module     The module
-     * @param Individual            $individual The individual to process
+     * @param ModuleCustomInterface $module
+     * @param Individual            $individual
      */
     public function __construct(
         private readonly ModuleCustomInterface $module,
@@ -40,12 +39,14 @@ class ImageProcessor
     }
 
     /**
-     * Returns the URL of a person's highlight image.
+     * Returns the URL of the individual's highlight (thumbnail) image for use in chart arcs.
+     * Falls back to a sex-specific silhouette SVG when no media file exists and both
+     * $returnSilhouettes and the tree's USE_SILHOUETTE preference are true.
+     * Returns empty string when the individual is not viewable or no image can be resolved.
      *
-     * @param int  $width             The request maximum width of the image
-     * @param int  $height            The request maximum height of the image
-     * @param bool $returnSilhouettes Set to TRUE to return silhouette images if this is
-     *                                also enabled in the configuration
+     * @param int  $width             Maximum pixel width of the requested image
+     * @param int  $height            Maximum pixel height of the requested image
+     * @param bool $returnSilhouettes Allow silhouette fallback when true
      *
      * @return string
      */

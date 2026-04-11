@@ -24,12 +24,12 @@ namespace MagicSunday\Webtrees\FanChart\Model;
 enum Symbols: string
 {
     /**
-     * Birth symbol (asterisk).
+     * * Birth symbol (asterisk).
      */
     case Birth = '*';
 
     /**
-     * Death symbol (dagger / obelisk).
+     * * Death symbol (dagger / obelisk).
      */
     case Death = "\u{2020}";
 

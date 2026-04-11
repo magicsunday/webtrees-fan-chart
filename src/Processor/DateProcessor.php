@@ -28,12 +28,12 @@ use MagicSunday\Webtrees\FanChart\Model\Symbols;
 class DateProcessor
 {
     /**
-     * The birthdate of the individual.
+     * * The birthdate of the individual.
      */
     private readonly Date $birthDate;
 
     /**
-     * The death date of the individual.
+     * * The death date of the individual.
      */
     private readonly Date $deathDate;
 
@@ -239,11 +239,9 @@ class DateProcessor
     }
 
     /**
-     * Create the timespan label.
-     *
-     * Uses genealogical symbols (* for birth, † for death) and compact date format
-     * for detailed generations. Dates are placed on separate lines when detailed
-     * format is active.
+     * Returns the arc lifetime label combining birth and death with genealogical symbols.
+     * Inner generations receive a two-line detailed format ("* DD.MM.YYYY\n† DD.MM.YYYY");
+     * outer generations receive a compact single-line format ("1875–1932").
      *
      * @return string
      */
@@ -259,7 +257,9 @@ class DateProcessor
     }
 
     /**
-     * Returns a detailed two-line lifetime description with genealogical symbols.
+     * Returns a two-line birth/death description with symbols ("* date\n† date").
+     * Shows a lone symbol when only one event is known. Returns empty string
+     * when neither date is available and the individual is not deceased.
      *
      * @return string
      */
@@ -317,13 +317,16 @@ class DateProcessor
     }
 
     /**
-     * Returns the marriage date of the individual.
+     * Returns the marriage date of the individual's own spouse family, formatted for arc display.
+     * Empty string when there is no spouse family or the marriage date is unknown.
      *
      * @return string
      */
     public function getMarriageDate(): string
     {
-        /** @var Family|null $family */
+        /**
+         * @var Family|null $family
+         */
         $family = $this->individual->spouseFamilies()->first();
 
         if ($family !== null && $family->getMarriageDate()->isOK()) {
@@ -334,13 +337,18 @@ class DateProcessor
     }
 
     /**
-     * Returns the marriage date of the parents.
+     * Returns the marriage date of the individual's parents for display in the arc between
+     * this individual's ring and the parent ring. Returns Symbols::MARRIAGE_DATE_UNKNOWN ("?")
+     * when a MARR fact exists but carries no date, so the JS can render the marriage symbol
+     * without a date string. Empty string when there is no parent family at all.
      *
      * @return string
      */
     public function getMarriageDateOfParents(): string
     {
-        /** @var Family|null $family */
+        /**
+         * @var Family|null $family
+         */
         $family = $this->individual->childFamilies()->first();
 
         if ($family !== null && $family->getMarriageDate()->isOK()) {
@@ -358,11 +366,12 @@ class DateProcessor
     }
 
     /**
-     * Returns a formatted marriage date. Marriage arcs sit between the
-     * child (at this generation) and the parents (generation + 1), so
-     * the effective depth is one level deeper than the individual.
+     * Formats a marriage date for the arc text, accounting for the fact that the
+     * marriage arc sits one generation deeper than the individual (effective depth = generation + 1).
+     * Returns empty when the effective depth exceeds 8 (no space available). Uses full
+     * DD.MM.YYYY up to generation 6, year-only beyond.
      *
-     * @param Date $date The marriage date
+     * @param Date $date
      *
      * @return string
      */

@@ -8,7 +8,9 @@
 import Export from "../export";
 
 /**
- * Export the chart as PNG image.
+ * Exports the fan chart as a PNG image. Clones the SVG, inlines all external
+ * images as base64, copies computed styles for text/path elements, sizes the
+ * canvas to at least A3 at 300 DPI, and triggers a download.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -16,11 +18,13 @@ import Export from "../export";
  */
 export default class PngExport extends Export {
     /**
-     * Copies recursively all the styles from the list of container elements from the source
-     * to the destination node.
+     * Recursively copies computed styles from source to destination for the
+     * container element types listed (svg, g, text, textPath). Leaf elements
+     * have every computed style property copied individually. Necessary because
+     * the cloned SVG rendered to a canvas has no stylesheet access.
      *
-     * @param {Element} sourceNode
-     * @param {Element} destinationNode
+     * @param {Element} sourceNode      The original live SVG element
+     * @param {Element} destinationNode The corresponding node in the clone
      */
     copyStylesInline(sourceNode, destinationNode) {
         const containerElements = ["svg", "g", "text", "textPath"];
@@ -42,11 +46,12 @@ export default class PngExport extends Export {
     }
 
     /**
-     * Returns the view-box of the SVG. Mainly used to apply a padding around the chart.
+     * Computes a viewBox that wraps the SVG's bounding box with 50 px padding
+     * on each side. Used to set the exported image dimensions.
      *
-     * @param {SVGGraphicsElement} svg The SVG element
+     * @param {SVGGraphicsElement} svg The live SVG element (not the clone)
      *
-     * @returns {number[]}
+     * @returns {number[]} [x, y, width, height]
      */
     calculateViewBox(svg) {
         // Get bounding box
@@ -63,9 +68,10 @@ export default class PngExport extends Export {
     }
 
     /**
+     * Creates and returns an off-screen canvas element sized to the given dimensions.
      *
-     * @param {number} width
-     * @param {number} height
+     * @param {number} width  Canvas width in pixels
+     * @param {number} height Canvas height in pixels
      *
      * @returns {HTMLCanvasElement}
      */
@@ -78,13 +84,15 @@ export default class PngExport extends Export {
     }
 
     /**
-     * Converts the given SVG into a PNG image. Resolves to the PNG data URL.
+     * Serializes the SVG to a Blob, renders it onto a canvas with a white
+     * background, and resolves with the resulting PNG data URL (using the
+     * octet-stream MIME type to force a download in all browsers).
      *
-     * @param {SVGGraphicsElement} svg    The SVG element
-     * @param {number}             width  The width of the image
-     * @param {number}             height The height of the image
+     * @param {SVGGraphicsElement} svg    The SVG element to render (typically a clone)
+     * @param {number}             width  Canvas width in pixels
+     * @param {number}             height Canvas height in pixels
      *
-     * @returns {Promise<String>}
+     * @returns {Promise<string>} Resolves to a PNG data URL
      */
     convertToDataUrl(svg, width, height) {
         return new Promise(resolve => {
@@ -116,9 +124,10 @@ export default class PngExport extends Export {
     }
 
     /**
-     * Clones the SVG element.
+     * Returns a shallow deep-clone of the SVG DOM node wrapped in a Promise,
+     * allowing it to be chained in the export promise pipeline.
      *
-     * @param {SVGGraphicsElement} svg
+     * @param {SVGGraphicsElement} svg The live SVG element to clone
      *
      * @returns {Promise<SVGGraphicsElement>}
      */
@@ -131,10 +140,12 @@ export default class PngExport extends Export {
     }
 
     /**
-     * Saves the given SVG as PNG image file.
+     * Full export pipeline: clones the SVG, inlines images, copies styles,
+     * sizes the canvas to at least A3 at 300 DPI, converts to a PNG data URL,
+     * and triggers a download. Logs a warning on failure but does not throw.
      *
-     * @param {Svg}    svg      The source SVG object
-     * @param {string} fileName The file name
+     * @param {Svg}    svg      The source Svg wrapper object
+     * @param {string} fileName The suggested download filename
      */
     svgToImage(svg, fileName) {
         // 300 DPI (good quality for printing) / 96 DPI (common browser)

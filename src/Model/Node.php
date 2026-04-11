@@ -32,7 +32,7 @@ class Node implements JsonSerializable
     protected array $parents = [];
 
     /**
-     * @param NodeData $data
+     * * @param NodeData $data
      */
     public function __construct(protected NodeData $data)
     {
