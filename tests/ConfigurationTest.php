@@ -66,9 +66,16 @@ final class ConfigurationTest extends TestCase
             'default_hideEmptySegments'       => '1',
             'default_showFamilyColors'        => '1',
             'default_showParentMarriageDates' => '1',
+            'default_showPlaces'              => '1',
+            'default_placeParts'              => '2',
+            'default_showImages'              => '1',
+            'default_showNames'               => '0',
             'default_innerArcs'               => '2',
             'default_hideSvgExport'           => '1',
             'default_hidePngExport'           => '1',
+            'default_detailedDateGenerations' => '5',
+            'default_paternalColor'           => '#aabbcc',
+            'default_maternalColor'           => '#ddeeff',
         ]);
 
         $configuration = new Configuration($request, $module);
@@ -79,9 +86,16 @@ final class ConfigurationTest extends TestCase
         self::assertTrue($configuration->getHideEmptySegments());
         self::assertTrue($configuration->getShowFamilyColors());
         self::assertTrue($configuration->getShowParentMarriageDates());
+        self::assertTrue($configuration->getShowPlaces());
+        self::assertSame(2, $configuration->getPlaceParts());
+        self::assertTrue($configuration->getShowImages());
+        self::assertFalse($configuration->getShowNames());
         self::assertSame(2, $configuration->getInnerArcs());
         self::assertTrue($configuration->getHideSvgExport());
         self::assertTrue($configuration->getHidePngExport());
+        self::assertSame(5, $configuration->getDetailedDateGenerations());
+        self::assertSame('#aabbcc', $configuration->getPaternalColor());
+        self::assertSame('#ddeeff', $configuration->getMaternalColor());
     }
 
     /**
