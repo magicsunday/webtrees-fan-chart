@@ -118,10 +118,17 @@ final class ConfigurationTest extends TestCase
             'fanDegree'               => '300',
             'hideEmptySegments'       => '1',
             'showFamilyColors'        => '1',
+            'showPlaces'              => '1',
+            'placeParts'              => '2',
             'showParentMarriageDates' => '1',
+            'showImages'              => '1',
+            'showNames'               => '0',
             'innerArcs'               => '1',
             'hideSvgExport'           => '0',
             'hidePngExport'           => '1',
+            'detailedDateGenerations' => '4',
+            'paternalColor'           => '#112233',
+            'maternalColor'           => '#445566',
         ]);
 
         $module = $this->createModuleWithPreferences([
@@ -130,10 +137,17 @@ final class ConfigurationTest extends TestCase
             'default_fanDegree'               => '210',
             'default_hideEmptySegments'       => '0',
             'default_showFamilyColors'        => '0',
+            'default_showPlaces'              => '0',
+            'default_placeParts'              => '1',
             'default_showParentMarriageDates' => '0',
+            'default_showImages'              => '0',
+            'default_showNames'               => '1',
             'default_innerArcs'               => '3',
             'default_hideSvgExport'           => '0',
             'default_hidePngExport'           => '0',
+            'default_detailedDateGenerations' => '3',
+            'default_paternalColor'           => '#70a9cf',
+            'default_maternalColor'           => '#d06f94',
         ]);
 
         $configuration = new Configuration($request, $module);
@@ -143,10 +157,17 @@ final class ConfigurationTest extends TestCase
         self::assertSame(300, $configuration->getFanDegree());
         self::assertTrue($configuration->getHideEmptySegments());
         self::assertTrue($configuration->getShowFamilyColors());
+        self::assertTrue($configuration->getShowPlaces());
+        self::assertSame(2, $configuration->getPlaceParts());
         self::assertTrue($configuration->getShowParentMarriageDates());
+        self::assertTrue($configuration->getShowImages());
+        self::assertFalse($configuration->getShowNames());
         self::assertSame(1, $configuration->getInnerArcs());
         self::assertFalse($configuration->getHideSvgExport());
         self::assertTrue($configuration->getHidePngExport());
+        self::assertSame(4, $configuration->getDetailedDateGenerations());
+        self::assertSame('#112233', $configuration->getPaternalColor());
+        self::assertSame('#445566', $configuration->getMaternalColor());
     }
 
     /**
