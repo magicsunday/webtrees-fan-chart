@@ -125,9 +125,9 @@ export default class Text {
      */
     createOuterLabels(parent, datum, positions) {
         if (datum.depth >= 7) {
-            const [first, ...last] = this.createNamesData(datum);
+            const nameGroups = this.createNamesData(datum);
             const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.FIRST_NAMES));
-            const combined = [].concat(first, typeof last[0] !== "undefined" ? last[0] : []);
+            const combined = nameGroups.flat();
 
             const text = parent
                 .append("text")

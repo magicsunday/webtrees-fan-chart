@@ -11,7 +11,7 @@
  *
  * @param {Selection} parent       The parent D3 selection (person or marriage group)
  * @param {Function}  arcGenerator The configured d3.arc() generator
- * @param {string}    [color]      Optional fill color for the arc path
+ * @param {string|null|undefined} [color] Optional fill color for the arc path
  */
 export function appendArc(parent, arcGenerator, color) {
     const arcGroup = parent

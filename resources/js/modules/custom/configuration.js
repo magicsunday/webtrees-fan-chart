@@ -46,7 +46,7 @@ export default class Configuration {
      * Constructor.
      *
      * @param {Object}   options
-     * @param {string[]} options.labels
+     * @param {Object<string, string>} options.labels  Label strings keyed by name (e.g. zoom, move) and generation index
      * @param {number}   [options.generations=6]
      * @param {number}   [options.fanDegree=210]
      * @param {number}   [options.fontScale=100]
@@ -63,7 +63,7 @@ export default class Configuration {
      * @param {string}   [options.maternalColor]
      */
     constructor({
-        labels = {},
+        labels = { zoom: "", move: "" },
         generations = 6,
         fanDegree = 210,
         fontScale = 100,

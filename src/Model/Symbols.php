@@ -15,7 +15,7 @@ namespace MagicSunday\Webtrees\FanChart\Model;
  * Genealogical symbols used in date labels and tooltips.
  *
  * These mirror the JS constants defined in resources/js/modules/custom/hierarchy.js
- * (SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_MARRIAGE).
+ * (SYMBOL_BIRTH, SYMBOL_DEATH). The marriage symbol is JS-only.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
