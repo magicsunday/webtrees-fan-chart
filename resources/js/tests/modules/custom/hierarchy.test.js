@@ -83,6 +83,9 @@ describe("Hierarchy.init", () => {
         expect(children.map((child) => child.data.data.sex)).toEqual([SEX_MALE, SEX_FEMALE]);
         expect(childGenerations.every((generation) => generation === 2)).toBe(true);
         expect(hierarchy.nodes).toHaveLength(7);
+
+        // Verify original datum was not mutated
+        expect(rootDatum.parents).toBeUndefined();
     });
 
     test("completes single parent entries by adding the missing sex at the correct position", () => {
