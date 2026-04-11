@@ -57,7 +57,7 @@ export default class Svg {
     }
 
     /**
-     *
+     * Returns the SVG visual group element.
      *
      * @return {Selection}
      */
@@ -174,7 +174,7 @@ export default class Svg {
      *
      * @return {PngExport|SvgExport}
      */
-    export(type ) {
+    export(type) {
         const factory = new ExportFactory();
 
         return factory.createExport(type);

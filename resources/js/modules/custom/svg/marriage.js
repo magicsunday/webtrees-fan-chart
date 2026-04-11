@@ -53,20 +53,19 @@ export default class Marriage {
         const hasChildren = datum.children
             && datum.children.some(child => child.data.data.xref !== "");
 
-        if (marriage.classed("new") && this._configuration.hideEmptySegments) {
+        const isNew = marriage.classed("new");
+        const isUpdate = marriage.classed("update");
+        const isRemove = marriage.classed("remove");
+
+        if (isNew && this._configuration.hideEmptySegments) {
             this.addArc(marriage, datum);
-        } else {
-            if (!marriage.classed("new")
-                && !marriage.classed("update")
-                && !marriage.classed("remove")
-                && (hasChildren || !this._configuration.hideEmptySegments)
-            ) {
-                this.addArc(marriage, datum);
-            }
+        } else if (!isNew && !isUpdate && !isRemove
+            && (hasChildren || !this._configuration.hideEmptySegments)
+        ) {
+            this.addArc(marriage, datum);
         }
 
-
-        if (!marriage.classed("remove")) {
+        if (!isRemove) {
             this.addLabel(marriage, datum);
         }
     }

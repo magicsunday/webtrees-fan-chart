@@ -50,16 +50,17 @@ export default class Person {
             return;
         }
 
-        if (person.classed("new") && this._configuration.hideEmptySegments) {
+        const isNew = person.classed("new");
+        const isUpdate = person.classed("update");
+        const isRemove = person.classed("remove");
+        const hasData = datum.data.data.xref !== "";
+
+        if (isNew && this._configuration.hideEmptySegments) {
             this.addArcToPerson(person, datum);
-        } else {
-            if (!person.classed("new")
-                && !person.classed("update")
-                && !person.classed("remove")
-                && ((datum.data.data.xref !== "") || !this._configuration.hideEmptySegments)
-            ) {
-                this.addArcToPerson(person, datum);
-            }
+        } else if (!isNew && !isUpdate && !isRemove
+            && (hasData || !this._configuration.hideEmptySegments)
+        ) {
+            this.addArcToPerson(person, datum);
         }
 
         if (datum.data.data.xref !== "") {
@@ -119,22 +120,16 @@ export default class Person {
      * Adds a color overlay for each arc.
      *
      * @param {Selection} person
-     * @param {Object}    data   The D3 data object
+     * @param {Object}    datum  The D3 data object
      */
     addColorGroup(person, datum) {
-        // Arc generator
         const arcGenerator = d3.arc()
             .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
             .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
             .innerRadius(this._geometry.outerRadius(datum.depth) - this._configuration.colorArcWidth)
-            .outerRadius(this._geometry.outerRadius(datum.depth) + 1);
-        // .innerRadius((data) => this._geometry.outerRadius(data.depth) - this._configuration.colorArcWidth - 2)
-        // .outerRadius((data) => this._geometry.outerRadius(data.depth) - 1);
-
-        arcGenerator.padAngle(this.getArcPadAngle(datum))
-            .padRadius(this._configuration.padRadius)
-        //     .cornerRadius(this._configuration.cornerRadius - 2)
-        ;
+            .outerRadius(this._geometry.outerRadius(datum.depth) + 1)
+            .padAngle(this.getArcPadAngle(datum))
+            .padRadius(this._configuration.padRadius);
 
         const color = person
             .append("g")

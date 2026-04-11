@@ -29,7 +29,7 @@ export default class Gradient {
     /**
      * Initializes the gradient fill.
      *
-     * @param {Object} data D3 data object
+     * @param {Object} datum D3 data object
      *
      * @return {void}
      */

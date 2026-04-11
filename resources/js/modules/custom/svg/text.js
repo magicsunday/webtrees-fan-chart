@@ -321,24 +321,12 @@ export default class Text {
      * @private
      */
     createAlternativeNamesData(datum) {
-        const words = datum.data.data.alternativeName.split(/\s+/);
-
-        /** @var {LabelElementData[]} names */
-        let names = [];
-
-        // Append the alternative names
-        names = names.concat(
-            words.map((word) => {
-                return {
-                    label: word,
-                    isPreferred: false,
-                    isLastName: false,
-                    isNameRtl: datum.data.data.isAltRtl,
-                };
-            }),
-        );
-
-        return names;
+        return datum.data.data.alternativeName.split(/\s+/).map((word) => ({
+            label: word,
+            isPreferred: false,
+            isLastName: false,
+            isNameRtl: datum.data.data.isAltRtl,
+        }));
     }
 
     /**

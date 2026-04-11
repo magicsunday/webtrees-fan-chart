@@ -40,10 +40,6 @@ export default class Hierarchy {
      * @param {Object} datum The JSON encoded chart data
      */
     init(datum) {
-        // Get the greatest depth
-        // const getDepth       = ({parents}) => 1 + (parents ? Math.max(...parents.map(getDepth)) : 0);
-        // const maxGenerations = getDepth(datum);
-
         // Construct root node from the hierarchical data
         this._root = d3.hierarchy(
             datum,

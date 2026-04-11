@@ -41,14 +41,10 @@ export class Storage {
         const storedValue = this.read(name);
 
         if (storedValue !== null) {
-            if (input.type && (input.type === "radio")) {
+            if (input.type === "radio" || input.type === "checkbox") {
                 input.checked = storedValue;
             } else {
-                if (input.type && (input.type === "checkbox")) {
-                    input.checked = storedValue;
-                } else {
-                    input.value = storedValue;
-                }
+                input.value = storedValue;
             }
         } else {
             this.onInput(input);
