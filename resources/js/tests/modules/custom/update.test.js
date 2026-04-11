@@ -5,7 +5,7 @@ const transitionInstances = [];
 
 class TransitionStub {
     constructor() {
-        this.handlers = { start: [], end: [] };
+        this.handlers = { start: [], end: [], interrupt: [] };
         this.registered = 0;
         this.durationValue = null;
     }

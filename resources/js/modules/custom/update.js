@@ -451,16 +451,19 @@ export default class Update {
         let activeCount = 0;
         let started = false;
 
+        const onComplete = () => {
+            if (!--activeCount) {
+                callback.apply(transition);
+            }
+        };
+
         transition
             .on("start", () => {
                 started = true;
                 ++activeCount;
             })
-            .on("end", () => {
-                if (!--activeCount) {
-                    callback.apply(transition);
-                }
-            });
+            .on("end", onComplete)
+            .on("interrupt", onComplete);
 
         // Fire callback if no transitions were started (empty selection).
         // setTimeout defers to after the current event-loop tick so D3

@@ -50,7 +50,7 @@ describe("Configuration", () => {
 
     it("adjusts padding and arc sizes when marriage dates are shown", () => {
         const config = new Configuration({
-            labels: ["ancestor", "spouse"],
+            labels: { zoom: "Zoom", move: "Move", 0: "ancestor", 1: "spouse" },
             showParentMarriageDates: true,
         });
 

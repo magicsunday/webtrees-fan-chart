@@ -282,7 +282,7 @@ export default class Text {
                 pos = datum.data.data.name.indexOf(lastName, lastnameOffset);
 
                 if ((pos !== -1) && firstnameMap.has(pos)) {
-                    lastnameOffset += pos + lastName.length;
+                    lastnameOffset = pos + lastName.length;
                 }
             } while ((pos !== -1) && firstnameMap.has(pos));
 
