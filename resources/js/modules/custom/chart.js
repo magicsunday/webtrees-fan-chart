@@ -245,17 +245,20 @@ export default class Chart {
                 // Only draw separator between different families
                 if (current.parent !== next.parent) {
                     const angle = geometry.calcAngle(current.x1);
-                    const innerR = geometry.innerRadius(depth);
 
-                    // Extend through the marriage arc gap only when the
-                    // marriage arc at this depth is actually visible
-                    const marriageVisible = this._configuration.showParentMarriageDates
-                        && (depth < (this._configuration.generations - 1))
-                        && (this._configuration.showNames || (depth < this._configuration.numberOfInnerCircles));
+                    // Marriage arc below: between depth-1 and depth
+                    const marriageBelow = this._configuration.showParentMarriageDates
+                        && (depth > 1)
+                        && ((depth - 1) < (this._configuration.generations - 1))
+                        && (this._configuration.showNames || ((depth - 1) < this._configuration.numberOfInnerCircles));
 
-                    const outerR = marriageVisible
-                        ? geometry.innerRadius(depth + 1)
-                        : geometry.outerRadius(depth);
+                    // With marriage below: start at the marriage arc inner edge
+                    // Without: start at the person arc inner edge
+                    const innerR = marriageBelow
+                        ? geometry.outerRadius(depth - 1)
+                        : geometry.innerRadius(depth);
+
+                    const outerR = geometry.outerRadius(depth);
 
                     separatorGroup
                         .append("line")
