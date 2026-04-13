@@ -55,6 +55,7 @@ export default class Marriage {
             return;
         }
 
+        const isDescendant = datum.depth < 0;
         const hasChildren = datum.children
             && datum.children.some(child => child.data.data.xref !== "");
 
@@ -65,7 +66,7 @@ export default class Marriage {
         if (isNew && this._configuration.hideEmptySegments) {
             this.addArc(marriage, datum);
         } else if (!isNew && !isUpdate && !isRemove
-            && (hasChildren || !this._configuration.hideEmptySegments)
+            && (hasChildren || !this._configuration.hideEmptySegments || isDescendant)
         ) {
             this.addArc(marriage, datum);
         }
@@ -87,25 +88,34 @@ export default class Marriage {
      * @private
      */
     addArc(marriage, datum) {
-        // Reuse existing arc if present (during updates)
-        if (!marriage.select("g.arc").empty()) {
+        // Reuse existing arc if present (during updates), but not old arcs
+        // that are fading out (descendant arcs get rebuilt on re-center)
+        if (!marriage.select("g.arc:not(.old)").empty()) {
             return;
         }
 
-        const innerR = this._geometry.outerRadius(datum.depth);
-        const outerR = this._geometry.innerRadius(datum.depth + 1);
+        let innerR, outerR, startAngle, endAngle;
+
+        if (datum.depth < 0) {
+            // Descendant marriage: gap between center and partner ring
+            innerR = this._geometry.outerRadius(0);
+            outerR = this._geometry.innerRadius(1);
+            startAngle = this._geometry.startAngle(datum.depth, datum.x0);
+            endAngle = this._geometry.endAngle(datum.depth, datum.x1);
+        } else {
+            innerR = this._geometry.outerRadius(datum.depth);
+            outerR = this._geometry.innerRadius(datum.depth + 1);
+            startAngle = (datum.depth < 1)
+                ? this._geometry.calcAngle(datum.x0)
+                : this._geometry.startAngle(datum.depth, datum.x0);
+            endAngle = (datum.depth < 1)
+                ? this._geometry.calcAngle(datum.x1)
+                : this._geometry.endAngle(datum.depth, datum.x1);
+        }
 
         if (outerR <= innerR) {
             return;
         }
-
-        const startAngle = (datum.depth < 1)
-            ? this._geometry.calcAngle(datum.x0)
-            : this._geometry.startAngle(datum.depth, datum.x0);
-
-        const endAngle = (datum.depth < 1)
-            ? this._geometry.calcAngle(datum.x1)
-            : this._geometry.endAngle(datum.depth, datum.x1);
 
         const arcGenerator = d3.arc()
             .startAngle(startAngle)
@@ -116,7 +126,11 @@ export default class Marriage {
             .padRadius(0)
             .cornerRadius(this._configuration.cornerRadius);
 
-        appendArc(marriage, arcGenerator, FamilyColor.getMarriageColor(datum));
+        const color = (datum.depth < 0)
+            ? (datum.data.data.familyColor || null)
+            : FamilyColor.getMarriageColor(datum);
+
+        appendArc(marriage, arcGenerator, color);
     }
 
     /**
@@ -132,24 +146,35 @@ export default class Marriage {
      * @private
      */
     addLabel(marriage, datum) {
-        if (!datum.data.data.marriageDateOfParents) {
+        const dateText = (datum.depth < 0)
+            ? datum.data.data.marriageDate
+            : datum.data.data.marriageDateOfParents;
+
+        if (!dateText) {
             return;
         }
 
-        const innerR = this._geometry.outerRadius(datum.depth);
-        const outerR = this._geometry.innerRadius(datum.depth + 1);
+        let innerR, outerR, startAngle, endAngle;
+
+        if (datum.depth < 0) {
+            innerR = this._geometry.outerRadius(0);
+            outerR = this._geometry.innerRadius(1);
+            startAngle = this._geometry.startAngle(datum.depth, datum.x0);
+            endAngle = this._geometry.endAngle(datum.depth, datum.x1);
+        } else {
+            innerR = this._geometry.outerRadius(datum.depth);
+            outerR = this._geometry.innerRadius(datum.depth + 1);
+            startAngle = (datum.depth < 1)
+                ? this._geometry.calcAngle(datum.x0)
+                : this._geometry.startAngle(datum.depth, datum.x0);
+            endAngle = (datum.depth < 1)
+                ? this._geometry.calcAngle(datum.x1)
+                : this._geometry.endAngle(datum.depth, datum.x1);
+        }
 
         if (outerR <= innerR) {
             return;
         }
-
-        const startAngle = (datum.depth < 1)
-            ? this._geometry.calcAngle(datum.x0)
-            : this._geometry.startAngle(datum.depth, datum.x0);
-
-        const endAngle = (datum.depth < 1)
-            ? this._geometry.calcAngle(datum.x1)
-            : this._geometry.endAngle(datum.depth, datum.x1);
 
         const midRadius = (innerR + outerR) / 2;
 
@@ -199,9 +224,9 @@ export default class Marriage {
             .attr("startOffset", "25%")
             .attr("class", "date");
 
-        const marriageText = (datum.data.data.marriageDateOfParents === "?")
+        const marriageText = (dateText === "?")
             ? SYMBOL_MARRIAGE
-            : SYMBOL_MARRIAGE + " " + datum.data.data.marriageDateOfParents;
+            : SYMBOL_MARRIAGE + " " + dateText;
 
         const tspan = textPath
             .append("tspan")
@@ -240,7 +265,7 @@ export default class Marriage {
      */
     getFontSize(datum) {
         return this._geometry.getFontSize(
-            Object.assign({}, datum, { depth: datum.depth + 1 }),
+            Object.assign({}, datum, { depth: Math.max(1, datum.depth + 1) }),
         );
     }
 }

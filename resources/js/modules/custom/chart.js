@@ -98,35 +98,27 @@ export default class Chart {
             .attr("height", "100%");
 
         const padding = this.convertRemToPixels(MIN_PADDING);
-
-        // Get bounding boxes
         const svgBoundingBox = this.svg.visual.node().getBBox();
         const clientBoundingBox = this.parent.node().getBoundingClientRect();
 
-        // View box should have at least the same width/height as the parent element
         let viewBoxWidth = Math.max(clientBoundingBox.width, svgBoundingBox.width);
         let viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height);
 
-        // Calculate offset to center chart inside svg
-        const offsetX = (viewBoxWidth - svgBoundingBox.width) >> 1;
-        const offsetY = (viewBoxHeight - svgBoundingBox.height) >> 1;
+        const offsetX = (viewBoxWidth - svgBoundingBox.width) / 2;
+        const offsetY = (viewBoxHeight - svgBoundingBox.height) / 2;
 
-        // Adjust view box dimensions by padding and offset
         const viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - padding);
         const viewBoxTop = Math.ceil(svgBoundingBox.y - offsetY - padding);
 
         // In fullscreen mode, use the full available height
-        // (buttonbar is now overlayed, so no offset needed)
         if (document.fullscreenElement) {
-            // Set width/height attributes
             this.svg
                 .attr("width", clientBoundingBox.width)
                 .attr("height", clientBoundingBox.height);
         }
 
-        // Final width/height of view box
-        viewBoxWidth = Math.ceil(viewBoxWidth + (padding << 1));
-        viewBoxHeight = Math.ceil(viewBoxHeight + (padding << 1));
+        viewBoxWidth = Math.ceil(viewBoxWidth + (padding * 2));
+        viewBoxHeight = Math.ceil(viewBoxHeight + (padding * 2));
 
         // Set view box attribute
         this.svg
@@ -139,6 +131,52 @@ export default class Chart {
                     viewBoxHeight,
                 ],
             );
+    }
+
+    /**
+     * Smoothly transitions the SVG viewBox to fit the final chart content.
+     * Temporarily hides elements marked for removal so getBBox() reflects
+     * only the incoming content, then restores them for the fade-out transition.
+     *
+     * @private
+     */
+    transitionViewBox() {
+        const padding = this.convertRemToPixels(MIN_PADDING);
+        const clientBoundingBox = this.parent.node().getBoundingClientRect();
+
+        // Hide all outgoing content with display:none so getBBox measures
+        // only the incoming chart. This includes:
+        // - Top-level elements marked for removal (.remove)
+        // - Old sub-elements within updating elements (.old)
+        // - Old separator lines
+        const outgoing = this._svg.visual.selectAll(
+            "g.person.remove, g.marriage.remove, .old"
+        );
+        outgoing.style("display", "none");
+
+        const svgBoundingBox = this.svg.visual.node().getBBox();
+
+        // Restore for the fade-out transition
+        outgoing.style("display", null);
+
+        let viewBoxWidth = Math.max(clientBoundingBox.width, svgBoundingBox.width);
+        let viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height);
+
+        const offsetX = (viewBoxWidth - svgBoundingBox.width) / 2;
+        const offsetY = (viewBoxHeight - svgBoundingBox.height) / 2;
+
+        const viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - padding);
+        const viewBoxTop = Math.ceil(svgBoundingBox.y - offsetY - padding);
+
+        viewBoxWidth = Math.ceil(viewBoxWidth + (padding * 2));
+        viewBoxHeight = Math.ceil(viewBoxHeight + (padding * 2));
+
+        const newViewBox = [viewBoxLeft, viewBoxTop, viewBoxWidth, viewBoxHeight].join(" ");
+
+        this.svg
+            .transition("viewBox")
+            .duration(this._configuration.updateDuration)
+            .attr("viewBox", newViewBox);
     }
 
     /**
@@ -171,6 +209,7 @@ export default class Chart {
 
         const personGroup = this._svg.select("g.personGroup");
         const familyColor = new FamilyColor(this._configuration);
+        familyColor.setPartnerMidpoints(this._hierarchy.nodes);
         const that = this;
 
         personGroup
@@ -180,9 +219,12 @@ export default class Chart {
             .filter(
                 (datum) => {
                     // Filter out all empty records, but only if we hide empty segments
-                    // otherwise the arcs won't be drawn correctly
+                    // otherwise the arcs won't be drawn correctly.
+                    // Descendant nodes (depth < 0) are always included because
+                    // empty partner arcs are structural placeholders.
                     return (datum.data.data.xref !== "")
-                         || !this._configuration.hideEmptySegments;
+                         || !this._configuration.hideEmptySegments
+                         || (datum.depth < 0);
                 },
             )
             .append("g")
@@ -205,6 +247,7 @@ export default class Chart {
         // Marriage arc layer (separate from persons so hover does not affect them)
         if (this._configuration.showParentMarriageDates) {
             this.drawMarriageArcs();
+            this.drawDescendantMarriageArcs();
         }
 
         // Radial separator lines between family branches
@@ -232,6 +275,8 @@ export default class Chart {
         const maxDepth = !this._configuration.showNames
             ? Math.min(this._configuration.generations, this._configuration.numberOfInnerCircles)
             : this._configuration.generations;
+
+        this.drawDescendantSeparators(geometry, separatorGroup);
 
         for (let depth = 1; depth <= maxDepth; depth++) {
             const nodesAtDepth = this._hierarchy.nodes
@@ -268,6 +313,46 @@ export default class Chart {
                         .attr("y2", -outerR * Math.cos(angle));
                 }
             }
+        }
+    }
+
+    /**
+     * Draws separator lines between partner families in the descendant section.
+     * Lines run from the marriage arc gap through the partner and children rings.
+     *
+     * @param {Geometry}  geometry
+     * @param {Selection} separatorGroup
+     *
+     * @private
+     */
+    drawDescendantSeparators(geometry, separatorGroup) {
+        if (!this._configuration.showDescendants || !this._configuration.childScale) {
+            return;
+        }
+
+        const partnerNodes = this._hierarchy.nodes
+            .filter((datum) => datum.depth === -1)
+            .sort((left, right) => left.x0 - right.x0);
+
+        for (let i = 0; i < (partnerNodes.length - 1); i++) {
+            const current = partnerNodes[i];
+            const angle = this._configuration.childScale(current.x1);
+
+            // Start at the marriage arc inner edge (outerRadius of center)
+            const hasMarriage = this._configuration.showParentMarriageDates;
+            const innerR = hasMarriage
+                ? geometry.outerRadius(0)
+                : geometry.innerRadius(-1);
+
+            // Extend through partner + children rings
+            const outerR = geometry.outerRadius(-2);
+
+            separatorGroup
+                .append("line")
+                .attr("x1", innerR * Math.sin(angle))
+                .attr("y1", -innerR * Math.cos(angle))
+                .attr("x2", outerR * Math.sin(angle))
+                .attr("y2", -outerR * Math.cos(angle));
         }
     }
 
@@ -313,6 +398,64 @@ export default class Chart {
     }
 
     /**
+     * Draws marriage arcs for descendant partners in the gap between the
+     * center circle and the partner ring. Each partner gets an arc showing
+     * the marriage date from the family record. Uses the childScale for
+     * angular positioning.
+     *
+     * @private
+     */
+    drawDescendantMarriageArcs() {
+        const that = this;
+
+        let marriageGroup = this._svg.visual.select("g.marriageGroup");
+
+        if (marriageGroup.empty()) {
+            marriageGroup = this._svg.visual.append("g").attr("class", "marriageGroup");
+        }
+
+        // Empty array when descendants are disabled or no partners exist,
+        // so the data-join still handles exit for old elements.
+        const partnerNodes = (this._configuration.showDescendants && this._configuration.childScale)
+            ? this._hierarchy.nodes.filter((datum) => datum.depth === -1)
+            : [];
+
+        const marriageJoin = marriageGroup
+            .selectAll("g.marriage.descendant")
+            .data(partnerNodes, (datum) => datum.id);
+
+        // Matched (update): mark old content for fade-out, create new content
+        // (geometry changes on re-center so arcs must be rebuilt)
+        marriageJoin.each(function (datum) {
+            const marriage = d3.select(this);
+
+            marriage.selectAll("g.arc, g.name")
+                .classed("old", true);
+
+            marriage.classed("update", false)
+                .classed("new", true);
+
+            new Marriage(that._svg, that._configuration, marriage, datum);
+        });
+
+        // Exiting: mark for removal
+        marriageJoin.exit()
+            .classed("remove", true)
+            .selectAll("g.arc, g.name")
+            .classed("old", true);
+
+        // Entering: create new elements
+        marriageJoin.enter()
+            .append("g")
+            .attr("class", "marriage descendant")
+            .attr("id", (datum) => "marriage-" + datum.id)
+            .each(function (datum) {
+                const marriage = d3.select(this);
+                new Marriage(that._svg, that._configuration, marriage, datum);
+            });
+    }
+
+    /**
      * Marks all persons with a non-empty xref as "available" (enabling hover
      * styles) and binds the click handler. Also marks marriage arcs that have
      * a date as "available" and empty ones as "empty" for CSS styling.
@@ -323,7 +466,7 @@ export default class Chart {
         const persons = this._svg
             .select("g.personGroup")
             .selectAll("g.person")
-            .filter((datum) => datum.data.data.xref !== "")
+            .filter((datum) => datum && datum.data && datum.data.data && datum.data.data.xref !== "")
             .classed("available", true);
 
         // Trigger method on click/touch
@@ -333,7 +476,8 @@ export default class Chart {
         this._svg
             .select("g.marriageGroup")
             .selectAll("g.marriage")
-            .filter((datum) => !!datum.data.data.marriageDateOfParents)
+            .filter((datum) => datum && datum.data
+                && (!!datum.data.data.marriageDateOfParents || !!datum.data.data.marriageDate))
             .classed("available", true);
 
         // Mark empty marriage arcs (no parents shown) for CSS styling
@@ -341,8 +485,11 @@ export default class Chart {
             .select("g.marriageGroup")
             .selectAll("g.marriage")
             .each(function (datum) {
-                const hasChildren = datum.children
-                    && datum.children.some(child => child.data.data.xref !== "");
+                if (!datum || !datum.children) {
+                    return;
+                }
+
+                const hasChildren = datum.children.some(child => child.data.data.xref !== "");
 
                 d3.select(this).classed("empty", !hasChildren);
             });
@@ -358,6 +505,11 @@ export default class Chart {
      * @private
      */
     personClick(event, datum) {
+        // Empty partner nodes have no updateUrl -- ignore clicks on them
+        if (datum.data.data.updateUrl === "") {
+            return;
+        }
+
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
         (datum.depth === 0) ? this.redirectToIndividual(datum.data.data.url) : this.update(datum.data.data.updateUrl);
     }
@@ -403,5 +555,12 @@ export default class Chart {
 
         this.drawFamilySeparators();
 
+        // Redraw descendant marriage arcs
+        if (this._configuration.showParentMarriageDates) {
+            this.drawDescendantMarriageArcs();
+        }
+
+        // Smoothly transition the viewBox alongside the arc transitions
+        this.transitionViewBox();
     }
 }

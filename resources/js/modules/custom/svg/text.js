@@ -542,7 +542,26 @@ export default class Text {
      */
     isInnerLabel(data) {
         // Note: The center element does not belong to the inner labels!
-        return ((data.depth > 0) && (data.depth <= this._configuration.numberOfInnerCircles));
+        if (data.depth < 0) {
+            // Descendants in inner-arc radial bands use arc-path text when
+            // the segment is wide enough; narrow segments fall back to
+            // rotated outer-style text that fits in the arc height.
+            if (Math.abs(data.depth) > this._configuration.numberOfInnerCircles) {
+                return false;
+            }
+
+            // Compute angular width from fraction * total sector to ensure
+            // all siblings get the same result (avoids floating-point
+            // boundary issues with individual startAngle/endAngle calls)
+            const totalSectorRad = this._geometry.endAngle(data.depth, 1)
+                - this._geometry.startAngle(data.depth, 0);
+            const angularWidthDeg = (data.x1 - data.x0) * totalSectorRad * MATH_RAD2DEG;
+            const minArcDeg = (data.depth === -1) ? 30 : 20;
+
+            return angularWidthDeg >= minArcDeg;
+        }
+
+        return (data.depth > 0) && (data.depth <= this._configuration.numberOfInnerCircles);
     }
 
     /**
@@ -666,16 +685,26 @@ export default class Text {
             groups.push(dateGroup);
         }
 
-        // Spacing within a group (tight) vs. between groups (wide), in percent
-        // of the arc height. Tuned relative to the base font size (22px).
-        let intraGroupSpacing = 16;
-        let interGroupSpacing = 24;
+        // Compute spacing dynamically based on font size relative to arc height.
+        // This ensures consistent visual gaps across all generations regardless
+        // of depth-dependent font scaling.
+        const fontSize = this._geometry.getFontSize(datum);
+        const arcHeight = this._geometry.outerRadius(datum.depth)
+            - this._geometry.innerRadius(datum.depth);
+        const fontPercent = (fontSize / arcHeight) * 100;
 
-        // Total vertical extent of all groups
+        let intraNameSpacing  = fontPercent * 1.1;
+        let intraDateSpacing  = fontPercent * 1.0;
+        let interGroupSpacing = fontPercent * 1.5;
+
+        // Total vertical extent of all groups using group-specific spacing
         let totalHeight = 0;
 
         groups.forEach((group, gi) => {
-            totalHeight += (group.length - 1) * intraGroupSpacing;
+            const isDateGroup = (group[0] === Text.TEXT_SLOT.DATE_LINE_1);
+            const intraSpacing = isDateGroup ? intraDateSpacing : intraNameSpacing;
+
+            totalHeight += (group.length - 1) * intraSpacing;
 
             if (gi < (groups.length - 1)) {
                 totalHeight += interGroupSpacing;
@@ -683,34 +712,60 @@ export default class Text {
         });
 
         // Center within usable range (0 = inner edge, 100 = outer edge).
-        // rangeMax accounts for the color arc strip at the outer edge.
-        const rangeMin = 5;
-        const rangeMax = 78;
+        // Margins shrink with more content lines so the text block can
+        // spread out instead of compressing into a fixed inner area.
+        const totalLines = groups.reduce((sum, g) => sum + g.length, 0);
+        const colorArcPercent = (this._configuration.colorArcWidth / arcHeight) * 100;
+        const marginFactor = totalLines <= 4 ? 0.6 : 0.25;
+        const minMargin = fontPercent * marginFactor;
+        const rangeMin = Math.max(3, minMargin);
+        const rangeMax = 100 - Math.max(3, minMargin) - colorArcPercent;
         const availableHeight = rangeMax - rangeMin;
 
-        // Compress spacing proportionally if content exceeds the safe zone
-        if (totalHeight > availableHeight) {
-            const scale = availableHeight / totalHeight;
-            intraGroupSpacing *= scale;
+        // Scale fill allowance with content: more lines may use more of the range
+        const fillRatio = 0.85;
+        const maxFill = availableHeight * fillRatio;
+
+        if (totalHeight > maxFill) {
+            const scale = maxFill / totalHeight;
+            intraNameSpacing  *= scale;
+            intraDateSpacing  *= scale;
             interGroupSpacing *= scale;
 
-            totalHeight = availableHeight;
+            totalHeight = maxFill;
         }
 
         const rangeMid = (rangeMin + rangeMax) / 2;
         let currentPos = rangeMid + (totalHeight / 2);
 
+        // Compensate for SVG text baseline: text renders with its baseline
+        // on the arc path, but the visual center of glyphs sits above the
+        // baseline. Shift each path position outward (higher %) so the
+        // visual center lands at the intended position.
+        const normalOffsetPercent  = (fontSize * 0.375 / arcHeight) * 100;
+        const flippedOffsetPercent = (fontSize * 0.2 / arcHeight) * 100;
+
         const positions = new Map();
 
         groups.forEach((group, gi) => {
+            const isDateGroup = (group[0] === Text.TEXT_SLOT.DATE_LINE_1);
+            const intraSpacing = isDateGroup ? intraDateSpacing : intraNameSpacing;
+
             group.forEach((slot, si) => {
-                positions.set(slot, {
-                    normal:  currentPos,
-                    flipped: 100 - currentPos,
-                });
+                if (datum.depth < 0) {
+                    positions.set(slot, {
+                        normal:  currentPos,
+                        flipped: (100 - currentPos) + flippedOffsetPercent,
+                    });
+                } else {
+                    positions.set(slot, {
+                        normal:  currentPos - normalOffsetPercent,
+                        flipped: (100 - currentPos) + flippedOffsetPercent,
+                    });
+                }
 
                 if (si < (group.length - 1)) {
-                    currentPos -= intraGroupSpacing;
+                    currentPos -= intraSpacing;
                 }
             });
 
@@ -752,6 +807,26 @@ export default class Text {
      * @private
      */
     getAvailableWidth(data, position) {
+        // Descendant arcs: dispatch to inner or outer width based on label style
+        if (data.depth < 0) {
+            if (!this.isInnerLabel(data)) {
+                // Narrow descendant arcs use rotated text -- width = actual arc height
+                const arcHeight = this._geometry.outerRadius(data.depth)
+                    - this._geometry.innerRadius(data.depth);
+
+                return arcHeight - (this._configuration.textPadding * 2);
+            }
+
+            // Wide descendant arcs use arc-path text -- width = chord length
+            const positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
+            let availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, position));
+
+            availableWidth = availableWidth - (this._configuration.textPadding * 2)
+                - (this._configuration.padDistance / 2);
+
+            return availableWidth;
+        }
+
         // Outer arcs
         if (data.depth > this._configuration.numberOfInnerCircles) {
             return this._configuration.outerArcHeight
@@ -846,23 +921,68 @@ export default class Text {
                     prevIsDate = isDate;
                 });
             } else {
-                // No image: use original index-based offset positioning
-                const offset = Math.max(1.0, countElements * 0.4);
+                // No image: center the text block vertically using
+                // grouped spacing (same logic as image case)
+                const innerLineHeight = fontSize * 0.95;
+                const intraGroupGap = fontSize * 0.2;
+                const interGroupGap = fontSize * 0.5;
 
-                const mapIndexToOffset = d3.scaleLinear()
-                    .domain([0, countElements - 1])
-                    .range([-offset, offset]);
+                // Determine group boundaries: names, alt-name, dates
+                let hasNames = false;
+                let hasDates = false;
+                let hasAlt = false;
+
+                textElements.each(function () {
+                    const el = d3.select(this);
+
+                    if (el.classed("date")) {
+                        hasDates = true;
+                    } else if (el.classed("wt-chart-box-name-alt")) {
+                        hasAlt = true;
+                    } else {
+                        hasNames = true;
+                    }
+                });
+
+                // Calculate total height from center of first to center of last line
+                const groupTransitions = (hasNames && hasAlt ? 1 : 0)
+                    + ((hasNames || hasAlt) && hasDates ? 1 : 0);
+                const totalHeight = ((countElements - 1) * innerLineHeight)
+                    + (groupTransitions * interGroupGap);
+
+                // First pass: compute raw positions
+                const positions = [];
+                let currentY = 0;
+                let prevGroup = "name";
+
+                textElements.each(function () {
+                    const el = d3.select(this);
+                    let currentGroup;
+
+                    if (el.classed("date")) {
+                        currentGroup = "date";
+                    } else if (el.classed("wt-chart-box-name-alt")) {
+                        currentGroup = "alt";
+                    } else {
+                        currentGroup = "name";
+                    }
+
+                    if (currentGroup !== prevGroup) {
+                        currentY += interGroupGap;
+                    }
+
+                    positions.push(currentY);
+                    currentY += innerLineHeight;
+                    prevGroup = currentGroup;
+                });
+
+                // Center the mean of all positions at 0, with a small
+                // downward shift to compensate for baseline rendering offset
+                const mean = positions.reduce((sum, p) => sum + p, 0) / positions.length;
+                const baselineShift = fontSize * 0.2;
 
                 textElements.each(function (_ignore, i) {
-                    const offsetRotate = mapIndexToOffset(i) * that._configuration.fontScale / 100.0;
-                    const isDate = d3.select(this).classed("date");
-                    const groupShift = fontSize * 0.15;
-
-                    d3.select(this).attr("dy",
-                        (offsetRotate * fontSize) + (fontSize / 2)
-                        + (isDate ? groupShift : -groupShift)
-                        + "px",
-                    );
+                    d3.select(this).attr("dy", (positions[i] - mean + baselineShift) + "px");
                 });
             }
 
@@ -878,15 +998,41 @@ export default class Text {
 
             d3.select(this).attr("transform", function () {
                 const dx = datum.x1 - datum.x0;
-                const angle = that._geometry.scale(datum.x0 + (dx / 2)) * MATH_RAD2DEG;
-                let rotate = angle - (offsetRotate * (angle > 0 ? -1 : 1));
+                let angle;
+                let flipped;
+
+                if (datum.depth < 0) {
+                    // Descendant outer labels: use childScale for angle,
+                    // flip at 180° so left-side text reads outward like
+                    // right-side text (independent of isPositionFlipped
+                    // which always returns true for inner arc-path labels)
+                    const midFrac = datum.x0 + (dx / 2);
+                    const midRad = that._configuration.childScale
+                        ? that._configuration.childScale(midFrac)
+                        : 0;
+
+                    angle = midRad * MATH_RAD2DEG;
+                    flipped = midRad <= Math.PI;
+                } else {
+                    // Ancestor nodes: use ancestor scale
+                    angle = that._geometry.scale(datum.x0 + (dx / 2)) * MATH_RAD2DEG;
+                    flipped = angle > 0;
+                }
+
+                let rotate = angle - (offsetRotate * (flipped ? -1 : 1));
                 let translate = (that._geometry.centerRadius(datum.depth) - (that._configuration.colorArcWidth / 2.0));
 
-                if (angle > 0) {
-                    rotate -= 90;
+                // Compensate for text baseline: convert a perpendicular pixel
+                // shift into an angular offset at the given radius
+                const radius = that._geometry.centerRadius(datum.depth);
+                const baselinePx = that._geometry.getFontSize(datum) * 0.1;
+                const baselineAngle = (baselinePx / radius) * MATH_RAD2DEG;
+
+                if (flipped) {
+                    rotate -= 90 - baselineAngle;
                 } else {
                     translate = -translate;
-                    rotate += 90;
+                    rotate += 90 - baselineAngle;
                 }
 
                 return "rotate(" + rotate + ") translate(" + translate + ")";
@@ -927,37 +1073,43 @@ export default class Text {
             }
         });
 
-        // Convert pixel-based spacing to degrees at this radius
+        // Convert pixel-based spacing to degrees at this radius.
+        // Use the same ratios as inner arc labels (calculateSlotPositions).
         const fontSize = this._geometry.getFontSize(datum);
         const centerRadius = this._geometry.centerRadius(datum.depth);
         const degPerPixel = MATH_RAD2DEG / centerRadius;
 
-        // Same ratio as inner labels: intraGroup = 16/73 of available,
-        // interGroup = 24/73. Convert to pixel gap then to degrees.
-        const intraGapPx = fontSize * 1.05;
-        const interGapPx = fontSize * 1.3;
+        const intraNameGapPx = fontSize * 1.1;
+        const intraDateGapPx = fontSize * 1.0;
+        const interGapPx     = fontSize * 1.5;
 
-        let intraGapDeg = intraGapPx * degPerPixel;
-        let interGapDeg = interGapPx * degPerPixel;
+        let intraNameGapDeg = intraNameGapPx * degPerPixel;
+        let intraDateGapDeg = intraDateGapPx * degPerPixel;
+        let interGapDeg     = interGapPx * degPerPixel;
 
-        // Compute total height
+        // Compute total angular extent using group-specific spacing
         let totalDeg = 0;
 
         groups.forEach((group, gi) => {
-            totalDeg += (group.items.length - 1) * intraGapDeg;
+            const intraGap = group.isDate ? intraDateGapDeg : intraNameGapDeg;
+            totalDeg += (group.items.length - 1) * intraGap;
 
             if (gi < (groups.length - 1)) {
                 totalDeg += interGapDeg;
             }
         });
 
-        // Cap to 50% of angular span, compress proportionally if needed
-        const angularSpanDeg = (datum.x1 - datum.x0) * 360;
-        const maxDeg = angularSpanDeg * 0.5;
+        // Cap to 85% of angular span, compress proportionally if needed
+        const angularSpanDeg = Math.abs(
+            this._geometry.endAngle(datum.depth, datum.x1)
+            - this._geometry.startAngle(datum.depth, datum.x0),
+        ) * MATH_RAD2DEG;
+        const maxDeg = angularSpanDeg * 0.85;
 
         if ((totalDeg > maxDeg) && (totalDeg > 0)) {
             const scale = maxDeg / totalDeg;
-            intraGapDeg *= scale;
+            intraNameGapDeg *= scale;
+            intraDateGapDeg *= scale;
             interGapDeg *= scale;
             totalDeg = maxDeg;
         }
@@ -968,11 +1120,13 @@ export default class Text {
         const positions = [];
 
         groups.forEach((group, gi) => {
+            const intraGap = group.isDate ? intraDateGapDeg : intraNameGapDeg;
+
             group.items.forEach((element, si) => {
                 positions.push(currentPos);
 
                 if (si < (group.items.length - 1)) {
-                    currentPos += intraGapDeg;
+                    currentPos += intraGap;
                 }
             });
 

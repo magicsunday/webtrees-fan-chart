@@ -59,10 +59,14 @@ export default class Person {
         const isRemove = person.classed("remove");
         const hasData = datum.data.data.xref !== "";
 
-        if (isNew && this._configuration.hideEmptySegments) {
+        // Descendant nodes always show their arc (empty partner arcs
+        // are structural placeholders for children below them)
+        const isDescendant = datum.depth < 0;
+
+        if (isNew && (this._configuration.hideEmptySegments || isDescendant)) {
             this.addArcToPerson(person, datum);
         } else if (!isNew && !isUpdate && !isRemove
-            && (hasData || !this._configuration.hideEmptySegments)
+            && (hasData || !this._configuration.hideEmptySegments || isDescendant)
         ) {
             this.addArcToPerson(person, datum);
         }
@@ -94,7 +98,10 @@ export default class Person {
                 // Check angular width — skip image if arc segment is too narrow
                 const angularWidth = (datum.depth === 0)
                     ? 360
-                    : (datum.x1 - datum.x0) * 360;
+                    : Math.abs(
+                        this._geometry.endAngle(datum.depth, datum.x1)
+                        - this._geometry.startAngle(datum.depth, datum.x0),
+                    ) * (180 / Math.PI);
 
                 if ((imageSize >= 28) && (angularWidth >= 10)) {
                     datum.data.data.imageSize = imageSize;
@@ -372,7 +379,13 @@ export default class Person {
      * @private
      */
     getArcPadAngle(datum) {
+        // Ancestors: no padding between spouse pairs when marriage arcs are shown
         if (this._configuration.showParentMarriageDates && datum.parent) {
+            return 0;
+        }
+
+        // Descendants: no padding when marriage arcs are shown (the arcs fill the gap)
+        if (this._configuration.showParentMarriageDates && (datum.depth < 0)) {
             return 0;
         }
 
