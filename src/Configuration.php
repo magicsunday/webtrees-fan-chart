@@ -88,7 +88,7 @@ class Configuration
     /**
      * The default number of generations for which detailed life event dates are displayed.
      */
-    private const int DEFAULT_DETAILED_DATE_GENERATIONS = 3;
+    private const int DEFAULT_DETAILED_DATE_GENERATIONS = 0;
 
     /**
      * Minimum number of generations showing detailed life event dates.
