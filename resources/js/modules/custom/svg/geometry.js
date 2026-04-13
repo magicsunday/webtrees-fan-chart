@@ -255,7 +255,7 @@ export default class Geometry {
         // so text fits within the angular width of the segment.
         const isOuterAncestor = datum.depth >= (this._configuration.numberOfInnerCircles + 1);
         const isPartner = (datum.depth === -1);
-        const isChild = (datum.depth === -2);
+        const isChild = (datum.depth <= -2);
 
         if (isOuterAncestor || isPartner) {
             const angularWidth = (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0)) * this.centerRadius(datum.depth);
@@ -325,8 +325,7 @@ export default class Geometry {
         const startAngle = this.startAngle(depth, x0);
         const endAngle = this.endAngle(depth, x1);
         const midAngle = (startAngle + endAngle) / 2;
-        const pi2 = Math.PI * 2;
-        const normalized = ((midAngle % pi2) + pi2) % pi2;
+        const normalized = ((midAngle % MATH_PI2) + MATH_PI2) % MATH_PI2;
 
         return (normalized > (90 * MATH_DEG2RAD)) && (normalized < (270 * MATH_DEG2RAD));
     }

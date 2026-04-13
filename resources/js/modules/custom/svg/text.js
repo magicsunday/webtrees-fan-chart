@@ -746,23 +746,17 @@ export default class Text {
         const flippedOffsetPercent = (fontSize * 0.2 / arcHeight) * 100;
 
         const positions = new Map();
+        const normalOffset = (datum.depth < 0) ? 0 : normalOffsetPercent;
 
         groups.forEach((group, gi) => {
             const isDateGroup = (group[0] === Text.TEXT_SLOT.DATE_LINE_1);
             const intraSpacing = isDateGroup ? intraDateSpacing : intraNameSpacing;
 
             group.forEach((slot, si) => {
-                if (datum.depth < 0) {
-                    positions.set(slot, {
-                        normal:  currentPos,
-                        flipped: (100 - currentPos) + flippedOffsetPercent,
-                    });
-                } else {
-                    positions.set(slot, {
-                        normal:  currentPos - normalOffsetPercent,
-                        flipped: (100 - currentPos) + flippedOffsetPercent,
-                    });
-                }
+                positions.set(slot, {
+                    normal: currentPos - normalOffset,
+                    flipped: (100 - currentPos) + flippedOffsetPercent,
+                });
 
                 if (si < (group.length - 1)) {
                     currentPos -= intraSpacing;

@@ -379,13 +379,9 @@ export default class Person {
      * @private
      */
     getArcPadAngle(datum) {
-        // Ancestors: no padding between spouse pairs when marriage arcs are shown
-        if (this._configuration.showParentMarriageDates && datum.parent) {
-            return 0;
-        }
-
-        // Descendants: no padding when marriage arcs are shown (the arcs fill the gap)
-        if (this._configuration.showParentMarriageDates && (datum.depth < 0)) {
+        // No padding between spouse pairs (ancestors) or descendant arcs
+        // when marriage arcs are shown -- the arcs fill the gap
+        if (this._configuration.showParentMarriageDates && (datum.parent || (datum.depth < 0))) {
             return 0;
         }
 

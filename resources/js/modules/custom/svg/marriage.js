@@ -77,6 +77,37 @@ export default class Marriage {
     }
 
     /**
+     * Resolves the radial and angular geometry for a marriage arc.
+     *
+     * @param {Object} datum The D3 partition datum
+     *
+     * @return {{ innerR: number, outerR: number, startAngle: number, endAngle: number }}
+     *
+     * @private
+     */
+    _resolveMarriageGeometry(datum) {
+        if (datum.depth < 0) {
+            return {
+                innerR: this._geometry.outerRadius(0),
+                outerR: this._geometry.innerRadius(1),
+                startAngle: this._geometry.startAngle(datum.depth, datum.x0),
+                endAngle: this._geometry.endAngle(datum.depth, datum.x1),
+            };
+        }
+
+        return {
+            innerR: this._geometry.outerRadius(datum.depth),
+            outerR: this._geometry.innerRadius(datum.depth + 1),
+            startAngle: (datum.depth < 1)
+                ? this._geometry.calcAngle(datum.x0)
+                : this._geometry.startAngle(datum.depth, datum.x0),
+            endAngle: (datum.depth < 1)
+                ? this._geometry.calcAngle(datum.x1)
+                : this._geometry.endAngle(datum.depth, datum.x1),
+        };
+    }
+
+    /**
      * Builds the d3.arc() generator for the gap between outerRadius(depth)
      * and innerRadius(depth+1) and delegates rendering to appendArc(). Skips
      * if an arc already exists (update path reuse) or if the gap is zero or
@@ -94,24 +125,7 @@ export default class Marriage {
             return;
         }
 
-        let innerR, outerR, startAngle, endAngle;
-
-        if (datum.depth < 0) {
-            // Descendant marriage: gap between center and partner ring
-            innerR = this._geometry.outerRadius(0);
-            outerR = this._geometry.innerRadius(1);
-            startAngle = this._geometry.startAngle(datum.depth, datum.x0);
-            endAngle = this._geometry.endAngle(datum.depth, datum.x1);
-        } else {
-            innerR = this._geometry.outerRadius(datum.depth);
-            outerR = this._geometry.innerRadius(datum.depth + 1);
-            startAngle = (datum.depth < 1)
-                ? this._geometry.calcAngle(datum.x0)
-                : this._geometry.startAngle(datum.depth, datum.x0);
-            endAngle = (datum.depth < 1)
-                ? this._geometry.calcAngle(datum.x1)
-                : this._geometry.endAngle(datum.depth, datum.x1);
-        }
+        const { innerR, outerR, startAngle, endAngle } = this._resolveMarriageGeometry(datum);
 
         if (outerR <= innerR) {
             return;
@@ -154,23 +168,7 @@ export default class Marriage {
             return;
         }
 
-        let innerR, outerR, startAngle, endAngle;
-
-        if (datum.depth < 0) {
-            innerR = this._geometry.outerRadius(0);
-            outerR = this._geometry.innerRadius(1);
-            startAngle = this._geometry.startAngle(datum.depth, datum.x0);
-            endAngle = this._geometry.endAngle(datum.depth, datum.x1);
-        } else {
-            innerR = this._geometry.outerRadius(datum.depth);
-            outerR = this._geometry.innerRadius(datum.depth + 1);
-            startAngle = (datum.depth < 1)
-                ? this._geometry.calcAngle(datum.x0)
-                : this._geometry.startAngle(datum.depth, datum.x0);
-            endAngle = (datum.depth < 1)
-                ? this._geometry.calcAngle(datum.x1)
-                : this._geometry.endAngle(datum.depth, datum.x1);
-        }
+        const { innerR, outerR, startAngle, endAngle } = this._resolveMarriageGeometry(datum);
 
         if (outerR <= innerR) {
             return;

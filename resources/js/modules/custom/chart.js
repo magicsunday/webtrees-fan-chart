@@ -85,6 +85,32 @@ export default class Chart {
     }
 
     /**
+     * Computes viewBox coordinates from padding and bounding boxes.
+     *
+     * @param {number} padding          Padding in pixels
+     * @param {DOMRect} svgBoundingBox  Bounding box of the SVG visual group
+     * @param {DOMRect} clientBoundingBox Bounding box of the parent container
+     *
+     * @return {{ left: number, top: number, width: number, height: number }}
+     *
+     * @private
+     */
+    _computeViewBox(padding, svgBoundingBox, clientBoundingBox) {
+        const viewBoxWidth = Math.max(clientBoundingBox.width, svgBoundingBox.width);
+        const viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height);
+
+        const offsetX = (viewBoxWidth - svgBoundingBox.width) / 2;
+        const offsetY = (viewBoxHeight - svgBoundingBox.height) / 2;
+
+        return {
+            left: Math.ceil(svgBoundingBox.x - offsetX - padding),
+            top: Math.ceil(svgBoundingBox.y - offsetY - padding),
+            width: Math.ceil(viewBoxWidth + (padding * 2)),
+            height: Math.ceil(viewBoxHeight + (padding * 2)),
+        };
+    }
+
+    /**
      * Recalculates and sets the SVG viewBox so the chart fills its container
      * with a minimum 1 rem padding on every side. In fullscreen mode the SVG
      * dimensions are set to the full client area.
@@ -101,15 +127,6 @@ export default class Chart {
         const svgBoundingBox = this.svg.visual.node().getBBox();
         const clientBoundingBox = this.parent.node().getBoundingClientRect();
 
-        let viewBoxWidth = Math.max(clientBoundingBox.width, svgBoundingBox.width);
-        let viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height);
-
-        const offsetX = (viewBoxWidth - svgBoundingBox.width) / 2;
-        const offsetY = (viewBoxHeight - svgBoundingBox.height) / 2;
-
-        const viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - padding);
-        const viewBoxTop = Math.ceil(svgBoundingBox.y - offsetY - padding);
-
         // In fullscreen mode, use the full available height
         if (document.fullscreenElement) {
             this.svg
@@ -117,18 +134,17 @@ export default class Chart {
                 .attr("height", clientBoundingBox.height);
         }
 
-        viewBoxWidth = Math.ceil(viewBoxWidth + (padding * 2));
-        viewBoxHeight = Math.ceil(viewBoxHeight + (padding * 2));
+        const viewBox = this._computeViewBox(padding, svgBoundingBox, clientBoundingBox);
 
         // Set view box attribute
         this.svg
             .attr(
                 "viewBox",
                 [
-                    viewBoxLeft,
-                    viewBoxTop,
-                    viewBoxWidth,
-                    viewBoxHeight,
+                    viewBox.left,
+                    viewBox.top,
+                    viewBox.width,
+                    viewBox.height,
                 ],
             );
     }
@@ -159,19 +175,8 @@ export default class Chart {
         // Restore for the fade-out transition
         outgoing.style("display", null);
 
-        let viewBoxWidth = Math.max(clientBoundingBox.width, svgBoundingBox.width);
-        let viewBoxHeight = Math.max(clientBoundingBox.height, svgBoundingBox.height);
-
-        const offsetX = (viewBoxWidth - svgBoundingBox.width) / 2;
-        const offsetY = (viewBoxHeight - svgBoundingBox.height) / 2;
-
-        const viewBoxLeft = Math.ceil(svgBoundingBox.x - offsetX - padding);
-        const viewBoxTop = Math.ceil(svgBoundingBox.y - offsetY - padding);
-
-        viewBoxWidth = Math.ceil(viewBoxWidth + (padding * 2));
-        viewBoxHeight = Math.ceil(viewBoxHeight + (padding * 2));
-
-        const newViewBox = [viewBoxLeft, viewBoxTop, viewBoxWidth, viewBoxHeight].join(" ");
+        const viewBox = this._computeViewBox(padding, svgBoundingBox, clientBoundingBox);
+        const newViewBox = [viewBox.left, viewBox.top, viewBox.width, viewBox.height].join(" ");
 
         this.svg
             .transition("viewBox")
