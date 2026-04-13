@@ -68,6 +68,10 @@ export default class Text {
         const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
 
         nameGroups.forEach((nameGroup, index) => {
+            if (nameGroup.length === 0) {
+                return;
+            }
+
             const slot = nameSlots[index];
             const position = positions.get(slot);
             const availableWidth = this.getAvailableWidth(datum, position);
@@ -145,6 +149,10 @@ export default class Text {
             const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
 
             nameGroups.forEach((nameGroup, index) => {
+                if (nameGroup.length === 0) {
+                    return;
+                }
+
                 const availableWidth = this.getAvailableWidth(datum, positions.get(nameSlots[index]));
                 const text = parent
                     .append("text")
@@ -156,7 +164,8 @@ export default class Text {
                 );
             });
 
-            if (datum.data.data.alternativeName !== "") {
+            // Skip alternative names for descendants to save space
+            if ((datum.data.data.alternativeName !== "") && (datum.depth >= 0)) {
                 const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.ALTERNATIVE_NAME));
                 const nameGroup = this.createAlternativeNamesData(datum);
 
@@ -657,8 +666,26 @@ export default class Text {
      * @private
      */
     calculateSlotPositions(datum) {
-        // Build semantic groups: names, alternative name, dates
-        const nameGroup = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+        // Build semantic groups: names, alternative name, dates.
+        // When one name part is empty (e.g. CJK names with no separate
+        // first name), exclude it from spacing but still assign a position
+        // so slot lookups don't fail.
+        const hasFirstNames = datum.data.data.firstNames && datum.data.data.firstNames.length > 0;
+        const hasLastNames = datum.data.data.lastNames && datum.data.data.lastNames.length > 0;
+        const nameGroup = [];
+
+        if (hasFirstNames) {
+            nameGroup.push(Text.TEXT_SLOT.FIRST_NAMES);
+        }
+
+        if (hasLastNames) {
+            nameGroup.push(Text.TEXT_SLOT.LAST_NAMES);
+        }
+
+        if (nameGroup.length === 0) {
+            nameGroup.push(Text.TEXT_SLOT.FIRST_NAMES);
+        }
+
         const altGroup = [];
         const dateGroup = [];
 
@@ -767,6 +794,14 @@ export default class Text {
                 currentPos -= interGroupSpacing;
             }
         });
+
+        // Ensure both name slots have a position even if one was excluded
+        // from spacing. Copy the other's position so lookups don't fail.
+        if (!positions.has(Text.TEXT_SLOT.FIRST_NAMES) && positions.has(Text.TEXT_SLOT.LAST_NAMES)) {
+            positions.set(Text.TEXT_SLOT.FIRST_NAMES, positions.get(Text.TEXT_SLOT.LAST_NAMES));
+        } else if (!positions.has(Text.TEXT_SLOT.LAST_NAMES) && positions.has(Text.TEXT_SLOT.FIRST_NAMES)) {
+            positions.set(Text.TEXT_SLOT.LAST_NAMES, positions.get(Text.TEXT_SLOT.FIRST_NAMES));
+        }
 
         return positions;
     }
@@ -1049,9 +1084,10 @@ export default class Text {
         const centerRadius = this._geometry.centerRadius(datum.depth);
         const degPerPixel = MATH_RAD2DEG / centerRadius;
 
+        const totalItems = groups.reduce((sum, g) => sum + g.items.length, 0);
         const intraNameGapPx = fontSize * 1.1;
         const intraDateGapPx = fontSize * 1.0;
-        const interGapPx = fontSize * 1.5;
+        const interGapPx = fontSize * (totalItems <= 3 ? 1.0 : 1.5);
 
         let intraNameGapDeg = intraNameGapPx * degPerPixel;
         let intraDateGapDeg = intraDateGapPx * degPerPixel;
