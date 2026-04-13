@@ -89,12 +89,20 @@ release-prepare: release-check
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) prepared"
 
 ## Publish: push, create GitHub release with zip.
-## Pass NOTES="..." for custom release notes, otherwise auto-generated.
+## Pass NOTES_FILE=path for release notes from a file (recommended for multi-line notes).
+## Pass NOTES="..." for a short inline note, or omit both for auto-generated notes.
+## Example: make release 3.1.1 NOTES_FILE=/tmp/release-notes.md
 ## Example: make release 3.1.1 NOTES="Bug fix release"
 release-publish:
 	@echo -e "${FYELLOW}[5/5]${FRESET} Publishing to GitHub..."
 	@git push origin main --tags
-	@if [ -n "$(NOTES)" ]; then \
+	@if [ -n "$(NOTES_FILE)" ]; then \
+		gh release create $(VERSION) \
+			--title "$(VERSION)" \
+			--notes-file "$(NOTES_FILE)" \
+			--target main \
+			$(MODULE_NAME).zip; \
+	elif [ -n "$(NOTES)" ]; then \
 		gh release create $(VERSION) \
 			--title "$(VERSION)" \
 			--notes "$(NOTES)" \
