@@ -57,6 +57,7 @@ export default class Configuration {
      * @param {boolean}  [options.showImages=false]
      * @param {boolean}  [options.showNames=true]
      * @param {boolean}  [options.showSilhouettes=false]
+     * @param {boolean}  [options.showDescendants=false]
      * @param {boolean}  [options.rtl=false]
      * @param {number}   [options.innerArcs=4]
      * @param {string}   [options.paternalColor]
@@ -74,6 +75,7 @@ export default class Configuration {
         showImages = false,
         showNames = true,
         showSilhouettes = false,
+        showDescendants = false,
         rtl = false,
         innerArcs = 4,
         paternalColor = Configuration.PATERNAL_COLOR_DEFAULT,
@@ -83,7 +85,7 @@ export default class Configuration {
         this._generations = toFiniteNumber(generations, 6);
 
         // Padding in pixel between each generation circle
-        this.circlePadding = showParentMarriageDates ? 40 : 0;
+        this.circlePadding = showParentMarriageDates ? 30 : 0;
 
         this.padAngle = 0.03;
         this.padRadius = this.circlePadding * 10;
@@ -126,6 +128,18 @@ export default class Configuration {
         // Default degrees of the fan chart
         this._fanDegree = toFiniteNumber(fanDegree, 210);
 
+        this._showDescendants = showDescendants;
+
+        // Clamp fan degree when descendants are shown
+        if (this._showDescendants) {
+            this._fanDegree = Math.min(270, Math.max(180, this._fanDegree));
+        }
+
+        // D3 linear scale mapping descendant full-circle fractions to radians.
+        // Set by hierarchy.js::initDescendants() once the descendant angle
+        // range is known. All Geometry instances read this via the getter.
+        this._childScale = null;
+
         this.rtl = rtl;
         this.labels = labels;
 
@@ -154,7 +168,9 @@ export default class Configuration {
     }
 
     set fanDegree(value) {
-        this._fanDegree = value;
+        this._fanDegree = this._showDescendants
+            ? Math.min(270, Math.max(180, value))
+            : value;
     }
 
     /**
@@ -243,6 +259,36 @@ export default class Configuration {
      */
     get showSilhouettes() {
         return this._showSilhouettes;
+    }
+
+    /**
+     * When true, partners and children of the central person are rendered
+     * as arcs in the lower section of the fan chart.
+     *
+     * @return {boolean}
+     */
+    get showDescendants() {
+        return this._showDescendants;
+    }
+
+    set showDescendants(value) {
+        this._showDescendants = value;
+    }
+
+    /**
+     * D3 linear scale mapping descendant full-circle fractions [0,1] to
+     * radian angles in the descendant sector. Set by hierarchy.js after
+     * computing the descendant angle range. Null when no descendants are
+     * active.
+     *
+     * @return {Function|null}
+     */
+    get childScale() {
+        return this._childScale;
+    }
+
+    set childScale(value) {
+        this._childScale = value;
     }
 
     /**

@@ -37,6 +37,19 @@ use MagicSunday\Webtrees\FanChart\Processor\PlaceProcessor;
 class DataFacade
 {
     /**
+     * Angular gap in degrees between the ancestor fan and the descendant
+     * sector, applied on both sides. Must match DESCENDANT_GAP_DEG in
+     * resources/js/modules/custom/hierarchy.js.
+     */
+    private const int DESCENDANT_GAP_DEG = 10;
+
+    /**
+     * Minimum angular width in degrees per child arc below which places
+     * and detailed dates are suppressed in favour of a compact format.
+     */
+    private const int MIN_CHILD_ARC_DEG = 20;
+
+    /**
      * The module. Initialized by createTreeStructure() on each call.
      * Accessing before createTreeStructure() throws "Uninitialized typed property".
      */
@@ -73,7 +86,13 @@ class DataFacade
         $this->configuration = $configuration;
         $this->nodeId        = 0;
 
-        return $this->buildTreeStructure($individual);
+        $rootNode = $this->buildTreeStructure($individual);
+
+        if (($rootNode instanceof Node) && $this->configuration->getShowDescendants()) {
+            $this->buildDescendantStructure($rootNode, $individual);
+        }
+
+        return $rootNode;
     }
 
     /**
@@ -119,6 +138,140 @@ class DataFacade
         }
 
         return $node;
+    }
+
+    /**
+     * Builds the descendant section (partners + children) for the root individual.
+     * Each spouse family produces one partner node with its children attached.
+     * Privacy-hidden spouses are detected via HUSB/WIFE fact analysis.
+     *
+     * @param Node       $rootNode   The root node to attach descendants to
+     * @param Individual $individual The root individual
+     */
+    private function buildDescendantStructure(Node $rootNode, Individual $individual): void
+    {
+        // Count total children across all families to estimate angular width.
+        // When arcs are too narrow, places are suppressed for children.
+        $totalChildSlots = 0;
+
+        foreach ($individual->spouseFamilies() as $family) {
+            $totalChildSlots += max(1, $family->children()->count());
+        }
+
+        $descendantSectorDeg = 360 - $this->configuration->getFanDegree() - (2 * self::DESCENDANT_GAP_DEG);
+        $perChildDeg         = ($totalChildSlots > 0) ? ($descendantSectorDeg / $totalChildSlots) : 360;
+        $suppressChildPlaces = $perChildDeg < self::MIN_CHILD_ARC_DEG;
+
+        foreach ($individual->spouseFamilies() as $family) {
+            $spouse          = $family->spouse($individual);
+            $visibleChildren = $family->children();
+
+            if ($spouse !== null) {
+                // Normal case: visible partner
+                $partnerNodeData = $this->getNodeData(1, $spouse);
+                $partnerNodeData->setGeneration(-1);
+
+                // Suppress images and irrelevant marriage fields for descendants
+                $partnerNodeData
+                    ->setThumbnail('')
+                    ->setMarriageDateOfParents('');
+
+                // Set marriage date from the specific family record as plain text
+                // (not from DateProcessor which only looks at the first spouse family)
+                $marriageDate = $family->getMarriageDate();
+
+                $partnerNodeData->setMarriageDate(
+                    $marriageDate->isOK()
+                        ? $marriageDate->minimumDate()->format(I18N::dateFormat())
+                        : ''
+                );
+
+                $partnerNode = new Node($partnerNodeData);
+            } else {
+                // spouse() returned null -- distinguish: no pointer vs. privacy-hidden
+                $hasSpousePointer = $family->facts(['HUSB', 'WIFE'])
+                    ->filter(
+                        static fn ($fact): bool => $fact->value() !== '@' . $individual->xref() . '@'
+                    )
+                    ->isNotEmpty();
+
+                if ($hasSpousePointer) {
+                    // Spouse is privacy-hidden -- no partner arc (would leak existence)
+                    // Visible children go to unassignedChildren on root
+                    foreach ($visibleChildren as $child) {
+                        $childNodeData = $this->getNodeData(2, $child);
+                        $childNodeData->setGeneration(-2);
+                        $childNodeData
+                            ->setThumbnail('')
+                            ->setMarriageDate('')
+                            ->setMarriageDateOfParents('');
+
+                        if ($suppressChildPlaces) {
+                            $childNodeData
+                                ->setBirthPlace('')
+                                ->setDeathPlace('')
+                                ->setMarriagePlace('');
+
+                            $this->rebuildTimespanWithoutPlaces($childNodeData);
+                        }
+
+                        $rootNode->addUnassignedChild(new Node($childNodeData));
+                    }
+
+                    continue;
+                }
+
+                if ($visibleChildren->isEmpty()) {
+                    // No spouse pointer and no children -- skip family entirely
+                    continue;
+                }
+
+                // Genuine unknown partner with visible children
+                $partnerNode = new Node($this->createEmptyPartnerNode(-1));
+            }
+
+            // Attach children to the partner node
+            $childNodes = [];
+
+            foreach ($visibleChildren as $child) {
+                $childNodeData = $this->getNodeData(2, $child);
+                $childNodeData->setGeneration(-2);
+                $childNodeData
+                    ->setThumbnail('')
+                    ->setMarriageDate('')
+                    ->setMarriageDateOfParents('');
+
+                if ($suppressChildPlaces) {
+                    $childNodeData
+                        ->setBirthPlace('')
+                        ->setDeathPlace('')
+                        ->setMarriagePlace('');
+
+                    $this->rebuildTimespanWithoutPlaces($childNodeData);
+                }
+
+                $childNodes[] = new Node($childNodeData);
+            }
+
+            $partnerNode->setChildren($childNodes);
+            $rootNode->addPartner($partnerNode);
+        }
+    }
+
+    /**
+     * Creates a minimal NodeData for an unknown partner (no Individual record).
+     * Only sets id, generation, and sex.
+     *
+     * @param int $generation The generation depth (typically -1)
+     *
+     * @return NodeData
+     */
+    private function createEmptyPartnerNode(int $generation): NodeData
+    {
+        return (new NodeData())
+            ->setId(++$this->nodeId)
+            ->setGeneration($generation)
+            ->setSex('U');
     }
 
     /**
@@ -209,6 +362,7 @@ class DataFacade
                 'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
                 'showPlaces'              => $this->configuration->getShowPlaces() ? '1' : '0',
                 'placeParts'              => $this->configuration->getPlaceParts(),
+                'showDescendants'         => $this->configuration->getShowDescendants() ? '1' : '0',
             ]
         );
     }
@@ -286,6 +440,41 @@ class DataFacade
         $year = $isBirth ? $dateProcessor->getBirthYear() : $dateProcessor->getDeathYear();
 
         return ($year > 0) ? (string) $year : '';
+    }
+
+    /**
+     * Rebuilds the timespan in compact year-only format (e.g. "1853–1933"),
+     * excluding places. Used when descendant arcs are too narrow for the
+     * full multi-line timespan with places.
+     *
+     * @param NodeData $nodeData The node data with dates already set
+     */
+    private function rebuildTimespanWithoutPlaces(NodeData $nodeData): void
+    {
+        // Extract 4-digit year from formatted date strings
+        $birthYear = (preg_match('/(\d{4})/', $nodeData->getBirth(), $m) === 1) ? $m[1] : '';
+        $deathYear = (preg_match('/(\d{4})/', $nodeData->getDeath(), $m) === 1) ? $m[1] : '';
+
+        // Compact single-line format: "1853–1933"
+        if (($birthYear !== '') && ($deathYear !== '')) {
+            $nodeData->setTimespan($birthYear . Symbols::DateRangeSeparator->value . $deathYear);
+
+            return;
+        }
+
+        if ($birthYear !== '') {
+            $nodeData->setTimespan(Symbols::Birth->value . ' ' . $birthYear);
+
+            return;
+        }
+
+        if ($deathYear !== '') {
+            $nodeData->setTimespan(Symbols::Death->value . ' ' . $deathYear);
+
+            return;
+        }
+
+        $nodeData->setTimespan('');
     }
 
     /**

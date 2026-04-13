@@ -85,6 +85,7 @@ export default class Update {
             // (must happen before person/marriage loops since marriage
             // arcs reference their children's familyColor)
             const familyColor = new FamilyColor(this._configuration);
+            familyColor.setPartnerMidpoints(this._hierarchy.nodes);
 
             if (this._configuration.showFamilyColors) {
                 this._hierarchy.nodes.forEach(
@@ -96,22 +97,74 @@ export default class Update {
             // the class instance (that) and the DOM element (this)
             const that = this;
 
-            // Flag all person elements which are subject to change
-            this._svg
+            // Note: descendant marriage arcs are handled in drawDescendantMarriageArcs()
+            // via redrawOverlayLayers(), using the same enter/exit/update pattern.
+
+            // Flag all person elements which are subject to change.
+            // Descendant person elements participate in the same data-join
+            // as ancestors: matched desc elements become "update", unmatched
+            // old ones become "remove", new ones get appended via enter().
+            const personJoin = this._svg
+                .select("g.personGroup")
                 .selectAll("g.person")
-                .data(this._hierarchy.nodes, (datum) => datum.id)
+                .data(this._hierarchy.nodes, (datum) => datum.id);
+
+            // Process matched (update) elements
+            personJoin
                 .each(function (datum) {
                     const empty = datum.data.data.xref === "";
                     const person = d3.select(this);
+                    const isDescendant = datum.depth < 0;
 
-                    person.classed("remove", empty)
-                        .classed("update", !empty && person.classed("available"))
-                        .classed("new", !empty && !person.classed("available"));
+                    // Descendants are always treated as "new" because their
+                    // arc geometry changes on every re-center (unlike ancestors
+                    // whose partition positions are stable). Mark old content
+                    // for fade-out including the arc itself.
+                    // Empty partner arcs (unknown spouse) are kept, not removed.
+                    if (isDescendant) {
+                        person.selectAll("g.arc, g.name, g.color, g.image, title")
+                            .classed("old", true);
+
+                        const removeDescendant = empty && (datum.depth !== -1);
+
+                        person.classed("remove", removeDescendant)
+                            .classed("update", false)
+                            .classed("new", !removeDescendant);
+                    } else {
+                        person.classed("remove", empty)
+                            .classed("update", !empty && person.classed("available"))
+                            .classed("new", !empty && !person.classed("available"));
+                    }
 
                     if (!person.classed("new")) {
                         person.selectAll("g.name, g.color, g.image, title")
                             .classed("old", true);
                     }
+
+                    new Person(that._svg, that._configuration, person, datum);
+                });
+
+            // Mark unmatched old elements for removal and flag ALL their
+            // children (including arc) as "old" for fade-out
+            personJoin.exit()
+                .classed("remove", true)
+                .selectAll("g.arc, g.name, g.color, g.image, title")
+                .classed("old", true);
+
+            // Create new person elements via enter() -- descendants always,
+            // and ancestors that didn't have a DOM element before (e.g. when
+            // hideEmptySegments filtered them out on the previous center person).
+            personJoin.enter()
+                .filter(
+                    (datum) => (datum.data.data.xref !== "")
+                        || !this._configuration.hideEmptySegments
+                        || (datum.depth < 0),
+                )
+                .append("g")
+                .attr("class", "person new")
+                .attr("id", (datum) => "person-" + datum.id)
+                .each(function (datum) {
+                    const person = d3.select(this);
 
                     new Person(that._svg, that._configuration, person, datum);
                 });
@@ -124,7 +177,7 @@ export default class Update {
                 );
 
                 this._svg
-                    .selectAll("g.marriage")
+                    .selectAll("g.marriage:not(.descendant)")
                     .data(marriageNodes, (datum) => datum.id)
                     .each(function (datum) {
                         const hasChildren = datum.children
@@ -185,16 +238,16 @@ export default class Update {
             this.transitionUpdatedArcs(transition, "g.marriage", (datum) =>
                 FamilyColor.getMarriageColor(datum));
 
-            // Fade out all old elements
+            // Fade out all old elements (including old descendant arcs)
             this._svg
-                .selectAll("g.person.update, g.person.remove")
-                .selectAll("g.name.old, g.color.old, g.image.old")
+                .selectAll("g.person.update, g.person.remove, g.person.new")
+                .selectAll("g.arc.old, g.name.old, g.color.old, g.image.old")
                 .transition(transition)
                 .style("opacity", 1e-6);
 
             this._svg
-                .selectAll("g.marriage.update, g.marriage.remove")
-                .selectAll("g.name.old")
+                .selectAll("g.marriage.update, g.marriage.remove, g.marriage.new")
+                .selectAll("g.arc.old, g.name.old")
                 .transition(transition)
                 .style("opacity", 1e-6);
 
@@ -203,7 +256,7 @@ export default class Update {
                 .transition(transition)
                 .style("opacity", 1e-6);
 
-            // Fade in all new elements
+            // Fade in all new elements (including new descendants)
             this._svg
                 .selectAll("g.person:not(.remove)")
                 .selectAll("g.name:not(.old), g.color:not(.old), g.image:not(.old)")
@@ -215,6 +268,8 @@ export default class Update {
                 .selectAll("g.name:not(.old)")
                 .transition(transition)
                 .style("opacity", 1);
+
+
 
             this._svg
                 .selectAll("g.separatorGroup line:not(.old)")
@@ -275,6 +330,7 @@ export default class Update {
 
             this._svg.selectAll("g.person g.name, g.person g.color, g.person g.image").style("opacity", null);
             this._svg.selectAll("g.marriage g.name").style("opacity", null);
+
         }, 10);
 
         this._svg
@@ -282,7 +338,7 @@ export default class Update {
             .classed("new", false)
             .classed("update", false)
             .classed("remove", false)
-            .selectAll("g.name.old, g.color.old, g.image.old, title.old")
+            .selectAll("g.arc.old, g.name.old, g.color.old, g.image.old, title.old")
             .remove();
 
         this._svg
@@ -290,7 +346,7 @@ export default class Update {
             .classed("new", false)
             .classed("update", false)
             .classed("remove", false)
-            .selectAll("g.name.old")
+            .selectAll("g.arc.old, g.name.old")
             .remove();
 
         this._svg
@@ -345,6 +401,19 @@ export default class Update {
                 }
             });
 
+        // Remove completely empty person shells (no arc, no name).
+        // These accumulate from exit elements whose content was removed.
+        this._svg
+            .select("g.personGroup")
+            .selectAll("g.person")
+            .filter(function () {
+                const el = d3.select(this);
+
+                return el.select("g.arc").empty()
+                    && el.select("g.name").empty();
+            })
+            .remove();
+
         // Execute callback function after everything is done
         callback();
     }
@@ -366,6 +435,11 @@ export default class Update {
             .selectAll(groupSelector)
             .each(function () {
                 const datum = d3.select(this).datum();
+
+                if (!datum) {
+                    return;
+                }
+
                 const color = getColor(datum);
 
                 if (color) {

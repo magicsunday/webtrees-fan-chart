@@ -277,11 +277,21 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
+    public function getBirth(): string
+    {
+        return $this->birth;
+    }
+
     public function setBirth(string $birth): NodeData
     {
         $this->birth = $birth;
 
         return $this;
+    }
+
+    public function getDeath(): string
+    {
+        return $this->death;
     }
 
     public function setDeath(string $death): NodeData

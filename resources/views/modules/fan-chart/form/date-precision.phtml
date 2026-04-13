@@ -17,21 +17,17 @@ use MagicSunday\Webtrees\FanChart\Configuration;
  */
 ?>
 
-<div class="row">
-    <label class="col-sm-3 col-form-label wt-page-options-label" for="detailedDateGenerations">
-        <?= I18N::translate('Birth and death date precision') ?>
-    </label>
-    <div class="col-sm-9 wt-page-options-value">
-        <?=
-            view('components/select', [
-                'name'     => 'detailedDateGenerations',
-                'selected' => $configuration->getDetailedDateGenerations(),
-                'options'  => $configuration->getDetailedDateGenerationsList(),
-                'class'    => 'form-control-sm',
-            ])
-        ?>
-        <small class="form-text text-muted">
-            <?= I18N::translate('Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9.') ?>
-        </small>
-    </div>
-</div>
+<label class="form-label" for="detailedDateGenerations">
+    <?= I18N::translate('Birth and death date precision') ?>
+</label>
+<?=
+    view('components/select', [
+        'name'     => 'detailedDateGenerations',
+        'selected' => $configuration->getDetailedDateGenerations(),
+        'options'  => $configuration->getDetailedDateGenerationsList(),
+        'class'    => 'form-control-sm',
+    ])
+?>
+<small class="form-text text-muted form-element-description" style="box-decoration-break: clone;">
+    <?= I18N::translate('Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format.') ?>
+</small>

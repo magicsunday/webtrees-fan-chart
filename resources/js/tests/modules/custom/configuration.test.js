@@ -54,11 +54,11 @@ describe("Configuration", () => {
             showParentMarriageDates: true,
         });
 
-        expect(config.circlePadding).toBe(40);
-        expect(config.innerArcHeight).toBe(165);
-        expect(config.outerArcHeight).toBe(165);
-        expect(config.padRadius).toBe(400);
-        expect(config.padDistance).toBeCloseTo(12, 5);
+        expect(config.circlePadding).toBe(30);
+        expect(config.innerArcHeight).toBe(155);
+        expect(config.outerArcHeight).toBe(155);
+        expect(config.padRadius).toBe(300);
+        expect(config.padDistance).toBeCloseTo(9, 5);
         expect(config.generations).toBe(6);
         expect(config.fanDegree).toBe(210);
         expect(config.fontScale).toBe(100);
@@ -76,11 +76,11 @@ describe("Configuration", () => {
             innerArcs: 5,
         });
 
-        expect(configuration.circlePadding).toBe(40);
-        expect(configuration.padRadius).toBe(400);
-        expect(configuration.padDistance).toBeCloseTo(12);
-        expect(configuration.innerArcHeight).toBe(165);
-        expect(configuration.outerArcHeight).toBe(165);
+        expect(configuration.circlePadding).toBe(30);
+        expect(configuration.padRadius).toBe(300);
+        expect(configuration.padDistance).toBeCloseTo(9);
+        expect(configuration.innerArcHeight).toBe(155);
+        expect(configuration.outerArcHeight).toBe(155);
         expect(configuration.showParentMarriageDates).toBe(true);
         expect(configuration.rtl).toBe(true);
     });

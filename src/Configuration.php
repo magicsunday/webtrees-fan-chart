@@ -88,7 +88,7 @@ class Configuration
     /**
      * The default number of generations for which detailed life event dates are displayed.
      */
-    private const int DEFAULT_DETAILED_DATE_GENERATIONS = 3;
+    private const int DEFAULT_DETAILED_DATE_GENERATIONS = 0;
 
     /**
      * Minimum number of generations showing detailed life event dates.
@@ -194,14 +194,14 @@ class Configuration
     }
 
     /**
-     * Returns the font size scaling factor as a percentage (50–150).
+     * Returns the font size scaling factor as a percentage (75–125).
      *
      * @return int
      */
     public function getFontScale(): int
     {
         return $this->validator()
-            ->isBetween(50, 150)
+            ->isBetween(75, 125)
             ->integer(
                 'fontScale',
                 (int) $this->module->getPreference(
@@ -212,11 +212,47 @@ class Configuration
     }
 
     /**
+     * Returns true when descendant support (partners + children) is active.
+     *
+     * @return bool
+     */
+    public function getShowDescendants(): bool
+    {
+        return $this->validator()
+            ->boolean(
+                'showDescendants',
+                (bool) $this->module->getPreference(
+                    'default_showDescendants',
+                    '0'
+                )
+            );
+    }
+
+    /**
      * Returns the opening angle of the fan in degrees (180–360).
+     * When showDescendants is active, the value is clamped to 180–270
+     * to reserve angular space for the descendant section.
      *
      * @return int
      */
     public function getFanDegree(): int
+    {
+        $value = $this->getFanDegreeUnclamped();
+
+        if ($this->getShowDescendants()) {
+            return min(270, max(180, $value));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Returns the opening angle of the fan in degrees WITHOUT descendant clamping.
+     * Used by page.phtml to initialise the fanDegreeRaw storage key.
+     *
+     * @return int
+     */
+    public function getFanDegreeUnclamped(): int
     {
         return $this->validator()
             ->isBetween(180, 360)
@@ -337,6 +373,12 @@ class Configuration
      */
     public function getShowImages(): bool
     {
+        $displayMode = $this->resolveDisplayMode();
+
+        if ($displayMode !== null) {
+            return in_array($displayMode, ['both', 'images'], true);
+        }
+
         return $this->validator()
             ->boolean(
                 'showImages',
@@ -354,6 +396,12 @@ class Configuration
      */
     public function getShowNames(): bool
     {
+        $displayMode = $this->resolveDisplayMode();
+
+        if ($displayMode !== null) {
+            return in_array($displayMode, ['both', 'names'], true);
+        }
+
         return $this->validator()
             ->boolean(
                 'showNames',
@@ -362,6 +410,24 @@ class Configuration
                     '1'
                 )
             );
+    }
+
+    /**
+     * Resolves the displayMode parameter from the request. Returns null if not present,
+     * allowing fallback to the individual showNames/showImages parameters.
+     *
+     * @return string|null 'both', 'names', 'images', or null
+     */
+    private function resolveDisplayMode(): ?string
+    {
+        $params = (array) $this->request->getParsedBody() + $this->request->getQueryParams();
+        $mode   = $params['displayMode'] ?? null;
+
+        if (is_string($mode) && in_array($mode, ['both', 'names', 'images'], true)) {
+            return $mode;
+        }
+
+        return null;
     }
 
     /**

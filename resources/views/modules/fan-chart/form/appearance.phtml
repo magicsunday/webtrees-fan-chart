@@ -13,17 +13,14 @@ use Fisharebest\Webtrees\I18N;
 use MagicSunday\Webtrees\FanChart\Configuration;
 
 /**
- * @var string        $moduleName
  * @var Configuration $configuration
+ * @var string        $moduleName
  */
 ?>
 
-<?= view($moduleName . '::modules/components/range-slider', [
-    'id'     => 'fanDegree',
-    'label'  => I18N::translate('Fan size'),
-    'value'  => $configuration->getFanDegree(),
-    'min'    => 180,
-    'max'    => $configuration->getShowDescendants() ? 270 : 360,
-    'step'   => 5,
-    'suffix' => '°',
-]) ?>
+<div class="mb-3">
+    <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+</div>
+<div class="mb-3">
+    <?= view($moduleName . '::modules/fan-chart/form/font-size', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+</div>

@@ -81,9 +81,16 @@ export default class FamilyColor {
      * @return {string|null} HSL color string, or null for the root node
      */
     getColor(datum) {
-        // Empty segments keep their default gray appearance
-        if (datum.data.data.xref === "") {
+        // Empty ancestor segments keep their default gray appearance.
+        // Empty partner arcs (unknown spouse) still get a family color.
+        if ((datum.data.data.xref === "") && (datum.depth >= 0)) {
             return null;
+        }
+
+        // Descendants: each partner family gets its own hue via position-based rotation.
+        // Children share their partner's hue at a slightly deeper depth.
+        if (datum.depth < 0) {
+            return this.getDescendantColor(datum);
         }
 
         // Center node: sex-based hue at depth 0 of the same curve
@@ -129,6 +136,80 @@ export default class FamilyColor {
         const lightness = maxLightness - (datum.depth - 1) * FamilyColor.LIGHTNESS_STEP;
 
         return "hsl(" + hue + ", " + saturation + "%, " + lightness + "%)";
+    }
+
+    /**
+     * Computes a family-branch color for descendant nodes. Each partner
+     * family gets a unique hue derived from its angular position in the
+     * descendant sector. Children share their partner's hue at a slightly
+     * deeper saturation/lightness level.
+     *
+     * @param {Object} datum The D3 partition datum (depth < 0)
+     *
+     * @return {string} HSL color string
+     *
+     * @private
+     */
+    getDescendantColor(datum) {
+        // Use the midpoint of the partner arc for hue derivation.
+        // For children (depth -2), use the parent partner's midpoint.
+        const partnerMidpoint = (datum.descendantType === "child" && datum.syntheticParentId)
+            ? this._findPartnerMidpoint(datum.syntheticParentId)
+            : (datum.x0 + datum.x1) / 2;
+
+        // Blend between paternal and maternal base hues based on position,
+        // producing pastel tones consistent with the ancestor color scheme.
+        const patHue = this._paternalHsl[0];
+        const matHue = this._maternalHsl[0];
+
+        // Interpolate hue between the two base colors with a slight spread
+        const hue = patHue + partnerMidpoint * ((matHue - patHue + 360) % 360);
+
+        // Match the pastel range of inner ancestor rings
+        const baseSat = (this._paternalHsl[1] + this._maternalHsl[1]) / 2;
+        const baseLit = (this._paternalHsl[2] + this._maternalHsl[2]) / 2;
+        const absDepth = Math.abs(datum.depth);
+
+        const {minSaturation, maxLightness} = FamilyColor._depthBounds(
+            [(patHue + matHue) / 2, baseSat, baseLit],
+        );
+
+        const saturation = minSaturation + (absDepth - 1) * FamilyColor.SATURATION_STEP;
+        const lightness = maxLightness - (absDepth - 1) * FamilyColor.LIGHTNESS_STEP;
+
+        return "hsl(" + (((hue % 360) + 360) % 360) + ", " + saturation + "%, " + lightness + "%)";
+    }
+
+    /**
+     * Finds the angular midpoint of a partner node by its ID.
+     *
+     * @param {string} partnerId The synthetic partner node ID
+     *
+     * @return {number} Midpoint in [0,1] range, or 0.5 as fallback
+     *
+     * @private
+     */
+    _findPartnerMidpoint(partnerId) {
+        // Search through the hierarchy nodes for the partner
+        // This is called from getColor which is invoked per-node during draw/update
+        // where all nodes are available in the hierarchy
+        return this._partnerMidpoints?.get(partnerId) ?? 0.5;
+    }
+
+    /**
+     * Pre-computes partner midpoints for descendant color lookups.
+     * Call once before computing colors for a new hierarchy.
+     *
+     * @param {Array} nodes All hierarchy nodes
+     */
+    setPartnerMidpoints(nodes) {
+        this._partnerMidpoints = new Map();
+
+        for (const node of nodes) {
+            if (node.depth === -1) {
+                this._partnerMidpoints.set(node.id, (node.x0 + node.x1) / 2);
+            }
+        }
     }
 
     /**
@@ -189,7 +270,7 @@ export default class FamilyColor {
      * @return {string|null}
      */
     static getMarriageColor(datum) {
-        if (datum.depth === 0) {
+        if (datum.depth === 0 || datum.depth < 0) {
             return datum.data.data.familyColor || null;
         }
 

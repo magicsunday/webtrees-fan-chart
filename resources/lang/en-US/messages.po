@@ -108,8 +108,8 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr ""
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -142,8 +142,8 @@ msgstr "Maternal"
 msgid "Show places"
 msgstr "Show places"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "Displays birth and death places in inner generation arcs. Choose the level of detail below."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
 
 msgid "Full place name"
 msgstr "Full place name"
@@ -160,6 +160,9 @@ msgstr "Lowest three levels"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -206,8 +209,8 @@ msgid "Birth and death date precision"
 msgstr ""
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -218,14 +221,32 @@ msgstr ""
 msgid "Show full dates up to generation %s"
 msgstr ""
 
-msgid "Show images"
-msgstr "Show images"
+msgid "Show descendants"
+msgstr "Show descendants"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
 
-msgid "Show names"
-msgstr "Show names"
+msgid "Show names and images"
+msgstr "Show names and images"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
+msgid "Show names only"
+msgstr "Show names only"
+
+msgid "Show images only"
+msgstr "Show images only"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+
+msgid "Display"
+msgstr "Display"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Colors"
+msgstr "Colors"
+
+msgid "Appearance"
+msgstr "Appearance"

@@ -111,8 +111,8 @@ msgstr "Antal inre nivåer"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr "Specificerar antalet inre nivåer i vilken texten skrivs längs en båge."
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "Specificerar antalet inre nivåer i vilken texten skrivs längs en båge. Ättlingsbågar växlar automatiskt mellan bågtext och roterad text baserat på tillgängligt utrymme."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -145,8 +145,8 @@ msgstr "Moderlig"
 msgid "Show places"
 msgstr "Visa platser"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "Visar födelse- och dödsplatser i de inre generationsbågarna. Välj detaljnivå nedan."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "Visar födelse- och dödsplatser i diagrambågarna där utrymmet tillåter. För ättlingar med många barn döljs platser automatiskt. Välj detaljnivå nedan."
 
 msgid "Full place name"
 msgstr "Fullständigt platsnamn"
@@ -163,6 +163,9 @@ msgstr "Tre lägsta nivåer"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Visa föräldrars giftermålsdatum"
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "Visar giftermålsdatumet för varje par i en smal båge mellan generationer. När ättlingar är aktiverade visas även giftermålsdatumet mellan centralpersonen och deras partner."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -212,8 +215,8 @@ msgid "Birth and death date precision"
 msgstr "Precision för födelse- och dödsdatum"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "Visa fullständiga födelse- och dödsdatum för tidiga generationer. Äktenskapsdatum visar bara år från generation 7 och döljs från generation 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Visa fullständiga födelse- och dödsdatum för tidiga generationer. Äktenskapsdatum visar bara år från generation 7 och döljs från generation 9. Ättlingar med smala bågar använder automatiskt ett kompakt format med bara år."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -224,14 +227,32 @@ msgstr "Endast år"
 msgid "Show full dates up to generation %s"
 msgstr "Visa fullständiga datum till generation %s"
 
-msgid "Show images"
-msgstr "Visa bilder"
+msgid "Show descendants"
+msgstr "Visa ättlingar"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "Visar miniatyrbilder i de inre bågarna och i mitten av diagrammet. Bilder visas bara om bågsegmentet är tillräckligt brett."
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "Partner och barn visas som bågar under förfäderssektionen. Solfjäderns storlek är begränsad till 180–270 grader när detta är aktiverat."
 
-msgid "Show names"
-msgstr "Visa namn"
+msgid "Show names and images"
+msgstr "Visa namn och bilder"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "Visar namn och datum i diagramsegmenten. När inaktiverat döljs yttre generationer bortom de inre bågarna."
+msgid "Show names only"
+msgstr "Visa bara namn"
+
+msgid "Show images only"
+msgstr "Visa bara bilder"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "Bilder visas bara om bågsegmentet är tillräckligt brett. Bilder för ättlingar är ännu inte tillgängliga."
+
+msgid "Display"
+msgstr "Visning"
+
+msgid "Details"
+msgstr "Detaljer"
+
+msgid "Colors"
+msgstr "Färger"
+
+msgid "Appearance"
+msgstr "Utseende"

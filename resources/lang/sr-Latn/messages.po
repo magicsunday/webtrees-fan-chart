@@ -108,8 +108,8 @@ msgstr "Broj unutrašnjih nivoa"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr "Određuje broj nivoa u kojima je tekst napisan duž luka."
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "Određuje broj nivoa u kojima je tekst napisan duž luka. Lukovi potomaka automatski se menjaju između teksta po luku i rotiranog teksta na osnovu raspoloživog prostora."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -142,8 +142,8 @@ msgstr "Majčin"
 msgid "Show places"
 msgstr "Prikaži mesta"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "Prikazuje mesta rođenja i smrti u unutrašnjim lukovima generacija. Izaberite nivo detalja ispod."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "Prikazuje mesta rođenja i smrti u lukovima dijagrama gde prostor to dozvoljava. Za potomke sa mnogo dece, mesta se automatski potiskuju. Izaberite nivo detalja ispod."
 
 msgid "Full place name"
 msgstr "Puno ime mesta"
@@ -160,6 +160,9 @@ msgstr "Najniža tri nivoa"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "Prikazuje datum venčanja svakog para u uskom luku između generacija. Kada su potomci omogućeni, takođe prikazuje datum venčanja između centralne osobe i njenih partnera."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -209,8 +212,8 @@ msgid "Birth and death date precision"
 msgstr "Preciznost datuma rođenja i smrti"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "Prikaži pune datume rođenja i smrti za rane generacije. Datumi venčanja prikazuju samo godinu od generacije 7 i sakriveni su od generacije 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Prikaži pune datume rođenja i smrti za rane generacije. Datumi venčanja prikazuju samo godinu od generacije 7 i sakriveni su od generacije 9. Potomci sa uskim lukovima automatski koriste kompaktni format samo sa godinom."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -221,14 +224,32 @@ msgstr "Samo godine"
 msgid "Show full dates up to generation %s"
 msgstr "Prikaži pune datume do generacije %s"
 
-msgid "Show images"
-msgstr "Prikaži slike"
+msgid "Show descendants"
+msgstr "Prikaži potomke"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "Prikazuje sličice u unutrašnjim lukovima i u središtu dijagrama. Slike se prikazuju samo ako je segment luka dovoljno širok."
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "Partneri i deca se prikazuju kao lukovi ispod sekcije predaka. Veličina lepeze je ograničena na 180–270 stepeni kada je omogućeno."
 
-msgid "Show names"
-msgstr "Prikaži imena"
+msgid "Show names and images"
+msgstr "Prikaži imena i slike"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "Prikazuje imena i datume u segmentima dijagrama. Kada je isključeno, spoljne generacije izvan unutrašnjih lukova su skrivene."
+msgid "Show names only"
+msgstr "Prikaži samo imena"
+
+msgid "Show images only"
+msgstr "Prikaži samo slike"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "Slike se prikazuju samo ako je segment luka dovoljno širok. Slike za potomke još uvek nisu dostupne."
+
+msgid "Display"
+msgstr "Prikaz"
+
+msgid "Details"
+msgstr "Detalji"
+
+msgid "Colors"
+msgstr "Boje"
+
+msgid "Appearance"
+msgstr "Izgled"

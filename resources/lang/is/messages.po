@@ -108,8 +108,8 @@ msgstr "Fjöldi innri þrepa"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr "Tilgreinir fjölda þrepa þar sem textinn er skrifaður eftir boga."
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "Tilgreinir fjölda þrepa þar sem textinn er skrifaður eftir boga. Bogar afkomenda skipta sjálfkrafa á milli bogatexta og snúins texta eftir tiltæku plássi."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -142,8 +142,8 @@ msgstr "Móðurleg"
 msgid "Show places"
 msgstr "Sýna staði"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "Sýnir fæðingar- og dánarstaði í innri kynslóðabogum. Veldu smáatriðastig hér að neðan."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "Sýnir fæðingar- og dánarstaði í bogum skýringarmyndarinnar þar sem pláss leyfir. Fyrir afkomendur með mörg börn eru staðir sjálfkrafa faldir. Veldu smáatriðastig hér að neðan."
 
 msgid "Full place name"
 msgstr "Fullt heiti staðar"
@@ -160,6 +160,9 @@ msgstr "Þrjú lægstu stig"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Sýna giftingardagsetningar foreldra"
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "Sýnir giftingardagsetningu hvers pars í mjóum boga milli kynslóða. Þegar afkomendur eru virkjaðir, sýnir einnig giftingardagsetningu milli miðpersónunnar og maka hennar."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -209,8 +212,8 @@ msgid "Birth and death date precision"
 msgstr "Nákvæmni fæðingar- og dánardaga"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "Sýna fulla fæðingar- og dánardaga fyrir fyrstu kynslóðir. Hjónabandsdagar sýna aðeins ár frá kynslóð 7 og eru faldir frá kynslóð 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Sýna fulla fæðingar- og dánardaga fyrir fyrstu kynslóðir. Hjónabandsdagar sýna aðeins ár frá kynslóð 7 og eru faldir frá kynslóð 9. Afkomendur með mjóa boga nota sjálfkrafa þjappað snið með aðeins ári."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -221,14 +224,32 @@ msgstr "Aðeins ár"
 msgid "Show full dates up to generation %s"
 msgstr "Sýna fulla dagsetningar til kynslóðar %s"
 
-msgid "Show images"
-msgstr "Sýna myndir"
+msgid "Show descendants"
+msgstr "Sýna afkomendur"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "Sýnir smámyndir í innri bogum og miðju skýringarmyndarinnar. Myndir birtast aðeins ef bogahlutinn er nógu breiður."
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "Makar og börn eru sýnd sem bogar undir forfeðrahlutanum. Viftustærðin er takmörkuð við 180–270 gráður þegar þetta er virkt."
 
-msgid "Show names"
-msgstr "Sýna nöfn"
+msgid "Show names and images"
+msgstr "Sýna nöfn og myndir"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "Sýnir nöfn og dagsetningar í hlutum skýringarmyndarinnar. Þegar slökkt er á eru ytri kynslóðir utan innri boga faldar."
+msgid "Show names only"
+msgstr "Sýna aðeins nöfn"
+
+msgid "Show images only"
+msgstr "Sýna aðeins myndir"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "Myndir birtast aðeins ef bogahlutinn er nógu breiður. Myndir af afkomendum eru ekki enn tiltækar."
+
+msgid "Display"
+msgstr "Birting"
+
+msgid "Details"
+msgstr "Upplýsingar"
+
+msgid "Colors"
+msgstr "Litir"
+
+msgid "Appearance"
+msgstr "Útlit"

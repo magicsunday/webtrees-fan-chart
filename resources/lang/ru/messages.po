@@ -109,8 +109,8 @@ msgstr "Ширина"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr "Указать ширину строчек для написания по дуге."
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "Указать ширину строчек для написания по дуге. Дуги потомков автоматически переключаются между текстом по дуге и повёрнутым текстом в зависимости от доступного пространства."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -143,8 +143,8 @@ msgstr "Материнская линия"
 msgid "Show places"
 msgstr "Показать места"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "Отображает места рождения и смерти на внутренних дугах поколений. Выберите уровень детализации ниже."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "Отображает места рождения и смерти на дугах диаграммы, где позволяет место. Для потомков с большим количеством детей места автоматически скрываются. Выберите уровень детализации ниже."
 
 msgid "Full place name"
 msgstr "Полное название места"
@@ -161,6 +161,9 @@ msgstr "Три нижних уровня"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Показать даты бракосочетания"
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "Отображает дату бракосочетания каждой пары в узкой дуге между поколениями. Когда потомки включены, также показывает дату бракосочетания между центральной персоной и её супругами."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -210,8 +213,8 @@ msgid "Birth and death date precision"
 msgstr "Точность дат рождения и смерти"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "Показывать полные даты рождения и смерти для ранних поколений. Даты бракосочетания отображаются только как год начиная с поколения 7 и скрываются начиная с поколения 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Показывать полные даты рождения и смерти для ранних поколений. Даты бракосочетания отображаются только как год начиная с поколения 7 и скрываются начиная с поколения 9. Потомки с узкими дугами автоматически используют компактный формат только с годом."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -222,14 +225,32 @@ msgstr "Только годы"
 msgid "Show full dates up to generation %s"
 msgstr "Показать полные даты до поколения %s"
 
-msgid "Show images"
-msgstr "Показать изображения"
+msgid "Show descendants"
+msgstr "Показать потомков"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "Отображает миниатюры во внутренних дугах и в центре диаграммы. Изображения показываются только если сегмент дуги достаточно широкий."
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "Супруги и дети отображаются в виде дуг под секцией предков. Размер веера ограничен 180–270 градусами при включении."
 
-msgid "Show names"
-msgstr "Показать имена"
+msgid "Show names and images"
+msgstr "Показать имена и изображения"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "Отображает имена и даты в сегментах диаграммы. При отключении внешние поколения за пределами внутренних дуг скрываются."
+msgid "Show names only"
+msgstr "Показать только имена"
+
+msgid "Show images only"
+msgstr "Показать только изображения"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "Изображения показываются только если сегмент дуги достаточно широкий. Изображения для потомков пока не доступны."
+
+msgid "Display"
+msgstr "Отображение"
+
+msgid "Details"
+msgstr "Подробности"
+
+msgid "Colors"
+msgstr "Цвета"
+
+msgid "Appearance"
+msgstr "Внешний вид"

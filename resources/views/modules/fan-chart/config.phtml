@@ -35,17 +35,15 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         <?= view($moduleName . '::modules/fan-chart/form/generations', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
     </div>
     <div class="mb-3">
-        <?= view($moduleName . '::modules/fan-chart/form/layout', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/display', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
     </div>
     <div class="mb-3">
-        <?= view($moduleName . '::modules/fan-chart/form/date-precision', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/details', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
     </div>
     <div class="mb-3">
-        <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+        <?= view($moduleName . '::modules/fan-chart/form/colors', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
     </div>
-    <div class="mb-3">
-        <?= view($moduleName . '::modules/fan-chart/form/font-size', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
-    </div>
+    <?= view($moduleName . '::modules/fan-chart/form/appearance', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
 
     <div class="mb-3">
         <div class="row">

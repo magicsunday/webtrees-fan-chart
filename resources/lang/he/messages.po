@@ -109,8 +109,8 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr ""
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "מציין את מספר הרמות שבהן הטקסט נכתב לאורך קשת. קשתות צאצאים עוברות אוטומטית בין טקסט קשת לטקסט מסובב בהתאם למקום הזמין."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -143,8 +143,8 @@ msgstr "אימהי"
 msgid "Show places"
 msgstr "הצג מקומות"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "מציג מקומות לידה ופטירה בקשתות הדורות הפנימיים. בחר את רמת הפירוט למטה."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "מציג מקומות לידה ופטירה בקשתות התרשים כשהמקום מאפשר. עבור צאצאים עם ילדים רבים, מקומות מודחקים אוטומטית. בחר את רמת הפירוט למטה."
 
 msgid "Full place name"
 msgstr "שם מקום מלא"
@@ -161,6 +161,9 @@ msgstr "שלוש הרמות הנמוכות ביותר"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "מציג את תאריך הנישואין של כל זוג בקשת צרה בין הדורות. כאשר צאצאים מופעלים, מציג גם את תאריך הנישואין בין האדם המרכזי לבני זוגו."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -207,8 +210,8 @@ msgid "Birth and death date precision"
 msgstr "דיוק תאריכי לידה ופטירה"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "הצג תאריכי לידה ופטירה מלאים עבור דורות ראשונים. תאריכי נישואין מציגים שנה בלבד מדור 7 ומוסתרים מדור 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "הצג תאריכי לידה ופטירה מלאים עבור דורות ראשונים. תאריכי נישואין מציגים שנה בלבד מדור 7 ומוסתרים מדור 9. צאצאים עם קשתות צרות משתמשים אוטומטית בפורמט שנה בלבד מרוכז."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -219,14 +222,32 @@ msgstr "שנים בלבד"
 msgid "Show full dates up to generation %s"
 msgstr "הצג תאריכים מלאים עד דור %s"
 
-msgid "Show images"
-msgstr "הצג תמונות"
+msgid "Show descendants"
+msgstr "הצג צאצאים"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "מציג תמונות ממוזערות בקשתות הפנימיות ובמרכז התרשים. תמונות מוצגות רק אם קטע הקשת רחב מספיק."
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "בני זוג וילדים מוצגים כקשתות מתחת לאזור האבות. גודל המניפה מוגבל ל-180–270 מעלות כאשר מופעל."
 
-msgid "Show names"
-msgstr "הצג שמות"
+msgid "Show names and images"
+msgstr "הצג שמות ותמונות"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "מציג שמות ותאריכים במקטעי התרשים. כאשר מושבת, דורות חיצוניים מעבר לקשתות הפנימיות מוסתרים."
+msgid "Show names only"
+msgstr "הצג שמות בלבד"
+
+msgid "Show images only"
+msgstr "הצג תמונות בלבד"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "תמונות מוצגות רק אם קטע הקשת רחב מספיק. תמונות עבור צאצאים עדיין לא זמינות."
+
+msgid "Display"
+msgstr "תצוגה"
+
+msgid "Details"
+msgstr "פרטים"
+
+msgid "Colors"
+msgstr "צבעים"
+
+msgid "Appearance"
+msgstr "מראה"

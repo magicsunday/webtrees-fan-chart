@@ -25,13 +25,13 @@ const createParentSelection = (isNew = false) => {
 };
 
 describe("appendArc", () => {
-    test("sets opacity on new elements and skips fill", () => {
+    test("sets both fill and opacity on new elements", () => {
         const { parent, styles } = createParentSelection(true);
 
         appendArc(parent, jest.fn(), "#ff0000");
 
+        expect(styles.fill).toBe("#ff0000");
         expect(styles.opacity).toBe(1e-6);
-        expect(styles.fill).toBeUndefined();
     });
 
     test("sets fill color on existing elements", () => {

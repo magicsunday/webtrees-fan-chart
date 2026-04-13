@@ -179,6 +179,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
                         'paternalColor'           => $this->configuration->getPaternalColor(),
                         'maternalColor'           => $this->configuration->getMaternalColor(),
                         'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
+                        'showDescendants'         => $this->configuration->getShowDescendants() ? '1' : '0',
                     ]
                 )
             );
@@ -280,6 +281,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
                 'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
                 'showPlaces'              => $this->configuration->getShowPlaces(),
                 'placeParts'              => $this->configuration->getPlaceParts(),
+                'showDescendants'         => $this->configuration->getShowDescendants(),
                 'xref'                    => $xref,
             ]
         );
