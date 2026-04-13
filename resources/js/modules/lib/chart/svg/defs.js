@@ -45,6 +45,17 @@ export default class Defs {
     }
 
     /**
+     * Selects all children of <defs> matching the selector.
+     *
+     * @param {function|string|null} select CSS selector or D3 selector function
+     *
+     * @return {Selection}
+     */
+    selectAll(select) {
+        return this._element.selectAll(select);
+    }
+
+    /**
      * Appends a new child element to <defs> and returns its D3 selection.
      *
      * @param {string|function} name Tag name or D3 creator function
