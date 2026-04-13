@@ -114,7 +114,7 @@ final class ConfigurationTest extends TestCase
 
         $request = $request->withParsedBody([
             'generations'             => '4',
-            'fontScale'               => '140',
+            'fontScale'               => '120',
             'fanDegree'               => '300',
             'hideEmptySegments'       => '1',
             'showFamilyColors'        => '1',
@@ -153,7 +153,7 @@ final class ConfigurationTest extends TestCase
         $configuration = new Configuration($request, $module);
 
         self::assertSame(4, $configuration->getGenerations());
-        self::assertSame(140, $configuration->getFontScale());
+        self::assertSame(120, $configuration->getFontScale());
         self::assertSame(300, $configuration->getFanDegree());
         self::assertTrue($configuration->getHideEmptySegments());
         self::assertTrue($configuration->getShowFamilyColors());

@@ -10,8 +10,8 @@ deren Kinder im unteren/inneren Bereich -- ein "2-Wege-Faecher".
 
 | Version | Umfang |
 |---------|--------|
-| **v3.3.0 (MVP)** | Checkbox, Partner-Arcs, Kinder-Arcs, feste Tiefe=1, AJAX-Update, Export, RTL, visuelle Trennung, Cap bei 270deg / Floor bei 180deg wenn showDescendants aktiv |
-| **v3.4.0** | Konfigurierbarer Depth-Slider (1-3), Marriage-Arc fuer Partner, Places und Images in Nachkommen-Arcs, Family Colors pro Partner-Familie |
+| **v3.3.0 (MVP)** | Checkbox, Partner-Arcs, Kinder-Arcs, feste Tiefe=1, AJAX-Update, Export, RTL, visuelle Trennung, Cap bei 270deg / Floor bei 180deg wenn showDescendants aktiv, Marriage-Arc fuer Nachkommen-Partner, Family Colors pro Partner-Familie, Places bei ausreichend breiten Arcs (>= 20deg) |
+| **v3.4.0** | Konfigurierbarer Depth-Slider (1-3), Images/Silhouettes in Nachkommen-Arcs |
 
 Issue #95 bleibt offen bis v3.4.0 Features geliefert sind. v3.3.0 kommentiert
 den Fortschritt, schliesst das Issue aber nicht.
@@ -27,11 +27,11 @@ den Fortschritt, schliesst das Issue aber nicht.
 | F3 | Kinder eines Partners werden unter dem jeweiligen Partner-Arc gezeigt | Must | 3.3.0 |
 | F4 | Konfigurierbare Nachkommen-Tiefe (1-3 Generationen) als Slider | Should | 3.4.0 |
 | F5 | Klick auf Nachkommen-Person loest AJAX-Update aus (kein Page-Reload) | Must | 3.3.0 |
-| F6 | Places und Images in Nachkommen-Arcs wie bei Vorfahren | Should | 3.4.0 |
+| F6 | Places in Nachkommen-Arcs (bei ausreichend breiten Arcs >= 20deg, mit kompaktem Jahr-Format bei schmalen Arcs) | Should | 3.3.0 (teilweise) |
 | F7 | Images/Silhouettes in Nachkommen-Arcs | Could | 3.4.0 |
-| F8 | Family Colors pro Partner-Familie (HSL-Rotation bei 3+ Partnern) | Could | 3.4.0 |
+| F8 | Family Colors pro Partner-Familie (HSL-Rotation bei 3+ Partnern) | Could | 3.3.0 |
 | F9 | Export (PNG/SVG) enthaelt Nachkommen | Must | 3.3.0 |
-| F10 | Marriage-Arc zwischen Zentralperson und Partner (wenn showParentMarriageDates=true) | Should | 3.4.0 |
+| F10 | Marriage-Arc zwischen Zentralperson und Partner (wenn showParentMarriageDates=true) | Should | 3.3.0 |
 | F11 | Visuelle Trennung (fester Gap) zwischen Vorfahren- und Nachkommen-Bereich | Must | 3.3.0 |
 
 ### Nicht-funktionale Anforderungen
@@ -208,6 +208,7 @@ als Property gesetzt werden (kein read-only Problem bei Plain Objects).
    eine falsche Farb-Zuordnung ergeben, da x0/x1 zwar in [0,1] normalisiert
    sind (wie Vorfahren), aber im Nachkommen-Sektor des Kreises liegen (z.B.
    0.75-0.95) -- ein refMidpoint von 0.85 waere immer "nicht paternal".
+   (Nachkommen-Family-Colors (F8, v3.3.0) nutzen separate Logik, siehe Abschnitt 8.)
 3. `gradient.js`: hat `if (datum.depth < 1) return` -- synthetische Nodes
    wuerden die Funktion sofort verlassen. Hinweis: gradient.js ist aktuell
    nicht in der Produktion eingebunden (kein Import in chart.js). Die Analyse
@@ -278,9 +279,11 @@ protected array $children = [];   // Kinder-Nodes (depth -2)
 **JSON-Ausgabe (v3.3.0)**:
 
 Nachkommen-Nodes nutzen die bestehende `NodeData`-Klasse (keine Subclass).
-Felder die fuer v3.3.0 nicht relevant sind (Places, Images, detaillierte Daten)
-bleiben als leere Strings in der Serialisierung. Das vermeidet eine zweite
-Klasse und null-Access-Bugs im JS, da alle 25 Felder immer vorhanden sind.
+Felder die fuer v3.3.0 nicht relevant sind (Images)
+bleiben als leere Strings in der Serialisierung. Places und Marriage-Daten
+werden seit der Vorziehung von F6/F8/F10 nach v3.3.0 befuellt. Das vermeidet
+eine zweite Klasse und null-Access-Bugs im JS, da alle 25 Felder immer
+vorhanden sind.
 
 **Invariante fuer getNodeData()**: Die Methode bleibt semantisch
 ancestor-oriented -- sie erhaelt immer positive Generationen. Negative
@@ -613,10 +616,9 @@ als visuelle Abgrenzung.
 **Guards fuer bestehende Features bei negativen Depths**:
 - `FamilyColor.getColor()` (in family-color.js): Guard `if (datum.depth < 0) return null`
   BEVOR refMidpoint berechnet wird. Explizit `null` zurueckgeben (nicht `undefined`).
-  Call-Sites (chart.js draw, update.js forEach) muessen `null` als "keine Farbe"
-  behandeln -- der bestehende Code prueft bereits `if (familyColor)` vor Zuweisung.
-  x0/x1 sind im Descendant-Winkelbereich -- ohne Guard ergibt die
-  `isPaternal = refMidpoint < 0.5` Berechnung falsche Farben.
+  Dieser Guard verhindert dass die Vorfahren-basierte refMidpoint-Logik auf
+  Nachkommen angewendet wird. Nachkommen-Family-Colors (F8, jetzt v3.3.0)
+  verwenden eine separate Farb-Logik (siehe Abschnitt 8).
 - `drawFamilySeparators()`: Bestehende Schleife `for (let depth = 1; ...)`
   iteriert nur positive Depths -- kein zusaetzlicher Guard noetig.
 - `drawMarriageArcs()`: Bestehender Filter `datum.children && ...` filtert
@@ -647,9 +649,10 @@ Outer-Arc-Cap fuer Vorfahren, basierend auf dem Nachkommen-Arc-Winkel.
 **Bekannte v3.3.0 Limitierungen**:
 - Bei mehreren gleichgeschlechtlichen Partnern (z.B. zwei Ehemaenner) erhalten
   beide Partner-Arcs dieselbe M/F-CSS-Klasse und sind visuell nicht unterscheidbar.
-  Family Colors pro Partner-Familie (v3.4.0, F8) loest das.
-- `showFamilyColors=true` faerbt nur Vorfahren-Arcs, nicht Nachkommen-Arcs
-  (Guard gibt `null` zurueck fuer depth < 0). Nachkommen zeigen nur M/F-Farben.
+  Family Colors pro Partner-Familie (F8, jetzt in v3.3.0) loest das.
+- `showFamilyColors=true` faerbt Nachkommen-Arcs mit Family Colors pro
+  Partner-Familie (F8). Partner-Arc und zugehoerige Kinder-Arcs teilen die
+  gleiche Familienfarbe.
 - Zoom/Pan-State geht beim showDescendants Checkbox-Toggle verloren (vollstaendiger
   AJAX-Reload). Bei Person-Klick-Navigation bleibt Zoom/Pan erhalten.
 
@@ -698,7 +701,7 @@ Akzeptanzkriterium fuer v3.3.0:
   zeigt Name und Daten fuer ALLE Arcs an, auch fuer unleserlich schmale.
   Das ist der primaere Interaktionsweg fuer schmale Nachkommen-Arcs.
 
-### 8. Family Colors fuer Nachkommen (v3.4.0)
+### 8. Family Colors fuer Nachkommen (v3.3.0)
 
 **Entscheidung**: Pro Partner-Familie eine eigene Farbe.
 
@@ -714,7 +717,7 @@ Bereich `[0,1]` liegt und vaeterlich = links der Mitte ist. Fuer
 Nachkommen-Nodes muss eine **separate** Farb-Logik implementiert werden,
 nicht die bestehende recyclen.
 
-### 9. Marriage-Arc fuer Partner (v3.4.0)
+### 9. Marriage-Arc fuer Partner (v3.3.0)
 
 **Entscheidung**: Zwischen Zentralperson und jedem Partner wird ein
 Marriage-Arc angezeigt, analog zum bestehenden Marriage-Arc bei Vorfahren.

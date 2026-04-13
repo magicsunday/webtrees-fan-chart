@@ -693,8 +693,8 @@ export default class Text {
             - this._geometry.innerRadius(datum.depth);
         const fontPercent = (fontSize / arcHeight) * 100;
 
-        let intraNameSpacing  = fontPercent * 1.1;
-        let intraDateSpacing  = fontPercent * 1.0;
+        let intraNameSpacing = fontPercent * 1.1;
+        let intraDateSpacing = fontPercent * 1.0;
         let interGroupSpacing = fontPercent * 1.5;
 
         // Total vertical extent of all groups using group-specific spacing
@@ -728,8 +728,8 @@ export default class Text {
 
         if (totalHeight > maxFill) {
             const scale = maxFill / totalHeight;
-            intraNameSpacing  *= scale;
-            intraDateSpacing  *= scale;
+            intraNameSpacing *= scale;
+            intraDateSpacing *= scale;
             interGroupSpacing *= scale;
 
             totalHeight = maxFill;
@@ -742,7 +742,7 @@ export default class Text {
         // on the arc path, but the visual center of glyphs sits above the
         // baseline. Shift each path position outward (higher %) so the
         // visual center lands at the intended position.
-        const normalOffsetPercent  = (fontSize * 0.375 / arcHeight) * 100;
+        const normalOffsetPercent = (fontSize * 0.375 / arcHeight) * 100;
         const flippedOffsetPercent = (fontSize * 0.2 / arcHeight) * 100;
 
         const positions = new Map();
@@ -924,31 +924,7 @@ export default class Text {
                 // No image: center the text block vertically using
                 // grouped spacing (same logic as image case)
                 const innerLineHeight = fontSize * 0.95;
-                const intraGroupGap = fontSize * 0.2;
                 const interGroupGap = fontSize * 0.5;
-
-                // Determine group boundaries: names, alt-name, dates
-                let hasNames = false;
-                let hasDates = false;
-                let hasAlt = false;
-
-                textElements.each(function () {
-                    const el = d3.select(this);
-
-                    if (el.classed("date")) {
-                        hasDates = true;
-                    } else if (el.classed("wt-chart-box-name-alt")) {
-                        hasAlt = true;
-                    } else {
-                        hasNames = true;
-                    }
-                });
-
-                // Calculate total height from center of first to center of last line
-                const groupTransitions = (hasNames && hasAlt ? 1 : 0)
-                    + ((hasNames || hasAlt) && hasDates ? 1 : 0);
-                const totalHeight = ((countElements - 1) * innerLineHeight)
-                    + (groupTransitions * interGroupGap);
 
                 // First pass: compute raw positions
                 const positions = [];
@@ -1081,11 +1057,11 @@ export default class Text {
 
         const intraNameGapPx = fontSize * 1.1;
         const intraDateGapPx = fontSize * 1.0;
-        const interGapPx     = fontSize * 1.5;
+        const interGapPx = fontSize * 1.5;
 
         let intraNameGapDeg = intraNameGapPx * degPerPixel;
         let intraDateGapDeg = intraDateGapPx * degPerPixel;
-        let interGapDeg     = interGapPx * degPerPixel;
+        let interGapDeg = interGapPx * degPerPixel;
 
         // Compute total angular extent using group-specific spacing
         let totalDeg = 0;

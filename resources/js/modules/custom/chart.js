@@ -150,7 +150,7 @@ export default class Chart {
         // - Old sub-elements within updating elements (.old)
         // - Old separator lines
         const outgoing = this._svg.visual.selectAll(
-            "g.person.remove, g.marriage.remove, .old"
+            "g.person.remove, g.marriage.remove, .old",
         );
         outgoing.style("display", "none");
 
