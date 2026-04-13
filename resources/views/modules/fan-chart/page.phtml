@@ -90,7 +90,16 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         <?= view($moduleName . '::modules/components/buttonbar', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
 
         <div id="fan-chart-url" class="wt-ajax-load wt-page-content wt-chart wt-chart-fan mt-0">
-            <?= view('icons/spinner') ?>
+            <?php
+            // icons/spinner was added in webtrees 2.2.6. Check without triggering
+            // output buffering so the fallback works safely on older versions.
+            try {
+                (new View('icons/spinner'))->getFilenameForView('icons/spinner');
+                echo view('icons/spinner');
+            } catch (\Exception $e) {
+                echo '<span class="wt-icon-spinner"><i class="fa-solid fa-spinner fa-spin fa-3x" aria-hidden="true"></i></span>';
+            }
+            ?>
         </div>
     </div>
 </div>
