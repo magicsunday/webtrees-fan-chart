@@ -23,6 +23,8 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/arc", () => ({
 
 await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () => ({
     __esModule: true,
+    MATH_DEG2RAD: Math.PI / 180,
+    MATH_RAD2DEG: 180 / Math.PI,
     default: class {
         constructor(config) { this._configuration = config; }
         startAngle() { return 0; }

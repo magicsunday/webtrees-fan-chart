@@ -32,6 +32,27 @@ class Node implements JsonSerializable
     protected array $parents = [];
 
     /**
+     * The list of partner nodes (depth -1 in the descendant section).
+     *
+     * @var Node[]
+     */
+    protected array $partners = [];
+
+    /**
+     * The list of child nodes (depth -2 in the descendant section).
+     *
+     * @var Node[]
+     */
+    protected array $children = [];
+
+    /**
+     * Children without a visible partner (privacy-hidden spouse).
+     *
+     * @var Node[]
+     */
+    protected array $unassignedChildren = [];
+
+    /**
      * @param NodeData $data
      */
     public function __construct(protected NodeData $data)
@@ -63,6 +84,78 @@ class Node implements JsonSerializable
     }
 
     /**
+     * Appends a partner node. Partners are displayed as arcs in the descendant section.
+     *
+     * @param Node $partner
+     *
+     * @return Node
+     */
+    public function addPartner(Node $partner): Node
+    {
+        $this->partners[] = $partner;
+
+        return $this;
+    }
+
+    /**
+     * Returns the list of partner nodes.
+     *
+     * @return Node[]
+     */
+    public function getPartners(): array
+    {
+        return $this->partners;
+    }
+
+    /**
+     * Sets the child nodes for this node.
+     *
+     * @param Node[] $children
+     *
+     * @return Node
+     */
+    public function setChildren(array $children): Node
+    {
+        $this->children = $children;
+
+        return $this;
+    }
+
+    /**
+     * Returns the list of child nodes.
+     *
+     * @return Node[]
+     */
+    public function getChildren(): array
+    {
+        return $this->children;
+    }
+
+    /**
+     * Appends an unassigned child (visible child of a privacy-hidden spouse).
+     *
+     * @param Node $child
+     *
+     * @return Node
+     */
+    public function addUnassignedChild(Node $child): Node
+    {
+        $this->unassignedChildren[] = $child;
+
+        return $this;
+    }
+
+    /**
+     * Returns the list of unassigned children.
+     *
+     * @return Node[]
+     */
+    public function getUnassignedChildren(): array
+    {
+        return $this->unassignedChildren;
+    }
+
+    /**
      * Serialises the node to an array for JSON output. The "parents" key is omitted
      * when the node has no ancestors, keeping the payload compact.
      *
@@ -76,6 +169,18 @@ class Node implements JsonSerializable
 
         if ($this->parents !== []) {
             $jsonData['parents'] = $this->parents;
+        }
+
+        if ($this->partners !== []) {
+            $jsonData['partners'] = $this->partners;
+        }
+
+        if ($this->children !== []) {
+            $jsonData['children'] = $this->children;
+        }
+
+        if ($this->unassignedChildren !== []) {
+            $jsonData['unassignedChildren'] = $this->unassignedChildren;
         }
 
         return $jsonData;

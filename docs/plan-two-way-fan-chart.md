@@ -4,6 +4,19 @@ Basiert auf: [Design-Dokument](design-two-way-fan-chart.md)
 Basis: v3.2.x
 Branch: `feature/two-way-fan-chart`
 
+> **Abweichungen von der Originalplanung (Stand 2026-04-12)**:
+>
+> - **F8 (Family Colors) und F10 (Marriage-Arc)** wurden in v3.3.0 statt
+>   v3.4.0 implementiert. Marriage-Arcs werden fuer Nachkommen-Partner
+>   angezeigt, Family Colors faerben Partner-Arcs und Kinder-Arcs pro
+>   Partner-Familie.
+> - **Descendant IDs** verwenden sequentielle Integers statt der geplanten
+>   xref-basierten String-IDs. Die xref-basierte Strategie aus dem Design-
+>   Dokument wurde zugunsten einfacherer sequentieller IDs aufgegeben.
+> - **F6 (Places)** ist teilweise umgesetzt: Places werden fuer Nachkommen
+>   angezeigt wenn die Arc-Breite ausreicht (>= 20deg). Bei schmalen Arcs
+>   werden kompakte Jahr-only-Dates verwendet. Images (F7) bleiben v3.4.0.
+
 ## Vorgehensweise
 
 Umsetzung per **TDD (Test-Driven Development)**:
@@ -24,8 +37,11 @@ Playwright mit Headless Chrome via CDP.
 
 Feste Tiefe=1 (Partner + Kinder), Ceiling 270deg / Floor 180deg wenn
 showDescendants aktiv, volle NodeData (keine Subclass), direkte
-Arc-Berechnung ohne zweite D3-Hierarchie, xref-basierte IDs fuer
-synthetische Nodes.
+Arc-Berechnung ohne zweite D3-Hierarchie. Zusaetzlich (ueber den
+urspruenglichen MVP-Umfang hinaus): Marriage-Arcs fuer Nachkommen-Partner
+(F10), Family Colors pro Partner-Familie (F8), Places bei ausreichend
+breiten Arcs (F6 teilweise). IDs verwenden sequentielle Integers
+(Abweichung von der geplanten xref-basierten Strategie).
 
 ### Vor Phase 1: Pre-Implementierungs-Checks
 
@@ -102,19 +118,23 @@ synthetische Nodes.
   - Partner-Node mit `getNodeData(1, $spouse)` am Call-Site (generation=1,
     da getNodeData() immer positive Generationen erwartet),
     danach `->setGeneration(-1)` auf dem zurueckgegebenen NodeData.
-    **v3.3.0 Feld-Suppression**: Nach `getNodeData()` werden fuer Nachkommen
-    folgende Felder geleert:
-    - Places: `->setBirthPlace('')->setDeathPlace('')->setMarriagePlace('')`
+    **v3.3.0 Feld-Suppression** (**Abweichung**: Places und Marriage-Daten
+    werden in der tatsaechlichen Implementierung NICHT mehr unterdrueckt,
+    da F6/F10 in v3.3.0 vorgezogen wurden. Places werden bei ausreichend
+    breiten Arcs (>= 20deg) angezeigt, Marriage-Arcs fuer Partner sind
+    aktiv. Images werden weiterhin unterdrueckt (F7 bleibt v3.4.0).
+    Schmale Arcs verwenden kompakte Jahr-only-Dates.)
+    Urspruenglicher Plan war, nach `getNodeData()` fuer Nachkommen
+    folgende Felder zu leeren:
+    - ~~Places: `->setBirthPlace('')->setDeathPlace('')->setMarriagePlace('')`~~
     - Images: `->setThumbnail('')`
-    - Marriage-Daten: `->setMarriageDate('')->setMarriageDateOfParents('')`
-      (marriageDate zeigt die Ehe des Partners, nicht der Zentralperson;
-       marriageDateOfParents zeigt die Ehe der Eltern des Partners --
-       beides ist fuer Nachkommen-Arcs semantisch falsch)
-    - Timespan: `->setTimespan(...)` muss NEU berechnet werden ohne Places,
-      da `buildTimespan()` Places in den composite String einbaut BEVOR
-      die Place-Felder geleert werden. Entweder `buildTimespan()` nochmal
-      mit leerem PlaceProcessor aufrufen, oder den Timespan-String manuell
-      aus birth/death-Daten zusammenbauen.
+    - ~~Marriage-Daten: `->setMarriageDate('')->setMarriageDateOfParents('')`~~
+      ~~(marriageDate zeigt die Ehe des Partners, nicht der Zentralperson;~~
+       ~~marriageDateOfParents zeigt die Ehe der Eltern des Partners --~~
+       ~~beides ist fuer Nachkommen-Arcs semantisch falsch)~~
+    - ~~Timespan: `->setTimespan(...)` muss NEU berechnet werden ohne Places,~~
+      ~~da `buildTimespan()` Places in den composite String einbaut BEVOR~~
+      ~~die Place-Felder geleert werden.~~
     Dates (birth, death) bleiben erhalten -- sie erscheinen in v3.3.0
     Nachkommen-Arcs als Jahr/Datum-Beschriftung.
     Wenn Spouse null UND kein HUSB/WIFE-Pointer: `createEmptyPartnerNode(-1)`.
@@ -354,11 +374,9 @@ delegiert an geometry.)
     filtert synthetische Nodes (children=null) bereits -- kein Guard noetig
   - **FamilyColor Guard** (in `family-color.js`, nicht chart.js):
     `getColor()` braucht `if (datum.depth < 0) return null` als erste Zeile
-    BEVOR refMidpoint berechnet wird. x0/x1 von Nachkommen liegen zwar
-    in [0,1] (Full-Circle-Fractions), aber im Nachkommen-Sektor (z.B.
-    0.75-0.95) -- refMidpoint > 0.5 ergibt isPaternal immer als false.
-    Guard muss in family-color.js stehen, damit alle Aufrufpfade
-    (chart.js draw + update.js forEach) geschuetzt sind.
+    BEVOR refMidpoint berechnet wird. Dieser Guard verhindert die Vorfahren-
+    basierte refMidpoint-Logik fuer Nachkommen. Nachkommen-Family-Colors
+    (F8, jetzt v3.3.0) verwenden separate Farb-Logik pro Partner-Familie.
 
 #### Schritt 2.7: update.js erweitern
 
@@ -395,7 +413,7 @@ delegiert an geometry.)
   mit `<small class="form-text text-muted">` Beschreibung:
   "Partners and children are shown as arcs below the ancestor section.
   The fan size is limited to 180-270 degrees when enabled.
-  Places and images for descendants will be added in a future release."
+  Images for descendants will be added in a future release."
   **onChange**: Muss AJAX-Reload ausloesen (nicht nur Client-Redraw), weil
   `showDescendants` die Server-Response-Struktur aendert.
   **Achtung**: Kein bestehendes Checkbox-Pattern in page.phtml loest AJAX-
@@ -515,8 +533,9 @@ wird als reine Funktion extrahiert und per Jest getestet (kein Browser noetig):
   Kinder-Arcs ohne Partner-Arc darueber, klickbar, kein Platzhalter-Arc
 - Privacy-Fall: Hidden spouse + keine sichtbaren Kinder ->
   keine Arcs fuer diese Familie
-- showFamilyColors=true + showDescendants=true -> keine falschen Farben
-  bei Nachkommen-Arcs (Guard greift)
+- showFamilyColors=true + showDescendants=true -> Nachkommen-Arcs zeigen
+  Family Colors pro Partner-Familie (F8), Vorfahren-Guard verhindert
+  refMidpoint-basierte Fehlfarben
 - showDescendants an -> fanDegree gecappt -> showDescendants aus ->
   fanDegree wiederhergestellt
 - RTL-Modus: Nachkommen-Text nicht kopfueber
@@ -565,27 +584,24 @@ as arcs in the lower section, children grouped below each partner.
 Note: enabling descendants limits the fan size to 180-270 degrees
 to reserve space for the descendant section.
 
-Descendant arcs show names and birth/death dates. Upcoming releases
-will add:
+Descendant arcs show names, birth/death dates, marriage arcs between
+central person and partners, family colors per partner family, and
+places when arc width allows. Upcoming releases will add:
 - Configurable descendant depth (grandchildren, great-grandchildren)
-- Places in descendant arcs
-- Marriage arcs between the central person and their partners
-- Images and family colors for descendants
+- Images/silhouettes in descendant arcs
 ```
 
 **Issue #95 Kommentar** (nach Release, Issue bleibt offen):
 
 ```
-v3.3.0 adds initial descendant support: partners and their children
-are shown as arcs below the ancestor fan. Click navigation (AJAX)
-and export (SVG/PNG) work for descendants too.
+v3.3.0 adds descendant support: partners and their children are shown
+as arcs below the ancestor fan. Includes marriage arcs for partners,
+family colors per partner family, and places (when arc width allows).
+Click navigation (AJAX) and export (SVG/PNG) work for descendants too.
 
 Planned for upcoming releases:
 - Configurable descendant depth (grandchildren, great-grandchildren)
-- Places in descendant arcs
-- Marriage arc between central person and partners
 - Images/silhouettes in descendant arcs
-- Family colors per partner family
 
 Feedback on the current implementation is welcome.
 
@@ -622,15 +638,10 @@ Wird nach v3.3.0 Release separat geplant. Voraussichtlicher Umfang:
   - `getDescendantGenerations()` in Configuration
   - Range-Slider in `form/descendant-generations.phtml`
   - Rekursives `buildDescendantStructure()` mit Tiefenbegrenzung
-- **F6**: Places und Images in Nachkommen-Arcs (Dates sind bereits in v3.3.0)
 - **F7**: Images/Silhouettes in Nachkommen-Arcs
-- **F8**: Family Colors pro Partner-Familie
-  - HSL-Rotation bei 3+ Partnern
-  - Separate Farb-Logik fuer Nachkommen (nicht `FamilyColor.getColor()` recyclen)
-- **F10**: Marriage-Arc zwischen Zentralperson und Partner
-  - Im Gap zwischen Center-Circle und Partner-Arc
-  - Angezeigt wenn `showParentMarriageDates=true` (ob eigene Option noetig,
-    wird in v3.4.0 entschieden)
+- ~~**F6**: Places und Images in Nachkommen-Arcs~~ (Places teilweise in v3.3.0 umgesetzt, Images bleiben hier)
+- ~~**F8**: Family Colors pro Partner-Familie~~ (in v3.3.0 umgesetzt)
+- ~~**F10**: Marriage-Arc zwischen Zentralperson und Partner~~ (in v3.3.0 umgesetzt)
 - **Proportionale Winkel-Aufteilung** evaluieren: Verbesserung der
   Kinderzahl-proportionalen Aufteilung basierend auf v3.3.0 Feedback
 - **Zoom/Pan-Restore** beim showDescendants-Toggle: Zoom-State vor Reload

@@ -108,9 +108,8 @@ msgstr "Numero di livelli interni"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr ""
-"Specifica il numero di livelli in cui il testo è scritto lungo un arco."
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "Specifica il numero di livelli in cui il testo è scritto lungo un arco. Gli archi dei discendenti alternano automaticamente tra testo ad arco e testo ruotato in base allo spazio disponibile."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -143,8 +142,8 @@ msgstr "Materno"
 msgid "Show places"
 msgstr "Mostra luoghi"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "Mostra i luoghi di nascita e morte negli archi delle generazioni interne. Scegli il livello di dettaglio qui sotto."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "Mostra i luoghi di nascita e morte negli archi del diagramma dove lo spazio lo consente. Per i discendenti con molti figli, i luoghi vengono soppressi automaticamente. Scegli il livello di dettaglio qui sotto."
 
 msgid "Full place name"
 msgstr "Nome completo del luogo"
@@ -161,6 +160,9 @@ msgstr "Tre livelli più bassi"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Mostra la data del matrimonio dei genitori"
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "Mostra la data di matrimonio di ogni coppia in un arco stretto tra le generazioni. Quando i discendenti sono attivati, mostra anche la data di matrimonio tra la persona centrale e i suoi partner."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -210,8 +212,8 @@ msgid "Birth and death date precision"
 msgstr "Precisione delle date di nascita e morte"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "Mostra le date complete di nascita e morte per le prime generazioni. Le date di matrimonio mostrano solo l'anno dalla generazione 7 e sono nascoste dalla generazione 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Mostra le date complete di nascita e morte per le prime generazioni. Le date di matrimonio mostrano solo l'anno dalla generazione 7 e sono nascoste dalla generazione 9. I discendenti con archi stretti usano automaticamente un formato compatto solo anno."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -222,14 +224,32 @@ msgstr "Solo anni"
 msgid "Show full dates up to generation %s"
 msgstr "Mostra date complete fino alla generazione %s"
 
-msgid "Show images"
-msgstr "Mostra immagini"
+msgid "Show descendants"
+msgstr "Mostra discendenti"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "Mostra le miniature negli archi interni e al centro del diagramma. Le immagini vengono mostrate solo se il segmento dell'arco è abbastanza largo."
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "I partner e i figli vengono mostrati come archi sotto la sezione degli antenati. La dimensione del ventaglio è limitata a 180–270 gradi quando attivato."
 
-msgid "Show names"
-msgstr "Mostra nomi"
+msgid "Show names and images"
+msgstr "Mostra nomi e immagini"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "Mostra nomi e date nei segmenti del diagramma. Se disattivato, le generazioni esterne oltre gli archi interni vengono nascoste."
+msgid "Show names only"
+msgstr "Mostra solo nomi"
+
+msgid "Show images only"
+msgstr "Mostra solo immagini"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "Le immagini vengono mostrate solo se il segmento dell'arco è abbastanza largo. Le immagini per i discendenti non sono ancora disponibili."
+
+msgid "Display"
+msgstr "Visualizzazione"
+
+msgid "Details"
+msgstr "Dettagli"
+
+msgid "Colors"
+msgstr "Colori"
+
+msgid "Appearance"
+msgstr "Aspetto"

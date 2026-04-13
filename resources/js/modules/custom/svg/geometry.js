@@ -73,6 +73,8 @@ export default class Geometry {
      * Inner radius in pixels for the arc at the given depth. The center node
      * (depth 0) has an inner radius of 0. Inner arcs use innerArcHeight;
      * outer arcs beyond numberOfInnerCircles use outerArcHeight instead.
+     * Negative depths (descendants) use the same radii as their positive
+     * counterparts via Math.abs().
      *
      * @param {number} depth Hierarchy depth (0 = center node)
      *
@@ -83,21 +85,28 @@ export default class Geometry {
             return 0;
         }
 
-        if (depth <= this._configuration.numberOfInnerCircles) {
-            return ((depth - 1) * (this._configuration.innerArcHeight))
+        const absDepth = Math.abs(depth);
+
+        // Descendant children (depth <= -2) skip circlePadding because
+        // there is no marriage arc between partner and children rings.
+        const padding = (depth < -1) ? 0 : this._configuration.circlePadding;
+
+        if (absDepth <= this._configuration.numberOfInnerCircles) {
+            return ((absDepth - 1) * (this._configuration.innerArcHeight))
                 + this._configuration.centerCircleRadius
-                + this._configuration.circlePadding;
+                + padding;
         }
 
         return (this._configuration.numberOfInnerCircles * this._configuration.innerArcHeight)
-            + ((depth - this._configuration.numberOfInnerCircles - 1) * this._configuration.outerArcHeight)
+            + ((absDepth - this._configuration.numberOfInnerCircles - 1) * this._configuration.outerArcHeight)
             + this._configuration.centerCircleRadius
-            + this._configuration.circlePadding;
+            + padding;
     }
 
     /**
      * Outer radius in pixels for the arc at the given depth. The center node
-     * (depth 0) outer radius equals centerCircleRadius.
+     * (depth 0) outer radius equals centerCircleRadius. Negative depths
+     * (descendants) mirror the same radii as positive depths.
      *
      * @param {number} depth Hierarchy depth (0 = center node)
      *
@@ -108,14 +117,16 @@ export default class Geometry {
             return this._configuration.centerCircleRadius;
         }
 
-        if (depth <= this._configuration.numberOfInnerCircles) {
-            return ((depth - 1) * (this._configuration.innerArcHeight))
+        const absDepth = Math.abs(depth);
+
+        if (absDepth <= this._configuration.numberOfInnerCircles) {
+            return ((absDepth - 1) * (this._configuration.innerArcHeight))
                 + this._configuration.centerCircleRadius
                 + this._configuration.innerArcHeight;
         }
 
         return (this._configuration.numberOfInnerCircles * this._configuration.innerArcHeight)
-            + ((depth - this._configuration.numberOfInnerCircles - 1) * this._configuration.outerArcHeight)
+            + ((absDepth - this._configuration.numberOfInnerCircles - 1) * this._configuration.outerArcHeight)
             + this._configuration.centerCircleRadius
             + this._configuration.outerArcHeight;
     }
@@ -160,7 +171,8 @@ export default class Geometry {
 
     /**
      * Start angle in radians for an arc at the given depth. The center node
-     * always starts at 0; all others map x0 through calcAngle.
+     * always starts at 0; negative depths (descendants) use the childScale;
+     * positive depths use the ancestor scale via calcAngle.
      *
      * @param {number} depth Hierarchy depth
      * @param {number} x0    Left partition boundary of the node
@@ -168,12 +180,23 @@ export default class Geometry {
      * @return {number}
      */
     startAngle(depth, x0) {
-        return (depth === 0) ? 0 : this.calcAngle(x0);
+        if (depth === 0) {
+            return 0;
+        }
+
+        if (depth < 0) {
+            return this._configuration.childScale
+                ? this._configuration.childScale(x0)
+                : 0;
+        }
+
+        return this.calcAngle(x0);
     }
 
     /**
      * End angle in radians for an arc at the given depth. The center node
-     * always spans the full circle (2π); all others map x1 through calcAngle.
+     * always spans the full circle (2π); negative depths use the childScale;
+     * positive depths use calcAngle.
      *
      * @param {number} depth Hierarchy depth
      * @param {number} x1    Right partition boundary of the node
@@ -181,7 +204,17 @@ export default class Geometry {
      * @return {number}
      */
     endAngle(depth, x1) {
-        return (depth === 0) ? MATH_PI2 : this.calcAngle(x1);
+        if (depth === 0) {
+            return MATH_PI2;
+        }
+
+        if (depth < 0) {
+            return this._configuration.childScale
+                ? this._configuration.childScale(x1)
+                : 0;
+        }
+
+        return this.calcAngle(x1);
     }
 
     /**
@@ -209,23 +242,38 @@ export default class Geometry {
      * @return {number}
      */
     getFontSize(datum) {
+        const absDepth = Math.abs(datum.depth);
         let fontSize = this._configuration.fontSize;
 
-        if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
+        if (absDepth >= (this._configuration.numberOfInnerCircles + 1)) {
             fontSize += 1;
         }
 
-        let scaled = (fontSize - datum.depth) * this._configuration.fontScale / 100.0;
+        let scaled = (fontSize - absDepth) * this._configuration.fontScale / 100.0;
 
-        // For outer labels, cap font size so text fits within the angular
-        // width of the segment. Uses 80% of angular width to leave visual
-        // padding and account for descenders / em-box centering offset.
-        if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
+        // For outer labels (ancestor or descendant), cap font size
+        // so text fits within the angular width of the segment.
+        const isOuterAncestor = datum.depth >= (this._configuration.numberOfInnerCircles + 1);
+        const isPartner = (datum.depth === -1);
+        const isChild = (datum.depth <= -2);
+
+        if (isOuterAncestor || isPartner) {
             const angularWidth = (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0)) * this.centerRadius(datum.depth);
 
             // Depth >= 7 merges first + last name into 1 line; others use 2
-            const lines = datum.depth >= 7 ? 1 : 2;
-            const maxFont = (angularWidth * 0.55) / lines;
+            const lines = absDepth >= 7 ? 1 : 2;
+            const factor = isPartner ? 0.35 : 0.55;
+            const maxFont = (angularWidth * factor) / lines;
+
+            scaled = Math.min(scaled, maxFont);
+        }
+
+        // Uniform font cap for all children based on the narrowest child arc
+        if (isChild && this._configuration.smallestChildFraction) {
+            const totalSectorRad = this.endAngle(datum.depth, 1) - this.startAngle(datum.depth, 0);
+            const narrowestRad = this._configuration.smallestChildFraction * totalSectorRad;
+            const narrowestWidth = narrowestRad * this.centerRadius(datum.depth);
+            const maxFont = (narrowestWidth * 0.55) / 2;
 
             scaled = Math.min(scaled, maxFont);
         }
@@ -234,10 +282,13 @@ export default class Geometry {
     }
 
     /**
-     * Returns true when the arc's midpoint falls in the bottom half of a full
-     * 360° chart (between 90° and 270°), indicating that text path direction
+     * Returns true when the arc's midpoint falls in the bottom half of the
+     * chart (between 90° and 270°), indicating that text path direction
      * should be reversed so labels read left-to-right instead of upside-down.
-     * Always returns false for fan degrees ≤ 270° or the center node.
+     *
+     * Center node (depth 0): never flipped.
+     * Descendant nodes (depth < 0): always checked via childScale.
+     * Ancestor nodes (depth >= 1): only checked for 360° charts (fanDegree > 270).
      *
      * @param {number} depth Hierarchy depth
      * @param {number} x0    Left partition boundary of the node
@@ -246,15 +297,35 @@ export default class Geometry {
      * @return {boolean}
      */
     isPositionFlipped(depth, x0, x1) {
-        if ((this._configuration.fanDegree <= 270) || (depth < 1)) {
+        if (depth === 0) {
+            return false;
+        }
+
+        // Descendants: the entire sector sits in the lower half of the chart
+        // (between 90° and 270°), so all arc-path text needs to be reversed
+        // for left-to-right readability. Outer radial labels use this same
+        // flag to determine rotation direction.
+        if (depth < 0) {
+            if (!this._configuration.childScale) {
+                return false;
+            }
+
+            const midAngle = this._configuration.childScale((x0 + x1) / 2);
+            const normalized = ((midAngle % MATH_PI2) + MATH_PI2) % MATH_PI2;
+
+            return (normalized > (90 * MATH_DEG2RAD))
+                && (normalized < (270 * MATH_DEG2RAD));
+        }
+
+        // depth >= 1: existing ancestor logic unchanged
+        if (this._configuration.fanDegree <= 270) {
             return false;
         }
 
         const startAngle = this.startAngle(depth, x0);
         const endAngle = this.endAngle(depth, x1);
         const midAngle = (startAngle + endAngle) / 2;
-        const pi2 = Math.PI * 2;
-        const normalized = ((midAngle % pi2) + pi2) % pi2;
+        const normalized = ((midAngle % MATH_PI2) + MATH_PI2) % MATH_PI2;
 
         return (normalized > (90 * MATH_DEG2RAD)) && (normalized < (270 * MATH_DEG2RAD));
     }

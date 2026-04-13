@@ -107,8 +107,8 @@ msgstr "आंतरिक स्तरों की संख्या"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr "उस स्तर की संख्या निर्दिष्ट करता है जिसमें पाठ चाप के साथ लिखा जाता है।"
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "उस स्तर की संख्या निर्दिष्ट करता है जिसमें पाठ चाप के साथ लिखा जाता है। वंशज चाप उपलब्ध स्थान के आधार पर चाप पाठ और घुमाए गए पाठ के बीच स्वचालित रूप से बदलते हैं।"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -141,8 +141,8 @@ msgstr "मातृक"
 msgid "Show places"
 msgstr "स्थान दिखाएँ"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "आंतरिक पीढ़ी चापों में जन्म और मृत्यु स्थान प्रदर्शित करता है। नीचे विवरण का स्तर चुनें।"
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "चार्ट चापों में जन्म और मृत्यु स्थान प्रदर्शित करता है जहाँ स्थान अनुमति देता है। बहुत सारे बच्चों वाले वंशजों के लिए, स्थान स्वचालित रूप से दबा दिए जाते हैं। नीचे विवरण का स्तर चुनें।"
 
 msgid "Full place name"
 msgstr "पूरा स्थान नाम"
@@ -159,6 +159,9 @@ msgstr "सबसे निचले तीन स्तर"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "पीढ़ियों के बीच एक संकीर्ण चाप में प्रत्येक जोड़े की विवाह तिथि प्रदर्शित करता है। जब वंशज सक्षम होते हैं, तो केंद्रीय व्यक्ति और उनके साथियों के बीच विवाह तिथि भी दिखाता है।"
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -208,8 +211,8 @@ msgid "Birth and death date precision"
 msgstr "जन्म और मृत्यु तिथि सटीकता"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "प्रारंभिक पीढ़ियों के लिए पूर्ण जन्म और मृत्यु तिथियाँ दिखाएँ। विवाह तिथियाँ पीढ़ी 7 से केवल वर्ष दिखाती हैं और पीढ़ी 9 से छिपा दी जाती हैं।"
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "प्रारंभिक पीढ़ियों के लिए पूर्ण जन्म और मृत्यु तिथियाँ दिखाएँ। विवाह तिथियाँ पीढ़ी 7 से केवल वर्ष दिखाती हैं और पीढ़ी 9 से छिपा दी जाती हैं। संकीर्ण चापों वाले वंशज स्वचालित रूप से एक संक्षिप्त केवल-वर्ष प्रारूप का उपयोग करते हैं।"
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -220,14 +223,32 @@ msgstr "केवल वर्ष"
 msgid "Show full dates up to generation %s"
 msgstr "पीढ़ी %s तक पूर्ण तिथियाँ दिखाएँ"
 
-msgid "Show images"
-msgstr "छवियाँ दिखाएँ"
+msgid "Show descendants"
+msgstr "वंशज दिखाएँ"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "आंतरिक चापों और चार्ट के केंद्र में लघुचित्र प्रदर्शित करता है। छवियाँ केवल तभी दिखाई जाती हैं जब चाप खंड पर्याप्त चौड़ा हो।"
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "साथी और बच्चे पूर्वज खंड के नीचे चापों के रूप में दिखाए जाते हैं। सक्षम होने पर पंखे का आकार 180–270 डिग्री तक सीमित है।"
 
-msgid "Show names"
-msgstr "नाम दिखाएँ"
+msgid "Show names and images"
+msgstr "नाम और छवियाँ दिखाएँ"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "चार्ट खंडों में नाम और तिथियाँ प्रदर्शित करता है। निष्क्रिय होने पर, आंतरिक चापों से परे बाहरी पीढ़ियाँ छिपा दी जाती हैं।"
+msgid "Show names only"
+msgstr "केवल नाम दिखाएँ"
+
+msgid "Show images only"
+msgstr "केवल छवियाँ दिखाएँ"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "छवियाँ केवल तभी दिखाई जाती हैं जब चाप खंड पर्याप्त चौड़ा हो। वंशजों के लिए छवियाँ अभी तक उपलब्ध नहीं हैं।"
+
+msgid "Display"
+msgstr "प्रदर्शन"
+
+msgid "Details"
+msgstr "विवरण"
+
+msgid "Colors"
+msgstr "रंग"
+
+msgid "Appearance"
+msgstr "दिखावट"

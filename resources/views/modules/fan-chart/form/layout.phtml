@@ -25,38 +25,66 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     <div class="col-sm-9 wt-page-options-value">
         <?=
             view($moduleName . '::modules/components/checkbox', [
-                'name'      => 'hideEmptySegments',
-                'label'     => I18N::translate('Hide empty segments'),
-                'checked'   => $configuration->getHideEmptySegments(),
+                'name'      => 'showDescendants',
+                'label'     => I18N::translate('Show descendants'),
+                'checked'   => $configuration->getShowDescendants(),
                 'unchecked' => '0',
             ])
         ?>
+        <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
+            <?= I18N::translate('Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled.') ?>
+        </small>
 
         <div class="mt-3">
             <?=
                 view($moduleName . '::modules/components/checkbox', [
-                    'name'      => 'showNames',
-                    'label'     => I18N::translate('Show names'),
-                    'checked'   => $configuration->getShowNames(),
+                    'name'      => 'hideEmptySegments',
+                    'label'     => I18N::translate('Hide empty segments'),
+                    'checked'   => $configuration->getHideEmptySegments(),
                     'unchecked' => '0',
                 ])
             ?>
-            <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
-                <?= I18N::translate('Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden.') ?>
-            </small>
         </div>
 
+        <?php
+            $showNames  = $configuration->getShowNames();
+            $showImages = $configuration->getShowImages();
+            $displayMode = 'names';
+
+            if ($showNames && $showImages) {
+                $displayMode = 'both';
+            } elseif ($showImages) {
+                $displayMode = 'images';
+            }
+        ?>
+
         <div class="mt-3">
-            <?=
-                view($moduleName . '::modules/components/checkbox', [
-                    'name'      => 'showImages',
-                    'label'     => I18N::translate('Show images'),
-                    'checked'   => $configuration->getShowImages(),
-                    'unchecked' => '0',
-                ])
-            ?>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="displayMode" id="displayMode-both" value="both" <?= $displayMode === 'both' ? 'checked' : '' ?>>
+                <label class="form-check-label" for="displayMode-both">
+                    <?= I18N::translate('Show names and images') ?>
+                </label>
+            </div>
+        </div>
+
+        <div class="mt-1">
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="displayMode" id="displayMode-names" value="names" <?= $displayMode === 'names' ? 'checked' : '' ?>>
+                <label class="form-check-label" for="displayMode-names">
+                    <?= I18N::translate('Show names only') ?>
+                </label>
+            </div>
+        </div>
+
+        <div class="mt-1">
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="displayMode" id="displayMode-images" value="images" <?= $displayMode === 'images' ? 'checked' : '' ?>>
+                <label class="form-check-label" for="displayMode-images">
+                    <?= I18N::translate('Show images only') ?>
+                </label>
+            </div>
             <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
-                <?= I18N::translate('Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough.') ?>
+                <?= I18N::translate('Images are only shown if the arc segment is wide enough. Images for descendants are not yet available.') ?>
             </small>
         </div>
 
@@ -70,7 +98,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                 ])
             ?>
             <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
-                <?= I18N::translate('Displays birth and death places in inner generation arcs. Choose the level of detail below.') ?>
+                <?= I18N::translate('Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below.') ?>
             </small>
             <div class="ps-4 mt-2">
                 <?=
@@ -93,6 +121,9 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                     'unchecked' => '0',
                 ])
             ?>
+            <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
+                <?= I18N::translate('Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners.') ?>
+            </small>
         </div>
 
         <div class="mt-3">

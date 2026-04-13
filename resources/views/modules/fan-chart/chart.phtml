@@ -83,6 +83,10 @@ import(<?= json_encode($javascript) ?>).then(({ FanChart }) => {
                 return (typeof showNames !== "undefined" && showNames !== null) ? showNames : <?= json_encode($configuration->getShowNames()) ?>;
             },
 
+            get showDescendants() {
+                return (typeof showDescendants !== "undefined" && showDescendants !== null) ? showDescendants : <?= json_encode($configuration->getShowDescendants()) ?>;
+            },
+
             showSilhouettes: <?= json_encode($chartParams['showSilhouettes']) ?>,
             data: <?= json_encode($data) ?>
         }

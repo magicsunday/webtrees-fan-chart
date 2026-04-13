@@ -114,7 +114,7 @@ final class ConfigurationTest extends TestCase
 
         $request = $request->withParsedBody([
             'generations'             => '4',
-            'fontScale'               => '140',
+            'fontScale'               => '120',
             'fanDegree'               => '300',
             'hideEmptySegments'       => '1',
             'showFamilyColors'        => '1',
@@ -153,7 +153,7 @@ final class ConfigurationTest extends TestCase
         $configuration = new Configuration($request, $module);
 
         self::assertSame(4, $configuration->getGenerations());
-        self::assertSame(140, $configuration->getFontScale());
+        self::assertSame(120, $configuration->getFontScale());
         self::assertSame(300, $configuration->getFanDegree());
         self::assertTrue($configuration->getHideEmptySegments());
         self::assertTrue($configuration->getShowFamilyColors());
@@ -229,6 +229,132 @@ final class ConfigurationTest extends TestCase
         self::assertCount(6, $configuration->getInnerArcsList());
         self::assertSame('0', $configuration->getInnerArcsList()[0]);
         self::assertSame('5', $configuration->getInnerArcsList()[5]);
+    }
+
+    /**
+     * Ensures getShowDescendants() defaults to false when not set.
+     */
+    #[Test]
+    public function showDescendantsDefaultsToFalse(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+
+        $module = $this->createModuleWithPreferences([]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertFalse($configuration->getShowDescendants());
+    }
+
+    /**
+     * Ensures getFanDegree() returns unclamped value when showDescendants is false.
+     */
+    #[Test]
+    public function fanDegreeUnclampedWhenDescendantsDisabled(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams([
+            'fanDegree'       => '300',
+            'showDescendants' => '0',
+        ]);
+
+        $module = $this->createModuleWithPreferences([
+            'default_fanDegree' => '210',
+        ]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame(300, $configuration->getFanDegree());
+    }
+
+    /**
+     * Ensures getFanDegree() clamps to 270 ceiling when showDescendants is true.
+     */
+    #[Test]
+    public function fanDegreeCeilingWhenDescendantsEnabled(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams([
+            'fanDegree'       => '300',
+            'showDescendants' => '1',
+        ]);
+
+        $module = $this->createModuleWithPreferences([
+            'default_fanDegree' => '210',
+        ]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame(270, $configuration->getFanDegree());
+    }
+
+    /**
+     * Ensures getFanDegree() does not clamp values within 180-270 range.
+     */
+    #[Test]
+    public function fanDegreeWithinRangeUnchanged(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams([
+            'fanDegree'       => '210',
+            'showDescendants' => '1',
+        ]);
+
+        $module = $this->createModuleWithPreferences([
+            'default_fanDegree' => '210',
+        ]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame(210, $configuration->getFanDegree());
+    }
+
+    /**
+     * Ensures getFanDegree() returns default (210) when input is out of isBetween range,
+     * even when showDescendants is true (90 is rejected by validator, default 210 returned).
+     */
+    #[Test]
+    public function fanDegreeOutOfRangeFallsBackToDefault(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams([
+            'fanDegree'       => '90',
+            'showDescendants' => '1',
+        ]);
+
+        $module = $this->createModuleWithPreferences([
+            'default_fanDegree' => '210',
+        ]);
+
+        $configuration = new Configuration($request, $module);
+
+        // isBetween(180,360) rejects 90, falls back to default 210
+        // Descendant clamp: min(270, max(180, 210)) = 210
+        self::assertSame(210, $configuration->getFanDegree());
+    }
+
+    /**
+     * Ensures getFanDegreeUnclamped() returns the value WITHOUT descendant clamp.
+     */
+    #[Test]
+    public function fanDegreeUnclampedIgnoresDescendantClamp(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams([
+            'fanDegree'       => '300',
+            'showDescendants' => '1',
+        ]);
+
+        $module = $this->createModuleWithPreferences([
+            'default_fanDegree' => '210',
+        ]);
+
+        $configuration = new Configuration($request, $module);
+
+        // getFanDegreeUnclamped should return 300 (no descendant clamp)
+        self::assertSame(300, $configuration->getFanDegreeUnclamped());
+        // getFanDegree should return 270 (clamped)
+        self::assertSame(270, $configuration->getFanDegree());
     }
 
     /**
