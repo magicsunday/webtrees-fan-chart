@@ -34,6 +34,11 @@ enum Symbols: string
     case Death = "\u{2020}";
 
     /**
+     * En dash used as separator in compact date ranges (e.g. "1853–1933").
+     */
+    case DateRangeSeparator = "\u{2013}";
+
+    /**
      * Placeholder returned when a marriage fact exists but has no date.
      * The JS side checks for this sentinel to display the marriage symbol
      * without an accompanying date string.

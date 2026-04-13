@@ -194,14 +194,14 @@ class Configuration
     }
 
     /**
-     * Returns the font size scaling factor as a percentage (50–150).
+     * Returns the font size scaling factor as a percentage (75–125).
      *
      * @return int
      */
     public function getFontScale(): int
     {
         return $this->validator()
-            ->isBetween(50, 150)
+            ->isBetween(75, 125)
             ->integer(
                 'fontScale',
                 (int) $this->module->getPreference(
@@ -212,11 +212,47 @@ class Configuration
     }
 
     /**
+     * Returns true when descendant support (partners + children) is active.
+     *
+     * @return bool
+     */
+    public function getShowDescendants(): bool
+    {
+        return $this->validator()
+            ->boolean(
+                'showDescendants',
+                (bool) $this->module->getPreference(
+                    'default_showDescendants',
+                    '0'
+                )
+            );
+    }
+
+    /**
      * Returns the opening angle of the fan in degrees (180–360).
+     * When showDescendants is active, the value is clamped to 180–270
+     * to reserve angular space for the descendant section.
      *
      * @return int
      */
     public function getFanDegree(): int
+    {
+        $value = $this->getFanDegreeUnclamped();
+
+        if ($this->getShowDescendants()) {
+            return min(270, max(180, $value));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Returns the opening angle of the fan in degrees WITHOUT descendant clamping.
+     * Used by page.phtml to initialise the fanDegreeRaw storage key.
+     *
+     * @return int
+     */
+    public function getFanDegreeUnclamped(): int
     {
         return $this->validator()
             ->isBetween(180, 360)

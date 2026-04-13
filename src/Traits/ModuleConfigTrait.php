@@ -116,6 +116,10 @@ trait ModuleConfigTrait
             $configuration->getMaternalColor()
         );
         $this->setPreference(
+            'default_showDescendants',
+            (string) $configuration->getShowDescendants()
+        );
+        $this->setPreference(
             'default_detailedDateGenerations',
             (string) $configuration->getDetailedDateGenerations()
         );
