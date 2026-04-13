@@ -89,7 +89,9 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     <div class="row webtrees-fan-fullscreen-container">
         <?= view($moduleName . '::modules/components/buttonbar', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
 
-        <div id="fan-chart-url" class="wt-ajax-load wt-page-content wt-chart wt-chart-fan mt-0"></div>
+        <div id="fan-chart-url" class="wt-ajax-load wt-page-content wt-chart wt-chart-fan mt-0">
+            <?= view('icons/spinner') ?>
+        </div>
     </div>
 </div>
 

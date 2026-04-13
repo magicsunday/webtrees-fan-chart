@@ -2,6 +2,13 @@
     min-height: 50dvh;
 }
 
+#fan-chart-url:has(.wt-icon-spinner) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50dvh;
+}
+
 .webtrees-fan-fullscreen-container::backdrop {
     background-color: var(--bs-body-bg);
 }
@@ -139,6 +146,7 @@
 
 .webtrees-fan-chart-container svg {
     display: block;
+    min-height: unset;
     cursor: grab;
     filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.2));
 }
