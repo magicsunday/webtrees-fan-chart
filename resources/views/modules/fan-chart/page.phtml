@@ -56,10 +56,10 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         <?= view($moduleName . '::modules/fan-chart/form/generations', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
 
         <div class="collapse" id="showMoreOptions">
-            <?= view($moduleName . '::modules/fan-chart/form/layout', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
-            <?= view($moduleName . '::modules/fan-chart/form/date-precision', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
-            <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
-            <?= view($moduleName . '::modules/fan-chart/form/font-size', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+            <?= view($moduleName . '::modules/fan-chart/form/display', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+            <?= view($moduleName . '::modules/fan-chart/form/details', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+            <?= view($moduleName . '::modules/fan-chart/form/colors', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+            <?= view($moduleName . '::modules/fan-chart/form/appearance', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
         </div>
 
         <div class="row mt-3">
@@ -111,7 +111,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
  *
  * @returns {String}
  */
-function getUrl(baseUrl, generations, detailedDateGenerations, showPlaces, placeParts)
+function getUrl(baseUrl, generations, detailedDateGenerations, showPlaces, placeParts, showDescendantsParam)
 {
     let url = new URL(baseUrl);
     url.searchParams.set("xref", document.getElementById('xref').value);
@@ -124,6 +124,12 @@ function getUrl(baseUrl, generations, detailedDateGenerations, showPlaces, place
 
     if (placeParts !== null && placeParts !== undefined) {
         url.searchParams.set("placeParts", placeParts);
+    }
+
+    if (showDescendantsParam) {
+        url.searchParams.set("showDescendants", "1");
+    } else {
+        url.searchParams.delete("showDescendants");
     }
 
     return url.toString();
@@ -180,6 +186,8 @@ storage.register("showNames");
 storage.register("innerArcs");
 storage.register("fontScale");
 storage.register("detailedDateGenerations");
+storage.register("showDescendants");
+storage.register("fanDegreeRaw");
 
 // Handle option toggle button
 toggleMoreOptions(storage);
@@ -203,6 +211,36 @@ initRangeSlider("generations");
 initRangeSlider("fontScale", "%");
 initRangeSlider("innerArcs");
 
+// Restore displayMode radio from storage and sync showNames/showImages on change
+const storedDisplayMode = storage.read("displayMode");
+
+if (storedDisplayMode) {
+    const radioToCheck = document.getElementById("displayMode-" + storedDisplayMode);
+
+    if (radioToCheck) {
+        radioToCheck.checked = true;
+    }
+}
+
+document.querySelectorAll('input[name="displayMode"]').forEach((radio) => {
+    radio.addEventListener("input", () => {
+        storage.write("displayMode", radio.value);
+        storage.write("showNames", radio.value === "both" || radio.value === "names");
+        storage.write("showImages", radio.value === "both" || radio.value === "images");
+    });
+});
+
+// Keep fanDegreeRaw in sync with the slider when descendants are not active
+const fanSliderElement = document.getElementById("fanDegree");
+
+if (fanSliderElement) {
+    fanSliderElement.addEventListener("input", () => {
+        if (!storage.read("showDescendants")) {
+            storage.write("fanDegreeRaw", fanSliderElement.value);
+        }
+    });
+}
+
 const fanDegree               = storage.read("fanDegree");
 const generations             = parseInt(storage.read("generations"));
 const hideEmptySegments       = storage.read("hideEmptySegments");
@@ -211,15 +249,91 @@ const paternalColor           = storage.read("paternalColor");
 const maternalColor           = storage.read("maternalColor");
 const showPlaces              = storage.read("showPlaces");
 const showParentMarriageDates = storage.read("showParentMarriageDates");
-const showImages              = storage.read("showImages");
-const showNames               = storage.read("showNames");
+// Derive showNames/showImages from displayMode (select) or legacy storage values
+const displayMode             = storage.read("displayMode");
+const showImages              = displayMode ? (displayMode === "both" || displayMode === "images") : storage.read("showImages");
+const showNames               = displayMode ? (displayMode === "both" || displayMode === "names") : storage.read("showNames");
 const innerArcs               = storage.read("innerArcs");
 const fontScale               = storage.read("fontScale");
+const showDescendants         = storage.read("showDescendants") ?? <?= json_encode($configuration->getShowDescendants()) ?>;
 const detailedDateGenerations = storage.read("detailedDateGenerations") ?? <?= json_encode($configuration->getDetailedDateGenerations()) ?>;
-const ajaxUrl                 = getUrl(<?= json_encode($ajaxUrl) ?>, storage.read("generations"), detailedDateGenerations, showPlaces, storage.read("placeParts"));
+
+// Store the unclamped fan degree so it can be restored when descendants are disabled
+if (storage.read("fanDegreeRaw") === null) {
+    storage.write("fanDegreeRaw", <?= json_encode($configuration->getFanDegreeUnclamped()) ?>);
+}
+
+// Clamp the fan degree slider when descendants are active (covers the case
+// where the page is loaded from storage with showDescendants already enabled)
+if (showDescendants) {
+    const fanSlider = document.getElementById("fanDegree");
+    const fanOutput = document.getElementById("fanDegreeOutput");
+
+    if (fanSlider) {
+        fanSlider.min = 180;
+        fanSlider.max = 270;
+        fanSlider.value = Math.min(270, Math.max(180, Number(fanSlider.value)));
+
+        if (fanOutput) {
+            fanOutput.value = fanSlider.value + "°";
+        }
+    }
+}
+
+const ajaxUrl = getUrl(<?= json_encode($ajaxUrl) ?>, storage.read("generations"), detailedDateGenerations, showPlaces, storage.read("placeParts"), showDescendants);
 
 document.getElementById("fan-chart-url")
     .setAttribute('data-wt-ajax-url', ajaxUrl);
+
+// showDescendants checkbox: AJAX reload + slider clamp
+const showDescendantsCheckbox = document.getElementById("showDescendants-1");
+
+if (showDescendantsCheckbox) {
+    showDescendantsCheckbox.addEventListener("change", () => {
+        const checked = showDescendantsCheckbox.checked;
+        storage.write("showDescendants", checked);
+
+        const fanSlider = document.getElementById("fanDegree");
+        const fanOutput = document.getElementById("fanDegreeOutput");
+
+        if (checked) {
+            // Save unclamped value before clamping
+            storage.write("fanDegreeRaw", fanSlider.value);
+            fanSlider.min = 180;
+            fanSlider.max = 270;
+            fanSlider.value = Math.min(270, Math.max(180, Number(fanSlider.value)));
+            storage.write("fanDegree", fanSlider.value);
+        } else {
+            // Restore unclamped value
+            fanSlider.min = 180;
+            fanSlider.max = 360;
+            const raw = storage.read("fanDegreeRaw");
+
+            if (raw !== null) {
+                fanSlider.value = raw;
+                storage.write("fanDegree", raw);
+            }
+        }
+
+        if (fanOutput) {
+            fanOutput.value = fanSlider.value + "°";
+        }
+
+        // Trigger AJAX reload since showDescendants changes the server response
+        const container = document.getElementById("fan-chart-url");
+        const newUrl = getUrl(
+            <?= json_encode($ajaxUrl) ?>,
+            storage.read("generations"),
+            detailedDateGenerations,
+            showPlaces,
+            storage.read("placeParts"),
+            checked
+        );
+
+        container.setAttribute("data-wt-ajax-url", newUrl);
+        webtrees.load(container, newUrl);
+    });
+}
 
 </script>
 <?php View::endpush(); ?>

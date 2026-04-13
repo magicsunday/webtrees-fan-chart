@@ -108,8 +108,8 @@ msgstr "Aantal binnevlakke"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr "Bepaal die aantal vlakke waarin die teks langs 'n boog geskryf word."
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "Bepaal die aantal vlakke waarin die teks langs 'n boog geskryf word. Afstammelingboë wissel outomaties tussen boogteks en geroteerde teks op grond van beskikbare spasie."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -142,8 +142,8 @@ msgstr "Moederlik"
 msgid "Show places"
 msgstr "Wys plekke"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "Wys geboorte- en sterfplekke in binneste generasieboë. Kies die vlak van detail hieronder."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "Vertoon geboorte- en sterfplekke in die diagramboë waar spasie dit toelaat. Vir afstammelinge met baie kinders word plekke outomaties onderdruk. Kies die vlak van detail hieronder."
 
 msgid "Full place name"
 msgstr "Volledige pleknaam"
@@ -160,6 +160,9 @@ msgstr "Laagste drie vlakke"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "Vertoon die huweliksdatum van elke egpaar in 'n smal boog tussen generasies. Wanneer afstammelinge geaktiveer is, word die huweliksdatum tussen die sentrale persoon en hul lewensmaats ook gewys."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -209,8 +212,8 @@ msgid "Birth and death date precision"
 msgstr "Geboortedatum en sterfdatum presisie"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "Wys volledige geboorte- en sterfdatums vir vroeë generasies. Huweliksdatums skakel oor na slegs die jaar vanaf generasie 7 en word versteek vanaf generasie 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Wys volledige geboorte- en sterfdatums vir vroeë generasies. Huweliksdatums skakel oor na slegs die jaar vanaf generasie 7 en word versteek vanaf generasie 9. Afstammelinge met smal boë gebruik outomaties 'n kompakte slegs-jaar-formaat."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -221,14 +224,32 @@ msgstr "Slegs jare"
 msgid "Show full dates up to generation %s"
 msgstr "Wys volledige datums tot generasie %s"
 
-msgid "Show images"
-msgstr "Wys beelde"
+msgid "Show descendants"
+msgstr "Wys afstammelinge"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "Vertoon miniatuurbeelde in die binneste boë en die middel van die diagram. Beelde word slegs vertoon as die boogsegment breed genoeg is."
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "Lewensmaats en kinders word as boë onder die voorouergedeelte gewys. Die waaiergrootte is beperk tot 180–270 grade wanneer geaktiveer."
 
-msgid "Show names"
-msgstr "Wys name"
+msgid "Show names and images"
+msgstr "Wys name en beelde"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "Vertoon name en datums in die diagramsegmente. Wanneer gedeaktiveer, word buitenste generasies buite die binneste boë versteek."
+msgid "Show names only"
+msgstr "Wys slegs name"
+
+msgid "Show images only"
+msgstr "Wys slegs beelde"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "Beelde word slegs gewys as die boogsegment breed genoeg is. Beelde vir afstammelinge is nog nie beskikbaar nie."
+
+msgid "Display"
+msgstr "Vertoon"
+
+msgid "Details"
+msgstr "Besonderhede"
+
+msgid "Colors"
+msgstr "Kleure"
+
+msgid "Appearance"
+msgstr "Voorkoms"

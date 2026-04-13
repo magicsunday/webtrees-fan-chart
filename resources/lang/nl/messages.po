@@ -107,8 +107,8 @@ msgid "Number of inner levels"
 msgstr "Aantal binnenste niveaus"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
-msgid "Specifies the number of levels in which the text is written along an arc."
-msgstr "Geeft het aantal niveaus aan waarin de tekst langs een boog wordt geschreven."
+msgid "Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "Geeft het aantal niveaus aan waarin de tekst langs een boog wordt geschreven. Nakomelingsenbogen schakelen automatisch tussen boogtekst en geroteerde tekst op basis van de beschikbare ruimte."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -137,8 +137,8 @@ msgstr "Moederlijk"
 msgid "Show places"
 msgstr "Toon plaatsen"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "Toont geboorte- en overlijdensplaatsen in de binnenste generatiebogen. Kies hieronder het detailniveau."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "Toont geboorte- en overlijdensplaatsen in de diagrambogen waar de ruimte het toelaat. Bij nakomelingen met veel kinderen worden plaatsen automatisch onderdrukt. Kies hieronder het detailniveau."
 
 msgid "Full place name"
 msgstr "Volledige plaatsnaam"
@@ -155,6 +155,9 @@ msgstr "Laagste drie niveaus"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Toon huwelijksdata van ouders"
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "Toont de huwelijksdatum van elk paar in een smalle boog tussen generaties. Wanneer nakomelingen zijn ingeschakeld, wordt ook de huwelijksdatum tussen de centrale persoon en diens partners getoond."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -201,8 +204,8 @@ msgid "Birth and death date precision"
 msgstr "Nauwkeurigheid geboorte- en overlijdensdatum"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "Toon volledige geboorte- en overlijdensdata voor vroege generaties. Huwelijksdata tonen alleen het jaar vanaf generatie 7 en worden verborgen vanaf generatie 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Toon volledige geboorte- en overlijdensdata voor vroege generaties. Huwelijksdata tonen alleen het jaar vanaf generatie 7 en worden verborgen vanaf generatie 9. Nakomelingen met smalle bogen gebruiken automatisch een compact alleen-jaar-formaat."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -213,20 +216,38 @@ msgstr "Alleen jaren"
 msgid "Show full dates up to generation %s"
 msgstr "Toon volledige data tot generatie %s"
 
-msgid "Show images"
-msgstr "Toon afbeeldingen"
-
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "Toont miniatuurafbeeldingen in de binnenste bogen en het midden van het diagram. Afbeeldingen worden alleen getoond als het boogsegment breed genoeg is."
-
-msgid "Show names"
-msgstr "Toon namen"
-
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "Toont namen en datums in de diagramsegmenten. Indien uitgeschakeld worden buitenste generaties voorbij de binnenste bogen verborgen."
-
 #~ msgid "Presentation"
 #~ msgstr "Weergave"
 
 #~ msgid "reset"
 #~ msgstr "herstellen"
+
+msgid "Show descendants"
+msgstr "Nakomelingen tonen"
+
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "Partners en kinderen worden als bogen onder het vooroudergedeelte getoond. De waaiergrootte is beperkt tot 180–270 graden wanneer ingeschakeld."
+
+msgid "Show names and images"
+msgstr "Toon namen en afbeeldingen"
+
+msgid "Show names only"
+msgstr "Toon alleen namen"
+
+msgid "Show images only"
+msgstr "Toon alleen afbeeldingen"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "Afbeeldingen worden alleen getoond als het boogsegment breed genoeg is. Afbeeldingen voor nakomelingen zijn nog niet beschikbaar."
+
+msgid "Display"
+msgstr "Weergave"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Colors"
+msgstr "Kleuren"
+
+msgid "Appearance"
+msgstr "Uiterlijk"

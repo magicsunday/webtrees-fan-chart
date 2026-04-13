@@ -108,8 +108,8 @@ msgstr "Độ rộng ô trong hình quạt"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr "Cấp độ trong đó văn bản được viết dọc theo một vòng cung"
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "Cấp độ trong đó văn bản được viết dọc theo một vòng cung. Các cung con cháu tự động chuyển đổi giữa văn bản theo cung và văn bản xoay dựa trên không gian có sẵn."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -142,8 +142,8 @@ msgstr "Bên ngoại"
 msgid "Show places"
 msgstr "Hiển thị địa điểm"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "Hiển thị nơi sinh và nơi mất trong các cung thế hệ bên trong. Chọn mức độ chi tiết bên dưới."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "Hiển thị nơi sinh và nơi mất trong các cung biểu đồ khi không gian cho phép. Đối với con cháu có nhiều con, địa điểm sẽ tự động bị ẩn. Chọn mức độ chi tiết bên dưới."
 
 msgid "Full place name"
 msgstr "Tên địa điểm đầy đủ"
@@ -160,6 +160,9 @@ msgstr "Ba cấp thấp nhất"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr ""
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "Hiển thị ngày kết hôn của mỗi cặp vợ chồng trong một cung hẹp giữa các thế hệ. Khi con cháu được bật, cũng hiển thị ngày kết hôn giữa người trung tâm và vợ/chồng của họ."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -209,8 +212,8 @@ msgid "Birth and death date precision"
 msgstr "Độ chính xác ngày sinh và ngày mất"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "Hiển thị đầy đủ ngày sinh và ngày mất cho các thế hệ đầu tiên. Ngày kết hôn chỉ hiển thị năm từ thế hệ 7 và được ẩn từ thế hệ 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Hiển thị đầy đủ ngày sinh và ngày mất cho các thế hệ đầu tiên. Ngày kết hôn chỉ hiển thị năm từ thế hệ 7 và được ẩn từ thế hệ 9. Con cháu với cung hẹp tự động sử dụng định dạng gọn chỉ có năm."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -221,14 +224,32 @@ msgstr "Chỉ năm"
 msgid "Show full dates up to generation %s"
 msgstr "Hiển thị đầy đủ ngày tháng đến thế hệ %s"
 
-msgid "Show images"
-msgstr "Hiển thị hình ảnh"
+msgid "Show descendants"
+msgstr "Hiển thị con cháu"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "Hiển thị hình thu nhỏ trong các cung bên trong và ở giữa biểu đồ. Hình ảnh chỉ hiển thị khi đoạn cung đủ rộng."
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "Vợ/chồng và con cái được hiển thị dưới dạng cung bên dưới phần tổ tiên. Kích thước quạt bị giới hạn ở 180–270 độ khi được bật."
 
-msgid "Show names"
-msgstr "Hiển thị tên"
+msgid "Show names and images"
+msgstr "Hiển thị tên và hình ảnh"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "Hiển thị tên và ngày tháng trong các phân đoạn biểu đồ. Khi tắt, các thế hệ bên ngoài vượt quá các cung bên trong sẽ bị ẩn."
+msgid "Show names only"
+msgstr "Chỉ hiển thị tên"
+
+msgid "Show images only"
+msgstr "Chỉ hiển thị hình ảnh"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "Hình ảnh chỉ hiển thị khi đoạn cung đủ rộng. Hình ảnh cho con cháu chưa có sẵn."
+
+msgid "Display"
+msgstr "Hiển thị"
+
+msgid "Details"
+msgstr "Chi tiết"
+
+msgid "Colors"
+msgstr "Màu sắc"
+
+msgid "Appearance"
+msgstr "Giao diện"

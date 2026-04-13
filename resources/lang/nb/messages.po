@@ -108,8 +108,8 @@ msgstr "Antall indre nivå"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
-"Specifies the number of levels in which the text is written along an arc."
-msgstr "Angir antall nivå der teksten vil bli skrevet i kurve."
+"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
+msgstr "Angir antall nivå der teksten vil bli skrevet i kurve. Etterkommerbuer veksler automatisk mellom buetekst og rotert tekst basert på tilgjengelig plass."
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
@@ -142,8 +142,8 @@ msgstr "Morslinje"
 msgid "Show places"
 msgstr "Vis steder"
 
-msgid "Displays birth and death places in inner generation arcs. Choose the level of detail below."
-msgstr "Viser fødested og dødssted i indre generasjonsbuer. Velg detaljnivå nedenfor."
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
+msgstr "Viser fødested og dødssted i diagrambuene der plassen tillater det. For etterkommere med mange barn undertrykkes steder automatisk. Velg detaljnivå nedenfor."
 
 msgid "Full place name"
 msgstr "Fullt stedsnavn"
@@ -160,6 +160,9 @@ msgstr "Tre laveste nivåer"
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
 msgstr "Vis dato for foreldres vielse"
+
+msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
+msgstr "Viser vielsesdatoen for hvert par i en smal bue mellom generasjoner. Når etterkommere er aktivert, vises også vielsesdatoen mellom sentralpersonen og deres partnere."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
@@ -209,8 +212,8 @@ msgid "Birth and death date precision"
 msgstr "Presisjon for fødsels- og dødsdatoer"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9."
-msgstr "Vis fullstendige fødsels- og dødsdatoer for tidlige generasjoner. Ekteskapsdatoer viser kun årstall fra generasjon 7 og skjules fra generasjon 9."
+msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Vis fullstendige fødsels- og dødsdatoer for tidlige generasjoner. Ekteskapsdatoer viser kun årstall fra generasjon 7 og skjules fra generasjon 9. Etterkommere med smale buer bruker automatisk et kompakt kun-årstall-format."
 
 #: src/Configuration.php:191
 msgid "Years only"
@@ -221,14 +224,32 @@ msgstr "Kun årstall"
 msgid "Show full dates up to generation %s"
 msgstr "Vis fullstendige datoer til generasjon %s"
 
-msgid "Show images"
-msgstr "Vis bilder"
+msgid "Show descendants"
+msgstr "Vis etterkommere"
 
-msgid "Displays thumbnail images in the inner arcs and the center of the chart. Images are only shown if the arc segment is wide enough."
-msgstr "Viser miniatyrbilder i de indre buene og i midten av diagrammet. Bilder vises kun hvis buesegmentet er bredt nok."
+msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
+msgstr "Partnere og barn vises som buer under forfedreseksjonen. Viftestørrelsen er begrenset til 180–270 grader når dette er aktivert."
 
-msgid "Show names"
-msgstr "Vis navn"
+msgid "Show names and images"
+msgstr "Vis navn og bilder"
 
-msgid "Displays names and dates in the chart segments. When disabled, outer generations beyond the inner arcs are hidden."
-msgstr "Viser navn og datoer i diagramsegmentene. Når deaktivert, skjules ytre generasjoner utenfor de indre buene."
+msgid "Show names only"
+msgstr "Vis kun navn"
+
+msgid "Show images only"
+msgstr "Vis kun bilder"
+
+msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
+msgstr "Bilder vises kun hvis buesegmentet er bredt nok. Bilder for etterkommere er ikke tilgjengelige ennå."
+
+msgid "Display"
+msgstr "Visning"
+
+msgid "Details"
+msgstr "Detaljer"
+
+msgid "Colors"
+msgstr "Farger"
+
+msgid "Appearance"
+msgstr "Utseende"
