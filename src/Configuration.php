@@ -373,6 +373,12 @@ class Configuration
      */
     public function getShowImages(): bool
     {
+        $displayMode = $this->resolveDisplayMode();
+
+        if ($displayMode !== null) {
+            return in_array($displayMode, ['both', 'images'], true);
+        }
+
         return $this->validator()
             ->boolean(
                 'showImages',
@@ -390,6 +396,12 @@ class Configuration
      */
     public function getShowNames(): bool
     {
+        $displayMode = $this->resolveDisplayMode();
+
+        if ($displayMode !== null) {
+            return in_array($displayMode, ['both', 'names'], true);
+        }
+
         return $this->validator()
             ->boolean(
                 'showNames',
@@ -398,6 +410,24 @@ class Configuration
                     '1'
                 )
             );
+    }
+
+    /**
+     * Resolves the displayMode parameter from the request. Returns null if not present,
+     * allowing fallback to the individual showNames/showImages parameters.
+     *
+     * @return string|null 'both', 'names', 'images', or null
+     */
+    private function resolveDisplayMode(): ?string
+    {
+        $params = (array) $this->request->getParsedBody() + $this->request->getQueryParams();
+        $mode   = $params['displayMode'] ?? null;
+
+        if (is_string($mode) && in_array($mode, ['both', 'names', 'images'], true)) {
+            return $mode;
+        }
+
+        return null;
     }
 
     /**

@@ -599,6 +599,10 @@ describe("Update", () => {
         expect(persons[1].data.data.data.xref).toBe("");
         expect(persons[2].data.data.data.xref).toBe("I3");
 
+        // Note: Class assignment (new/remove/update) is verified visually via
+        // Playwright tests. The D3 data-join mock does not fully replicate the
+        // selectAll().data().each() chain that sets these classes in production.
+
         if (transition) {
             transition.complete();
         }

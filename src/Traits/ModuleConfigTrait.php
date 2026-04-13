@@ -116,6 +116,14 @@ trait ModuleConfigTrait
             $configuration->getMaternalColor()
         );
         $this->setPreference(
+            'default_showNames',
+            (string) $configuration->getShowNames()
+        );
+        $this->setPreference(
+            'default_showImages',
+            (string) $configuration->getShowImages()
+        );
+        $this->setPreference(
             'default_showDescendants',
             (string) $configuration->getShowDescendants()
         );
