@@ -5,7 +5,8 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import Text from "./text";
+import Text from "./text.js";
+import { fadeIfUpdating } from "./lifecycle.js";
 
 /**
  * Thin coordinator that creates the label <g> for a person arc, applies the
@@ -47,9 +48,7 @@ export default class LabelRenderer {
             .style("font-size", this._geometry.getFontSize(datum) + "px");
 
         // Hide immediately during updates to prevent visual flash
-        if (parent.classed("update")) {
-            label.style("opacity", 1e-6);
-        }
+        fadeIfUpdating(label, parent);
 
         const text = new Text(this._svg, this._configuration, this._geometry);
         text.createLabels(label, datum);

@@ -5,13 +5,13 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../../lib/d3";
-import {appendArc} from "./arc";
-import FamilyColor from "./family-color";
-import {SYMBOL_MARRIAGE} from "../hierarchy";
-
-/** Total horizontal padding (both sides) reserved around the marriage date text in px. */
-const LABEL_ARC_PADDING = 24;
+import * as d3 from "../../lib/d3.js";
+import {appendArc} from "./arc.js";
+import { createMarriageArcGenerator } from "./arc-factory.js";
+import FamilyColor from "./family-color.js";
+import {SYMBOL_MARRIAGE} from "../hierarchy.js";
+import { classifyElement, fadeIfUpdating } from "./lifecycle.js";
+import { truncateToFit } from "./text-truncation.js";
 
 /**
  * Renders the thin arc that sits in the radial gap between a parent generation
@@ -62,9 +62,7 @@ export default class Marriage {
         const hasChildren = datum.children
             && datum.children.some(child => child.data.data.xref !== "");
 
-        const isNew = marriage.classed("new");
-        const isUpdate = marriage.classed("update");
-        const isRemove = marriage.classed("remove");
+        const { isNew, isUpdate, isRemove } = classifyElement(marriage);
 
         if (isNew && this._configuration.hideEmptySegments) {
             this.addArc(marriage, datum);
@@ -134,14 +132,10 @@ export default class Marriage {
             return;
         }
 
-        const arcGenerator = d3.arc()
-            .startAngle(startAngle)
-            .endAngle(endAngle)
-            .innerRadius(innerR)
-            .outerRadius(outerR)
-            .padAngle(0)
-            .padRadius(0)
-            .cornerRadius(this._configuration.cornerRadius);
+        const arcGenerator = createMarriageArcGenerator(
+            this._configuration,
+            { startAngle, endAngle, innerR, outerR },
+        );
 
         const color = (datum.depth < 0)
             ? (datum.data.data.familyColor || null)
@@ -212,9 +206,7 @@ export default class Marriage {
             .style("font-size", this.getFontSize(datum) + "px");
 
         // Hide immediately during updates to prevent visual flash
-        if (marriage.classed("update")) {
-            labelGroup.style("opacity", 1e-6);
-        }
+        fadeIfUpdating(labelGroup, marriage);
 
         const text = labelGroup
             .append("text")
@@ -236,23 +228,9 @@ export default class Marriage {
             .text(marriageText);
 
         // Truncate if text overflows the arc (with padding on both sides)
-        const arcLength = ((endAngle - startAngle) * midRadius) - LABEL_ARC_PADDING;
+        const arcLength = ((endAngle - startAngle) * midRadius) - (this._configuration.textPadding * 2);
 
-        if (tspan.node().getComputedTextLength() > arcLength) {
-            let label = tspan.text();
-
-            while ((tspan.node().getComputedTextLength() > arcLength) && (label.length > 1)) {
-                label = label.slice(0, -1).trim();
-                tspan.text(label);
-            }
-
-            // Remove trailing dot if present
-            if (label[label.length - 1] === ".") {
-                label = label.slice(0, -1).trim();
-            }
-
-            tspan.text(label + "\u2026");
-        }
+        truncateToFit(tspan, arcLength);
     }
 
     /**

@@ -5,11 +5,13 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../../lib/d3";
-import {appendArc} from "./arc";
-import TooltipRenderer from "./tooltip-renderer";
-import LabelRenderer from "./label-renderer";
-import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
+import * as d3 from "../../lib/d3.js";
+import {appendArc} from "./arc.js";
+import { createPersonArcGenerator } from "./arc-factory.js";
+import TooltipRenderer from "./tooltip-renderer.js";
+import LabelRenderer from "./label-renderer.js";
+import {SEX_FEMALE, SEX_MALE} from "../hierarchy.js";
+import { classifyElement, fadeIfUpdating } from "./lifecycle.js";
 
 /** Minimum rendered image diameter in pixels — narrower arcs skip the image. */
 const IMAGE_SIZE_MIN = 28;
@@ -69,9 +71,7 @@ export default class Person {
             return;
         }
 
-        const isNew = person.classed("new");
-        const isUpdate = person.classed("update");
-        const isRemove = person.classed("remove");
+        const { isNew, isUpdate, isRemove } = classifyElement(person);
         const hasData = datum.data.data.xref !== "";
 
         // Descendant nodes always show their arc (empty partner arcs
@@ -166,9 +166,7 @@ export default class Person {
             .attr("class", "color");
 
         // Hide immediately during updates to prevent visual flash
-        if (person.classed("update")) {
-            color.style("opacity", 1e-6);
-        }
+        fadeIfUpdating(color, person);
 
         const path = color.append("path")
             .attr("d", arcGenerator);
@@ -353,14 +351,12 @@ export default class Person {
      * @private
      */
     addArcToPerson(person, datum) {
-        const arcGenerator = d3.arc()
-            .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
-            .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
-            .innerRadius(this._geometry.innerRadius(datum.depth))
-            .outerRadius(this._geometry.outerRadius(datum.depth))
-            .padAngle(this.getArcPadAngle(datum))
-            .padRadius(this._configuration.padRadius)
-            .cornerRadius(this._configuration.cornerRadius);
+        const arcGenerator = createPersonArcGenerator(
+            this._geometry,
+            this._configuration,
+            datum,
+            this.getArcPadAngle(datum),
+        );
 
         appendArc(person, arcGenerator, datum.data.data.familyColor);
     }

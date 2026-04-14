@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
+import {SEX_FEMALE, SEX_MALE} from "../hierarchy.js";
 
 /**
  * This class computes family-branch colors for person arcs. The two

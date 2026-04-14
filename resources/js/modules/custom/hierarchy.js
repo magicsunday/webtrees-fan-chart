@@ -5,8 +5,8 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../lib/d3";
-import {MATH_DEG2RAD} from "./svg/geometry";
+import * as d3 from "../lib/d3.js";
+import {MATH_DEG2RAD} from "./svg/geometry.js";
 
 export const SEX_MALE = "M";
 export const SEX_FEMALE = "F";

@@ -5,7 +5,7 @@
  * LICENSE file distributed with this source code.
  */
 
-import Export from "../export";
+import Export from "../export.js";
 
 /**
  * Exports the fan chart as a PNG image. Clones the SVG, inlines all external

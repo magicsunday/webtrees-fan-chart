@@ -5,8 +5,8 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../../lib/d3";
-import {SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_ELLIPSIS, SYMBOL_MARRIAGE} from "../hierarchy";
+import * as d3 from "../../lib/d3.js";
+import {SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_ELLIPSIS, SYMBOL_MARRIAGE} from "../hierarchy.js";
 
 /**
  * Binds hover and context-menu events to a person arc element and manages the

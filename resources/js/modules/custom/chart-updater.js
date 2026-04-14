@@ -5,11 +5,11 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../lib/d3";
-import Geometry from "./svg/geometry";
-import Person from "./svg/person";
-import Marriage from "./svg/marriage";
-import FamilyColor from "./svg/family-color";
+import * as d3 from "../lib/d3.js";
+import Geometry from "./svg/geometry.js";
+import Person from "./svg/person.js";
+import Marriage from "./svg/marriage.js";
+import FamilyColor from "./svg/family-color.js";
 
 /**
  * Handles the animated transition when the chart re-centers on a new individual.

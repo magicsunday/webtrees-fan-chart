@@ -1,4 +1,5 @@
 import stylisticJs from "@stylistic/eslint-plugin";
+import importPlugin from "eslint-plugin-import-x";
 import globals from "globals";
 
 export default [
@@ -6,6 +7,7 @@ export default [
         files: ["resources/js/modules/**/*.js"],
         plugins: {
             "@stylistic": stylisticJs,
+            "import-x": importPlugin,
         },
         languageOptions: {
             ecmaVersion: 2022,
@@ -22,6 +24,7 @@ export default [
             "no-var": "error",
             "prefer-const": "warn",
             "yoda": ["error", "never"],
+            "import-x/extensions": ["error", "always"],
 
             // Stylistic
             "@stylistic/semi": ["error", "always"],

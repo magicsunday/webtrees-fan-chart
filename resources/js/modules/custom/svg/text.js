@@ -5,9 +5,10 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../../lib/d3";
-import Geometry, {MATH_RAD2DEG} from "./geometry";
-import measureText from "../../lib/chart/text/measure";
+import * as d3 from "../../lib/d3.js";
+import Geometry, {MATH_RAD2DEG} from "./geometry.js";
+import measureText from "../../lib/chart/text/measure.js";
+import { truncateToFit, truncateNames } from "./text-truncation.js";
 
 /**
  * Generates all text elements for a single person arc: first names, last names,
@@ -231,12 +232,7 @@ export default class Text {
             const tspan = container.append("tspan").text(line);
             const availableWidth = this.getAvailableWidth(datum, position);
 
-            if (this.getTextLength(container) > availableWidth) {
-                container.selectAll("tspan")
-                    .each(this.truncateDate(container, availableWidth));
-
-                tspan.text(tspan.text() + "\u2026");
-            }
+            truncateToFit(tspan, availableWidth);
         });
     }
 
@@ -391,75 +387,7 @@ export default class Text {
         const fontSize = parent.style("font-size");
         const fontWeight = parent.style("font-weight");
 
-        return this.truncateNames(names, fontSize, fontWeight, availableWidth);
-    }
-
-    /**
-     * Reduces name parts to initial-letter abbreviations until the joined string
-     * fits within availableWidth. Abbreviation order: non-preferred given names
-     * first (least important), then the preferred given name, then last names
-     * (never dropped entirely). Works on a shallow clone so the caller's array
-     * is not mutated.
-     *
-     * @param {LabelElementData[]} names          Name parts to truncate
-     * @param {string}             fontSize       CSS font-size (e.g. "14px")
-     * @param {string}             fontWeight     CSS font-weight
-     * @param {number}             availableWidth Maximum pixel width for the full name string
-     *
-     * @return {LabelElementData[]}
-     *
-     * @private
-     */
-    truncateNames(names, fontSize, fontWeight, availableWidth) {
-        // Shallow clone each name object to avoid mutating the caller's data.
-        // This is safe because all LabelElementData fields are primitives
-        // (label: string, isPreferred: bool, isLastName: bool, isNameRtl: bool).
-        const workNames = names.map(name => ({...name}));
-        let text = workNames.map(item => item.label).join(" ");
-
-        return workNames
-            // Start truncating from the last element to the first one
-            .reverse()
-            .map((name) => {
-                // Select all not preferred and not last names
-                if ((name.isPreferred === false)
-                    && (name.isLastName === false)
-                ) {
-                    if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
-                        // Keep only the first letter
-                        name.label = name.label.slice(0, 1) + ".";
-                        text = workNames.map(item => item.label).join(" ");
-                    }
-                }
-
-                return name;
-            })
-            .map((name) => {
-                // Afterward, the preferred ones, if text takes still too much space
-                if (name.isPreferred === true) {
-                    if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
-                        // Keep only the first letter
-                        name.label = name.label.slice(0, 1) + ".";
-                        text = workNames.map(item => item.label).join(" ");
-                    }
-                }
-
-                return name;
-            })
-            .map((name) => {
-                // Finally truncate lastnames
-                if (name.isLastName === true) {
-                    if (this.measureText(text, fontSize, fontWeight) > availableWidth) {
-                        // Keep only the first letter
-                        name.label = name.label.slice(0, 1) + ".";
-                        text = workNames.map(item => item.label).join(" ");
-                    }
-                }
-
-                return name;
-            })
-            // Revert reversed order again
-            .reverse();
+        return truncateNames(names, availableWidth, (text) => this.measureText(text, fontSize, fontWeight));
     }
 
     /**
@@ -478,64 +406,6 @@ export default class Text {
         const fontFamily = this._svg.style("font-family");
 
         return measureText(text, fontFamily, fontSize, fontWeight);
-    }
-
-    /**
-     * Returns a callback suitable for use with D3's .each() that strips
-     * trailing characters from each <tspan> until the total text length of
-     * parent fits within availableWidth, removing a trailing period if present.
-     *
-     * @param {Selection} parent         The <text> or <textPath> containing the <tspan> children
-     * @param {number}    availableWidth Maximum pixel width before truncation kicks in
-     *
-     * @return {Function}
-     *
-     * @private
-     */
-    truncateDate(parent, availableWidth) {
-        const that = this;
-
-        return function () {
-            let textLength = that.getTextLength(parent);
-            const tspan = d3.select(this);
-            let text = tspan.text();
-
-            // Repeat removing the last char until the width matches
-            while ((textLength > availableWidth) && (text.length > 1)) {
-                // Remove last char
-                text = text.slice(0, -1).trim();
-
-                tspan.text(text);
-
-                // Recalculate text length
-                textLength = that.getTextLength(parent);
-            }
-
-            // Remove trailing dot if present
-            if (text[text.length - 1] === ".") {
-                tspan.text(text.slice(0, -1).trim());
-            }
-        };
-    }
-
-    /**
-     * Returns a float representing the computed length of all <tspan> elements within the element.
-     *
-     * @param {Selection} parent The parent (<text> or <textPath>) element containing the <tspan> child elements
-     *
-     * @return {number}
-     *
-     * @private
-     */
-    getTextLength(parent) {
-        let totalWidth = 0;
-
-        // Calculate the total used width of all <tspan> elements
-        parent.selectAll("tspan").each(function () {
-            totalWidth += this.getComputedTextLength();
-        });
-
-        return totalWidth;
     }
 
     /**

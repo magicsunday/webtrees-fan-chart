@@ -5,15 +5,15 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../lib/d3";
-import Hierarchy from "./hierarchy";
-import Overlay from "../lib/chart/overlay";
-import Svg from "./svg";
-import Person from "./svg/person";
-import Marriage from "./svg/marriage";
-import Geometry from "./svg/geometry";
-import FamilyColor from "./svg/family-color";
-import ChartUpdater from "./chart-updater";
+import * as d3 from "../lib/d3.js";
+import Hierarchy from "./hierarchy.js";
+import Overlay from "../lib/chart/overlay.js";
+import Svg from "./svg.js";
+import Person from "./svg/person.js";
+import Marriage from "./svg/marriage.js";
+import Geometry from "./svg/geometry.js";
+import FamilyColor from "./svg/family-color.js";
+import ChartUpdater from "./chart-updater.js";
 
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
 

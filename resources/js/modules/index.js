@@ -5,9 +5,9 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "./lib/d3";
-import Configuration from "./custom/configuration";
-import Chart from "./custom/chart";
+import * as d3 from "./lib/d3.js";
+import Configuration from "./custom/configuration.js";
+import Chart from "./custom/chart.js";
 
 /**
  * Top-level entry point for the fan chart. Wires together the Configuration,

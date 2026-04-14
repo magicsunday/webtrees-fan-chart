@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
+import {SEX_FEMALE, SEX_MALE} from "./hierarchy.js";
 
 /**
  * Computes and registers SVG linearGradient definitions for each person arc.

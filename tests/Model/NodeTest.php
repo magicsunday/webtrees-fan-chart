@@ -149,5 +149,4 @@ final class NodeTest extends TestCase
         self::assertArrayHasKey('unassignedChildren', $result);
         self::assertSame([$child], $result['unassignedChildren']);
     }
-
 }
