@@ -85,3 +85,29 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         </div>
     </div>
 </div>
+
+<script>
+// Clamp fan degree slider when "Show descendants" is toggled.
+// Shared by both the chart page and the admin config page.
+(function () {
+    const checkbox  = document.getElementById("showDescendants-1");
+    const fanSlider = document.getElementById("fanDegree");
+    const fanOutput = document.getElementById("fanDegreeOutput");
+
+    if (checkbox && fanSlider) {
+        checkbox.addEventListener("change", function () {
+            const maxDegree = checkbox.checked ? 270 : 360;
+
+            fanSlider.max = maxDegree;
+
+            if (Number(fanSlider.value) > maxDegree) {
+                fanSlider.value = maxDegree;
+            }
+
+            if (fanOutput) {
+                fanOutput.value = fanSlider.value + "°";
+            }
+        });
+    }
+})();
+</script>

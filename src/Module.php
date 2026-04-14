@@ -216,7 +216,7 @@ class Module extends FanChartModule implements ModuleCustomInterface, ModuleConf
                 'tree'          => $tree,
                 'configuration' => $this->configuration,
                 'stylesheets'   => $this->getStylesheets(),
-                'javascript'    => $this->assetUrl('js/fan-chart-storage.min.js'),
+                'javascript'    => $this->assetUrl('js/fan-chart-page.min.js'),
             ]
         );
     }

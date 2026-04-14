@@ -58,13 +58,13 @@ Version: <%= pkg.version %>`
         ]
     },
 
-    // fan-chart-storage.js
+    // fan-chart-page.js (Storage + page initialisation)
     {
-        input: "resources/js/modules/lib/storage.js",
+        input: "resources/js/modules/custom/page-entry.js",
         output: [
             {
                 name: "WebtreesFanChart",
-                file: "resources/js/fan-chart-storage.js",
+                file: "resources/js/fan-chart-page.js",
                 format: "umd"
             }
         ],
@@ -73,11 +73,11 @@ Version: <%= pkg.version %>`
         ]
     },
     {
-        input: "resources/js/modules/lib/storage.js",
+        input: "resources/js/modules/custom/page-entry.js",
         output: [
             {
                 name: "WebtreesFanChart",
-                file: "resources/js/fan-chart-storage.min.js",
+                file: "resources/js/fan-chart-page.min.js",
                 format: "umd"
             }
         ],

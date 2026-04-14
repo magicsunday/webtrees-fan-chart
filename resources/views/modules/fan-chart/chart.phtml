@@ -28,6 +28,8 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 <script type="module">
 
 import(<?= json_encode($javascript) ?>).then(({ FanChart }) => {
+    const opts = (typeof WebtreesFanChart !== "undefined" && WebtreesFanChart.chartOptions) || {};
+
     new FanChart(
         "#webtrees-fan-chart-container-<?= $id ?>",
         {
@@ -36,55 +38,55 @@ import(<?= json_encode($javascript) ?>).then(({ FanChart }) => {
             cssFiles: <?= json_encode($exportStylesheets) ?>,
 
             get generations() {
-                return (typeof generations !== "undefined" && generations !== null) ? generations : <?= $configuration->getGenerations() ?>
+                return opts.generations ?? <?= $configuration->getGenerations() ?>;
             },
 
             get fanDegree() {
-                return (typeof fanDegree !== "undefined" && fanDegree !== null) ? fanDegree : <?= json_encode($configuration->getFanDegree()) ?>;
+                return opts.fanDegree ?? <?= json_encode($configuration->getFanDegree()) ?>;
             },
 
             get fontScale() {
-                return (typeof fontScale !== "undefined" && fontScale !== null) ? fontScale : <?= json_encode($configuration->getFontScale()) ?>;
+                return opts.fontScale ?? <?= json_encode($configuration->getFontScale()) ?>;
             },
 
             get hideEmptySegments() {
-                return (typeof hideEmptySegments !== "undefined" && hideEmptySegments !== null) ? hideEmptySegments : <?= json_encode($configuration->getHideEmptySegments()) ?>;
+                return opts.hideEmptySegments ?? <?= json_encode($configuration->getHideEmptySegments()) ?>;
             },
 
             get showFamilyColors() {
-                return (typeof showFamilyColors !== "undefined" && showFamilyColors !== null) ? showFamilyColors : <?= json_encode($configuration->getShowFamilyColors()) ?>;
+                return opts.showFamilyColors ?? <?= json_encode($configuration->getShowFamilyColors()) ?>;
             },
 
             get paternalColor() {
-                return (typeof paternalColor !== "undefined" && paternalColor !== null) ? paternalColor : <?= json_encode($configuration->getPaternalColor()) ?>;
+                return opts.paternalColor ?? <?= json_encode($configuration->getPaternalColor()) ?>;
             },
 
             get maternalColor() {
-                return (typeof maternalColor !== "undefined" && maternalColor !== null) ? maternalColor : <?= json_encode($configuration->getMaternalColor()) ?>;
+                return opts.maternalColor ?? <?= json_encode($configuration->getMaternalColor()) ?>;
             },
 
             get showPlaces() {
-                return (typeof showPlaces !== "undefined" && showPlaces !== null) ? showPlaces : <?= json_encode($configuration->getShowPlaces()) ?>;
+                return opts.showPlaces ?? <?= json_encode($configuration->getShowPlaces()) ?>;
             },
 
             get showParentMarriageDates() {
-                return (typeof showParentMarriageDates !== "undefined" && showParentMarriageDates !== null) ? showParentMarriageDates : <?= json_encode($configuration->getShowParentMarriageDates()) ?>;
+                return opts.showParentMarriageDates ?? <?= json_encode($configuration->getShowParentMarriageDates()) ?>;
             },
 
             get innerArcs() {
-                return (typeof innerArcs !== "undefined" && innerArcs !== null) ? innerArcs : <?= json_encode($configuration->getInnerArcs()) ?>;
+                return opts.innerArcs ?? <?= json_encode($configuration->getInnerArcs()) ?>;
             },
 
             get showImages() {
-                return (typeof showImages !== "undefined" && showImages !== null) ? showImages : <?= json_encode($configuration->getShowImages()) ?>;
+                return opts.showImages ?? <?= json_encode($configuration->getShowImages()) ?>;
             },
 
             get showNames() {
-                return (typeof showNames !== "undefined" && showNames !== null) ? showNames : <?= json_encode($configuration->getShowNames()) ?>;
+                return opts.showNames ?? <?= json_encode($configuration->getShowNames()) ?>;
             },
 
             get showDescendants() {
-                return (typeof showDescendants !== "undefined" && showDescendants !== null) ? showDescendants : <?= json_encode($configuration->getShowDescendants()) ?>;
+                return opts.showDescendants ?? <?= json_encode($configuration->getShowDescendants()) ?>;
             },
 
             showSilhouettes: <?= json_encode($chartParams['showSilhouettes']) ?>,
