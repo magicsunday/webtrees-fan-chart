@@ -83,7 +83,7 @@ export function truncateNames(names, availableWidth, measureFn) {
     const abbreviate = (predicate) => {
         for (let i = workNames.length - 1; i >= 0; i--) {
             if (predicate(workNames[i]) && (measureFn(text) > availableWidth)) {
-                workNames[i].label = workNames[i].label.slice(0, 1) + ".";
+                workNames[i].label = `${workNames[i].label.slice(0, 1)}.`;
                 text = workNames.map(item => item.label).join(" ");
             }
         }

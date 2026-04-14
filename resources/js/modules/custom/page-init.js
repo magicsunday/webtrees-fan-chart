@@ -83,7 +83,7 @@ function initRangeSlider(storage, id, suffix = "") {
 
     if (stored !== null) {
         const input = document.getElementById(id);
-        const output = document.getElementById(id + "Output");
+        const output = document.getElementById(`${id}Output`);
 
         input.value = stored;
         output.value = stored + suffix;
@@ -133,7 +133,7 @@ export function initPage(config) {
     const storedDisplayMode = storage.read("displayMode");
 
     if (storedDisplayMode) {
-        const radioToCheck = document.getElementById("displayMode-" + storedDisplayMode);
+        const radioToCheck = document.getElementById(`displayMode-${storedDisplayMode}`);
 
         if (radioToCheck) {
             radioToCheck.checked = true;
@@ -166,7 +166,7 @@ export function initPage(config) {
 
     const chartOptions = {
         fanDegree:               storage.read("fanDegree"),
-        generations:             storage.read("generations") !== null ? Number(storage.read("generations")) : null,
+        generations:             storage.read("generations") === null ? null : Number(storage.read("generations")),
         hideEmptySegments:       storage.read("hideEmptySegments"),
         showFamilyColors:        storage.read("showFamilyColors"),
         paternalColor:           storage.read("paternalColor"),
@@ -198,7 +198,7 @@ export function initPage(config) {
             fanSlider.value = chartOptions.fanDegree;
 
             if (fanOutput) {
-                fanOutput.value = chartOptions.fanDegree + "°";
+                fanOutput.value = `${chartOptions.fanDegree}°`;
             }
         }
     }
@@ -243,7 +243,7 @@ export function initPage(config) {
                     fanSlider.value = raw;
 
                     if (fanOutput) {
-                        fanOutput.value = raw + "°";
+                        fanOutput.value = `${raw}°`;
                     }
                 }
             }

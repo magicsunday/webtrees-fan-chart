@@ -59,8 +59,7 @@ export default class Marriage {
         }
 
         const isDescendant = datum.depth < 0;
-        const hasChildren = datum.children
-            && datum.children.some(child => child.data.data.xref !== "");
+        const hasChildren = datum.children?.some(child => child.data.data.xref !== "");
 
         const { isNew, isUpdate, isRemove } = classifyElement(marriage);
 
@@ -186,13 +185,13 @@ export default class Marriage {
             .outerRadius(midRadius);
 
         const marriageId = marriage.attr("id");
-        let pathId = "path-" + marriageId;
+        let pathId = `path-${marriageId}`;
 
         // During updates, old text still references the old path definition.
         // Create a new path with a unique ID so old and new text render at
         // their respective positions during the cross-fade.
-        if (this._svg.defs.select("path#" + pathId).node()) {
-            pathId += "-" + marriage.selectAll("g.name").size();
+        if (this._svg.defs.select(`path#${pathId}`).node()) {
+            pathId += `-${marriage.selectAll("g.name").size()}`;
         }
 
         this._svg.defs
@@ -203,7 +202,7 @@ export default class Marriage {
         const labelGroup = marriage
             .append("g")
             .attr("class", "name")
-            .style("font-size", this.getFontSize(datum) + "px");
+            .style("font-size", `${this.getFontSize(datum)}px`);
 
         // Hide immediately during updates to prevent visual flash
         fadeIfUpdating(labelGroup, marriage);
@@ -215,13 +214,13 @@ export default class Marriage {
 
         const textPath = text
             .append("textPath")
-            .attr("href", "#" + pathId)
+            .attr("href", `#${pathId}`)
             .attr("startOffset", "25%")
             .attr("class", "date");
 
         const marriageText = (dateText === "?")
             ? SYMBOL_MARRIAGE
-            : SYMBOL_MARRIAGE + " " + dateText;
+            : `${SYMBOL_MARRIAGE} ${dateText}`;
 
         const tspan = textPath
             .append("tspan")

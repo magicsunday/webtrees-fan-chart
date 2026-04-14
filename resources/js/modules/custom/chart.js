@@ -238,7 +238,7 @@ export default class Chart {
             )
             .append("g")
             .attr("class", "person")
-            .attr("id", (datum) => "person-" + datum.id);
+            .attr("id", (datum) => `person-${datum.id}`);
 
         const svg = this._svg;
         const configuration = this._configuration;
@@ -280,9 +280,9 @@ export default class Chart {
             separatorGroup = this._svg.visual.append("g").attr("class", "separatorGroup");
         }
 
-        const maxDepth = !this._configuration.showNames
-            ? Math.min(this._configuration.generations, this._configuration.numberOfInnerCircles)
-            : this._configuration.generations;
+        const maxDepth = this._configuration.showNames
+            ? this._configuration.generations
+            : Math.min(this._configuration.generations, this._configuration.numberOfInnerCircles);
 
         this.drawDescendantSeparators(geometry, separatorGroup);
 
@@ -392,7 +392,7 @@ export default class Chart {
             .enter()
             .append("g")
             .attr("class", "marriage")
-            .attr("id", (datum) => "marriage-" + datum.id);
+            .attr("id", (datum) => `marriage-${datum.id}`);
 
         const svg = this._svg;
         const configuration = this._configuration;
@@ -460,7 +460,7 @@ export default class Chart {
         marriageJoin.enter()
             .append("g")
             .attr("class", "marriage descendant")
-            .attr("id", (datum) => "marriage-" + datum.id)
+            .attr("id", (datum) => `marriage-${datum.id}`)
             .each((datum, i, nodes) => {
                 const marriage = d3.select(nodes[i]);
                 new Marriage(svg, configuration, geometry, marriage, datum);
@@ -496,7 +496,7 @@ export default class Chart {
             .select("g.marriageGroup")
             .selectAll("g.marriage")
             .each(function (datum) {
-                if (!datum || !datum.children) {
+                if (!datum?.children) {
                     return;
                 }
 
@@ -515,7 +515,7 @@ export default class Chart {
      *
      * @private
      */
-    personClick(event, datum) {
+    personClick(_event, datum) {
         // Empty partner nodes have no updateUrl -- ignore clicks on them
         if (datum.data.data.updateUrl === "") {
             return;

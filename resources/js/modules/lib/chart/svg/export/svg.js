@@ -304,7 +304,7 @@ export default class SvgExport extends Export {
             .then(objectUrl => this.cleanUp(objectUrl))
             .then(objectUrl => this.triggerDownload(objectUrl, fileName))
             .catch((error) => {
-                console.log("Failed to save chart as SVG image: " + error.message);
+                console.log(`Failed to save chart as SVG image: ${error.message}`);
                 console.log(error);
             });
     }

@@ -63,8 +63,8 @@ export default class TooltipRenderer {
             })
             .on("mousemove", (event) => {
                 this._svg.div
-                    .style("left", (event.pageX) + "px")
-                    .style("top", (event.pageY - 30) + "px");
+                    .style("left", `${event.pageX}px`)
+                    .style("top", `${event.pageY - 30}px`);
             })
             .on("mouseover", (event) => {
                 d3.select(event.currentTarget)
@@ -75,6 +75,82 @@ export default class TooltipRenderer {
                 d3.select(event.currentTarget)
                     .classed("hover", false);
             });
+    }
+
+    /**
+     * Builds the HTML for the tooltip image (thumbnail or silhouette).
+     * Returns an empty string if no image should be shown.
+     *
+     * @param {Object} datum The D3 partition datum
+     *
+     * @return {string}
+     *
+     * @private
+     */
+    _buildTooltipImage(datum) {
+        if (datum.data.data.thumbnail) {
+            return `<div class="image"><img src="${datum.data.data.thumbnail}" alt="" /></div>`;
+        }
+
+        if (this._configuration.showSilhouettes) {
+            return `<div class="image"><i class="icon-silhouette icon-silhouette-${datum.data.data.sex.toLowerCase()} wt-icon-flip-rtl" ></i></div>`;
+        }
+
+        return "";
+    }
+
+    /**
+     * Builds the HTML table rows for birth, marriage, and death data.
+     * Returns an empty string if no data is available.
+     *
+     * @param {Object} datum The D3 partition datum
+     *
+     * @return {string}
+     *
+     * @private
+     */
+    _buildTooltipData(datum) {
+        const birthDate = datum.data.data.birthDateFull || datum.data.data.birth || "";
+        const deathDate = datum.data.data.deathDateFull || datum.data.data.death || "";
+        const marriageDate = datum.data.data.marriageDateFull || datum.data.data.marriageDate || "";
+        const birthPlace = datum.data.data.birthPlace || "";
+        const deathPlace = datum.data.data.deathPlace || "";
+        const marriagePlace = datum.data.data.marriagePlace || "";
+        const hasBirth = birthDate || birthPlace;
+        const hasDeath = deathDate || deathPlace;
+        const hasMarriage = marriageDate || marriagePlace;
+
+        if (!hasBirth && !hasMarriage && !hasDeath) {
+            return "";
+        }
+
+        let rows = "";
+
+        if (hasBirth) {
+            rows += `<tr class="date"><th>${SYMBOL_BIRTH}</th><td>${birthDate || SYMBOL_ELLIPSIS}</td></tr>`;
+
+            if (birthPlace) {
+                rows += `<tr class="place"><th></th><td>${birthPlace}</td></tr>`;
+            }
+        }
+
+        if (hasMarriage) {
+            rows += `<tr class="date"><th>${SYMBOL_MARRIAGE}</th><td>${marriageDate || SYMBOL_ELLIPSIS}</td></tr>`;
+
+            if (marriagePlace) {
+                rows += `<tr class="place"><th></th><td>${marriagePlace}</td></tr>`;
+            }
+        }
+
+        if (hasDeath) {
+            rows += `<tr class="date"><th>${SYMBOL_DEATH}</th><td>${deathDate || SYMBOL_ELLIPSIS}</td></tr>`;
+
+            if (deathPlace) {
+                rows += `<tr class="place"><th></th><td>${deathPlace}</td></tr>`;
+            }
+        }
+
+        return `<table>${rows}</table>`;
     }
 
     /**
@@ -89,62 +165,19 @@ export default class TooltipRenderer {
      * @private
      */
     setTooltipHtml(event, datum) {
-        // Ignore empty elements
         if (datum.data.data.xref === "") {
             return;
         }
 
-        let image = "";
-
-        // Always show individual image in overlay (independent of arc image setting)
-        if (datum.data.data.thumbnail) {
-            image = "<div class=\"image\">";
-            image += "<img src=\"" + datum.data.data.thumbnail + "\" alt=\"\" />";
-            image += "</div>";
-        } else if (this._configuration.showSilhouettes) {
-            image = "<div class=\"image\">";
-            image += "<i class=\"icon-silhouette icon-silhouette-" + datum.data.data.sex.toLowerCase() + " wt-icon-flip-rtl\" ></i>";
-            image += "</div>";
-        }
-
-        // Use full compact dates for tooltip (always DD.MM.YYYY
-        // regardless of what the arc shows)
-        const birthDate = datum.data.data.birthDateFull || datum.data.data.birth || "";
-        const deathDate = datum.data.data.deathDateFull || datum.data.data.death || "";
-        const marriageDate = datum.data.data.marriageDateFull || datum.data.data.marriageDate || "";
-        const birthPlace = datum.data.data.birthPlace || "";
-        const deathPlace = datum.data.data.deathPlace || "";
-        const marriagePlace = datum.data.data.marriagePlace || "";
-        const hasBirth = birthDate || birthPlace;
-        const hasDeath = deathDate || deathPlace;
-        const hasMarriage = marriageDate || marriagePlace;
-        const hasData = hasBirth || hasMarriage || hasDeath;
+        const image = this._buildTooltipImage(datum);
+        const data = this._buildTooltipData(datum);
 
         this._svg.div
             .html(
-                image
-                + "<div class=\"text\">"
-                    + "<div class=\"name\">" + datum.data.data.name + "</div>"
-                    + (hasData
-                        ? "<table>"
-                            + (hasBirth
-                                ? ("<tr class=\"date\"><th>" + SYMBOL_BIRTH + "</th><td>" + (birthDate || SYMBOL_ELLIPSIS) + "</td></tr>")
-                                + (birthPlace ? "<tr class=\"place\"><th></th><td>" + birthPlace + "</td></tr>" : "")
-                                : "")
-                            + (hasMarriage
-                                ? ("<tr class=\"date\"><th>" + SYMBOL_MARRIAGE + "</th><td>" + (marriageDate || SYMBOL_ELLIPSIS) + "</td></tr>")
-                                + (marriagePlace ? "<tr class=\"place\"><th></th><td>" + marriagePlace + "</td></tr>" : "")
-                                : "")
-                            + (hasDeath
-                                ? ("<tr class=\"date\"><th>" + SYMBOL_DEATH + "</th><td>" + (deathDate || SYMBOL_ELLIPSIS) + "</td></tr>")
-                                + (deathPlace ? "<tr class=\"place\"><th></th><td>" + deathPlace + "</td></tr>" : "")
-                                : "")
-                        + "</table>"
-                        : "")
-                + "</div>",
+                `${image}<div class="text"><div class="name">${datum.data.data.name}</div>${data}</div>`,
             )
-            .style("left", (event.pageX) + "px")
-            .style("top", (event.pageY - 30) + "px");
+            .style("left", `${event.pageX}px`)
+            .style("top", `${event.pageY - 30}px`);
 
         if (this._svg.div.property("active")) {
             this._svg.div

@@ -1,0 +1,87 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.4.11/schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "files": {
+        "includes": [
+            "resources/js/modules/**/*.js",
+            "resources/js/tests/**/*.js"
+        ]
+    },
+    "formatter": {
+        "enabled": false
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "style": {
+                "useConst": "warn",
+                "useTemplate": "error",
+                "noParameterAssign": "warn",
+                "useDefaultParameterLast": "error",
+                "noNegationElse": "warn"
+            },
+            "suspicious": {
+                "noDoubleEquals": "error",
+                "noPrototypeBuiltins": "error",
+                "noShadowRestrictedNames": "error",
+                "useIsArray": "error"
+            },
+            "correctness": {
+                "noUnusedVariables": "warn",
+                "noUnusedImports": "warn",
+                "noUnusedFunctionParameters": "warn",
+                "useImportExtensions": "error"
+            },
+            "complexity": {
+                "noStaticOnlyClass": "off",
+                "noArguments": "off",
+                "noExcessiveCognitiveComplexity": {
+                    "level": "warn",
+                    "options": {
+                        "maxAllowedComplexity": 25
+                    }
+                },
+                "useArrowFunction": "error"
+            },
+            "performance": {
+                "noDelete": "warn"
+            },
+            "security": {
+                "noDangerouslySetInnerHtml": "error"
+            }
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "double",
+            "semicolons": "always",
+            "trailingCommas": "all",
+            "bracketSpacing": true
+        }
+    },
+    "assist": {
+        "enabled": true,
+        "actions": {
+            "source": {
+                "organizeImports": "on"
+            }
+        }
+    },
+    "overrides": [
+        {
+            "includes": ["resources/js/modules/lib/**/*.js"],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "useIterableCallbackReturn": "off"
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -90,38 +90,7 @@ export default class Person {
             this.addTitleToPerson(person, datum.data.data.name);
 
             // Pre-compute image size so text layout can account for it
-            if (this._configuration.showImages
-                && datum.data.data.thumbnail
-                && (datum.depth <= this._configuration.numberOfInnerCircles)
-            ) {
-                const arcHeight = (datum.depth === 0)
-                    ? this._configuration.centerCircleRadius * 2
-                    : this._geometry.outerRadius(datum.depth) - this._geometry.innerRadius(datum.depth);
-
-                let imageSize;
-
-                if (this._configuration.showNames) {
-                    imageSize = Math.min(arcHeight * 0.4, IMAGE_HEIGHT_MAX);
-                } else {
-                    const arcWidth = (datum.depth === 0)
-                        ? arcHeight
-                        : (this._geometry.endAngle(datum.depth, datum.x1) - this._geometry.startAngle(datum.depth, datum.x0)) * this._geometry.centerRadius(datum.depth);
-
-                    imageSize = Math.min(arcHeight, arcWidth) * 0.8;
-                }
-
-                // Check angular width — skip image if arc segment is too narrow
-                const angularWidth = (datum.depth === 0)
-                    ? 360
-                    : Math.abs(
-                        this._geometry.endAngle(datum.depth, datum.x1)
-                        - this._geometry.startAngle(datum.depth, datum.x0),
-                    ) * (180 / Math.PI);
-
-                if ((imageSize >= IMAGE_SIZE_MIN) && (angularWidth >= IMAGE_ANGULAR_MIN_DEG)) {
-                    datum.data.data.imageSize = imageSize;
-                }
-            }
+            datum.data.data.imageSize = this._computeImageSize(datum);
 
             // Render labels (text layout uses imageSize if set above)
             if (this._configuration.showNames) {
@@ -188,6 +157,55 @@ export default class Person {
     }
 
     /**
+     * Computes the image size for a person arc based on arc height, angular
+     * width, and whether names are shown. Returns null if conditions aren't
+     * met (images disabled, no thumbnail, outer arc, or arc too narrow).
+     *
+     * @param {Object} datum The D3 partition datum
+     *
+     * @return {number|null}
+     *
+     * @private
+     */
+    _computeImageSize(datum) {
+        if (!this._configuration.showImages
+            || !datum.data.data.thumbnail
+            || (datum.depth > this._configuration.numberOfInnerCircles)
+        ) {
+            return null;
+        }
+
+        const arcHeight = (datum.depth === 0)
+            ? this._configuration.centerCircleRadius * 2
+            : this._geometry.outerRadius(datum.depth) - this._geometry.innerRadius(datum.depth);
+
+        let imageSize;
+
+        if (this._configuration.showNames) {
+            imageSize = Math.min(arcHeight * 0.4, IMAGE_HEIGHT_MAX);
+        } else {
+            const arcWidth = (datum.depth === 0)
+                ? arcHeight
+                : (this._geometry.endAngle(datum.depth, datum.x1) - this._geometry.startAngle(datum.depth, datum.x0)) * this._geometry.centerRadius(datum.depth);
+
+            imageSize = Math.min(arcHeight, arcWidth) * 0.8;
+        }
+
+        const angularWidth = (datum.depth === 0)
+            ? 360
+            : Math.abs(
+                this._geometry.endAngle(datum.depth, datum.x1)
+                - this._geometry.startAngle(datum.depth, datum.x0),
+            ) * (180 / Math.PI);
+
+        if ((imageSize >= IMAGE_SIZE_MIN) && (angularWidth >= IMAGE_ANGULAR_MIN_DEG)) {
+            return imageSize;
+        }
+
+        return null;
+    }
+
+    /**
      * Appends a circular thumbnail image to the person element.
      * Called AFTER labels are rendered so getBBox() can measure text.
      *
@@ -219,7 +237,7 @@ export default class Person {
             }
         });
 
-        const clipId = "clip-image-" + datum.id + "-" + Date.now();
+        const clipId = `clip-image-${datum.id}-${Date.now()}`;
 
         if (datum.depth === 0) {
             // Center node: image above text, or centered alone if no names shown
@@ -256,7 +274,7 @@ export default class Person {
                 .attr("y", centerY - (imageSize / 2))
                 .attr("width", imageSize)
                 .attr("height", imageSize)
-                .attr("clip-path", "url(#" + clipId + ")")
+                .attr("clip-path", `url(#${clipId})`)
                 .attr("preserveAspectRatio", "xMidYMid meet");
 
             imageGroup.append("circle")
@@ -315,7 +333,7 @@ export default class Person {
                 .attr("y", -(imageSize / 2))
                 .attr("width", imageSize)
                 .attr("height", imageSize)
-                .attr("clip-path", "url(#" + clipId + ")")
+                .attr("clip-path", `url(#${clipId})`)
                 .attr("preserveAspectRatio", "xMidYMid meet");
 
             imageGroup.append("circle")
@@ -335,7 +353,7 @@ export default class Person {
             nameGroup.selectAll("textPath").each(function () {
                 const raw = parseFloat(d3.select(this).attr("startOffset"));
                 const currentOffset = Number.isFinite(raw) ? raw : 25;
-                d3.select(this).attr("startOffset", (currentOffset + textShiftPercent).toFixed(1) + "%");
+                d3.select(this).attr("startOffset", `${(currentOffset + textShiftPercent).toFixed(1)}%`);
             });
         }
     }

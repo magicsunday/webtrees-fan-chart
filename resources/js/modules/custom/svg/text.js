@@ -80,7 +80,7 @@ export default class Text {
             const textPath = parent
                 .append("text")
                 .append("textPath")
-                .attr("href", "#" + pathId)
+                .attr("href", `#${pathId}`)
                 .attr("startOffset", textStartOffset);
 
             this.addNameElements(
@@ -99,7 +99,7 @@ export default class Text {
             const textPath = parent
                 .append("text")
                 .append("textPath")
-                .attr("href", "#" + pathId)
+                .attr("href", `#${pathId}`)
                 .attr("startOffset", textStartOffset)
                 .classed("wt-chart-box-name-alt", true)
                 .classed("rtl", datum.data.data.isAltRtl);
@@ -116,7 +116,7 @@ export default class Text {
             return parent
                 .append("text")
                 .append("textPath")
-                .attr("href", "#" + pathId)
+                .attr("href", `#${pathId}`)
                 .attr("startOffset", textStartOffset)
                 .attr("class", "date");
         });
@@ -214,7 +214,7 @@ export default class Text {
      *
      * @private
      */
-    renderTimespanLines(parent, datum, positions, createElement) {
+    renderTimespanLines(_parent, datum, positions, createElement) {
         if (datum.data.data.timespan === "") {
             return;
         }
@@ -363,7 +363,7 @@ export default class Text {
                     .text(datum => datum.label)
                     // Add some spacing between the elements
                     .attr("dx", (datum, index) => {
-                        return index !== 0 ? ((datum.isNameRtl ? -1 : 1) * 0.25) + "em" : null;
+                        return index === 0 ? null : `${(datum.isNameRtl ? -1 : 1) * 0.25}em`;
                     })
                     // Highlight the preferred and last name
                     .attr("text-decoration", datum => datum.isPreferred ? "underline" : null)
@@ -460,12 +460,12 @@ export default class Text {
      * @private
      */
     createPathDefinition(parentId, slot, position, data) {
-        let pathId = "path-" + parentId + "-" + slot.index;
+        let pathId = `path-${parentId}-${slot.index}`;
 
         // If path already exists (update case), create a new one with a unique ID
         // so old text keeps its path during fade-out and new text gets correct position
-        if (this._svg.defs.select("path#" + pathId).node()) {
-            pathId = pathId + "-" + this._svg.defs.get().selectAll("path[id^='" + pathId + "']").size();
+        if (this._svg.defs.select(`path#${pathId}`).node()) {
+            pathId = `${pathId}-${this._svg.defs.get().selectAll(`path[id^='${pathId}']`).size()}`;
         }
 
         const positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
@@ -814,7 +814,7 @@ export default class Text {
                         currentY += groupGap;
                     }
 
-                    d3.select(this).attr("dy", currentY + "px");
+                    d3.select(this).attr("dy", `${currentY}px`);
 
                     currentY += innerLineHeight;
                     prevIsDate = isDate;
@@ -857,7 +857,7 @@ export default class Text {
                 const baselineShift = fontSize * 0.2;
 
                 textElements.each(function (_ignore, i) {
-                    d3.select(this).attr("dy", (positions[i] - mean + baselineShift) + "px");
+                    d3.select(this).attr("dy", `${positions[i] - mean + baselineShift}px`);
                 });
             }
 
@@ -868,10 +868,10 @@ export default class Text {
         // labels in calculateSlotPositions) but in angular degrees.
         const angularPositions = this.calculateOuterSlotPositions(datum, textElements);
 
-        textElements.each(function (ignore, i) {
+        textElements.each(function (_ignore, i) {
             const offsetRotate = angularPositions[i] * that._configuration.fontScale / 100.0;
 
-            d3.select(this).attr("transform", function () {
+            d3.select(this).attr("transform", () => {
                 const dx = datum.x1 - datum.x0;
                 let angle;
                 let flipped;
@@ -910,7 +910,7 @@ export default class Text {
                     rotate += 90 - baselineAngle;
                 }
 
-                return "rotate(" + rotate + ") translate(" + translate + ")";
+                return `rotate(${rotate}) translate(${translate})`;
             });
         });
     }
@@ -998,7 +998,7 @@ export default class Text {
         groups.forEach((group, gi) => {
             const intraGap = group.isDate ? intraDateGapDeg : intraNameGapDeg;
 
-            group.items.forEach((element, si) => {
+            group.items.forEach((_element, si) => {
                 positions.push(currentPos);
 
                 if (si < (group.items.length - 1)) {

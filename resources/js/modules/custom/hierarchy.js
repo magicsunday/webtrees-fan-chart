@@ -246,6 +246,21 @@ export default class Hierarchy {
 
         this._configuration.smallestChildFraction = smallestChildFraction;
 
+        this._createDescendantNodes(familyBlocks, rootXref, useEqualDistribution, totalWeight);
+    }
+
+    /**
+     * Creates descendant D3 datum nodes for each family block (partner arcs
+     * at depth -1, child arcs at depth -2) and pushes them into this._nodes.
+     *
+     * @param {Object[]} familyBlocks          Array of { type, partner, children, weight }
+     * @param {string}   rootXref              The xref of the root individual
+     * @param {boolean}  useEqualDistribution  Whether to distribute angles equally
+     * @param {number}   totalWeight           Sum of all block weights
+     *
+     * @private
+     */
+    _createDescendantNodes(familyBlocks, rootXref, useEqualDistribution, totalWeight) {
         let nextId = this._nodes.length;
         let currentFraction = 0;
 

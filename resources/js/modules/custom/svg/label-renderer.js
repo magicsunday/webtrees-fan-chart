@@ -45,7 +45,7 @@ export default class LabelRenderer {
         const label = parent
             .append("g")
             .attr("class", "wt-chart-box-name name")
-            .style("font-size", this._geometry.getFontSize(datum) + "px");
+            .style("font-size", `${this._geometry.getFontSize(datum)}px`);
 
         // Hide immediately during updates to prevent visual flash
         fadeIfUpdating(label, parent);

@@ -36,8 +36,8 @@ export class Storage {
     register(name) {
         // Use "querySelector" here as the ID of checkbox elements may additionally contain a hyphen and the value
         // Query checked elements (radio and checkbox) separately
-        const input = document.querySelector('input[id^="' + name + '"]:checked, select[id^="' + name + '"]')
-            || document.querySelector('input[id^="' + name + '"]');
+        const input = document.querySelector(`input[id^="${name}"]:checked, select[id^="${name}"]`)
+            || document.querySelector(`input[id^="${name}"]`);
 
         if (input === null) {
             return;
@@ -45,19 +45,19 @@ export class Storage {
 
         const storedValue = this.read(name);
 
-        if (storedValue !== null) {
+        if (storedValue === null) {
+            this.onInput(input);
+        } else {
             if (input.type === "radio" || input.type === "checkbox") {
                 input.checked = storedValue;
             } else {
                 input.value = storedValue;
             }
-        } else {
-            this.onInput(input);
         }
 
         // Add event listener to all inputs by their IDs
         document
-            .querySelectorAll('input[id^="' + name + '"], select[id^="' + name + '"]')
+            .querySelectorAll(`input[id^="${name}"], select[id^="${name}"]`)
             .forEach(
                 (input) => input.addEventListener("input", (event) => {
                     this.onInput(event.target);
@@ -90,7 +90,7 @@ export class Storage {
      * @return {null|string|boolean|number}
      */
     read(name) {
-        if (Object.prototype.hasOwnProperty.call(this._storage, name)) {
+        if (Object.hasOwn(this._storage, name)) {
             return this._storage[name];
         }
 
@@ -112,7 +112,7 @@ export class Storage {
             localStorage.setItem(this._storageKey, JSON.stringify(this._storage));
         } catch (_exception) {
             console.log(
-                "There wasn't enough space to store '" + name + "' with value '" + value + "' in the local storage.",
+                `There wasn't enough space to store '${name}' with value '${value}' in the local storage.`,
             );
         }
     }

@@ -227,7 +227,7 @@ export default class ChartUpdater {
             )
             .append("g")
             .attr("class", "person new")
-            .attr("id", (datum) => "person-" + datum.id)
+            .attr("id", (datum) => `person-${datum.id}`)
             .each((datum, i, nodes) => {
                 const person = d3.select(nodes[i]);
 
@@ -261,8 +261,7 @@ export default class ChartUpdater {
             .selectAll("g.marriage:not(.descendant)")
             .data(marriageNodes, (datum) => datum.id)
             .each((datum, i, nodes) => {
-                const hasChildren = datum.children
-                    && datum.children.some(child => child.data.data.xref !== "");
+                const hasChildren = datum.children?.some(child => child.data.data.xref !== "");
 
                 const empty = !hasChildren;
                 const marriage = d3.select(nodes[i]);
@@ -448,7 +447,7 @@ export default class ChartUpdater {
         this._svg.defs.get()
             .selectAll("path[id^='path-person-'], path[id^='path-marriage-']")
             .each(function () {
-                if (!document.querySelector("textPath[href='#" + this.id + "']")) {
+                if (!document.querySelector(`textPath[href='#${this.id}']`)) {
                     this.remove();
                 }
             });
