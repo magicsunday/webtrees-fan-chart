@@ -43,13 +43,11 @@ export class FanChart {
         // Set up configuration
         this._configuration = new Configuration(options);
 
-        this._cssFiles = options.cssFiles;
-
         // Set up chart instance
         this._chart = new Chart(this._parent, this._configuration);
 
         this.init();
-        this.draw(options.data);
+        this.render(options.data);
     }
 
     /**
@@ -123,9 +121,9 @@ export class FanChart {
      *
      * @param {Object} data The JSON-encoded chart data from the server
      */
-    draw(data) {
+    render(data) {
         this._chart.data = data;
-        this._chart.draw();
+        this._chart.render();
     }
 
     /**
@@ -148,11 +146,6 @@ export class FanChart {
     exportSVG() {
         this._chart.svg
             .export("svg")
-            .svgToImage(
-                this._chart.svg,
-                this._cssFiles,
-                "webtrees-fan-chart-container",
-                "fan-chart.svg",
-            );
+            .svgToImage(this._chart.svg, "fan-chart.svg");
     }
 }

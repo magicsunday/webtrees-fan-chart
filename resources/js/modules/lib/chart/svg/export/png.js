@@ -103,7 +103,7 @@ export default class PngExport extends Export {
      * @private
      */
     convertToDataUrl(svg, width, height) {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             const data = (new XMLSerializer()).serializeToString(svg);
             const DOMURL = window.URL || window.webkitURL || window;
             const svgBlob = new Blob([ data ], { type: "image/svg+xml;charset=utf-8" });
@@ -127,13 +127,18 @@ export default class PngExport extends Export {
                 resolve(imgURI);
             };
 
+            img.onerror = () => {
+                DOMURL.revokeObjectURL(url);
+                reject(new Error("Failed to load SVG as image for PNG export"));
+            };
+
             img.src = url;
         });
     }
 
     /**
-     * Returns a shallow deep-clone of the SVG DOM node wrapped in a Promise,
-     * allowing it to be chained in the export promise pipeline.
+     * Returns a deep-clone of the SVG DOM node as a resolved Promise,
+     * so it can be chained in the export promise pipeline.
      *
      * @param {SVGGraphicsElement} svg The live SVG element to clone
      *
@@ -142,11 +147,7 @@ export default class PngExport extends Export {
      * @private
      */
     cloneSvg(svg) {
-        return new Promise(resolve => {
-            const newSvg = svg.cloneNode(true);
-
-            resolve(newSvg);
-        });
+        return Promise.resolve(svg.cloneNode(true));
     }
 
     /**
@@ -158,9 +159,6 @@ export default class PngExport extends Export {
      * @param {string} fileName The suggested download filename
      */
     svgToImage(svg, fileName) {
-        // 300 DPI (good quality for printing) / 96 DPI (common browser)
-        //let scale = 300 / dpi();
-
         // Paper sizes (width, height) in pixel at 300 DPI/PPI
         const paperSize = {
             "A3": [4960, 3508],

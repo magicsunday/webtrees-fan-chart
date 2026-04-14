@@ -5,7 +5,6 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import Geometry from "./geometry";
 import Text from "./text";
 
 /**
@@ -19,10 +18,15 @@ import Text from "./text";
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 export default class LabelRenderer {
-    constructor(svg, configuration) {
+    /**
+     * @param {Svg}           svg
+     * @param {Configuration} configuration The application configuration
+     * @param {Geometry}      geometry      Shared geometry instance for this render pass
+     */
+    constructor(svg, configuration, geometry) {
         this._svg = svg;
         this._configuration = configuration;
-        this._geometry = new Geometry(this._configuration);
+        this._geometry = geometry;
     }
 
     /**
@@ -47,7 +51,7 @@ export default class LabelRenderer {
             label.style("opacity", 1e-6);
         }
 
-        const text = new Text(this._svg, this._configuration);
+        const text = new Text(this._svg, this._configuration, this._geometry);
         text.createLabels(label, datum);
 
         return label;

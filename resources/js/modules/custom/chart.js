@@ -13,7 +13,7 @@ import Person from "./svg/person";
 import Marriage from "./svg/marriage";
 import Geometry from "./svg/geometry";
 import FamilyColor from "./svg/family-color";
-import Update from "./update";
+import ChartUpdater from "./chart-updater";
 
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
 
@@ -199,7 +199,7 @@ export default class Chart {
      * person arcs, marriage arcs, and family separator lines, then binds click
      * event listeners.
      */
-    draw() {
+    render() {
         // Remove previously created content
         this._parent.html("");
 
@@ -213,9 +213,13 @@ export default class Chart {
         this._svg.initEvents(this._overlay);
 
         const personGroup = this._svg.select("g.personGroup");
+        const geometry = new Geometry(this._configuration);
         const familyColor = new FamilyColor(this._configuration);
         familyColor.setPartnerMidpoints(this._hierarchy.nodes);
-        const that = this;
+
+        if (this._configuration.showFamilyColors) {
+            this._hierarchy.applyFamilyColors(familyColor);
+        }
 
         personGroup
             .selectAll("g.person")
@@ -236,17 +240,16 @@ export default class Chart {
             .attr("class", "person")
             .attr("id", (datum) => "person-" + datum.id);
 
+        const svg = this._svg;
+        const configuration = this._configuration;
+
         // Create a new selection in order to leave the previous enter() selection
         personGroup
             .selectAll("g.person")
-            .each(function (datum) {
-                const person = d3.select(this);
+            .each((datum, i, nodes) => {
+                const person = d3.select(nodes[i]);
 
-                if (that._configuration.showFamilyColors) {
-                    datum.data.data.familyColor = familyColor.getColor(datum);
-                }
-
-                new Person(that._svg, that._configuration, person, datum);
+                new Person(svg, configuration, geometry, person, datum);
             });
 
         // Marriage arc layer (separate from persons so hover does not affect them)
@@ -370,8 +373,6 @@ export default class Chart {
      * @private
      */
     drawMarriageArcs() {
-        const that = this;
-
         let marriageGroup = this._svg.visual.select("g.marriageGroup");
 
         if (marriageGroup.empty()) {
@@ -393,12 +394,16 @@ export default class Chart {
             .attr("class", "marriage")
             .attr("id", (datum) => "marriage-" + datum.id);
 
+        const svg = this._svg;
+        const configuration = this._configuration;
+        const geometry = new Geometry(configuration);
+
         // Create a new selection in order to leave the previous enter() selection
         marriageGroup
             .selectAll("g.marriage")
-            .each(function (datum) {
-                const marriage = d3.select(this);
-                new Marriage(that._svg, that._configuration, marriage, datum);
+            .each((datum, i, nodes) => {
+                const marriage = d3.select(nodes[i]);
+                new Marriage(svg, configuration, geometry, marriage, datum);
             });
     }
 
@@ -411,8 +416,6 @@ export default class Chart {
      * @private
      */
     drawDescendantMarriageArcs() {
-        const that = this;
-
         let marriageGroup = this._svg.visual.select("g.marriageGroup");
 
         if (marriageGroup.empty()) {
@@ -429,10 +432,14 @@ export default class Chart {
             .selectAll("g.marriage.descendant")
             .data(partnerNodes, (datum) => datum.id);
 
+        const svg = this._svg;
+        const configuration = this._configuration;
+        const geometry = new Geometry(configuration);
+
         // Matched (update): mark old content for fade-out, create new content
         // (geometry changes on re-center so arcs must be rebuilt)
-        marriageJoin.each(function (datum) {
-            const marriage = d3.select(this);
+        marriageJoin.each((datum, i, nodes) => {
+            const marriage = d3.select(nodes[i]);
 
             marriage.selectAll("g.arc, g.name")
                 .classed("old", true);
@@ -440,7 +447,7 @@ export default class Chart {
             marriage.classed("update", false)
                 .classed("new", true);
 
-            new Marriage(that._svg, that._configuration, marriage, datum);
+            new Marriage(svg, configuration, geometry, marriage, datum);
         });
 
         // Exiting: mark for removal
@@ -454,9 +461,9 @@ export default class Chart {
             .append("g")
             .attr("class", "marriage descendant")
             .attr("id", (datum) => "marriage-" + datum.id)
-            .each(function (datum) {
-                const marriage = d3.select(this);
-                new Marriage(that._svg, that._configuration, marriage, datum);
+            .each((datum, i, nodes) => {
+                const marriage = d3.select(nodes[i]);
+                new Marriage(svg, configuration, geometry, marriage, datum);
             });
     }
 
@@ -471,7 +478,7 @@ export default class Chart {
         const persons = this._svg
             .select("g.personGroup")
             .selectAll("g.person")
-            .filter((datum) => datum && datum.data && datum.data.data && datum.data.data.xref !== "")
+            .filter((datum) => datum?.data?.data?.xref !== "")
             .classed("available", true);
 
         // Trigger method on click/touch
@@ -481,8 +488,7 @@ export default class Chart {
         this._svg
             .select("g.marriageGroup")
             .selectAll("g.marriage")
-            .filter((datum) => datum && datum.data
-                && (!!datum.data.data.marriageDateOfParents || !!datum.data.data.marriageDate))
+            .filter((datum) => datum?.data?.data?.marriageDateOfParents || datum?.data?.data?.marriageDate)
             .classed("available", true);
 
         // Mark empty marriage arcs (no parents shown) for CSS styling
@@ -537,9 +543,9 @@ export default class Chart {
      * @param {string} url The update URL for the new center individual
      */
     update(url) {
-        const update = new Update(this._svg, this._configuration, this._hierarchy);
+        const updater = new ChartUpdater(this._svg, this._configuration, this._hierarchy);
 
-        update.update(
+        updater.update(
             url,
             () => this.redrawOverlayLayers(),
             () => this.bindClickEventListener(),

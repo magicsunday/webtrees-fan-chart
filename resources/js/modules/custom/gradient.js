@@ -60,11 +60,13 @@ export default class Gradient {
             ];
 
             if (datum.data.data.sex === SEX_MALE) {
-                datum.data.data.colors = [ datum.parent.data.data.colors[0], blendedColor];
-            }
-
-            if (datum.data.data.sex === SEX_FEMALE) {
+                datum.data.data.colors = [ datum.parent.data.data.colors[0], blendedColor ];
+            } else if (datum.data.data.sex === SEX_FEMALE) {
                 datum.data.data.colors = [ blendedColor, datum.parent.data.data.colors[1] ];
+            } else {
+                // Unknown sex: inherit parent colors unchanged so gradient
+                // definitions still render correctly at this depth.
+                datum.data.data.colors = [ ...datum.parent.data.data.colors ];
             }
         }
 

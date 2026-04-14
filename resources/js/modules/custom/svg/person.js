@@ -7,10 +7,24 @@
 
 import * as d3 from "../../lib/d3";
 import {appendArc} from "./arc";
-import Geometry from "./geometry";
 import TooltipRenderer from "./tooltip-renderer";
 import LabelRenderer from "./label-renderer";
 import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
+
+/** Minimum rendered image diameter in pixels — narrower arcs skip the image. */
+const IMAGE_SIZE_MIN = 28;
+
+/** Maximum image diameter when names are shown (caps at 40% of arc height). */
+const IMAGE_HEIGHT_MAX = 55;
+
+/** Minimum angular width of an arc in degrees required to show an image. */
+const IMAGE_ANGULAR_MIN_DEG = 10;
+
+/** Vertical gap in pixels between the image and the first text line (center node). */
+const IMAGE_TEXT_GAP = 6;
+
+/** Horizontal gap in pixels between the image and the text block (inner arcs). */
+const IMAGE_LABEL_GAP = 10;
 
 /**
  * Renders all visual elements for a single person arc: the filled arc path,
@@ -27,13 +41,14 @@ export default class Person {
     /**
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
+     * @param {Geometry}      geometry      Shared geometry instance for this render pass
      * @param {Selection}     person        The <g class="person"> D3 selection
      * @param {Object}        children      The D3 partition datum for this person
      */
-    constructor(svg, configuration, person, children) {
+    constructor(svg, configuration, geometry, person, children) {
         this._svg = svg;
         this._configuration = configuration;
-        this._geometry = new Geometry(this._configuration);
+        this._geometry = geometry;
 
         this.init(person, children);
     }
@@ -86,7 +101,7 @@ export default class Person {
                 let imageSize;
 
                 if (this._configuration.showNames) {
-                    imageSize = Math.min(arcHeight * 0.4, 55);
+                    imageSize = Math.min(arcHeight * 0.4, IMAGE_HEIGHT_MAX);
                 } else {
                     const arcWidth = (datum.depth === 0)
                         ? arcHeight
@@ -103,14 +118,14 @@ export default class Person {
                         - this._geometry.startAngle(datum.depth, datum.x0),
                     ) * (180 / Math.PI);
 
-                if ((imageSize >= 28) && (angularWidth >= 10)) {
+                if ((imageSize >= IMAGE_SIZE_MIN) && (angularWidth >= IMAGE_ANGULAR_MIN_DEG)) {
                     datum.data.data.imageSize = imageSize;
                 }
             }
 
             // Render labels (text layout uses imageSize if set above)
             if (this._configuration.showNames) {
-                const labelRenderer = new LabelRenderer(this._svg, this._configuration);
+                const labelRenderer = new LabelRenderer(this._svg, this._configuration, this._geometry);
                 labelRenderer.addLabel(person, datum);
             }
 
@@ -207,7 +222,6 @@ export default class Person {
         });
 
         const clipId = "clip-image-" + datum.id + "-" + Date.now();
-        const gap = 10;
 
         if (datum.depth === 0) {
             // Center node: image above text, or centered alone if no names shown
@@ -218,8 +232,7 @@ export default class Person {
                 const firstDy = parseFloat(firstText.attr("dy")) || 0;
                 const fontSize = this._geometry.getFontSize(datum);
                 const lineHeight = fontSize * 1.3;
-                const imageGap = 6;
-                centerY = firstDy - (lineHeight / 2) - imageGap - (imageSize / 2);
+                centerY = firstDy - (lineHeight / 2) - IMAGE_TEXT_GAP - (imageSize / 2);
             }
 
             this._svg.defs
@@ -263,7 +276,7 @@ export default class Person {
 
             // When text is present, shift image left to center image+text block
             const shiftAngle = (textWidth > 0)
-                ? ((textWidth + gap) / 2) / centerRadius
+                ? ((textWidth + IMAGE_LABEL_GAP) / 2) / centerRadius
                 : 0;
 
             const midAngle = (startAngle + endAngle) / 2;
@@ -318,7 +331,7 @@ export default class Person {
             // Shift the text right to make room for the image.
             // Convert pixel shift to startOffset percentage: the text baseline
             // starts at 25%, leaving 50 percentage points of arc length to work with.
-            const textShiftPx = (imageSize / 2) + gap;
+            const textShiftPx = (imageSize / 2) + IMAGE_LABEL_GAP;
             const textShiftPercent = (textShiftPx / (Math.abs(endAngle - startAngle) * centerRadius)) * 50;
 
             nameGroup.selectAll("textPath").each(function () {

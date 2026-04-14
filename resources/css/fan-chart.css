@@ -155,6 +155,36 @@
     cursor: grabbing;
 }
 
+/*
+ * Arc / marriage lifecycle CSS classes
+ * ─────────────────────────────────────────────────────────────
+ * ChartUpdater.update() drives the following state machine on
+ * every g.person and g.marriage element during a re-center:
+ *
+ *  .available  — element exists from a previous render and is
+ *                interactive; cleared at the start of updateDone()
+ *
+ *  .new        — element was just created (or re-created for
+ *                descendants whose geometry changes every re-center)
+ *
+ *  .update     — element existed before and its data changed
+ *                (only ancestors; their arc geometry is stable)
+ *
+ *  .remove     — element is leaving (empty ancestor slot or
+ *                descendant that no longer applies)
+ *
+ *  .old        — sub-element (g.arc, g.name, g.color, g.image,
+ *                title) that belongs to the outgoing frame and
+ *                should be faded out then removed
+ *
+ *  .empty      — marriage arc with no visible children
+ *                (kept for visual consistency, styled dimly by CSS)
+ *
+ * All transition classes are removed by updateDone() once the
+ * D3 cross-fade settles.
+ * ─────────────────────────────────────────────────────────────
+ */
+
 /* Unset any style from our transition helper classes */
 .webtrees-fan-chart-container svg g.person.new,
 .webtrees-fan-chart-container svg g.person.remove,

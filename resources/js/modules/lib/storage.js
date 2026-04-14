@@ -20,8 +20,8 @@ export class Storage {
      * @param {string} name The localStorage key under which all values are stored as a JSON object
      */
     constructor(name) {
-        this._name = name;
-        this._storage = JSON.parse(localStorage.getItem(this._name)) || {};
+        this._storageKey = name;
+        this._storage = JSON.parse(localStorage.getItem(this._storageKey)) || {};
     }
 
     /**
@@ -109,7 +109,7 @@ export class Storage {
         this._storage[name] = value;
 
         try {
-            localStorage.setItem(this._name, JSON.stringify(this._storage));
+            localStorage.setItem(this._storageKey, JSON.stringify(this._storage));
         } catch (_exception) {
             console.log(
                 "There wasn't enough space to store '" + name + "' with value '" + value + "' in the local storage.",

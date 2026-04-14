@@ -7,9 +7,11 @@
 
 import * as d3 from "../../lib/d3";
 import {appendArc} from "./arc";
-import Geometry from "./geometry";
 import FamilyColor from "./family-color";
 import {SYMBOL_MARRIAGE} from "../hierarchy";
+
+/** Total horizontal padding (both sides) reserved around the marriage date text in px. */
+const LABEL_ARC_PADDING = 24;
 
 /**
  * Renders the thin arc that sits in the radial gap between a parent generation
@@ -27,13 +29,14 @@ export default class Marriage {
     /**
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
-     * @param {Selection}     marriage       The <g class="marriage"> D3 selection
-     * @param {Object}        datum          The D3 partition datum for the parent node
+     * @param {Geometry}      geometry      Shared geometry instance for this render pass
+     * @param {Selection}     marriage      The <g class="marriage"> D3 selection
+     * @param {Object}        datum         The D3 partition datum for the parent node
      */
-    constructor(svg, configuration, marriage, datum) {
+    constructor(svg, configuration, geometry, marriage, datum) {
         this._svg = svg;
         this._configuration = configuration;
-        this._geometry = new Geometry(this._configuration);
+        this._geometry = geometry;
 
         this.init(marriage, datum);
     }
@@ -160,6 +163,8 @@ export default class Marriage {
      * @private
      */
     addLabel(marriage, datum) {
+        // Resolve the date text first — most arcs have no date, so we avoid
+        // computing geometry entirely for those.
         const dateText = (datum.depth < 0)
             ? datum.data.data.marriageDate
             : datum.data.data.marriageDateOfParents;
@@ -231,7 +236,7 @@ export default class Marriage {
             .text(marriageText);
 
         // Truncate if text overflows the arc (with padding on both sides)
-        const arcLength = ((endAngle - startAngle) * midRadius) - 24;
+        const arcLength = ((endAngle - startAngle) * midRadius) - LABEL_ARC_PADDING;
 
         if (tspan.node().getComputedTextLength() > arcLength) {
             let label = tspan.text();

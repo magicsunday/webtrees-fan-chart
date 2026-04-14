@@ -25,6 +25,31 @@ export const SYMBOL_ELLIPSIS = "\u2026";
 export const DESCENDANT_GAP_DEG = 10;
 
 /**
+ * A single node in the D3 partition hierarchy, as stored in Hierarchy._nodes.
+ * Ancestor nodes come from d3.partition(); descendant nodes are synthetic and
+ * appended by initDescendants().
+ *
+ * @typedef {Object} HierarchyNode
+ * @property {number}          id               Sequential integer, unique within one hierarchy
+ * @property {number}          depth            Ancestor depth ≥ 0; partner = -1; child = -2
+ * @property {number}          x0               Partition start fraction [0, 1]
+ * @property {number}          x1               Partition end fraction [0, 1]
+ * @property {HierarchyNode|null} parent        D3 parent node (null for root and synthetic nodes)
+ * @property {HierarchyNode[]|null} children    D3 child nodes, or null for leaves
+ * @property {number}          height           D3 partition height
+ * @property {number}          value            D3 partition value
+ * @property {Object}          data             Server payload wrapper ({ data: PersonData })
+ * @property {Object}          data.data        Person record from the server
+ * @property {string}          data.data.xref   GEDCOM identifier, empty string for placeholders
+ * @property {string}          [data.data.familyColor]  Pre-computed HSL color string (set by applyFamilyColors)
+ * @property {number}          [data.data.imageSize]    Pre-computed thumbnail size in px (set by Person)
+ * @property {string}          [descendantType] "partner" | "child" — only on synthetic descendant nodes
+ * @property {string}          [partnerXref]    Partner's GEDCOM xref — only on synthetic descendant nodes
+ * @property {string}          [rootXref]       Central person's xref — only on synthetic descendant nodes
+ * @property {number|null}     [syntheticParentId] Partner node id for child nodes, null otherwise
+ */
+
+/**
  * Transforms the flat JSON tree received from the server into a D3 partition
  * hierarchy. Missing parents are filled in with empty placeholder nodes so
  * every individual always has two parents up to the configured generation
@@ -303,6 +328,19 @@ export default class Hierarchy {
 
             currentFraction = blockEnd;
         }
+    }
+
+    /**
+     * Assigns a familyColor property to every node's data payload.
+     * Must be called after setPartnerMidpoints() and before any arc
+     * rendering so both Person and Marriage can read the pre-computed colors.
+     *
+     * @param {FamilyColor} familyColor The color calculator instance
+     */
+    applyFamilyColors(familyColor) {
+        this._nodes.forEach((datum) => {
+            datum.data.data.familyColor = familyColor.getColor(datum);
+        });
     }
 
     /**

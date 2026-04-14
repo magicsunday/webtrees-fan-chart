@@ -287,12 +287,10 @@ export default class SvgExport extends Export {
      * removes the sandbox, and triggers a download. Logs errors but does not
      * re-throw.
      *
-     * @param {Svg}      svg                The source Svg wrapper object
-     * @param {string[]} cssFiles           CSS files included in the page (currently unused, reserved for future embedding)
-     * @param {string}   containerClassName The outer container CSS class (currently unused, reserved for future use)
-     * @param {string}   fileName           The suggested download filename
+     * @param {Svg}    svg      The source Svg wrapper object
+     * @param {string} fileName The suggested download filename
      */
-    svgToImage(svg, cssFiles, containerClassName, fileName) {
+    svgToImage(svg, fileName) {
         const node = svg.node();
 
         Promise

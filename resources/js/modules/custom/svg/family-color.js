@@ -72,6 +72,27 @@ export default class FamilyColor {
     }
 
     /**
+     * Builds an HSL color string for a given hue, base color, and depth.
+     * Saturation increases and lightness decreases with depth so outer
+     * generations appear more vivid while inner ones stay pastel.
+     *
+     * @param {number}   hue     The hue value (unnormalized; will be wrapped to 0–360)
+     * @param {number[]} baseHsl [hue, saturation, lightness] reference color for bounds
+     * @param {number}   depth   Absolute depth (1 = closest generation, depth-1 multiplier applied)
+     *
+     * @return {string} HSL color string
+     *
+     * @private
+     */
+    static _depthHslString(hue, baseHsl, depth) {
+        const { minSaturation, maxLightness } = FamilyColor._depthBounds(baseHsl);
+        const saturation = minSaturation + (depth - 1) * FamilyColor.SATURATION_STEP;
+        const lightness = maxLightness - (depth - 1) * FamilyColor.LIGHTNESS_STEP;
+
+        return "hsl(" + (((hue % 360) + 360) % 360) + ", " + saturation + "%, " + lightness + "%)";
+    }
+
+    /**
      * Computes the family-branch color for a given datum. Both parents
      * of the same child share the same hue so couples appear as a
      * single colored family unit.
@@ -127,15 +148,7 @@ export default class FamilyColor {
         const half = isPaternal ? refMidpoint / 0.5 : (refMidpoint - 0.5) / 0.5;
         const hue = ((baseHsl[0] + (half - 0.5) * 60) % 360 + 360) % 360;
 
-        const {minSaturation, maxLightness} = FamilyColor._depthBounds(baseHsl);
-
-        // Saturation increases with depth (inner = pastel, outer = vivid)
-        const saturation = minSaturation + (datum.depth - 1) * FamilyColor.SATURATION_STEP;
-
-        // Lightness decreases with depth (inner = light, outer = deeper)
-        const lightness = maxLightness - (datum.depth - 1) * FamilyColor.LIGHTNESS_STEP;
-
-        return "hsl(" + hue + ", " + saturation + "%, " + lightness + "%)";
+        return FamilyColor._depthHslString(hue, baseHsl, datum.depth);
     }
 
     /**
@@ -170,14 +183,7 @@ export default class FamilyColor {
         const baseLit = (this._paternalHsl[2] + this._maternalHsl[2]) / 2;
         const absDepth = Math.abs(datum.depth);
 
-        const {minSaturation, maxLightness} = FamilyColor._depthBounds(
-            [(patHue + matHue) / 2, baseSat, baseLit],
-        );
-
-        const saturation = minSaturation + (absDepth - 1) * FamilyColor.SATURATION_STEP;
-        const lightness = maxLightness - (absDepth - 1) * FamilyColor.LIGHTNESS_STEP;
-
-        return "hsl(" + (((hue % 360) + 360) % 360) + ", " + saturation + "%, " + lightness + "%)";
+        return FamilyColor._depthHslString(hue, [(patHue + matHue) / 2, baseSat, baseLit], absDepth);
     }
 
     /**
