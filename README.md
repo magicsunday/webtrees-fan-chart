@@ -22,7 +22,7 @@ This module provides an interactive SVG ancestor fan chart for the [webtrees](ht
 Click on any ancestor to re-center the chart on that person. Right-click to open a tooltip with detailed
 dates, places, and images.
 
-![210 Degree fan chart with family branch colors](assets/fan-chart-210-color.png)
+![225 Degree fan chart with family branch colors](assets/fan-chart-225-color.png)
 
 
 ## Installation
@@ -90,12 +90,13 @@ Click **Show more options** to access additional settings:
 
 | Option | Description |
 |--------|-------------|
-| **Show names** | Displays names and dates in the chart segments. When disabled, outer generations are hidden for an image-only chart. |
-| **Show images** | Displays thumbnail images in the inner arcs and the center. Silhouette placeholders are used when no photo is available. |
-| **Show places** | Displays birth and death places in inner generation arcs. Choose the level of detail (full name or lowest 1-3 hierarchy levels). |
-| **Show parent marriage dates** | Displays marriage dates in a narrow arc between each pair of parent arcs. |
+| **Display mode** | Choose between "Show names and images", "Show names only", or "Show images only". Images are only shown if the arc segment is wide enough. |
+| **Show descendants** | Shows partners and children as arcs below the ancestor section. The fan size is limited to 180-270 degrees when enabled. |
+| **Hide empty segments** | Hides chart segments for missing ancestors. |
+| **Show places** | Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail (full name or lowest 1-3 hierarchy levels). |
+| **Show parent marriage dates** | Displays marriage dates in a narrow arc between each pair of parent arcs. When descendants are enabled, also shows the marriage date between the central person and their partners. |
 | **Show family colors** | Colors arcs by family branch. Paternal and maternal base colors are configurable via color pickers. |
-| **Birth and death date precision** | Choose between full dates (DD.MM.YYYY) for inner generations or years only for all generations. |
+| **Birth and death date precision** | Show full birth and death dates (DD.MM.YYYY) for early generations. Outer generations use a compact year-only format. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact format. |
 | **Number of inner levels** | Controls how many generations use the wider inner-arc layout with text along the arc path. |
 | **Font size** | Scales the text size (50-150%). |
 
@@ -108,6 +109,7 @@ Click **Show more options** to access additional settings:
 | Ctrl + scroll | Zoom in/out |
 | Click and drag | Move the chart |
 | Click center button | Reset view to center |
+| Fullscreen button | Toggle fullscreen mode |
 | PNG / SVG buttons | Export the chart as an image file |
 
 
