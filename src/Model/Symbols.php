@@ -26,7 +26,7 @@ enum Symbols: string
     /**
      * Birth symbol (asterisk).
      */
-    case Birth = '*';
+    case Birth = "\u{2605}";
 
     /**
      * Death symbol (dagger / obelisk).
