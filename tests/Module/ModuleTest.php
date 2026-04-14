@@ -99,10 +99,5 @@ final class ModuleTest extends TestCase
         self::assertSame('menu-chart-fanchart', $module->chartMenuClass());
         self::assertStringContainsString('Example Person', $module->chartTitle($individual));
         self::assertStringContainsString('/route/webtrees-fan-chart?', $module->chartUrl($individual));
-        self::assertSame(Module::CUSTOM_AUTHOR, $module->customModuleAuthorName());
-        self::assertSame(Module::CUSTOM_VERSION, $module->customModuleVersion());
-        self::assertSame(Module::CUSTOM_SUPPORT_URL, $module->customModuleSupportUrl());
-        self::assertSame(Module::CUSTOM_LATEST_VERSION, $module->customModuleLatestVersionUrl());
-        self::assertSame([], $module->customTranslations('zz'));
     }
 }

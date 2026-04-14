@@ -44,6 +44,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
 }));
 
 const { default: Marriage } = await import("resources/js/modules/custom/svg/marriage");
+const { default: Geometry } = await import("resources/js/modules/custom/svg/geometry");
 
 const createSvgStub = () => ({
     defs: {
@@ -128,7 +129,7 @@ describe("Marriage", () => {
         const config = createConfiguration();
         const datum = createDatum();
 
-        new Marriage(svg, config, selection, datum);
+        new Marriage(svg, config, new Geometry(config), selection, datum);
 
         const arcGroup = appendedGroups.find(g => g.tag === "g" && g.className === "arc");
         const nameGroup = appendedGroups.find(g => g.tag === "g" && g.className === "name");
@@ -144,7 +145,7 @@ describe("Marriage", () => {
         const datum = createDatum();
         datum.data.data.marriageDateOfParents = "";
 
-        new Marriage(svg, config, selection, datum);
+        new Marriage(svg, config, new Geometry(config), selection, datum);
 
         const arcGroup = appendedGroups.find(g => g.tag === "g" && g.className === "arc");
         const nameGroup = appendedGroups.find(g => g.tag === "g" && g.className === "name");
@@ -159,7 +160,7 @@ describe("Marriage", () => {
         const config = createConfiguration();
         const datum = createDatum();
 
-        new Marriage(svg, config, selection, datum);
+        new Marriage(svg, config, new Geometry(config), selection, datum);
 
         expect(appendedGroups).toHaveLength(0);
     });
@@ -170,7 +171,7 @@ describe("Marriage", () => {
         const config = createConfiguration({ fontSize: 22, fontScale: 100, numberOfInnerCircles: 3 });
         const datum = createDatum({ depth: 2 });
 
-        const marriage = new Marriage(svg, config, selection, datum);
+        const marriage = new Marriage(svg, config, new Geometry(config), selection, datum);
 
         // getFontSize now uses depth+1 internally: (22 - 3) * 100 / 100.0 = 19
         expect(marriage.getFontSize(datum)).toBe(19);
@@ -182,7 +183,7 @@ describe("Marriage", () => {
         const config = createConfiguration({ fontSize: 22, fontScale: 100, numberOfInnerCircles: 3 });
         const datum = createDatum({ depth: 4 });
 
-        const marriage = new Marriage(svg, config, selection, datum);
+        const marriage = new Marriage(svg, config, new Geometry(config), selection, datum);
 
         // getFontSize now uses depth+1 internally: depth 5 >= numberOfInnerCircles + 1 (4), so fontSize = 23
         // (23 - 5) * 100 / 100.0 = 18

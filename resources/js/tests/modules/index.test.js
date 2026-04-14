@@ -31,7 +31,7 @@ class StubChart {
         this.configuration = configuration;
         this.dataValue     = null;
 
-        this.draw          = jest.fn();
+        this.render        = jest.fn();
         this.center        = jest.fn();
         this.update        = jest.fn();
         this.updateViewBox = jest.fn();
@@ -111,7 +111,7 @@ describe("FanChart", () => {
 
         expect(chartInstances).toHaveLength(1);
         expect(chartInstances[0].data).toBe(sampleData);
-        expect(chartInstances[0].draw).toHaveBeenCalledTimes(1);
+        expect(chartInstances[0].render).toHaveBeenCalledTimes(1);
     });
 
     it("triggers chart interactions from toolbar buttons", () => {
@@ -140,12 +140,7 @@ describe("FanChart", () => {
         expect(exportSvgHandler).toBeInstanceOf(Function);
         exportSvgHandler();
         expect(chart.svg.export).toHaveBeenCalledWith("svg");
-        expect(chart.svg.svgToImageMock).toHaveBeenCalledWith(
-            chart.svg,
-            cssFiles,
-            "webtrees-fan-chart-container",
-            "fan-chart.svg",
-        );
+        expect(chart.svg.svgToImageMock).toHaveBeenCalledWith(chart.svg, "fan-chart.svg");
     });
 
     it("delegates update requests to the chart", () => {

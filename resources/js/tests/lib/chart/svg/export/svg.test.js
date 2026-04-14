@@ -184,7 +184,7 @@ describe("SvgExport", () => {
         const exporter = new TestExport();
         const svg = { node: () => document.createElementNS("http://www.w3.org/2000/svg", "svg") };
 
-        await exporter.svgToImage(svg, [], "fan-chart", "chart.svg");
+        await exporter.svgToImage(svg, "chart.svg");
         await new Promise((resolve) => setTimeout(resolve, 0));
 
         expect(exporter.triggerDownload).toHaveBeenCalledWith("blob:svg", "chart.svg");

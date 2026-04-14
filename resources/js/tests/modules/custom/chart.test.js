@@ -153,7 +153,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/person", () => (
     default: jest.fn(() => ({}))
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/update", () => ({
+await jest.unstable_mockModule("resources/js/modules/custom/chart-updater", () => ({
     __esModule: true,
     default: jest.fn(() => ({
         update: jest.fn()
@@ -300,7 +300,7 @@ describe("Chart", () => {
         }));
 
         chartWithVisibleEmptySegments.data = data;
-        chartWithVisibleEmptySegments.draw();
+        chartWithVisibleEmptySegments.render();
 
         const visibleNodes = mockSvgInstances[0].personGroup.enterFilteredData;
 
@@ -312,7 +312,7 @@ describe("Chart", () => {
         }));
 
         chartWithHiddenEmptySegments.data = data;
-        chartWithHiddenEmptySegments.draw();
+        chartWithHiddenEmptySegments.render();
 
         const filteredNodes = mockSvgInstances[1].personGroup.enterFilteredData;
 
@@ -320,14 +320,14 @@ describe("Chart", () => {
         expect(filteredNodes.every((node) => node.data.data.xref !== "")).toBe(true);
     });
 
-    test("draw sets viewBox using container size and padding", () => {
+    test("render sets viewBox using container size and padding", () => {
         const data = createHierarchyDatum();
         const parentSelection = createParentSelection({ width: 500, height: 400 });
 
         const chart = new Chart(parentSelection, createConfiguration());
 
         chart.data = data;
-        chart.draw();
+        chart.render();
 
         const viewBoxCall = mockSvgInstances[0].attrCalls.find((call) => call.name === "viewBox");
 
@@ -343,7 +343,7 @@ describe("Chart", () => {
 
         setSvgBoundingBox({ x: 0, y: 0, width: 400, height: 300 });
         chart.data = data;
-        chart.draw();
+        chart.render();
 
         document.fullscreenElement = document.createElement("div");
         chart.updateViewBox();

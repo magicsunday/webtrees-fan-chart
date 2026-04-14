@@ -151,7 +151,7 @@ describe("Person tooltips", () => {
         const { personSelection } = createPersonSelection();
         const { div, htmlCalls } = createDivSelection();
 
-        new Person({ div }, { hideEmptySegments: false }, personSelection, {
+        new Person({ div }, { hideEmptySegments: false }, {}, personSelection, {
             ...baseDatum,
             data: { data: { xref: "" } }
         });
@@ -177,6 +177,7 @@ describe("Person tooltips", () => {
         new Person(
             { div },
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
+            {},
             personSelection,
             datum
         );
@@ -210,6 +211,7 @@ describe("Person tooltips", () => {
         new Person(
             { div },
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
+            {},
             personSelection,
             datum
         );
@@ -238,6 +240,7 @@ describe("Person interactions", () => {
         new Person(
             { div: divSelection },
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
+            {},
             personSelection,
             datum
         );

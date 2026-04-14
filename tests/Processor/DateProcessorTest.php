@@ -17,6 +17,7 @@ use Fisharebest\Webtrees\Date;
 use Fisharebest\Webtrees\Date\AbstractCalendarDate;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
+use MagicSunday\Webtrees\FanChart\Model\Symbols;
 use MagicSunday\Webtrees\FanChart\Processor\DateProcessor;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -50,7 +51,7 @@ class DateProcessorTest extends TestCase
             3
         );
 
-        self::assertSame("* 01.01.1980\n† 02.02.2020", $processor->getLifetimeDescription());
+        self::assertSame(Symbols::Birth->value . " 01.01.1980\n" . Symbols::Death->value . ' 02.02.2020', $processor->getLifetimeDescription());
     }
 
     #[Test]
@@ -65,7 +66,7 @@ class DateProcessorTest extends TestCase
             2
         );
 
-        self::assertSame("1980\u{2013}2020", $processor->getLifetimeDescription());
+        self::assertSame('1980' . Symbols::DateRangeSeparator->value . '2020', $processor->getLifetimeDescription());
     }
 
     #[Test]
@@ -81,7 +82,7 @@ class DateProcessorTest extends TestCase
             4
         );
 
-        self::assertSame('* 01.01.1980', $processor->getLifetimeDescription());
+        self::assertSame(Symbols::Birth->value . ' 01.01.1980', $processor->getLifetimeDescription());
     }
 
     #[Test]
@@ -97,7 +98,7 @@ class DateProcessorTest extends TestCase
             4
         );
 
-        self::assertSame('†', $processor->getLifetimeDescription());
+        self::assertSame(Symbols::Death->value, $processor->getLifetimeDescription());
     }
 
     #[Test]

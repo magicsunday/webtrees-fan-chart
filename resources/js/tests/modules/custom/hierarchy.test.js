@@ -59,7 +59,7 @@ await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
     scaleLinear: scaleLinearMock,
 }));
 
-const { default: Hierarchy, SEX_FEMALE, SEX_MALE, DESCENDANT_GAP_DEG } = await import("resources/js/modules/custom/hierarchy");
+const { default: Hierarchy, SEX_FEMALE, SEX_MALE } = await import("resources/js/modules/custom/hierarchy");
 
 const createIndividual = ({ id = 1, generation = 1, sex = SEX_MALE, parents } = {}) => ({
     data: {
@@ -300,15 +300,5 @@ describe("Hierarchy.initDescendants", () => {
         hierarchy.init(rootDatum);
 
         expect(config.childScale).toBeNull();
-    });
-});
-
-describe("DESCENDANT_GAP_DEG constant", () => {
-    test("is exported as a number", () => {
-        expect(typeof DESCENDANT_GAP_DEG).toBe("number");
-    });
-
-    test("equals 10 degrees", () => {
-        expect(DESCENDANT_GAP_DEG).toBe(10);
     });
 });

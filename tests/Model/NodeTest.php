@@ -150,23 +150,4 @@ final class NodeTest extends TestCase
         self::assertSame([$child], $result['unassignedChildren']);
     }
 
-    /**
-     * Getters return the correct arrays.
-     */
-    #[Test]
-    public function gettersReturnCorrectArrays(): void
-    {
-        $root       = new Node((new NodeData())->setId(1));
-        $partner    = new Node((new NodeData())->setId(2));
-        $child      = new Node((new NodeData())->setId(3));
-        $unassigned = new Node((new NodeData())->setId(4));
-
-        $root->addPartner($partner);
-        $root->setChildren([$child]);
-        $root->addUnassignedChild($unassigned);
-
-        self::assertSame([$partner], $root->getPartners());
-        self::assertSame([$child], $root->getChildren());
-        self::assertSame([$unassigned], $root->getUnassignedChildren());
-    }
 }

@@ -81,7 +81,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/marriage", () =>
     default: jest.fn(() => ({})),
 }));
 
-const { default: Update } = await import("resources/js/modules/custom/update");
+const { default: Update } = await import("resources/js/modules/custom/chart-updater");
 
 const flushPromises = () => new Promise((resolve) => {
     setTimeout(resolve, 0);
@@ -296,8 +296,10 @@ class PersonGroupSelection {
     }
 
     each(callback) {
-        this.persons.forEach((person) => {
-            callback.call(person.domElement, person.data);
+        const allNodes = this.persons.map((person) => person.domElement);
+
+        this.persons.forEach((person, index) => {
+            callback.call(person.domElement, person.data, index, allNodes);
         });
 
         return this;
