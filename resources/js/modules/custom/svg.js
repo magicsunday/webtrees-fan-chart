@@ -6,10 +6,8 @@
  */
 
 import * as d3 from "../lib/d3.js";
-import Defs from "../lib/chart/svg/defs.js";
-import Zoom from "../lib/chart/svg/zoom.js";
+import { SvgDefs, ChartZoom, ChartExportFactory } from "@magicsunday/webtrees-chart-lib";
 import Filter from "./svg/filter.js";
-import ExportFactory from "../lib/chart/svg/export-factory.js";
 
 /**
  * Creates and manages the root SVG element for the fan chart. Owns the
@@ -30,7 +28,7 @@ export default class Svg {
     constructor(parent, configuration) {
         // Create the <svg> element
         this._element = parent.append("svg");
-        this._defs = new Defs(this._element);
+        this._defs = new SvgDefs(this._element);
 
         this._visual = null;
         this._zoom = null;
@@ -41,14 +39,14 @@ export default class Svg {
     }
 
     /**
-     * @return {Defs}
+     * @return {SvgDefs}
      */
     get defs() {
         return this._defs;
     }
 
     /**
-     * @return {Zoom}
+     * @return {ChartZoom}
      */
     get zoom() {
         return this._zoom;
@@ -97,7 +95,7 @@ export default class Svg {
      * overlay hint on wheel and touch gestures, creates the tooltip div, appends
      * the zoomable visual group, and attaches the D3 zoom behavior.
      *
-     * @param {Overlay} overlay The overlay used for zoom/pan hint messages
+     * @param {ChartOverlay} overlay The overlay used for zoom/pan hint messages
      */
     initEvents(overlay) {
         this._element
@@ -155,7 +153,7 @@ export default class Svg {
             .append("g")
             .attr("class", "personGroup");
 
-        this._zoom = new Zoom(this._visual);
+        this._zoom = new ChartZoom(this._visual);
         this._element.call(this._zoom.get());
     }
 
@@ -181,7 +179,7 @@ export default class Svg {
      * @return {PngExport|SvgExport}
      */
     export(type) {
-        const factory = new ExportFactory();
+        const factory = new ChartExportFactory();
 
         return factory.createExport(type);
     }

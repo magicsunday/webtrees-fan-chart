@@ -7,7 +7,7 @@
 
 import * as d3 from "../lib/d3.js";
 import Hierarchy from "./hierarchy.js";
-import Overlay from "../lib/chart/overlay.js";
+import { ChartOverlay } from "@magicsunday/webtrees-chart-lib";
 import Svg from "./svg.js";
 import Person from "./svg/person.js";
 import Marriage from "./svg/marriage.js";
@@ -207,7 +207,7 @@ export default class Chart {
         this._svg = new Svg(this._parent, this._configuration);
 
         // Overlay must be placed after the <svg> element
-        this._overlay = new Overlay(this._parent);
+        this._overlay = new ChartOverlay(this._parent);
 
         // Init the <svg> events
         this._svg.initEvents(this._overlay);

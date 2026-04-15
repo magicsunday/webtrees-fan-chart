@@ -5,7 +5,7 @@
  * LICENSE file distributed with this source code.
  */
 
-import { Storage } from "../lib/storage.js";
+import { Storage } from "@magicsunday/webtrees-chart-lib";
 
 /**
  * Builds the AJAX URL for fetching chart data from the current form state.
