@@ -456,7 +456,7 @@ export default class Chart {
         marriageJoin.each((datum, i, nodes) => {
             const marriage = d3.select(nodes[i]);
 
-            marriage.selectAll("g.arc, g.name")
+            marriage.selectAll("g.content")
                 .classed("old", true);
 
             marriage.classed("update", false)
@@ -468,7 +468,7 @@ export default class Chart {
         // Exiting: mark for removal
         marriageJoin.exit()
             .classed("remove", true)
-            .selectAll("g.arc, g.name")
+            .selectAll("g.content")
             .classed("old", true);
 
         // Entering: create new elements

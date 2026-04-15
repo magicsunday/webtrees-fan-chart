@@ -10,7 +10,7 @@ import {appendArc} from "./arc.js";
 import { createMarriageArcGenerator } from "./arc-factory.js";
 import FamilyColor from "./family-color.js";
 import {SYMBOL_MARRIAGE} from "../hierarchy.js";
-import { classifyElement, fadeIfUpdating } from "./lifecycle.js";
+import { classifyElement } from "./lifecycle.js";
 import { truncateToFit } from "./text-truncation.js";
 
 /**
@@ -63,20 +63,24 @@ export default class Marriage {
 
         const { isNew, isUpdate, isRemove } = classifyElement(marriage);
 
+        // All visual content goes into a <g class="content"> wrapper so the
+        // update lifecycle can fade old/new content as a single unit.
+        const content = marriage.append("g").attr("class", "content");
+
         if (isNew && this._configuration.hideEmptySegments) {
-            this.addArc(marriage, datum);
+            this.addArc(content, datum);
         } else if (isUpdate) {
             // Arc geometry changes on re-center (partition positions shift).
-            // The old arc is marked .old, so addArc() will rebuild it.
-            this.addArc(marriage, datum);
+            // The old content is marked .old, so addArc() will rebuild it.
+            this.addArc(content, datum);
         } else if (!isNew && !isRemove
             && (hasChildren || !this._configuration.hideEmptySegments || isDescendant)
         ) {
-            this.addArc(marriage, datum);
+            this.addArc(content, datum);
         }
 
         if (!isRemove) {
-            this.addLabel(marriage, datum);
+            this.addLabel(content, datum);
         }
     }
 
@@ -123,11 +127,6 @@ export default class Marriage {
      * @private
      */
     addArc(marriage, datum) {
-        // Reuse existing arc if present (during updates), but not old arcs
-        // that are fading out (descendant arcs get rebuilt on re-center)
-        if (!marriage.select("g.arc:not(.old)").empty()) {
-            return;
-        }
 
         const { innerR, outerR, startAngle, endAngle } = this._resolveMarriageGeometry(datum);
 
@@ -188,14 +187,17 @@ export default class Marriage {
             .innerRadius(midRadius)
             .outerRadius(midRadius);
 
-        const marriageId = marriage.attr("id");
+        // Get the marriage ID from the outer <g class="marriage"> element
+        // (the parent parameter is the content wrapper which has no ID)
+        const marriageNode = marriage.node().closest("g.marriage") || marriage.node();
+        const marriageId = marriageNode.id || marriageNode.getAttribute?.("id") || "marriage-0";
         let pathId = `path-${marriageId}`;
 
         // During updates, old text still references the old path definition.
         // Create a new path with a unique ID so old and new text render at
         // their respective positions during the cross-fade.
         if (this._svg.defs.select(`path#${pathId}`).node()) {
-            pathId += `-${marriage.selectAll("g.name").size()}`;
+            pathId += `-${Date.now()}`;
         }
 
         this._svg.defs
@@ -207,9 +209,6 @@ export default class Marriage {
             .append("g")
             .attr("class", "name")
             .style("font-size", `${this.getFontSize(datum)}px`);
-
-        // Hide immediately during updates to prevent visual flash
-        fadeIfUpdating(labelGroup, marriage);
 
         const text = labelGroup
             .append("text")
