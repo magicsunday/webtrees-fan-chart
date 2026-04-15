@@ -191,11 +191,15 @@ export default class Hierarchy {
         const totalAngleDeg = (endChildPi - startChildPi) / MATH_DEG2RAD;
         const rootXref = datum.data.xref || "";
 
-        // Build family blocks with weights for angle distribution
+        // Build family blocks with weights for angle distribution.
+        // Reverse the block and children order so the oldest child appears
+        // on the left and the youngest on the right (the descendant sector
+        // runs right-to-left in radians, so reversing the data array
+        // produces the natural left-to-right chronological reading order).
         const familyBlocks = [];
 
-        for (const partner of partners) {
-            const children = partner.children || [];
+        for (const partner of [...partners].reverse()) {
+            const children = (partner.children || []).slice().reverse();
 
             familyBlocks.push({
                 type: "family",
@@ -209,7 +213,7 @@ export default class Hierarchy {
             familyBlocks.push({
                 type: "unassigned",
                 partner: null,
-                children: unassignedChildren,
+                children: [...unassignedChildren].reverse(),
                 weight: unassignedChildren.length,
             });
         }

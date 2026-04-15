@@ -6,13 +6,13 @@
 
 .PHONY: lint lint-fix
 
-lint: .logo ## Run ESLint on JavaScript sources.
+lint: .logo ## Run Biome lint on JavaScript sources.
 	@$(COMPOSE_RUN) npm run lint
-	@echo -e "${FGREEN} ✔${FRESET} ESLint passed"
+	@echo -e "${FGREEN} ✔${FRESET} Biome lint passed"
 
-lint-fix: .logo ## Run ESLint with auto-fix on JavaScript sources.
+lint-fix: .logo ## Run Biome lint with auto-fix on JavaScript sources.
 	@$(COMPOSE_RUN) npm run lint:fix
-	@echo -e "${FGREEN} ✔${FRESET} ESLint auto-fix applied"
+	@echo -e "${FGREEN} ✔${FRESET} Biome auto-fix applied"
 
 #### Testing
 

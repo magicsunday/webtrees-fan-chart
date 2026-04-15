@@ -263,10 +263,9 @@ describe("Hierarchy.initDescendants", () => {
 
         hierarchy.init(rootDatum);
 
-        // 2 generations = 3 ancestor nodes (IDs 0-2), partner1 = 3, partner2 = 7
-        // (3 children of partner1 at IDs 4-6, then partner2 at 7)
-        const p1 = hierarchy.nodes.find((n) => n.depth === -1 && n.id === 3);
-        const p2 = hierarchy.nodes.find((n) => n.depth === -1 && n.id === 7);
+        // Find partners by xref (order is reversed for left-to-right chronology)
+        const p1 = hierarchy.nodes.find((n) => n.depth === -1 && n.data.data.xref === "I2");
+        const p2 = hierarchy.nodes.find((n) => n.depth === -1 && n.data.data.xref === "I3");
 
         // partner1 has 3 children (weight=3), partner2 has 0 (weight=1), total=4
         expect(p1.x1 - p1.x0).toBeCloseTo(0.75, 10);
