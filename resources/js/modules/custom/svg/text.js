@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../../lib/d3.js";
+import * as d3 from "../../d3.js";
 import Geometry, {MATH_RAD2DEG} from "./geometry.js";
 import { measureText } from "@magicsunday/webtrees-chart-lib";
 import { truncateToFit, truncateNames } from "./text-truncation.js";

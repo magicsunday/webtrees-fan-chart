@@ -1,6 +1,6 @@
 import { jest, describe, expect, test } from "@jest/globals";
 
-await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
+await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
 }));
 

@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../../lib/d3.js";
+import * as d3 from "../../d3.js";
 
 export const MATH_DEG2RAD = Math.PI / 180;
 export const MATH_RAD2DEG = 180 / Math.PI;

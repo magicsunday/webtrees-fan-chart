@@ -61,7 +61,7 @@ const timeoutMock = jest.fn((callback) => {
 
 const selectMock = jest.fn((target) => target?.__selection ?? null);
 
-await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
+await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
     json: jsonMock,
     select: selectMock,

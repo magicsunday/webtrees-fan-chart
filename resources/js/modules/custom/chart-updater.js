@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../lib/d3.js";
+import * as d3 from "../d3.js";
 import Geometry from "./svg/geometry.js";
 import Person from "./svg/person.js";
 import Marriage from "./svg/marriage.js";

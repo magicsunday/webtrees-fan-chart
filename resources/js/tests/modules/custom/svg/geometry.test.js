@@ -25,7 +25,7 @@ const scaleLinearMock = jest.fn(() => {
     return scale;
 });
 
-await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
+await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
     scaleLinear: scaleLinearMock
 }));
