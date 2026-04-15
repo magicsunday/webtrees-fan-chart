@@ -209,12 +209,12 @@ msgid "Reload chart for that person"
 msgstr "Перезавантажити діаграму для цієї особи"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Birth and death date precision"
-msgstr "Точність дат народження та смерті"
+msgid "Date precision"
+msgstr "Точність дат"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "Показувати повні дати народження та смерті для ранніх поколінь. Дати шлюбу відображаються лише як рік починаючи з покоління 7 і приховуються починаючи з покоління 9. Нащадки з вузькими дугами автоматично використовують компактний формат лише з роком."
+msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Показувати повні дати (народження, шлюбу, смерті) для ранніх поколінь. Пізніші покоління показують лише рік. Дати шлюбу приховуються з покоління 9. Нащадки з вузькими дугами автоматично використовують компактний формат лише з роком."
 
 #: src/Configuration.php:191
 msgid "Years only"

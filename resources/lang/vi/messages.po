@@ -208,12 +208,12 @@ msgid "Reload chart for that person"
 msgstr "Tải lại biểu đồ cho người đó"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Birth and death date precision"
-msgstr "Độ chính xác ngày sinh và ngày mất"
+msgid "Date precision"
+msgstr "Độ chính xác ngày tháng"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "Hiển thị đầy đủ ngày sinh và ngày mất cho các thế hệ đầu tiên. Ngày kết hôn chỉ hiển thị năm từ thế hệ 7 và được ẩn từ thế hệ 9. Con cháu với cung hẹp tự động sử dụng định dạng gọn chỉ có năm."
+msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Hiển thị ngày đầy đủ (sinh, kết hôn, mất) cho các thế hệ gần. Các thế hệ sau chỉ hiển thị năm. Ngày kết hôn bị ẩn từ thế hệ 9. Con cháu có cung hẹp tự động sử dụng định dạng chỉ năm gọn."
 
 #: src/Configuration.php:191
 msgid "Years only"

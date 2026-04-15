@@ -271,7 +271,7 @@ export default class ChartUpdater {
                     .classed("new", !empty && !marriage.classed("available"));
 
                 if (!marriage.classed("new")) {
-                    marriage.selectAll("g.name")
+                    marriage.selectAll("g.arc, g.name")
                         .classed("old", true);
                 }
 
@@ -293,7 +293,7 @@ export default class ChartUpdater {
 
         this._svg
             .selectAll("g.marriage:not(.remove)")
-            .selectAll("g.name:not(.old)")
+            .selectAll("g.arc:not(.old), g.name:not(.old)")
             .style("opacity", 1e-6);
 
         this._svg
@@ -354,7 +354,7 @@ export default class ChartUpdater {
 
         this._svg
             .selectAll("g.marriage:not(.remove)")
-            .selectAll("g.name:not(.old)")
+            .selectAll("g.arc:not(.old), g.name:not(.old)")
             .transition(transition)
             .style("opacity", 1);
 

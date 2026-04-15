@@ -207,12 +207,12 @@ msgid "Reload chart for that person"
 msgstr "उस व्यक्ति के लिए चार्ट पुनः लोड करें"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Birth and death date precision"
-msgstr "जन्म और मृत्यु तिथि सटीकता"
+msgid "Date precision"
+msgstr "तारीख सटीकता"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "प्रारंभिक पीढ़ियों के लिए पूर्ण जन्म और मृत्यु तिथियाँ दिखाएँ। विवाह तिथियाँ पीढ़ी 7 से केवल वर्ष दिखाती हैं और पीढ़ी 9 से छिपा दी जाती हैं। संकीर्ण चापों वाले वंशज स्वचालित रूप से एक संक्षिप्त केवल-वर्ष प्रारूप का उपयोग करते हैं।"
+msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "प्रारंभिक पीढ़ियों के लिए पूर्ण तिथियाँ (जन्म, विवाह, मृत्यु) दिखाएँ। बाद की पीढ़ियाँ केवल वर्ष दिखाती हैं। विवाह तिथियाँ पीढ़ी 9 से छिपी होती हैं। संकीर्ण चापों वाले वंशज स्वचालित रूप से एक संक्षिप्त केवल-वर्ष प्रारूप का उपयोग करते हैं।"
 
 #: src/Configuration.php:191
 msgid "Years only"

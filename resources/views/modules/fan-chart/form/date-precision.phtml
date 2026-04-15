@@ -18,7 +18,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 ?>
 
 <label class="form-label" for="detailedDateGenerations">
-    <?= I18N::translate('Birth and death date precision') ?>
+    <?= I18N::translate('Date precision') ?>
 </label>
 <?=
     view('components/select', [
@@ -29,5 +29,5 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     ])
 ?>
 <small class="form-text text-muted form-element-description" style="box-decoration-break: clone;">
-    <?= I18N::translate('Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format.') ?>
+    <?= I18N::translate('Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format.') ?>
 </small>

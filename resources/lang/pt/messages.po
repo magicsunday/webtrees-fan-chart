@@ -148,12 +148,12 @@ msgid "cancel"
 msgstr "Cancelar"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Birth and death date precision"
-msgstr "Precisão das datas de nascimento e óbito"
+msgid "Date precision"
+msgstr "Precisão das datas"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "Mostrar as datas de nascimento e óbito completas para as gerações mais recentes. As datas de casamento são representadas apenas pelo ano a partir da geração 7 e não são mostradas a partir da geração 9. Os descendentes com arcos estreitos utilizam automaticamente um formato compacto apenas com o ano."
+msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Mostrar datas completas (nascimento, casamento, óbito) para as gerações mais próximas. As gerações seguintes mostram apenas o ano. As datas de casamento são ocultadas a partir da geração 9. Os descendentes com arcos estreitos utilizam automaticamente um formato compacto apenas com o ano."
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"

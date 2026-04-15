@@ -65,7 +65,11 @@ export default class Marriage {
 
         if (isNew && this._configuration.hideEmptySegments) {
             this.addArc(marriage, datum);
-        } else if (!isNew && !isUpdate && !isRemove
+        } else if (isUpdate) {
+            // Arc geometry changes on re-center (partition positions shift).
+            // The old arc is marked .old, so addArc() will rebuild it.
+            this.addArc(marriage, datum);
+        } else if (!isNew && !isRemove
             && (hasChildren || !this._configuration.hideEmptySegments || isDescendant)
         ) {
             this.addArc(marriage, datum);

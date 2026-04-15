@@ -205,12 +205,12 @@ msgid "Reload chart for that person"
 msgstr "Lataa kaavio uudelleen tälle henkilölle"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Birth and death date precision"
-msgstr "Syntymä- ja kuolinpäivämäärien tarkkuus"
+msgid "Date precision"
+msgstr "Päivämäärien tarkkuus"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "Näytä tarkat syntymä- ja kuolinpäivämäärät varhaisille sukupolville. Avioliittopäivämäärät näytetään pelkkänä vuotena sukupolvesta 7 alkaen ja piilotetaan sukupolvesta 9 alkaen. Jälkeläiset kapeilla kaarilla käyttävät automaattisesti tiivistä vain vuosi -muotoa."
+msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Näytä täydelliset päivämäärät (syntymä, avioliitto, kuolema) lähisukupolville. Myöhemmät sukupolvet näyttävät vain vuoden. Avioliittopäivämäärät piilotetaan sukupolvesta 9 alkaen. Kapeiden kaarien jälkeläiset käyttävät automaattisesti kompaktia vain vuosi -muotoa."
 
 #: src/Configuration.php:191
 msgid "Years only"

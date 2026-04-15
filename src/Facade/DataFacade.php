@@ -176,13 +176,19 @@ class DataFacade
                     ->setThumbnail('')
                     ->setMarriageDateOfParents('');
 
-                // Set marriage date from the specific family record as plain text
-                // (not from DateProcessor which only looks at the first spouse family)
+                // Set marriage date from the specific family record
+                // (not from DateProcessor which only looks at the first spouse family).
+                // Use generation 0 because the partner marriage arc sits adjacent to the
+                // center person, not one level deeper like ancestor marriage arcs.
                 $marriageDate = $family->getMarriageDate();
 
                 $partnerNodeData->setMarriageDate(
                     $marriageDate->isOK()
-                        ? $marriageDate->minimumDate()->format(I18N::dateFormat())
+                        ? DateProcessor::formatMarriageDate(
+                            $marriageDate,
+                            0,
+                            $this->configuration->getDetailedDateGenerations()
+                        )
                         : ''
                 );
 
