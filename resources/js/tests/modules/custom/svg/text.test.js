@@ -44,9 +44,8 @@ await jest.unstable_mockModule("resources/js/modules/lib/d3", () => ({
     select: jest.fn((node) => selectMock(node))
 }));
 
-await jest.unstable_mockModule("resources/js/modules/lib/chart/text/measure", () => ({
-    __esModule: true,
-    default: measureTextMock
+await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
+    measureText: measureTextMock
 }));
 
 const { default: Text } = await import("resources/js/modules/custom/svg/text");

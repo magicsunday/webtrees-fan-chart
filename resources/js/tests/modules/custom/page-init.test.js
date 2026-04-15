@@ -3,7 +3,7 @@ import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 let storageInstances = [];
 let storageData = {};
 
-await jest.unstable_mockModule("resources/js/modules/lib/storage.js", () => ({
+await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
     Storage: jest.fn().mockImplementation(() => {
         const instance = {
             register: jest.fn(),
