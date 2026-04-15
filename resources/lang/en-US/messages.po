@@ -205,12 +205,12 @@ msgid "Reload chart for that person"
 msgstr "Reload chart for that person"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Birth and death date precision"
-msgstr ""
+msgid "Date precision"
+msgstr "Date precision"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
 
 #: src/Configuration.php:191
 msgid "Years only"

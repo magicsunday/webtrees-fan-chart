@@ -23,13 +23,13 @@
     "test:coverage": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "test:exports": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --runTestsByPath resources/js/tests/export.integration.test.js resources/js/tests/export.large.integration.test.js",
     "test:watch": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
-    "lint": "eslint --max-warnings 0 resources/js/modules/",
-    "lint:fix": "eslint --fix resources/js/modules/"
+    "lint": "biome lint resources/js/modules/",
+    "lint:fix": "biome lint --fix --unsafe resources/js/modules/"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.11",
     "@rollup/plugin-node-resolve": "^16.0",
     "@rollup/plugin-terser": "^1.0",
-    "@stylistic/eslint-plugin": "^5.0",
     "d3-fetch": "^3.0",
     "d3-hierarchy": "^3.0",
     "d3-path": "^3.0",
@@ -39,8 +39,6 @@
     "d3-timer": "^3.0",
     "d3-transition": "^3.0",
     "d3-zoom": "^3.0",
-    "eslint": "^10.0",
-    "globals": "^17.0",
     "jest": "^30.0",
     "jest-environment-jsdom": "^30.0",
     "pixelmatch": "^7.0",

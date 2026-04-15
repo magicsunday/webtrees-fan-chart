@@ -111,12 +111,28 @@ const createPersonSelection = () => {
     const handlers = {};
     const nodes = [{}];
 
+    // The content wrapper mock — Person.init() appends a <g class="content">
+    // and all child elements go inside it
+    const contentGroup = {
+        attr: jest.fn(() => contentGroup),
+        append: jest.fn(() => contentGroup),
+        insert: jest.fn(() => contentGroup),
+        select: jest.fn(() => contentGroup),
+        selectAll: jest.fn(() => contentGroup),
+        text: jest.fn(() => contentGroup),
+        style: jest.fn(() => contentGroup),
+        classed: jest.fn(() => false),
+        each: jest.fn(),
+        node: jest.fn(() => ({ getComputedTextLength: () => 0 })),
+    };
+
     const personSelection = {
         classed: jest.fn((name) => name === "new"),
         on: jest.fn((event, handler) => {
             handlers[event] = handler;
             return personSelection;
         }),
+        append: jest.fn(() => contentGroup),
         nodes: jest.fn(() => nodes)
     };
 
@@ -219,6 +235,36 @@ describe("Person tooltips", () => {
         handlers.mouseenter({ pageX: 200, pageY: 100 });
 
         expect(htmlCalls[0]).toContain("icon-silhouette-f");
+    });
+
+    it("escapes tooltip content", () => {
+        const { personSelection, handlers } = createPersonSelection();
+        const { div, htmlCalls } = createDivSelection();
+        const datum = {
+            ...baseDatum,
+            data: {
+                data: {
+                    ...baseDatum.data.data,
+                    name: "<script>alert(1)</script>",
+                    birthPlace: "<b>unsafe</b>",
+                    thumbnail: "javascript:alert(1)"
+                }
+            }
+        };
+
+        new Person(
+            { div },
+            { hideEmptySegments: false, showImages: true, showSilhouettes: false },
+            {},
+            personSelection,
+            datum
+        );
+
+        handlers.mouseenter({ pageX: 120, pageY: 80 });
+
+        expect(htmlCalls[0]).toContain("&lt;script&gt;alert(1)&lt;/script&gt;");
+        expect(htmlCalls[0]).toContain("&lt;b&gt;unsafe&lt;/b&gt;");
+        expect(htmlCalls[0]).not.toContain("<script>");
     });
 });
 

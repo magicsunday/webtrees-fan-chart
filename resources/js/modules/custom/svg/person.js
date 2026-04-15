@@ -5,11 +5,13 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../../lib/d3";
-import {appendArc} from "./arc";
-import TooltipRenderer from "./tooltip-renderer";
-import LabelRenderer from "./label-renderer";
-import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
+import * as d3 from "../../lib/d3.js";
+import {appendArc} from "./arc.js";
+import { createPersonArcGenerator } from "./arc-factory.js";
+import TooltipRenderer from "./tooltip-renderer.js";
+import LabelRenderer from "./label-renderer.js";
+import {SEX_FEMALE, SEX_MALE} from "../hierarchy.js";
+import { classifyElement } from "./lifecycle.js";
 
 /** Minimum rendered image diameter in pixels — narrower arcs skip the image. */
 const IMAGE_SIZE_MIN = 28;
@@ -69,74 +71,50 @@ export default class Person {
             return;
         }
 
-        const isNew = person.classed("new");
-        const isUpdate = person.classed("update");
-        const isRemove = person.classed("remove");
+        const { isNew, isUpdate, isRemove } = classifyElement(person);
         const hasData = datum.data.data.xref !== "";
 
         // Descendant nodes always show their arc (empty partner arcs
         // are structural placeholders for children below them)
         const isDescendant = datum.depth < 0;
 
+        // All visual content goes into a <g class="content"> wrapper so the
+        // update lifecycle can fade old/new content as a single unit.
+        const content = person.append("g").attr("class", "content");
+
         if (isNew && (this._configuration.hideEmptySegments || isDescendant)) {
-            this.addArcToPerson(person, datum);
-        } else if (!isNew && !isUpdate && !isRemove
+            this.addArcToPerson(content, datum);
+        } else if (isUpdate) {
+            // Arc must be rebuilt in the new content wrapper (the old arc
+            // is inside g.content.old and will be removed after fade-out)
+            this.addArcToPerson(content, datum);
+        } else if (!isNew && !isRemove
             && (hasData || !this._configuration.hideEmptySegments || isDescendant)
         ) {
-            this.addArcToPerson(person, datum);
+            this.addArcToPerson(content, datum);
         }
 
         if (datum.data.data.xref !== "") {
-            this.addTitleToPerson(person, datum.data.data.name);
+            this.addTitleToPerson(content, datum.data.data.name);
 
             // Pre-compute image size so text layout can account for it
-            if (this._configuration.showImages
-                && datum.data.data.thumbnail
-                && (datum.depth <= this._configuration.numberOfInnerCircles)
-            ) {
-                const arcHeight = (datum.depth === 0)
-                    ? this._configuration.centerCircleRadius * 2
-                    : this._geometry.outerRadius(datum.depth) - this._geometry.innerRadius(datum.depth);
-
-                let imageSize;
-
-                if (this._configuration.showNames) {
-                    imageSize = Math.min(arcHeight * 0.4, IMAGE_HEIGHT_MAX);
-                } else {
-                    const arcWidth = (datum.depth === 0)
-                        ? arcHeight
-                        : (this._geometry.endAngle(datum.depth, datum.x1) - this._geometry.startAngle(datum.depth, datum.x0)) * this._geometry.centerRadius(datum.depth);
-
-                    imageSize = Math.min(arcHeight, arcWidth) * 0.8;
-                }
-
-                // Check angular width — skip image if arc segment is too narrow
-                const angularWidth = (datum.depth === 0)
-                    ? 360
-                    : Math.abs(
-                        this._geometry.endAngle(datum.depth, datum.x1)
-                        - this._geometry.startAngle(datum.depth, datum.x0),
-                    ) * (180 / Math.PI);
-
-                if ((imageSize >= IMAGE_SIZE_MIN) && (angularWidth >= IMAGE_ANGULAR_MIN_DEG)) {
-                    datum.data.data.imageSize = imageSize;
-                }
-            }
+            datum.data.data.imageSize = this._computeImageSize(datum);
 
             // Render labels (text layout uses imageSize if set above)
             if (this._configuration.showNames) {
                 const labelRenderer = new LabelRenderer(this._svg, this._configuration, this._geometry);
-                labelRenderer.addLabel(person, datum);
+                labelRenderer.addLabel(content, datum);
             }
 
             // Place image after text is rendered
             if (datum.data.data.imageSize) {
-                this.addImageToPerson(person, datum, this._configuration.showNames);
+                this.addImageToPerson(content, datum, this._configuration.showNames);
             }
 
-            this.addColorGroup(person, datum);
+            this.addColorGroup(content, datum);
 
-            // Bind tooltip and hover events
+            // Bind tooltip and hover events (on the outer person element,
+            // not the content wrapper, so events work during transitions)
             const tooltipRenderer = new TooltipRenderer(this._svg, this._configuration);
             tooltipRenderer.bindEvents(person, datum);
         }
@@ -165,11 +143,6 @@ export default class Person {
             .append("g")
             .attr("class", "color");
 
-        // Hide immediately during updates to prevent visual flash
-        if (person.classed("update")) {
-            color.style("opacity", 1e-6);
-        }
-
         const path = color.append("path")
             .attr("d", arcGenerator);
 
@@ -187,6 +160,55 @@ export default class Person {
                 datum.data.data.sex === SEX_FEMALE ? "female" : (datum.data.data.sex === SEX_MALE ? "male" : "unknown"),
             );
         }
+    }
+
+    /**
+     * Computes the image size for a person arc based on arc height, angular
+     * width, and whether names are shown. Returns null if conditions aren't
+     * met (images disabled, no thumbnail, outer arc, or arc too narrow).
+     *
+     * @param {Object} datum The D3 partition datum
+     *
+     * @return {number|null}
+     *
+     * @private
+     */
+    _computeImageSize(datum) {
+        if (!this._configuration.showImages
+            || !datum.data.data.thumbnail
+            || (datum.depth > this._configuration.numberOfInnerCircles)
+        ) {
+            return null;
+        }
+
+        const arcHeight = (datum.depth === 0)
+            ? this._configuration.centerCircleRadius * 2
+            : this._geometry.outerRadius(datum.depth) - this._geometry.innerRadius(datum.depth);
+
+        let imageSize;
+
+        if (this._configuration.showNames) {
+            imageSize = Math.min(arcHeight * 0.4, IMAGE_HEIGHT_MAX);
+        } else {
+            const arcWidth = (datum.depth === 0)
+                ? arcHeight
+                : (this._geometry.endAngle(datum.depth, datum.x1) - this._geometry.startAngle(datum.depth, datum.x0)) * this._geometry.centerRadius(datum.depth);
+
+            imageSize = Math.min(arcHeight, arcWidth) * 0.8;
+        }
+
+        const angularWidth = (datum.depth === 0)
+            ? 360
+            : Math.abs(
+                this._geometry.endAngle(datum.depth, datum.x1)
+                - this._geometry.startAngle(datum.depth, datum.x0),
+            ) * (180 / Math.PI);
+
+        if ((imageSize >= IMAGE_SIZE_MIN) && (angularWidth >= IMAGE_ANGULAR_MIN_DEG)) {
+            return imageSize;
+        }
+
+        return null;
     }
 
     /**
@@ -209,8 +231,7 @@ export default class Person {
             return;
         }
 
-        // Select the NEW name group (not the old one being faded out)
-        const nameGroup = person.select("g.name:not(.old)");
+        const nameGroup = person.select("g.name");
         let textWidth = 0;
 
         nameGroup.selectAll("text").each(function () {
@@ -221,7 +242,7 @@ export default class Person {
             }
         });
 
-        const clipId = "clip-image-" + datum.id + "-" + Date.now();
+        const clipId = `clip-image-${datum.id}-${Date.now()}`;
 
         if (datum.depth === 0) {
             // Center node: image above text, or centered alone if no names shown
@@ -258,7 +279,7 @@ export default class Person {
                 .attr("y", centerY - (imageSize / 2))
                 .attr("width", imageSize)
                 .attr("height", imageSize)
-                .attr("clip-path", "url(#" + clipId + ")")
+                .attr("clip-path", `url(#${clipId})`)
                 .attr("preserveAspectRatio", "xMidYMid meet");
 
             imageGroup.append("circle")
@@ -317,7 +338,7 @@ export default class Person {
                 .attr("y", -(imageSize / 2))
                 .attr("width", imageSize)
                 .attr("height", imageSize)
-                .attr("clip-path", "url(#" + clipId + ")")
+                .attr("clip-path", `url(#${clipId})`)
                 .attr("preserveAspectRatio", "xMidYMid meet");
 
             imageGroup.append("circle")
@@ -337,7 +358,7 @@ export default class Person {
             nameGroup.selectAll("textPath").each(function () {
                 const raw = parseFloat(d3.select(this).attr("startOffset"));
                 const currentOffset = Number.isFinite(raw) ? raw : 25;
-                d3.select(this).attr("startOffset", (currentOffset + textShiftPercent).toFixed(1) + "%");
+                d3.select(this).attr("startOffset", `${(currentOffset + textShiftPercent).toFixed(1)}%`);
             });
         }
     }
@@ -353,14 +374,12 @@ export default class Person {
      * @private
      */
     addArcToPerson(person, datum) {
-        const arcGenerator = d3.arc()
-            .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
-            .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
-            .innerRadius(this._geometry.innerRadius(datum.depth))
-            .outerRadius(this._geometry.outerRadius(datum.depth))
-            .padAngle(this.getArcPadAngle(datum))
-            .padRadius(this._configuration.padRadius)
-            .cornerRadius(this._configuration.cornerRadius);
+        const arcGenerator = createPersonArcGenerator(
+            this._geometry,
+            this._configuration,
+            datum,
+            this.getArcPadAngle(datum),
+        );
 
         appendArc(person, arcGenerator, datum.data.data.familyColor);
     }

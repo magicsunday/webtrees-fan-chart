@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import {SEX_FEMALE, SEX_MALE} from "../hierarchy";
+import {SEX_FEMALE, SEX_MALE} from "../hierarchy.js";
 
 /**
  * This class computes family-branch colors for person arcs. The two
@@ -89,7 +89,7 @@ export default class FamilyColor {
         const saturation = minSaturation + (depth - 1) * FamilyColor.SATURATION_STEP;
         const lightness = maxLightness - (depth - 1) * FamilyColor.LIGHTNESS_STEP;
 
-        return "hsl(" + (((hue % 360) + 360) % 360) + ", " + saturation + "%, " + lightness + "%)";
+        return `hsl(${((hue % 360) + 360) % 360}, ${saturation}%, ${lightness}%)`;
     }
 
     /**
@@ -128,7 +128,7 @@ export default class FamilyColor {
 
             const {minSaturation, maxLightness} = FamilyColor._depthBounds(baseHsl);
 
-            return "hsl(" + baseHsl[0] + ", " + Math.max(10, minSaturation - FamilyColor.SATURATION_STEP) + "%, " + Math.min(93, maxLightness + FamilyColor.LIGHTNESS_STEP) + "%)";
+            return `hsl(${baseHsl[0]}, ${Math.max(10, minSaturation - FamilyColor.SATURATION_STEP)}%, ${Math.min(93, maxLightness + FamilyColor.LIGHTNESS_STEP)}%)`;
         }
 
         // Depth 1: two main branches get their own hue from their own position.
@@ -230,11 +230,11 @@ export default class FamilyColor {
             return [0, 0, 50];
         }
 
-        hex = hex.replace(/^#/, "");
+        const normalizedHex = hex.replace(/^#/, "");
 
-        const red = parseInt(hex.substring(0, 2), 16) / 255;
-        const green = parseInt(hex.substring(2, 4), 16) / 255;
-        const blue = parseInt(hex.substring(4, 6), 16) / 255;
+        const red = parseInt(normalizedHex.substring(0, 2), 16) / 255;
+        const green = parseInt(normalizedHex.substring(2, 4), 16) / 255;
+        const blue = parseInt(normalizedHex.substring(4, 6), 16) / 255;
 
         const max = Math.max(red, green, blue);
         const min = Math.min(red, green, blue);

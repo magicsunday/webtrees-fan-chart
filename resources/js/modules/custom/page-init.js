@@ -83,7 +83,7 @@ function initRangeSlider(storage, id, suffix = "") {
 
     if (stored !== null) {
         const input = document.getElementById(id);
-        const output = document.getElementById(id + "Output");
+        const output = document.getElementById(`${id}Output`);
 
         input.value = stored;
         output.value = stored + suffix;
@@ -133,7 +133,7 @@ export function initPage(config) {
     const storedDisplayMode = storage.read("displayMode");
 
     if (storedDisplayMode) {
-        const radioToCheck = document.getElementById("displayMode-" + storedDisplayMode);
+        const radioToCheck = document.getElementById(`displayMode-${storedDisplayMode}`);
 
         if (radioToCheck) {
             radioToCheck.checked = true;
@@ -148,14 +148,13 @@ export function initPage(config) {
         });
     });
 
-    // Keep fanDegreeRaw in sync with the slider when descendants are not active
+    // Keep fanDegreeRaw in sync with the slider so disabling descendants
+    // restores the last user-chosen value (not a stale one from earlier)
     const fanSliderElement = document.getElementById("fanDegree");
 
     if (fanSliderElement) {
         fanSliderElement.addEventListener("input", () => {
-            if (!storage.read("showDescendants")) {
-                storage.write("fanDegreeRaw", fanSliderElement.value);
-            }
+            storage.write("fanDegreeRaw", fanSliderElement.value);
         });
     }
 
@@ -166,7 +165,7 @@ export function initPage(config) {
 
     const chartOptions = {
         fanDegree:               storage.read("fanDegree"),
-        generations:             storage.read("generations") !== null ? Number(storage.read("generations")) : null,
+        generations:             storage.read("generations") === null ? null : Number(storage.read("generations")),
         hideEmptySegments:       storage.read("hideEmptySegments"),
         showFamilyColors:        storage.read("showFamilyColors"),
         paternalColor:           storage.read("paternalColor"),
@@ -181,11 +180,6 @@ export function initPage(config) {
         detailedDateGenerations: storage.read("detailedDateGenerations") ?? config.defaultDetailedDateGenerations,
     };
 
-    // Store the unclamped fan degree so it can be restored when descendants are disabled
-    if (storage.read("fanDegreeRaw") === null) {
-        storage.write("fanDegreeRaw", config.defaultFanDegreeRaw);
-    }
-
     // Clamp the fan degree slider when descendants are active (covers the case
     // where the page is loaded from storage with showDescendants already enabled)
     if (chartOptions.showDescendants) {
@@ -193,12 +187,18 @@ export function initPage(config) {
         const fanOutput = document.getElementById("fanDegreeOutput");
 
         if (fanSlider) {
+            // Save the unclamped value BEFORE clamping so it can be restored
+            // when descendants are disabled later. This ensures fanDegreeRaw
+            // always reflects the actual fan degree, not a stale value from
+            // a previous session with a different degree.
+            storage.write("fanDegreeRaw", fanSlider.value);
+
             fanSlider.max = 270;
             chartOptions.fanDegree = Math.min(270, Math.max(180, Number(fanSlider.value)));
             fanSlider.value = chartOptions.fanDegree;
 
             if (fanOutput) {
-                fanOutput.value = chartOptions.fanDegree + "°";
+                fanOutput.value = `${chartOptions.fanDegree}°`;
             }
         }
     }
@@ -243,7 +243,7 @@ export function initPage(config) {
                     fanSlider.value = raw;
 
                     if (fanOutput) {
-                        fanOutput.value = raw + "°";
+                        fanOutput.value = `${raw}°`;
                     }
                 }
             }

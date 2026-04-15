@@ -5,15 +5,15 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../lib/d3";
-import Hierarchy from "./hierarchy";
-import Overlay from "../lib/chart/overlay";
-import Svg from "./svg";
-import Person from "./svg/person";
-import Marriage from "./svg/marriage";
-import Geometry from "./svg/geometry";
-import FamilyColor from "./svg/family-color";
-import ChartUpdater from "./chart-updater";
+import * as d3 from "../lib/d3.js";
+import Hierarchy from "./hierarchy.js";
+import Overlay from "../lib/chart/overlay.js";
+import Svg from "./svg.js";
+import Person from "./svg/person.js";
+import Marriage from "./svg/marriage.js";
+import Geometry from "./svg/geometry.js";
+import FamilyColor from "./svg/family-color.js";
+import ChartUpdater from "./chart-updater.js";
 
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
 
@@ -238,7 +238,7 @@ export default class Chart {
             )
             .append("g")
             .attr("class", "person")
-            .attr("id", (datum) => "person-" + datum.id);
+            .attr("id", (datum) => `person-${datum.id}`);
 
         const svg = this._svg;
         const configuration = this._configuration;
@@ -280,9 +280,9 @@ export default class Chart {
             separatorGroup = this._svg.visual.append("g").attr("class", "separatorGroup");
         }
 
-        const maxDepth = !this._configuration.showNames
-            ? Math.min(this._configuration.generations, this._configuration.numberOfInnerCircles)
-            : this._configuration.generations;
+        const maxDepth = this._configuration.showNames
+            ? this._configuration.generations
+            : Math.min(this._configuration.generations, this._configuration.numberOfInnerCircles);
 
         this.drawDescendantSeparators(geometry, separatorGroup);
 
@@ -342,9 +342,21 @@ export default class Chart {
             .filter((datum) => datum.depth === -1)
             .sort((left, right) => left.x0 - right.x0);
 
+        const childNodes = this._hierarchy.nodes
+            .filter((datum) => datum.depth === -2);
+
         for (let i = 0; i < (partnerNodes.length - 1); i++) {
             const current = partnerNodes[i];
+            const next = partnerNodes[i + 1];
             const angle = this._configuration.childScale(current.x1);
+
+            // Check whether the adjacent partners have children
+            const currentHasChildren = childNodes.some(
+                (c) => c.syntheticParentId === current.id,
+            );
+            const nextHasChildren = childNodes.some(
+                (c) => c.syntheticParentId === next.id,
+            );
 
             // Start at the marriage arc inner edge (outerRadius of center)
             const hasMarriage = this._configuration.showParentMarriageDates;
@@ -352,8 +364,11 @@ export default class Chart {
                 ? geometry.outerRadius(0)
                 : geometry.innerRadius(-1);
 
-            // Extend through partner + children rings
-            const outerR = geometry.outerRadius(-2);
+            // Extend to children ring only if at least one adjacent partner has children,
+            // otherwise stop at the partner ring outer edge
+            const outerR = (currentHasChildren || nextHasChildren)
+                ? geometry.outerRadius(-2)
+                : geometry.outerRadius(-1);
 
             separatorGroup
                 .append("line")
@@ -392,7 +407,7 @@ export default class Chart {
             .enter()
             .append("g")
             .attr("class", "marriage")
-            .attr("id", (datum) => "marriage-" + datum.id);
+            .attr("id", (datum) => `marriage-${datum.id}`);
 
         const svg = this._svg;
         const configuration = this._configuration;
@@ -441,7 +456,7 @@ export default class Chart {
         marriageJoin.each((datum, i, nodes) => {
             const marriage = d3.select(nodes[i]);
 
-            marriage.selectAll("g.arc, g.name")
+            marriage.selectAll("g.content")
                 .classed("old", true);
 
             marriage.classed("update", false)
@@ -453,14 +468,14 @@ export default class Chart {
         // Exiting: mark for removal
         marriageJoin.exit()
             .classed("remove", true)
-            .selectAll("g.arc, g.name")
+            .selectAll("g.content")
             .classed("old", true);
 
         // Entering: create new elements
         marriageJoin.enter()
             .append("g")
             .attr("class", "marriage descendant")
-            .attr("id", (datum) => "marriage-" + datum.id)
+            .attr("id", (datum) => `marriage-${datum.id}`)
             .each((datum, i, nodes) => {
                 const marriage = d3.select(nodes[i]);
                 new Marriage(svg, configuration, geometry, marriage, datum);
@@ -496,7 +511,7 @@ export default class Chart {
             .select("g.marriageGroup")
             .selectAll("g.marriage")
             .each(function (datum) {
-                if (!datum || !datum.children) {
+                if (!datum?.children) {
                     return;
                 }
 
@@ -515,7 +530,7 @@ export default class Chart {
      *
      * @private
      */
-    personClick(event, datum) {
+    personClick(_event, datum) {
         // Empty partner nodes have no updateUrl -- ignore clicks on them
         if (datum.data.data.updateUrl === "") {
             return;

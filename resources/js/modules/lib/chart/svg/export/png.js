@@ -5,7 +5,7 @@
  * LICENSE file distributed with this source code.
  */
 
-import Export from "../export";
+import Export from "../export.js";
 
 /**
  * Exports the fan chart as a PNG image. Clones the SVG, inlines all external
@@ -172,12 +172,12 @@ export default class PngExport extends Export {
                 this.copyStylesInline(svg.node(), newSvg);
 
                 const viewBox = this.calculateViewBox(svg.node());
-                const width = Math.max(paperSize["A3"][0], viewBox[2]);
-                const height = Math.max(paperSize["A3"][1], viewBox[3]);
+                const width = Math.max(paperSize.A3[0], viewBox[2]);
+                const height = Math.max(paperSize.A3[1], viewBox[3]);
 
-                newSvg.setAttribute("width", "" + width);
-                newSvg.setAttribute("height", "" + height);
-                newSvg.setAttribute("viewBox", "" + viewBox);
+                newSvg.setAttribute("width", `${width}`);
+                newSvg.setAttribute("height", `${height}`);
+                newSvg.setAttribute("viewBox", `${viewBox}`);
 
                 return this.convertToDataUrl(newSvg, width, height);
             })

@@ -206,12 +206,12 @@ msgid "Reload chart for that person"
 msgstr "טעינת התרשים מחדש עבור אותו אדם"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Birth and death date precision"
-msgstr "דיוק תאריכי לידה ופטירה"
+msgid "Date precision"
+msgstr "דיוק תאריכים"
 
 #: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full birth and death dates for early generations. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "הצג תאריכי לידה ופטירה מלאים עבור דורות ראשונים. תאריכי נישואין מציגים שנה בלבד מדור 7 ומוסתרים מדור 9. צאצאים עם קשתות צרות משתמשים אוטומטית בפורמט שנה בלבד מרוכז."
+msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
+msgstr "הצג תאריכים מלאים (לידה, נישואין, פטירה) לדורות הקרובים. דורות מאוחרים מציגים שנה בלבד. תאריכי נישואין מוסתרים מדור 9. צאצאים עם קשתות צרות משתמשים אוטומטית בפורמט שנה בלבד."
 
 #: src/Configuration.php:191
 msgid "Years only"

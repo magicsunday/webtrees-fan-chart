@@ -5,7 +5,7 @@
  * LICENSE file distributed with this source code.
  */
 
-import Export from "../export";
+import Export from "../export.js";
 
 /**
  * Exports the fan chart as a standalone SVG file. Deep-clones the live SVG
@@ -304,7 +304,7 @@ export default class SvgExport extends Export {
             .then(objectUrl => this.cleanUp(objectUrl))
             .then(objectUrl => this.triggerDownload(objectUrl, fileName))
             .catch((error) => {
-                console.log("Failed to save chart as SVG image: " + error.message);
+                console.log(`Failed to save chart as SVG image: ${error.message}`);
                 console.log(error);
             });
     }

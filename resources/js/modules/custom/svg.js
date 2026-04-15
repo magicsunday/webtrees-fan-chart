@@ -5,11 +5,11 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../lib/d3";
-import Defs from "../lib/chart/svg/defs";
-import Zoom from "../lib/chart/svg/zoom";
-import Filter from "./svg/filter";
-import ExportFactory from "../lib/chart/svg/export-factory";
+import * as d3 from "../lib/d3.js";
+import Defs from "../lib/chart/svg/defs.js";
+import Zoom from "../lib/chart/svg/zoom.js";
+import Filter from "./svg/filter.js";
+import ExportFactory from "../lib/chart/svg/export-factory.js";
 
 /**
  * Creates and manages the root SVG element for the fan chart. Owns the

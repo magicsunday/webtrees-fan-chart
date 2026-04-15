@@ -5,8 +5,8 @@
  * LICENSE file distributed with this source code.
  */
 
-import PngExport from "./export/png";
-import SvgExport from "./export/svg";
+import PngExport from "./export/png.js";
+import SvgExport from "./export/svg.js";
 
 /**
  * Instantiates the correct export handler (PNG or SVG) for a given type string.

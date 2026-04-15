@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import {SEX_FEMALE, SEX_MALE} from "./hierarchy";
+import {SEX_FEMALE, SEX_MALE} from "./hierarchy.js";
 
 /**
  * Computes and registers SVG linearGradient definitions for each person arc.
@@ -73,15 +73,15 @@ export default class Gradient {
         // Add a new radial gradient
         const newGrad = this._svg.defs
             .append("svg:linearGradient")
-            .attr("id", "grad-" + datum.id);
+            .attr("id", `grad-${datum.id}`);
 
         // Define start and stop colors of gradient
         newGrad.append("svg:stop")
             .attr("offset", "0%")
-            .attr("stop-color", "rgb(" + datum.data.data.colors[0].join(",") + ")");
+            .attr("stop-color", `rgb(${datum.data.data.colors[0].join(",")})`);
 
         newGrad.append("svg:stop")
             .attr("offset", "100%")
-            .attr("stop-color", "rgb(" + datum.data.data.colors[1].join(",") + ")");
+            .attr("stop-color", `rgb(${datum.data.data.colors[1].join(",")})`);
     }
 }

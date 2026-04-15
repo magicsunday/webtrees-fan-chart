@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import Text from "./text";
+import Text from "./text.js";
 
 /**
  * Thin coordinator that creates the label <g> for a person arc, applies the
@@ -44,12 +44,7 @@ export default class LabelRenderer {
         const label = parent
             .append("g")
             .attr("class", "wt-chart-box-name name")
-            .style("font-size", this._geometry.getFontSize(datum) + "px");
-
-        // Hide immediately during updates to prevent visual flash
-        if (parent.classed("update")) {
-            label.style("opacity", 1e-6);
-        }
+            .style("font-size", `${this._geometry.getFontSize(datum)}px`);
 
         const text = new Text(this._svg, this._configuration, this._geometry);
         text.createLabels(label, datum);

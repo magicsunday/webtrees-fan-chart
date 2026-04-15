@@ -61,16 +61,28 @@ const createSvgStub = () => ({
 const createMarriageSelection = (classes = {}) => {
     const appendedGroups = [];
 
-    const createAppendable = () => {
+    const createAppendable = (trackInto) => {
         const el = {
             attr: jest.fn((name, value) => {
                 if (name === "class" && value) { el.className = value; }
                 return el;
             }),
             style: jest.fn().mockReturnThis(),
-            append: jest.fn(() => createAppendable()),
+            append: jest.fn((tag) => {
+                const child = createAppendable(trackInto);
+                child.tag = tag;
+
+                if (trackInto) {
+                    trackInto.push(child);
+                }
+
+                return child;
+            }),
             text: jest.fn().mockReturnThis(),
-            node: jest.fn(() => ({ getComputedTextLength: () => 0 })),
+            node: jest.fn(() => ({
+                getComputedTextLength: () => 0,
+                closest: () => ({ id: "marriage-0" }),
+            })),
             className: ""
         };
         return el;
@@ -79,7 +91,7 @@ const createMarriageSelection = (classes = {}) => {
     const selection = {
         classed: jest.fn((name) => Boolean(classes[name])),
         append: jest.fn((tag) => {
-            const group = createAppendable();
+            const group = createAppendable(appendedGroups);
             group.tag = tag;
             appendedGroups.push(group);
             return group;
@@ -162,7 +174,12 @@ describe("Marriage", () => {
 
         new Marriage(svg, config, new Geometry(config), selection, datum);
 
-        expect(appendedGroups).toHaveLength(0);
+        // Content wrapper is always created, but should contain no arc or label
+        const contentGroup = appendedGroups.find(g => g.className === "content");
+
+        expect(contentGroup).toBeDefined();
+        expect(appendedGroups.find(g => g.className === "arc")).toBeUndefined();
+        expect(appendedGroups.find(g => g.className === "name")).toBeUndefined();
     });
 
     it("calculates font size based on depth and scale", () => {

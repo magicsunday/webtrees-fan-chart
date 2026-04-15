@@ -373,19 +373,37 @@ class DateProcessor
      */
     private function getMarriageEventDate(Date $date): string
     {
+        return self::formatMarriageDate($date, $this->generation, $this->detailedDateGenerations);
+    }
+
+    /**
+     * Formats a marriage date for arc display based on generation depth and the
+     * configured detail threshold. Usable without a DateProcessor instance for
+     * descendant marriage dates that come from a specific family record.
+     *
+     * @param Date $date                    The marriage date to format
+     * @param int  $generation              1-based generation depth of the individual
+     * @param int  $detailedDateGenerations Generations at or below this depth show DD.MM.YYYY
+     *
+     * @return string
+     */
+    public static function formatMarriageDate(Date $date, int $generation, int $detailedDateGenerations): string
+    {
         // Marriage arcs sit one level deeper than the individual.
-        $effectiveDepth = $this->generation + 1;
+        $effectiveDepth = $generation + 1;
 
         // No space at all beyond generation 8
         if ($effectiveDepth > 8) {
             return '';
         }
 
+        $calendarDate = $date->minimumDate();
+
         // Compact date up to generation 6, year only beyond
-        if ($effectiveDepth <= min($this->detailedDateGenerations, 6)) {
-            return $this->formatCompactDate($date);
+        if ($effectiveDepth <= min($detailedDateGenerations, 6)) {
+            return $calendarDate->format('%d.%m.%Y');
         }
 
-        return (string) $this->getYear($date);
+        return (string) $calendarDate->year();
     }
 }

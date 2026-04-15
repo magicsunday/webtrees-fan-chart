@@ -27,8 +27,4 @@ export function appendArc(parent, arcGenerator, color) {
     if (color) {
         path.style("fill", color);
     }
-
-    if (parent.classed("new")) {
-        path.style("opacity", 1e-6);
-    }
 }

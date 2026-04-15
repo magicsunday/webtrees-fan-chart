@@ -5,11 +5,11 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../lib/d3";
-import Geometry from "./svg/geometry";
-import Person from "./svg/person";
-import Marriage from "./svg/marriage";
-import FamilyColor from "./svg/family-color";
+import * as d3 from "../lib/d3.js";
+import Geometry from "./svg/geometry.js";
+import Person from "./svg/person.js";
+import Marriage from "./svg/marriage.js";
+import FamilyColor from "./svg/family-color.js";
 
 /**
  * Handles the animated transition when the chart re-centers on a new individual.
@@ -183,13 +183,9 @@ export default class ChartUpdater {
 
             // Descendants are always treated as "new" because their
             // arc geometry changes on every re-center (unlike ancestors
-            // whose partition positions are stable). Mark old content
-            // for fade-out including the arc itself.
+            // whose partition positions are stable).
             // Empty partner arcs (unknown spouse) are kept, not removed.
             if (isDescendant) {
-                person.selectAll("g.arc, g.name, g.color, g.image, title")
-                    .classed("old", true);
-
                 const removeDescendant = empty && (datum.depth !== -1);
 
                 person.classed("remove", removeDescendant)
@@ -201,19 +197,17 @@ export default class ChartUpdater {
                     .classed("new", !empty && !person.classed("available"));
             }
 
-            if (!person.classed("new")) {
-                person.selectAll("g.name, g.color, g.image, title")
-                    .classed("old", true);
-            }
+            // Mark existing content wrapper as old for fade-out
+            person.selectAll("g.content")
+                .classed("old", true);
 
             new Person(svg, configuration, geometry, person, datum);
         });
 
-        // Mark unmatched old elements for removal and flag ALL their
-        // children (including arc) as "old" for fade-out
+        // Mark unmatched old elements for removal
         personJoin.exit()
             .classed("remove", true)
-            .selectAll("g.arc, g.name, g.color, g.image, title")
+            .selectAll("g.content")
             .classed("old", true);
 
         // Create new person elements via enter() -- descendants always,
@@ -227,7 +221,7 @@ export default class ChartUpdater {
             )
             .append("g")
             .attr("class", "person new")
-            .attr("id", (datum) => "person-" + datum.id)
+            .attr("id", (datum) => `person-${datum.id}`)
             .each((datum, i, nodes) => {
                 const person = d3.select(nodes[i]);
 
@@ -261,8 +255,7 @@ export default class ChartUpdater {
             .selectAll("g.marriage:not(.descendant)")
             .data(marriageNodes, (datum) => datum.id)
             .each((datum, i, nodes) => {
-                const hasChildren = datum.children
-                    && datum.children.some(child => child.data.data.xref !== "");
+                const hasChildren = datum.children?.some(child => child.data.data.xref !== "");
 
                 const empty = !hasChildren;
                 const marriage = d3.select(nodes[i]);
@@ -271,10 +264,9 @@ export default class ChartUpdater {
                     .classed("update", !empty && marriage.classed("available"))
                     .classed("new", !empty && !marriage.classed("available"));
 
-                if (!marriage.classed("new")) {
-                    marriage.selectAll("g.name")
-                        .classed("old", true);
-                }
+                // Mark existing content wrapper as old for fade-out
+                marriage.selectAll("g.content")
+                    .classed("old", true);
 
                 new Marriage(svg, configuration, geometry, marriage, datum);
             });
@@ -288,13 +280,8 @@ export default class ChartUpdater {
      */
     _hideIncomingElements() {
         this._svg
-            .selectAll("g.person:not(.remove)")
-            .selectAll("g.name:not(.old), g.color:not(.old), g.image:not(.old)")
-            .style("opacity", 1e-6);
-
-        this._svg
-            .selectAll("g.marriage:not(.remove)")
-            .selectAll("g.name:not(.old)")
+            .selectAll("g.person:not(.remove), g.marriage:not(.remove)")
+            .selectAll("g.content:not(.old)")
             .style("opacity", 1e-6);
 
         this._svg
@@ -328,16 +315,10 @@ export default class ChartUpdater {
         this.transitionUpdatedArcs(transition, "g.marriage", (datum) =>
             FamilyColor.getMarriageColor(datum));
 
-        // Fade out all old elements (including old descendant arcs)
+        // Fade out old content wrappers and separator lines
         this._svg
-            .selectAll("g.person.update, g.person.remove, g.person.new")
-            .selectAll("g.arc.old, g.name.old, g.color.old, g.image.old")
-            .transition(transition)
-            .style("opacity", 1e-6);
-
-        this._svg
-            .selectAll("g.marriage.update, g.marriage.remove, g.marriage.new")
-            .selectAll("g.arc.old, g.name.old")
+            .selectAll("g.person, g.marriage")
+            .selectAll("g.content.old")
             .transition(transition)
             .style("opacity", 1e-6);
 
@@ -346,16 +327,10 @@ export default class ChartUpdater {
             .transition(transition)
             .style("opacity", 1e-6);
 
-        // Fade in all new elements (including new descendants)
+        // Fade in new content wrappers and separator lines
         this._svg
-            .selectAll("g.person:not(.remove)")
-            .selectAll("g.name:not(.old), g.color:not(.old), g.image:not(.old)")
-            .transition(transition)
-            .style("opacity", 1);
-
-        this._svg
-            .selectAll("g.marriage:not(.remove)")
-            .selectAll("g.name:not(.old)")
+            .selectAll("g.person:not(.remove), g.marriage:not(.remove)")
+            .selectAll("g.content:not(.old)")
             .transition(transition)
             .style("opacity", 1);
 
@@ -382,46 +357,32 @@ export default class ChartUpdater {
         // Remove arc if segments should be hidden
         if (this._configuration.hideEmptySegments) {
             this._svg
-                .selectAll("g.person.remove")
-                .selectAll("g.arc")
-                .remove();
-
-            this._svg
-                .selectAll("g.marriage.remove")
-                .selectAll("g.arc")
+                .selectAll("g.person.remove, g.marriage.remove")
+                .selectAll("g.content g.arc")
                 .remove();
         }
 
         // Remove styles so CSS classes may work correct, Uses a small timer as animation seems not
         // to be done already if the point is reached
         d3.timeout(() => {
-            this._svg.selectAll("g.person g.arc path").attr("style", null);
-            this._svg.selectAll("g.marriage g.arc path").attr("style", null);
+            this._svg.selectAll("g.person g.arc path, g.marriage g.arc path").attr("style", null);
 
             this.restoreFamilyColors("g.person", (datum) =>
                 datum?.data?.data?.familyColor || null);
             this.restoreFamilyColors("g.marriage", (datum) =>
                 FamilyColor.getMarriageColor(datum));
 
-            this._svg.selectAll("g.person g.name, g.person g.color, g.person g.image").style("opacity", null);
-            this._svg.selectAll("g.marriage g.name").style("opacity", null);
+            this._svg.selectAll("g.person g.content, g.marriage g.content").style("opacity", null);
 
         }, 10);
 
+        // Remove old content wrappers and clear lifecycle classes
         this._svg
-            .selectAll("g.person.new, g.person.update, g.person.remove")
+            .selectAll("g.person.new, g.person.update, g.person.remove, g.marriage.new, g.marriage.update, g.marriage.remove")
             .classed("new", false)
             .classed("update", false)
             .classed("remove", false)
-            .selectAll("g.arc.old, g.name.old, g.color.old, g.image.old, title.old")
-            .remove();
-
-        this._svg
-            .selectAll("g.marriage.new, g.marriage.update, g.marriage.remove")
-            .classed("new", false)
-            .classed("update", false)
-            .classed("remove", false)
-            .selectAll("g.arc.old, g.name.old")
+            .selectAll("g.content.old")
             .remove();
 
         this._svg
@@ -448,7 +409,7 @@ export default class ChartUpdater {
         this._svg.defs.get()
             .selectAll("path[id^='path-person-'], path[id^='path-marriage-']")
             .each(function () {
-                if (!document.querySelector("textPath[href='#" + this.id + "']")) {
+                if (!document.querySelector(`textPath[href='#${this.id}']`)) {
                     this.remove();
                 }
             });
@@ -476,16 +437,13 @@ export default class ChartUpdater {
                 }
             });
 
-        // Remove completely empty person shells (no arc, no name).
+        // Remove completely empty person shells (no content remaining).
         // These accumulate from exit elements whose content was removed.
         this._svg
             .select("g.personGroup")
             .selectAll("g.person")
             .filter(function () {
-                const el = d3.select(this);
-
-                return el.select("g.arc").empty()
-                    && el.select("g.name").empty();
+                return d3.select(this).select("g.content").empty();
             })
             .remove();
 

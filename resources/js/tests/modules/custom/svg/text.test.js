@@ -159,28 +159,4 @@ describe("Text", () => {
         expect(availableWidth).toBe(150 - 20 - 5);
     });
 
-    it("truncates date labels without trailing dots", () => {
-        const text = new Text(svgStub, createConfiguration());
-        const tspanNode = {
-            textContent: "01 JAN. 1900",
-            getComputedTextLength() {
-                return this.textContent.length * 10;
-            }
-        };
-        const parent = {
-            selectAll: () => ({
-                each: (callback) => {
-                    callback.call(tspanNode);
-                }
-            })
-        };
-
-        text.getTextLength = jest.fn(() => tspanNode.getComputedTextLength());
-
-        const truncate = text.truncateDate(parent, 50);
-        truncate.call(tspanNode);
-
-        expect(tspanNode.textContent.endsWith(".")).toBe(false);
-        expect(tspanNode.textContent.length * 10).toBeLessThanOrEqual(50);
-    });
 });

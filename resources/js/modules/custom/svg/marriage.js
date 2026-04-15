@@ -5,13 +5,13 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../../lib/d3";
-import {appendArc} from "./arc";
-import FamilyColor from "./family-color";
-import {SYMBOL_MARRIAGE} from "../hierarchy";
-
-/** Total horizontal padding (both sides) reserved around the marriage date text in px. */
-const LABEL_ARC_PADDING = 24;
+import * as d3 from "../../lib/d3.js";
+import {appendArc} from "./arc.js";
+import { createMarriageArcGenerator } from "./arc-factory.js";
+import FamilyColor from "./family-color.js";
+import {SYMBOL_MARRIAGE} from "../hierarchy.js";
+import { classifyElement } from "./lifecycle.js";
+import { truncateToFit } from "./text-truncation.js";
 
 /**
  * Renders the thin arc that sits in the radial gap between a parent generation
@@ -59,23 +59,28 @@ export default class Marriage {
         }
 
         const isDescendant = datum.depth < 0;
-        const hasChildren = datum.children
-            && datum.children.some(child => child.data.data.xref !== "");
+        const hasChildren = datum.children?.some(child => child.data.data.xref !== "");
 
-        const isNew = marriage.classed("new");
-        const isUpdate = marriage.classed("update");
-        const isRemove = marriage.classed("remove");
+        const { isNew, isUpdate, isRemove } = classifyElement(marriage);
+
+        // All visual content goes into a <g class="content"> wrapper so the
+        // update lifecycle can fade old/new content as a single unit.
+        const content = marriage.append("g").attr("class", "content");
 
         if (isNew && this._configuration.hideEmptySegments) {
-            this.addArc(marriage, datum);
-        } else if (!isNew && !isUpdate && !isRemove
+            this.addArc(content, datum);
+        } else if (isUpdate) {
+            // Arc geometry changes on re-center (partition positions shift).
+            // The old content is marked .old, so addArc() will rebuild it.
+            this.addArc(content, datum);
+        } else if (!isNew && !isRemove
             && (hasChildren || !this._configuration.hideEmptySegments || isDescendant)
         ) {
-            this.addArc(marriage, datum);
+            this.addArc(content, datum);
         }
 
         if (!isRemove) {
-            this.addLabel(marriage, datum);
+            this.addLabel(content, datum);
         }
     }
 
@@ -122,11 +127,6 @@ export default class Marriage {
      * @private
      */
     addArc(marriage, datum) {
-        // Reuse existing arc if present (during updates), but not old arcs
-        // that are fading out (descendant arcs get rebuilt on re-center)
-        if (!marriage.select("g.arc:not(.old)").empty()) {
-            return;
-        }
 
         const { innerR, outerR, startAngle, endAngle } = this._resolveMarriageGeometry(datum);
 
@@ -134,14 +134,10 @@ export default class Marriage {
             return;
         }
 
-        const arcGenerator = d3.arc()
-            .startAngle(startAngle)
-            .endAngle(endAngle)
-            .innerRadius(innerR)
-            .outerRadius(outerR)
-            .padAngle(0)
-            .padRadius(0)
-            .cornerRadius(this._configuration.cornerRadius);
+        const arcGenerator = createMarriageArcGenerator(
+            this._configuration,
+            { startAngle, endAngle, innerR, outerR },
+        );
 
         const color = (datum.depth < 0)
             ? (datum.data.data.familyColor || null)
@@ -191,14 +187,17 @@ export default class Marriage {
             .innerRadius(midRadius)
             .outerRadius(midRadius);
 
-        const marriageId = marriage.attr("id");
-        let pathId = "path-" + marriageId;
+        // Get the marriage ID from the outer <g class="marriage"> element
+        // (the parent parameter is the content wrapper which has no ID)
+        const marriageNode = marriage.node().closest("g.marriage") || marriage.node();
+        const marriageId = marriageNode.id || marriageNode.getAttribute?.("id") || "marriage-0";
+        let pathId = `path-${marriageId}`;
 
         // During updates, old text still references the old path definition.
         // Create a new path with a unique ID so old and new text render at
         // their respective positions during the cross-fade.
-        if (this._svg.defs.select("path#" + pathId).node()) {
-            pathId += "-" + marriage.selectAll("g.name").size();
+        if (this._svg.defs.select(`path#${pathId}`).node()) {
+            pathId += `-${Date.now()}`;
         }
 
         this._svg.defs
@@ -209,12 +208,7 @@ export default class Marriage {
         const labelGroup = marriage
             .append("g")
             .attr("class", "name")
-            .style("font-size", this.getFontSize(datum) + "px");
-
-        // Hide immediately during updates to prevent visual flash
-        if (marriage.classed("update")) {
-            labelGroup.style("opacity", 1e-6);
-        }
+            .style("font-size", `${this.getFontSize(datum)}px`);
 
         const text = labelGroup
             .append("text")
@@ -223,36 +217,22 @@ export default class Marriage {
 
         const textPath = text
             .append("textPath")
-            .attr("href", "#" + pathId)
+            .attr("href", `#${pathId}`)
             .attr("startOffset", "25%")
             .attr("class", "date");
 
         const marriageText = (dateText === "?")
             ? SYMBOL_MARRIAGE
-            : SYMBOL_MARRIAGE + " " + dateText;
+            : `${SYMBOL_MARRIAGE} ${dateText}`;
 
         const tspan = textPath
             .append("tspan")
             .text(marriageText);
 
         // Truncate if text overflows the arc (with padding on both sides)
-        const arcLength = ((endAngle - startAngle) * midRadius) - LABEL_ARC_PADDING;
+        const arcLength = ((endAngle - startAngle) * midRadius) - (this._configuration.textPadding * 2);
 
-        if (tspan.node().getComputedTextLength() > arcLength) {
-            let label = tspan.text();
-
-            while ((tspan.node().getComputedTextLength() > arcLength) && (label.length > 1)) {
-                label = label.slice(0, -1).trim();
-                tspan.text(label);
-            }
-
-            // Remove trailing dot if present
-            if (label[label.length - 1] === ".") {
-                label = label.slice(0, -1).trim();
-            }
-
-            tspan.text(label + "\u2026");
-        }
+        truncateToFit(tspan, arcLength);
     }
 
     /**

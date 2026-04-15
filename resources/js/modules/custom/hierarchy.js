@@ -5,8 +5,8 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../lib/d3";
-import {MATH_DEG2RAD} from "./svg/geometry";
+import * as d3 from "../lib/d3.js";
+import {MATH_DEG2RAD} from "./svg/geometry.js";
 
 export const SEX_MALE = "M";
 export const SEX_FEMALE = "F";
@@ -191,11 +191,15 @@ export default class Hierarchy {
         const totalAngleDeg = (endChildPi - startChildPi) / MATH_DEG2RAD;
         const rootXref = datum.data.xref || "";
 
-        // Build family blocks with weights for angle distribution
+        // Build family blocks with weights for angle distribution.
+        // Reverse the block and children order so the oldest child appears
+        // on the left and the youngest on the right (the descendant sector
+        // runs right-to-left in radians, so reversing the data array
+        // produces the natural left-to-right chronological reading order).
         const familyBlocks = [];
 
-        for (const partner of partners) {
-            const children = partner.children || [];
+        for (const partner of [...partners].reverse()) {
+            const children = (partner.children || []).slice().reverse();
 
             familyBlocks.push({
                 type: "family",
@@ -209,7 +213,7 @@ export default class Hierarchy {
             familyBlocks.push({
                 type: "unassigned",
                 partner: null,
-                children: unassignedChildren,
+                children: [...unassignedChildren].reverse(),
                 weight: unassignedChildren.length,
             });
         }
@@ -246,6 +250,21 @@ export default class Hierarchy {
 
         this._configuration.smallestChildFraction = smallestChildFraction;
 
+        this._createDescendantNodes(familyBlocks, rootXref, useEqualDistribution, totalWeight);
+    }
+
+    /**
+     * Creates descendant D3 datum nodes for each family block (partner arcs
+     * at depth -1, child arcs at depth -2) and pushes them into this._nodes.
+     *
+     * @param {Object[]} familyBlocks          Array of { type, partner, children, weight }
+     * @param {string}   rootXref              The xref of the root individual
+     * @param {boolean}  useEqualDistribution  Whether to distribute angles equally
+     * @param {number}   totalWeight           Sum of all block weights
+     *
+     * @private
+     */
+    _createDescendantNodes(familyBlocks, rootXref, useEqualDistribution, totalWeight) {
         let nextId = this._nodes.length;
         let currentFraction = 0;
 

@@ -173,9 +173,8 @@
  *  .remove     — element is leaving (empty ancestor slot or
  *                descendant that no longer applies)
  *
- *  .old        — sub-element (g.arc, g.name, g.color, g.image,
- *                title) that belongs to the outgoing frame and
- *                should be faded out then removed
+ *  .old        — content wrapper (g.content) that belongs to the
+ *                outgoing frame and should be faded out then removed
  *
  *  .empty      — marriage arc with no visible children
  *                (kept for visual consistency, styled dimly by CSS)
