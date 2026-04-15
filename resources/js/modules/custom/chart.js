@@ -342,9 +342,21 @@ export default class Chart {
             .filter((datum) => datum.depth === -1)
             .sort((left, right) => left.x0 - right.x0);
 
+        const childNodes = this._hierarchy.nodes
+            .filter((datum) => datum.depth === -2);
+
         for (let i = 0; i < (partnerNodes.length - 1); i++) {
             const current = partnerNodes[i];
+            const next = partnerNodes[i + 1];
             const angle = this._configuration.childScale(current.x1);
+
+            // Check whether the adjacent partners have children
+            const currentHasChildren = childNodes.some(
+                (c) => c.syntheticParentId === current.id,
+            );
+            const nextHasChildren = childNodes.some(
+                (c) => c.syntheticParentId === next.id,
+            );
 
             // Start at the marriage arc inner edge (outerRadius of center)
             const hasMarriage = this._configuration.showParentMarriageDates;
@@ -352,8 +364,11 @@ export default class Chart {
                 ? geometry.outerRadius(0)
                 : geometry.innerRadius(-1);
 
-            // Extend through partner + children rings
-            const outerR = geometry.outerRadius(-2);
+            // Extend to children ring only if at least one adjacent partner has children,
+            // otherwise stop at the partner ring outer edge
+            const outerR = (currentHasChildren || nextHasChildren)
+                ? geometry.outerRadius(-2)
+                : geometry.outerRadius(-1);
 
             separatorGroup
                 .append("line")
