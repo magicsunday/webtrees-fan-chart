@@ -9,6 +9,41 @@ import * as d3 from "../../lib/d3.js";
 import {SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_ELLIPSIS, SYMBOL_MARRIAGE} from "../hierarchy.js";
 
 /**
+ * Escapes HTML entities to prevent injection in tooltip content.
+ *
+ * @param {string} value The value to escape
+ *
+ * @return {string}
+ */
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+/**
+ * Builds the HTML rows for a single fact (date + optional place).
+ *
+ * @param {string} symbol Unicode symbol for the fact type
+ * @param {string} date   Date string (may be empty)
+ * @param {string} place  Place string (may be empty)
+ *
+ * @return {string}
+ */
+function buildFactRows(symbol, date, place) {
+    let rows = `<tr class="date"><th>${symbol}</th><td>${date ? escapeHtml(date) : SYMBOL_ELLIPSIS}</td></tr>`;
+
+    if (place) {
+        rows += `<tr class="place"><th></th><td>${escapeHtml(place)}</td></tr>`;
+    }
+
+    return rows;
+}
+
+/**
  * Binds hover and context-menu events to a person arc element and manages the
  * floating tooltip div. The tooltip is shown on mouseenter and positioned on
  * mousemove. A right-click toggles it "pinned" so it stays visible after the
@@ -89,11 +124,15 @@ export default class TooltipRenderer {
      */
     _buildTooltipImage(datum) {
         if (datum.data.data.thumbnail) {
-            return `<div class="image"><img src="${datum.data.data.thumbnail}" alt="" /></div>`;
+            const source = escapeHtml(datum.data.data.thumbnail);
+
+            return `<div class="image"><img src="${source}" alt="" /></div>`;
         }
 
         if (this._configuration.showSilhouettes) {
-            return `<div class="image"><i class="icon-silhouette icon-silhouette-${datum.data.data.sex.toLowerCase()} wt-icon-flip-rtl" ></i></div>`;
+            const sexClass = escapeHtml(datum.data.data.sex.toLowerCase());
+
+            return `<div class="image"><i class="icon-silhouette icon-silhouette-${sexClass} wt-icon-flip-rtl" ></i></div>`;
         }
 
         return "";
@@ -127,27 +166,15 @@ export default class TooltipRenderer {
         let rows = "";
 
         if (hasBirth) {
-            rows += `<tr class="date"><th>${SYMBOL_BIRTH}</th><td>${birthDate || SYMBOL_ELLIPSIS}</td></tr>`;
-
-            if (birthPlace) {
-                rows += `<tr class="place"><th></th><td>${birthPlace}</td></tr>`;
-            }
+            rows += buildFactRows(SYMBOL_BIRTH, birthDate, birthPlace);
         }
 
         if (hasMarriage) {
-            rows += `<tr class="date"><th>${SYMBOL_MARRIAGE}</th><td>${marriageDate || SYMBOL_ELLIPSIS}</td></tr>`;
-
-            if (marriagePlace) {
-                rows += `<tr class="place"><th></th><td>${marriagePlace}</td></tr>`;
-            }
+            rows += buildFactRows(SYMBOL_MARRIAGE, marriageDate, marriagePlace);
         }
 
         if (hasDeath) {
-            rows += `<tr class="date"><th>${SYMBOL_DEATH}</th><td>${deathDate || SYMBOL_ELLIPSIS}</td></tr>`;
-
-            if (deathPlace) {
-                rows += `<tr class="place"><th></th><td>${deathPlace}</td></tr>`;
-            }
+            rows += buildFactRows(SYMBOL_DEATH, deathDate, deathPlace);
         }
 
         return `<table>${rows}</table>`;
@@ -171,10 +198,11 @@ export default class TooltipRenderer {
 
         const image = this._buildTooltipImage(datum);
         const data = this._buildTooltipData(datum);
+        const safeName = escapeHtml(datum.data.data.name);
 
         this._svg.div
             .html(
-                `${image}<div class="text"><div class="name">${datum.data.data.name}</div>${data}</div>`,
+                `${image}<div class="text"><div class="name">${safeName}</div>${data}</div>`,
             )
             .style("left", `${event.pageX}px`)
             .style("top", `${event.pageY - 30}px`);

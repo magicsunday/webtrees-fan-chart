@@ -46,4 +46,35 @@ describe("Storage", () => {
         stored = JSON.parse(localStorage.getItem("options"));
         expect(stored.notify).toBe(true);
     });
+
+    test("register restores radio selection by value", () => {
+        localStorage.setItem("displayMode", JSON.stringify({ displayMode: "names" }));
+
+        const radioBoth = document.createElement("input");
+        radioBoth.id = "displayMode-both";
+        radioBoth.name = "displayMode";
+        radioBoth.type = "radio";
+        radioBoth.value = "both";
+
+        const radioNames = document.createElement("input");
+        radioNames.id = "displayMode-names";
+        radioNames.name = "displayMode";
+        radioNames.type = "radio";
+        radioNames.value = "names";
+
+        document.body.appendChild(radioBoth);
+        document.body.appendChild(radioNames);
+
+        const storage = new Storage("displayMode");
+        storage.register("displayMode");
+
+        expect(radioNames.checked).toBe(true);
+        expect(radioBoth.checked).toBe(false);
+
+        radioBoth.checked = true;
+        radioBoth.dispatchEvent(new Event("input", { bubbles: true }));
+
+        const stored = JSON.parse(localStorage.getItem("displayMode"));
+        expect(stored.displayMode).toBe("both");
+    });
 });

@@ -48,11 +48,7 @@ export class Storage {
         if (storedValue === null) {
             this.onInput(input);
         } else {
-            if (input.type === "radio" || input.type === "checkbox") {
-                input.checked = storedValue;
-            } else {
-                input.value = storedValue;
-            }
+            this.restoreInputValue(input, storedValue, name);
         }
 
         // Add event listener to all inputs by their IDs
@@ -95,6 +91,39 @@ export class Storage {
         }
 
         return null;
+    }
+
+    /**
+     * Restores the stored value on the provided input, handling radio/checkbox
+     * differences. Radios are matched by name/value; checkboxes use the stored
+     * boolean state. All other inputs fall back to string assignment.
+     *
+     * @param {HTMLInputElement} input        The input element to restore
+     * @param {string|boolean}   storedValue  The persisted value
+     * @param {string}           idPrefix     The id prefix used for registration
+     *
+     * @private
+     */
+    restoreInputValue(input, storedValue, idPrefix) {
+        if (input.type === "radio") {
+            const radioToCheck = document.querySelector(
+                `input[type="radio"][name="${input.name}"][value="${storedValue}"]`,
+            ) || document.getElementById(`${idPrefix}-${storedValue}`);
+
+            if (radioToCheck) {
+                radioToCheck.checked = true;
+            }
+
+            return;
+        }
+
+        if (input.type === "checkbox") {
+            input.checked = storedValue;
+
+            return;
+        }
+
+        input.value = storedValue;
     }
 
     /**

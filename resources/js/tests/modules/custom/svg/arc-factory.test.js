@@ -30,6 +30,12 @@ const mockConfig = {
     cornerRadius: 5,
 };
 
+beforeEach(() => {
+    for (const method of Object.values(arcInstance)) {
+        method.mockClear();
+    }
+});
+
 describe("createPersonArcGenerator", () => {
     it("configures d3.arc with geometry-derived values", () => {
         const datum = { depth: 2, x0: 0.1, x1: 0.3 };
@@ -39,13 +45,10 @@ describe("createPersonArcGenerator", () => {
         const expectedInnerRadius = mockGeometry.innerRadius(2);
         const expectedOuterRadius = mockGeometry.outerRadius(2);
 
-        arcInstance.startAngle.mockClear();
-        arcInstance.endAngle.mockClear();
-        arcInstance.innerRadius.mockClear();
-        arcInstance.outerRadius.mockClear();
-        arcInstance.padAngle.mockClear();
-        arcInstance.padRadius.mockClear();
-        arcInstance.cornerRadius.mockClear();
+        // Clear again after computing expected values above
+        for (const method of Object.values(arcInstance)) {
+            method.mockClear();
+        }
 
         createPersonArcGenerator(mockGeometry, mockConfig, datum, 0.03);
 
@@ -61,14 +64,6 @@ describe("createPersonArcGenerator", () => {
 
 describe("createMarriageArcGenerator", () => {
     it("configures d3.arc with explicit radii and angles", () => {
-        arcInstance.startAngle.mockClear();
-        arcInstance.endAngle.mockClear();
-        arcInstance.innerRadius.mockClear();
-        arcInstance.outerRadius.mockClear();
-        arcInstance.padAngle.mockClear();
-        arcInstance.padRadius.mockClear();
-        arcInstance.cornerRadius.mockClear();
-
         createMarriageArcGenerator(mockConfig, {
             startAngle: 0.5,
             endAngle: 1.2,

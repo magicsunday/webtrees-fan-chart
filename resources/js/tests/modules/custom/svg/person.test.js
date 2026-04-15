@@ -220,6 +220,36 @@ describe("Person tooltips", () => {
 
         expect(htmlCalls[0]).toContain("icon-silhouette-f");
     });
+
+    it("escapes tooltip content", () => {
+        const { personSelection, handlers } = createPersonSelection();
+        const { div, htmlCalls } = createDivSelection();
+        const datum = {
+            ...baseDatum,
+            data: {
+                data: {
+                    ...baseDatum.data.data,
+                    name: "<script>alert(1)</script>",
+                    birthPlace: "<b>unsafe</b>",
+                    thumbnail: "javascript:alert(1)"
+                }
+            }
+        };
+
+        new Person(
+            { div },
+            { hideEmptySegments: false, showImages: true, showSilhouettes: false },
+            {},
+            personSelection,
+            datum
+        );
+
+        handlers.mouseenter({ pageX: 120, pageY: 80 });
+
+        expect(htmlCalls[0]).toContain("&lt;script&gt;alert(1)&lt;/script&gt;");
+        expect(htmlCalls[0]).toContain("&lt;b&gt;unsafe&lt;/b&gt;");
+        expect(htmlCalls[0]).not.toContain("<script>");
+    });
 });
 
 describe("Person interactions", () => {
