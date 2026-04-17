@@ -18,11 +18,11 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
-use MagicSunday\Webtrees\FanChart\Model\Symbols;
-use MagicSunday\Webtrees\FanChart\Processor\DateProcessor;
-use MagicSunday\Webtrees\FanChart\Processor\ImageProcessor;
-use MagicSunday\Webtrees\FanChart\Processor\NameProcessor;
-use MagicSunday\Webtrees\FanChart\Processor\PlaceProcessor;
+use MagicSunday\Webtrees\ModuleBase\Model\Symbols;
+use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
+use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
+use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
+use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
 
 /**
  * Assembles the nested Node tree passed to the JavaScript chart renderer.
@@ -323,12 +323,12 @@ class DataFacade
             ->setIsAltRtl($this->isRtl($alternativeName))
             ->setThumbnail($imageProcessor->getHighlightImageUrl(100, 100))
             ->setSex($individual->sex())
-            ->setBirth($dateProcessor->getBirthDate())
-            ->setDeath($dateProcessor->getDeathDate())
-            ->setMarriageDate($dateProcessor->getMarriageDate())
+            ->setBirth($dateProcessor->getFormattedBirthDate())
+            ->setDeath($dateProcessor->getFormattedDeathDate())
+            ->setMarriageDate($dateProcessor->getFormattedMarriageDate())
             ->setMarriageDateOfParents(
                 $this->appendPlaceToLine(
-                    $dateProcessor->getMarriageDateOfParents(),
+                    $dateProcessor->getFormattedMarriageDateOfParents(),
                     $this->getParentsMarriagePlaceShort($individual, $placeProcessor),
                     $generation
                 )
