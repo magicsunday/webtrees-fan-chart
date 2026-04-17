@@ -20,7 +20,7 @@ VERSION := $(filter-out release release-% dist,$(MAKECMDGOALS))
 
 REQUIRED_TOOLS := git node npm jq zip gh sed
 
-.PHONY: release release-check release-prepare release-publish release-bump dist clean-js release-clean
+.PHONY: release release-check release-prepare release-publish release-bump dist clean-js release-clean prepare-git-deps
 
 ## Verify all required tools are available
 release-check:
@@ -61,6 +61,16 @@ clean-js:
 	@rm -f resources/js/fan-chart-*.js resources/js/fan-chart-*.min.js
 	@echo -e "${FGREEN} ✔${FRESET} Old JS bundles removed"
 
+## Build dist/ for Git-URL dependencies that ship sources only
+## (their prepare scripts were skipped by npm ci --ignore-scripts).
+prepare-git-deps:
+	@for pkg in node_modules/@magicsunday/webtrees-chart-lib; do \
+		if [ -d "$$pkg" ] && [ ! -d "$$pkg/dist" ]; then \
+			echo "  Building $$pkg/dist..."; \
+			(cd "$$pkg" && npm install --no-package-lock --ignore-scripts --silent && npm run build --silent); \
+		fi; \
+	done
+
 ## Build distribution zip from git archive (respects .gitattributes export-ignore)
 dist:
 	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip
@@ -80,6 +90,7 @@ release-prepare: release-check
 	@echo -e "${FYELLOW}[3/5]${FRESET} Building JavaScript bundles..."
 	@rm -rf node_modules
 	@npm ci --ignore-scripts
+	@$(MAKE) prepare-git-deps
 	@npm run prepare
 	@echo -e "${FYELLOW}[4/5]${FRESET} Committing release and building archive..."
 	@git add -A
@@ -128,6 +139,7 @@ release-bump:
 	@$(MAKE) clean-js
 	@rm -rf node_modules
 	@npm ci --ignore-scripts
+	@$(MAKE) prepare-git-deps
 	@npm run prepare
 	@git add -A
 	@git commit -m "Bump version to $(NEXT)-dev"
