@@ -47,7 +47,8 @@ Module.php (entry point, registers routes)
 ### JS (`resources/js/modules/`)
 - **`index.js`** — Exports `FanChart` class (ES module entry point for Rollup).
 - **`custom/`** — Fan-chart-specific: `chart.js` (D3 partition layout, click handling), `update.js` (AJAX update, transitions), `hierarchy.js` (D3 hierarchy, symbol constants), `svg/` (person/text/marriage/tooltip rendering), `svg/arc.js` (shared arc DOM helper).
-- **`lib/`** — Reusable base classes shared with pedigree/descendants chart modules: export, overlay, storage, zoom.
+- **`d3.js`** — D3 facade re-exporting only the d3 sub-packages used by the chart (selection, transition, zoom, hierarchy, scale, etc.).
+- **Reusable base classes** (export, overlay, storage, zoom, configuration helpers, SVG/data utilities) live in the external [`@magicsunday/webtrees-chart-lib`](https://github.com/magicsunday/webtrees-chart-lib) package, shared with the pedigree- and descendants-chart modules. Consumed via Git URL pinned in `package.json` (`github:magicsunday/webtrees-chart-lib#vX.Y.Z`); chart-lib's `prepare` script builds its `dist/` during install, so `npm ci --ignore-scripts` will break the build.
 
 ### Views (`resources/views/`)
 - **`fan-chart/page.phtml`** — Main page with form. `getUrl()` builds AJAX URL from localStorage values.
