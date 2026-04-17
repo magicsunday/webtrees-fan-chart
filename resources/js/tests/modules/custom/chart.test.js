@@ -147,9 +147,11 @@ await jest.unstable_mockModule("resources/js/modules/custom/gradient", () => ({
     }))
 }));
 
+const personConstructor = jest.fn(() => ({}));
+
 await jest.unstable_mockModule("resources/js/modules/custom/svg/person", () => ({
     __esModule: true,
-    default: jest.fn(() => ({}))
+    default: personConstructor
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/chart-updater", () => ({
@@ -276,6 +278,7 @@ describe("Chart", () => {
         window.getComputedStyle = jest.fn(() => ({ fontSize: "16px" }));
         mockSvgInstances.length = 0;
         setSvgBoundingBox({ x: 0, y: 0, width: 400, height: 300 });
+        personConstructor.mockClear();
     });
 
     test("convertRemToPixels uses the document root font size", () => {
@@ -358,5 +361,22 @@ describe("Chart", () => {
 
         document.fullscreenElement = null;
         getComputedStyleSpy.mockRestore();
+    });
+
+    test("render applies family colors even when parent marriage dates are hidden", () => {
+        const data = createHierarchyDatum();
+        const chart = new Chart(createParentSelection(), createConfiguration({
+            showFamilyColors: true,
+            showParentMarriageDates: false,
+        }));
+
+        chart.data = data;
+        chart.render();
+
+        const coloredDatums = chart._hierarchy.nodes
+            .filter((datum) => datum?.data?.data?.xref !== "");
+
+        expect(coloredDatums).not.toHaveLength(0);
+        expect(coloredDatums.every((datum) => typeof datum.data.data.familyColor === "string")).toBe(true);
     });
 });

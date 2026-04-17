@@ -122,8 +122,9 @@ export default class Person {
 
     /**
      * Appends the thin color-indicator strip along the outer edge of the arc.
-     * When family colors fill the arc body the strip is light gray; otherwise
-     * it carries the sex-based CSS class (male / female / unknown).
+     * The strip always carries the sex-based CSS class (male / female / unknown)
+     * so the gender remains visible regardless of whether family colors fill
+     * the arc body.
      *
      * @param {Selection} person The <g class="person"> D3 selection
      * @param {Object}    datum  The D3 partition datum
@@ -143,23 +144,13 @@ export default class Person {
             .append("g")
             .attr("class", "color");
 
-        const path = color.append("path")
-            .attr("d", arcGenerator);
+        const sexClass = datum.data.data.sex === SEX_FEMALE
+            ? "female"
+            : (datum.data.data.sex === SEX_MALE ? "male" : "unknown");
 
-        if (this._configuration.showFamilyColors) {
-            // Light gray strip when family colors fill the arcs
-            path.style("fill", "rgb(215, 215, 215)");
-        } else {
-            // Sex-based color on the strip
-            if (!datum.depth) {
-                path.attr("fill", "rgb(225, 225, 225)");
-            }
-
-            path.attr(
-                "class",
-                datum.data.data.sex === SEX_FEMALE ? "female" : (datum.data.data.sex === SEX_MALE ? "male" : "unknown"),
-            );
-        }
+        color.append("path")
+            .attr("d", arcGenerator)
+            .attr("class", sexClass);
     }
 
     /**
