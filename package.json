@@ -48,7 +48,7 @@
     "rollup-plugin-license": "^3.0"
   },
   "dependencies": {
-    "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#v1.0.0",
+    "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#v1.0.1",
     "jscpd": "^4.0.9",
     "node": "^25.0"
   }
