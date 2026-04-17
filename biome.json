@@ -77,8 +77,13 @@
             "includes": ["resources/js/modules/lib/**/*.js"],
             "linter": {
                 "rules": {
+                    "style": {
+                        "noParameterAssign": "off"
+                    },
                     "suspicious": {
-                        "useIterableCallbackReturn": "off"
+                        "useIterableCallbackReturn": "off",
+                        "noShadowRestrictedNames": "off",
+                        "noAssignInExpressions": "off"
                     }
                 }
             }
