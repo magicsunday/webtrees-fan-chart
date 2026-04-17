@@ -40,9 +40,13 @@ Module.php (entry point, registers routes)
 - **Module.php** — Entry point, extends webtrees FanChartModule, registers chart route.
 - **Configuration.php** — Reads form parameters from request (POST/GET) with user preference fallback.
 - **Facade/DataFacade.php** — Builds hierarchical Node tree. `buildTimespan()` assembles date+place lines from structured event data via `buildEventLine()`. `getUpdateRoute()` generates AJAX URL for person-click navigation.
-- **Processor/** — Each processor extracts one aspect from a webtrees Individual (dates, places, names, images).
 - **Model/Node, NodeData** — Tree node with JSON serialization for D3.
-- **Model/Symbols** — Backed enum for genealogical symbols (Birth, Death). Marriage symbol is JS-only.
+- **Shared classes from [`magicsunday/webtrees-module-base`](https://github.com/magicsunday/webtrees-module-base)** (composer dependency `^1.1`):
+  - `Processor/DateProcessor` — generation-aware date formatting; DataFacade calls the `getFormatted*` methods (compact DD.MM.YYYY) rather than the locale-aware legacy methods.
+  - `Processor/NameProcessor`, `Processor/ImageProcessor`, `Processor/PlaceProcessor` — name/image/place extraction.
+  - `Model/Symbols` — backed enum for genealogical symbols (Birth ★, Death †, MARRIAGE_DATE_UNKNOWN sentinel).
+  - `Module/VersionInformation` — GitHub release-checking with file cache.
+  - For local edits to module-base while developing fan-chart, run `make link-base` (symlinks `.build/vendor/.../webtrees-module-base` → the sibling clone). Reverse with `make unlink-base` or any `composer install/update`.
 
 ### JS (`resources/js/modules/`)
 - **`index.js`** — Exports `FanChart` class (ES module entry point for Rollup).
