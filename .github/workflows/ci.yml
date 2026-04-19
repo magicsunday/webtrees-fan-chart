@@ -55,7 +55,7 @@ jobs:
                 name: Install dependencies
                 run: |
                     composer install --no-progress --no-interaction
-                    timeout 300 npm ci
+                    npm ci
 
             -   id: php-lint
                 name: PHP Lint

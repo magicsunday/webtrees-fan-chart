@@ -25,11 +25,6 @@ VENDOR_DIR       := .build/vendor
 MODULE_BASE_PKG  := magicsunday/webtrees-module-base
 MODULE_BASE_PATH := $(VENDOR_DIR)/$(MODULE_BASE_PKG)
 
-# Wall-clock timeout (seconds) for `npm ci`. Cold-cache + Git-URL fetch over a
-# slow NAS uplink can legitimately exceed the default; override at the command
-# line: `make release 3.1.0 NPM_CI_TIMEOUT=1800`.
-NPM_CI_TIMEOUT   ?= 900
-
 # Accept both 'make release 3.1.0' (goal form) and 'make release VERSION=3.1.0'.
 VERSION ?= $(filter-out release release-% dist,$(MAKECMDGOALS))
 
@@ -103,7 +98,7 @@ clean-js:
 build-js-fresh:
 	@$(MAKE) clean-js
 	@rm -rf node_modules
-	@timeout $(NPM_CI_TIMEOUT) npm ci
+	@npm ci
 	@npm run prepare
 
 ## Build distribution zip from git archive (respects .gitattributes export-ignore)
