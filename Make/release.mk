@@ -194,9 +194,10 @@ release-prepare: release-check
 	@$(call jq_edit,package.json,.version = $$v,--arg v "$(VERSION)",.version == $$v)
 	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0",.require["fisharebest/webtrees"] == $$v)
 	@echo -e "${FYELLOW}[2/5]${FRESET} Cleaning + rebuilding JavaScript bundles..."
+	@npm install --package-lock-only --no-audit --no-fund
 	@$(MAKE) build-js-fresh
 	@echo -e "${FYELLOW}[3/5]${FRESET} Committing release commit..."
-	@git add src/Module.php package.json composer.json resources/js/
+	@git add src/Module.php package.json composer.json package-lock.json resources/js/
 	@git commit -m "Release $(VERSION)"
 	@echo -e "${FYELLOW}[4/5]${FRESET} Building + smoke-testing distribution archive..."
 	@$(MAKE) dist
@@ -267,8 +268,9 @@ release-bump:
 	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/","CUSTOM_VERSION = '$(NEXT)-dev'")
 	@$(call jq_edit,package.json,.version = $$v,--arg v "$(NEXT)-dev",.version == $$v)
 	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0 || dev-main",.require["fisharebest/webtrees"] == $$v)
+	@npm install --package-lock-only --no-audit --no-fund
 	@$(MAKE) build-js-fresh
-	@git add src/Module.php package.json composer.json resources/js/
+	@git add src/Module.php package.json composer.json package-lock.json resources/js/
 	@git commit -m "Bump version to $(NEXT)-dev"
 	@git push origin main
 	@echo -e "${FGREEN} ✔${FRESET} Version bumped to $(NEXT)-dev"
