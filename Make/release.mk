@@ -18,7 +18,7 @@ MODULE_NAME := webtrees-fan-chart
 # Extract version from arguments: "make release 3.1.0"
 VERSION := $(filter-out release release-% dist,$(MAKECMDGOALS))
 
-REQUIRED_TOOLS := git node npm jq zip gh sed
+REQUIRED_TOOLS := git node npm composer jq zip gh sed
 
 .PHONY: release release-check release-prepare release-publish release-bump dist clean-js release-clean
 
@@ -62,9 +62,17 @@ clean-js:
 	@echo -e "${FGREEN} ✔${FRESET} Old JS bundles removed"
 
 ## Build distribution zip from git archive (respects .gitattributes export-ignore)
+## and bundle magicsunday/webtrees-module-base into the zip's vendor/ so ZIP
+## installs work without requiring the user to run composer themselves.
 dist:
 	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip
+	@composer install --no-dev --no-progress --quiet
 	@git archive --prefix=$(MODULE_NAME)/ HEAD --format=tar | tar -x
+	@if [ -d .build/vendor/magicsunday/webtrees-module-base ]; then \
+		mkdir -p $(MODULE_NAME)/vendor/magicsunday; \
+		cp -r .build/vendor/magicsunday/webtrees-module-base $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base; \
+		echo "  Bundled webtrees-module-base into vendor/"; \
+	fi
 	@cd $(MODULE_NAME) && zip --quiet --recurse-paths --move -9 ../$(MODULE_NAME).zip .
 	@rm -rf $(MODULE_NAME)/
 	@echo -e "${FGREEN} ✔${FRESET} $(MODULE_NAME).zip created"
