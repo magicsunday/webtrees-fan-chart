@@ -1,54 +1,54 @@
 {
-  "name": "webtrees-fan-chart",
-  "version": "3.3.5-dev",
-  "description": "This modules provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.",
-  "keywords": [
-    "webtrees",
-    "module",
-    "fan",
-    "chart"
-  ],
-  "type": "module",
-  "homepage": "https://github.com/magicsunday/webtrees-fan-chart",
-  "license": "GPL-3.0-or-later",
-  "author": "Rico Sonntag <mail@ricosonntag.de>",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/magicsunday/webtrees-fan-chart.git"
-  },
-  "scripts": {
-    "prepare": "rollup --config rollup.config.js",
-    "watch": "rollup --watch --config rollup.config.js",
-    "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
-    "test:coverage": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-    "test:exports": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --runTestsByPath resources/js/tests/export.integration.test.js resources/js/tests/export.large.integration.test.js",
-    "test:watch": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
-    "lint": "biome lint resources/js/modules/",
-    "lint:fix": "biome lint --fix --unsafe resources/js/modules/"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.4.11",
-    "@rollup/plugin-node-resolve": "^16.0",
-    "@rollup/plugin-terser": "^1.0",
-    "d3-fetch": "^3.0",
-    "d3-hierarchy": "^3.0",
-    "d3-path": "^3.0",
-    "d3-scale": "^4.0",
-    "d3-selection": "^3.0",
-    "d3-shape": "^3.0",
-    "d3-timer": "^3.0",
-    "d3-transition": "^3.0",
-    "d3-zoom": "^3.0",
-    "jest": "^30.0",
-    "jest-environment-jsdom": "^30.0",
-    "jscpd": "^4.0.9",
-    "pixelmatch": "^7.0",
-    "playwright": "^1.0",
-    "pngjs": "^7.0",
-    "rollup": "^4.0",
-    "rollup-plugin-license": "^3.0"
-  },
-  "dependencies": {
-    "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#v1.0.1"
-  }
+    "name": "webtrees-fan-chart",
+    "version": "3.3.5",
+    "description": "This modules provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.",
+    "keywords": [
+        "webtrees",
+        "module",
+        "fan",
+        "chart"
+    ],
+    "type": "module",
+    "homepage": "https://github.com/magicsunday/webtrees-fan-chart",
+    "license": "GPL-3.0-or-later",
+    "author": "Rico Sonntag <mail@ricosonntag.de>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/magicsunday/webtrees-fan-chart.git"
+    },
+    "scripts": {
+        "prepare": "rollup --config rollup.config.js",
+        "watch": "rollup --watch --config rollup.config.js",
+        "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
+        "test:coverage": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+        "test:exports": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --runTestsByPath resources/js/tests/export.integration.test.js resources/js/tests/export.large.integration.test.js",
+        "test:watch": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+        "lint": "biome lint resources/js/modules/",
+        "lint:fix": "biome lint --fix --unsafe resources/js/modules/"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "2.4.11",
+        "@rollup/plugin-node-resolve": "^16.0",
+        "@rollup/plugin-terser": "^1.0",
+        "d3-fetch": "^3.0",
+        "d3-hierarchy": "^3.0",
+        "d3-path": "^3.0",
+        "d3-scale": "^4.0",
+        "d3-selection": "^3.0",
+        "d3-shape": "^3.0",
+        "d3-timer": "^3.0",
+        "d3-transition": "^3.0",
+        "d3-zoom": "^3.0",
+        "jest": "^30.0",
+        "jest-environment-jsdom": "^30.0",
+        "jscpd": "^4.0.9",
+        "pixelmatch": "^7.0",
+        "playwright": "^1.0",
+        "pngjs": "^7.0",
+        "rollup": "^4.0",
+        "rollup-plugin-license": "^3.0"
+    },
+    "dependencies": {
+        "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#v1.0.1"
+    }
 }
