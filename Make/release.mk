@@ -64,8 +64,9 @@ release-check:
 	@if [ -n "$$(git status --porcelain --untracked-files=no)" ]; then \
 		echo "Error: Working directory not clean. Commit or stash changes first."; \
 		echo "If a previous release attempt left an unpushed release commit:"; \
-		echo "  git tag -d $(VERSION)      # if the tag was created"; \
+		echo "  git tag -d <VERSION>       # if the tag was created"; \
 		echo "  git reset --soft HEAD~1    # undo the release commit"; \
+		echo "(Stash any other local changes first — git reset only moves HEAD)"; \
 		exit 1; \
 	fi
 	@if ! git symbolic-ref --quiet HEAD >/dev/null 2>&1; then \
@@ -150,7 +151,7 @@ dist-smoke:
 		echo "$$paths" | grep -Fxq "$$f" || { echo "Error: required file missing from zip: $$f"; exit 1; }; \
 	done; \
 	for prefix in \
-		resources/js/$(JS_NAME)- \
+		resources/js/$(JS_NAME)-[0-9] \
 		vendor/magicsunday/webtrees-module-base/src/Model/ \
 		vendor/magicsunday/webtrees-module-base/src/Module/ \
 		vendor/magicsunday/webtrees-module-base/src/Processor/ \
@@ -165,18 +166,22 @@ dist-smoke:
 	fi
 	@echo -e "${FGREEN} ✔${FRESET} dist-smoke passed: $(MODULE_NAME).zip is well-formed"
 
-# Atomic JSON edit with cleanup on failure. Usage:
-#   $(call jq_edit,FILE,EXPR,ARGS)
+# Atomic JSON edit with cleanup on failure + post-write assertion. Usage:
+#   $(call jq_edit,FILE,WRITE_EXPR,ARGS,VERIFY_EXPR)
 # The temp file is removed if jq fails, leaving the original file untouched.
+# VERIFY_EXPR must evaluate truthy after the write; otherwise the macro aborts.
 define jq_edit
-( jq --indent 4 $(3) '$(2)' $(1) > $(1).tmp && mv $(1).tmp $(1) ) || ( rm -f $(1).tmp; exit 1 )
+( jq --indent 4 $(3) '$(2)' $(1) > $(1).tmp && mv $(1).tmp $(1) ) || ( rm -f $(1).tmp; exit 1 ); \
+jq -e $(3) '$(4)' $(1) >/dev/null || { echo "Error: $(1) write did not match $(4)"; exit 1; }
 endef
 
 # In-place sed edit with post-write fixed-string assertion. Usage:
 #   $(call sed_edit,FILE,SED_EXPR,EXPECTED_FIXED_STR)
 # Aborts if FILE does not contain EXPECTED_FIXED_STR after the sed runs.
+# printf %s safely handles the literal expected-string value in the error path
+# (echo "..." would break on the embedded double quotes inside $(3)).
 define sed_edit
-sed -i $(2) $(1) && grep -qF $(3) $(1) || { echo "Error: $(1) update did not apply (expected: $(3))"; exit 1; }
+sed -i $(2) $(1) && grep -qF $(3) $(1) || { printf 'Error: %s update did not apply (expected: %s)\n' '$(1)' $(3); exit 1; }
 endef
 
 ## Prepare: update versions, pin webtrees, build JS, commit, build archive, tag.
@@ -185,17 +190,16 @@ endef
 release-prepare: release-check
 	@echo -e "${FYELLOW}[1/5]${FRESET} Updating versions to $(VERSION)..."
 	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(VERSION)'/","CUSTOM_VERSION = '$(VERSION)'")
-	@$(call jq_edit,package.json,.version = $$v,--arg v "$(VERSION)")
-	@jq -e --arg v "$(VERSION)" '.version == $$v' package.json >/dev/null || { echo "Error: package.json .version did not update to $(VERSION)"; exit 1; }
-	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0")
-	@jq -e '.require["fisharebest/webtrees"] == "~2.2.0"' composer.json >/dev/null || { echo "Error: composer.json webtrees pin did not update to ~2.2.0"; exit 1; }
+	@$(call jq_edit,package.json,.version = $$v,--arg v "$(VERSION)",.version == $$v)
+	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0",.require["fisharebest/webtrees"] == $$v)
 	@echo -e "${FYELLOW}[2/5]${FRESET} Cleaning + rebuilding JavaScript bundles..."
 	@$(MAKE) build-js-fresh
 	@echo -e "${FYELLOW}[3/5]${FRESET} Committing release commit..."
 	@git add src/Module.php package.json composer.json resources/js/
 	@git commit -m "Release $(VERSION)"
-	@echo -e "${FYELLOW}[4/5]${FRESET} Building distribution archive..."
+	@echo -e "${FYELLOW}[4/5]${FRESET} Building + smoke-testing distribution archive..."
 	@$(MAKE) dist
+	@$(MAKE) dist-smoke
 	@echo -e "${FYELLOW}[5/5]${FRESET} Tagging $(VERSION)..."
 	@git tag $(VERSION)
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) prepared"
@@ -240,12 +244,18 @@ release-publish:
 
 ## Bump to next dev version. Standalone-safe — validates VERSION before use.
 ##
-## Recovery on failure AFTER release-publish has succeeded:
-##   The release tag and GitHub release are already live and valid; only the
-##   post-release dev bump is missing. Restore a clean tree and re-run:
-##     git checkout -- src/Module.php package.json composer.json
-##     rm -f composer.json.tmp package.json.tmp
-##     make release-bump VERSION=$(VERSION)
+## Recovery paths:
+##
+## 1. Bump fails BEFORE git commit (sed/jq/build-js-fresh aborted):
+##      git stash                            # save unrelated work first
+##      git restore src/Module.php package.json composer.json
+##      rm -f composer.json.tmp package.json.tmp
+##      git stash pop                        # if you stashed
+##      make release-bump VERSION=<VERSION>  # retry
+##
+## 2. Bump fails AFTER release-publish has succeeded (release is live, only
+##    the post-release dev bump is missing — same recovery as case 1, the
+##    release itself is unaffected and stays valid).
 release-bump:
 	@if [ -z "$(VERSION)" ] || ! echo "$(VERSION)" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$$'; then \
 		echo "Error: VERSION must be semver (e.g. 3.1.0)"; \
@@ -254,10 +264,8 @@ release-bump:
 	@$(eval NEXT := $(shell echo "$(VERSION)" | awk -F. '{print $$1"."$$2"."$$3+1}'))
 	@echo -e "${FYELLOW}[bump]${FRESET} Bumping to $(NEXT)-dev..."
 	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/","CUSTOM_VERSION = '$(NEXT)-dev'")
-	@$(call jq_edit,package.json,.version = $$v,--arg v "$(NEXT)-dev")
-	@jq -e --arg v "$(NEXT)-dev" '.version == $$v' package.json >/dev/null || { echo "Error: package.json .version did not bump to $(NEXT)-dev"; exit 1; }
-	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0 || dev-main")
-	@jq -e '.require["fisharebest/webtrees"] == "~2.2.0 || dev-main"' composer.json >/dev/null || { echo "Error: composer.json webtrees pin did not restore to dev-main range"; exit 1; }
+	@$(call jq_edit,package.json,.version = $$v,--arg v "$(NEXT)-dev",.version == $$v)
+	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0 || dev-main",.require["fisharebest/webtrees"] == $$v)
 	@$(MAKE) build-js-fresh
 	@git add src/Module.php package.json composer.json resources/js/
 	@git commit -m "Bump version to $(NEXT)-dev"

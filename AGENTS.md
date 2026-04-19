@@ -134,4 +134,4 @@ Pipeline (`make release X.Y.Z`):
 - Prefer interfaces where sensible; mark data-only classes as `readonly`.
 - Avoid external JavaScript libraries beyond D3.
 - Always use Playwright to verify JS changes in the browser — don't just trust the tests.
-- Use `jq` (not `sed`) for JSON manipulation in build scripts — Alpine `sed` does not support GNU syntax.
+- Use `jq` (not `sed`) for **JSON file** manipulation in build scripts — Alpine `sed` does not support the GNU regex extensions needed for nested JSON edits. `sed` is fine for non-JSON files (PHP, YAML); see the `sed_edit` and `jq_edit` macros in `Make/release.mk`.
