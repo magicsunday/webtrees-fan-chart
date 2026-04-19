@@ -65,6 +65,11 @@ clean-js:
 ## Build distribution zip from git archive (respects .gitattributes export-ignore)
 ## and bundle magicsunday/webtrees-module-base into the zip's vendor/ so ZIP
 ## installs work without requiring the user to run composer themselves.
+##
+## composer.json files are kept in git (composer uses its own GitHub archive
+## fetch for 'composer require' installs) but removed from the release zip,
+## since manual ZIP installs drop the module straight into modules_v4/ where
+## webtrees never reads composer.json.
 dist:
 	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip
 	@composer install --no-dev --no-progress --quiet
@@ -74,6 +79,8 @@ dist:
 		cp -r .build/vendor/magicsunday/webtrees-module-base $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base; \
 		echo "  Bundled webtrees-module-base into vendor/"; \
 	fi
+	@rm -f $(MODULE_NAME)/composer.json
+	@rm -f $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/composer.json
 	@cd $(MODULE_NAME) && zip --quiet --recurse-paths --move -9 ../$(MODULE_NAME).zip .
 	@rm -rf $(MODULE_NAME)/
 	@echo -e "${FGREEN} ✔${FRESET} $(MODULE_NAME).zip created"
