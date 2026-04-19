@@ -7,6 +7,7 @@
 /.php-cs-fixer.dist.php export-ignore
 /.phplint.yml          export-ignore
 /AGENTS.md             export-ignore
+/assets/              export-ignore
 /biome.json            export-ignore
 /compose.yaml          export-ignore
 /jest.config.mjs       export-ignore
