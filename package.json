@@ -41,6 +41,7 @@
     "d3-zoom": "^3.0",
     "jest": "^30.0",
     "jest-environment-jsdom": "^30.0",
+    "jscpd": "^4.0.9",
     "pixelmatch": "^7.0",
     "playwright": "^1.0",
     "pngjs": "^7.0",
@@ -48,8 +49,6 @@
     "rollup-plugin-license": "^3.0"
   },
   "dependencies": {
-    "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#v1.0.1",
-    "jscpd": "^4.0.9",
-    "node": "^25.0"
+    "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#v1.0.1"
   }
 }
