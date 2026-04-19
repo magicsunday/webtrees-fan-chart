@@ -99,6 +99,19 @@ jobs:
                 run: |
                     composer ci:test:js:unit
 
+            -   id: dist-smoke
+                name: Release zip smoke test
+                if: ${{ always() && steps.install.conclusion == 'success' }}
+                run: |
+                    make dist
+                    zip=$(ls *.zip)
+                    unzip -l "$zip" | grep -q 'vendor/magicsunday/webtrees-module-base/src/Processor' \
+                      || { echo "ERROR: module-base Processor classes missing from $zip"; exit 1; }
+                    if unzip -l "$zip" | grep -E '^[[:space:]]+[0-9]+.*composer\.json$' >/dev/null; then
+                      echo "ERROR: composer.json found in $zip"; exit 1
+                    fi
+                    rm -f "$zip"
+
             -   id: cgl
                 name: CGL
                 if: ${{ always() && steps.install.conclusion == 'success' }}

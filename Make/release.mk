@@ -64,6 +64,10 @@ release-check:
 		echo "  git reset --soft HEAD~1    # undo the release commit"; \
 		exit 1; \
 	fi
+	@if ! git symbolic-ref --quiet HEAD >/dev/null 2>&1; then \
+		echo "Error: HEAD is detached. Check out the release branch first (typically 'main')."; \
+		exit 1; \
+	fi
 	@if [ -L $(MODULE_BASE_PATH) ]; then \
 		echo "Error: $(MODULE_BASE_PATH) is a symlink (active 'make link-base')."; \
 		echo "Run 'make unlink-base' before releasing — a symlinked vendor copy"; \
