@@ -119,6 +119,7 @@ dist:
 		echo "Run 'make unlink-base' before 'make dist'."; \
 		exit 1; \
 	fi
+	@rm -rf $(VENDOR_DIR)
 	@echo "  Installing composer runtime dependencies into $(VENDOR_DIR)..."
 	@composer update --no-dev --no-progress --no-interaction --no-security-blocking --ignore-platform-req=php
 	@git archive --prefix=$(MODULE_NAME)/ HEAD --format=tar | tar -x
