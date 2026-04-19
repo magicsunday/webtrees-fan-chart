@@ -54,7 +54,7 @@ jobs:
             -   id: install
                 name: Install dependencies
                 run: |
-                    composer install --no-progress
+                    composer install --no-progress --no-interaction
                     npm ci
 
             -   id: php-lint
@@ -110,32 +110,8 @@ jobs:
             # .build/vendor. Any later composer-driven step would fail.
             -   id: dist-smoke
                 name: Release zip smoke test
-                if: ${{ always() && steps.install.conclusion == 'success' }}
+                if: ${{ success() }}
                 run: |
-                    set -euo pipefail
                     make dist
-                    zips=( *.zip )
-                    if [ "${#zips[@]}" -ne 1 ]; then
-                      echo "ERROR: expected exactly 1 zip, found ${#zips[@]}"; exit 1
-                    fi
-                    zip="${zips[0]}"
-                    listing=$(unzip -l "$zip")
-                    # Required entries
-                    for required in \
-                      'module.php' \
-                      'LICENSE' \
-                      'vendor/magicsunday/webtrees-module-base/src/Model/' \
-                      'vendor/magicsunday/webtrees-module-base/src/Module/' \
-                      'vendor/magicsunday/webtrees-module-base/src/Processor/' \
-                    ; do
-                      echo "$listing" | grep -qE "[[:space:]]${required}\$|[[:space:]]${required}[[:space:]]*\$|${required}[A-Za-z]" \
-                        || { echo "ERROR: required entry missing from $zip: $required"; exit 1; }
-                    done
-                    # Forbidden entries
-                    if echo "$listing" | grep -E '^[[:space:]]+[0-9]+.*composer\.json$' >/dev/null; then
-                      echo "ERROR: composer.json found in $zip"; exit 1
-                    fi
-                    if echo "$listing" | grep -E '^[[:space:]]+[0-9]+.*[[:space:]]assets/' >/dev/null; then
-                      echo "ERROR: assets/ found in $zip"; exit 1
-                    fi
-                    rm -f "$zip"
+                    make dist-smoke
+                    rm -f *.zip

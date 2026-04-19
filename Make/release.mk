@@ -31,7 +31,7 @@ VERSION ?= $(filter-out release release-% dist,$(MAKECMDGOALS))
 REQUIRED_TOOLS := git node npm composer jq zip gh sed
 
 .PHONY: release release-check release-prepare release-publish release-bump \
-        dist clean-js release-clean build-js-fresh
+        dist dist-smoke clean-js release-clean build-js-fresh
 
 # release pipeline operates on shared repo state — must run sequentially.
 .NOTPARALLEL:
@@ -97,7 +97,7 @@ clean-js:
 build-js-fresh:
 	@$(MAKE) clean-js
 	@rm -rf node_modules
-	@npm ci
+	@timeout 300 npm ci
 	@npm run prepare
 
 ## Build distribution zip from git archive (respects .gitattributes export-ignore)
@@ -137,6 +137,34 @@ dist:
 	@rm -rf $(MODULE_NAME)/
 	@echo -e "${FGREEN} ✔${FRESET} $(MODULE_NAME).zip created"
 
+## Smoke-test the just-built distribution zip. Asserts required entries
+## are present and forbidden ones absent. Suitable for CI on every push.
+##   make dist && make dist-smoke
+dist-smoke:
+	@if [ ! -f $(MODULE_NAME).zip ]; then \
+		echo "Error: $(MODULE_NAME).zip not found — run 'make dist' first"; \
+		exit 1; \
+	fi
+	@paths=$$(unzip -Z1 $(MODULE_NAME).zip); \
+	for f in module.php LICENSE; do \
+		echo "$$paths" | grep -Fxq "$$f" || { echo "Error: required file missing from zip: $$f"; exit 1; }; \
+	done; \
+	for prefix in \
+		resources/js/$(JS_NAME)- \
+		vendor/magicsunday/webtrees-module-base/src/Model/ \
+		vendor/magicsunday/webtrees-module-base/src/Module/ \
+		vendor/magicsunday/webtrees-module-base/src/Processor/ \
+	; do \
+		echo "$$paths" | grep -qE "^$$prefix" || { echo "Error: required prefix has no entries in zip: $$prefix"; exit 1; }; \
+	done; \
+	if echo "$$paths" | grep -qE '(^|/)composer\.json$$'; then \
+		echo "Error: composer.json found in zip"; exit 1; \
+	fi; \
+	if echo "$$paths" | grep -qE '^assets/'; then \
+		echo "Error: assets/ found in zip"; exit 1; \
+	fi
+	@echo -e "${FGREEN} ✔${FRESET} dist-smoke passed: $(MODULE_NAME).zip is well-formed"
+
 # Atomic JSON edit with cleanup on failure. Usage:
 #   $(call jq_edit,FILE,EXPR,ARGS)
 # The temp file is removed if jq fails, leaving the original file untouched.
@@ -144,13 +172,19 @@ define jq_edit
 ( jq --indent 4 $(3) '$(2)' $(1) > $(1).tmp && mv $(1).tmp $(1) ) || ( rm -f $(1).tmp; exit 1 )
 endef
 
+# In-place sed edit with post-write fixed-string assertion. Usage:
+#   $(call sed_edit,FILE,SED_EXPR,EXPECTED_FIXED_STR)
+# Aborts if FILE does not contain EXPECTED_FIXED_STR after the sed runs.
+define sed_edit
+sed -i $(2) $(1) && grep -qF $(3) $(1) || { echo "Error: $(1) update did not apply (expected: $(3))"; exit 1; }
+endef
+
 ## Prepare: update versions, pin webtrees, build JS, commit, build archive, tag.
 ## Tag runs AFTER dist succeeds so a dist failure does not leave a dangling tag.
 ## Recovery on dist failure: git reset --soft HEAD~1 (removes release commit).
 release-prepare: release-check
 	@echo -e "${FYELLOW}[1/5]${FRESET} Updating versions to $(VERSION)..."
-	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(VERSION)'/" src/Module.php
-	@grep -q "CUSTOM_VERSION = '$(VERSION)'" src/Module.php || { echo "Error: Module.php CUSTOM_VERSION update did not apply"; exit 1; }
+	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(VERSION)'/","CUSTOM_VERSION = '$(VERSION)'")
 	@$(call jq_edit,package.json,.version = $$v,--arg v "$(VERSION)")
 	@jq -e --arg v "$(VERSION)" '.version == $$v' package.json >/dev/null || { echo "Error: package.json .version did not update to $(VERSION)"; exit 1; }
 	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0")
@@ -205,15 +239,21 @@ release-publish:
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) published"
 
 ## Bump to next dev version. Standalone-safe — validates VERSION before use.
+##
+## Recovery on failure AFTER release-publish has succeeded:
+##   The release tag and GitHub release are already live and valid; only the
+##   post-release dev bump is missing. Restore a clean tree and re-run:
+##     git checkout -- src/Module.php package.json composer.json
+##     rm -f composer.json.tmp package.json.tmp
+##     make release-bump VERSION=$(VERSION)
 release-bump:
 	@if [ -z "$(VERSION)" ] || ! echo "$(VERSION)" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$$'; then \
 		echo "Error: VERSION must be semver (e.g. 3.1.0)"; \
 		exit 1; \
 	fi
-	$(eval NEXT := $(shell echo "$(VERSION)" | awk -F. '{print $$1"."$$2"."$$3+1}'))
-	@echo -e "${FYELLOW}[+]${FRESET} Bumping to $(NEXT)-dev..."
-	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/" src/Module.php
-	@grep -q "CUSTOM_VERSION = '$(NEXT)-dev'" src/Module.php || { echo "Error: Module.php CUSTOM_VERSION bump did not apply"; exit 1; }
+	@$(eval NEXT := $(shell echo "$(VERSION)" | awk -F. '{print $$1"."$$2"."$$3+1}'))
+	@echo -e "${FYELLOW}[bump]${FRESET} Bumping to $(NEXT)-dev..."
+	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/","CUSTOM_VERSION = '$(NEXT)-dev'")
 	@$(call jq_edit,package.json,.version = $$v,--arg v "$(NEXT)-dev")
 	@jq -e --arg v "$(NEXT)-dev" '.version == $$v' package.json >/dev/null || { echo "Error: package.json .version did not bump to $(NEXT)-dev"; exit 1; }
 	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0 || dev-main")
