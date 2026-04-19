@@ -76,12 +76,21 @@ These must be passed in both `getUrl()` (initial AJAX) and `getUpdateRoute()` (p
 - **D3 interrupt handling**: `endAll` listens to both `"end"` and `"interrupt"` events so the callback fires even when transitions are cancelled.
 
 ## Release process
-Runs inside the buildbox (requires git, node, npm, jq, zip, gh):
+Runs inside the buildbox (requires git, node, npm, composer, jq, zip, gh, sed):
 ```
 make release 3.1.2
-make release 3.1.2 NOTES="Bug fix release"
+make release 3.1.2 NOTES_FILE=/tmp/notes.md
+make release VERSION=3.1.2 NOTES="Bug fix release"
 ```
-Pipeline: version bump (via `jq` for package.json, `sed` for Module.php) → clean old bundles (`git rm` + `rm`) → npm ci → rollup → commit → tag → git archive → zip → gh release → bump to next dev.
+Pipeline (`make release X.Y.Z`):
+1. `release-check` — tools, semver, clean tree, no detached HEAD, no active `make link-base` symlink, gh auth (or `GH_TOKEN`).
+2. `release-prepare` — `sed` updates `CUSTOM_VERSION` in `src/Module.php`, `jq` (with `--indent 4` and post-write assertion) updates `package.json` version + `composer.json` webtrees pin → clean+rebuild JS bundles via `build-js-fresh` → commit → `dist`.
+3. `dist` — symlink guard, `composer install --no-dev --no-interaction`, `git archive HEAD` (respects `.gitattributes` export-ignore), bundles `magicsunday/webtrees-module-base` into the zip's `vendor/` (so manual ZIP installs work without composer), strips all `composer.json` files (`find vendor -name composer.json -delete`), atomic write to `.tmp` + rename + `zip -T` integrity check.
+4. Tag `VERSION` (only after dist succeeds — keeps the tag aligned with the published archive).
+5. `release-publish` — `git push --tags`, `gh release create` with the zip + notes, emits `RELEASE_PUBLISHED version=X` marker for agent observers.
+6. `release-bump` — bump to `VERSION+1-dev`, restore `~2.2.0 || dev-main` constraint, push.
+
+CI runs a `dist-smoke` step on every push that asserts the zip contains the required entries (module.php, LICENSE, module-base src) and excludes the forbidden ones (composer.json, assets/).
 
 ## Code style
 

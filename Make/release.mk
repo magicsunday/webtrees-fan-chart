@@ -20,6 +20,7 @@
 #### Release
 
 MODULE_NAME      := webtrees-fan-chart
+JS_NAME          := $(patsubst webtrees-%,%,$(MODULE_NAME))
 VENDOR_DIR       := .build/vendor
 MODULE_BASE_PKG  := magicsunday/webtrees-module-base
 MODULE_BASE_PATH := $(VENDOR_DIR)/$(MODULE_BASE_PKG)
@@ -31,6 +32,9 @@ REQUIRED_TOOLS := git node npm composer jq zip gh sed
 
 .PHONY: release release-check release-prepare release-publish release-bump \
         dist clean-js release-clean build-js-fresh
+
+# release pipeline operates on shared repo state — must run sequentially.
+.NOTPARALLEL:
 
 ## Verify all required tools, VERSION, clean tree, no active link-base symlink, gh auth.
 release-check:
@@ -83,12 +87,13 @@ release-check:
 
 ## Remove old versioned JS bundles before building new ones (filesystem + git)
 clean-js:
-	@git rm -f --ignore-unmatch resources/js/fan-chart-*.js resources/js/fan-chart-*.min.js >/dev/null 2>&1 || true
-	@rm -f resources/js/fan-chart-*.js resources/js/fan-chart-*.min.js
+	@git rm -f --ignore-unmatch resources/js/$(JS_NAME)-*.js resources/js/$(JS_NAME)-*.min.js >/dev/null 2>&1 || true
+	@rm -f resources/js/$(JS_NAME)-*.js resources/js/$(JS_NAME)-*.min.js
 	@echo -e "${FGREEN} ✔${FRESET} Old JS bundles removed"
 
 ## Fresh JS build: clean bundles, wipe node_modules, reinstall, rollup.
 ## Shared by release-prepare and release-bump so the toolchain stays aligned.
+## Owns the clean-first contract — callers should not invoke clean-js separately.
 build-js-fresh:
 	@$(MAKE) clean-js
 	@rm -rf node_modules
@@ -103,19 +108,22 @@ build-js-fresh:
 ## fetch for 'composer require' installs) but removed from the release zip,
 ## since manual ZIP installs drop the module straight into modules_v4/ where
 ## webtrees never reads composer.json.
+##
+## The symlink guard runs before composer install — composer install would
+## clobber an active 'make link-base' symlink and produce a stale ZIP.
 dist:
 	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp
+	@if [ -L $(MODULE_BASE_PATH) ]; then \
+		echo "Error: $(MODULE_BASE_PATH) is a symlink (active 'make link-base')."; \
+		echo "Run 'make unlink-base' before 'make dist'."; \
+		exit 1; \
+	fi
 	@echo "  Installing composer runtime dependencies into $(VENDOR_DIR)..."
-	@composer install --no-dev --no-progress
+	@composer install --no-dev --no-progress --no-interaction
 	@git archive --prefix=$(MODULE_NAME)/ HEAD --format=tar | tar -x
 	@if [ ! -d $(MODULE_BASE_PATH) ]; then \
 		echo "Error: $(MODULE_BASE_PATH) not found after composer install."; \
 		echo "Check composer.json vendor-dir config and the require section for $(MODULE_BASE_PKG)."; \
-		exit 1; \
-	fi
-	@if [ -L $(MODULE_BASE_PATH) ]; then \
-		echo "Error: $(MODULE_BASE_PATH) is a symlink (active 'make link-base')."; \
-		echo "Run 'make unlink-base' before releasing."; \
 		exit 1; \
 	fi
 	@mkdir -p $(MODULE_NAME)/vendor/magicsunday
@@ -125,9 +133,16 @@ dist:
 	@rm -f $(MODULE_NAME)/composer.json
 	@cd $(MODULE_NAME) && zip --quiet --recurse-paths -9 ../$(MODULE_NAME).zip.tmp .
 	@mv $(MODULE_NAME).zip.tmp $(MODULE_NAME).zip
-	@zip -T $(MODULE_NAME).zip >/dev/null
+	@zip -T $(MODULE_NAME).zip >/dev/null || { rm -f $(MODULE_NAME).zip; echo "Error: zip integrity check failed"; exit 1; }
 	@rm -rf $(MODULE_NAME)/
 	@echo -e "${FGREEN} ✔${FRESET} $(MODULE_NAME).zip created"
+
+# Atomic JSON edit with cleanup on failure. Usage:
+#   $(call jq_edit,FILE,EXPR,ARGS)
+# The temp file is removed if jq fails, leaving the original file untouched.
+define jq_edit
+( jq --indent 4 $(3) '$(2)' $(1) > $(1).tmp && mv $(1).tmp $(1) ) || ( rm -f $(1).tmp; exit 1 )
+endef
 
 ## Prepare: update versions, pin webtrees, build JS, commit, build archive, tag.
 ## Tag runs AFTER dist succeeds so a dist failure does not leave a dangling tag.
@@ -136,16 +151,18 @@ release-prepare: release-check
 	@echo -e "${FYELLOW}[1/5]${FRESET} Updating versions to $(VERSION)..."
 	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(VERSION)'/" src/Module.php
 	@grep -q "CUSTOM_VERSION = '$(VERSION)'" src/Module.php || { echo "Error: Module.php CUSTOM_VERSION update did not apply"; exit 1; }
-	@jq --arg v "$(VERSION)" '.version = $$v' package.json > package.json.tmp && mv package.json.tmp package.json
-	@jq --arg v "~2.2.0" '.require["fisharebest/webtrees"] = $$v' composer.json > composer.json.tmp && mv composer.json.tmp composer.json
-	@echo -e "${FYELLOW}[2/5]${FRESET} Removing old JS bundles..."
-	@$(MAKE) clean-js
-	@echo -e "${FYELLOW}[3/5]${FRESET} Building JavaScript bundles..."
+	@$(call jq_edit,package.json,.version = $$v,--arg v "$(VERSION)")
+	@jq -e --arg v "$(VERSION)" '.version == $$v' package.json >/dev/null || { echo "Error: package.json .version did not update to $(VERSION)"; exit 1; }
+	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0")
+	@jq -e '.require["fisharebest/webtrees"] == "~2.2.0"' composer.json >/dev/null || { echo "Error: composer.json webtrees pin did not update to ~2.2.0"; exit 1; }
+	@echo -e "${FYELLOW}[2/5]${FRESET} Cleaning + rebuilding JavaScript bundles..."
 	@$(MAKE) build-js-fresh
-	@echo -e "${FYELLOW}[4/5]${FRESET} Committing release and building archive..."
+	@echo -e "${FYELLOW}[3/5]${FRESET} Committing release commit..."
 	@git add src/Module.php package.json composer.json resources/js/
 	@git commit -m "Release $(VERSION)"
+	@echo -e "${FYELLOW}[4/5]${FRESET} Building distribution archive..."
 	@$(MAKE) dist
+	@echo -e "${FYELLOW}[5/5]${FRESET} Tagging $(VERSION)..."
 	@git tag $(VERSION)
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) prepared"
 
@@ -159,7 +176,7 @@ release-publish:
 		echo "Error: NOTES_FILE=$(NOTES_FILE) does not exist"; \
 		exit 1; \
 	fi
-	@echo -e "${FYELLOW}[5/5]${FRESET} Publishing to GitHub..."
+	@echo -e "${FYELLOW}[publish]${FRESET} Pushing to GitHub..."
 	@git push origin main --tags
 	@if [ -n "$(NOTES_FILE)" ]; then \
 		echo "  Notes: from file $(NOTES_FILE)"; \
@@ -197,8 +214,10 @@ release-bump:
 	@echo -e "${FYELLOW}[+]${FRESET} Bumping to $(NEXT)-dev..."
 	@sed -i "s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/" src/Module.php
 	@grep -q "CUSTOM_VERSION = '$(NEXT)-dev'" src/Module.php || { echo "Error: Module.php CUSTOM_VERSION bump did not apply"; exit 1; }
-	@jq --arg v "$(NEXT)-dev" '.version = $$v' package.json > package.json.tmp && mv package.json.tmp package.json
-	@jq --arg v "~2.2.0 || dev-main" '.require["fisharebest/webtrees"] = $$v' composer.json > composer.json.tmp && mv composer.json.tmp composer.json
+	@$(call jq_edit,package.json,.version = $$v,--arg v "$(NEXT)-dev")
+	@jq -e --arg v "$(NEXT)-dev" '.version == $$v' package.json >/dev/null || { echo "Error: package.json .version did not bump to $(NEXT)-dev"; exit 1; }
+	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0 || dev-main")
+	@jq -e '.require["fisharebest/webtrees"] == "~2.2.0 || dev-main"' composer.json >/dev/null || { echo "Error: composer.json webtrees pin did not restore to dev-main range"; exit 1; }
 	@$(MAKE) build-js-fresh
 	@git add src/Module.php package.json composer.json resources/js/
 	@git commit -m "Bump version to $(NEXT)-dev"
@@ -208,6 +227,7 @@ release-bump:
 ## Remove leftover release artifacts
 release-clean:
 	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp
+	@rm -f composer.json.tmp package.json.tmp
 
 ## Full release pipeline
 release: release-prepare release-publish release-bump release-clean ## Create and publish a release (usage: make release 3.1.0)

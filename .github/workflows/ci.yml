@@ -99,21 +99,43 @@ jobs:
                 run: |
                     composer ci:test:js:unit
 
-            -   id: dist-smoke
-                name: Release zip smoke test
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    make dist
-                    zip=$(ls *.zip)
-                    unzip -l "$zip" | grep -q 'vendor/magicsunday/webtrees-module-base/src/Processor' \
-                      || { echo "ERROR: module-base Processor classes missing from $zip"; exit 1; }
-                    if unzip -l "$zip" | grep -E '^[[:space:]]+[0-9]+.*composer\.json$' >/dev/null; then
-                      echo "ERROR: composer.json found in $zip"; exit 1
-                    fi
-                    rm -f "$zip"
-
             -   id: cgl
                 name: CGL
                 if: ${{ always() && steps.install.conclusion == 'success' }}
                 run: |
                     composer ci:cgl -- --dry-run
+
+            # Runs LAST: 'make dist' invokes 'composer install --no-dev'
+            # which strips dev packages (php-cs-fixer, phpstan, ...) from
+            # .build/vendor. Any later composer-driven step would fail.
+            -   id: dist-smoke
+                name: Release zip smoke test
+                if: ${{ always() && steps.install.conclusion == 'success' }}
+                run: |
+                    set -euo pipefail
+                    make dist
+                    zips=( *.zip )
+                    if [ "${#zips[@]}" -ne 1 ]; then
+                      echo "ERROR: expected exactly 1 zip, found ${#zips[@]}"; exit 1
+                    fi
+                    zip="${zips[0]}"
+                    listing=$(unzip -l "$zip")
+                    # Required entries
+                    for required in \
+                      'module.php' \
+                      'LICENSE' \
+                      'vendor/magicsunday/webtrees-module-base/src/Model/' \
+                      'vendor/magicsunday/webtrees-module-base/src/Module/' \
+                      'vendor/magicsunday/webtrees-module-base/src/Processor/' \
+                    ; do
+                      echo "$listing" | grep -qE "[[:space:]]${required}\$|[[:space:]]${required}[[:space:]]*\$|${required}[A-Za-z]" \
+                        || { echo "ERROR: required entry missing from $zip: $required"; exit 1; }
+                    done
+                    # Forbidden entries
+                    if echo "$listing" | grep -E '^[[:space:]]+[0-9]+.*composer\.json$' >/dev/null; then
+                      echo "ERROR: composer.json found in $zip"; exit 1
+                    fi
+                    if echo "$listing" | grep -E '^[[:space:]]+[0-9]+.*[[:space:]]assets/' >/dev/null; then
+                      echo "ERROR: assets/ found in $zip"; exit 1
+                    fi
+                    rm -f "$zip"
