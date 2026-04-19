@@ -2,7 +2,8 @@
 # Release pipeline
 #
 # Requires:
-#   git  — version control, tagging, archive
+#   git      — version control, tagging, archive
+#   composer — PHP dependency manager (bundles webtrees-module-base into vendor/)
 #   node — JavaScript runtime for Rollup bundling
 #   npm  — package manager for JS dependencies
 #   jq   — JSON manipulation for package.json version updates
