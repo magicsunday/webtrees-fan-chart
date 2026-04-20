@@ -23,6 +23,7 @@ use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
+use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 
 /**
  * Assembles the nested Node tree passed to the JavaScript chart renderer.
@@ -53,7 +54,7 @@ class DataFacade
      * The module. Initialized by createTreeStructure() on each call.
      * Accessing before createTreeStructure() throws "Uninitialized typed property".
      */
-    private ModuleCustomInterface $module;
+    private ModuleCustomInterface&ModuleAssetUrlInterface $module;
 
     /**
      * The configuration instance. Initialized by createTreeStructure() on each call.
@@ -71,14 +72,14 @@ class DataFacade
      * ready for JSON serialisation. Resets the node counter on each call so IDs
      * are always consecutive starting at 1.
      *
-     * @param ModuleCustomInterface $module
+     * @param ModuleCustomInterface&ModuleAssetUrlInterface $module
      * @param Configuration         $configuration
      * @param Individual            $individual    The root individual (generation 1)
      *
      * @return Node|null
      */
     public function createTreeStructure(
-        ModuleCustomInterface $module,
+        ModuleCustomInterface&ModuleAssetUrlInterface $module,
         Configuration $configuration,
         Individual $individual,
     ): ?Node {

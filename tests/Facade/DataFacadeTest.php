@@ -31,6 +31,7 @@ use Illuminate\Support\Collection;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
+use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -109,7 +110,7 @@ final class DataFacadeTest extends TestCase
         $configuration = self::createStub(Configuration::class);
         $configuration->method('getGenerations')->willReturn(2);
 
-        $module = self::createStub(ModuleCustomInterface::class);
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
 
         $childFamily  = self::createStub(Family::class);
@@ -211,7 +212,7 @@ final class DataFacadeTest extends TestCase
         $configuration->method('getGenerations')->willReturn(2);
         $configuration->method('getShowDescendants')->willReturn(true);
 
-        $module = self::createStub(ModuleCustomInterface::class);
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
 
         $tree = self::createStub(Tree::class);
