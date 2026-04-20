@@ -137,7 +137,19 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
     ChartOverlay: jest.fn(() => ({
         hide: jest.fn(),
         show: jest.fn()
-    }))
+    })),
+    // FamilyColor (pulled in indirectly via hierarchy/chart-updater) imports
+    // these named exports; provide identity stubs so the module graph loads
+    // even though the chart code paths exercised here do not invoke them.
+    BRANCH_HUE_SPREAD: 60,
+    LIGHTNESS_STEP: 3,
+    SATURATION_STEP: 3.5,
+    MAX_GENERATIONS_REF: 10,
+    depthBounds: jest.fn(() => ({ minSaturation: 20, maxLightness: 90 })),
+    depthHsl: jest.fn(() => "hsl(0, 0%, 50%)"),
+    familyBranchHsl: jest.fn(() => "hsl(0, 0%, 50%)"),
+    familyCenterHsl: jest.fn(() => "hsl(0, 0%, 92%)"),
+    hexToHsl: jest.fn(() => [0, 0, 50])
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/gradient", () => ({

@@ -18,31 +18,8 @@ const createConfiguration = (overrides = {}) => ({
     ...overrides
 });
 
-describe("FamilyColor.hexToHsl", () => {
-    it("converts a valid hex color to HSL array", () => {
-        const hsl = FamilyColor.hexToHsl("#3b82b0");
-
-        expect(hsl).toHaveLength(3);
-        expect(hsl[0]).toBeGreaterThanOrEqual(0);
-        expect(hsl[0]).toBeLessThanOrEqual(360);
-        expect(hsl[1]).toBeGreaterThanOrEqual(0);
-        expect(hsl[1]).toBeLessThanOrEqual(100);
-        expect(hsl[2]).toBeGreaterThanOrEqual(0);
-        expect(hsl[2]).toBeLessThanOrEqual(100);
-    });
-
-    it("returns gray fallback for invalid hex", () => {
-        expect(FamilyColor.hexToHsl("not-a-color")).toEqual([0, 0, 50]);
-        expect(FamilyColor.hexToHsl("")).toEqual([0, 0, 50]);
-    });
-
-    it("handles hex with or without leading hash", () => {
-        const withHash = FamilyColor.hexToHsl("#3b82b0");
-        const withoutHash = FamilyColor.hexToHsl("3b82b0");
-
-        expect(withHash).toEqual(withoutHash);
-    });
-});
+// hexToHsl tests live in @magicsunday/webtrees-chart-lib
+// (tests/color/familyColor.test.js) — the helper moved out of this class.
 
 describe("FamilyColor.getColor", () => {
     it("returns null for empty xref nodes", () => {

@@ -4,3 +4,8 @@ services:
         working_dir: /app
         volumes:
             - ./:/app
+            # The chart-lib node_modules entry is a symlink to the sibling
+            # ../webtrees-chart-lib package; rollup must see the target
+            # inside the container or it leaves chart-lib external (UMD
+            # bundles then break in the browser).
+            - ../webtrees-chart-lib:/webtrees-chart-lib
