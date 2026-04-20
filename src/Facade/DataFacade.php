@@ -18,12 +18,12 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
+use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Model\Symbols;
 use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
-use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 
 /**
  * Assembles the nested Node tree passed to the JavaScript chart renderer.
@@ -73,8 +73,8 @@ class DataFacade
      * are always consecutive starting at 1.
      *
      * @param ModuleCustomInterface&ModuleAssetUrlInterface $module
-     * @param Configuration         $configuration
-     * @param Individual            $individual    The root individual (generation 1)
+     * @param Configuration                                 $configuration
+     * @param Individual                                    $individual    The root individual (generation 1)
      *
      * @return Node|null
      */
