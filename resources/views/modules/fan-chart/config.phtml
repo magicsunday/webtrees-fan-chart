@@ -70,6 +70,24 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                     ])
                     ?>
                 </div>
+
+                <div class="mt-3">
+                    <label for="nameAbbreviation" class="form-label">
+                        <?= I18N::translate('Name abbreviation when space is tight') ?>
+                    </label>
+                    <?=
+                        view('components/select', [
+                            'name'     => 'nameAbbreviation',
+                            'id'       => 'nameAbbreviation',
+                            'selected' => $configuration->getNameAbbreviation(),
+                            'options'  => $configuration->getNameAbbreviationList(),
+                            'class'    => 'form-control-sm',
+                        ])
+                    ?>
+                    <small class="form-text text-muted form-element-description" style="box-decoration-break: clone;">
+                        <?= I18N::translate('Controls which name part shrinks first when an arc is too narrow for the full name. "Automatic" uses the tree\'s surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names).') ?>
+                    </small>
+                </div>
             </div>
         </div>
     </div>
