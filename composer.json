@@ -41,7 +41,7 @@
         "php": "8.3 - 8.5",
         "ext-dom": "*",
         "ext-json": "*",
-        "fisharebest/webtrees": "~2.2.0 || dev-main",
+        "fisharebest/webtrees": "~2.2.0",
         "magicsunday/webtrees-module-base": "^2.0",
         "magicsunday/webtrees-module-installer-plugin": "^1.3"
     },
