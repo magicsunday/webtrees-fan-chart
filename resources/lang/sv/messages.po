@@ -256,3 +256,18 @@ msgstr "Färger"
 
 msgid "Appearance"
 msgstr "Utseende"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Namnförkortning när utrymmet är begränsat"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Automatiskt (baserat på trädets efternamnstradition)"
+
+msgid "Abbreviate given names first"
+msgstr "Förkorta förnamn först"
+
+msgid "Abbreviate surnames first"
+msgstr "Förkorta efternamn först"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Styr vilken namndel som förkortas först när en båge är för smal för det fullständiga namnet. \"Automatiskt\" använder trädets efternamnstradition (isländska förkortar efternamn; allt annat förkortar förnamn)."

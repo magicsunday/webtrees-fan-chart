@@ -256,3 +256,18 @@ msgstr "Barve"
 
 msgid "Appearance"
 msgstr "Videz"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Krajšanje imena, ko je prostor omejen"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Samodejno (glede na drevesno tradicijo priimkov)"
+
+msgid "Abbreviate given names first"
+msgstr "Najprej skrajšaj osebna imena"
+
+msgid "Abbreviate surnames first"
+msgstr "Najprej skrajšaj priimke"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Določa, kateri del imena se najprej skrajša, ko je lok preozek za polno ime. »Samodejno« uporablja drevesno tradicijo priimkov (islandska tradicija krajša priimke; vse ostale krajšajo osebna imena)."

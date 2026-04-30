@@ -90,6 +90,7 @@ import(<?= json_encode($javascript) ?>).then(({ FanChart }) => {
             },
 
             showSilhouettes: <?= json_encode($chartParams['showSilhouettes']) ?>,
+            nameAbbreviation: <?= json_encode($chartParams['nameAbbreviation']) ?>,
             data: <?= json_encode($data) ?>
         }
     );

@@ -254,3 +254,18 @@ msgstr "Цвета"
 
 msgid "Appearance"
 msgstr "Внешний вид"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Сокращение имени при недостатке места"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Автоматически (по традиции фамилий дерева)"
+
+msgid "Abbreviate given names first"
+msgstr "Сокращать сначала имена"
+
+msgid "Abbreviate surnames first"
+msgstr "Сокращать сначала фамилии"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Определяет, какая часть имени сокращается первой, если дуга слишком узкая для полного имени. «Автоматически» использует традицию фамилий дерева (исландская традиция сокращает фамилии; все остальные сокращают имена)."

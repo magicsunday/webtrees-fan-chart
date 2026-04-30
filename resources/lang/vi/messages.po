@@ -253,3 +253,18 @@ msgstr "Màu sắc"
 
 msgid "Appearance"
 msgstr "Giao diện"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Viết tắt tên khi không đủ chỗ"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Tự động (dựa trên truyền thống họ của cây phả hệ)"
+
+msgid "Abbreviate given names first"
+msgstr "Viết tắt tên gọi trước"
+
+msgid "Abbreviate surnames first"
+msgstr "Viết tắt họ trước"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Kiểm soát phần nào của tên được rút ngắn trước khi cung quá hẹp để hiển thị tên đầy đủ. \"Tự động\" sử dụng truyền thống họ của cây phả hệ (Iceland viết tắt họ; còn lại viết tắt tên gọi)."

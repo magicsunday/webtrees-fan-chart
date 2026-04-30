@@ -253,3 +253,18 @@ msgstr "Farben"
 
 msgid "Appearance"
 msgstr "Erscheinung"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Namensabkürzung bei knappem Platz"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Automatisch (basierend auf der Nachnamen-Tradition des Stammbaums)"
+
+msgid "Abbreviate given names first"
+msgstr "Zuerst Vornamen abkürzen"
+
+msgid "Abbreviate surnames first"
+msgstr "Zuerst Nachnamen abkürzen"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Steuert, welcher Namensteil zuerst gekürzt wird, wenn ein Bogen zu schmal für den vollen Namen ist. „Automatisch“ verwendet die Nachnamen-Tradition des Stammbaums (Isländisch kürzt Nachnamen; alles andere kürzt Vornamen)."

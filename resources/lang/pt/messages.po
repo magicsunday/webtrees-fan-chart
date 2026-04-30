@@ -264,3 +264,18 @@ msgstr "Cores"
 
 msgid "Appearance"
 msgstr "Aparência"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Abreviatura do nome quando o espaço é limitado"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Automático (com base na tradição de sobrenomes da árvore)"
+
+msgid "Abbreviate given names first"
+msgstr "Abreviar primeiro os nomes próprios"
+
+msgid "Abbreviate surnames first"
+msgstr "Abreviar primeiro os sobrenomes"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Controla qual parte do nome é abreviada primeiro quando um arco é muito estreito para o nome completo. \"Automático\" usa a tradição de sobrenomes da árvore (islandês abrevia sobrenomes; todo o resto abrevia nomes próprios)."

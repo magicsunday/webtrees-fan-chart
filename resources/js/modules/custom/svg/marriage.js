@@ -11,7 +11,7 @@ import { createMarriageArcGenerator } from "./arc-factory.js";
 import FamilyColor from "./family-color.js";
 import {SYMBOL_MARRIAGE} from "../hierarchy.js";
 import { classifyElement } from "./lifecycle.js";
-import { truncateToFit } from "./text-truncation.js";
+import { truncateToFit } from "@magicsunday/webtrees-chart-lib";
 
 /**
  * Renders the thin arc that sits in the radial gap between a parent generation

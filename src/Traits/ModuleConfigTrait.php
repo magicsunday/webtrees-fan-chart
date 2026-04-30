@@ -131,6 +131,10 @@ trait ModuleConfigTrait
             'default_detailedDateGenerations',
             (string) $configuration->getDetailedDateGenerations()
         );
+        $this->setPreference(
+            'default_nameAbbreviation',
+            $configuration->getNameAbbreviation()
+        );
 
         FlashMessages::addMessage(
             I18N::translate(

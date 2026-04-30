@@ -250,3 +250,18 @@ msgstr "Värit"
 
 msgid "Appearance"
 msgstr "Ulkoasu"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Nimen lyhentäminen, kun tila on rajallinen"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Automaattinen (sukupuun sukunimitradition mukaan)"
+
+msgid "Abbreviate given names first"
+msgstr "Lyhennä ensin etunimet"
+
+msgid "Abbreviate surnames first"
+msgstr "Lyhennä ensin sukunimet"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Määrittää, mikä nimen osa lyhennetään ensin, kun kaari on liian kapea koko nimelle. \"Automaattinen\" käyttää sukupuun sukunimitradition (islantilainen lyhentää sukunimet; muut lyhentävät etunimet)."

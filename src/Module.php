@@ -241,23 +241,50 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
 
     /**
      * Returns the static chart parameters passed to the JavaScript initialiser —
-     * RTL direction flag, image/silhouette visibility, and localised UI labels.
+     * RTL direction flag, image/silhouette visibility, name-abbreviation
+     * strategy (resolved from the tree's surname tradition), and localised
+     * UI labels.
      *
      * @param Individual $individual
      *
-     * @return array<string, bool|array<string, string>>
+     * @return array<string, string|bool|array<string, string>>
      */
     private function getChartParameters(Individual $individual): array
     {
         return [
-            'rtl'             => I18N::direction() === 'rtl',
-            'showImages'      => $this->showImages($individual),
-            'showSilhouettes' => $this->showSilhouettes($individual),
-            'labels'          => [
+            'rtl'              => I18N::direction() === 'rtl',
+            'showImages'       => $this->showImages($individual),
+            'showSilhouettes'  => $this->showSilhouettes($individual),
+            'nameAbbreviation' => $this->resolveNameAbbreviation($individual),
+            'labels'           => [
                 'zoom' => I18N::translate('Use Ctrl + scroll to zoom in the view'),
                 'move' => I18N::translate('Move the view with two fingers'),
             ],
         ];
+    }
+
+    /**
+     * Resolves the configured name-abbreviation strategy into a concrete
+     * GIVEN or SURNAME value the JS layer can use directly. AUTO maps to
+     * SURNAME for Icelandic-tradition trees (where surnames are typically
+     * patronymics and people are addressed by given name) and GIVEN for
+     * everything else.
+     *
+     * @param Individual $individual
+     *
+     * @return string Configuration::NAME_ABBREV_GIVEN or NAME_ABBREV_SURNAME
+     */
+    private function resolveNameAbbreviation(Individual $individual): string
+    {
+        $configured = $this->configuration->getNameAbbreviation();
+
+        if ($configured !== Configuration::NAME_ABBREV_AUTO) {
+            return $configured;
+        }
+
+        return $individual->tree()->getPreference('SURNAME_TRADITION') === 'icelandic'
+            ? Configuration::NAME_ABBREV_SURNAME
+            : Configuration::NAME_ABBREV_GIVEN;
     }
 
     /**

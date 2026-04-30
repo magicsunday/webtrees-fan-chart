@@ -251,3 +251,18 @@ msgstr "顏色"
 
 msgid "Appearance"
 msgstr "外觀"
+
+msgid "Name abbreviation when space is tight"
+msgstr "空間不足時的姓名縮寫方式"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "自動（根據族譜的姓氏傳統）"
+
+msgid "Abbreviate given names first"
+msgstr "優先縮寫名字"
+
+msgid "Abbreviate surnames first"
+msgstr "優先縮寫姓氏"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "控制當弧形對完整姓名而言過窄時，先縮寫哪個名字部分。「自動」使用族譜的姓氏傳統（冰島語縮寫姓氏；其他所有傳統縮寫名字）。"

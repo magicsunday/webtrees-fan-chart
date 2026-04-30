@@ -7,8 +7,7 @@
 
 import * as d3 from "../../d3.js";
 import Geometry, {MATH_RAD2DEG} from "./geometry.js";
-import { measureText } from "@magicsunday/webtrees-chart-lib";
-import { truncateToFit, truncateNames } from "./text-truncation.js";
+import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees-chart-lib";
 
 /**
  * Generates all text elements for a single person arc: first names, last names,
@@ -387,7 +386,12 @@ export default class Text {
         const fontSize = parent.style("font-size");
         const fontWeight = parent.style("font-weight");
 
-        return truncateNames(names, availableWidth, (text) => this.measureText(text, fontSize, fontWeight));
+        return truncateNames(
+            names,
+            availableWidth,
+            (text) => this.measureText(text, fontSize, fontWeight),
+            { strategy: this._configuration.nameAbbreviation },
+        );
     }
 
     /**

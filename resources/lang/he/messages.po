@@ -251,3 +251,18 @@ msgstr "צבעים"
 
 msgid "Appearance"
 msgstr "מראה"
+
+msgid "Name abbreviation when space is tight"
+msgstr "קיצור שם כאשר המקום מצומצם"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "אוטומטי (על פי מסורת שם המשפחה של העץ)"
+
+msgid "Abbreviate given names first"
+msgstr "קצר תחילה את השמות הפרטיים"
+
+msgid "Abbreviate surnames first"
+msgstr "קצר תחילה את שמות המשפחה"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "קובע איזה חלק של השם יקוצר ראשון כאשר קשת צרה מדי להכיל את השם המלא. \"אוטומטי\" משתמש במסורת שם המשפחה של העץ (איסלנדית מקצרת שמות משפחה; כל השאר מקצרים שמות פרטיים)."

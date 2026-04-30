@@ -253,3 +253,18 @@ msgstr "Kleure"
 
 msgid "Appearance"
 msgstr "Voorkoms"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Naamafkorting wanneer ruimte beperk is"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Outomaties (gebaseer op die boom se vannaam-tradisie)"
+
+msgid "Abbreviate given names first"
+msgstr "Verkort eers voorname"
+
+msgid "Abbreviate surnames first"
+msgstr "Verkort eers vanne"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Bepaal watter naamdeel eerste verkort word wanneer 'n boog te smal is vir die volle naam. \"Outomaties\" gebruik die boom se vannaam-tradisie (Yslands verkort vanne; alles anders verkort voorname)."

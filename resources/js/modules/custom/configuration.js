@@ -62,6 +62,7 @@ export default class Configuration {
      * @param {number}   [options.innerArcs=4]
      * @param {string}   [options.paternalColor]
      * @param {string}   [options.maternalColor]
+     * @param {string}   [options.nameAbbreviation="GIVEN"] One of "GIVEN" or "SURNAME". Resolved server-side from the tree's SURNAME_TRADITION when admin sets it to AUTO.
      */
     constructor({
         labels = { zoom: "", move: "" },
@@ -80,6 +81,7 @@ export default class Configuration {
         innerArcs = 4,
         paternalColor = Configuration.PATERNAL_COLOR_DEFAULT,
         maternalColor = Configuration.MATERNAL_COLOR_DEFAULT,
+        nameAbbreviation = "GIVEN",
     } = {}) {
         // Default number of generations to display
         this._generations = toFiniteNumber(generations, 6);
@@ -145,6 +147,18 @@ export default class Configuration {
 
         this._paternalColor = paternalColor;
         this._maternalColor = maternalColor;
+        this._nameAbbreviation = nameAbbreviation;
+    }
+
+    /**
+     * Returns the resolved name-abbreviation strategy ("GIVEN" or "SURNAME").
+     * The server resolves the tree-pref value (which can also be "AUTO") into
+     * one of these two before serialising — the JS layer never sees AUTO.
+     *
+     * @return {string}
+     */
+    get nameAbbreviation() {
+        return this._nameAbbreviation;
     }
 
     /**

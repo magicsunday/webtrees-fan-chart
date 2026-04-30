@@ -253,3 +253,18 @@ msgstr "Litir"
 
 msgid "Appearance"
 msgstr "Útlit"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Nafnastytting þegar pláss er lítið"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Sjálfvirkt (byggt á eftirnafnshefð trésins)"
+
+msgid "Abbreviate given names first"
+msgstr "Stytta eiginnöfn fyrst"
+
+msgid "Abbreviate surnames first"
+msgstr "Stytta eftirnöfn fyrst"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Stjórnar því hvaða nafnshluti er styttur fyrst þegar bogi er of þröngur fyrir fullt nafn. „Sjálfvirkt“ notar eftirnafnshefð trésins (íslensk hefð styttir eftirnöfn; aðrar stytta eiginnöfn)."

@@ -44,8 +44,23 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     select: jest.fn((node) => selectMock(node))
 }));
 
+// truncateNames and truncateToFit live in chart-lib since v1.2.0; chart-lib's
+// own jest tests cover the abbreviation algorithm. Here we mock both so the
+// fan-chart unit tests can assert that text.js wires them through correctly
+// (right argument shape, right strategy from configuration).
+const truncateNamesMock = jest.fn((names, _availableWidth, measureFn) => {
+    // Call measureFn so the existing measureText call-count assertions
+    // continue to reflect the integration contract.
+    measureFn(names.map((n) => n.label).join(" "));
+
+    // Simulate the GIVEN-strategy outcome the historical test expected:
+    // shrink each label to its first letter + ".".
+    return names.map((n) => ({ ...n, label: `${n.label.slice(0, 1)}.` }));
+});
 await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
-    measureText: measureTextMock
+    measureText: measureTextMock,
+    truncateNames: truncateNamesMock,
+    truncateToFit: jest.fn((tspan) => tspan.text()),
 }));
 
 const { default: Text } = await import("resources/js/modules/custom/svg/text");
@@ -63,6 +78,7 @@ const createConfiguration = (overrides = {}) => ({
     colorArcWidth: 20,
     fanDegree: 180,
     fontScale: 100,
+    nameAbbreviation: "GIVEN",
     ...overrides
 });
 
@@ -114,6 +130,7 @@ describe("Text", () => {
     });
 
     it("truncates names based on available width and preference", () => {
+        truncateNamesMock.mockClear();
         const text = new Text(svgStub, createConfiguration());
         const nameGroup = [
             { label: "Anna", isPreferred: false, isLastName: false, isNameRtl: false },
@@ -130,9 +147,33 @@ describe("Text", () => {
         expect(parent.style).toHaveBeenCalledWith("font-size");
         expect(parent.style).toHaveBeenCalledWith("font-weight");
 
-        // Verify input was not mutated (deep-clone protection)
-        expect(nameGroup[0].label).toBe("Anna");
-        expect(nameGroup[1].label).toBe("Beatrice");
+        // Verify the chart-lib call signature: (names, width, measureFn, options)
+        expect(truncateNamesMock).toHaveBeenCalledWith(
+            nameGroup,
+            100,
+            expect.any(Function),
+            expect.objectContaining({ strategy: "GIVEN" })
+        );
+    });
+
+    it("passes the SURNAME strategy to truncateNames when configured", () => {
+        truncateNamesMock.mockClear();
+        const text = new Text(svgStub, createConfiguration({ nameAbbreviation: "SURNAME" }));
+        const parent = {
+            style: jest.fn((property) => (property === "font-size" ? "12px" : "700"))
+        };
+
+        text.truncateNamesData(parent, [
+            { label: "Jón", isPreferred: true, isLastName: false, isNameRtl: false },
+            { label: "Sigurðsson", isPreferred: false, isLastName: true, isNameRtl: false }
+        ], 60);
+
+        expect(truncateNamesMock).toHaveBeenCalledWith(
+            expect.any(Array),
+            expect.any(Number),
+            expect.any(Function),
+            expect.objectContaining({ strategy: "SURNAME" })
+        );
     });
 
     it("calculates available width using arc geometry for inner labels", () => {

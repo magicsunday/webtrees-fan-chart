@@ -253,3 +253,18 @@ msgstr "Fargar"
 
 msgid "Appearance"
 msgstr "Utsjånad"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Namneforkorting når plassen er trong"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Automatisk (basert på etternamnstradisjonen til treet)"
+
+msgid "Abbreviate given names first"
+msgstr "Forkort førenamn først"
+
+msgid "Abbreviate surnames first"
+msgstr "Forkort etternamn først"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Styrer kva for ein namnedel som vert forkorta først når ein boge er for smal for heile namnet. «Automatisk» brukar etternamnstradisjonen til treet (islandsk forkortar etternamn; alt anna forkortar førenamn)."

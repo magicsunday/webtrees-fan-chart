@@ -252,3 +252,18 @@ msgstr "रंग"
 
 msgid "Appearance"
 msgstr "दिखावट"
+
+msgid "Name abbreviation when space is tight"
+msgstr "जब स्थान सीमित हो तो नाम का संक्षिप्तीकरण"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "स्वचालित (वृक्ष की उपनाम परंपरा पर आधारित)"
+
+msgid "Abbreviate given names first"
+msgstr "पहले प्रदत्त नामों को संक्षिप्त करें"
+
+msgid "Abbreviate surnames first"
+msgstr "पहले उपनामों को संक्षिप्त करें"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "नियंत्रित करता है कि चाप पूर्ण नाम के लिए बहुत संकरा होने पर कौन सा नाम भाग पहले छोटा होगा। \"स्वचालित\" वृक्ष की उपनाम परंपरा का उपयोग करता है (आइसलैंडिक उपनामों को संक्षिप्त करता है; बाकी सभी प्रदत्त नामों को संक्षिप्त करते हैं)।"

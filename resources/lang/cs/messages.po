@@ -253,3 +253,18 @@ msgstr "Barvy"
 
 msgid "Appearance"
 msgstr "Vzhled"
+
+msgid "Name abbreviation when space is tight"
+msgstr "Zkracování jména při nedostatku místa"
+
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Automaticky (podle tradice příjmení stromu)"
+
+msgid "Abbreviate given names first"
+msgstr "Nejprve zkrátit křestní jména"
+
+msgid "Abbreviate surnames first"
+msgstr "Nejprve zkrátit příjmení"
+
+msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
+msgstr "Určuje, která část jména se zkrátí první, když je oblouk příliš úzký pro celé jméno. \"Automaticky\" používá tradici příjmení stromu (islandská tradice zkracuje příjmení; všechny ostatní zkracují křestní jména)."
