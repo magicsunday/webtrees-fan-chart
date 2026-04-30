@@ -72,15 +72,15 @@ msgstr "Einingar"
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "General"
-msgstr ""
+msgstr "Almennt"
 
 #: resources/views/modules/fan-chart/config.phtml:56
 msgid "Hide the SVG export button"
-msgstr ""
+msgstr "Fela SVG útflutningshnappinn"
 
 #: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
-msgstr ""
+msgstr "Fela PNG útflutningshnappinn"
 
 #: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
