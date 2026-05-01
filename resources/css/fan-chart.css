@@ -223,6 +223,9 @@ div.tooltip .image {
     opacity: 1;
     width: 100px;
     height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.7));
 }
 
 div.tooltip .image + .text {
@@ -230,14 +233,22 @@ div.tooltip .image + .text {
 }
 
 div.tooltip .image img {
-    width: 100px;
-    height: 100px;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: scale-down;
     padding: 2px;
-    border-radius: 50%;
-    opacity: 1;
-    background-color: #F5F0E6;
-    filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.7));
+}
+
+/* Blurred backdrop layer behind real photos. Slight overscan to hide
+   the soft fade at the blurred edge. Skipped for silhouettes (they
+   ship with their own cream background already baked in). */
+div.tooltip .image img.blur {
+    object-fit: cover;
+    padding: 0;
+    filter: blur(8px);
+    transform: scale(1.1);
 }
 
 div.tooltip table {

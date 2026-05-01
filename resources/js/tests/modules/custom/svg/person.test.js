@@ -148,6 +148,7 @@ const baseDatum = {
             xref: "I1",
             name: "Alex Example",
             thumbnail: "",
+            silhouette: "",
             sex: "M",
             birth: "1900",
             marriageDate: "1920",
@@ -210,15 +211,20 @@ describe("Person tooltips", () => {
         expect(div.transition).not.toHaveBeenCalled();
     });
 
-    it("renders a silhouette when no thumbnail is present", () => {
+    it("renders the silhouette image when no real photo is available", () => {
         const { personSelection, handlers } = createPersonSelection();
         const { div, htmlCalls } = createDivSelection();
+        // Server has fallen back to silhouette because the person has no
+        // media file (or its file is missing on disk): thumbnail and
+        // silhouette URLs are identical.
+        const silhouetteUrl = "/silhouette-F.png";
         const datum = {
             ...baseDatum,
             data: {
                 data: {
                     ...baseDatum.data.data,
-                    thumbnail: "",
+                    thumbnail: silhouetteUrl,
+                    silhouette: silhouetteUrl,
                     sex: "F"
                 }
             }
@@ -234,7 +240,9 @@ describe("Person tooltips", () => {
 
         handlers.mouseenter({ pageX: 200, pageY: 100 });
 
-        expect(htmlCalls[0]).toContain("icon-silhouette-f");
+        expect(htmlCalls[0]).toContain(silhouetteUrl);
+        // Single img (silhouette path), not the photo's two-img blur stack
+        expect(htmlCalls[0].match(/<img/g)).toHaveLength(1);
     });
 
     it("escapes tooltip content", () => {

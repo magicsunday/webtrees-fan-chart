@@ -172,9 +172,11 @@ class DataFacade
                 $partnerNodeData = $this->getNodeData(1, $spouse);
                 $partnerNodeData->setGeneration(-1);
 
-                // Suppress images and irrelevant marriage fields for descendants
+                // Suppress irrelevant marriage fields for descendants;
+                // thumbnail/silhouette stay so the chart-arc renders an image
+                // when the arc is wide enough, and the tooltip stays
+                // consistent with what the arc would show.
                 $partnerNodeData
-                    ->setThumbnail('')
                     ->setMarriageDateOfParents('');
 
                 // Set marriage date from the specific family record
@@ -209,7 +211,6 @@ class DataFacade
                         $childNodeData = $this->getNodeData(2, $child);
                         $childNodeData->setGeneration(-2);
                         $childNodeData
-                            ->setThumbnail('')
                             ->setMarriageDate('')
                             ->setMarriageDateOfParents('');
 
@@ -244,7 +245,6 @@ class DataFacade
                 $childNodeData = $this->getNodeData(2, $child);
                 $childNodeData->setGeneration(-2);
                 $childNodeData
-                    ->setThumbnail('')
                     ->setMarriageDate('')
                     ->setMarriageDateOfParents('');
 

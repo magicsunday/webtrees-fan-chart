@@ -22,6 +22,14 @@ const IMAGE_HEIGHT_MAX = 55;
 /** Minimum angular width of an arc in degrees required to show an image. */
 const IMAGE_ANGULAR_MIN_DEG = 10;
 
+/**
+ * Minimum angular width for descendants (depth < 0). Higher than the
+ * ancestor threshold so the descendant ring stays uncluttered: 2-3
+ * children each get a wide arc with their image, but 10+ siblings on
+ * the same ring share narrow arcs and skip images.
+ */
+const IMAGE_ANGULAR_MIN_DEG_DESCENDANT = 25;
+
 /** Vertical gap in pixels between the image and the first text line (center node). */
 const IMAGE_TEXT_GAP = 6;
 
@@ -195,7 +203,11 @@ export default class Person {
                 - this._geometry.startAngle(datum.depth, datum.x0),
             ) * (180 / Math.PI);
 
-        if ((imageSize >= IMAGE_SIZE_MIN) && (angularWidth >= IMAGE_ANGULAR_MIN_DEG)) {
+        const minAngularWidth = (datum.depth < 0)
+            ? IMAGE_ANGULAR_MIN_DEG_DESCENDANT
+            : IMAGE_ANGULAR_MIN_DEG;
+
+        if ((imageSize >= IMAGE_SIZE_MIN) && (angularWidth >= minAngularWidth)) {
             return imageSize;
         }
 
@@ -258,11 +270,19 @@ export default class Person {
             const imageGroup = person.append("g")
                 .attr("class", "image");
 
-            imageGroup.append("circle")
-                .attr("cx", 0)
-                .attr("cy", centerY)
-                .attr("r", imageSize / 2)
-                .attr("fill", "#F5F0E6");
+            // Blur backdrop: a copy of the photo, scaled to fill (slice) and
+            // blurred. Skipped for silhouettes (they bake in their own bg).
+            if (datum.data.data.thumbnail !== datum.data.data.silhouette) {
+                imageGroup.append("image")
+                    .attr("href", datum.data.data.thumbnail)
+                    .attr("x", -(imageSize / 2))
+                    .attr("y", centerY - (imageSize / 2))
+                    .attr("width", imageSize)
+                    .attr("height", imageSize)
+                    .attr("clip-path", `url(#${clipId})`)
+                    .attr("preserveAspectRatio", "xMidYMid slice")
+                    .attr("filter", "url(#image-backdrop-blur)");
+            }
 
             imageGroup.append("image")
                 .attr("href", datum.data.data.thumbnail)
@@ -317,11 +337,19 @@ export default class Person {
                     + "rotate(" + rotateDeg + ")",
                 );
 
-            imageGroup.append("circle")
-                .attr("cx", 0)
-                .attr("cy", 0)
-                .attr("r", imageSize / 2)
-                .attr("fill", "#F5F0E6");
+            // Blur backdrop: a copy of the photo, scaled to fill (slice) and
+            // blurred. Skipped for silhouettes (they bake in their own bg).
+            if (datum.data.data.thumbnail !== datum.data.data.silhouette) {
+                imageGroup.append("image")
+                    .attr("href", datum.data.data.thumbnail)
+                    .attr("x", -(imageSize / 2))
+                    .attr("y", -(imageSize / 2))
+                    .attr("width", imageSize)
+                    .attr("height", imageSize)
+                    .attr("clip-path", `url(#${clipId})`)
+                    .attr("preserveAspectRatio", "xMidYMid slice")
+                    .attr("filter", "url(#image-backdrop-blur)");
+            }
 
             imageGroup.append("image")
                 .attr("href", datum.data.data.thumbnail)

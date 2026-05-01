@@ -37,6 +37,20 @@ export default class Filter {
             .attr("dy", "0")
             .attr("flood-opacity", "0.3")
             .attr("flood-color", "rgb(0,0,0)");
+
+        // Soft blur backdrop for the per-person image: a copy of the photo
+        // sits behind the crisp foreground, gaussian-blurred to extend the
+        // photo's colour into the surrounding circle area.
+        const blur = this._element
+            .append("filter")
+            .attr("id", "image-backdrop-blur")
+            .attr("x", "-50%")
+            .attr("y", "-50%")
+            .attr("width", "200%")
+            .attr("height", "200%");
+
+        blur.append("feGaussianBlur")
+            .attr("stdDeviation", 6);
     }
 
     /**
