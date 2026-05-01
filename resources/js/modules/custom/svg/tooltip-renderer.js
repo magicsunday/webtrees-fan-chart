@@ -123,16 +123,18 @@ export default class TooltipRenderer {
      * @private
      */
     _buildTooltipImage(datum) {
-        if (datum.data.data.thumbnail) {
-            const source = escapeHtml(datum.data.data.thumbnail);
+        const thumbnail = datum.data.data.thumbnail;
+        const silhouette = datum.data.data.silhouette;
+        const isPhoto = thumbnail !== "" && thumbnail !== silhouette;
 
-            return `<div class="image"><img src="${source}" alt="" /></div>`;
+        // Real photo: always show
+        if (isPhoto) {
+            return `<div class="image"><img src="${escapeHtml(thumbnail)}" alt="" /></div>`;
         }
 
-        if (this._configuration.showSilhouettes) {
-            const sexClass = escapeHtml(datum.data.data.sex.toLowerCase());
-
-            return `<div class="image"><i class="icon-silhouette icon-silhouette-${sexClass} wt-icon-flip-rtl" ></i></div>`;
+        // Silhouette: only when the tooltip-side config opts in
+        if (this._configuration.showSilhouettes && silhouette !== "") {
+            return `<div class="image"><img src="${escapeHtml(silhouette)}" alt="" /></div>`;
         }
 
         return "";

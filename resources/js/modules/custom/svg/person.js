@@ -262,7 +262,7 @@ export default class Person {
                 .attr("cx", 0)
                 .attr("cy", centerY)
                 .attr("r", imageSize / 2)
-                .attr("fill", "white");
+                .attr("fill", "#F5F0E6");
 
             imageGroup.append("image")
                 .attr("href", datum.data.data.thumbnail)
@@ -321,7 +321,7 @@ export default class Person {
                 .attr("cx", 0)
                 .attr("cy", 0)
                 .attr("r", imageSize / 2)
-                .attr("fill", "white");
+                .attr("fill", "#F5F0E6");
 
             imageGroup.append("image")
                 .attr("href", datum.data.data.thumbnail)

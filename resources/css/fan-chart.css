@@ -229,7 +229,6 @@ div.tooltip .image + .text {
     margin-left: 70px;
 }
 
-div.tooltip .image i,
 div.tooltip .image img {
     width: 100px;
     height: 100px;
@@ -237,7 +236,7 @@ div.tooltip .image img {
     padding: 2px;
     border-radius: 50%;
     opacity: 1;
-    background-color: rgb(255, 255, 255);
+    background-color: #F5F0E6;
     filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.7));
 }
 

@@ -96,6 +96,12 @@ class NodeData implements JsonSerializable
     private string $thumbnail = '';
 
     /**
+     * The URL of the sex-specific silhouette image. Used as a client-side
+     * onerror fallback when the highlight image's media file is missing.
+     */
+    private string $silhouette = '';
+
+    /**
      * The sex of the individual.
      */
     private string $sex = 'U';
@@ -267,6 +273,13 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
+    public function setSilhouette(string $silhouette): NodeData
+    {
+        $this->silhouette = $silhouette;
+
+        return $this;
+    }
+
     /**
      * Sets the GEDCOM sex code ("M", "F", or "U").
      */
@@ -409,6 +422,7 @@ class NodeData implements JsonSerializable
             'alternativeName'       => $this->alternativeName,
             'isAltRtl'              => $this->isAltRtl,
             'thumbnail'             => $this->thumbnail,
+            'silhouette'            => $this->silhouette,
             'sex'                   => $this->sex,
             'birth'                 => $this->birth,
             'death'                 => $this->death,

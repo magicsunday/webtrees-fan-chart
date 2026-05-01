@@ -323,6 +323,7 @@ class DataFacade
             ->setAlternativeName($alternativeName)
             ->setIsAltRtl($this->isRtl($alternativeName))
             ->setThumbnail($imageProcessor->getHighlightImageUrl(100, 100))
+            ->setSilhouette($imageProcessor->getSilhouetteUrl())
             ->setSex($individual->sex())
             ->setBirth($dateProcessor->getFormattedBirthDate())
             ->setDeath($dateProcessor->getFormattedDeathDate())
