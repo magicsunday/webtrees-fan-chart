@@ -317,6 +317,18 @@ class PersonGroupSelection {
         return new PersonGroupSelection(filtered, this.svg, this.eventLog);
     }
 
+    // Used by the production code's enter().filter().append("g").attr().each()
+    // chain. The enter() set is empty in these tests (all persons go through
+    // update or exit), so append/attr are pure pass-throughs and the trailing
+    // each() iterates over zero persons.
+    append() {
+        return this;
+    }
+
+    attr() {
+        return this;
+    }
+
     select(selector) {
         return this.selectAll(selector);
     }

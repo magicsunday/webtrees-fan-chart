@@ -33,7 +33,8 @@ class PersonGroupSelection {
                                             }
 
                                             return attrSelection;
-                                        }
+                                        },
+                                        each: () => attrSelection
                                     };
 
                                     return attrSelection;
