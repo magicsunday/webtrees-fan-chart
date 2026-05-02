@@ -127,13 +127,10 @@ export default class TooltipRenderer {
         const silhouette = datum.data.data.silhouette;
         const isPhoto = thumbnail !== "" && thumbnail !== silhouette;
 
-        // Real photo: blurred backdrop + crisp foreground (matches chart-arc).
         if (isPhoto) {
-            const src = escapeHtml(thumbnail);
-            return `<div class="image"><img class="blur" src="${src}" alt=""><img src="${src}" alt=""></div>`;
+            return `<div class="image"><img src="${escapeHtml(thumbnail)}" alt=""></div>`;
         }
 
-        // Silhouette: only when the tooltip-side config opts in.
         if (this._configuration.showSilhouettes && silhouette !== "") {
             return `<div class="image"><img src="${escapeHtml(silhouette)}" alt="" /></div>`;
         }

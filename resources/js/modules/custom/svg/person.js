@@ -270,19 +270,13 @@ export default class Person {
             const imageGroup = person.append("g")
                 .attr("class", "image");
 
-            // Blur backdrop: a copy of the photo, scaled to fill (slice) and
-            // blurred. Skipped for silhouettes (they bake in their own bg).
-            if (datum.data.data.thumbnail !== datum.data.data.silhouette) {
-                imageGroup.append("image")
-                    .attr("href", datum.data.data.thumbnail)
-                    .attr("x", -(imageSize / 2))
-                    .attr("y", centerY - (imageSize / 2))
-                    .attr("width", imageSize)
-                    .attr("height", imageSize)
-                    .attr("clip-path", `url(#${clipId})`)
-                    .attr("preserveAspectRatio", "xMidYMid slice")
-                    .attr("filter", "url(#image-backdrop-blur)");
-            }
+            // Plain white background behind the (possibly letterboxed)
+            // foreground photo so the boundary against the page is uniform.
+            imageGroup.append("circle")
+                .attr("cx", 0)
+                .attr("cy", centerY)
+                .attr("r", imageSize / 2)
+                .attr("fill", "#FFFFFF");
 
             imageGroup.append("image")
                 .attr("href", datum.data.data.thumbnail)
@@ -337,19 +331,13 @@ export default class Person {
                     + "rotate(" + rotateDeg + ")",
                 );
 
-            // Blur backdrop: a copy of the photo, scaled to fill (slice) and
-            // blurred. Skipped for silhouettes (they bake in their own bg).
-            if (datum.data.data.thumbnail !== datum.data.data.silhouette) {
-                imageGroup.append("image")
-                    .attr("href", datum.data.data.thumbnail)
-                    .attr("x", -(imageSize / 2))
-                    .attr("y", -(imageSize / 2))
-                    .attr("width", imageSize)
-                    .attr("height", imageSize)
-                    .attr("clip-path", `url(#${clipId})`)
-                    .attr("preserveAspectRatio", "xMidYMid slice")
-                    .attr("filter", "url(#image-backdrop-blur)");
-            }
+            // Plain white background behind the (possibly letterboxed)
+            // foreground photo so the boundary against the page is uniform.
+            imageGroup.append("circle")
+                .attr("cx", 0)
+                .attr("cy", 0)
+                .attr("r", imageSize / 2)
+                .attr("fill", "#FFFFFF");
 
             imageGroup.append("image")
                 .attr("href", datum.data.data.thumbnail)

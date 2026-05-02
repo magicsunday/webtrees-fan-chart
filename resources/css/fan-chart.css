@@ -239,17 +239,6 @@ div.tooltip .image img {
     width: 100%;
     height: 100%;
     object-fit: scale-down;
-    padding: 2px;
-}
-
-/* Blurred backdrop layer behind real photos. Slight overscan to hide
-   the soft fade at the blurred edge. Skipped for silhouettes (they
-   ship with their own cream background already baked in). */
-div.tooltip .image img.blur {
-    object-fit: cover;
-    padding: 0;
-    filter: blur(8px);
-    transform: scale(1.1);
 }
 
 div.tooltip table {
