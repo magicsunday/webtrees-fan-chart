@@ -61,11 +61,11 @@ if ($showNames && $showImages) {
 
         <div class="mt-3">
             <?php echo view($moduleName . '::modules/components/checkbox', [
-        'name'      => 'showDescendants',
-        'label'     => I18N::translate('Show descendants'),
-        'checked'   => $configuration->getShowDescendants(),
-        'unchecked' => '0',
-    ]);
+                'name'      => 'showDescendants',
+                'label'     => I18N::translate('Show descendants'),
+                'checked'   => $configuration->getShowDescendants(),
+                'unchecked' => '0',
+            ]);
 ?>
             <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
                 <?php echo I18N::translate('Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled.'); ?>
@@ -74,11 +74,11 @@ if ($showNames && $showImages) {
 
         <div class="mt-3">
             <?php echo view($moduleName . '::modules/components/checkbox', [
-    'name'      => 'hideEmptySegments',
-    'label'     => I18N::translate('Hide empty segments'),
-    'checked'   => $configuration->getHideEmptySegments(),
-    'unchecked' => '0',
-]);
+                'name'      => 'hideEmptySegments',
+                'label'     => I18N::translate('Hide empty segments'),
+                'checked'   => $configuration->getHideEmptySegments(),
+                'unchecked' => '0',
+            ]);
 ?>
         </div>
     </div>

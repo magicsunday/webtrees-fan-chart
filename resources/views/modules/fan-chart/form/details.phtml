@@ -35,21 +35,21 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         </small>
         <div class="ps-4 mt-2">
             <?php echo view('components/select', [
-        'name'     => 'placeParts',
-        'selected' => $configuration->getPlaceParts(),
-        'options'  => $configuration->getPlacePartsList(),
-        'class'    => 'form-control-sm',
-    ]);
+                'name'     => 'placeParts',
+                'selected' => $configuration->getPlaceParts(),
+                'options'  => $configuration->getPlacePartsList(),
+                'class'    => 'form-control-sm',
+            ]);
 ?>
         </div>
 
         <div class="mt-3">
             <?php echo view($moduleName . '::modules/components/checkbox', [
-    'name'      => 'showParentMarriageDates',
-    'label'     => I18N::translate('Show parent marriage dates'),
-    'checked'   => $configuration->getShowParentMarriageDates(),
-    'unchecked' => '0',
-]);
+                'name'      => 'showParentMarriageDates',
+                'label'     => I18N::translate('Show parent marriage dates'),
+                'checked'   => $configuration->getShowParentMarriageDates(),
+                'unchecked' => '0',
+            ]);
 ?>
             <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
                 <?php echo I18N::translate('Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners.'); ?>
