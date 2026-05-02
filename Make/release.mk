@@ -25,6 +25,12 @@ VENDOR_DIR       := .build/vendor
 MODULE_BASE_PKG  := magicsunday/webtrees-module-base
 MODULE_BASE_PATH := $(VENDOR_DIR)/$(MODULE_BASE_PKG)
 
+# Per-module namespace prefix injected into the bundled module-base classes
+# at dist time. Prevents PHP autoloader collisions when multiple magicsunday
+# chart modules at different versions register the same shared namespace
+# (see GitHub issues #194, #196). Must be unique per module.
+SCOPE_NS         := FanChartVendor
+
 # Accept both 'make release 3.1.0' (goal form) and 'make release VERSION=3.1.0'.
 VERSION ?= $(filter-out release release-% dist,$(MAKECMDGOALS))
 
@@ -128,11 +134,24 @@ dist:
 		echo "Check composer.json vendor-dir config and the require section for $(MODULE_BASE_PKG)."; \
 		exit 1; \
 	fi
-	@mkdir -p $(MODULE_NAME)/vendor/magicsunday
-	@cp -rL $(MODULE_BASE_PATH) $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base
-	@echo "  Bundled $(MODULE_BASE_PKG) into vendor/"
+	@mkdir -p $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base
+	@cp -rL $(MODULE_BASE_PATH)/src $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/src
+	@cp -L $(MODULE_BASE_PATH)/LICENSE $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/LICENSE
+	@echo "  Bundled $(MODULE_BASE_PKG) (src + LICENSE only) into vendor/"
 	@find $(MODULE_NAME)/vendor -name composer.json -delete
 	@rm -f $(MODULE_NAME)/composer.json
+	@echo "  Scoping module-base namespace with prefix $(SCOPE_NS)..."
+	@find $(MODULE_NAME) -type f \( -name '*.php' -o -name '*.phtml' \) -exec sed -i \
+		-e 's|MagicSunday\\\\Webtrees\\\\ModuleBase|MagicSunday\\\\$(SCOPE_NS)\\\\Webtrees\\\\ModuleBase|g' \
+		-e 's|MagicSunday\\Webtrees\\ModuleBase|MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase|g' \
+		{} +
+	@hits=$$(find $(MODULE_NAME) -type f -print0 \
+	    | xargs -0 grep -lE 'MagicSunday\\Webtrees\\ModuleBase' 2>/dev/null); \
+	if [ -n "$$hits" ]; then \
+		echo "Error: unprefixed MagicSunday\\Webtrees\\ModuleBase remains in dist:"; \
+		echo "$$hits" | head -5; \
+		exit 1; \
+	fi
 	@cd $(MODULE_NAME) && zip --quiet --recurse-paths -9 ../$(MODULE_NAME).zip.tmp .
 	@mv $(MODULE_NAME).zip.tmp $(MODULE_NAME).zip
 	@zip -T $(MODULE_NAME).zip >/dev/null || { rm -f $(MODULE_NAME).zip; echo "Error: zip integrity check failed"; exit 1; }
@@ -164,6 +183,12 @@ dist-smoke:
 	fi; \
 	if echo "$$paths" | grep -qE '^assets/'; then \
 		echo "Error: assets/ found in zip"; exit 1; \
+	fi
+	@unzip -p $(MODULE_NAME).zip module.php | grep -qF 'MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase' \
+		|| { echo "Error: module.php in zip is missing prefixed namespace ($(SCOPE_NS))"; exit 1; }
+	@if unzip -p $(MODULE_NAME).zip module.php | grep -qE 'MagicSunday\\Webtrees\\ModuleBase'; then \
+		echo "Error: module.php in zip still contains unprefixed MagicSunday\\Webtrees\\ModuleBase"; \
+		exit 1; \
 	fi
 	@echo -e "${FGREEN} ✔${FRESET} dist-smoke passed: $(MODULE_NAME).zip is well-formed"
 
