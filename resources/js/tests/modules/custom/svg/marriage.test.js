@@ -11,7 +11,7 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
         padRadius: jest.fn().mockReturnThis(),
         cornerRadius: jest.fn().mockReturnThis(),
     })),
-    select: jest.fn()
+    select: jest.fn(),
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/svg/arc", () => ({
@@ -26,19 +26,33 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
     MATH_DEG2RAD: Math.PI / 180,
     MATH_RAD2DEG: 180 / Math.PI,
     default: class {
-        constructor(config) { this._configuration = config; }
-        startAngle() { return 0; }
-        endAngle() { return 1; }
-        innerRadius(depth) { return 50 + depth * 100; }
-        outerRadius(depth) { return 100 + depth * 100; }
-        calcAngle() { return 0; }
-        isPositionFlipped() { return false; }
+        constructor(config) {
+            this._configuration = config;
+        }
+        startAngle() {
+            return 0;
+        }
+        endAngle() {
+            return 1;
+        }
+        innerRadius(depth) {
+            return 50 + depth * 100;
+        }
+        outerRadius(depth) {
+            return 100 + depth * 100;
+        }
+        calcAngle() {
+            return 0;
+        }
+        isPositionFlipped() {
+            return false;
+        }
         getFontSize(datum) {
             let fontSize = this._configuration.fontSize;
-            if (datum.depth >= (this._configuration.numberOfInnerCircles + 1)) {
+            if (datum.depth >= this._configuration.numberOfInnerCircles + 1) {
                 fontSize += 1;
             }
-            return ((fontSize - datum.depth) * this._configuration.fontScale / 100.0);
+            return ((fontSize - datum.depth) * this._configuration.fontScale) / 100.0;
         }
     },
 }));
@@ -53,9 +67,9 @@ const createSvgStub = () => ({
             attr: jest.fn().mockReturnThis(),
         })),
         get: jest.fn(() => ({
-            selectAll: jest.fn(() => ({ size: () => 0 }))
-        }))
-    }
+            selectAll: jest.fn(() => ({ size: () => 0 })),
+        })),
+    },
 });
 
 const createMarriageSelection = (classes = {}) => {
@@ -64,7 +78,9 @@ const createMarriageSelection = (classes = {}) => {
     const createAppendable = (trackInto) => {
         const el = {
             attr: jest.fn((name, value) => {
-                if (name === "class" && value) { el.className = value; }
+                if (name === "class" && value) {
+                    el.className = value;
+                }
                 return el;
             }),
             style: jest.fn().mockReturnThis(),
@@ -83,7 +99,7 @@ const createMarriageSelection = (classes = {}) => {
                 getComputedTextLength: () => 0,
                 closest: () => ({ id: "marriage-0" }),
             })),
-            className: ""
+            className: "",
         };
         return el;
     };
@@ -98,7 +114,7 @@ const createMarriageSelection = (classes = {}) => {
         }),
         attr: jest.fn(() => "marriage-0"),
         select: jest.fn(() => ({ empty: () => true })),
-        selectAll: jest.fn(() => ({ size: () => 0 }))
+        selectAll: jest.fn(() => ({ size: () => 0 })),
     };
 
     return { selection, appendedGroups };
@@ -112,7 +128,7 @@ const createConfiguration = (overrides = {}) => ({
     fontSize: 22,
     numberOfInnerCircles: 3,
     generations: 6,
-    ...overrides
+    ...overrides,
 });
 
 const createDatum = (overrides = {}) => ({
@@ -120,18 +136,15 @@ const createDatum = (overrides = {}) => ({
     x0: 0,
     x1: 0.5,
     id: 5,
-    children: [
-        { data: { data: { xref: "I10" } } },
-        { data: { data: { xref: "I11" } } }
-    ],
+    children: [{ data: { data: { xref: "I10" } } }, { data: { data: { xref: "I11" } } }],
     data: {
         data: {
             xref: "I5",
             marriageDateOfParents: "8. Mai 1880",
-            ...overrides.data
-        }
+            ...overrides.data,
+        },
     },
-    ...overrides
+    ...overrides,
 });
 
 describe("Marriage", () => {
@@ -143,8 +156,8 @@ describe("Marriage", () => {
 
         new Marriage(svg, config, new Geometry(config), selection, datum);
 
-        const arcGroup = appendedGroups.find(g => g.tag === "g" && g.className === "arc");
-        const nameGroup = appendedGroups.find(g => g.tag === "g" && g.className === "name");
+        const arcGroup = appendedGroups.find((g) => g.tag === "g" && g.className === "arc");
+        const nameGroup = appendedGroups.find((g) => g.tag === "g" && g.className === "name");
 
         expect(arcGroup).toBeDefined();
         expect(nameGroup).toBeDefined();
@@ -159,8 +172,8 @@ describe("Marriage", () => {
 
         new Marriage(svg, config, new Geometry(config), selection, datum);
 
-        const arcGroup = appendedGroups.find(g => g.tag === "g" && g.className === "arc");
-        const nameGroup = appendedGroups.find(g => g.tag === "g" && g.className === "name");
+        const arcGroup = appendedGroups.find((g) => g.tag === "g" && g.className === "arc");
+        const nameGroup = appendedGroups.find((g) => g.tag === "g" && g.className === "name");
 
         expect(arcGroup).toBeDefined();
         expect(nameGroup).toBeUndefined();
@@ -175,17 +188,21 @@ describe("Marriage", () => {
         new Marriage(svg, config, new Geometry(config), selection, datum);
 
         // Content wrapper is always created, but should contain no arc or label
-        const contentGroup = appendedGroups.find(g => g.className === "content");
+        const contentGroup = appendedGroups.find((g) => g.className === "content");
 
         expect(contentGroup).toBeDefined();
-        expect(appendedGroups.find(g => g.className === "arc")).toBeUndefined();
-        expect(appendedGroups.find(g => g.className === "name")).toBeUndefined();
+        expect(appendedGroups.find((g) => g.className === "arc")).toBeUndefined();
+        expect(appendedGroups.find((g) => g.className === "name")).toBeUndefined();
     });
 
     it("calculates font size based on depth and scale", () => {
         const svg = createSvgStub();
         const { selection } = createMarriageSelection();
-        const config = createConfiguration({ fontSize: 22, fontScale: 100, numberOfInnerCircles: 3 });
+        const config = createConfiguration({
+            fontSize: 22,
+            fontScale: 100,
+            numberOfInnerCircles: 3,
+        });
         const datum = createDatum({ depth: 2 });
 
         const marriage = new Marriage(svg, config, new Geometry(config), selection, datum);
@@ -197,7 +214,11 @@ describe("Marriage", () => {
     it("adds 1 to font size for outer circles", () => {
         const svg = createSvgStub();
         const { selection } = createMarriageSelection();
-        const config = createConfiguration({ fontSize: 22, fontScale: 100, numberOfInnerCircles: 3 });
+        const config = createConfiguration({
+            fontSize: 22,
+            fontScale: 100,
+            numberOfInnerCircles: 3,
+        });
         const datum = createDatum({ depth: 4 });
 
         const marriage = new Marriage(svg, config, new Geometry(config), selection, datum);

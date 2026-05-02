@@ -63,16 +63,13 @@ export class FanChart {
      */
     init() {
         // Bind click event on center button
-        d3.select("#centerButton")
-            .on("click", () => this._chart.center());
+        d3.select("#centerButton").on("click", () => this._chart.center());
 
         // Bind click event on export as PNG button
-        d3.select("#exportPNG")
-            .on("click", () => this.exportPNG());
+        d3.select("#exportPNG").on("click", () => this.exportPNG());
 
         // Bind click event on export as SVG button
-        d3.select("#exportSVG")
-            .on("click", () => this.exportSVG());
+        d3.select("#exportSVG").on("click", () => this.exportSVG());
 
         this.addEventListeners();
     }
@@ -85,26 +82,21 @@ export class FanChart {
      */
     addEventListeners() {
         // Listen for fullscreen change event
-        document.addEventListener(
-            "fullscreenchange",
-            () => {
-                if (document.fullscreenElement) {
-                    // Add attribute to the body element to indicate fullscreen state
-                    document.body.setAttribute("fullscreen", "");
-                } else {
-                    document.body.removeAttribute("fullscreen");
-                }
+        document.addEventListener("fullscreenchange", () => {
+            if (document.fullscreenElement) {
+                // Add attribute to the body element to indicate fullscreen state
+                document.body.setAttribute("fullscreen", "");
+            } else {
+                document.body.removeAttribute("fullscreen");
+            }
 
-                this._chart.updateViewBox();
-            },
-        );
+            this._chart.updateViewBox();
+        });
 
         // Listen for orientation change event
-        screen.orientation.addEventListener(
-            "change",
-            () => {
-                this._chart.updateViewBox();
-            });
+        screen.orientation.addEventListener("change", () => {
+            this._chart.updateViewBox();
+        });
     }
 
     /**
@@ -132,9 +124,7 @@ export class FanChart {
      * @private
      */
     exportPNG() {
-        this._chart.svg
-            .export("png")
-            .svgToImage(this._chart.svg, "fan-chart.png");
+        this._chart.svg.export("png").svgToImage(this._chart.svg, "fan-chart.png");
     }
 
     /**
@@ -144,8 +134,6 @@ export class FanChart {
      * @private
      */
     exportSVG() {
-        this._chart.svg
-            .export("svg")
-            .svgToImage(this._chart.svg, "fan-chart.svg");
+        this._chart.svg.export("svg").svgToImage(this._chart.svg, "fan-chart.svg");
     }
 }

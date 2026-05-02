@@ -6,7 +6,7 @@
  */
 
 import * as d3 from "../../d3.js";
-import Geometry, {MATH_RAD2DEG} from "./geometry.js";
+import Geometry, { MATH_RAD2DEG } from "./geometry.js";
 import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees-chart-lib";
 
 /**
@@ -133,17 +133,15 @@ export default class Text {
     createOuterLabels(parent, datum, positions) {
         if (datum.depth >= 7) {
             const nameGroups = this.createNamesData(datum);
-            const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.FIRST_NAMES));
+            const availableWidth = this.getAvailableWidth(
+                datum,
+                positions.get(Text.TEXT_SLOT.FIRST_NAMES),
+            );
             const combined = nameGroups.flat();
 
-            const text = parent
-                .append("text")
-                .attr("dominant-baseline", "middle");
+            const text = parent.append("text").attr("dominant-baseline", "middle");
 
-            this.addNameElements(
-                text,
-                this.truncateNamesData(text, combined, availableWidth),
-            );
+            this.addNameElements(text, this.truncateNamesData(text, combined, availableWidth));
         } else {
             const nameGroups = this.createNamesData(datum);
             const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
@@ -153,20 +151,21 @@ export default class Text {
                     return;
                 }
 
-                const availableWidth = this.getAvailableWidth(datum, positions.get(nameSlots[index]));
-                const text = parent
-                    .append("text")
-                    .attr("dominant-baseline", "middle");
-
-                this.addNameElements(
-                    text,
-                    this.truncateNamesData(text, nameGroup, availableWidth),
+                const availableWidth = this.getAvailableWidth(
+                    datum,
+                    positions.get(nameSlots[index]),
                 );
+                const text = parent.append("text").attr("dominant-baseline", "middle");
+
+                this.addNameElements(text, this.truncateNamesData(text, nameGroup, availableWidth));
             });
 
             // Skip alternative names for descendants to save space
-            if ((datum.data.data.alternativeName !== "") && (datum.depth >= 0)) {
-                const availableWidth = this.getAvailableWidth(datum, positions.get(Text.TEXT_SLOT.ALTERNATIVE_NAME));
+            if (datum.data.data.alternativeName !== "" && datum.depth >= 0) {
+                const availableWidth = this.getAvailableWidth(
+                    datum,
+                    positions.get(Text.TEXT_SLOT.ALTERNATIVE_NAME),
+                );
                 const nameGroup = this.createAlternativeNamesData(datum);
 
                 const text = parent
@@ -175,26 +174,21 @@ export default class Text {
                     .classed("wt-chart-box-name-alt", true)
                     .classed("rtl", datum.data.data.isAltRtl);
 
-                this.addNameElements(
-                    text,
-                    this.truncateNamesData(text, nameGroup, availableWidth),
-                );
+                this.addNameElements(text, this.truncateNamesData(text, nameGroup, availableWidth));
             }
 
             // Depth 6+ outer arcs are too narrow for date text
             if (datum.depth < 6) {
                 // Outer labels use plain text elements — slot/position unused
                 // since positioning is handled by transformOuterText
-                this.renderTimespanLines(parent, datum, positions, (_slot) => parent
-                    .append("text")
-                    .attr("class", "date")
-                    .attr("dominant-baseline", "middle"));
+                this.renderTimespanLines(parent, datum, positions, (_slot) =>
+                    parent.append("text").attr("class", "date").attr("dominant-baseline", "middle"),
+                );
             }
         }
 
         if (datum.depth >= 8) {
-            parent.selectAll("tspan[text-decoration]")
-                .attr("text-decoration", null);
+            parent.selectAll("tspan[text-decoration]").attr("text-decoration", null);
         }
 
         this.transformOuterText(parent, datum);
@@ -270,19 +264,16 @@ export default class Text {
                     minPosFirstnames = pos;
                 }
 
-                firstnameMap.set(
-                    pos,
-                    {
-                        label: firstName,
-                        isPreferred: firstName === datum.data.data.preferredName,
-                        isLastName: false,
-                        isNameRtl: datum.data.data.isNameRtl,
-                    },
-                );
+                firstnameMap.set(pos, {
+                    label: firstName,
+                    isPreferred: firstName === datum.data.data.preferredName,
+                    isLastName: false,
+                    isNameRtl: datum.data.data.isNameRtl,
+                });
             }
         }
 
-        names[minPosFirstnames] = [...firstnameMap].map(([, value]) => ( value ));
+        names[minPosFirstnames] = [...firstnameMap].map(([, value]) => value);
 
         let lastnameOffset = 0;
         const lastnameMap = new Map();
@@ -294,10 +285,10 @@ export default class Text {
             do {
                 pos = datum.data.data.name.indexOf(lastName, lastnameOffset);
 
-                if ((pos !== -1) && firstnameMap.has(pos)) {
+                if (pos !== -1 && firstnameMap.has(pos)) {
                     lastnameOffset = pos + lastName.length;
                 }
-            } while ((pos !== -1) && firstnameMap.has(pos));
+            } while (pos !== -1 && firstnameMap.has(pos));
 
             if (pos !== -1) {
                 lastnameOffset = pos;
@@ -306,19 +297,16 @@ export default class Text {
                     minPosLastnames = pos;
                 }
 
-                lastnameMap.set(
-                    pos,
-                    {
-                        label: lastName,
-                        isPreferred: false,
-                        isLastName: true,
-                        isNameRtl: datum.data.data.isNameRtl,
-                    },
-                );
+                lastnameMap.set(pos, {
+                    label: lastName,
+                    isPreferred: false,
+                    isLastName: true,
+                    isNameRtl: datum.data.data.isNameRtl,
+                });
             }
         }
 
-        names[minPosLastnames] = [...lastnameMap].map(([, value]) => ( value ));
+        names[minPosLastnames] = [...lastnameMap].map(([, value]) => value);
 
         // Extract the values (keys don't matter anymore)
         return Object.values(names);
@@ -354,19 +342,21 @@ export default class Text {
      * @private
      */
     addNameElements(parent, data) {
-        parent.selectAll("tspan")
+        parent
+            .selectAll("tspan")
             .data(data)
             .enter()
             .call((enterSelection) => {
-                enterSelection.append("tspan")
-                    .text(datum => datum.label)
+                enterSelection
+                    .append("tspan")
+                    .text((datum) => datum.label)
                     // Add some spacing between the elements
                     .attr("dx", (datum, index) => {
                         return index === 0 ? null : `${(datum.isNameRtl ? -1 : 1) * 0.25}em`;
                     })
                     // Highlight the preferred and last name
-                    .attr("text-decoration", datum => datum.isPreferred ? "underline" : null)
-                    .classed("lastName", datum => datum.isLastName);
+                    .attr("text-decoration", (datum) => (datum.isPreferred ? "underline" : null))
+                    .classed("lastName", (datum) => datum.isLastName);
             });
     }
 
@@ -436,15 +426,15 @@ export default class Text {
             // Compute angular width from fraction * total sector to ensure
             // all siblings get the same result (avoids floating-point
             // boundary issues with individual startAngle/endAngle calls)
-            const totalSectorRad = this._geometry.endAngle(data.depth, 1)
-                - this._geometry.startAngle(data.depth, 0);
+            const totalSectorRad =
+                this._geometry.endAngle(data.depth, 1) - this._geometry.startAngle(data.depth, 0);
             const angularWidthDeg = (data.x1 - data.x0) * totalSectorRad * MATH_RAD2DEG;
-            const minArcDeg = (data.depth === -1) ? 30 : 20;
+            const minArcDeg = data.depth === -1 ? 30 : 20;
 
             return angularWidthDeg >= minArcDeg;
         }
 
-        return (data.depth > 0) && (data.depth <= this._configuration.numberOfInnerCircles);
+        return data.depth > 0 && data.depth <= this._configuration.numberOfInnerCircles;
     }
 
     /**
@@ -475,10 +465,14 @@ export default class Text {
         const positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
         const startAngle = this._geometry.startAngle(data.depth, data.x0);
         const endAngle = this._geometry.endAngle(data.depth, data.x1);
-        const relativeRadius = this._geometry.relativeRadius(data.depth, this.getTextOffset(positionFlipped, position));
+        const relativeRadius = this._geometry.relativeRadius(
+            data.depth,
+            this.getTextOffset(positionFlipped, position),
+        );
 
         // Create an arc generator for path segments
-        const arcGenerator = d3.arc()
+        const arcGenerator = d3
+            .arc()
             .startAngle(positionFlipped ? endAngle : startAngle)
             .endAngle(positionFlipped ? startAngle : endAngle)
             .innerRadius(relativeRadius)
@@ -491,10 +485,7 @@ export default class Text {
 
         // Store the <path> inside the definition list, so we could
         // access it later on by its id
-        this._svg.defs
-            .append("path")
-            .attr("id", pathId)
-            .attr("d", arcGenerator);
+        this._svg.defs.append("path").attr("id", pathId).attr("d", arcGenerator);
 
         return pathId;
     }
@@ -520,11 +511,11 @@ export default class Text {
      * @type {Object<string, {index: number}>}
      */
     static TEXT_SLOT = {
-        FIRST_NAMES:      { index: 0 },
-        LAST_NAMES:       { index: 1 },
+        FIRST_NAMES: { index: 0 },
+        LAST_NAMES: { index: 1 },
         ALTERNATIVE_NAME: { index: 2 },
-        DATE_LINE_1:      { index: 3 },
-        DATE_LINE_2:      { index: 4 },
+        DATE_LINE_1: { index: 3 },
+        DATE_LINE_2: { index: 4 },
     };
 
     /**
@@ -590,8 +581,8 @@ export default class Text {
         // This ensures consistent visual gaps across all generations regardless
         // of depth-dependent font scaling.
         const fontSize = this._geometry.getFontSize(datum);
-        const arcHeight = this._geometry.outerRadius(datum.depth)
-            - this._geometry.innerRadius(datum.depth);
+        const arcHeight =
+            this._geometry.outerRadius(datum.depth) - this._geometry.innerRadius(datum.depth);
         const fontPercent = (fontSize / arcHeight) * 100;
 
         let intraNameSpacing = fontPercent * 1.1;
@@ -602,12 +593,12 @@ export default class Text {
         let totalHeight = 0;
 
         groups.forEach((group, gi) => {
-            const isDateGroup = (group[0] === Text.TEXT_SLOT.DATE_LINE_1);
+            const isDateGroup = group[0] === Text.TEXT_SLOT.DATE_LINE_1;
             const intraSpacing = isDateGroup ? intraDateSpacing : intraNameSpacing;
 
             totalHeight += (group.length - 1) * intraSpacing;
 
-            if (gi < (groups.length - 1)) {
+            if (gi < groups.length - 1) {
                 totalHeight += interGroupSpacing;
             }
         });
@@ -637,43 +628,49 @@ export default class Text {
         }
 
         const rangeMid = (rangeMin + rangeMax) / 2;
-        let currentPos = rangeMid + (totalHeight / 2);
+        let currentPos = rangeMid + totalHeight / 2;
 
         // Compensate for SVG text baseline: text renders with its baseline
         // on the arc path, but the visual center of glyphs sits above the
         // baseline. Shift each path position outward (higher %) so the
         // visual center lands at the intended position.
-        const normalOffsetPercent = (fontSize * 0.375 / arcHeight) * 100;
-        const flippedOffsetPercent = (fontSize * 0.2 / arcHeight) * 100;
+        const normalOffsetPercent = ((fontSize * 0.375) / arcHeight) * 100;
+        const flippedOffsetPercent = ((fontSize * 0.2) / arcHeight) * 100;
 
         const positions = new Map();
-        const normalOffset = (datum.depth < 0) ? 0 : normalOffsetPercent;
+        const normalOffset = datum.depth < 0 ? 0 : normalOffsetPercent;
 
         groups.forEach((group, gi) => {
-            const isDateGroup = (group[0] === Text.TEXT_SLOT.DATE_LINE_1);
+            const isDateGroup = group[0] === Text.TEXT_SLOT.DATE_LINE_1;
             const intraSpacing = isDateGroup ? intraDateSpacing : intraNameSpacing;
 
             group.forEach((slot, si) => {
                 positions.set(slot, {
                     normal: currentPos - normalOffset,
-                    flipped: (100 - currentPos) + flippedOffsetPercent,
+                    flipped: 100 - currentPos + flippedOffsetPercent,
                 });
 
-                if (si < (group.length - 1)) {
+                if (si < group.length - 1) {
                     currentPos -= intraSpacing;
                 }
             });
 
-            if (gi < (groups.length - 1)) {
+            if (gi < groups.length - 1) {
                 currentPos -= interGroupSpacing;
             }
         });
 
         // Ensure both name slots have a position even if one was excluded
         // from spacing. Copy the other's position so lookups don't fail.
-        if (!positions.has(Text.TEXT_SLOT.FIRST_NAMES) && positions.has(Text.TEXT_SLOT.LAST_NAMES)) {
+        if (
+            !positions.has(Text.TEXT_SLOT.FIRST_NAMES) &&
+            positions.has(Text.TEXT_SLOT.LAST_NAMES)
+        ) {
             positions.set(Text.TEXT_SLOT.FIRST_NAMES, positions.get(Text.TEXT_SLOT.LAST_NAMES));
-        } else if (!positions.has(Text.TEXT_SLOT.LAST_NAMES) && positions.has(Text.TEXT_SLOT.FIRST_NAMES)) {
+        } else if (
+            !positions.has(Text.TEXT_SLOT.LAST_NAMES) &&
+            positions.has(Text.TEXT_SLOT.FIRST_NAMES)
+        ) {
             positions.set(Text.TEXT_SLOT.LAST_NAMES, positions.get(Text.TEXT_SLOT.FIRST_NAMES));
         }
 
@@ -714,48 +711,62 @@ export default class Text {
         if (data.depth < 0) {
             if (!this.isInnerLabel(data)) {
                 // Narrow descendant arcs use rotated text -- width = actual arc height
-                const arcHeight = this._geometry.outerRadius(data.depth)
-                    - this._geometry.innerRadius(data.depth);
+                const arcHeight =
+                    this._geometry.outerRadius(data.depth) - this._geometry.innerRadius(data.depth);
 
-                return arcHeight - (this._configuration.textPadding * 2);
+                return arcHeight - this._configuration.textPadding * 2;
             }
 
             // Wide descendant arcs use arc-path text -- width = chord length
             const positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
-            let availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, position));
+            let availableWidth = this._geometry.arcLength(
+                data,
+                this.getTextOffset(positionFlipped, position),
+            );
 
-            availableWidth = availableWidth - (this._configuration.textPadding * 2)
-                - (this._configuration.padDistance / 2);
+            availableWidth =
+                availableWidth -
+                this._configuration.textPadding * 2 -
+                this._configuration.padDistance / 2;
 
             return availableWidth;
         }
 
         // Outer arcs
         if (data.depth > this._configuration.numberOfInnerCircles) {
-            return this._configuration.outerArcHeight
-                - (this._configuration.textPadding * 2)
-                - this._configuration.circlePadding;
+            return (
+                this._configuration.outerArcHeight -
+                this._configuration.textPadding * 2 -
+                this._configuration.circlePadding
+            );
         }
 
         // Innermost circle (Reducing the width slightly, avoiding the text is sticking too close to the edge)
-        let availableWidth = (this._configuration.centerCircleRadius * 2) - (this._configuration.centerCircleRadius * 0.15);
+        let availableWidth =
+            this._configuration.centerCircleRadius * 2 -
+            this._configuration.centerCircleRadius * 0.15;
 
         if (data.depth >= 1) {
             const positionFlipped = this.isPositionFlipped(data.depth, data.x0, data.x1);
 
             // Calculate length of the arc
-            availableWidth = this._geometry.arcLength(data, this.getTextOffset(positionFlipped, position));
+            availableWidth = this._geometry.arcLength(
+                data,
+                this.getTextOffset(positionFlipped, position),
+            );
         }
 
-        availableWidth = availableWidth - (this._configuration.textPadding * 2)
-            - (this._configuration.padDistance / 2);
+        availableWidth =
+            availableWidth -
+            this._configuration.textPadding * 2 -
+            this._configuration.padDistance / 2;
 
         // Reduce available width when an image is present.
         // imageSize is pre-computed and set on the datum by Person.init() before labels are rendered.
         const imageSize = data.data.data.imageSize || 0;
 
         if (imageSize > 0) {
-            availableWidth -= (imageSize + 10);
+            availableWidth -= imageSize + 10;
         }
 
         return availableWidth;
@@ -803,11 +814,11 @@ export default class Text {
                     }
                 });
 
-                const actualGroupGap = (hasNames && hasDates) ? groupGap : 0;
-                const textHeight = (countElements * innerLineHeight) + actualGroupGap;
+                const actualGroupGap = hasNames && hasDates ? groupGap : 0;
+                const textHeight = countElements * innerLineHeight + actualGroupGap;
                 const totalHeight = imageSize + imageGap + textHeight;
 
-                let currentY = -(totalHeight / 2) + imageSize + imageGap + (innerLineHeight / 2);
+                let currentY = -(totalHeight / 2) + imageSize + imageGap + innerLineHeight / 2;
                 let prevIsDate = false;
 
                 textElements.each(function () {
@@ -873,7 +884,7 @@ export default class Text {
         const angularPositions = this.calculateOuterSlotPositions(datum, textElements);
 
         textElements.each(function (_ignore, i) {
-            const offsetRotate = angularPositions[i] * that._configuration.fontScale / 100.0;
+            const offsetRotate = (angularPositions[i] * that._configuration.fontScale) / 100.0;
 
             d3.select(this).attr("transform", () => {
                 const dx = datum.x1 - datum.x0;
@@ -885,7 +896,7 @@ export default class Text {
                     // flip at 180° so left-side text reads outward like
                     // right-side text (independent of isPositionFlipped
                     // which always returns true for inner arc-path labels)
-                    const midFrac = datum.x0 + (dx / 2);
+                    const midFrac = datum.x0 + dx / 2;
                     const midRad = that._configuration.childScale
                         ? that._configuration.childScale(midFrac)
                         : 0;
@@ -894,12 +905,14 @@ export default class Text {
                     flipped = midRad <= Math.PI;
                 } else {
                     // Ancestor nodes: use ancestor scale
-                    angle = that._geometry.scale(datum.x0 + (dx / 2)) * MATH_RAD2DEG;
+                    angle = that._geometry.scale(datum.x0 + dx / 2) * MATH_RAD2DEG;
                     flipped = angle > 0;
                 }
 
-                let rotate = angle - (offsetRotate * (flipped ? -1 : 1));
-                let translate = (that._geometry.centerRadius(datum.depth) - (that._configuration.colorArcWidth / 2.0));
+                let rotate = angle - offsetRotate * (flipped ? -1 : 1);
+                let translate =
+                    that._geometry.centerRadius(datum.depth) -
+                    that._configuration.colorArcWidth / 2.0;
 
                 // Compensate for text baseline: convert a perpendicular pixel
                 // shift into an angular offset at the given radius
@@ -940,8 +953,9 @@ export default class Text {
         textElements.each(function () {
             if (d3.select(this).classed("date")) {
                 // Start a new group for the first date
-                if ((groups[groups.length - 1].items.length > 0)
-                    && !groups[groups.length - 1].isDate
+                if (
+                    groups[groups.length - 1].items.length > 0 &&
+                    !groups[groups.length - 1].isDate
                 ) {
                     groups.push({ items: [], isDate: true });
                 }
@@ -974,19 +988,20 @@ export default class Text {
             const intraGap = group.isDate ? intraDateGapDeg : intraNameGapDeg;
             totalDeg += (group.items.length - 1) * intraGap;
 
-            if (gi < (groups.length - 1)) {
+            if (gi < groups.length - 1) {
                 totalDeg += interGapDeg;
             }
         });
 
         // Cap to 85% of angular span, compress proportionally if needed
-        const angularSpanDeg = Math.abs(
-            this._geometry.endAngle(datum.depth, datum.x1)
-            - this._geometry.startAngle(datum.depth, datum.x0),
-        ) * MATH_RAD2DEG;
+        const angularSpanDeg =
+            Math.abs(
+                this._geometry.endAngle(datum.depth, datum.x1) -
+                    this._geometry.startAngle(datum.depth, datum.x0),
+            ) * MATH_RAD2DEG;
         const maxDeg = angularSpanDeg * 0.85;
 
-        if ((totalDeg > maxDeg) && (totalDeg > 0)) {
+        if (totalDeg > maxDeg && totalDeg > 0) {
             const scale = maxDeg / totalDeg;
             intraNameGapDeg *= scale;
             intraDateGapDeg *= scale;
@@ -1005,12 +1020,12 @@ export default class Text {
             group.items.forEach((_element, si) => {
                 positions.push(currentPos);
 
-                if (si < (group.items.length - 1)) {
+                if (si < group.items.length - 1) {
                     currentPos += intraGap;
                 }
             });
 
-            if (gi < (groups.length - 1)) {
+            if (gi < groups.length - 1) {
                 currentPos += interGapDeg;
             }
         });

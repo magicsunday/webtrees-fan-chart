@@ -16,7 +16,7 @@
  */
 export function classifyElement(element) {
     return {
-        isNew:    element.classed("new"),
+        isNew: element.classed("new"),
         isUpdate: element.classed("update"),
         isRemove: element.classed("remove"),
     };

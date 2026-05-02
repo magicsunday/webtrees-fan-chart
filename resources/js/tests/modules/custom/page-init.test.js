@@ -7,8 +7,12 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
     Storage: jest.fn().mockImplementation(() => {
         const instance = {
             register: jest.fn(),
-            read: jest.fn((key) => Object.prototype.hasOwnProperty.call(storageData, key) ? storageData[key] : null),
-            write: jest.fn((key, value) => { storageData[key] = value; }),
+            read: jest.fn((key) =>
+                Object.prototype.hasOwnProperty.call(storageData, key) ? storageData[key] : null,
+            ),
+            write: jest.fn((key, value) => {
+                storageData[key] = value;
+            }),
         };
 
         storageInstances.push(instance);

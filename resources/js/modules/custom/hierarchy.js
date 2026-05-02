@@ -6,7 +6,7 @@
  */
 
 import * as d3 from "../d3.js";
-import {MATH_DEG2RAD} from "./svg/geometry.js";
+import { MATH_DEG2RAD } from "./svg/geometry.js";
 
 export const SEX_MALE = "M";
 export const SEX_FEMALE = "F";
@@ -78,14 +78,13 @@ export default class Hierarchy {
      */
     init(datum) {
         // Construct root node from the hierarchical data
-        this._root = d3.hierarchy(
-            datum,
-            datum => {
+        this._root = d3
+            .hierarchy(datum, (datum) => {
                 // Build a parents array without mutating the original server JSON
                 let parents = datum.parents;
 
                 // Fill up the missing parents to the requested number of generations
-                if (!parents && (datum.data.generation < this._configuration.generations)) {
+                if (!parents && datum.data.generation < this._configuration.generations) {
                     parents = [
                         this.createEmptyNode(datum.data.generation + 1, SEX_MALE),
                         this.createEmptyNode(datum.data.generation + 1, SEX_FEMALE),
@@ -93,17 +92,13 @@ export default class Hierarchy {
                 }
 
                 // Add missing parent record if we got only one
-                if (parents && (parents.length < 2)) {
+                if (parents && parents.length < 2) {
                     parents = [...parents];
 
                     if (parents[0].data.sex === SEX_MALE) {
-                        parents.push(
-                            this.createEmptyNode(datum.data.generation + 1, SEX_FEMALE),
-                        );
+                        parents.push(this.createEmptyNode(datum.data.generation + 1, SEX_FEMALE));
                     } else {
-                        parents.unshift(
-                            this.createEmptyNode(datum.data.generation + 1, SEX_MALE),
-                        );
+                        parents.unshift(this.createEmptyNode(datum.data.generation + 1, SEX_MALE));
                     }
                 }
 
@@ -116,8 +111,7 @@ export default class Hierarchy {
         const partitionLayout = d3.partition();
 
         // Map the node data to the partition layout
-        this._nodes = partitionLayout(this._root)
-            .descendants();
+        this._nodes = partitionLayout(this._root).descendants();
 
         // Assign a unique ID to each node
         this._nodes.forEach((node, i) => {
@@ -161,7 +155,7 @@ export default class Hierarchy {
         const partners = datum.partners || [];
         const unassignedChildren = datum.unassignedChildren || [];
 
-        if ((partners.length === 0) && (unassignedChildren.length === 0)) {
+        if (partners.length === 0 && unassignedChildren.length === 0) {
             this._configuration.childScale = null;
 
             return;
@@ -171,11 +165,11 @@ export default class Hierarchy {
         const gap = DESCENDANT_GAP_DEG * MATH_DEG2RAD;
         const fanDeg = this._configuration.fanDegree;
 
-        const startPi = (fanDeg === 90) ? 0 : -(fanDeg / 2 * MATH_DEG2RAD);
-        const endPi = (fanDeg === 90) ? (fanDeg * MATH_DEG2RAD) : (fanDeg / 2 * MATH_DEG2RAD);
+        const startPi = fanDeg === 90 ? 0 : -((fanDeg / 2) * MATH_DEG2RAD);
+        const endPi = fanDeg === 90 ? fanDeg * MATH_DEG2RAD : (fanDeg / 2) * MATH_DEG2RAD;
 
         const startChildPi = endPi + gap;
-        const endChildPi = (Math.PI * 2 + startPi) - gap;
+        const endChildPi = Math.PI * 2 + startPi - gap;
 
         // Not enough room for descendants
         if (endChildPi <= startChildPi) {
@@ -226,7 +220,7 @@ export default class Hierarchy {
         let useEqualDistribution = false;
 
         if (totalWeight > 0) {
-            const smallestPartnerDeg = totalAngleDeg * 1 / totalWeight;
+            const smallestPartnerDeg = (totalAngleDeg * 1) / totalWeight;
 
             if (smallestPartnerDeg < minPartnerDeg) {
                 useEqualDistribution = true;
@@ -240,8 +234,8 @@ export default class Hierarchy {
         for (const block of familyBlocks) {
             if (block.children.length > 0) {
                 const blockFraction = useEqualDistribution
-                    ? (1 / familyBlocks.length)
-                    : (block.weight / totalWeight);
+                    ? 1 / familyBlocks.length
+                    : block.weight / totalWeight;
                 const childFraction = blockFraction / block.children.length;
 
                 smallestChildFraction = Math.min(smallestChildFraction, childFraction);
@@ -270,8 +264,8 @@ export default class Hierarchy {
 
         for (const block of familyBlocks) {
             const blockFraction = useEqualDistribution
-                ? (1 / familyBlocks.length)
-                : (block.weight / totalWeight);
+                ? 1 / familyBlocks.length
+                : block.weight / totalWeight;
 
             const blockStart = currentFraction;
             const blockEnd = currentFraction + blockFraction;
@@ -306,8 +300,8 @@ export default class Hierarchy {
                         this._nodes.push({
                             id: nextId++,
                             depth: -2,
-                            x0: blockStart + (i * childFraction),
-                            x1: blockStart + ((i + 1) * childFraction),
+                            x0: blockStart + i * childFraction,
+                            x1: blockStart + (i + 1) * childFraction,
                             parent: null,
                             children: null,
                             height: 0,
@@ -330,8 +324,8 @@ export default class Hierarchy {
                     this._nodes.push({
                         id: nextId++,
                         depth: -2,
-                        x0: blockStart + (i * childFraction),
-                        x1: blockStart + ((i + 1) * childFraction),
+                        x0: blockStart + i * childFraction,
+                        x1: blockStart + (i + 1) * childFraction,
                         parent: null,
                         children: null,
                         height: 0,
@@ -377,19 +371,19 @@ export default class Hierarchy {
     createEmptyNode(generation, sex) {
         return {
             data: {
-                id              : 0,
-                xref            : "",
-                url             : "",
-                updateUrl       : "",
-                generation      : generation,
-                name            : "",
-                firstNames      : [],
-                lastNames       : [],
-                preferredName   : "",
-                alternativeName : "",
-                isAltRtl        : false,
-                sex             : sex,
-                timespan        : "",
+                id: 0,
+                xref: "",
+                url: "",
+                updateUrl: "",
+                generation: generation,
+                name: "",
+                firstNames: [],
+                lastNames: [],
+                preferredName: "",
+                alternativeName: "",
+                isAltRtl: false,
+                sex: sex,
+                timespan: "",
             },
         };
     }

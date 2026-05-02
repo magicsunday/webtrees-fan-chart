@@ -6,7 +6,7 @@
  */
 
 import * as d3 from "../../d3.js";
-import {SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_ELLIPSIS, SYMBOL_MARRIAGE} from "../hierarchy.js";
+import { SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_ELLIPSIS, SYMBOL_MARRIAGE } from "../hierarchy.js";
 
 /**
  * Escapes HTML entities to prevent injection in tooltip content.
@@ -74,10 +74,7 @@ export default class TooltipRenderer {
         person
             .on("contextmenu", (event) => {
                 if (this._svg.div.property("active")) {
-                    this._svg.div
-                        .transition()
-                        .duration(200)
-                        .style("opacity", 0);
+                    this._svg.div.transition().duration(200).style("opacity", 0);
 
                     this._svg.div.property("active", false);
                     event.preventDefault();
@@ -102,13 +99,10 @@ export default class TooltipRenderer {
                     .style("top", `${event.pageY - 30}px`);
             })
             .on("mouseover", (event) => {
-                d3.select(event.currentTarget)
-                    .classed("hover", true)
-                    .raise();
+                d3.select(event.currentTarget).classed("hover", true).raise();
             })
             .on("mouseout", (event) => {
-                d3.select(event.currentTarget)
-                    .classed("hover", false);
+                d3.select(event.currentTarget).classed("hover", false);
             });
     }
 
@@ -201,17 +195,12 @@ export default class TooltipRenderer {
         const safeName = escapeHtml(datum.data.data.name);
 
         this._svg.div
-            .html(
-                `${image}<div class="text"><div class="name">${safeName}</div>${data}</div>`,
-            )
+            .html(`${image}<div class="text"><div class="name">${safeName}</div>${data}</div>`)
             .style("left", `${event.pageX}px`)
             .style("top", `${event.pageY - 30}px`);
 
         if (this._svg.div.property("active")) {
-            this._svg.div
-                .transition()
-                .duration(200)
-                .style("opacity", 1);
+            this._svg.div.transition().duration(200).style("opacity", 1);
         }
     }
 }

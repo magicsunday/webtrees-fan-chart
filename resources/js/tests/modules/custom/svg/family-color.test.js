@@ -7,7 +7,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/hierarchy", () => ({
     __esModule: true,
     SEX_MALE,
     SEX_FEMALE,
-    default: jest.fn()
+    default: jest.fn(),
 }));
 
 const { default: FamilyColor } = await import("resources/js/modules/custom/svg/family-color");
@@ -15,7 +15,7 @@ const { default: FamilyColor } = await import("resources/js/modules/custom/svg/f
 const createConfiguration = (overrides = {}) => ({
     paternalColor: "#3b82b0",
     maternalColor: "#d06f94",
-    ...overrides
+    ...overrides,
 });
 
 // hexToHsl tests live in @magicsunday/webtrees-chart-lib
@@ -30,7 +30,7 @@ describe("FamilyColor.getColor", () => {
             x0: 0,
             x1: 0.5,
             parent: null,
-            data: { data: { xref: "", sex: SEX_MALE } }
+            data: { data: { xref: "", sex: SEX_MALE } },
         };
 
         expect(fc.getColor(datum)).toBeNull();
@@ -43,7 +43,7 @@ describe("FamilyColor.getColor", () => {
             depth: 0,
             x0: 0,
             x1: 1,
-            data: { data: { xref: "I1", sex: SEX_MALE } }
+            data: { data: { xref: "I1", sex: SEX_MALE } },
         };
 
         const color = fc.getColor(datum);
@@ -59,7 +59,7 @@ describe("FamilyColor.getColor", () => {
             depth: 0,
             x0: 0,
             x1: 1,
-            data: { data: { xref: "I1", sex: SEX_FEMALE } }
+            data: { data: { xref: "I1", sex: SEX_FEMALE } },
         };
 
         const color = fc.getColor(datum);
@@ -74,7 +74,7 @@ describe("FamilyColor.getColor", () => {
             depth: 0,
             x0: 0,
             x1: 1,
-            data: { data: { xref: "I1", sex: "U" } }
+            data: { data: { xref: "I1", sex: "U" } },
         };
 
         expect(fc.getColor(datum)).toBe("hsl(0, 0%, 92%)");
@@ -88,7 +88,7 @@ describe("FamilyColor.getColor", () => {
             x0: 0,
             x1: 0.25,
             parent: null,
-            data: { data: { xref: "I2", sex: SEX_MALE } }
+            data: { data: { xref: "I2", sex: SEX_MALE } },
         };
 
         const color = fc.getColor(datum);
@@ -102,9 +102,7 @@ describe("FamilyColor.getColor", () => {
         const fc = new FamilyColor(config);
 
         // Pre-set partner midpoints so descendant lookups work
-        fc.setPartnerMidpoints([
-            { depth: -1, id: 10, x0: 0, x1: 0.5 }
-        ]);
+        fc.setPartnerMidpoints([{ depth: -1, id: 10, x0: 0, x1: 0.5 }]);
 
         const datum = {
             depth: -1,
@@ -113,7 +111,7 @@ describe("FamilyColor.getColor", () => {
             id: 10,
             descendantType: "partner",
             syntheticParentId: null,
-            data: { data: { xref: "I5", sex: SEX_FEMALE } }
+            data: { data: { xref: "I5", sex: SEX_FEMALE } },
         };
 
         const color = fc.getColor(datum);
@@ -140,7 +138,7 @@ describe("FamilyColor.getDescendantColor (via getColor)", () => {
             id: 10,
             descendantType: "partner",
             syntheticParentId: null,
-            data: { data: { xref: "I2", sex: SEX_FEMALE } }
+            data: { data: { xref: "I2", sex: SEX_FEMALE } },
         };
 
         const partner2 = {
@@ -150,7 +148,7 @@ describe("FamilyColor.getDescendantColor (via getColor)", () => {
             id: 11,
             descendantType: "partner",
             syntheticParentId: null,
-            data: { data: { xref: "I3", sex: SEX_FEMALE } }
+            data: { data: { xref: "I3", sex: SEX_FEMALE } },
         };
 
         const color1 = fc.getColor(partner1);
@@ -166,9 +164,7 @@ describe("FamilyColor.getDescendantColor (via getColor)", () => {
         const config = createConfiguration();
         const fc = new FamilyColor(config);
 
-        fc.setPartnerMidpoints([
-            { depth: -1, id: 10, x0: 0.2, x1: 0.6 }
-        ]);
+        fc.setPartnerMidpoints([{ depth: -1, id: 10, x0: 0.2, x1: 0.6 }]);
 
         const partner = {
             depth: -1,
@@ -177,7 +173,7 @@ describe("FamilyColor.getDescendantColor (via getColor)", () => {
             id: 10,
             descendantType: "partner",
             syntheticParentId: null,
-            data: { data: { xref: "I2", sex: SEX_FEMALE } }
+            data: { data: { xref: "I2", sex: SEX_FEMALE } },
         };
 
         const child = {
@@ -187,7 +183,7 @@ describe("FamilyColor.getDescendantColor (via getColor)", () => {
             id: 11,
             descendantType: "child",
             syntheticParentId: 10,
-            data: { data: { xref: "I3", sex: SEX_MALE } }
+            data: { data: { xref: "I3", sex: SEX_MALE } },
         };
 
         const partnerColor = fc.getColor(partner);
@@ -210,7 +206,7 @@ describe("FamilyColor.getMarriageColor", () => {
     it("returns familyColor for depth 0", () => {
         const datum = {
             depth: 0,
-            data: { data: { familyColor: "hsl(200, 50%, 60%)" } }
+            data: { data: { familyColor: "hsl(200, 50%, 60%)" } },
         };
 
         expect(FamilyColor.getMarriageColor(datum)).toBe("hsl(200, 50%, 60%)");
@@ -219,7 +215,7 @@ describe("FamilyColor.getMarriageColor", () => {
     it("returns familyColor for depth < 0 (descendant)", () => {
         const datum = {
             depth: -1,
-            data: { data: { familyColor: "hsl(120, 40%, 55%)" } }
+            data: { data: { familyColor: "hsl(120, 40%, 55%)" } },
         };
 
         expect(FamilyColor.getMarriageColor(datum)).toBe("hsl(120, 40%, 55%)");
@@ -228,7 +224,7 @@ describe("FamilyColor.getMarriageColor", () => {
     it("returns null for depth < 0 when familyColor is empty", () => {
         const datum = {
             depth: -1,
-            data: { data: { familyColor: "" } }
+            data: { data: { familyColor: "" } },
         };
 
         expect(FamilyColor.getMarriageColor(datum)).toBeNull();
@@ -241,7 +237,7 @@ describe("FamilyColor.getMarriageColor", () => {
                 { data: { data: { familyColor: "" } } },
                 { data: { data: { familyColor: "hsl(30, 60%, 70%)" } } },
             ],
-            data: { data: {} }
+            data: { data: {} },
         };
 
         expect(FamilyColor.getMarriageColor(datum)).toBe("hsl(30, 60%, 70%)");
@@ -250,10 +246,8 @@ describe("FamilyColor.getMarriageColor", () => {
     it("returns null when ancestor node has no children with familyColor", () => {
         const datum = {
             depth: 2,
-            children: [
-                { data: { data: { familyColor: "" } } },
-            ],
-            data: { data: {} }
+            children: [{ data: { data: { familyColor: "" } } }],
+            data: { data: {} },
         };
 
         expect(FamilyColor.getMarriageColor(datum)).toBeNull();
@@ -263,7 +257,7 @@ describe("FamilyColor.getMarriageColor", () => {
         const datum = {
             depth: 1,
             children: null,
-            data: { data: {} }
+            data: { data: {} },
         };
 
         expect(FamilyColor.getMarriageColor(datum)).toBeNull();
@@ -294,7 +288,7 @@ describe("FamilyColor.setPartnerMidpoints", () => {
             id: 7,
             descendantType: "child",
             syntheticParentId: 5,
-            data: { data: { xref: "I10", sex: SEX_MALE } }
+            data: { data: { xref: "I10", sex: SEX_MALE } },
         };
 
         const color = fc.getColor(childDatum);
@@ -322,7 +316,7 @@ describe("FamilyColor.setPartnerMidpoints", () => {
             id: 7,
             descendantType: "child",
             syntheticParentId: 99,
-            data: { data: { xref: "I10", sex: SEX_MALE } }
+            data: { data: { xref: "I10", sex: SEX_MALE } },
         };
 
         // Should still produce a valid color (using fallback midpoint 0.5)

@@ -83,17 +83,18 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/marriage", () =>
 
 const { default: Update } = await import("resources/js/modules/custom/chart-updater");
 
-const flushPromises = () => new Promise((resolve) => {
-    setTimeout(resolve, 0);
-});
+const flushPromises = () =>
+    new Promise((resolve) => {
+        setTimeout(resolve, 0);
+    });
 
 class PersonSelection {
     constructor(id, available = false) {
-        this.id         = id;
-        this.data       = null;
-        this.svg        = null;
-        this.classes    = { available };
-        this.children   = {
+        this.id = id;
+        this.data = null;
+        this.svg = null;
+        this.classes = { available };
+        this.children = {
             arc: { removed: false, styles: {}, attrStyle: undefined },
             name: { old: false, styles: {}, removed: false },
             color: { old: false, styles: {}, removed: false },
@@ -127,7 +128,7 @@ class PersonSelection {
     select() {
         return {
             style: () => {},
-            empty: () => true
+            empty: () => true,
         };
     }
 
@@ -139,7 +140,7 @@ class PersonSelection {
 class ChildSelection {
     constructor(targets, svg) {
         this.targets = targets;
-        this.svg     = svg;
+        this.svg = svg;
     }
 
     classed(name, value) {
@@ -203,7 +204,7 @@ class ChildSelection {
                                 const resolved = typeof value === "function" ? value() : value;
                                 person.children[type].styles[name] = resolved;
                                 return chain;
-                            }
+                            },
                         };
 
                         return chain;
@@ -211,9 +212,9 @@ class ChildSelection {
                     select: () => ({
                         style: (name, value) => {
                             person.children[type].styles[name] = value;
-                        }
-                    })
-                }
+                        },
+                    }),
+                },
             };
 
             callback.call(arcPathEl);
@@ -223,7 +224,10 @@ class ChildSelection {
     }
 
     selectAll(selector) {
-        return this.svg.createChildSelection(selector, this.targets.map(({ person }) => person));
+        return this.svg.createChildSelection(
+            selector,
+            this.targets.map(({ person }) => person),
+        );
     }
 
     remove() {
@@ -232,7 +236,7 @@ class ChildSelection {
                 person.children.arc.removed = true;
             } else {
                 person.children[type].removed = true;
-                person.children[type].old     = false;
+                person.children[type].old = false;
             }
         });
 
@@ -251,15 +255,15 @@ class ChildSelection {
                 });
 
                 return this;
-            }
+            },
         };
     }
 }
 
 class PersonGroupSelection {
     constructor(persons, svg, eventLog) {
-        this.persons  = persons;
-        this.svg      = svg;
+        this.persons = persons;
+        this.svg = svg;
         this.eventLog = eventLog;
     }
 
@@ -287,7 +291,7 @@ class PersonGroupSelection {
             const person = this.svg.personById.get(id);
 
             person.data = datum;
-            person.svg  = this.svg;
+            person.svg = this.svg;
 
             return person;
         });
@@ -353,22 +357,22 @@ class PersonGroupSelection {
 class SvgStub {
     constructor(persons = []) {
         this.personById = new Map(persons.map((person) => [person.id, person]));
-        this.eventLog   = [];
-        this.div        = { property: jest.fn() };
-        this.defs       = {
+        this.eventLog = [];
+        this.div = { property: jest.fn() };
+        this.defs = {
             get: () => ({
                 selectAll: () => ({
-                    each: () => ({})
-                })
-            })
+                    each: () => ({}),
+                }),
+            }),
         };
     }
 
     get() {
         return {
             selectAll: () => ({
-                each: () => ({})
-            })
+                each: () => ({}),
+            }),
         };
     }
 
@@ -383,10 +387,10 @@ class SvgStub {
     }
 
     selectAll(selector) {
-        const hasPersonSelector   = selector.includes("g.person");
+        const hasPersonSelector = selector.includes("g.person");
         const hasMarriageSelector = selector.includes("g.marriage");
         const hasSeparatorSelector = selector.includes("g.separatorGroup");
-        const hasChildSelector    = /g\.arc|g\.name|g\.color|g\.image|title/.test(selector);
+        const hasChildSelector = /g\.arc|g\.name|g\.color|g\.image|title/.test(selector);
 
         // Image clip-path, marriage and separator selectors return empty selections
         if (selector.includes("image[clip-path]") || hasMarriageSelector || hasSeparatorSelector) {
@@ -410,17 +414,23 @@ class SvgStub {
 
     filterPersons(selector) {
         const selectors = selector.split(",").map((item) => item.trim());
-        const matches   = new Set();
-        let hasFilters  = false;
+        const matches = new Set();
+        let hasFilters = false;
 
         selectors.forEach((item) => {
             const requiresRemove = item.includes(".remove") && !item.includes(":not(.remove)");
             const requiresUpdate = item.includes(".update");
-            const requiresNew    = item.includes(".new");
-            const requiresAvail  = item.includes(".available");
+            const requiresNew = item.includes(".new");
+            const requiresAvail = item.includes(".available");
             const excludesRemove = item.includes(":not(.remove)");
 
-            hasFilters = hasFilters || requiresRemove || requiresUpdate || requiresNew || requiresAvail || excludesRemove;
+            hasFilters =
+                hasFilters ||
+                requiresRemove ||
+                requiresUpdate ||
+                requiresNew ||
+                requiresAvail ||
+                excludesRemove;
 
             this.personById.forEach((person) => {
                 if (requiresRemove && !person.classes.remove) {
@@ -456,7 +466,7 @@ class SvgStub {
 
     createChildSelection(selector, persons) {
         const selectors = selector.split(",").map((item) => item.trim());
-        const targets   = [];
+        const targets = [];
 
         selectors.forEach((item) => {
             const type = (() => {
@@ -502,7 +512,7 @@ class SvgStub {
 
 class HierarchyStub {
     constructor() {
-        this.nodes     = [];
+        this.nodes = [];
         this.initCalls = [];
     }
 
@@ -512,17 +522,16 @@ class HierarchyStub {
     }
 }
 
-const createNodes = () => ([
+const createNodes = () => [
     { id: "1", data: { data: { xref: "I1" } } },
     { id: "2", data: { data: { xref: "" } } },
     { id: "3", data: { data: { xref: "I3" } } },
-]);
+];
 
 const createSvgWithPersons = (availableIds = []) => {
-    const persons = createNodes().map((node) => new PersonSelection(
-        node.id,
-        availableIds.includes(node.id)
-    ));
+    const persons = createNodes().map(
+        (node) => new PersonSelection(node.id, availableIds.includes(node.id)),
+    );
 
     return new SvgStub(persons);
 };
@@ -550,12 +559,12 @@ beforeEach(() => {
 
 describe("Update", () => {
     test("removes existing handlers before fetching and updates titles", async () => {
-        const svg         = createSvgWithPersons(["1"]);
-        const hierarchy   = new HierarchyStub();
+        const svg = createSvgWithPersons(["1"]);
+        const hierarchy = new HierarchyStub();
         const configuration = defaultConfiguration();
-        const update      = new Update(svg, configuration, hierarchy);
-        const titleHtml   = "<strong>Updated</strong>";
-        const callback    = jest.fn();
+        const update = new Update(svg, configuration, hierarchy);
+        const titleHtml = "<strong>Updated</strong>";
+        const callback = jest.fn();
 
         document.body.innerHTML = '<h1 class="wt-page-title">Original</h1>';
 
@@ -580,11 +589,11 @@ describe("Update", () => {
     });
 
     test("assigns classes based on data and applies transition styles", async () => {
-        const svg           = createSvgWithPersons(["1"]);
-        const hierarchy     = new HierarchyStub();
+        const svg = createSvgWithPersons(["1"]);
+        const hierarchy = new HierarchyStub();
         const configuration = defaultConfiguration();
-        const update        = new Update(svg, configuration, hierarchy);
-        const callback      = jest.fn();
+        const update = new Update(svg, configuration, hierarchy);
+        const callback = jest.fn();
 
         jsonMock.mockResolvedValueOnce({
             data: createNodes(),
@@ -627,11 +636,11 @@ describe("Update", () => {
     });
 
     test("hides empty segments and cleans up after transitions", async () => {
-        const svg           = createSvgWithPersons(["1", "2"]);
-        const hierarchy     = new HierarchyStub();
+        const svg = createSvgWithPersons(["1", "2"]);
+        const hierarchy = new HierarchyStub();
         const configuration = defaultConfiguration({ hideEmptySegments: true });
-        const update        = new Update(svg, configuration, hierarchy);
-        const callback      = jest.fn();
+        const update = new Update(svg, configuration, hierarchy);
+        const callback = jest.fn();
 
         jsonMock.mockResolvedValueOnce({
             data: createNodes(),
@@ -669,12 +678,12 @@ describe("Update", () => {
     });
 
     test("restores interactivity and cleans CSS classes on fetch error", async () => {
-        const svg           = createSvgWithPersons(["1"]);
-        const hierarchy     = new HierarchyStub();
+        const svg = createSvgWithPersons(["1"]);
+        const hierarchy = new HierarchyStub();
         const configuration = defaultConfiguration();
-        const update        = new Update(svg, configuration, hierarchy);
-        const callback      = jest.fn();
-        const errorSpy      = jest.spyOn(console, "error").mockImplementation(() => {});
+        const update = new Update(svg, configuration, hierarchy);
+        const callback = jest.fn();
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
         jsonMock.mockRejectedValueOnce(new Error("network error"));
 

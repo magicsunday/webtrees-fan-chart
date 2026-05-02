@@ -27,11 +27,10 @@ export default class Filter {
 
         // Chrome still does not support filtering SVG elements using CSS other than the root
         // https://bugs.chromium.org/p/chromium/issues/detail?id=109224
-        const filter = this._element
-            .append("filter")
-            .attr("id", "drop-shadow");
+        const filter = this._element.append("filter").attr("id", "drop-shadow");
 
-        filter.append("feDropShadow")
+        filter
+            .append("feDropShadow")
             .attr("stdDeviation", "7 7")
             .attr("dx", "0")
             .attr("dy", "0")

@@ -9,7 +9,7 @@ const scaleLinearMock = jest.fn(() => {
         const [rangeStart, rangeEnd] = range;
         const t = (value - domainStart) / (domainEnd - domainStart);
 
-        return rangeStart + ((rangeEnd - rangeStart) * t);
+        return rangeStart + (rangeEnd - rangeStart) * t;
     };
 
     scale.range = (values) => {
@@ -27,10 +27,12 @@ const scaleLinearMock = jest.fn(() => {
 
 await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
-    scaleLinear: scaleLinearMock
+    scaleLinear: scaleLinearMock,
 }));
 
-const { default: Geometry, MATH_DEG2RAD } = await import("resources/js/modules/custom/svg/geometry");
+const { default: Geometry, MATH_DEG2RAD } = await import(
+    "resources/js/modules/custom/svg/geometry"
+);
 
 describe("Geometry", () => {
     const createConfiguration = (overrides = {}) => ({
@@ -44,7 +46,7 @@ describe("Geometry", () => {
         padRadius: 0,
         padDistance: 0,
         colorArcWidth: 20,
-        ...overrides
+        ...overrides,
     });
 
     beforeEach(() => {
@@ -96,14 +98,14 @@ describe("Geometry", () => {
         const span = 120 * MATH_DEG2RAD;
         const inner = geometry.innerRadius(datum.depth);
         const outer = geometry.outerRadius(datum.depth);
-        const relative = outer - ((100 - 50) * (outer - inner) / 100);
+        const relative = outer - ((100 - 50) * (outer - inner)) / 100;
 
         expect(length).toBeCloseTo(span * relative);
     });
 
     it("returns true from isPositionFlipped for negative depths in the lower half", () => {
         // childScale maps [0,1] to a sector centered around 180° (PI)
-        const descendantChildScale = (value) => (Math.PI * 0.6) + value * (Math.PI * 0.8);
+        const descendantChildScale = (value) => Math.PI * 0.6 + value * (Math.PI * 0.8);
         const geometry = new Geometry(createConfiguration({ childScale: descendantChildScale }));
 
         // Midpoint at ~180° → in lower half → flipped
@@ -161,7 +163,7 @@ describe("Geometry", () => {
             fontSize: 22,
             fontScale: 100,
             numberOfInnerCircles: 2,
-            childScale: (v) => v * Math.PI
+            childScale: (v) => v * Math.PI,
         });
         const geometry = new Geometry(config);
 

@@ -19,7 +19,14 @@ import { Storage } from "@magicsunday/webtrees-chart-lib";
  *
  * @returns {string}
  */
-function getUrl(baseUrl, generations, detailedDateGenerations, showPlaces, placeParts, showDescendantsParam) {
+function getUrl(
+    baseUrl,
+    generations,
+    detailedDateGenerations,
+    showPlaces,
+    placeParts,
+    showDescendantsParam,
+) {
     const url = new URL(baseUrl);
     url.searchParams.set("xref", document.getElementById("xref").value);
     url.searchParams.set("generations", generations);
@@ -164,20 +171,26 @@ export function initPage(config) {
     const displayMode = storage.read("displayMode");
 
     const chartOptions = {
-        fanDegree:               storage.read("fanDegree"),
-        generations:             storage.read("generations") === null ? null : Number(storage.read("generations")),
-        hideEmptySegments:       storage.read("hideEmptySegments"),
-        showFamilyColors:        storage.read("showFamilyColors"),
-        paternalColor:           storage.read("paternalColor"),
-        maternalColor:           storage.read("maternalColor"),
-        showPlaces:              storage.read("showPlaces"),
+        fanDegree: storage.read("fanDegree"),
+        generations:
+            storage.read("generations") === null ? null : Number(storage.read("generations")),
+        hideEmptySegments: storage.read("hideEmptySegments"),
+        showFamilyColors: storage.read("showFamilyColors"),
+        paternalColor: storage.read("paternalColor"),
+        maternalColor: storage.read("maternalColor"),
+        showPlaces: storage.read("showPlaces"),
         showParentMarriageDates: storage.read("showParentMarriageDates"),
-        showImages:              displayMode ? (displayMode === "both" || displayMode === "images") : storage.read("showImages"),
-        showNames:               displayMode ? (displayMode === "both" || displayMode === "names") : storage.read("showNames"),
-        innerArcs:               storage.read("innerArcs"),
-        fontScale:               storage.read("fontScale"),
-        showDescendants:         storage.read("showDescendants") ?? config.defaultShowDescendants,
-        detailedDateGenerations: storage.read("detailedDateGenerations") ?? config.defaultDetailedDateGenerations,
+        showImages: displayMode
+            ? displayMode === "both" || displayMode === "images"
+            : storage.read("showImages"),
+        showNames: displayMode
+            ? displayMode === "both" || displayMode === "names"
+            : storage.read("showNames"),
+        innerArcs: storage.read("innerArcs"),
+        fontScale: storage.read("fontScale"),
+        showDescendants: storage.read("showDescendants") ?? config.defaultShowDescendants,
+        detailedDateGenerations:
+            storage.read("detailedDateGenerations") ?? config.defaultDetailedDateGenerations,
     };
 
     // Clamp the fan degree slider when descendants are active (covers the case
@@ -219,8 +232,7 @@ export function initPage(config) {
         chartOptions.showDescendants,
     );
 
-    document.getElementById("fan-chart-url")
-        .setAttribute("data-wt-ajax-url", ajaxUrl);
+    document.getElementById("fan-chart-url").setAttribute("data-wt-ajax-url", ajaxUrl);
 
     // showDescendants checkbox: persist to storage, restore raw fan degree, AJAX reload.
     // The slider max/value clamping is handled by the shared script in display.phtml

@@ -69,6 +69,12 @@ jobs:
                 run: |
                     composer ci:test:js:lint
 
+            -   id: js-format
+                name: JS Format
+                if: ${{ always() && steps.install.conclusion == 'success' }}
+                run: |
+                    composer ci:test:js:format
+
             -   id: phpstan
                 name: PHPStan
                 if: ${{ always() && steps.install.conclusion == 'success' }}

@@ -6,10 +6,10 @@
  */
 
 import * as d3 from "../../d3.js";
-import {appendArc} from "./arc.js";
+import { appendArc } from "./arc.js";
 import { createMarriageArcGenerator } from "./arc-factory.js";
 import FamilyColor from "./family-color.js";
-import {SYMBOL_MARRIAGE} from "../hierarchy.js";
+import { SYMBOL_MARRIAGE } from "../hierarchy.js";
 import { classifyElement } from "./lifecycle.js";
 import { truncateToFit } from "@magicsunday/webtrees-chart-lib";
 
@@ -52,14 +52,15 @@ export default class Marriage {
      */
     init(marriage, datum) {
         // Hide marriage arcs for outer generations when names are disabled
-        if (!this._configuration.showNames
-            && (datum.depth >= this._configuration.numberOfInnerCircles)
+        if (
+            !this._configuration.showNames &&
+            datum.depth >= this._configuration.numberOfInnerCircles
         ) {
             return;
         }
 
         const isDescendant = datum.depth < 0;
-        const hasChildren = datum.children?.some(child => child.data.data.xref !== "");
+        const hasChildren = datum.children?.some((child) => child.data.data.xref !== "");
 
         const { isNew, isUpdate, isRemove } = classifyElement(marriage);
 
@@ -73,8 +74,10 @@ export default class Marriage {
             // Arc geometry changes on re-center (partition positions shift).
             // The old content is marked .old, so addArc() will rebuild it.
             this.addArc(content, datum);
-        } else if (!isNew && !isRemove
-            && (hasChildren || !this._configuration.hideEmptySegments || isDescendant)
+        } else if (
+            !isNew &&
+            !isRemove &&
+            (hasChildren || !this._configuration.hideEmptySegments || isDescendant)
         ) {
             this.addArc(content, datum);
         }
@@ -106,12 +109,14 @@ export default class Marriage {
         return {
             innerR: this._geometry.outerRadius(datum.depth),
             outerR: this._geometry.innerRadius(datum.depth + 1),
-            startAngle: (datum.depth < 1)
-                ? this._geometry.calcAngle(datum.x0)
-                : this._geometry.startAngle(datum.depth, datum.x0),
-            endAngle: (datum.depth < 1)
-                ? this._geometry.calcAngle(datum.x1)
-                : this._geometry.endAngle(datum.depth, datum.x1),
+            startAngle:
+                datum.depth < 1
+                    ? this._geometry.calcAngle(datum.x0)
+                    : this._geometry.startAngle(datum.depth, datum.x0),
+            endAngle:
+                datum.depth < 1
+                    ? this._geometry.calcAngle(datum.x1)
+                    : this._geometry.endAngle(datum.depth, datum.x1),
         };
     }
 
@@ -127,21 +132,23 @@ export default class Marriage {
      * @private
      */
     addArc(marriage, datum) {
-
         const { innerR, outerR, startAngle, endAngle } = this._resolveMarriageGeometry(datum);
 
         if (outerR <= innerR) {
             return;
         }
 
-        const arcGenerator = createMarriageArcGenerator(
-            this._configuration,
-            { startAngle, endAngle, innerR, outerR },
-        );
+        const arcGenerator = createMarriageArcGenerator(this._configuration, {
+            startAngle,
+            endAngle,
+            innerR,
+            outerR,
+        });
 
-        const color = (datum.depth < 0)
-            ? (datum.data.data.familyColor || null)
-            : FamilyColor.getMarriageColor(datum);
+        const color =
+            datum.depth < 0
+                ? datum.data.data.familyColor || null
+                : FamilyColor.getMarriageColor(datum);
 
         appendArc(marriage, arcGenerator, color);
     }
@@ -161,9 +168,8 @@ export default class Marriage {
     addLabel(marriage, datum) {
         // Resolve the date text first — most arcs have no date, so we avoid
         // computing geometry entirely for those.
-        const dateText = (datum.depth < 0)
-            ? datum.data.data.marriageDate
-            : datum.data.data.marriageDateOfParents;
+        const dateText =
+            datum.depth < 0 ? datum.data.data.marriageDate : datum.data.data.marriageDateOfParents;
 
         if (!dateText) {
             return;
@@ -181,7 +187,8 @@ export default class Marriage {
         // so marriage dates read left-to-right like person labels
         const flipped = this._geometry.isPositionFlipped(datum.depth, datum.x0, datum.x1);
 
-        const textPathGenerator = d3.arc()
+        const textPathGenerator = d3
+            .arc()
             .startAngle(flipped ? endAngle : startAngle)
             .endAngle(flipped ? startAngle : endAngle)
             .innerRadius(midRadius)
@@ -200,10 +207,7 @@ export default class Marriage {
             pathId += `-${Date.now()}`;
         }
 
-        this._svg.defs
-            .append("path")
-            .attr("id", pathId)
-            .attr("d", textPathGenerator);
+        this._svg.defs.append("path").attr("id", pathId).attr("d", textPathGenerator);
 
         const labelGroup = marriage
             .append("g")
@@ -221,16 +225,12 @@ export default class Marriage {
             .attr("startOffset", "25%")
             .attr("class", "date");
 
-        const marriageText = (dateText === "?")
-            ? SYMBOL_MARRIAGE
-            : `${SYMBOL_MARRIAGE} ${dateText}`;
+        const marriageText = dateText === "?" ? SYMBOL_MARRIAGE : `${SYMBOL_MARRIAGE} ${dateText}`;
 
-        const tspan = textPath
-            .append("tspan")
-            .text(marriageText);
+        const tspan = textPath.append("tspan").text(marriageText);
 
         // Truncate if text overflows the arc (with padding on both sides)
-        const arcLength = ((endAngle - startAngle) * midRadius) - (this._configuration.textPadding * 2);
+        const arcLength = (endAngle - startAngle) * midRadius - this._configuration.textPadding * 2;
 
         truncateToFit(tspan, arcLength);
     }

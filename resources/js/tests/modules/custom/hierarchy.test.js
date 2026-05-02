@@ -3,13 +3,12 @@ import { jest } from "@jest/globals";
 const hierarchyMock = jest.fn((datum, childrenAccessor) => {
     const buildNode = (value, parent = null) => {
         const node = {
-            data    : value,
+            data: value,
             parent,
-            children: []
+            children: [],
         };
-        const children = typeof childrenAccessor === "function"
-            ? childrenAccessor(value) || []
-            : [];
+        const children =
+            typeof childrenAccessor === "function" ? childrenAccessor(value) || [] : [];
 
         node.children = children.map((child) => buildNode(child, node));
 
@@ -46,8 +45,14 @@ const scaleLinearMock = jest.fn(() => {
         return _range[0] + t * (_range[1] - _range[0]);
     };
 
-    scale.domain = (d) => { _domain = d; return scale; };
-    scale.range = (r) => { _range = r; return scale; };
+    scale.domain = (d) => {
+        _domain = d;
+        return scale;
+    };
+    scale.range = (r) => {
+        _range = r;
+        return scale;
+    };
 
     return scale;
 });
@@ -59,25 +64,29 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     scaleLinear: scaleLinearMock,
 }));
 
-const { default: Hierarchy, SEX_FEMALE, SEX_MALE } = await import("resources/js/modules/custom/hierarchy");
+const {
+    default: Hierarchy,
+    SEX_FEMALE,
+    SEX_MALE,
+} = await import("resources/js/modules/custom/hierarchy");
 
 const createIndividual = ({ id = 1, generation = 1, sex = SEX_MALE, parents } = {}) => ({
     data: {
         id,
-        xref           : `I${id}`,
-        url            : `url-${id}`,
-        updateUrl      : `update-${id}`,
+        xref: `I${id}`,
+        url: `url-${id}`,
+        updateUrl: `update-${id}`,
         generation,
-        name           : `Person ${id}`,
-        firstNames     : ["Person"],
-        lastNames      : ["Test"],
-        preferredName  : `Person ${id}`,
+        name: `Person ${id}`,
+        firstNames: ["Person"],
+        lastNames: ["Test"],
+        preferredName: `Person ${id}`,
         alternativeName: "",
-        isAltRtl       : false,
+        isAltRtl: false,
         sex,
-        timespan       : ""
+        timespan: "",
     },
-    ...(parents ? { parents } : {})
+    ...(parents ? { parents } : {}),
 });
 
 describe("Hierarchy.init", () => {
@@ -107,9 +116,9 @@ describe("Hierarchy.init", () => {
     test("completes single parent entries by adding the missing sex at the correct position", () => {
         const existingParent = createIndividual({ id: 2, generation: 2, sex: SEX_FEMALE });
         const rootDatum = createIndividual({
-            id       : 1,
+            id: 1,
             generation: 1,
-            parents  : [existingParent]
+            parents: [existingParent],
         });
         const hierarchy = new Hierarchy({ generations: 3 });
 
@@ -152,22 +161,45 @@ describe("Hierarchy.init", () => {
 });
 
 describe("Hierarchy.initDescendants", () => {
-    const createPartner = ({ xref = "I2", name = "Partner", sex = SEX_FEMALE, children = [] } = {}) => ({
+    const createPartner = ({
+        xref = "I2",
+        name = "Partner",
+        sex = SEX_FEMALE,
+        children = [],
+    } = {}) => ({
         data: {
-            id: 2, xref, url: `url-${xref}`, updateUrl: `update-${xref}`,
-            generation: -1, name, firstNames: [name], lastNames: ["Test"],
-            preferredName: name, alternativeName: "", isAltRtl: false,
-            sex, timespan: "",
+            id: 2,
+            xref,
+            url: `url-${xref}`,
+            updateUrl: `update-${xref}`,
+            generation: -1,
+            name,
+            firstNames: [name],
+            lastNames: ["Test"],
+            preferredName: name,
+            alternativeName: "",
+            isAltRtl: false,
+            sex,
+            timespan: "",
         },
         ...(children.length > 0 ? { children } : {}),
     });
 
     const createChild = ({ xref = "I3", name = "Child", sex = SEX_MALE } = {}) => ({
         data: {
-            id: 3, xref, url: `url-${xref}`, updateUrl: `update-${xref}`,
-            generation: -2, name, firstNames: [name], lastNames: ["Test"],
-            preferredName: name, alternativeName: "", isAltRtl: false,
-            sex, timespan: "",
+            id: 3,
+            xref,
+            url: `url-${xref}`,
+            updateUrl: `update-${xref}`,
+            generation: -2,
+            name,
+            firstNames: [name],
+            lastNames: ["Test"],
+            preferredName: name,
+            alternativeName: "",
+            isAltRtl: false,
+            sex,
+            timespan: "",
         },
     });
 
@@ -253,7 +285,11 @@ describe("Hierarchy.initDescendants", () => {
     test("multiple partners get weighted angle distribution", () => {
         const partner1 = createPartner({
             xref: "I2",
-            children: [createChild({ xref: "I10" }), createChild({ xref: "I11" }), createChild({ xref: "I12" })],
+            children: [
+                createChild({ xref: "I10" }),
+                createChild({ xref: "I11" }),
+                createChild({ xref: "I12" }),
+            ],
         });
         const partner2 = createPartner({ xref: "I3", sex: SEX_FEMALE });
         const rootDatum = createIndividual({ id: 1, generation: 1 });
@@ -274,10 +310,7 @@ describe("Hierarchy.initDescendants", () => {
 
     test("unassigned children get their own angle block", () => {
         const rootDatum = createIndividual({ id: 1, generation: 1 });
-        rootDatum.unassignedChildren = [
-            createChild({ xref: "I20" }),
-            createChild({ xref: "I21" }),
-        ];
+        rootDatum.unassignedChildren = [createChild({ xref: "I20" }), createChild({ xref: "I21" })];
         const config = { generations: 2, showDescendants: true, fanDegree: 210, childScale: null };
         const hierarchy = new Hierarchy(config);
 
@@ -293,7 +326,12 @@ describe("Hierarchy.initDescendants", () => {
 
     test("sets childScale to null when no descendants exist", () => {
         const rootDatum = createIndividual({ id: 1, generation: 1 });
-        const config = { generations: 2, showDescendants: true, fanDegree: 210, childScale: "stale" };
+        const config = {
+            generations: 2,
+            showDescendants: true,
+            fanDegree: 210,
+            childScale: "stale",
+        };
         const hierarchy = new Hierarchy(config);
 
         hierarchy.init(rootDatum);

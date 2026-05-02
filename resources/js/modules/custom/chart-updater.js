@@ -74,59 +74,62 @@ export default class ChartUpdater {
             }
         };
 
-        d3.json(url, { signal }).then((data) => {
-            this._fetchController = null;
+        d3.json(url, { signal })
+            .then((data) => {
+                this._fetchController = null;
 
-            this._updatePageTitle(data);
+                this._updatePageTitle(data);
 
-            // Initialize the new loaded data
-            this._hierarchy.init(data.data);
+                // Initialize the new loaded data
+                this._hierarchy.init(data.data);
 
-            // Compute family colors upfront — marriage arcs reference their
-            // children's familyColor, so colors must be set before either loop.
-            const familyColor = new FamilyColor(this._configuration);
-            familyColor.setPartnerMidpoints(this._hierarchy.nodes);
+                // Compute family colors upfront — marriage arcs reference their
+                // children's familyColor, so colors must be set before either loop.
+                const familyColor = new FamilyColor(this._configuration);
+                familyColor.setPartnerMidpoints(this._hierarchy.nodes);
 
-            if (this._configuration.showFamilyColors) {
-                this._hierarchy.applyFamilyColors(familyColor);
-            }
+                if (this._configuration.showFamilyColors) {
+                    this._hierarchy.applyFamilyColors(familyColor);
+                }
 
-            // Note: descendant marriage arcs are handled in drawDescendantMarriageArcs()
-            // via redrawOverlayLayers(), using the same enter/exit/update pattern.
-            this._classifyPersonElements();
-            this._classifyMarriageElements();
+                // Note: descendant marriage arcs are handled in drawDescendantMarriageArcs()
+                // via redrawOverlayLayers(), using the same enter/exit/update pattern.
+                this._classifyPersonElements();
+                this._classifyMarriageElements();
 
-            // Mark old separator lines + draw new ones
-            redrawOverlays();
+                // Mark old separator lines + draw new ones
+                redrawOverlays();
 
-            this._hideIncomingElements();
+                this._hideIncomingElements();
 
-            const transition = d3.transition()
-                .duration(this._configuration.updateDuration)
-                .call(this.endAll, onceCallback);
+                const transition = d3
+                    .transition()
+                    .duration(this._configuration.updateDuration)
+                    .call(this.endAll, onceCallback);
 
-            this._runUpdateAnimations(transition);
-        }).catch((error) => {
-            // A superseded request was intentionally aborted — discard silently
-            // and leave the DOM in whatever state the newer update is building.
-            if (error?.name === "AbortError") {
-                return;
-            }
+                this._runUpdateAnimations(transition);
+            })
+            .catch((error) => {
+                // A superseded request was intentionally aborted — discard silently
+                // and leave the DOM in whatever state the newer update is building.
+                if (error?.name === "AbortError") {
+                    return;
+                }
 
-            this._fetchController = null;
+                this._fetchController = null;
 
-            console.error("Fan chart update failed:", error);
+                console.error("Fan chart update failed:", error);
 
-            // Clean up stale CSS classes left by a partial update
-            this._svg
-                .selectAll("g.person, g.marriage")
-                .classed("new", false)
-                .classed("update", false)
-                .classed("remove", false);
+                // Clean up stale CSS classes left by a partial update
+                this._svg
+                    .selectAll("g.person, g.marriage")
+                    .classed("new", false)
+                    .classed("update", false)
+                    .classed("remove", false);
 
-            // Restore interactivity via the once-guarded callback
-            onceCallback();
-        });
+                // Restore interactivity via the once-guarded callback
+                onceCallback();
+            });
     }
 
     /**
@@ -186,38 +189,38 @@ export default class ChartUpdater {
             // whose partition positions are stable).
             // Empty partner arcs (unknown spouse) are kept, not removed.
             if (isDescendant) {
-                const removeDescendant = empty && (datum.depth !== -1);
+                const removeDescendant = empty && datum.depth !== -1;
 
-                person.classed("remove", removeDescendant)
+                person
+                    .classed("remove", removeDescendant)
                     .classed("update", false)
                     .classed("new", !removeDescendant);
             } else {
-                person.classed("remove", empty)
+                person
+                    .classed("remove", empty)
                     .classed("update", !empty && person.classed("available"))
                     .classed("new", !empty && !person.classed("available"));
             }
 
             // Mark existing content wrapper as old for fade-out
-            person.selectAll("g.content")
-                .classed("old", true);
+            person.selectAll("g.content").classed("old", true);
 
             new Person(svg, configuration, geometry, person, datum);
         });
 
         // Mark unmatched old elements for removal
-        personJoin.exit()
-            .classed("remove", true)
-            .selectAll("g.content")
-            .classed("old", true);
+        personJoin.exit().classed("remove", true).selectAll("g.content").classed("old", true);
 
         // Create new person elements via enter() -- descendants always,
         // and ancestors that didn't have a DOM element before (e.g. when
         // hideEmptySegments filtered them out on the previous center person).
-        personJoin.enter()
+        personJoin
+            .enter()
             .filter(
-                (datum) => (datum.data.data.xref !== "")
-                    || !configuration.hideEmptySegments
-                    || (datum.depth < 0),
+                (datum) =>
+                    datum.data.data.xref !== "" ||
+                    !configuration.hideEmptySegments ||
+                    datum.depth < 0,
             )
             .append("g")
             .attr("class", "person new")
@@ -246,27 +249,25 @@ export default class ChartUpdater {
         const geometry = new Geometry(configuration);
 
         const marriageNodes = this._hierarchy.nodes.filter(
-            datum => datum.children
-                && (datum.depth < (configuration.generations - 1)),
+            (datum) => datum.children && datum.depth < configuration.generations - 1,
         );
 
         // Flag all marriage elements which are subject to change (same pattern as persons)
-        svg
-            .selectAll("g.marriage:not(.descendant)")
+        svg.selectAll("g.marriage:not(.descendant)")
             .data(marriageNodes, (datum) => datum.id)
             .each((datum, i, nodes) => {
-                const hasChildren = datum.children?.some(child => child.data.data.xref !== "");
+                const hasChildren = datum.children?.some((child) => child.data.data.xref !== "");
 
                 const empty = !hasChildren;
                 const marriage = d3.select(nodes[i]);
 
-                marriage.classed("remove", empty)
+                marriage
+                    .classed("remove", empty)
                     .classed("update", !empty && marriage.classed("available"))
                     .classed("new", !empty && !marriage.classed("available"));
 
                 // Mark existing content wrapper as old for fade-out
-                marriage.selectAll("g.content")
-                    .classed("old", true);
+                marriage.selectAll("g.content").classed("old", true);
 
                 new Marriage(svg, configuration, geometry, marriage, datum);
             });
@@ -284,9 +285,7 @@ export default class ChartUpdater {
             .selectAll("g.content:not(.old)")
             .style("opacity", 1e-6);
 
-        this._svg
-            .selectAll("g.separatorGroup line:not(.old)")
-            .style("opacity", 1e-6);
+        this._svg.selectAll("g.separatorGroup line:not(.old)").style("opacity", 1e-6);
     }
 
     /**
@@ -304,16 +303,24 @@ export default class ChartUpdater {
         this.fadeOutRemovedArcs(transition, "g.marriage.remove");
 
         // Fade in new arcs with family colors
-        this.fadeInNewArcs(transition, "g.person", (datum) =>
-            datum?.data?.data?.familyColor || null);
+        this.fadeInNewArcs(
+            transition,
+            "g.person",
+            (datum) => datum?.data?.data?.familyColor || null,
+        );
         this.fadeInNewArcs(transition, "g.marriage", (datum) =>
-            FamilyColor.getMarriageColor(datum));
+            FamilyColor.getMarriageColor(datum),
+        );
 
         // Transition family colors on updated arcs
-        this.transitionUpdatedArcs(transition, "g.person", (datum) =>
-            datum?.data?.data?.familyColor || null);
+        this.transitionUpdatedArcs(
+            transition,
+            "g.person",
+            (datum) => datum?.data?.data?.familyColor || null,
+        );
         this.transitionUpdatedArcs(transition, "g.marriage", (datum) =>
-            FamilyColor.getMarriageColor(datum));
+            FamilyColor.getMarriageColor(datum),
+        );
 
         // Fade out old content wrappers and separator lines
         this._svg
@@ -367,46 +374,36 @@ export default class ChartUpdater {
         d3.timeout(() => {
             this._svg.selectAll("g.person g.arc path, g.marriage g.arc path").attr("style", null);
 
-            this.restoreFamilyColors("g.person", (datum) =>
-                datum?.data?.data?.familyColor || null);
-            this.restoreFamilyColors("g.marriage", (datum) =>
-                FamilyColor.getMarriageColor(datum));
+            this.restoreFamilyColors("g.person", (datum) => datum?.data?.data?.familyColor || null);
+            this.restoreFamilyColors("g.marriage", (datum) => FamilyColor.getMarriageColor(datum));
 
             this._svg.selectAll("g.person g.content, g.marriage g.content").style("opacity", null);
-
         }, 10);
 
         // Remove old content wrappers and clear lifecycle classes
         this._svg
-            .selectAll("g.person.new, g.person.update, g.person.remove, g.marriage.new, g.marriage.update, g.marriage.remove")
+            .selectAll(
+                "g.person.new, g.person.update, g.person.remove, g.marriage.new, g.marriage.update, g.marriage.remove",
+            )
             .classed("new", false)
             .classed("update", false)
             .classed("remove", false)
             .selectAll("g.content.old")
             .remove();
 
-        this._svg
-            .selectAll("g.person.available")
-            .classed("available", false);
+        this._svg.selectAll("g.person.available").classed("available", false);
 
-        this._svg
-            .selectAll("g.marriage.available")
-            .classed("available", false);
+        this._svg.selectAll("g.marriage.available").classed("available", false);
 
-        this._svg
-            .selectAll("g.marriage.empty")
-            .classed("empty", false);
+        this._svg.selectAll("g.marriage.empty").classed("empty", false);
 
-        this._svg
-            .selectAll("g.separatorGroup line.old")
-            .remove();
+        this._svg.selectAll("g.separatorGroup line.old").remove();
 
-        this._svg
-            .selectAll("g.separatorGroup line")
-            .style("opacity", null);
+        this._svg.selectAll("g.separatorGroup line").style("opacity", null);
 
         // Remove orphaned path definitions (both person and marriage paths)
-        this._svg.defs.get()
+        this._svg.defs
+            .get()
             .selectAll("path[id^='path-person-'], path[id^='path-marriage-']")
             .each(function () {
                 if (!document.querySelector(`textPath[href='#${this.id}']`)) {
@@ -419,17 +416,16 @@ export default class ChartUpdater {
         // clipPath not in the set. Avoids O(n*m) document.querySelector per clipPath.
         const activeClipIds = new Set();
 
-        this._svg
-            .selectAll("image[clip-path]")
-            .each(function () {
-                const match = this.getAttribute("clip-path").match(/url\(#(.+)\)/);
+        this._svg.selectAll("image[clip-path]").each(function () {
+            const match = this.getAttribute("clip-path").match(/url\(#(.+)\)/);
 
-                if (match) {
-                    activeClipIds.add(match[1]);
-                }
-            });
+            if (match) {
+                activeClipIds.add(match[1]);
+            }
+        });
 
-        this._svg.defs.get()
+        this._svg.defs
+            .get()
             .selectAll("clipPath[id^='clip-image-']")
             .each(function () {
                 if (!activeClipIds.has(this.id)) {
@@ -464,23 +460,19 @@ export default class ChartUpdater {
             return;
         }
 
-        this._svg
-            .selectAll(groupSelector)
-            .each(function () {
-                const datum = d3.select(this).datum();
+        this._svg.selectAll(groupSelector).each(function () {
+            const datum = d3.select(this).datum();
 
-                if (!datum) {
-                    return;
-                }
+            if (!datum) {
+                return;
+            }
 
-                const color = getColor(datum);
+            const color = getColor(datum);
 
-                if (color) {
-                    d3.select(this)
-                        .select("g.arc path")
-                        .style("fill", color);
-                }
-            });
+            if (color) {
+                d3.select(this).select("g.arc path").style("fill", color);
+            }
+        });
     }
 
     /**
@@ -495,8 +487,10 @@ export default class ChartUpdater {
         this._svg
             .selectAll(`${selector} g.arc path`)
             .transition(transition)
-            .style("fill", () => this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)")
-            .style("opacity", () => this._configuration.hideEmptySegments ? 1e-6 : null);
+            .style("fill", () =>
+                this._configuration.hideEmptySegments ? null : "rgb(235, 235, 235)",
+            )
+            .style("opacity", () => (this._configuration.hideEmptySegments ? 1e-6 : null));
     }
 
     /**
@@ -511,18 +505,16 @@ export default class ChartUpdater {
     fadeInNewArcs(transition, groupSelector, getColor) {
         const config = this._configuration;
 
-        this._svg
-            .selectAll(`${groupSelector}.new g.arc path`)
-            .each(function () {
-                const datum = d3.select(this.closest(groupSelector)).datum();
-                const color = config.showFamilyColors ? getColor(datum) : null;
-                const target = color || "rgb(250, 250, 250)";
+        this._svg.selectAll(`${groupSelector}.new g.arc path`).each(function () {
+            const datum = d3.select(this.closest(groupSelector)).datum();
+            const color = config.showFamilyColors ? getColor(datum) : null;
+            const target = color || "rgb(250, 250, 250)";
 
-                d3.select(this)
-                    .transition(transition)
-                    .style("fill", target)
-                    .style("opacity", () => config.hideEmptySegments ? 1 : null);
-            });
+            d3.select(this)
+                .transition(transition)
+                .style("fill", target)
+                .style("opacity", () => (config.hideEmptySegments ? 1 : null));
+        });
     }
 
     /**
@@ -539,18 +531,14 @@ export default class ChartUpdater {
             return;
         }
 
-        this._svg
-            .selectAll(`${groupSelector}.update g.arc path`)
-            .each(function () {
-                const datum = d3.select(this.closest(groupSelector)).datum();
-                const color = getColor(datum);
+        this._svg.selectAll(`${groupSelector}.update g.arc path`).each(function () {
+            const datum = d3.select(this.closest(groupSelector)).datum();
+            const color = getColor(datum);
 
-                if (color) {
-                    d3.select(this)
-                        .transition(transition)
-                        .style("fill", color);
-                }
-            });
+            if (color) {
+                d3.select(this).transition(transition).style("fill", color);
+            }
+        });
     }
 
     /**

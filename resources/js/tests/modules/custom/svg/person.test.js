@@ -6,7 +6,7 @@ const hoverSelection = {
         hoverClassCalls.push({ name, value });
         return hoverSelection;
     }),
-    raise: jest.fn(() => hoverSelection)
+    raise: jest.fn(() => hoverSelection),
 };
 
 const selectMock = jest.fn(() => hoverSelection);
@@ -17,16 +17,16 @@ const arcMock = jest.fn(() => ({
                 outerRadius: jest.fn(() => ({})),
                 padAngle: jest.fn(() => ({})),
                 padRadius: jest.fn(() => ({})),
-                cornerRadius: jest.fn(() => ({}))
-            }))
-        }))
-    }))
+                cornerRadius: jest.fn(() => ({})),
+            })),
+        })),
+    })),
 }));
 
 await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
     select: selectMock,
-    arc: arcMock
+    arc: arcMock,
 }));
 
 const textCreateLabels = jest.fn();
@@ -35,7 +35,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/text", () => ({
     __esModule: true,
     default: class {
         createLabels = textCreateLabels;
-    }
+    },
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/svg/arc", () => ({
@@ -48,19 +48,31 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
     MATH_DEG2RAD: Math.PI / 180,
     MATH_RAD2DEG: 180 / Math.PI,
     default: class {
-        startAngle() { return 0; }
-        endAngle() { return 0; }
-        innerRadius() { return 0; }
-        outerRadius() { return 0; }
-        getFontSize() { return 14; }
+        startAngle() {
+            return 0;
+        }
+        endAngle() {
+            return 0;
+        }
+        innerRadius() {
+            return 0;
+        }
+        outerRadius() {
+            return 0;
+        }
+        getFontSize() {
+            return 14;
+        }
     },
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/svg/label-renderer", () => ({
     __esModule: true,
     default: class {
-        addLabel() { return {}; }
-    }
+        addLabel() {
+            return {};
+        }
+    },
 }));
 
 const { default: Person } = await import("resources/js/modules/custom/svg/person");
@@ -81,7 +93,7 @@ const createDivSelection = () => {
         style: jest.fn((name, value) => {
             transitionStyleCalls.push({ name, value });
             return transitionSelection;
-        })
+        }),
     };
 
     const div = {
@@ -101,7 +113,7 @@ const createDivSelection = () => {
 
             properties.set(name, value);
             return div;
-        })
+        }),
     };
 
     return { div, htmlCalls, styleCalls, transitionStyleCalls, properties };
@@ -133,7 +145,7 @@ const createPersonSelection = () => {
             return personSelection;
         }),
         append: jest.fn(() => contentGroup),
-        nodes: jest.fn(() => nodes)
+        nodes: jest.fn(() => nodes),
     };
 
     return { personSelection, handlers, nodes };
@@ -152,9 +164,9 @@ const baseDatum = {
             sex: "M",
             birth: "1900",
             marriageDate: "1920",
-            death: "1980"
-        }
-    }
+            death: "1980",
+        },
+    },
 };
 
 describe("Person tooltips", () => {
@@ -170,7 +182,7 @@ describe("Person tooltips", () => {
 
         new Person({ div }, { hideEmptySegments: false }, {}, personSelection, {
             ...baseDatum,
-            data: { data: { xref: "" } }
+            data: { data: { xref: "" } },
         });
 
         // No event handlers should be bound for empty xref
@@ -186,9 +198,9 @@ describe("Person tooltips", () => {
             data: {
                 data: {
                     ...baseDatum.data.data,
-                    thumbnail: "thumb.jpg"
-                }
-            }
+                    thumbnail: "thumb.jpg",
+                },
+            },
         };
 
         new Person(
@@ -196,7 +208,7 @@ describe("Person tooltips", () => {
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
             {},
             personSelection,
-            datum
+            datum,
         );
 
         // Trigger mouseenter to set tooltip HTML
@@ -206,7 +218,7 @@ describe("Person tooltips", () => {
         expect(htmlCalls[0]).not.toContain("icon-silhouette");
         expect(styleCalls).toEqual([
             { name: "left", value: "120px" },
-            { name: "top", value: "50px" }
+            { name: "top", value: "50px" },
         ]);
         expect(div.transition).not.toHaveBeenCalled();
     });
@@ -225,9 +237,9 @@ describe("Person tooltips", () => {
                     ...baseDatum.data.data,
                     thumbnail: silhouetteUrl,
                     silhouette: silhouetteUrl,
-                    sex: "F"
-                }
-            }
+                    sex: "F",
+                },
+            },
         };
 
         new Person(
@@ -235,7 +247,7 @@ describe("Person tooltips", () => {
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
             {},
             personSelection,
-            datum
+            datum,
         );
 
         handlers.mouseenter({ pageX: 200, pageY: 100 });
@@ -255,9 +267,9 @@ describe("Person tooltips", () => {
                     ...baseDatum.data.data,
                     name: "<script>alert(1)</script>",
                     birthPlace: "<b>unsafe</b>",
-                    thumbnail: "javascript:alert(1)"
-                }
-            }
+                    thumbnail: "javascript:alert(1)",
+                },
+            },
         };
 
         new Person(
@@ -265,7 +277,7 @@ describe("Person tooltips", () => {
             { hideEmptySegments: false, showImages: true, showSilhouettes: false },
             {},
             personSelection,
-            datum
+            datum,
         );
 
         handlers.mouseenter({ pageX: 120, pageY: 80 });
@@ -296,7 +308,7 @@ describe("Person interactions", () => {
             { hideEmptySegments: false, showImages: true, showSilhouettes: true },
             {},
             personSelection,
-            datum
+            datum,
         );
     });
 
@@ -311,7 +323,7 @@ describe("Person interactions", () => {
 
         const transitionSpy = jest.fn(() => ({
             duration: jest.fn(() => ({ style: jest.fn() })),
-            style: jest.fn()
+            style: jest.fn(),
         }));
         divSelection.transition = transitionSpy;
 
@@ -337,7 +349,7 @@ describe("Person interactions", () => {
         expect(selectMock).toHaveBeenCalledWith(node);
         expect(hoverClassCalls).toEqual([
             { name: "hover", value: true },
-            { name: "hover", value: false }
+            { name: "hover", value: false },
         ]);
     });
 });

@@ -19,7 +19,8 @@ import * as d3 from "../../d3.js";
  * @returns {Function} Configured d3.arc() generator
  */
 export function createPersonArcGenerator(geometry, config, datum, padAngle) {
-    return d3.arc()
+    return d3
+        .arc()
         .startAngle(geometry.startAngle(datum.depth, datum.x0))
         .endAngle(geometry.endAngle(datum.depth, datum.x1))
         .innerRadius(geometry.innerRadius(datum.depth))
@@ -39,7 +40,8 @@ export function createPersonArcGenerator(geometry, config, datum, padAngle) {
  * @returns {Function} Configured d3.arc() generator
  */
 export function createMarriageArcGenerator(config, geometry) {
-    return d3.arc()
+    return d3
+        .arc()
         .startAngle(geometry.startAngle)
         .endAngle(geometry.endAngle)
         .innerRadius(geometry.innerR)

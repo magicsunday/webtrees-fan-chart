@@ -11,7 +11,7 @@ const scaleLinearMock = jest.fn(() => {
         const [rangeStart, rangeEnd] = range;
         const t = (value - domainStart) / (domainEnd - domainStart);
 
-        return rangeStart + ((rangeEnd - rangeStart) * t);
+        return rangeStart + (rangeEnd - rangeStart) * t;
     };
 
     scale.range = (values) => {
@@ -35,13 +35,13 @@ const selectMock = (node) => ({
 
         node.textContent = value;
         return this;
-    }
+    },
 });
 
 await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
     scaleLinear: scaleLinearMock,
-    select: jest.fn((node) => selectMock(node))
+    select: jest.fn((node) => selectMock(node)),
 }));
 
 // truncateNames and truncateToFit live in chart-lib since v1.2.0; chart-lib's
@@ -79,7 +79,7 @@ const createConfiguration = (overrides = {}) => ({
     fanDegree: 180,
     fontScale: 100,
     nameAbbreviation: "GIVEN",
-    ...overrides
+    ...overrides,
 });
 
 const createDatum = (overrides = {}) => ({
@@ -97,16 +97,16 @@ const createDatum = (overrides = {}) => ({
             isNameRtl: false,
             timespan: "",
             marriageDateOfParents: null,
-            ...overrides.data
-        }
+            ...overrides.data,
+        },
     },
-    ...overrides
+    ...overrides,
 });
 
 describe("Text", () => {
     const svgStub = {
         style: jest.fn(() => "Arial"),
-        defs: { select: jest.fn(), append: jest.fn(() => ({ append: jest.fn() })) }
+        defs: { select: jest.fn(), append: jest.fn(() => ({ append: jest.fn() })) },
     };
 
     beforeEach(() => {
@@ -122,10 +122,10 @@ describe("Text", () => {
 
         expect(firstNames).toEqual([
             { label: "Jane", isPreferred: false, isLastName: false, isNameRtl: false },
-            { label: "Marie", isPreferred: true, isLastName: false, isNameRtl: false }
+            { label: "Marie", isPreferred: true, isLastName: false, isNameRtl: false },
         ]);
         expect(lastNames).toEqual([
-            { label: "Doe", isPreferred: false, isLastName: true, isNameRtl: false }
+            { label: "Doe", isPreferred: false, isLastName: true, isNameRtl: false },
         ]);
     });
 
@@ -134,10 +134,10 @@ describe("Text", () => {
         const text = new Text(svgStub, createConfiguration());
         const nameGroup = [
             { label: "Anna", isPreferred: false, isLastName: false, isNameRtl: false },
-            { label: "Beatrice", isPreferred: true, isLastName: false, isNameRtl: false }
+            { label: "Beatrice", isPreferred: true, isLastName: false, isNameRtl: false },
         ];
         const parent = {
-            style: jest.fn((property) => (property === "font-size" ? "12px" : "700"))
+            style: jest.fn((property) => (property === "font-size" ? "12px" : "700")),
         };
 
         const truncated = text.truncateNamesData(parent, nameGroup, 100);
@@ -152,7 +152,7 @@ describe("Text", () => {
             nameGroup,
             100,
             expect.any(Function),
-            expect.objectContaining({ strategy: "GIVEN" })
+            expect.objectContaining({ strategy: "GIVEN" }),
         );
     });
 
@@ -160,19 +160,23 @@ describe("Text", () => {
         truncateNamesMock.mockClear();
         const text = new Text(svgStub, createConfiguration({ nameAbbreviation: "SURNAME" }));
         const parent = {
-            style: jest.fn((property) => (property === "font-size" ? "12px" : "700"))
+            style: jest.fn((property) => (property === "font-size" ? "12px" : "700")),
         };
 
-        text.truncateNamesData(parent, [
-            { label: "Jón", isPreferred: true, isLastName: false, isNameRtl: false },
-            { label: "Sigurðsson", isPreferred: false, isLastName: true, isNameRtl: false }
-        ], 60);
+        text.truncateNamesData(
+            parent,
+            [
+                { label: "Jón", isPreferred: true, isLastName: false, isNameRtl: false },
+                { label: "Sigurðsson", isPreferred: false, isLastName: true, isNameRtl: false },
+            ],
+            60,
+        );
 
         expect(truncateNamesMock).toHaveBeenCalledWith(
             expect.any(Array),
             expect.any(Number),
             expect.any(Function),
-            expect.objectContaining({ strategy: "SURNAME" })
+            expect.objectContaining({ strategy: "SURNAME" }),
         );
     });
 
@@ -186,7 +190,9 @@ describe("Text", () => {
         const positionFlipped = text.isPositionFlipped(datum.depth, datum.x0, datum.x1);
         const offset = positionFlipped ? position.flipped : position.normal;
 
-        expect(availableWidth).toBeCloseTo((Math.PI * text._geometry.relativeRadius(datum.depth, offset)) - 23);
+        expect(availableWidth).toBeCloseTo(
+            Math.PI * text._geometry.relativeRadius(datum.depth, offset) - 23,
+        );
     });
 
     it("calculates available width for outer arcs without geometry", () => {
@@ -198,5 +204,4 @@ describe("Text", () => {
 
         expect(availableWidth).toBe(150 - 20 - 5);
     });
-
 });

@@ -8,7 +8,7 @@ const selectMock = jest.fn((selector) => {
             eventHandlers.set(`${selector}:${event}`, handler);
 
             return selection;
-        }
+        },
     };
 
     return selection;
@@ -17,36 +17,32 @@ const selectMock = jest.fn((selector) => {
 const chartInstances = [];
 
 class StubSvg {
-    constructor()
-    {
+    constructor() {
         this.svgToImageMock = jest.fn();
-        this.export         = jest.fn(() => ({ svgToImage: this.svgToImageMock }));
+        this.export = jest.fn(() => ({ svgToImage: this.svgToImageMock }));
     }
 }
 
 class StubChart {
-    constructor(parent, configuration)
-    {
-        this.parent        = parent;
+    constructor(parent, configuration) {
+        this.parent = parent;
         this.configuration = configuration;
-        this.dataValue     = null;
+        this.dataValue = null;
 
-        this.render        = jest.fn();
-        this.center        = jest.fn();
-        this.update        = jest.fn();
+        this.render = jest.fn();
+        this.center = jest.fn();
+        this.update = jest.fn();
         this.updateViewBox = jest.fn();
-        this.svg           = new StubSvg();
+        this.svg = new StubSvg();
 
         chartInstances.push(this);
     }
 
-    set data(value)
-    {
+    set data(value) {
         this.dataValue = value;
     }
 
-    get data()
-    {
+    get data() {
         return this.dataValue;
     }
 }
@@ -101,8 +97,9 @@ describe("FanChart", () => {
     });
 
     it("draws initial data during setup", () => {
-        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
-            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+        document.body.innerHTML =
+            '<div id="chart"></div><button id="centerButton"></button>' +
+            '<button id="exportPNG"></button><button id="exportSVG"></button>';
 
         const sampleData = [{ id: "I1" }];
 
@@ -115,8 +112,9 @@ describe("FanChart", () => {
     });
 
     it("triggers chart interactions from toolbar buttons", () => {
-        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
-            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+        document.body.innerHTML =
+            '<div id="chart"></div><button id="centerButton"></button>' +
+            '<button id="exportPNG"></button><button id="exportSVG"></button>';
 
         const cssFiles = ["fan.css"];
 
@@ -144,11 +142,12 @@ describe("FanChart", () => {
     });
 
     it("delegates update requests to the chart", () => {
-        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
-            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+        document.body.innerHTML =
+            '<div id="chart"></div><button id="centerButton"></button>' +
+            '<button id="exportPNG"></button><button id="exportSVG"></button>';
 
         const fanChart = new FanChart("#chart", createOptions());
-        const chart    = chartInstances[0];
+        const chart = chartInstances[0];
 
         fanChart.update("/update/url");
 
@@ -156,8 +155,9 @@ describe("FanChart", () => {
     });
 
     it("keeps the viewBox in sync when fullscreen mode changes", () => {
-        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
-            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+        document.body.innerHTML =
+            '<div id="chart"></div><button id="centerButton"></button>' +
+            '<button id="exportPNG"></button><button id="exportSVG"></button>';
 
         const addEventListenerSpy = jest.spyOn(document, "addEventListener");
 
@@ -166,10 +166,12 @@ describe("FanChart", () => {
 
         const chart = chartInstances[0];
 
-        const fullscreenCall = addEventListenerSpy.mock.calls.find(([event]) => event === "fullscreenchange");
+        const fullscreenCall = addEventListenerSpy.mock.calls.find(
+            ([event]) => event === "fullscreenchange",
+        );
         expect(fullscreenCall?.[1]).toBeInstanceOf(Function);
 
-        const [ , fullscreenHandler ] = fullscreenCall;
+        const [, fullscreenHandler] = fullscreenCall;
 
         document.fullscreenElement = document.createElement("div");
         fullscreenHandler();
@@ -185,8 +187,9 @@ describe("FanChart", () => {
     });
 
     it("updates the viewBox after device orientation changes", () => {
-        document.body.innerHTML = '<div id="chart"></div><button id="centerButton"></button>'
-            + '<button id="exportPNG"></button><button id="exportSVG"></button>';
+        document.body.innerHTML =
+            '<div id="chart"></div><button id="centerButton"></button>' +
+            '<button id="exportPNG"></button><button id="exportSVG"></button>';
 
         const orientationListenerSpy = jest.spyOn(screen.orientation, "addEventListener");
 
@@ -196,7 +199,7 @@ describe("FanChart", () => {
         const changeCall = orientationListenerSpy.mock.calls.find(([event]) => event === "change");
         expect(changeCall?.[1]).toBeInstanceOf(Function);
 
-        const [ , changeHandler ] = changeCall;
+        const [, changeHandler] = changeCall;
 
         const chart = chartInstances[0];
         chart.updateViewBox.mockClear();

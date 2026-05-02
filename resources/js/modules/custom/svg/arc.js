@@ -16,13 +16,9 @@
  * @param {string|null|undefined} [color]      HSL fill color; omit to keep the default CSS fill
  */
 export function appendArc(parent, arcGenerator, color) {
-    const arcGroup = parent
-        .append("g")
-        .attr("class", "arc");
+    const arcGroup = parent.append("g").attr("class", "arc");
 
-    const path = arcGroup
-        .append("path")
-        .attr("d", arcGenerator);
+    const path = arcGroup.append("path").attr("d", arcGenerator);
 
     if (color) {
         path.style("fill", color);

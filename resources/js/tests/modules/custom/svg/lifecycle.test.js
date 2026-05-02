@@ -13,7 +13,9 @@ function createMockSelection() {
     let opacity = null;
 
     return {
-        style: (prop, value) => { if (prop === "opacity") opacity = value; },
+        style: (prop, value) => {
+            if (prop === "opacity") opacity = value;
+        },
         getOpacity: () => opacity,
     };
 }

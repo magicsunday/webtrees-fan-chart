@@ -99,6 +99,9 @@
         "ci:test:js:lint": [
             "npm run lint"
         ],
+        "ci:test:js:format": [
+            "npm run format:check"
+        ],
         "ci:test:js:unit": [
             "SKIP_EXPORT_BUILD=true node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests --ignore=resources/js/tests/export"
         ],
@@ -108,6 +111,7 @@
         "ci:test": [
             "@ci:test:php:lint",
             "@ci:test:js:lint",
+            "@ci:test:js:format",
             "@ci:test:php:phpstan",
             "@ci:test:php:rector",
             "@ci:test:php:cpd",

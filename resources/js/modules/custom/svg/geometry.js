@@ -42,7 +42,7 @@ export default class Geometry {
             return 0;
         }
 
-        return -(this._configuration.fanDegree / 2 * MATH_DEG2RAD);
+        return -((this._configuration.fanDegree / 2) * MATH_DEG2RAD);
     }
 
     /**
@@ -53,10 +53,10 @@ export default class Geometry {
      */
     get endPi() {
         if (this._configuration.fanDegree === 90) {
-            return (this._configuration.fanDegree * MATH_DEG2RAD);
+            return this._configuration.fanDegree * MATH_DEG2RAD;
         }
 
-        return (this._configuration.fanDegree / 2 * MATH_DEG2RAD);
+        return (this._configuration.fanDegree / 2) * MATH_DEG2RAD;
     }
 
     /**
@@ -89,18 +89,23 @@ export default class Geometry {
 
         // Descendant children (depth <= -2) skip circlePadding because
         // there is no marriage arc between partner and children rings.
-        const padding = (depth < -1) ? 0 : this._configuration.circlePadding;
+        const padding = depth < -1 ? 0 : this._configuration.circlePadding;
 
         if (absDepth <= this._configuration.numberOfInnerCircles) {
-            return ((absDepth - 1) * (this._configuration.innerArcHeight))
-                + this._configuration.centerCircleRadius
-                + padding;
+            return (
+                (absDepth - 1) * this._configuration.innerArcHeight +
+                this._configuration.centerCircleRadius +
+                padding
+            );
         }
 
-        return (this._configuration.numberOfInnerCircles * this._configuration.innerArcHeight)
-            + ((absDepth - this._configuration.numberOfInnerCircles - 1) * this._configuration.outerArcHeight)
-            + this._configuration.centerCircleRadius
-            + padding;
+        return (
+            this._configuration.numberOfInnerCircles * this._configuration.innerArcHeight +
+            (absDepth - this._configuration.numberOfInnerCircles - 1) *
+                this._configuration.outerArcHeight +
+            this._configuration.centerCircleRadius +
+            padding
+        );
     }
 
     /**
@@ -120,15 +125,20 @@ export default class Geometry {
         const absDepth = Math.abs(depth);
 
         if (absDepth <= this._configuration.numberOfInnerCircles) {
-            return ((absDepth - 1) * (this._configuration.innerArcHeight))
-                + this._configuration.centerCircleRadius
-                + this._configuration.innerArcHeight;
+            return (
+                (absDepth - 1) * this._configuration.innerArcHeight +
+                this._configuration.centerCircleRadius +
+                this._configuration.innerArcHeight
+            );
         }
 
-        return (this._configuration.numberOfInnerCircles * this._configuration.innerArcHeight)
-            + ((absDepth - this._configuration.numberOfInnerCircles - 1) * this._configuration.outerArcHeight)
-            + this._configuration.centerCircleRadius
-            + this._configuration.outerArcHeight;
+        return (
+            this._configuration.numberOfInnerCircles * this._configuration.innerArcHeight +
+            (absDepth - this._configuration.numberOfInnerCircles - 1) *
+                this._configuration.outerArcHeight +
+            this._configuration.centerCircleRadius +
+            this._configuration.outerArcHeight
+        );
     }
 
     /**
@@ -155,7 +165,7 @@ export default class Geometry {
     relativeRadius(depth, position) {
         const outer = this.outerRadius(depth);
 
-        return outer - ((100 - position) * (outer - this.innerRadius(depth)) / 100);
+        return outer - ((100 - position) * (outer - this.innerRadius(depth))) / 100;
     }
 
     /**
@@ -185,9 +195,7 @@ export default class Geometry {
         }
 
         if (depth < 0) {
-            return this._configuration.childScale
-                ? this._configuration.childScale(x0)
-                : 0;
+            return this._configuration.childScale ? this._configuration.childScale(x0) : 0;
         }
 
         return this.calcAngle(x0);
@@ -209,9 +217,7 @@ export default class Geometry {
         }
 
         if (depth < 0) {
-            return this._configuration.childScale
-                ? this._configuration.childScale(x1)
-                : 0;
+            return this._configuration.childScale ? this._configuration.childScale(x1) : 0;
         }
 
         return this.calcAngle(x1);
@@ -227,8 +233,10 @@ export default class Geometry {
      * @return {number}
      */
     arcLength(datum, position) {
-        return (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0))
-            * this.relativeRadius(datum.depth, position);
+        return (
+            (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0)) *
+            this.relativeRadius(datum.depth, position)
+        );
     }
 
     /**
@@ -245,20 +253,22 @@ export default class Geometry {
         const absDepth = Math.abs(datum.depth);
         let fontSize = this._configuration.fontSize;
 
-        if (absDepth >= (this._configuration.numberOfInnerCircles + 1)) {
+        if (absDepth >= this._configuration.numberOfInnerCircles + 1) {
             fontSize += 1;
         }
 
-        let scaled = (fontSize - absDepth) * this._configuration.fontScale / 100.0;
+        let scaled = ((fontSize - absDepth) * this._configuration.fontScale) / 100.0;
 
         // For outer labels (ancestor or descendant), cap font size
         // so text fits within the angular width of the segment.
-        const isOuterAncestor = datum.depth >= (this._configuration.numberOfInnerCircles + 1);
-        const isPartner = (datum.depth === -1);
-        const isChild = (datum.depth <= -2);
+        const isOuterAncestor = datum.depth >= this._configuration.numberOfInnerCircles + 1;
+        const isPartner = datum.depth === -1;
+        const isChild = datum.depth <= -2;
 
         if (isOuterAncestor || isPartner) {
-            const angularWidth = (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0)) * this.centerRadius(datum.depth);
+            const angularWidth =
+                (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0)) *
+                this.centerRadius(datum.depth);
 
             // Depth >= 7 merges first + last name into 1 line; others use 2
             const lines = absDepth >= 7 ? 1 : 2;
@@ -313,8 +323,7 @@ export default class Geometry {
             const midAngle = this._configuration.childScale((x0 + x1) / 2);
             const normalized = ((midAngle % MATH_PI2) + MATH_PI2) % MATH_PI2;
 
-            return (normalized > (90 * MATH_DEG2RAD))
-                && (normalized < (270 * MATH_DEG2RAD));
+            return normalized > 90 * MATH_DEG2RAD && normalized < 270 * MATH_DEG2RAD;
         }
 
         // depth >= 1: existing ancestor logic unchanged
@@ -327,6 +336,6 @@ export default class Geometry {
         const midAngle = (startAngle + endAngle) / 2;
         const normalized = ((midAngle % MATH_PI2) + MATH_PI2) % MATH_PI2;
 
-        return (normalized > (90 * MATH_DEG2RAD)) && (normalized < (270 * MATH_DEG2RAD));
+        return normalized > 90 * MATH_DEG2RAD && normalized < 270 * MATH_DEG2RAD;
     }
 }

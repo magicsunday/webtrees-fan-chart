@@ -27,31 +27,36 @@ class PersonGroupSelection {
                                     const attrSelection = {
                                         attr: (name, valueResolver) => {
                                             if (typeof valueResolver === "function") {
-                                                this.appendedAttributeValues = this.filteredData.map(valueResolver);
+                                                this.appendedAttributeValues =
+                                                    this.filteredData.map(valueResolver);
                                             } else {
-                                                this.appendedAttributeValues = this.filteredData.map(() => valueResolver);
+                                                this.appendedAttributeValues =
+                                                    this.filteredData.map(() => valueResolver);
                                             }
 
                                             return attrSelection;
                                         },
-                                        each: () => attrSelection
+                                        each: () => attrSelection,
                                     };
 
                                     return attrSelection;
-                                }
+                                },
                             };
-                        }
-                    })
+                        },
+                    }),
                 };
             },
             each: () => selection,
             filter: (predicate) => {
-                const source = this.enterFilteredData.length === 0 ? this.filteredData : this.enterFilteredData;
+                const source =
+                    this.enterFilteredData.length === 0
+                        ? this.filteredData
+                        : this.enterFilteredData;
                 this.filteredData = source.filter(predicate);
                 return selection;
             },
             classed: () => selection,
-            on: () => selection
+            on: () => selection,
         };
 
         return selection;
@@ -65,27 +70,31 @@ class MockSvg {
         this.personGroup = new PersonGroupSelection();
         this.visual = {
             node: () => ({
-                getBBox: () => svgBoundingBox
+                getBBox: () => svgBoundingBox,
             }),
             select: () => ({
                 empty: () => true,
                 selectAll: () => ({
-                    classed: () => ({})
-                })
+                    classed: () => ({}),
+                }),
             }),
             append: () => ({
-                attr: function() { return this; },
+                attr: function () {
+                    return this;
+                },
                 selectAll: () => ({
                     data: () => ({
                         enter: () => ({
                             append: () => ({
-                                attr: function() { return this; }
-                            })
-                        })
+                                attr: function () {
+                                    return this;
+                                },
+                            }),
+                        }),
                     }),
-                    each: () => ({})
-                })
-            })
+                    each: () => ({}),
+                }),
+            }),
         };
         this.attrCalls = [];
 
@@ -107,8 +116,16 @@ class MockSvg {
                 filter: () => noopSelection,
                 classed: () => noopSelection,
                 on: () => noopSelection,
-                data: () => ({ enter: () => ({ append: () => ({ attr: function() { return this; } }) }) }),
-                each: () => noopSelection
+                data: () => ({
+                    enter: () => ({
+                        append: () => ({
+                            attr: function () {
+                                return this;
+                            },
+                        }),
+                    }),
+                }),
+                each: () => noopSelection,
             };
 
             return noopSelection;
@@ -131,13 +148,13 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg", () => ({
     __esModule: true,
     default: MockSvg,
     mockSvgInstances,
-    setSvgBoundingBox
+    setSvgBoundingBox,
 }));
 
 await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
     ChartOverlay: jest.fn(() => ({
         hide: jest.fn(),
-        show: jest.fn()
+        show: jest.fn(),
     })),
     // FamilyColor (pulled in indirectly via hierarchy/chart-updater) imports
     // these named exports; provide identity stubs so the module graph loads
@@ -150,33 +167,33 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
     depthHsl: jest.fn(() => "hsl(0, 0%, 50%)"),
     familyBranchHsl: jest.fn(() => "hsl(0, 0%, 50%)"),
     familyCenterHsl: jest.fn(() => "hsl(0, 0%, 92%)"),
-    hexToHsl: jest.fn(() => [0, 0, 50])
+    hexToHsl: jest.fn(() => [0, 0, 50]),
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/gradient", () => ({
     __esModule: true,
     default: jest.fn(() => ({
-        init: jest.fn()
-    }))
+        init: jest.fn(),
+    })),
 }));
 
 const personConstructor = jest.fn(() => ({}));
 
 await jest.unstable_mockModule("resources/js/modules/custom/svg/person", () => ({
     __esModule: true,
-    default: personConstructor
+    default: personConstructor,
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/chart-updater", () => ({
     __esModule: true,
     default: jest.fn(() => ({
-        update: jest.fn()
-    }))
+        update: jest.fn(),
+    })),
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/svg/marriage", () => ({
     __esModule: true,
-    default: jest.fn(() => ({}))
+    default: jest.fn(() => ({})),
 }));
 
 await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () => ({
@@ -184,16 +201,34 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
     MATH_DEG2RAD: Math.PI / 180,
     MATH_RAD2DEG: 180 / Math.PI,
     default: class {
-        startAngle() { return 0; }
-        endAngle() { return 0; }
-        innerRadius() { return 0; }
-        outerRadius() { return 0; }
-        calcAngle() { return 0; }
-        centerRadius() { return 0; }
-        arcLength() { return 100; }
-        relativeRadius() { return 50; }
-        scale() { return 0; }
-    }
+        startAngle() {
+            return 0;
+        }
+        endAngle() {
+            return 0;
+        }
+        innerRadius() {
+            return 0;
+        }
+        outerRadius() {
+            return 0;
+        }
+        calcAngle() {
+            return 0;
+        }
+        centerRadius() {
+            return 0;
+        }
+        arcLength() {
+            return 100;
+        }
+        relativeRadius() {
+            return 50;
+        }
+        scale() {
+            return 0;
+        }
+    },
 }));
 
 const { default: Chart } = await import("resources/js/modules/custom/chart");
@@ -206,9 +241,9 @@ const createConfiguration = (overrides = {}) => ({
     rtl: false,
     labels: {
         zoom: "Zoom",
-        move: "Move"
+        move: "Move",
     },
-    ...overrides
+    ...overrides,
 });
 
 const createParentSelection = ({ width = 500, height = 400 } = {}) => {
@@ -220,12 +255,12 @@ const createParentSelection = ({ width = 500, height = 400 } = {}) => {
         top: 0,
         left: 0,
         right: width,
-        bottom: height
+        bottom: height,
     };
 
     return {
         html: jest.fn().mockReturnThis(),
-        node: () => ({ getBoundingClientRect: () => boundingRect })
+        node: () => ({ getBoundingClientRect: () => boundingRect }),
     };
 };
 
@@ -263,7 +298,7 @@ const createHierarchyDatum = () => ({
                 sex: "M",
                 timespan: "",
                 marriageDateOfParents: "",
-            }
+            },
         },
         {
             data: {
@@ -281,9 +316,9 @@ const createHierarchyDatum = () => ({
                 sex: "F",
                 timespan: "",
                 marriageDateOfParents: "",
-            }
-        }
-    ]
+            },
+        },
+    ],
 });
 
 describe("Chart", () => {
@@ -296,7 +331,8 @@ describe("Chart", () => {
 
     test("convertRemToPixels uses the document root font size", () => {
         const chart = new Chart(createParentSelection(), createConfiguration());
-        const getComputedStyleSpy = jest.spyOn(window, "getComputedStyle")
+        const getComputedStyleSpy = jest
+            .spyOn(window, "getComputedStyle")
             .mockReturnValue({ fontSize: "18px" });
 
         const result = chart.convertRemToPixels(2.5);
@@ -310,9 +346,12 @@ describe("Chart", () => {
     test("personGroup selection filters empty nodes only when empty segments are hidden", () => {
         const data = createHierarchyDatum();
 
-        const chartWithVisibleEmptySegments = new Chart(createParentSelection(), createConfiguration({
-            hideEmptySegments: false
-        }));
+        const chartWithVisibleEmptySegments = new Chart(
+            createParentSelection(),
+            createConfiguration({
+                hideEmptySegments: false,
+            }),
+        );
 
         chartWithVisibleEmptySegments.data = data;
         chartWithVisibleEmptySegments.render();
@@ -320,11 +359,16 @@ describe("Chart", () => {
         const visibleNodes = mockSvgInstances[0].personGroup.enterFilteredData;
 
         expect(visibleNodes).toHaveLength(3);
-        expect(visibleNodes.map((node) => node.data.data.xref)).toEqual(expect.arrayContaining(["I1", "I2", ""]));
+        expect(visibleNodes.map((node) => node.data.data.xref)).toEqual(
+            expect.arrayContaining(["I1", "I2", ""]),
+        );
 
-        const chartWithHiddenEmptySegments = new Chart(createParentSelection(), createConfiguration({
-            hideEmptySegments: true
-        }));
+        const chartWithHiddenEmptySegments = new Chart(
+            createParentSelection(),
+            createConfiguration({
+                hideEmptySegments: true,
+            }),
+        );
 
         chartWithHiddenEmptySegments.data = data;
         chartWithHiddenEmptySegments.render();
@@ -353,7 +397,8 @@ describe("Chart", () => {
         const data = createHierarchyDatum();
         const parentSelection = createParentSelection({ width: 600, height: 450 });
         const chart = new Chart(parentSelection, createConfiguration());
-        const getComputedStyleSpy = jest.spyOn(window, "getComputedStyle")
+        const getComputedStyleSpy = jest
+            .spyOn(window, "getComputedStyle")
             .mockReturnValue({ fontSize: "16px" });
 
         setSvgBoundingBox({ x: 0, y: 0, width: 400, height: 300 });
@@ -378,18 +423,24 @@ describe("Chart", () => {
 
     test("render applies family colors even when parent marriage dates are hidden", () => {
         const data = createHierarchyDatum();
-        const chart = new Chart(createParentSelection(), createConfiguration({
-            showFamilyColors: true,
-            showParentMarriageDates: false,
-        }));
+        const chart = new Chart(
+            createParentSelection(),
+            createConfiguration({
+                showFamilyColors: true,
+                showParentMarriageDates: false,
+            }),
+        );
 
         chart.data = data;
         chart.render();
 
-        const coloredDatums = chart._hierarchy.nodes
-            .filter((datum) => datum?.data?.data?.xref !== "");
+        const coloredDatums = chart._hierarchy.nodes.filter(
+            (datum) => datum?.data?.data?.xref !== "",
+        );
 
         expect(coloredDatums).not.toHaveLength(0);
-        expect(coloredDatums.every((datum) => typeof datum.data.data.familyColor === "string")).toBe(true);
+        expect(
+            coloredDatums.every((datum) => typeof datum.data.data.familyColor === "string"),
+        ).toBe(true);
     });
 });

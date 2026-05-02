@@ -6,11 +6,11 @@
  */
 
 import * as d3 from "../../d3.js";
-import {appendArc} from "./arc.js";
+import { appendArc } from "./arc.js";
 import { createPersonArcGenerator } from "./arc-factory.js";
 import TooltipRenderer from "./tooltip-renderer.js";
 import LabelRenderer from "./label-renderer.js";
-import {SEX_FEMALE, SEX_MALE} from "../hierarchy.js";
+import { SEX_FEMALE, SEX_MALE } from "../hierarchy.js";
 import { classifyElement } from "./lifecycle.js";
 
 /** Minimum rendered image diameter in pixels — narrower arcs skip the image. */
@@ -73,8 +73,9 @@ export default class Person {
      */
     init(person, datum) {
         // Hide outer generations when only images are shown (no names)
-        if (!this._configuration.showNames
-            && (datum.depth > this._configuration.numberOfInnerCircles)
+        if (
+            !this._configuration.showNames &&
+            datum.depth > this._configuration.numberOfInnerCircles
         ) {
             return;
         }
@@ -96,8 +97,10 @@ export default class Person {
             // Arc must be rebuilt in the new content wrapper (the old arc
             // is inside g.content.old and will be removed after fade-out)
             this.addArcToPerson(content, datum);
-        } else if (!isNew && !isRemove
-            && (hasData || !this._configuration.hideEmptySegments || isDescendant)
+        } else if (
+            !isNew &&
+            !isRemove &&
+            (hasData || !this._configuration.hideEmptySegments || isDescendant)
         ) {
             this.addArcToPerson(content, datum);
         }
@@ -110,7 +113,11 @@ export default class Person {
 
             // Render labels (text layout uses imageSize if set above)
             if (this._configuration.showNames) {
-                const labelRenderer = new LabelRenderer(this._svg, this._configuration, this._geometry);
+                const labelRenderer = new LabelRenderer(
+                    this._svg,
+                    this._configuration,
+                    this._geometry,
+                );
                 labelRenderer.addLabel(content, datum);
             }
 
@@ -140,25 +147,27 @@ export default class Person {
      * @private
      */
     addColorGroup(person, datum) {
-        const arcGenerator = d3.arc()
+        const arcGenerator = d3
+            .arc()
             .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
             .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
-            .innerRadius(this._geometry.outerRadius(datum.depth) - this._configuration.colorArcWidth)
+            .innerRadius(
+                this._geometry.outerRadius(datum.depth) - this._configuration.colorArcWidth,
+            )
             .outerRadius(this._geometry.outerRadius(datum.depth) + 1)
             .padAngle(this.getArcPadAngle(datum))
             .padRadius(this._configuration.padRadius);
 
-        const color = person
-            .append("g")
-            .attr("class", "color");
+        const color = person.append("g").attr("class", "color");
 
-        const sexClass = datum.data.data.sex === SEX_FEMALE
-            ? "female"
-            : (datum.data.data.sex === SEX_MALE ? "male" : "unknown");
+        const sexClass =
+            datum.data.data.sex === SEX_FEMALE
+                ? "female"
+                : datum.data.data.sex === SEX_MALE
+                  ? "male"
+                  : "unknown";
 
-        color.append("path")
-            .attr("d", arcGenerator)
-            .attr("class", sexClass);
+        color.append("path").attr("d", arcGenerator).attr("class", sexClass);
     }
 
     /**
@@ -173,41 +182,47 @@ export default class Person {
      * @private
      */
     _computeImageSize(datum) {
-        if (!this._configuration.showImages
-            || !datum.data.data.thumbnail
-            || (datum.depth > this._configuration.numberOfInnerCircles)
+        if (
+            !this._configuration.showImages ||
+            !datum.data.data.thumbnail ||
+            datum.depth > this._configuration.numberOfInnerCircles
         ) {
             return null;
         }
 
-        const arcHeight = (datum.depth === 0)
-            ? this._configuration.centerCircleRadius * 2
-            : this._geometry.outerRadius(datum.depth) - this._geometry.innerRadius(datum.depth);
+        const arcHeight =
+            datum.depth === 0
+                ? this._configuration.centerCircleRadius * 2
+                : this._geometry.outerRadius(datum.depth) - this._geometry.innerRadius(datum.depth);
 
         let imageSize;
 
         if (this._configuration.showNames) {
             imageSize = Math.min(arcHeight * 0.4, IMAGE_HEIGHT_MAX);
         } else {
-            const arcWidth = (datum.depth === 0)
-                ? arcHeight
-                : (this._geometry.endAngle(datum.depth, datum.x1) - this._geometry.startAngle(datum.depth, datum.x0)) * this._geometry.centerRadius(datum.depth);
+            const arcWidth =
+                datum.depth === 0
+                    ? arcHeight
+                    : (this._geometry.endAngle(datum.depth, datum.x1) -
+                          this._geometry.startAngle(datum.depth, datum.x0)) *
+                      this._geometry.centerRadius(datum.depth);
 
             imageSize = Math.min(arcHeight, arcWidth) * 0.8;
         }
 
-        const angularWidth = (datum.depth === 0)
-            ? 360
-            : Math.abs(
-                this._geometry.endAngle(datum.depth, datum.x1)
-                - this._geometry.startAngle(datum.depth, datum.x0),
-            ) * (180 / Math.PI);
+        const angularWidth =
+            datum.depth === 0
+                ? 360
+                : Math.abs(
+                      this._geometry.endAngle(datum.depth, datum.x1) -
+                          this._geometry.startAngle(datum.depth, datum.x0),
+                  ) *
+                  (180 / Math.PI);
 
-        const minAngularWidth = (datum.depth < 0)
-            ? IMAGE_ANGULAR_MIN_DEG_DESCENDANT
-            : IMAGE_ANGULAR_MIN_DEG;
+        const minAngularWidth =
+            datum.depth < 0 ? IMAGE_ANGULAR_MIN_DEG_DESCENDANT : IMAGE_ANGULAR_MIN_DEG;
 
-        if ((imageSize >= IMAGE_SIZE_MIN) && (angularWidth >= minAngularWidth)) {
+        if (imageSize >= IMAGE_SIZE_MIN && angularWidth >= minAngularWidth) {
             return imageSize;
         }
 
@@ -256,7 +271,7 @@ export default class Person {
                 const firstDy = parseFloat(firstText.attr("dy")) || 0;
                 const fontSize = this._geometry.getFontSize(datum);
                 const lineHeight = fontSize * 1.3;
-                centerY = firstDy - (lineHeight / 2) - IMAGE_TEXT_GAP - (imageSize / 2);
+                centerY = firstDy - lineHeight / 2 - IMAGE_TEXT_GAP - imageSize / 2;
             }
 
             this._svg.defs
@@ -267,27 +282,29 @@ export default class Person {
                 .attr("cy", centerY)
                 .attr("r", imageSize / 2);
 
-            const imageGroup = person.append("g")
-                .attr("class", "image");
+            const imageGroup = person.append("g").attr("class", "image");
 
             // Plain white background behind the (possibly letterboxed)
             // foreground photo so the boundary against the page is uniform.
-            imageGroup.append("circle")
+            imageGroup
+                .append("circle")
                 .attr("cx", 0)
                 .attr("cy", centerY)
                 .attr("r", imageSize / 2)
                 .attr("fill", "#FFFFFF");
 
-            imageGroup.append("image")
+            imageGroup
+                .append("image")
                 .attr("href", datum.data.data.thumbnail)
                 .attr("x", -(imageSize / 2))
-                .attr("y", centerY - (imageSize / 2))
+                .attr("y", centerY - imageSize / 2)
                 .attr("width", imageSize)
                 .attr("height", imageSize)
                 .attr("clip-path", `url(#${clipId})`)
                 .attr("preserveAspectRatio", "xMidYMid meet");
 
-            imageGroup.append("circle")
+            imageGroup
+                .append("circle")
                 .attr("cx", 0)
                 .attr("cy", centerY)
                 .attr("r", imageSize / 2)
@@ -301,16 +318,12 @@ export default class Person {
             const centerRadius = this._geometry.centerRadius(datum.depth);
 
             // When text is present, shift image left to center image+text block
-            const shiftAngle = (textWidth > 0)
-                ? ((textWidth + IMAGE_LABEL_GAP) / 2) / centerRadius
-                : 0;
+            const shiftAngle = textWidth > 0 ? (textWidth + IMAGE_LABEL_GAP) / 2 / centerRadius : 0;
 
             const midAngle = (startAngle + endAngle) / 2;
             const flipped = this._geometry.isPositionFlipped(datum.depth, datum.x0, datum.x1);
 
-            const imageAngle = flipped
-                ? midAngle + shiftAngle
-                : midAngle - shiftAngle;
+            const imageAngle = flipped ? midAngle + shiftAngle : midAngle - shiftAngle;
 
             const rotateDeg = imageAngle * (180 / Math.PI) + (flipped ? 180 : 0);
             const posX = centerRadius * Math.sin(imageAngle);
@@ -324,22 +337,22 @@ export default class Person {
                 .attr("cy", 0)
                 .attr("r", imageSize / 2);
 
-            const imageGroup = person.append("g")
+            const imageGroup = person
+                .append("g")
                 .attr("class", "image")
-                .attr("transform",
-                    "translate(" + posX + "," + posY + ") "
-                    + "rotate(" + rotateDeg + ")",
-                );
+                .attr("transform", `translate(${posX},${posY}) rotate(${rotateDeg})`);
 
             // Plain white background behind the (possibly letterboxed)
             // foreground photo so the boundary against the page is uniform.
-            imageGroup.append("circle")
+            imageGroup
+                .append("circle")
                 .attr("cx", 0)
                 .attr("cy", 0)
                 .attr("r", imageSize / 2)
                 .attr("fill", "#FFFFFF");
 
-            imageGroup.append("image")
+            imageGroup
+                .append("image")
                 .attr("href", datum.data.data.thumbnail)
                 .attr("x", -(imageSize / 2))
                 .attr("y", -(imageSize / 2))
@@ -348,7 +361,8 @@ export default class Person {
                 .attr("clip-path", `url(#${clipId})`)
                 .attr("preserveAspectRatio", "xMidYMid meet");
 
-            imageGroup.append("circle")
+            imageGroup
+                .append("circle")
                 .attr("cx", 0)
                 .attr("cy", 0)
                 .attr("r", imageSize / 2)
@@ -359,13 +373,17 @@ export default class Person {
             // Shift the text right to make room for the image.
             // Convert pixel shift to startOffset percentage: the text baseline
             // starts at 25%, leaving 50 percentage points of arc length to work with.
-            const textShiftPx = (imageSize / 2) + IMAGE_LABEL_GAP;
-            const textShiftPercent = (textShiftPx / (Math.abs(endAngle - startAngle) * centerRadius)) * 50;
+            const textShiftPx = imageSize / 2 + IMAGE_LABEL_GAP;
+            const textShiftPercent =
+                (textShiftPx / (Math.abs(endAngle - startAngle) * centerRadius)) * 50;
 
             nameGroup.selectAll("textPath").each(function () {
                 const raw = parseFloat(d3.select(this).attr("startOffset"));
                 const currentOffset = Number.isFinite(raw) ? raw : 25;
-                d3.select(this).attr("startOffset", `${(currentOffset + textShiftPercent).toFixed(1)}%`);
+                d3.select(this).attr(
+                    "startOffset",
+                    `${(currentOffset + textShiftPercent).toFixed(1)}%`,
+                );
             });
         }
     }
@@ -401,9 +419,7 @@ export default class Person {
      * @private
      */
     addTitleToPerson(person, value) {
-        person
-            .insert("title", ":first-child")
-            .text(value);
+        person.insert("title", ":first-child").text(value);
     }
 
     /**
@@ -420,7 +436,7 @@ export default class Person {
     getArcPadAngle(datum) {
         // No padding between spouse pairs (ancestors) or descendant arcs
         // when marriage arcs are shown -- the arcs fill the gap
-        if (this._configuration.showParentMarriageDates && (datum.parent || (datum.depth < 0))) {
+        if (this._configuration.showParentMarriageDates && (datum.parent || datum.depth < 0)) {
             return 0;
         }
 

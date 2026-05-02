@@ -182,9 +182,7 @@ export default class Configuration {
     }
 
     set fanDegree(value) {
-        this._fanDegree = this._showDescendants
-            ? Math.min(270, Math.max(180, value))
-            : value;
+        this._fanDegree = this._showDescendants ? Math.min(270, Math.max(180, value)) : value;
     }
 
     /**

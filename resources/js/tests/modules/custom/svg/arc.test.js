@@ -9,16 +9,23 @@ const { appendArc } = await import("resources/js/modules/custom/svg/arc");
 const createParentSelection = (isNew = false) => {
     const styles = {};
     const path = {
-        attr: jest.fn(function () { return this; }),
-        style: jest.fn((name, value) => { styles[name] = value; return path; }),
+        attr: jest.fn(function () {
+            return this;
+        }),
+        style: jest.fn((name, value) => {
+            styles[name] = value;
+            return path;
+        }),
     };
     const arcGroup = {
-        attr: jest.fn(function () { return this; }),
+        attr: jest.fn(function () {
+            return this;
+        }),
         append: jest.fn(() => path),
     };
     const parent = {
         append: jest.fn(() => arcGroup),
-        classed: jest.fn((name) => name === "new" ? isNew : false),
+        classed: jest.fn((name) => (name === "new" ? isNew : false)),
     };
 
     return { parent, arcGroup, path, styles };

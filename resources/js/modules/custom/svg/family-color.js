@@ -11,7 +11,7 @@ import {
     familyCenterHsl,
     hexToHsl,
 } from "@magicsunday/webtrees-chart-lib";
-import {SEX_FEMALE, SEX_MALE} from "../hierarchy.js";
+import { SEX_FEMALE, SEX_MALE } from "../hierarchy.js";
 
 /**
  * This class computes family-branch colors for person arcs. The two
@@ -53,7 +53,7 @@ export default class FamilyColor {
     getColor(datum) {
         // Empty ancestor segments keep their default gray appearance.
         // Empty partner arcs (unknown spouse) still get a family color.
-        if ((datum.data.data.xref === "") && (datum.depth >= 0)) {
+        if (datum.data.data.xref === "" && datum.depth >= 0) {
             return null;
         }
 
@@ -77,7 +77,7 @@ export default class FamilyColor {
         // Depth 1: two main branches get their own hue from their own position.
         // Depth 2+: hue comes from the parent (= child in genealogical terms),
         // so both parents of the same child share the same hue.
-        const refNode = (datum.depth >= 2 && datum.parent) ? datum.parent : datum;
+        const refNode = datum.depth >= 2 && datum.parent ? datum.parent : datum;
         const refMidpoint = (refNode.x0 + refNode.x1) / 2;
         const isPaternal = refMidpoint < 0.5;
         const baseHsl = isPaternal ? this._paternalHsl : this._maternalHsl;
@@ -101,9 +101,10 @@ export default class FamilyColor {
     getDescendantColor(datum) {
         // Use the midpoint of the partner arc for hue derivation.
         // For children (depth -2), use the parent partner's midpoint.
-        const partnerMidpoint = (datum.descendantType === "child" && datum.syntheticParentId)
-            ? this._findPartnerMidpoint(datum.syntheticParentId)
-            : (datum.x0 + datum.x1) / 2;
+        const partnerMidpoint =
+            datum.descendantType === "child" && datum.syntheticParentId
+                ? this._findPartnerMidpoint(datum.syntheticParentId)
+                : (datum.x0 + datum.x1) / 2;
 
         // Blend between paternal and maternal base hues based on position,
         // producing pastel tones consistent with the ancestor color scheme.
@@ -178,5 +179,4 @@ export default class FamilyColor {
 
         return null;
     }
-
 }

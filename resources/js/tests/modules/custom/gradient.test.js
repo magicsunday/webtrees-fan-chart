@@ -7,7 +7,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/hierarchy", () => ({
     __esModule: true,
     SEX_MALE,
     SEX_FEMALE,
-    default: jest.fn()
+    default: jest.fn(),
 }));
 
 const { default: Gradient } = await import("resources/js/modules/custom/gradient");
@@ -29,17 +29,17 @@ const createDefsContext = () => {
                 attr: jest.fn((name, value) => {
                     calls.push({ name, value });
                     return stopSelection;
-                })
+                }),
             };
 
             return stopSelection;
-        })
+        }),
     };
 
     return {
         defs: { append: jest.fn(() => gradientSelection) },
         gradientAttrCalls,
-        stopAttrCalls
+        stopAttrCalls,
     };
 };
 
@@ -49,20 +49,20 @@ const createDatum = ({ depth, id = 1, sex, parentColors = null }) => ({
     data: {
         data: {
             sex,
-            ...(parentColors ? {} : { colors: undefined })
-        }
+            ...(parentColors ? {} : { colors: undefined }),
+        },
     },
     ...(parentColors
         ? {
-            parent: {
-                data: {
-                    data: {
-                        colors: parentColors
-                    }
-                }
-            }
-        }
-        : {})
+              parent: {
+                  data: {
+                      data: {
+                          colors: parentColors,
+                      },
+                  },
+              },
+          }
+        : {}),
 });
 
 describe("Gradient.init", () => {
@@ -89,15 +89,15 @@ describe("Gradient.init", () => {
         expect(defsContext.stopAttrCalls).toHaveLength(2);
         expect(defsContext.stopAttrCalls[0]).toEqual([
             { name: "offset", value: "0%" },
-            { name: "stop-color", value: "rgb(64,143,222)" }
+            { name: "stop-color", value: "rgb(64,143,222)" },
         ]);
         expect(defsContext.stopAttrCalls[1]).toEqual([
             { name: "offset", value: "100%" },
-            { name: "stop-color", value: "rgb(161,219,117)" }
+            { name: "stop-color", value: "rgb(161,219,117)" },
         ]);
         expect(datum.data.data.colors).toEqual([
             [64, 143, 222],
-            [161, 219, 117]
+            [161, 219, 117],
         ]);
     });
 
@@ -113,15 +113,15 @@ describe("Gradient.init", () => {
         expect(defsContext.stopAttrCalls).toHaveLength(2);
         expect(defsContext.stopAttrCalls[0]).toEqual([
             { name: "offset", value: "0%" },
-            { name: "stop-color", value: "rgb(218,102,13)" }
+            { name: "stop-color", value: "rgb(218,102,13)" },
         ]);
         expect(defsContext.stopAttrCalls[1]).toEqual([
             { name: "offset", value: "100%" },
-            { name: "stop-color", value: "rgb(235,201,33)" }
+            { name: "stop-color", value: "rgb(235,201,33)" },
         ]);
         expect(datum.data.data.colors).toEqual([
             [218, 102, 13],
-            [235, 201, 33]
+            [235, 201, 33],
         ]);
     });
 
@@ -130,13 +130,13 @@ describe("Gradient.init", () => {
         const gradient = new Gradient({ defs: defsContext.defs });
         const parentColors = [
             [10, 20, 30],
-            [55, 65, 75]
+            [55, 65, 75],
         ];
         const datum = createDatum({
             depth: 2,
             id: 8,
             sex: SEX_MALE,
-            parentColors
+            parentColors,
         });
 
         gradient.init(datum);
@@ -145,7 +145,7 @@ describe("Gradient.init", () => {
         expect(defsContext.gradientAttrCalls).toEqual([{ name: "id", value: "grad-8" }]);
         expect(datum.data.data.colors).toEqual([
             [10, 20, 30],
-            [33, 43, 53]
+            [33, 43, 53],
         ]);
         expect(defsContext.stopAttrCalls[0][1].value).toBe("rgb(10,20,30)");
         expect(defsContext.stopAttrCalls[1][1].value).toBe("rgb(33,43,53)");
@@ -156,13 +156,13 @@ describe("Gradient.init", () => {
         const gradient = new Gradient({ defs: defsContext.defs });
         const parentColors = [
             [5, 15, 25],
-            [40, 60, 80]
+            [40, 60, 80],
         ];
         const datum = createDatum({
             depth: 3,
             id: 9,
             sex: SEX_FEMALE,
-            parentColors
+            parentColors,
         });
 
         gradient.init(datum);
@@ -171,7 +171,7 @@ describe("Gradient.init", () => {
         expect(defsContext.gradientAttrCalls).toEqual([{ name: "id", value: "grad-9" }]);
         expect(datum.data.data.colors).toEqual([
             [23, 38, 53],
-            [40, 60, 80]
+            [40, 60, 80],
         ]);
         expect(defsContext.stopAttrCalls[0][1].value).toBe("rgb(23,38,53)");
         expect(defsContext.stopAttrCalls[1][1].value).toBe("rgb(40,60,80)");

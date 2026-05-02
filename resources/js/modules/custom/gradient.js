@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import {SEX_FEMALE, SEX_MALE} from "./hierarchy.js";
+import { SEX_FEMALE, SEX_MALE } from "./hierarchy.js";
 
 /**
  * Computes and registers SVG linearGradient definitions for each person arc.
@@ -50,37 +50,46 @@ export default class Gradient {
                 color2 = [235, 201, 33];
             }
 
-            datum.data.data.colors = [ color1, color2 ];
+            datum.data.data.colors = [color1, color2];
         } else {
             // Calculate subsequent gradient colors
             const blendedColor = [
-                Math.ceil((datum.parent.data.data.colors[0][0] + datum.parent.data.data.colors[1][0]) / 2.0),
-                Math.ceil((datum.parent.data.data.colors[0][1] + datum.parent.data.data.colors[1][1]) / 2.0),
-                Math.ceil((datum.parent.data.data.colors[0][2] + datum.parent.data.data.colors[1][2]) / 2.0),
+                Math.ceil(
+                    (datum.parent.data.data.colors[0][0] + datum.parent.data.data.colors[1][0]) /
+                        2.0,
+                ),
+                Math.ceil(
+                    (datum.parent.data.data.colors[0][1] + datum.parent.data.data.colors[1][1]) /
+                        2.0,
+                ),
+                Math.ceil(
+                    (datum.parent.data.data.colors[0][2] + datum.parent.data.data.colors[1][2]) /
+                        2.0,
+                ),
             ];
 
             if (datum.data.data.sex === SEX_MALE) {
-                datum.data.data.colors = [ datum.parent.data.data.colors[0], blendedColor ];
+                datum.data.data.colors = [datum.parent.data.data.colors[0], blendedColor];
             } else if (datum.data.data.sex === SEX_FEMALE) {
-                datum.data.data.colors = [ blendedColor, datum.parent.data.data.colors[1] ];
+                datum.data.data.colors = [blendedColor, datum.parent.data.data.colors[1]];
             } else {
                 // Unknown sex: inherit parent colors unchanged so gradient
                 // definitions still render correctly at this depth.
-                datum.data.data.colors = [ ...datum.parent.data.data.colors ];
+                datum.data.data.colors = [...datum.parent.data.data.colors];
             }
         }
 
         // Add a new radial gradient
-        const newGrad = this._svg.defs
-            .append("svg:linearGradient")
-            .attr("id", `grad-${datum.id}`);
+        const newGrad = this._svg.defs.append("svg:linearGradient").attr("id", `grad-${datum.id}`);
 
         // Define start and stop colors of gradient
-        newGrad.append("svg:stop")
+        newGrad
+            .append("svg:stop")
             .attr("offset", "0%")
             .attr("stop-color", `rgb(${datum.data.data.colors[0].join(",")})`);
 
-        newGrad.append("svg:stop")
+        newGrad
+            .append("svg:stop")
             .attr("offset", "100%")
             .attr("stop-color", `rgb(${datum.data.data.colors[1].join(",")})`);
     }

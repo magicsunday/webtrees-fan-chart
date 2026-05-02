@@ -5,20 +5,20 @@ if (typeof window !== "undefined") {
         configurable: true,
         value: jest.fn(() => ({
             getPropertyValue: jest.fn(() => ""),
-            fontSize: "16px"
-        }))
+            fontSize: "16px",
+        })),
     });
 
     const orientationMock = {
         angle: 0,
         lock: jest.fn().mockResolvedValue(undefined),
         type: "landscape-primary",
-        unlock: jest.fn().mockResolvedValue(undefined)
+        unlock: jest.fn().mockResolvedValue(undefined),
     };
 
     Object.defineProperty(window.screen, "orientation", {
         configurable: true,
-        value: orientationMock
+        value: orientationMock,
     });
 }
 
@@ -32,6 +32,6 @@ if (typeof document !== "undefined") {
         },
         set(value) {
             fullscreenElement = value;
-        }
+        },
     });
 }

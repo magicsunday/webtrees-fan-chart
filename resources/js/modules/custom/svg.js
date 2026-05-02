@@ -102,13 +102,9 @@ export default class Svg {
             .on("contextmenu", (event) => event.preventDefault())
             .on("wheel", (event) => {
                 if (!event.ctrlKey) {
-                    overlay.show(
-                        this._configuration.labels.zoom,
-                        300,
-                        () => {
-                            overlay.hide(700, 800);
-                        },
-                    );
+                    overlay.show(this._configuration.labels.zoom, 300, () => {
+                        overlay.hide(700, 800);
+                    });
                 }
             })
             .on("touchend", (event) => {
@@ -137,21 +133,19 @@ export default class Svg {
         const tooltip = d3.select("div.tooltip");
 
         if (tooltip.empty()) {
-            this._div = d3.select("body")
+            this._div = d3
+                .select("body")
                 .append("div")
                 .attr("class", "tooltip")
                 .style("opacity", 0);
         } else {
-            this._div = tooltip
-                .style("opacity", 0);
+            this._div = tooltip.style("opacity", 0);
         }
 
         // Add a group
         this._visual = this._element.append("g");
 
-        this._visual
-            .append("g")
-            .attr("class", "personGroup");
+        this._visual.append("g").attr("class", "personGroup");
 
         this._zoom = new ChartZoom(this._visual);
         this._element.call(this._zoom.get());

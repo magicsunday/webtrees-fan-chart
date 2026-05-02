@@ -24,7 +24,9 @@
         "test:exports": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --runTestsByPath resources/js/tests/export.integration.test.js resources/js/tests/export.large.integration.test.js",
         "test:watch": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
         "lint": "biome lint --error-on-warnings resources/js/modules/",
-        "lint:fix": "biome lint --fix --unsafe resources/js/modules/"
+        "lint:fix": "biome lint --fix --unsafe resources/js/modules/",
+        "format": "biome format --write resources/js/modules/ resources/js/tests/",
+        "format:check": "biome format resources/js/modules/ resources/js/tests/"
     },
     "devDependencies": {
         "@biomejs/biome": "2.4.11",

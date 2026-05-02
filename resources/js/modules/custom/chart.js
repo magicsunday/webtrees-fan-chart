@@ -105,8 +105,8 @@ export default class Chart {
         return {
             left: Math.ceil(svgBoundingBox.x - offsetX - padding),
             top: Math.ceil(svgBoundingBox.y - offsetY - padding),
-            width: Math.ceil(viewBoxWidth + (padding * 2)),
-            height: Math.ceil(viewBoxHeight + (padding * 2)),
+            width: Math.ceil(viewBoxWidth + padding * 2),
+            height: Math.ceil(viewBoxHeight + padding * 2),
         };
     }
 
@@ -119,9 +119,7 @@ export default class Chart {
      */
     updateViewBox() {
         // Set width/height attributes
-        this.svg
-            .attr("width", "100%")
-            .attr("height", "100%");
+        this.svg.attr("width", "100%").attr("height", "100%");
 
         const padding = this.convertRemToPixels(MIN_PADDING);
         const svgBoundingBox = this.svg.visual.node().getBBox();
@@ -137,16 +135,7 @@ export default class Chart {
         const viewBox = this._computeViewBox(padding, svgBoundingBox, clientBoundingBox);
 
         // Set view box attribute
-        this.svg
-            .attr(
-                "viewBox",
-                [
-                    viewBox.left,
-                    viewBox.top,
-                    viewBox.width,
-                    viewBox.height,
-                ],
-            );
+        this.svg.attr("viewBox", [viewBox.left, viewBox.top, viewBox.width, viewBox.height]);
     }
 
     /**
@@ -165,9 +154,7 @@ export default class Chart {
         // - Top-level elements marked for removal (.remove)
         // - Old sub-elements within updating elements (.old)
         // - Old separator lines
-        const outgoing = this._svg.visual.selectAll(
-            "g.person.remove, g.marriage.remove, .old",
-        );
+        const outgoing = this._svg.visual.selectAll("g.person.remove, g.marriage.remove, .old");
         outgoing.style("display", "none");
 
         const svgBoundingBox = this.svg.visual.node().getBBox();
@@ -188,10 +175,7 @@ export default class Chart {
      * Animates the chart back to its initial zoom level and pan position (identity transform).
      */
     center() {
-        this.svg
-            .transition()
-            .duration(750)
-            .call(this.svg.zoom.get().transform, d3.zoomIdentity);
+        this.svg.transition().duration(750).call(this.svg.zoom.get().transform, d3.zoomIdentity);
     }
 
     /**
@@ -225,17 +209,17 @@ export default class Chart {
             .selectAll("g.person")
             .data(this._hierarchy.nodes, (datum) => datum.id)
             .enter()
-            .filter(
-                (datum) => {
-                    // Filter out all empty records, but only if we hide empty segments
-                    // otherwise the arcs won't be drawn correctly.
-                    // Descendant nodes (depth < 0) are always included because
-                    // empty partner arcs are structural placeholders.
-                    return (datum.data.data.xref !== "")
-                         || !this._configuration.hideEmptySegments
-                         || (datum.depth < 0);
-                },
-            )
+            .filter((datum) => {
+                // Filter out all empty records, but only if we hide empty segments
+                // otherwise the arcs won't be drawn correctly.
+                // Descendant nodes (depth < 0) are always included because
+                // empty partner arcs are structural placeholders.
+                return (
+                    datum.data.data.xref !== "" ||
+                    !this._configuration.hideEmptySegments ||
+                    datum.depth < 0
+                );
+            })
             .append("g")
             .attr("class", "person")
             .attr("id", (datum) => `person-${datum.id}`);
@@ -244,13 +228,11 @@ export default class Chart {
         const configuration = this._configuration;
 
         // Create a new selection in order to leave the previous enter() selection
-        personGroup
-            .selectAll("g.person")
-            .each((datum, i, nodes) => {
-                const person = d3.select(nodes[i]);
+        personGroup.selectAll("g.person").each((datum, i, nodes) => {
+            const person = d3.select(nodes[i]);
 
-                new Person(svg, configuration, geometry, person, datum);
-            });
+            new Person(svg, configuration, geometry, person, datum);
+        });
 
         // Marriage arc layer (separate from persons so hover does not affect them)
         if (this._configuration.showParentMarriageDates) {
@@ -288,10 +270,10 @@ export default class Chart {
 
         for (let depth = 1; depth <= maxDepth; depth++) {
             const nodesAtDepth = this._hierarchy.nodes
-                .filter(datum => (datum.depth === depth) && (datum.data.data.xref !== ""))
+                .filter((datum) => datum.depth === depth && datum.data.data.xref !== "")
                 .sort((left, right) => left.x0 - right.x0);
 
-            for (let i = 0; i < (nodesAtDepth.length - 1); i++) {
+            for (let i = 0; i < nodesAtDepth.length - 1; i++) {
                 const current = nodesAtDepth[i];
                 const next = nodesAtDepth[i + 1];
 
@@ -300,10 +282,12 @@ export default class Chart {
                     const angle = geometry.calcAngle(current.x1);
 
                     // Marriage arc below: between depth-1 and depth
-                    const marriageBelow = this._configuration.showParentMarriageDates
-                        && (depth > 1)
-                        && ((depth - 1) < (this._configuration.generations - 1))
-                        && (this._configuration.showNames || ((depth - 1) < this._configuration.numberOfInnerCircles));
+                    const marriageBelow =
+                        this._configuration.showParentMarriageDates &&
+                        depth > 1 &&
+                        depth - 1 < this._configuration.generations - 1 &&
+                        (this._configuration.showNames ||
+                            depth - 1 < this._configuration.numberOfInnerCircles);
 
                     // With marriage below: start at the marriage arc inner edge
                     // Without: start at the person arc inner edge
@@ -342,33 +326,27 @@ export default class Chart {
             .filter((datum) => datum.depth === -1)
             .sort((left, right) => left.x0 - right.x0);
 
-        const childNodes = this._hierarchy.nodes
-            .filter((datum) => datum.depth === -2);
+        const childNodes = this._hierarchy.nodes.filter((datum) => datum.depth === -2);
 
-        for (let i = 0; i < (partnerNodes.length - 1); i++) {
+        for (let i = 0; i < partnerNodes.length - 1; i++) {
             const current = partnerNodes[i];
             const next = partnerNodes[i + 1];
             const angle = this._configuration.childScale(current.x1);
 
             // Check whether the adjacent partners have children
-            const currentHasChildren = childNodes.some(
-                (c) => c.syntheticParentId === current.id,
-            );
-            const nextHasChildren = childNodes.some(
-                (c) => c.syntheticParentId === next.id,
-            );
+            const currentHasChildren = childNodes.some((c) => c.syntheticParentId === current.id);
+            const nextHasChildren = childNodes.some((c) => c.syntheticParentId === next.id);
 
             // Start at the marriage arc inner edge (outerRadius of center)
             const hasMarriage = this._configuration.showParentMarriageDates;
-            const innerR = hasMarriage
-                ? geometry.outerRadius(0)
-                : geometry.innerRadius(-1);
+            const innerR = hasMarriage ? geometry.outerRadius(0) : geometry.innerRadius(-1);
 
             // Extend to children ring only if at least one adjacent partner has children,
             // otherwise stop at the partner ring outer edge
-            const outerR = (currentHasChildren || nextHasChildren)
-                ? geometry.outerRadius(-2)
-                : geometry.outerRadius(-1);
+            const outerR =
+                currentHasChildren || nextHasChildren
+                    ? geometry.outerRadius(-2)
+                    : geometry.outerRadius(-1);
 
             separatorGroup
                 .append("line")
@@ -396,8 +374,7 @@ export default class Chart {
 
         // All nodes that have children and are within display range
         const nodes = this._hierarchy.nodes.filter(
-            datum => datum.children
-                && (datum.depth < (this._configuration.generations - 1)),
+            (datum) => datum.children && datum.depth < this._configuration.generations - 1,
         );
 
         // D3 data join: same pattern as person elements
@@ -414,12 +391,10 @@ export default class Chart {
         const geometry = new Geometry(configuration);
 
         // Create a new selection in order to leave the previous enter() selection
-        marriageGroup
-            .selectAll("g.marriage")
-            .each((datum, i, nodes) => {
-                const marriage = d3.select(nodes[i]);
-                new Marriage(svg, configuration, geometry, marriage, datum);
-            });
+        marriageGroup.selectAll("g.marriage").each((datum, i, nodes) => {
+            const marriage = d3.select(nodes[i]);
+            new Marriage(svg, configuration, geometry, marriage, datum);
+        });
     }
 
     /**
@@ -439,9 +414,10 @@ export default class Chart {
 
         // Empty array when descendants are disabled or no partners exist,
         // so the data-join still handles exit for old elements.
-        const partnerNodes = (this._configuration.showDescendants && this._configuration.childScale)
-            ? this._hierarchy.nodes.filter((datum) => datum.depth === -1)
-            : [];
+        const partnerNodes =
+            this._configuration.showDescendants && this._configuration.childScale
+                ? this._hierarchy.nodes.filter((datum) => datum.depth === -1)
+                : [];
 
         const marriageJoin = marriageGroup
             .selectAll("g.marriage.descendant")
@@ -456,23 +432,19 @@ export default class Chart {
         marriageJoin.each((datum, i, nodes) => {
             const marriage = d3.select(nodes[i]);
 
-            marriage.selectAll("g.content")
-                .classed("old", true);
+            marriage.selectAll("g.content").classed("old", true);
 
-            marriage.classed("update", false)
-                .classed("new", true);
+            marriage.classed("update", false).classed("new", true);
 
             new Marriage(svg, configuration, geometry, marriage, datum);
         });
 
         // Exiting: mark for removal
-        marriageJoin.exit()
-            .classed("remove", true)
-            .selectAll("g.content")
-            .classed("old", true);
+        marriageJoin.exit().classed("remove", true).selectAll("g.content").classed("old", true);
 
         // Entering: create new elements
-        marriageJoin.enter()
+        marriageJoin
+            .enter()
             .append("g")
             .attr("class", "marriage descendant")
             .attr("id", (datum) => `marriage-${datum.id}`)
@@ -503,7 +475,10 @@ export default class Chart {
         this._svg
             .select("g.marriageGroup")
             .selectAll("g.marriage")
-            .filter((datum) => datum?.data?.data?.marriageDateOfParents || datum?.data?.data?.marriageDate)
+            .filter(
+                (datum) =>
+                    datum?.data?.data?.marriageDateOfParents || datum?.data?.data?.marriageDate,
+            )
             .classed("available", true);
 
         // Mark empty marriage arcs (no parents shown) for CSS styling
@@ -515,7 +490,7 @@ export default class Chart {
                     return;
                 }
 
-                const hasChildren = datum.children.some(child => child.data.data.xref !== "");
+                const hasChildren = datum.children.some((child) => child.data.data.xref !== "");
 
                 d3.select(this).classed("empty", !hasChildren);
             });
@@ -537,7 +512,9 @@ export default class Chart {
         }
 
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
-        (datum.depth === 0) ? this.redirectToIndividual(datum.data.data.url) : this.update(datum.data.data.updateUrl);
+        datum.depth === 0
+            ? this.redirectToIndividual(datum.data.data.url)
+            : this.update(datum.data.data.updateUrl);
     }
 
     /**
@@ -576,8 +553,7 @@ export default class Chart {
      */
     redrawOverlayLayers() {
         // Separators: mark old, draw new
-        this._svg.visual.selectAll("g.separatorGroup line")
-            .classed("old", true);
+        this._svg.visual.selectAll("g.separatorGroup line").classed("old", true);
 
         this.drawFamilySeparators();
 
