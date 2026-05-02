@@ -17,13 +17,13 @@ use Fisharebest\Webtrees\View;
  */
 ?>
 
-<?= $content ?>
+<?php echo $content; ?>
 
-<?php View::push('styles') ?>
-<?php foreach ($stylesheets as $stylesheet) : ?>
-    <link rel="stylesheet" href="<?= e($stylesheet) ?>">
-<?php endforeach ?>
+<?php View::push('styles'); ?>
+<?php foreach ($stylesheets as $stylesheet) { ?>
+    <link rel="stylesheet" href="<?php echo e($stylesheet); ?>">
+<?php } ?>
 <?php View::endpush(); ?>
 
-<?= View::stack('styles') ?>
-<?= View::stack('javascript') ?>
+<?php echo View::stack('styles'); ?>
+<?php echo View::stack('javascript'); ?>

@@ -21,7 +21,10 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
         __DIR__ . '/src/',
         __DIR__ . '/tests/',
+        __DIR__ . '/resources/views/',
     ]);
+
+    $rectorConfig->fileExtensions(['php', 'phtml']);
 
     if (
         !is_dir($concurrentDirectory = __DIR__ . '/.build/cache/.rector.cache')

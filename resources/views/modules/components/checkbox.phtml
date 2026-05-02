@@ -21,19 +21,17 @@ declare(strict_types=1);
  * @var string      $value
  * @var string      $unchecked
  */
-
 ?>
 
-<input type="hidden" value="<?= e($unchecked) ?>" name="<?= e($name) ?>">
+<input type="hidden" value="<?php echo e($unchecked); ?>" name="<?php echo e($name); ?>">
 
-<?=
-    view('components/checkbox', [
-        'checked'   => $checked ?? null,
-        'disabled'  => $disabled ?? null,
-        'id'        => $id ?? null,
-        'label'     => $label,
-        'name'      => $name,
-        'value'     => $value ?? '1',
-        'unchecked' => $unchecked,
-    ])
+<?php echo view('components/checkbox', [
+    'checked'   => $checked ?? null,
+    'disabled'  => $disabled ?? null,
+    'id'        => $id ?? null,
+    'label'     => $label,
+    'name'      => $name,
+    'value'     => $value ?? '1',
+    'unchecked' => $unchecked,
+]);
 ?>

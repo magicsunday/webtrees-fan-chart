@@ -18,16 +18,15 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 ?>
 
 <label class="form-label" for="detailedDateGenerations">
-    <?= I18N::translate('Date precision') ?>
+    <?php echo I18N::translate('Date precision'); ?>
 </label>
-<?=
-    view('components/select', [
-        'name'     => 'detailedDateGenerations',
-        'selected' => $configuration->getDetailedDateGenerations(),
-        'options'  => $configuration->getDetailedDateGenerationsList(),
-        'class'    => 'form-control-sm',
-    ])
+<?php echo view('components/select', [
+    'name'     => 'detailedDateGenerations',
+    'selected' => $configuration->getDetailedDateGenerations(),
+    'options'  => $configuration->getDetailedDateGenerationsList(),
+    'class'    => 'form-control-sm',
+]);
 ?>
 <small class="form-text text-muted form-element-description" style="box-decoration-break: clone;">
-    <?= I18N::translate('Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format.') ?>
+    <?php echo I18N::translate('Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format.'); ?>
 </small>

@@ -9,7 +9,6 @@
 
 declare(strict_types=1);
 
-use Fisharebest\Webtrees\I18N;
 use MagicSunday\Webtrees\FanChart\Configuration;
 
 /**
@@ -19,8 +18,8 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 ?>
 
 <div class="mb-3">
-    <?= view($moduleName . '::modules/fan-chart/form/inner-levels', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+    <?php echo view($moduleName . '::modules/fan-chart/form/inner-levels', ['moduleName' => $moduleName, 'configuration' => $configuration]); ?>
 </div>
 <div class="mb-3">
-    <?= view($moduleName . '::modules/fan-chart/form/font-size', ['moduleName' => $moduleName, 'configuration' => $configuration]) ?>
+    <?php echo view($moduleName . '::modules/fan-chart/form/font-size', ['moduleName' => $moduleName, 'configuration' => $configuration]); ?>
 </div>

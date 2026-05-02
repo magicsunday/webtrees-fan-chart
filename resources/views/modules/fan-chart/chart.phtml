@@ -22,76 +22,76 @@ use MagicSunday\Webtrees\FanChart\Configuration;
  */
 ?>
 
-<div class="webtrees-fan-chart-container" id="webtrees-fan-chart-container-<?= $id ?>"></div>
+<div class="webtrees-fan-chart-container" id="webtrees-fan-chart-container-<?php echo $id; ?>"></div>
 
 <?php View::push('javascript'); ?>
 <script type="module">
 
-import(<?= json_encode($javascript) ?>).then(({ FanChart }) => {
+import(<?php echo json_encode($javascript); ?>).then(({ FanChart }) => {
     const opts = (typeof WebtreesFanChart !== "undefined" && WebtreesFanChart.chartOptions) || {};
 
     new FanChart(
-        "#webtrees-fan-chart-container-<?= $id ?>",
+        "#webtrees-fan-chart-container-<?php echo $id; ?>",
         {
-            labels: <?= json_encode($chartParams['labels']) ?>,
-            rtl: <?= json_encode($chartParams['rtl']) ?>,
-            cssFiles: <?= json_encode($exportStylesheets) ?>,
+            labels: <?php echo json_encode($chartParams['labels']); ?>,
+            rtl: <?php echo json_encode($chartParams['rtl']); ?>,
+            cssFiles: <?php echo json_encode($exportStylesheets); ?>,
 
             get generations() {
-                return opts.generations ?? <?= $configuration->getGenerations() ?>;
+                return opts.generations ?? <?php echo $configuration->getGenerations(); ?>;
             },
 
             get fanDegree() {
-                return opts.fanDegree ?? <?= json_encode($configuration->getFanDegree()) ?>;
+                return opts.fanDegree ?? <?php echo json_encode($configuration->getFanDegree()); ?>;
             },
 
             get fontScale() {
-                return opts.fontScale ?? <?= json_encode($configuration->getFontScale()) ?>;
+                return opts.fontScale ?? <?php echo json_encode($configuration->getFontScale()); ?>;
             },
 
             get hideEmptySegments() {
-                return opts.hideEmptySegments ?? <?= json_encode($configuration->getHideEmptySegments()) ?>;
+                return opts.hideEmptySegments ?? <?php echo json_encode($configuration->getHideEmptySegments()); ?>;
             },
 
             get showFamilyColors() {
-                return opts.showFamilyColors ?? <?= json_encode($configuration->getShowFamilyColors()) ?>;
+                return opts.showFamilyColors ?? <?php echo json_encode($configuration->getShowFamilyColors()); ?>;
             },
 
             get paternalColor() {
-                return opts.paternalColor ?? <?= json_encode($configuration->getPaternalColor()) ?>;
+                return opts.paternalColor ?? <?php echo json_encode($configuration->getPaternalColor()); ?>;
             },
 
             get maternalColor() {
-                return opts.maternalColor ?? <?= json_encode($configuration->getMaternalColor()) ?>;
+                return opts.maternalColor ?? <?php echo json_encode($configuration->getMaternalColor()); ?>;
             },
 
             get showPlaces() {
-                return opts.showPlaces ?? <?= json_encode($configuration->getShowPlaces()) ?>;
+                return opts.showPlaces ?? <?php echo json_encode($configuration->getShowPlaces()); ?>;
             },
 
             get showParentMarriageDates() {
-                return opts.showParentMarriageDates ?? <?= json_encode($configuration->getShowParentMarriageDates()) ?>;
+                return opts.showParentMarriageDates ?? <?php echo json_encode($configuration->getShowParentMarriageDates()); ?>;
             },
 
             get innerArcs() {
-                return opts.innerArcs ?? <?= json_encode($configuration->getInnerArcs()) ?>;
+                return opts.innerArcs ?? <?php echo json_encode($configuration->getInnerArcs()); ?>;
             },
 
             get showImages() {
-                return opts.showImages ?? <?= json_encode($configuration->getShowImages()) ?>;
+                return opts.showImages ?? <?php echo json_encode($configuration->getShowImages()); ?>;
             },
 
             get showNames() {
-                return opts.showNames ?? <?= json_encode($configuration->getShowNames()) ?>;
+                return opts.showNames ?? <?php echo json_encode($configuration->getShowNames()); ?>;
             },
 
             get showDescendants() {
-                return opts.showDescendants ?? <?= json_encode($configuration->getShowDescendants()) ?>;
+                return opts.showDescendants ?? <?php echo json_encode($configuration->getShowDescendants()); ?>;
             },
 
-            showSilhouettes: <?= json_encode($chartParams['showSilhouettes']) ?>,
-            nameAbbreviation: <?= json_encode($chartParams['nameAbbreviation']) ?>,
-            data: <?= json_encode($data) ?>
+            showSilhouettes: <?php echo json_encode($chartParams['showSilhouettes']); ?>,
+            nameAbbreviation: <?php echo json_encode($chartParams['nameAbbreviation']); ?>,
+            data: <?php echo json_encode($data); ?>
         }
     );
 });

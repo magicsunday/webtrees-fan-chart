@@ -20,28 +20,27 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 
 <div class="row mt-3">
     <div class="col-form-label col-sm-3 wt-page-options-label">
-        <?= I18N::translate('Colors') ?>
+        <?php echo I18N::translate('Colors'); ?>
     </div>
     <div class="col-sm-9 wt-page-options-value">
-        <?=
-            view($moduleName . '::modules/components/checkbox', [
-                'name'      => 'showFamilyColors',
-                'label'     => I18N::translate('Show family colors'),
-                'checked'   => $configuration->getShowFamilyColors(),
-                'unchecked' => '0',
-            ])
-        ?>
+        <?php echo view($moduleName . '::modules/components/checkbox', [
+            'name'      => 'showFamilyColors',
+            'label'     => I18N::translate('Show family colors'),
+            'checked'   => $configuration->getShowFamilyColors(),
+            'unchecked' => '0',
+        ]);
+?>
         <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
-            <?= I18N::translate('Colors the arcs by family branch. Each couple shares the same color, derived from the chosen base colors.') ?>
+            <?php echo I18N::translate('Colors the arcs by family branch. Each couple shares the same color, derived from the chosen base colors.'); ?>
         </small>
         <div class="ps-4 mt-2 d-flex align-items-center gap-3">
             <label class="d-flex align-items-center gap-1 mb-0">
-                <input type="color" id="paternalColor" name="paternalColor" value="<?= e($configuration->getPaternalColor()) ?>">
-                <?= I18N::translate('Paternal') ?>
+                <input type="color" id="paternalColor" name="paternalColor" value="<?php echo e($configuration->getPaternalColor()); ?>">
+                <?php echo I18N::translate('Paternal'); ?>
             </label>
             <label class="d-flex align-items-center gap-1 mb-0">
-                <input type="color" id="maternalColor" name="maternalColor" value="<?= e($configuration->getMaternalColor()) ?>">
-                <?= I18N::translate('Maternal') ?>
+                <input type="color" id="maternalColor" name="maternalColor" value="<?php echo e($configuration->getMaternalColor()); ?>">
+                <?php echo I18N::translate('Maternal'); ?>
             </label>
         </div>
     </div>

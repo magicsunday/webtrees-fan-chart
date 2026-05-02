@@ -18,7 +18,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
  */
 ?>
 
-<?= view($moduleName . '::modules/components/range-slider', [
+<?php echo view($moduleName . '::modules/components/range-slider', [
     'id'     => 'fontScale',
     'label'  => I18N::translate('Font size'),
     'value'  => $configuration->getFontScale(),
@@ -26,4 +26,4 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     'max'    => 125,
     'step'   => 5,
     'suffix' => '%',
-]) ?>
+]); ?>

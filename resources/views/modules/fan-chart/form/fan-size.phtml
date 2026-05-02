@@ -18,7 +18,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
  */
 ?>
 
-<?= view($moduleName . '::modules/components/range-slider', [
+<?php echo view($moduleName . '::modules/components/range-slider', [
     'id'     => 'fanDegree',
     'label'  => I18N::translate('Fan size'),
     'value'  => $configuration->getFanDegree(),
@@ -26,4 +26,4 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     'max'    => $configuration->getShowDescendants() ? 270 : 360,
     'step'   => 5,
     'suffix' => '°',
-]) ?>
+]); ?>
