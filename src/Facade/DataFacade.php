@@ -305,8 +305,8 @@ class DataFacade
             $this->configuration->getPlaceParts(),
         );
 
-        $showNicknames   = $this->configuration->getShowNicknames();
-        $fullNN          = $showNicknames
+        $showNicknames = $this->configuration->getShowNicknames();
+        $fullNN        = $showNicknames
             ? $nameProcessor->getFullNameWithNickname()
             : $nameProcessor->getFullName();
         $alternativeName = $nameProcessor->getAlternateName($individual);
