@@ -266,3 +266,11 @@ msgstr "קצר תחילה את שמות המשפחה"
 
 msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
 msgstr "קובע איזה חלק של השם יקוצר ראשון כאשר קשת צרה מדי להכיל את השם המלא. \"אוטומטי\" משתמש במסורת שם המשפחה של העץ (איסלנדית מקצרת שמות משפחה; כל השאר מקצרים שמות פרטיים)."
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Show nicknames in display names"
+msgstr "הצג כינויים בשמות המוצגים"
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr "מוסיף את ערך ה־GEDCOM NICK בתוך מירכאות בין השמות הפרטיים לשם המשפחה (למשל Martin \"Chalky\" White). משחזר את התנהגות webtrees הישנה עבור עצים השומרים כינויים בשדה GEDCOM NICK הנפרד."

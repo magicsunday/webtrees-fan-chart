@@ -265,3 +265,11 @@ msgstr "Lyhennä ensin sukunimet"
 
 msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
 msgstr "Määrittää, mikä nimen osa lyhennetään ensin, kun kaari on liian kapea koko nimelle. \"Automaattinen\" käyttää sukupuun sukunimitradition (islantilainen lyhentää sukunimet; muut lyhentävät etunimet)."
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Show nicknames in display names"
+msgstr "Näytä lempinimet näyttönimissä"
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr "Lisää GEDCOM NICK -arvon lainausmerkeissä etunimien ja sukunimen väliin (esim. Martin \"Chalky\" White). Toistaa vanhan webtrees-käyttäytymisen sukupuille, joissa lempinimet on tallennettu erilliseen GEDCOM NICK -kenttään."

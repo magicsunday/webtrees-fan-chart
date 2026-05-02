@@ -268,3 +268,11 @@ msgstr "Viết tắt họ trước"
 
 msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
 msgstr "Kiểm soát phần nào của tên được rút ngắn trước khi cung quá hẹp để hiển thị tên đầy đủ. \"Tự động\" sử dụng truyền thống họ của cây phả hệ (Iceland viết tắt họ; còn lại viết tắt tên gọi)."
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Show nicknames in display names"
+msgstr "Hiển thị biệt danh trong tên hiển thị"
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr "Chèn giá trị GEDCOM NICK trong dấu ngoặc kép giữa các tên đệm và họ (ví dụ Martin \"Chalky\" White). Tái hiện hành vi webtrees cũ cho cây gia phả lưu biệt danh trong trường GEDCOM NICK riêng."

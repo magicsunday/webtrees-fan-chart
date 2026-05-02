@@ -81,6 +81,13 @@ class NodeData implements JsonSerializable
     private string $preferredName = '';
 
     /**
+     * The legacy GEDCOM `2 NICK` value rendered between given names and surname
+     * when the chart's "Show nicknames" option is enabled. Empty string when no
+     * nickname is set or the option is off.
+     */
+    private string $nickname = '';
+
+    /**
      * The alternative name.
      */
     private string $alternativeName = '';
@@ -252,6 +259,13 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
+    public function setNickname(string $nickname): NodeData
+    {
+        $this->nickname = $nickname;
+
+        return $this;
+    }
+
     public function setAlternativeName(string $alternativeName): NodeData
     {
         $this->alternativeName = $alternativeName;
@@ -419,6 +433,7 @@ class NodeData implements JsonSerializable
             'firstNames'            => $this->firstNames,
             'lastNames'             => $this->lastNames,
             'preferredName'         => $this->preferredName,
+            'nickname'              => $this->nickname,
             'alternativeName'       => $this->alternativeName,
             'isAltRtl'              => $this->isAltRtl,
             'thumbnail'             => $this->thumbnail,

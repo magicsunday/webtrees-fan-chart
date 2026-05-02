@@ -391,6 +391,25 @@ class Configuration
     }
 
     /**
+     * Returns true when the legacy GEDCOM `2 NICK` value should be displayed in
+     * quotes between the given names and the surname (e.g. `Martin "Chalky" White`).
+     * Default off so existing trees keep the post-2.0 webtrees rendering.
+     *
+     * @return bool
+     */
+    public function getShowNicknames(): bool
+    {
+        return $this->validator()
+            ->boolean(
+                'showNicknames',
+                (bool) $this->module->getPreference(
+                    'default_showNicknames',
+                    '0'
+                )
+            );
+    }
+
+    /**
      * Returns true when individual names should be rendered inside arc segments.
      *
      * @return bool

@@ -266,3 +266,11 @@ msgstr "优先缩写姓氏"
 
 msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
 msgstr "控制当弧形对完整姓名而言过窄时，先缩写哪个名字部分。“自动”使用族谱的姓氏传统（冰岛语缩写姓氏；其他所有传统缩写名字）。"
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Show nicknames in display names"
+msgstr "在显示名中显示昵称"
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr "将 GEDCOM NICK 字段的值用引号插入在名字与姓氏之间（例如 Martin \"Chalky\" White）。模拟旧版 webtrees 的行为，适用于在单独的 GEDCOM NICK 字段中保存昵称的家谱。"

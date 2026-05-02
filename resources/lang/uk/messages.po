@@ -269,3 +269,11 @@ msgstr "Спершу скорочувати прізвища"
 
 msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
 msgstr "Визначає, яку частину імені скорочувати першою, коли дуга занадто вузька для повного імені. «Автоматично» використовує традицію прізвищ дерева (ісландська скорочує прізвища; усі інші скорочують імена)."
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Show nicknames in display names"
+msgstr "Показувати прізвиська у відображуваних іменах"
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr "Вставляє значення GEDCOM NICK у лапках між іменами та прізвищем (наприклад, Martin \"Chalky\" White). Повторює попередню поведінку webtrees для дерев, які зберігають прізвиська в окремому полі GEDCOM NICK."

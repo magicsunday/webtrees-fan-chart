@@ -266,3 +266,11 @@ msgstr "Achternamen eerst afkorten"
 
 msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
 msgstr "Bepaalt welk naamdeel eerst wordt afgekort wanneer een boog te smal is voor de volledige naam. \"Automatisch\" gebruikt de achternaamtraditie van de stamboom (IJslands kort achternamen af; al het andere kort voornamen af)."
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Show nicknames in display names"
+msgstr "Bijnamen in weergavenamen tonen"
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr "Voegt de GEDCOM NICK-waarde tussen aanhalingstekens in tussen de voornamen en de achternaam (bv. Martin \"Chalky\" White). Bootst het oude webtrees-gedrag na voor stambomen die bijnamen in het afzonderlijke GEDCOM NICK-veld opslaan."

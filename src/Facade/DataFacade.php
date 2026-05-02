@@ -305,7 +305,10 @@ class DataFacade
             $this->configuration->getPlaceParts(),
         );
 
-        $fullNN          = $nameProcessor->getFullName();
+        $showNicknames   = $this->configuration->getShowNicknames();
+        $fullNN          = $showNicknames
+            ? $nameProcessor->getFullNameWithNickname()
+            : $nameProcessor->getFullName();
         $alternativeName = $nameProcessor->getAlternateName($individual);
 
         $treeData = new NodeData();
@@ -320,6 +323,7 @@ class DataFacade
             ->setFirstNames($nameProcessor->getFirstNames())
             ->setLastNames($nameProcessor->getLastNames())
             ->setPreferredName($nameProcessor->getPreferredName())
+            ->setNickname($showNicknames ? $nameProcessor->getNickname() : '')
             ->setAlternativeName($alternativeName)
             ->setIsAltRtl($this->isRtl($alternativeName))
             ->setThumbnail($imageProcessor->getHighlightImageUrl(100, 100))

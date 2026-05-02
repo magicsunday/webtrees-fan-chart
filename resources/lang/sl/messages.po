@@ -271,3 +271,11 @@ msgstr "Najprej skrajšaj priimke"
 
 msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
 msgstr "Določa, kateri del imena se najprej skrajša, ko je lok preozek za polno ime. »Samodejno« uporablja drevesno tradicijo priimkov (islandska tradicija krajša priimke; vse ostale krajšajo osebna imena)."
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Show nicknames in display names"
+msgstr "Prikaži vzdevke v prikaznih imenih"
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr "Vstavi vrednost GEDCOM NICK v narekovajih med osebna imena in priimek (npr. Martin \"Chalky\" White). Posnema staro vedenje webtrees za drevesa, ki vzdevke shranjujejo v ločenem polju GEDCOM NICK."

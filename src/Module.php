@@ -176,6 +176,7 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
                         'showParentMarriageDates' => $this->configuration->getShowParentMarriageDates() ? '1' : '0',
                         'showImages'              => $this->configuration->getShowImages() ? '1' : '0',
                         'showNames'               => $this->configuration->getShowNames() ? '1' : '0',
+                        'showNicknames'           => $this->configuration->getShowNicknames() ? '1' : '0',
                         'innerArcs'               => $this->configuration->getInnerArcs(),
                         'paternalColor'           => $this->configuration->getPaternalColor(),
                         'maternalColor'           => $this->configuration->getMaternalColor(),
@@ -289,6 +290,7 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
                 'showPlaces'              => $this->configuration->getShowPlaces(),
                 'placeParts'              => $this->configuration->getPlaceParts(),
                 'showDescendants'         => $this->configuration->getShowDescendants(),
+                'showNicknames'           => $this->configuration->getShowNicknames(),
                 'xref'                    => $xref,
             ]
         );

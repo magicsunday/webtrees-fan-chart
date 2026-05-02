@@ -268,3 +268,11 @@ msgstr "Zuerst Nachnamen abkürzen"
 
 msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
 msgstr "Steuert, welcher Namensteil zuerst gekürzt wird, wenn ein Bogen zu schmal für den vollen Namen ist. „Automatisch“ verwendet die Nachnamen-Tradition des Stammbaums (Isländisch kürzt Nachnamen; alles andere kürzt Vornamen)."
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Show nicknames in display names"
+msgstr "Spitznamen in den angezeigten Namen anzeigen"
+
+#: resources/views/modules/fan-chart/form/display.phtml
+msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr "Fügt den GEDCOM NICK-Wert in Anführungszeichen zwischen Vornamen und Nachnamen ein (z.B. Martin \"Chalky\" White). Bildet das alte webtrees-Verhalten für Bäume nach, die Spitznamen im separaten GEDCOM NICK-Feld speichern."
