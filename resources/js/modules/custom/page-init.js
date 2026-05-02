@@ -16,6 +16,7 @@ import { Storage } from "@magicsunday/webtrees-chart-lib";
  * @param {string|boolean|null} showPlaces           Whether to display places in the arcs
  * @param {string|null}         placeParts           Number of place hierarchy levels to show
  * @param {boolean}             showDescendantsParam Whether to include descendants in the response
+ * @param {boolean|null}        showNicknamesParam   Whether to inject GEDCOM NICK in display names
  *
  * @returns {string}
  */
@@ -26,6 +27,7 @@ function getUrl(
     showPlaces,
     placeParts,
     showDescendantsParam,
+    showNicknamesParam,
 ) {
     const url = new URL(baseUrl);
     url.searchParams.set("xref", document.getElementById("xref").value);
@@ -44,6 +46,10 @@ function getUrl(
         url.searchParams.set("showDescendants", "1");
     } else {
         url.searchParams.delete("showDescendants");
+    }
+
+    if (showNicknamesParam !== null && showNicknamesParam !== undefined) {
+        url.searchParams.set("showNicknames", showNicknamesParam ? "1" : "0");
     }
 
     return url.toString();
@@ -123,6 +129,7 @@ export function initPage(config) {
     storage.register("showParentMarriageDates");
     storage.register("showImages");
     storage.register("showNames");
+    storage.register("showNicknames");
     storage.register("innerArcs");
     storage.register("fontScale");
     storage.register("detailedDateGenerations");
@@ -186,6 +193,7 @@ export function initPage(config) {
         showNames: displayMode
             ? displayMode === "both" || displayMode === "names"
             : storage.read("showNames"),
+        showNicknames: storage.read("showNicknames") ?? config.defaultShowNicknames,
         innerArcs: storage.read("innerArcs"),
         fontScale: storage.read("fontScale"),
         showDescendants: storage.read("showDescendants") ?? config.defaultShowDescendants,
@@ -230,6 +238,7 @@ export function initPage(config) {
         chartOptions.showPlaces,
         storage.read("placeParts"),
         chartOptions.showDescendants,
+        chartOptions.showNicknames,
     );
 
     document.getElementById("fan-chart-url").setAttribute("data-wt-ajax-url", ajaxUrl);
@@ -270,6 +279,7 @@ export function initPage(config) {
                 storage.read("showPlaces"),
                 storage.read("placeParts"),
                 checked,
+                storage.read("showNicknames") ?? config.defaultShowNicknames,
             );
 
             container.setAttribute("data-wt-ajax-url", newUrl);

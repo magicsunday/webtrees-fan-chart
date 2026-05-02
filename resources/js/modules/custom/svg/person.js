@@ -23,6 +23,13 @@ const IMAGE_HEIGHT_MAX = 55;
 const IMAGE_ANGULAR_MIN_DEG = 10;
 
 /**
+ * Monotonic counter for clipPath IDs. `Date.now()` collided when multiple
+ * person nodes rendered inside the same millisecond, giving them identical
+ * clip-path references and causing one node's image to vanish.
+ */
+let clipIdCounter = 0;
+
+/**
  * Minimum angular width for descendants (depth < 0). Higher than the
  * ancestor threshold so the descendant ring stays uncluttered: 2-3
  * children each get a wide arc with their image, but 10+ siblings on
@@ -260,7 +267,7 @@ export default class Person {
             }
         });
 
-        const clipId = `clip-image-${datum.id}-${Date.now()}`;
+        const clipId = `clip-image-${datum.id}-${++clipIdCounter}`;
 
         if (datum.depth === 0) {
             // Center node: image above text, or centered alone if no names shown

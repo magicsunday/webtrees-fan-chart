@@ -124,6 +124,10 @@ trait ModuleConfigTrait
             (string) $configuration->getShowImages()
         );
         $this->setPreference(
+            'default_showNicknames',
+            (string) $configuration->getShowNicknames()
+        );
+        $this->setPreference(
             'default_showDescendants',
             (string) $configuration->getShowDescendants()
         );

@@ -14,6 +14,13 @@ import { classifyElement } from "./lifecycle.js";
 import { truncateToFit } from "@magicsunday/webtrees-chart-lib";
 
 /**
+ * Monotonic counter for marriage textPath IDs. `Date.now()` collided when
+ * multiple updates fired inside the same millisecond, leaving two definitions
+ * with the same id and breaking the textPath href lookup.
+ */
+let marriagePathCounter = 0;
+
+/**
  * Renders the thin arc that sits in the radial gap between a parent generation
  * and its parents, showing the marriage date of the couple. The arc fills the
  * space between outerRadius(depth) and innerRadius(depth+1). Text is rendered
@@ -204,7 +211,7 @@ export default class Marriage {
         // Create a new path with a unique ID so old and new text render at
         // their respective positions during the cross-fade.
         if (this._svg.defs.select(`path#${pathId}`).node()) {
-            pathId += `-${Date.now()}`;
+            pathId += `-${++marriagePathCounter}`;
         }
 
         this._svg.defs.append("path").attr("id", pathId).attr("d", textPathGenerator);

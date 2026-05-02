@@ -281,16 +281,30 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
         Individual $individual,
         string $xref,
     ): string {
+        // Mirror every parameter the form POST → redirect carries, so the AJAX
+        // request that fetches the chart partial sees the user's current
+        // selections instead of silently falling back to module preference
+        // defaults.
         return $this->chartUrl(
             $individual,
             [
                 'ajax'                    => true,
                 'generations'             => $this->configuration->getGenerations(),
-                'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
+                'fanDegree'               => $this->configuration->getFanDegree(),
+                'fontScale'               => $this->configuration->getFontScale(),
+                'hideEmptySegments'       => $this->configuration->getHideEmptySegments(),
+                'showFamilyColors'        => $this->configuration->getShowFamilyColors(),
                 'showPlaces'              => $this->configuration->getShowPlaces(),
                 'placeParts'              => $this->configuration->getPlaceParts(),
-                'showDescendants'         => $this->configuration->getShowDescendants(),
+                'showParentMarriageDates' => $this->configuration->getShowParentMarriageDates(),
+                'showImages'              => $this->configuration->getShowImages(),
+                'showNames'               => $this->configuration->getShowNames(),
                 'showNicknames'           => $this->configuration->getShowNicknames(),
+                'innerArcs'               => $this->configuration->getInnerArcs(),
+                'paternalColor'           => $this->configuration->getPaternalColor(),
+                'maternalColor'           => $this->configuration->getMaternalColor(),
+                'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
+                'showDescendants'         => $this->configuration->getShowDescendants(),
                 'xref'                    => $xref,
             ]
         );
