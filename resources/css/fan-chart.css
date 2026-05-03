@@ -264,7 +264,7 @@ div.tooltip .name {
     font-size: 16px;
     margin-right: 10px;
     padding-left: 10px;
-    color: rgb(0, 0, 0);
+    color: var(--bs-body-color, rgb(0, 0, 0));
 }
 
 div.tooltip .date {
