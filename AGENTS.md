@@ -14,10 +14,10 @@ This repository hosts the webtrees fan chart module — an interactive SVG fan c
 - After JS changes, always verify in the browser via Playwright before claiming success.
 
 ## Build & tests
-- **`composer ci:test` MUST run before every commit** — catches ESLint, PHPStan, PHP-CS-Fixer, Rector, PHPUnit, Jest, and CPD issues before they reach GitHub CI.
-- Individual checks: `composer ci:test:php:phpstan`, `composer ci:test:php:unit`, `composer ci:test:php:cgl`, `composer ci:test:js:lint`, `composer ci:test:js:unit`.
+- **`composer ci:test` MUST run before every commit** — catches Biome lint, PHPStan, PHP-CS-Fixer, Rector, PHPUnit, Jest, and jscpd issues before they reach GitHub CI.
+- Individual checks: `composer ci:test:php:phpstan`, `composer ci:test:php:unit`, `composer ci:test:php:cgl`, `composer ci:test:js:lint`, `composer ci:test:js:unit`, `composer ci:test:cpd` (PHP + JS duplicate detection).
 - Single PHPUnit test: `composer ci:test:php:unit -- --filter TestClassName`.
-- Auto-fix: `composer ci:cgl` (PHP style), `composer ci:rector` (Rector), `npm run lint:fix` (ESLint).
+- Auto-fix: `composer ci:cgl` (PHP style), `composer ci:rector` (Rector), `npm run lint:fix` + `npm run format` (Biome).
 - JS bundles: `make build` (rollup), `make watch` (dev rebuild loop).
 - Translations: `make lang` (compile .po → .mo). All 24 locale files must have non-empty `msgstr` entries.
 - Keep PHPStan, PHPCS, and CPD clean on affected code; add PHPUnit attribute-based coverage (positive and negative cases) for every class/method introduced or modified.
@@ -49,14 +49,16 @@ Module.php (entry point, registers routes)
   - For local edits to module-base while developing fan-chart, run `make link-base` (symlinks `.build/vendor/.../webtrees-module-base` → the sibling clone). Reverse with `make unlink-base` or any `composer install/update`.
 
 ### JS (`resources/js/modules/`)
+Flat layout — every file is fan-chart-specific glue. Reusable base classes (Storage, ChartExport, ChartOverlay, ChartZoom, Orientations, measureText, truncateNames) live in the external [`@magicsunday/webtrees-chart-lib`](https://github.com/magicsunday/webtrees-chart-lib) package, shared with the pedigree- and descendants-chart modules. Consumed via Git URL pinned in `package.json` (`github:magicsunday/webtrees-chart-lib#vX.Y.Z`); chart-lib's `prepare` script builds its `dist/` during install, so `npm ci --ignore-scripts` will break the build.
 - **`index.js`** — Exports `FanChart` class (ES module entry point for Rollup).
-- **`custom/`** — Fan-chart-specific: `chart.js` (D3 partition layout, click handling), `update.js` (AJAX update, transitions), `hierarchy.js` (D3 hierarchy, symbol constants), `svg/` (person/text/marriage/tooltip rendering), `svg/arc.js` (shared arc DOM helper).
+- **`page-entry.js` / `page-init.js`** — UMD bundle (`fan-chart-page.min.js`) loaded by `page.phtml`. Owns localStorage form-state wiring; `initPage()` resolves user options and publishes them under `WebtreesFanChart.chartOptions` for `chart.phtml` getters.
+- **`chart.js`** (D3 partition layout, click handling), **`chart-updater.js`** (AJAX update, transitions), **`hierarchy.js`** (D3 hierarchy, symbol constants), **`gradient.js`**, **`configuration.js`**, **`svg.js`**.
+- **`svg/`** — person/text/marriage/tooltip rendering, `arc.js` (shared arc DOM helper), `arc-factory.js`, `geometry.js`, `lifecycle.js`, `family-color.js`, `filter.js`, `label-renderer.js`, `tooltip-renderer.js`.
 - **`d3.js`** — D3 facade re-exporting only the d3 sub-packages used by the chart (selection, transition, zoom, hierarchy, scale, etc.).
-- **Reusable base classes** (export, overlay, storage, zoom, configuration helpers, SVG/data utilities) live in the external [`@magicsunday/webtrees-chart-lib`](https://github.com/magicsunday/webtrees-chart-lib) package, shared with the pedigree- and descendants-chart modules. Consumed via Git URL pinned in `package.json` (`github:magicsunday/webtrees-chart-lib#vX.Y.Z`); chart-lib's `prepare` script builds its `dist/` during install, so `npm ci --ignore-scripts` will break the build.
 
 ### Views (`resources/views/`)
-- **`fan-chart/page.phtml`** — Main page with form. `getUrl()` builds AJAX URL from localStorage values.
-- **`fan-chart/chart.phtml`** — AJAX response: `<script type="module">` with `import()` to load ES module bundle.
+- **`fan-chart/page.phtml`** — Form + AJAX container. Loads `fan-chart-page.min.js` and calls `WebtreesFanChart.initPage({ ajaxUrl, defaults… })`.
+- **`fan-chart/chart.phtml`** — AJAX response: `<script type="module">` with `import()` to load ES module bundle. Reads user overrides from `WebtreesFanChart.chartOptions ?? PHP defaults`.
 - **`charts/chart.phtml`** — Block template override (home page widget), uses `data-wt-ajax-url` pattern.
 
 ### Data-relevant config parameters
@@ -68,8 +70,8 @@ These must be passed in both `getUrl()` (initial AJAX) and `getUpdateRoute()` (p
 
 ## Key patterns
 - **ES module loading**: `import().then(({ FanChart }) => ...)` in `<script type="module">`, avoiding the `webtrees.load()` race condition.
-- **Storage flow**: `page.phtml` reads localStorage → injects as JS variables → `chart.phtml` getter checks `typeof varName !== "undefined"` before falling back to PHP defaults.
-- **Unique clipPath IDs**: `"clip-image-" + datum.id + "-" + Date.now()` prevents collisions during D3 transitions.
+- **Storage flow**: `page-init.js` reads localStorage → publishes resolved options under `WebtreesFanChart.chartOptions` → `chart.phtml` getter reads `opts.x ?? PHP default`.
+- **Unique clipPath IDs**: monotonic `clipIdCounter` (in `svg/person.js`) prevents collisions during D3 transitions; `Date.now()` is too coarse when transitions overlap.
 - **Overlay independence**: Overlay popup always shows images/places regardless of form toggle states.
 - **Block template**: Overrides core `modules/charts/chart.phtml` — must stay in sync with webtrees core changes (e.g. VanillaJS conversion).
 - **Once-guard callback**: `endAll` + `.catch()` share a `callbackFired` flag to prevent double-invocation of `updateDone`.
