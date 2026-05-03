@@ -91,7 +91,7 @@ jobs:
                 name: Copy/Paste Detection
                 if: ${{ always() && steps.install.conclusion == 'success' }}
                 run: |
-                    composer ci:test:php:cpd
+                    composer ci:test:cpd
 
             -   id: php-unit
                 name: PHP Unit Tests
