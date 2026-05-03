@@ -16,31 +16,31 @@
 }
 
 .webtrees-fan-chart-container svg g.person g.arc path {
-    fill: rgb(235, 235, 235);
+    fill: var(--bs-secondary-bg, rgb(235, 235, 235));
     stroke: none;
 }
 
 .webtrees-fan-chart-container svg g.marriage g.arc path {
-    fill: rgb(250, 250, 250);
+    fill: var(--bs-body-bg, rgb(250, 250, 250));
     stroke: none;
 }
 
 .webtrees-fan-chart-container svg g.marriage.empty g.arc path {
-    fill: rgb(235, 235, 235);
+    fill: var(--bs-secondary-bg, rgb(235, 235, 235));
 }
 
 .webtrees-fan-chart-container svg g.person.available g.arc path,
 .webtrees-fan-chart-container svg g.marriage.available g.arc path {
-    fill: rgb(250, 250, 250);
+    fill: var(--bs-body-bg, rgb(250, 250, 250));
 }
 
 .webtrees-fan-chart-container svg g.separatorGroup line {
-    stroke: rgb(225, 225, 225);
+    stroke: var(--bs-border-color, rgb(225, 225, 225));
     stroke-width: 1px;
 }
 
 .webtrees-fan-chart-container svg g.person.available.hover g.arc path {
-    stroke: rgb(200, 200, 200);
+    stroke: var(--bs-border-color, rgb(200, 200, 200));
     stroke-width: 1.5px;
     filter: brightness(0.95);
 }
@@ -50,14 +50,14 @@
 }
 
 .webtrees-fan-chart-container svg g.name .wt-chart-box-name-alt {
-    fill: rgb(127, 127, 127);
+    fill: var(--bs-tertiary-color, rgb(127, 127, 127));
     font-weight: normal;
     direction: ltr;
     unicode-bidi: normal;
 }
 
 .webtrees-fan-chart-container svg g.name .date {
-    fill: rgb(50, 50, 50);
+    fill: var(--bs-body-color, rgb(50, 50, 50));
     font-size: 85%;
     font-weight: normal;
     direction: ltr;
@@ -65,7 +65,7 @@
 }
 
 .webtrees-fan-chart-container svg g.name .place {
-    fill: rgb(90, 90, 90);
+    fill: var(--bs-secondary-color, rgb(90, 90, 90));
     font-weight: normal;
     font-style: italic;
     direction: ltr;
@@ -77,10 +77,9 @@
 }
 
 .webtrees-fan-chart-container svg .wt-chart-box-name {
-    fill: rgb(50, 50, 50);
+    fill: var(--bs-body-color, rgb(50, 50, 50));
 }
 
 .webtrees-fan-chart-container svg .wt-chart-box-name-alt {
-    fill: rgb(50, 50, 50);
+    fill: var(--bs-body-color, rgb(50, 50, 50));
 }
-
