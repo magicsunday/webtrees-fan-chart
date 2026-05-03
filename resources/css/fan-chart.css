@@ -125,7 +125,7 @@
 
 .webtrees-fan-chart-container div.overlay .tooltip {
     font-size: 22px;
-    color: #5a6268;
+    color: var(--bs-secondary-color, #5a6268);
     position: relative;
     margin: 0;
     top: 50%;
@@ -209,11 +209,11 @@ div.tooltip {
     height: auto;
     padding: 15px 15px;
     font: 12px sans-serif;
-    background: rgb(240, 240, 240);
-    border: 2px solid rgb(127, 127, 127);
+    background: var(--bs-secondary-bg, rgb(240, 240, 240));
+    border: 2px solid var(--bs-border-color, rgb(127, 127, 127));
     border-radius: 10px;
     pointer-events: none;
-    filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.7));
+    box-shadow: var(--bs-box-shadow-lg, 0 0 5px rgba(0, 0, 0, 0.7));
 }
 
 div.tooltip .image {
@@ -225,8 +225,8 @@ div.tooltip .image {
     height: 100px;
     border-radius: 50%;
     overflow: hidden;
-    background-color: #FFFFFF;
-    filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.7));
+    background-color: var(--bs-body-bg, #ffffff);
+    box-shadow: var(--bs-box-shadow-lg, 0 0 5px rgba(0, 0, 0, 0.7));
 }
 
 div.tooltip .image + .text {
@@ -269,13 +269,13 @@ div.tooltip .name {
 
 div.tooltip .date {
     font-size: 14px;
-    color: rgb(127, 127, 127);
+    color: var(--bs-tertiary-color, rgb(127, 127, 127));
 }
 
 div.tooltip .place td {
     font-size: 12px;
     font-style: italic;
-    color: rgb(127, 127, 127);
+    color: var(--bs-tertiary-color, rgb(127, 127, 127));
     padding-top: 0;
 }
 
