@@ -270,12 +270,15 @@ export default class Hierarchy {
             const blockStart = currentFraction;
             const blockEnd = currentFraction + blockFraction;
 
+            let partnerXref = "";
+            let parentForChildren = null;
+
             if (block.partner) {
-                const partnerXref = block.partner.data.xref || "";
-                const partnerId = nextId++;
+                partnerXref = block.partner.data.xref || "";
+                parentForChildren = nextId++;
 
                 this._nodes.push({
-                    id: partnerId,
+                    id: parentForChildren,
                     depth: -1,
                     x0: blockStart,
                     x1: blockEnd,
@@ -289,38 +292,12 @@ export default class Hierarchy {
                     rootXref: rootXref,
                     syntheticParentId: null,
                 });
+            }
 
-                // Create child nodes (depth = -2), equally spaced under partner arc
-                if (block.children.length > 0) {
-                    const childFraction = blockFraction / block.children.length;
-
-                    for (let i = 0; i < block.children.length; i++) {
-                        const child = block.children[i];
-
-                        this._nodes.push({
-                            id: nextId++,
-                            depth: -2,
-                            x0: blockStart + i * childFraction,
-                            x1: blockStart + (i + 1) * childFraction,
-                            parent: null,
-                            children: null,
-                            height: 0,
-                            value: 1,
-                            data: child,
-                            descendantType: "child",
-                            partnerXref: partnerXref,
-                            rootXref: rootXref,
-                            syntheticParentId: partnerId,
-                        });
-                    }
-                }
-            } else {
-                // Unassigned children (hidden spouse) at depth = -2
+            if (block.children.length > 0) {
                 const childFraction = blockFraction / block.children.length;
 
                 for (let i = 0; i < block.children.length; i++) {
-                    const child = block.children[i];
-
                     this._nodes.push({
                         id: nextId++,
                         depth: -2,
@@ -330,11 +307,11 @@ export default class Hierarchy {
                         children: null,
                         height: 0,
                         value: 1,
-                        data: child,
+                        data: block.children[i],
                         descendantType: "child",
-                        partnerXref: "",
+                        partnerXref: partnerXref,
                         rootXref: rootXref,
-                        syntheticParentId: null,
+                        syntheticParentId: parentForChildren,
                     });
                 }
             }

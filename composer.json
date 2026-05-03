@@ -87,7 +87,7 @@
         "ci:test:php:rector": [
             "@ci:rector --dry-run"
         ],
-        "ci:test:php:cpd": [
+        "ci:test:cpd": [
             "npx jscpd --config .jscpd.json"
         ],
         "ci:test:php:unit": [
@@ -114,7 +114,7 @@
             "@ci:test:js:format",
             "@ci:test:php:phpstan",
             "@ci:test:php:rector",
-            "@ci:test:php:cpd",
+            "@ci:test:cpd",
             "@ci:test:php:unit",
             "@ci:test:js:unit",
             "@ci:test:php:cgl"
