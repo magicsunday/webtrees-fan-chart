@@ -7,6 +7,10 @@
 
 import * as d3 from "../d3.js";
 
+/**
+ * @import Configuration from "../configuration.js"
+ */
+
 export const MATH_DEG2RAD = Math.PI / 180;
 export const MATH_RAD2DEG = 180 / Math.PI;
 
@@ -227,7 +231,7 @@ export default class Geometry {
      * Arc length in pixels at the given radial position inside the arc band.
      * Used to determine whether truncated text fits within the segment.
      *
-     * @param {Object} datum    D3 partition datum (needs depth, x0, x1)
+     * @param {object} datum    D3 partition datum (needs depth, x0, x1)
      * @param {number} position Percentage within the arc band (0 = inner, 100 = outer)
      *
      * @return {number}
@@ -245,7 +249,7 @@ export default class Geometry {
      * for outer arcs caps the result so text fits within 55% of the angular
      * segment width (80% for single-line arcs at depth ≥ 7).
      *
-     * @param {Object} datum D3 partition datum (needs depth, x0, x1)
+     * @param {object} datum D3 partition datum (needs depth, x0, x1)
      *
      * @return {number}
      */
@@ -279,9 +283,10 @@ export default class Geometry {
         }
 
         // Uniform font cap for all children based on the narrowest child arc
-        if (isChild && this._configuration.smallestChildFraction) {
+        const cfg = /** @type {any} */ (this._configuration);
+        if (isChild && cfg.smallestChildFraction) {
             const totalSectorRad = this.endAngle(datum.depth, 1) - this.startAngle(datum.depth, 0);
-            const narrowestRad = this._configuration.smallestChildFraction * totalSectorRad;
+            const narrowestRad = cfg.smallestChildFraction * totalSectorRad;
             const narrowestWidth = narrowestRad * this.centerRadius(datum.depth);
             const maxFont = (narrowestWidth * 0.55) / 2;
 

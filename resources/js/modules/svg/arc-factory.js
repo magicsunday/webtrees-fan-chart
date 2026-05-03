@@ -11,9 +11,9 @@ import * as d3 from "../d3.js";
  * Creates a d3.arc() generator configured for a person arc segment using
  * geometry-derived radii and angles from the D3 partition datum.
  *
- * @param {Object} geometry  Geometry instance for radius/angle calculations
- * @param {Object} config    Configuration with padRadius, cornerRadius
- * @param {Object} datum     D3 partition datum (depth, x0, x1)
+ * @param {object} geometry  Geometry instance for radius/angle calculations
+ * @param {object} config    Configuration with padRadius, cornerRadius
+ * @param {object} datum     D3 partition datum (depth, x0, x1)
  * @param {number} padAngle  Gap angle between adjacent arcs in radians
  *
  * @returns {Function} Configured d3.arc() generator
@@ -34,8 +34,8 @@ export function createPersonArcGenerator(geometry, config, datum, padAngle) {
  * Creates a d3.arc() generator configured for a marriage arc using
  * pre-computed geometry values from _resolveMarriageGeometry().
  *
- * @param {Object} config   Configuration with cornerRadius
- * @param {Object} geometry Pre-computed { startAngle, endAngle, innerR, outerR }
+ * @param {object} config   Configuration with cornerRadius
+ * @param {object} geometry Pre-computed { startAngle, endAngle, innerR, outerR }
  *
  * @returns {Function} Configured d3.arc() generator
  */

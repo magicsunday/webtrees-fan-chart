@@ -14,6 +14,13 @@ import { classifyElement } from "./lifecycle.js";
 import { truncateToFit } from "@magicsunday/webtrees-chart-lib";
 
 /**
+ * @import { Selection } from "d3-selection"
+ * @import Svg from "../svg.js"
+ * @import Configuration from "../configuration.js"
+ * @import Geometry from "./geometry.js"
+ */
+
+/**
  * Monotonic counter for marriage textPath IDs. `Date.now()` collided when
  * multiple updates fired inside the same millisecond, leaving two definitions
  * with the same id and breaking the textPath href lookup.
@@ -37,8 +44,8 @@ export default class Marriage {
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      * @param {Geometry}      geometry      Shared geometry instance for this render pass
-     * @param {Selection}     marriage      The <g class="marriage"> D3 selection
-     * @param {Object}        datum         The D3 partition datum for the parent node
+     * @param {Selection<any, any, any, any>}     marriage      The <g class="marriage"> D3 selection
+     * @param {object}        datum         The D3 partition datum for the parent node
      */
     constructor(svg, configuration, geometry, marriage, datum) {
         this._svg = svg;
@@ -54,8 +61,8 @@ export default class Marriage {
      * existing arc is reused) and skips label creation for elements being removed.
      * Returns early for outer generations when names are disabled.
      *
-     * @param {Selection} marriage The <g class="marriage"> D3 selection
-     * @param {Object}    datum    The D3 partition datum
+     * @param {Selection<any, any, any, any>} marriage The <g class="marriage"> D3 selection
+     * @param {object}    datum    The D3 partition datum
      */
     init(marriage, datum) {
         // Hide marriage arcs for outer generations when names are disabled
@@ -97,7 +104,7 @@ export default class Marriage {
     /**
      * Resolves the radial and angular geometry for a marriage arc.
      *
-     * @param {Object} datum The D3 partition datum
+     * @param {object} datum The D3 partition datum
      *
      * @return {{ innerR: number, outerR: number, startAngle: number, endAngle: number }}
      *
@@ -133,8 +140,8 @@ export default class Marriage {
      * if an arc already exists (update path reuse) or if the gap is zero or
      * negative.
      *
-     * @param {Selection} marriage The <g class="marriage"> D3 selection
-     * @param {Object}    datum    The D3 partition datum
+     * @param {Selection<any, any, any, any>} marriage The <g class="marriage"> D3 selection
+     * @param {object}    datum    The D3 partition datum
      *
      * @private
      */
@@ -167,8 +174,8 @@ export default class Marriage {
      * Truncates the date string with an ellipsis if it overflows the arc length.
      * No-ops when the datum has no marriageDateOfParents or the arc gap is zero.
      *
-     * @param {Selection} marriage The <g class="marriage"> D3 selection
-     * @param {Object}    datum    The D3 partition datum
+     * @param {Selection<any, any, any, any>} marriage The <g class="marriage"> D3 selection
+     * @param {object}    datum    The D3 partition datum
      *
      * @private
      */
@@ -247,7 +254,7 @@ export default class Marriage {
      * marriage arc occupies the gap that visually belongs to the parent
      * generation, so the text should match parent-generation sizing.
      *
-     * @param {Object} datum The D3 partition datum
+     * @param {object} datum The D3 partition datum
      *
      * @return {number}
      *

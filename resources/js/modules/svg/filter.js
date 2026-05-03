@@ -6,6 +6,10 @@
  */
 
 /**
+ * @import { Selection } from "d3-selection"
+ */
+
+/**
  * Registers a drop-shadow SVG filter definition (#drop-shadow) in the given
  * <defs> element. The filter is applied via CSS ("filter: url(#drop-shadow)")
  * because Chrome does not support CSS filter on SVG elements via the stylesheet
@@ -17,7 +21,7 @@
  */
 export default class Filter {
     /**
-     * @param {Selection} defs The D3 selection of the SVG <defs> element
+     * @param {Selection<any, any, any, any>} defs The D3 selection of the SVG <defs> element
      */
     constructor(defs) {
         // Create the <svg:defs> element
@@ -41,7 +45,7 @@ export default class Filter {
     /**
      * Returns the <defs> D3 selection passed to the constructor.
      *
-     * @return {Selection}
+     * @return {Selection<any, any, any, any>}
      */
     get() {
         return this._element;

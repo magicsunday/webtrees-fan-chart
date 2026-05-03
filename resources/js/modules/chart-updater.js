@@ -12,6 +12,13 @@ import Marriage from "./svg/marriage.js";
 import FamilyColor from "./svg/family-color.js";
 
 /**
+ * @import { Transition } from "d3-transition"
+ * @import Svg from "./svg.js"
+ * @import Configuration from "./configuration.js"
+ * @import Hierarchy from "./hierarchy.js"
+ */
+
+/**
  * Handles the animated transition when the chart re-centers on a new individual.
  * Fetches new hierarchy data via AJAX, classifies each person and marriage element
  * as "new", "update", or "remove", then runs a cross-fade transition that fades
@@ -75,7 +82,7 @@ export default class ChartUpdater {
         };
 
         d3.json(url, { signal })
-            .then((data) => {
+            .then((/** @type {any} */ data) => {
                 this._fetchController = null;
 
                 this._updatePageTitle(data);
@@ -135,7 +142,7 @@ export default class ChartUpdater {
     /**
      * Updates the page header and browser tab title from AJAX response data.
      *
-     * @param {Object} data The AJAX response object
+     * @param {object} data The AJAX response object
      *
      * @private
      */
@@ -254,7 +261,7 @@ export default class ChartUpdater {
 
         // Flag all marriage elements which are subject to change (same pattern as persons)
         svg.selectAll("g.marriage:not(.descendant)")
-            .data(marriageNodes, (datum) => datum.id)
+            .data(marriageNodes, (/** @type {any} */ datum) => datum.id)
             .each((datum, i, nodes) => {
                 const hasChildren = datum.children?.some((child) => child.data.data.xref !== "");
 
@@ -293,7 +300,7 @@ export default class ChartUpdater {
      * removed arcs, fades in new arcs with family colors, transitions colors
      * on updated arcs, and cross-fades old/new labels and separator lines.
      *
-     * @param {Transition} transition The shared D3 transition instance
+     * @param {Transition<any, any, any, any>} transition The shared D3 transition instance
      *
      * @private
      */
@@ -406,8 +413,9 @@ export default class ChartUpdater {
             .get()
             .selectAll("path[id^='path-person-'], path[id^='path-marriage-']")
             .each(function () {
-                if (!document.querySelector(`textPath[href='#${this.id}']`)) {
-                    this.remove();
+                const el = /** @type {SVGElement} */ (this);
+                if (!document.querySelector(`textPath[href='#${el.id}']`)) {
+                    el.remove();
                 }
             });
 
@@ -417,7 +425,8 @@ export default class ChartUpdater {
         const activeClipIds = new Set();
 
         this._svg.selectAll("image[clip-path]").each(function () {
-            const match = this.getAttribute("clip-path").match(/url\(#(.+)\)/);
+            const el = /** @type {SVGElement} */ (this);
+            const match = el.getAttribute("clip-path")?.match(/url\(#(.+)\)/);
 
             if (match) {
                 activeClipIds.add(match[1]);
@@ -428,8 +437,9 @@ export default class ChartUpdater {
             .get()
             .selectAll("clipPath[id^='clip-image-']")
             .each(function () {
-                if (!activeClipIds.has(this.id)) {
-                    this.remove();
+                const el = /** @type {SVGElement} */ (this);
+                if (!activeClipIds.has(el.id)) {
+                    el.remove();
                 }
             });
 
@@ -478,7 +488,7 @@ export default class ChartUpdater {
     /**
      * Fades out removed arc paths with a transition.
      *
-     * @param {Transition} transition
+     * @param {Transition<any, any, any, any>} transition
      * @param {string}     selector   The group selector (e.g. "g.person.remove")
      *
      * @private
@@ -496,7 +506,7 @@ export default class ChartUpdater {
     /**
      * Fades in new arc paths with their family color.
      *
-     * @param {Transition} transition
+     * @param {Transition<any, any, any, any>} transition
      * @param {string}     groupSelector The group type selector (e.g. "g.person")
      * @param {Function}   getColor      Extracts the color from a datum
      *
@@ -520,7 +530,7 @@ export default class ChartUpdater {
     /**
      * Transitions family colors on updated (existing) arc paths.
      *
-     * @param {Transition} transition
+     * @param {Transition<any, any, any, any>} transition
      * @param {string}     groupSelector The group type selector (e.g. "g.person")
      * @param {Function}   getColor      Extracts the color from a datum
      *
@@ -547,7 +557,7 @@ export default class ChartUpdater {
      * selection), the callback fires asynchronously on the next event-loop tick
      * so callers can always assume async delivery.
      *
-     * @param {Transition} transition The D3 transition to monitor
+     * @param {Transition<any, any, any, any>} transition The D3 transition to monitor
      * @param {Function}   callback   Invoked with the transition as `this` when all transitions settle
      *
      * @private

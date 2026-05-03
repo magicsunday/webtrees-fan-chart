@@ -45,8 +45,8 @@ export default class Configuration {
     static MATERNAL_COLOR_DEFAULT = "#d06f94";
 
     /**
-     * @param {Object}   options
-     * @param {Object<string, string>} options.labels  Label strings keyed by name (e.g. zoom, move) and generation index
+     * @param {object}   options
+     * @param {Object<string, string>} [options.labels]  Label strings keyed by name (e.g. zoom, move) and generation index
      * @param {number}   [options.generations=6]
      * @param {number}   [options.fanDegree=210]
      * @param {number}   [options.fontScale=100]

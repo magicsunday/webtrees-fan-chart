@@ -13,6 +13,13 @@ import LabelRenderer from "./label-renderer.js";
 import { SEX_FEMALE, SEX_MALE } from "../hierarchy.js";
 import { classifyElement } from "./lifecycle.js";
 
+/**
+ * @import { Selection } from "d3-selection"
+ * @import Svg from "../svg.js"
+ * @import Configuration from "../configuration.js"
+ * @import Geometry from "./geometry.js"
+ */
+
 /** Minimum rendered image diameter in pixels — narrower arcs skip the image. */
 const IMAGE_SIZE_MIN = 28;
 
@@ -59,8 +66,8 @@ export default class Person {
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      * @param {Geometry}      geometry      Shared geometry instance for this render pass
-     * @param {Selection}     person        The <g class="person"> D3 selection
-     * @param {Object}        children      The D3 partition datum for this person
+     * @param {Selection<any, any, any, any>} person        The <g class="person"> D3 selection
+     * @param {object}        children      The D3 partition datum for this person
      */
     constructor(svg, configuration, geometry, person, children) {
         this._svg = svg;
@@ -75,8 +82,8 @@ export default class Person {
      * names are disabled. For nodes with data, pre-computes imageSize on the datum
      * before calling LabelRenderer so text layout can account for the image width.
      *
-     * @param {Selection} person The <g class="person"> D3 selection
-     * @param {Object}    datum  The D3 partition datum
+     * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
+     * @param {object}    datum  The D3 partition datum
      */
     init(person, datum) {
         // Hide outer generations when only images are shown (no names)
@@ -148,8 +155,8 @@ export default class Person {
      * so the gender remains visible regardless of whether family colors fill
      * the arc body.
      *
-     * @param {Selection} person The <g class="person"> D3 selection
-     * @param {Object}    datum  The D3 partition datum
+     * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
+     * @param {object}    datum  The D3 partition datum
      *
      * @private
      */
@@ -182,7 +189,7 @@ export default class Person {
      * width, and whether names are shown. Returns null if conditions aren't
      * met (images disabled, no thumbnail, outer arc, or arc too narrow).
      *
-     * @param {Object} datum The D3 partition datum
+     * @param {object} datum The D3 partition datum
      *
      * @return {number|null}
      *
@@ -243,8 +250,8 @@ export default class Person {
      * Center node: image above the text, horizontally centered.
      * Inner arcs: image left of the text block, both centered on arc.
      *
-     * @param {Selection} person    The parent element
-     * @param {Object}    datum     The D3 data object
+     * @param {Selection<any, any, any, any>} person    The parent element
+     * @param {object}    datum     The D3 data object
      * @param {boolean}   showNames Whether name labels are rendered
      *
      * @private
@@ -260,7 +267,7 @@ export default class Person {
         let textWidth = 0;
 
         nameGroup.selectAll("text").each(function () {
-            const lineLength = this.getComputedTextLength();
+            const lineLength = /** @type {SVGTextContentElement} */ (this).getComputedTextLength();
 
             if (lineLength > textWidth) {
                 textWidth = lineLength;
@@ -400,8 +407,8 @@ export default class Person {
      * partition angles, and computed radii, then delegates rendering to
      * appendArc() with the pre-computed family color (if any).
      *
-     * @param {Selection} person The <g class="person"> D3 selection
-     * @param {Object}    datum  The D3 partition datum
+     * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
+     * @param {object}    datum  The D3 partition datum
      *
      * @private
      */
@@ -420,7 +427,7 @@ export default class Person {
      * Inserts an SVG <title> as the first child of the person element so
      * browsers show the full name as a native tooltip on hover.
      *
-     * @param {Selection} person The <g class="person"> D3 selection
+     * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
      * @param {string}    value  The individual's full name
      *
      * @private
@@ -434,7 +441,7 @@ export default class Person {
      * spouse segments (sharing the same parent) use no padding so they appear
      * as a single joined block.
      *
-     * @param {Object} datum The D3 data object
+     * @param {object} datum The D3 data object
      *
      * @return {number}
      *

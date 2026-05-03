@@ -14,6 +14,10 @@ import {
 import { SEX_FEMALE, SEX_MALE } from "../hierarchy.js";
 
 /**
+ * @import Configuration from "../configuration.js"
+ */
+
+/**
  * This class computes family-branch colors for person arcs. The two
  * base colors (paternal / maternal) are configurable via the chart
  * settings. Sub-branches derive their hue from the base color with
@@ -46,7 +50,7 @@ export default class FamilyColor {
      * of the same child share the same hue so couples appear as a
      * single colored family unit.
      *
-     * @param {Object} datum The D3 partition datum
+     * @param {object} datum The D3 partition datum
      *
      * @return {string|null} HSL color string, or null for the root node
      */
@@ -92,7 +96,7 @@ export default class FamilyColor {
      * descendant sector. Children share their partner's hue at a slightly
      * deeper saturation/lightness level.
      *
-     * @param {Object} datum The D3 partition datum (depth < 0)
+     * @param {object} datum The D3 partition datum (depth < 0)
      *
      * @return {string} HSL color string
      *
@@ -160,7 +164,7 @@ export default class FamilyColor {
      * both lineages. For deeper nodes it is the first available
      * child's color (both parents share the same hue).
      *
-     * @param {Object} datum The D3 data object
+     * @param {object} datum The D3 data object
      *
      * @return {string|null}
      */

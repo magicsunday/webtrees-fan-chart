@@ -9,6 +9,10 @@ import * as d3 from "../d3.js";
 import { SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_ELLIPSIS, SYMBOL_MARRIAGE } from "../hierarchy.js";
 
 /**
+ * @import { Selection } from "d3-selection"
+ */
+
+/**
  * Escapes HTML entities to prevent injection in tooltip content.
  *
  * @param {string} value The value to escape
@@ -63,8 +67,8 @@ export default class TooltipRenderer {
      * Attaches contextmenu, mouseenter, mouseleave, mousemove, mouseover, and
      * mouseout handlers to the person element. No-ops for empty persons (no xref).
      *
-     * @param {Selection} person The <g class="person"> D3 selection
-     * @param {Object}    datum  The D3 partition datum
+     * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
+     * @param {object}                         datum  The D3 partition datum
      */
     bindEvents(person, datum) {
         if (datum.data.data.xref === "") {
@@ -110,7 +114,7 @@ export default class TooltipRenderer {
      * Builds the HTML for the tooltip image (thumbnail or silhouette).
      * Returns an empty string if no image should be shown.
      *
-     * @param {Object} datum The D3 partition datum
+     * @param {object} datum The D3 partition datum
      *
      * @return {string}
      *
@@ -136,7 +140,7 @@ export default class TooltipRenderer {
      * Builds the HTML table rows for birth, marriage, and death data.
      * Returns an empty string if no data is available.
      *
-     * @param {Object} datum The D3 partition datum
+     * @param {object} datum The D3 partition datum
      *
      * @return {string}
      *
@@ -180,8 +184,8 @@ export default class TooltipRenderer {
      * div near the cursor. When the tooltip is pinned (active = true), also
      * fades it in. No-ops for empty persons.
      *
-     * @param {Event}  event The triggering mouse event (used for cursor position)
-     * @param {Object} datum The D3 partition datum
+     * @param {MouseEvent} event The triggering mouse event (used for cursor position)
+     * @param {object}     datum The D3 partition datum
      *
      * @private
      */

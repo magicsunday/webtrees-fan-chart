@@ -10,6 +10,22 @@ import Geometry, { MATH_RAD2DEG } from "./geometry.js";
 import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees-chart-lib";
 
 /**
+ * @import { Selection } from "d3-selection"
+ * @import Svg from "../svg.js"
+ * @import Configuration from "../configuration.js"
+ *
+ * @typedef {object} NameElementData
+ * @property {{data: object}} data
+ * @property {boolean}        [isPreferred]
+ *
+ * @typedef {object} LabelElementData
+ * @property {string}  label
+ * @property {boolean} [isPreferred]
+ * @property {boolean} [isLastName]
+ * @property {boolean} [isNameRtl]
+ */
+
+/**
  * Generates all text elements for a single person arc: first names, last names,
  * alternative name, and date lines. Inner arcs (depth 1 to numberOfInnerCircles)
  * render text along arc-shaped <path> definitions; outer arcs use rotated plain
@@ -36,8 +52,8 @@ export default class Text {
     /**
      * Creates all the labels and all dependent elements for a single person.
      *
-     * @param {Selection} parent The parent element to which the elements are to be attached
-     * @param {Object}    datum  The D3 data object
+     * @param {Selection<any, any, any, any>} parent The parent element to which the elements are to be attached
+     * @param {object}    datum  The D3 data object
      */
     createLabels(parent, datum) {
         const positions = this.calculateSlotPositions(datum);
@@ -55,8 +71,8 @@ export default class Text {
     /**
      * Creates labels for inner arc generations (text along arc paths).
      *
-     * @param {Selection} parent
-     * @param {Object}    datum
+     * @param {Selection<any, any, any, any>} parent
+     * @param {object}    datum
      * @param {Map}       positions
      *
      * @private
@@ -124,8 +140,8 @@ export default class Text {
     /**
      * Creates labels for outer arc generations (plain text elements).
      *
-     * @param {Selection} parent
-     * @param {Object}    datum
+     * @param {Selection<any, any, any, any>} parent
+     * @param {object}    datum
      * @param {Map}       positions
      *
      * @private
@@ -200,8 +216,8 @@ export default class Text {
      * The createElement callback abstracts away the inner/outer difference:
      * inner labels pass a textPath creator, outer labels pass a plain text creator.
      *
-     * @param {Selection} parent
-     * @param {Object}    datum
+     * @param {Selection<any, any, any, any>} _parent  Unused; kept for symmetry with sibling renderers
+     * @param {object}    datum
      * @param {Map}       positions        Slot-to-position map from calculateSlotPositions()
      * @param {Function}  createElement    Called as (slot, position) => container element
      *
@@ -399,11 +415,13 @@ export default class Text {
         const fontSize = parent.style("font-size");
         const fontWeight = parent.style("font-weight");
 
-        return truncateNames(
-            names,
-            availableWidth,
-            (text) => this.measureText(text, fontSize, fontWeight),
-            { strategy: this._configuration.nameAbbreviation },
+        return /** @type {LabelElementData[]} */ (
+            truncateNames(
+                /** @type {any} */ (names),
+                availableWidth,
+                (text) => this.measureText(text, fontSize, fontWeight),
+                { strategy: this._configuration.nameAbbreviation },
+            )
         );
     }
 
@@ -419,10 +437,10 @@ export default class Text {
      *
      * @private
      */
-    measureText(text, fontSize, fontWeight = 400) {
+    measureText(text, fontSize, fontWeight = "400") {
         const fontFamily = this._svg.style("font-family");
 
-        return measureText(text, fontFamily, fontSize, fontWeight);
+        return measureText(text, fontFamily, fontSize, String(fontWeight));
     }
 
     /**
@@ -430,7 +448,7 @@ export default class Text {
      * text along curved arc paths. Returns false for the center node (depth 0)
      * and for outer generations that use rotated plain text elements.
      *
-     * @param {Object} data The D3 partition datum
+     * @param {object} data The D3 partition datum
      *
      * @return {boolean}
      *
@@ -468,9 +486,9 @@ export default class Text {
      * Reverses start/end angles for flipped labels in the bottom half of 360° charts.
      *
      * @param {string} parentId The ID of the parent person/marriage element
-     * @param {Object} slot     One of the TEXT_SLOT constants (carries .index for the path ID)
+     * @param {object} slot     One of the TEXT_SLOT constants (carries .index for the path ID)
      * @param {{normal: number, flipped: number}} position Radial percentage positions for this slot
-     * @param {Object} data     The D3 partition datum
+     * @param {object} data     The D3 partition datum
      *
      * @return {string} The id attribute of the newly created <path> element
      *
@@ -547,7 +565,7 @@ export default class Text {
      * a group use tighter spacing; groups are separated by a wider gap.
      * The result is vertically centered in the available arc space.
      *
-     * @param {Object} datum The D3 data object
+     * @param {object} datum The D3 data object
      *
      * @return {Map<Object, {normal: number, flipped: number}>}
      *
@@ -722,7 +740,7 @@ export default class Text {
      * circle uses a fraction of its diameter. Image presence further reduces
      * the width by imageSize + 10 px gap.
      *
-     * @param {Object}                            data     The D3 partition datum
+     * @param {object}                            data     The D3 partition datum
      * @param {{normal: number, flipped: number}} position Radial slot position from calculateSlotPositions()
      *
      * @return {number}
@@ -802,8 +820,8 @@ export default class Text {
      * rotate+translate transform to align each line with the segment's angular
      * center using semantic group spacing (see calculateOuterSlotPositions).
      *
-     * @param {Selection} parent The label <g> element whose <text> children to position
-     * @param {Object}    datum  The D3 partition datum
+     * @param {Selection<any, any, any, any>} parent The label <g> element whose <text> children to position
+     * @param {object}    datum  The D3 partition datum
      *
      * @private
      */
@@ -962,7 +980,7 @@ export default class Text {
      * are returned as degree offsets from the arc center, vertically
      * centered within the available angular span.
      *
-     * @param {Object}    datum        The D3 data object
+     * @param {object}    datum        The D3 data object
      * @param {Selection} textElements The text elements to position
      *
      * @return {number[]} Angular offset in degrees for each text element

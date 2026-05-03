@@ -8,6 +8,11 @@
 import * as d3 from "./d3.js";
 import { MATH_DEG2RAD } from "./svg/geometry.js";
 
+/**
+ * @import Configuration from "./configuration.js"
+ * @import FamilyColor from "./svg/family-color.js"
+ */
+
 export const SEX_MALE = "M";
 export const SEX_FEMALE = "F";
 
@@ -29,7 +34,7 @@ export const DESCENDANT_GAP_DEG = 10;
  * Ancestor nodes come from d3.partition(); descendant nodes are synthetic and
  * appended by initDescendants().
  *
- * @typedef {Object} HierarchyNode
+ * @typedef {object} HierarchyNode
  * @property {number}          id               Sequential integer, unique within one hierarchy
  * @property {number}          depth            Ancestor depth ≥ 0; partner = -1; child = -2
  * @property {number}          x0               Partition start fraction [0, 1]
@@ -38,8 +43,8 @@ export const DESCENDANT_GAP_DEG = 10;
  * @property {HierarchyNode[]|null} children    D3 child nodes, or null for leaves
  * @property {number}          height           D3 partition height
  * @property {number}          value            D3 partition value
- * @property {Object}          data             Server payload wrapper ({ data: PersonData })
- * @property {Object}          data.data        Person record from the server
+ * @property {object}          data             Server payload wrapper ({ data: PersonData })
+ * @property {object}          data.data        Person record from the server
  * @property {string}          data.data.xref   GEDCOM identifier, empty string for placeholders
  * @property {string}          [data.data.familyColor]  Pre-computed HSL color string (set by applyFamilyColors)
  * @property {number}          [data.data.imageSize]    Pre-computed thumbnail size in px (set by Person)
@@ -74,7 +79,7 @@ export default class Hierarchy {
      * empty nodes, applies a partition layout, and assigns sequential IDs. Must
      * be called before accessing nodes or root.
      *
-     * @param {Object} datum The raw JSON chart data object from the server
+     * @param {object} datum The raw JSON chart data object from the server
      */
     init(datum) {
         // Construct root node from the hierarchical data
@@ -113,9 +118,10 @@ export default class Hierarchy {
         // Map the node data to the partition layout
         this._nodes = partitionLayout(this._root).descendants();
 
-        // Assign a unique ID to each node
+        // Assign a unique ID to each node — d3 HierarchyNode `id` is a
+        // readonly getter, so we attach our own property under a typed view.
         this._nodes.forEach((node, i) => {
-            node.id = i;
+            /** @type {any} */ (node).id = i;
         });
 
         // Append synthetic descendant nodes if enabled
@@ -135,7 +141,7 @@ export default class Hierarchy {
     }
 
     /**
-     * @return {Object}
+     * @return {object}
      */
     get root() {
         return this._root;
@@ -147,7 +153,7 @@ export default class Hierarchy {
      * the childScale on the configuration so Geometry can resolve angles
      * for negative depths.
      *
-     * @param {Object} datum The raw JSON chart data object from the server
+     * @param {object} datum The raw JSON chart data object from the server
      *
      * @private
      */
@@ -242,7 +248,7 @@ export default class Hierarchy {
             }
         }
 
-        this._configuration.smallestChildFraction = smallestChildFraction;
+        /** @type {any} */ (this._configuration).smallestChildFraction = smallestChildFraction;
 
         this._createDescendantNodes(familyBlocks, rootXref, useEqualDistribution, totalWeight);
     }
@@ -277,42 +283,46 @@ export default class Hierarchy {
                 partnerXref = block.partner.data.xref || "";
                 parentForChildren = nextId++;
 
-                this._nodes.push({
-                    id: parentForChildren,
-                    depth: -1,
-                    x0: blockStart,
-                    x1: blockEnd,
-                    parent: null,
-                    children: null,
-                    height: 0,
-                    value: 1,
-                    data: block.partner,
-                    descendantType: "partner",
-                    partnerXref: partnerXref,
-                    rootXref: rootXref,
-                    syntheticParentId: null,
-                });
+                this._nodes.push(
+                    /** @type {any} */ ({
+                        id: parentForChildren,
+                        depth: -1,
+                        x0: blockStart,
+                        x1: blockEnd,
+                        parent: null,
+                        children: null,
+                        height: 0,
+                        value: 1,
+                        data: block.partner,
+                        descendantType: "partner",
+                        partnerXref: partnerXref,
+                        rootXref: rootXref,
+                        syntheticParentId: null,
+                    }),
+                );
             }
 
             if (block.children.length > 0) {
                 const childFraction = blockFraction / block.children.length;
 
                 for (let i = 0; i < block.children.length; i++) {
-                    this._nodes.push({
-                        id: nextId++,
-                        depth: -2,
-                        x0: blockStart + i * childFraction,
-                        x1: blockStart + (i + 1) * childFraction,
-                        parent: null,
-                        children: null,
-                        height: 0,
-                        value: 1,
-                        data: block.children[i],
-                        descendantType: "child",
-                        partnerXref: partnerXref,
-                        rootXref: rootXref,
-                        syntheticParentId: parentForChildren,
-                    });
+                    this._nodes.push(
+                        /** @type {any} */ ({
+                            id: nextId++,
+                            depth: -2,
+                            x0: blockStart + i * childFraction,
+                            x1: blockStart + (i + 1) * childFraction,
+                            parent: null,
+                            children: null,
+                            height: 0,
+                            value: 1,
+                            data: block.children[i],
+                            descendantType: "child",
+                            partnerXref: partnerXref,
+                            rootXref: rootXref,
+                            syntheticParentId: parentForChildren,
+                        }),
+                    );
                 }
             }
 
@@ -341,7 +351,7 @@ export default class Hierarchy {
      * @param {number} generation Depth of the placeholder in the tree
      * @param {string} sex        SEX_MALE or SEX_FEMALE constant
      *
-     * @return {Object}
+     * @return {object}
      *
      * @private
      */

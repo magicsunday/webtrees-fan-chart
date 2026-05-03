@@ -10,6 +10,12 @@ import Configuration from "./configuration.js";
 import Chart from "./chart.js";
 
 /**
+ * @import { Selection } from "d3-selection"
+ *
+ * @typedef {object} Data
+ */
+
+/**
  * Top-level entry point for the fan chart. Wires together the Configuration,
  * Chart, and DOM event listeners, then performs the initial draw.
  *
@@ -20,7 +26,7 @@ import Chart from "./chart.js";
 export class FanChart {
     /**
      * @param {string} selector The CSS selector of the container element to render the chart into
-     * @param {Object} options  Configuration values passed from the server-rendered page
+     * @param {object} options  Configuration values passed from the server-rendered page
      *
      * @param {Object<string, string>} options.labels
      * @param {number}   options.generations
@@ -38,7 +44,9 @@ export class FanChart {
      */
     constructor(selector, options) {
         this._selector = selector;
-        this._parent = d3.select(this._selector);
+        this._parent = /** @type {Selection<HTMLElement, unknown, HTMLElement, unknown>} */ (
+            d3.select(this._selector)
+        );
 
         // Set up configuration
         this._configuration = new Configuration(options);
@@ -111,7 +119,7 @@ export class FanChart {
     /**
      * Passes data to the chart and triggers the initial render.
      *
-     * @param {Object} data The JSON-encoded chart data from the server
+     * @param {object} data The JSON-encoded chart data from the server
      */
     render(data) {
         this._chart.data = data;

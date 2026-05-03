@@ -10,7 +10,7 @@
  * a structured object indicating the element's current state in the
  * enter/update/exit data join.
  *
- * @param {Object} element D3 selection with .classed() method
+ * @param {object} element D3 selection with .classed() method
  *
  * @returns {{ isNew: boolean, isUpdate: boolean, isRemove: boolean }}
  */
@@ -27,8 +27,8 @@ export function classifyElement(element) {
  * in the "update" lifecycle state. Used for cross-fade transitions
  * where new content fades in while old content fades out.
  *
- * @param {Object} selection D3 selection to hide
- * @param {Object} parent    D3 selection of the parent element
+ * @param {object} selection D3 selection to hide
+ * @param {object} parent    D3 selection of the parent element
  */
 export function fadeIfUpdating(selection, parent) {
     if (parent.classed("update")) {

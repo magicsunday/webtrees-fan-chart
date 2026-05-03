@@ -13,7 +13,7 @@ import { Storage } from "@magicsunday/webtrees-chart-lib";
  * @param {string}              baseUrl              The base AJAX endpoint URL
  * @param {string|null}         generations          Number of ancestor generations to display
  * @param {string|number|null}  detailedDateGenerations Number of generations showing full dates
- * @param {string|boolean|null} showPlaces           Whether to display places in the arcs
+ * @param {string|number|boolean|null} showPlaces    Whether to display places in the arcs
  * @param {string|null}         placeParts           Number of place hierarchy levels to show
  * @param {boolean}             showDescendantsParam Whether to include descendants in the response
  * @param {boolean|null}        showNicknamesParam   Whether to inject GEDCOM NICK in display names
@@ -30,16 +30,17 @@ function getUrl(
     showNicknamesParam,
 ) {
     const url = new URL(baseUrl);
-    url.searchParams.set("xref", document.getElementById("xref").value);
-    url.searchParams.set("generations", generations);
-    url.searchParams.set("detailedDateGenerations", detailedDateGenerations);
+    const xref = /** @type {HTMLInputElement} */ (document.getElementById("xref"));
+    url.searchParams.set("xref", xref.value);
+    url.searchParams.set("generations", String(generations));
+    url.searchParams.set("detailedDateGenerations", String(detailedDateGenerations));
 
     if (showPlaces !== null && showPlaces !== undefined) {
         url.searchParams.set("showPlaces", showPlaces ? "1" : "0");
     }
 
     if (placeParts !== null && placeParts !== undefined) {
-        url.searchParams.set("placeParts", placeParts);
+        url.searchParams.set("placeParts", String(placeParts));
     }
 
     if (showDescendantsParam) {
@@ -64,6 +65,9 @@ function getUrl(
 function toggleMoreOptions(storage) {
     const showMoreOptions = document.getElementById("showMoreOptions");
     const optionsToggle = document.getElementById("options");
+    if (!showMoreOptions || !optionsToggle) {
+        return;
+    }
 
     showMoreOptions.addEventListener("shown.bs.collapse", () => {
         storage.write("showMoreOptions", true);
@@ -95,11 +99,17 @@ function initRangeSlider(storage, id, suffix = "") {
     const stored = storage.read(id);
 
     if (stored !== null) {
-        const input = document.getElementById(id);
-        const output = document.getElementById(`${id}Output`);
+        const input = /** @type {HTMLInputElement|null} */ (document.getElementById(id));
+        const output = /** @type {HTMLOutputElement|null} */ (
+            document.getElementById(`${id}Output`)
+        );
 
-        input.value = stored;
-        output.value = stored + suffix;
+        if (input) {
+            input.value = String(stored);
+        }
+        if (output) {
+            output.value = stored + suffix;
+        }
     }
 }
 
@@ -108,9 +118,10 @@ function initRangeSlider(storage, id, suffix = "") {
  * sets up event listeners for interactive form elements, builds the initial
  * AJAX URL, and triggers the first chart data load.
  *
- * @param {Object}  config
+ * @param {object}  config
  * @param {string}  config.ajaxUrl                        The base AJAX endpoint URL
  * @param {boolean} config.defaultShowDescendants         Server-side default for showDescendants
+ * @param {boolean} [config.defaultShowNicknames]         Server-side default for showNicknames
  * @param {number}  config.defaultFanDegreeRaw            Server-side unclamped fan degree
  * @param {number}  config.defaultDetailedDateGenerations Server-side default for detailed date generations
  */
@@ -147,14 +158,17 @@ export function initPage(config) {
     const storedDisplayMode = storage.read("displayMode");
 
     if (storedDisplayMode) {
-        const radioToCheck = document.getElementById(`displayMode-${storedDisplayMode}`);
+        const radioToCheck = /** @type {HTMLInputElement|null} */ (
+            document.getElementById(`displayMode-${storedDisplayMode}`)
+        );
 
         if (radioToCheck) {
             radioToCheck.checked = true;
         }
     }
 
-    document.querySelectorAll('input[name="displayMode"]').forEach((radio) => {
+    document.querySelectorAll('input[name="displayMode"]').forEach((radioEl) => {
+        const radio = /** @type {HTMLInputElement} */ (radioEl);
         radio.addEventListener("input", () => {
             storage.write("displayMode", radio.value);
             storage.write("showNames", radio.value === "both" || radio.value === "names");
@@ -164,7 +178,9 @@ export function initPage(config) {
 
     // Keep fanDegreeRaw in sync with the slider so disabling descendants
     // restores the last user-chosen value (not a stale one from earlier)
-    const fanSliderElement = document.getElementById("fanDegree");
+    const fanSliderElement = /** @type {HTMLInputElement|null} */ (
+        document.getElementById("fanDegree")
+    );
 
     if (fanSliderElement) {
         fanSliderElement.addEventListener("input", () => {
@@ -177,35 +193,65 @@ export function initPage(config) {
     // instead of falling back to server-side defaults only.
     const displayMode = storage.read("displayMode");
 
+    /**
+     * Resolved user options. `null` here means "user has not overridden the
+     * server default"; chart.phtml falls back to the PHP-side value via `??`.
+     * `showDescendants` and `detailedDateGenerations` are pre-resolved with
+     * their server defaults because subsequent code in this function reads
+     * them unconditionally.
+     *
+     * @type {{
+     *   fanDegree: number|null,
+     *   generations: number|null,
+     *   hideEmptySegments: boolean|null,
+     *   showFamilyColors: boolean|null,
+     *   paternalColor: string|null,
+     *   maternalColor: string|null,
+     *   showPlaces: boolean|null,
+     *   showParentMarriageDates: boolean|null,
+     *   showImages: boolean|null,
+     *   showNames: boolean|null,
+     *   showNicknames: boolean|null,
+     *   innerArcs: number|null,
+     *   fontScale: number|null,
+     *   showDescendants: boolean,
+     *   detailedDateGenerations: number,
+     * }}
+     */
     const chartOptions = {
-        fanDegree: storage.read("fanDegree"),
-        generations:
-            storage.read("generations") === null ? null : Number(storage.read("generations")),
-        hideEmptySegments: storage.read("hideEmptySegments"),
-        showFamilyColors: storage.read("showFamilyColors"),
-        paternalColor: storage.read("paternalColor"),
-        maternalColor: storage.read("maternalColor"),
-        showPlaces: storage.read("showPlaces"),
-        showParentMarriageDates: storage.read("showParentMarriageDates"),
+        fanDegree: storage.readNumber("fanDegree"),
+        generations: storage.readNumber("generations"),
+        hideEmptySegments: storage.readBool("hideEmptySegments"),
+        showFamilyColors: storage.readBool("showFamilyColors"),
+        paternalColor: storage.readString("paternalColor"),
+        maternalColor: storage.readString("maternalColor"),
+        showPlaces: storage.readBool("showPlaces"),
+        showParentMarriageDates: storage.readBool("showParentMarriageDates"),
         showImages: displayMode
             ? displayMode === "both" || displayMode === "images"
-            : storage.read("showImages"),
+            : storage.readBool("showImages"),
         showNames: displayMode
             ? displayMode === "both" || displayMode === "names"
-            : storage.read("showNames"),
-        showNicknames: storage.read("showNicknames") ?? config.defaultShowNicknames,
-        innerArcs: storage.read("innerArcs"),
-        fontScale: storage.read("fontScale"),
-        showDescendants: storage.read("showDescendants") ?? config.defaultShowDescendants,
-        detailedDateGenerations:
-            storage.read("detailedDateGenerations") ?? config.defaultDetailedDateGenerations,
+            : storage.readBool("showNames"),
+        showNicknames: storage.readBool("showNicknames", config.defaultShowNicknames ?? null),
+        innerArcs: storage.readNumber("innerArcs"),
+        fontScale: storage.readNumber("fontScale"),
+        showDescendants: storage.readBool("showDescendants", config.defaultShowDescendants),
+        detailedDateGenerations: storage.readNumber(
+            "detailedDateGenerations",
+            config.defaultDetailedDateGenerations,
+        ),
     };
 
     // Clamp the fan degree slider when descendants are active (covers the case
     // where the page is loaded from storage with showDescendants already enabled)
     if (chartOptions.showDescendants) {
-        const fanSlider = document.getElementById("fanDegree");
-        const fanOutput = document.getElementById("fanDegreeOutput");
+        const fanSlider = /** @type {HTMLInputElement|null} */ (
+            document.getElementById("fanDegree")
+        );
+        const fanOutput = /** @type {HTMLOutputElement|null} */ (
+            document.getElementById("fanDegreeOutput")
+        );
 
         if (fanSlider) {
             // Save the unclamped value BEFORE clamping so it can be restored
@@ -214,9 +260,9 @@ export function initPage(config) {
             // a previous session with a different degree.
             storage.write("fanDegreeRaw", fanSlider.value);
 
-            fanSlider.max = 270;
+            fanSlider.max = "270";
             chartOptions.fanDegree = Math.min(270, Math.max(180, Number(fanSlider.value)));
-            fanSlider.value = chartOptions.fanDegree;
+            fanSlider.value = String(chartOptions.fanDegree);
 
             if (fanOutput) {
                 fanOutput.value = `${chartOptions.fanDegree}°`;
@@ -227,33 +273,47 @@ export function initPage(config) {
     // Attach to the UMD global so chart.phtml getters can read the user's
     // localStorage overrides instead of falling back to server-side defaults.
     // Written after the clamp block so fanDegree is consistent with the slider.
-    if (typeof window.WebtreesFanChart !== "undefined") {
-        window.WebtreesFanChart.chartOptions = chartOptions;
+    // WebtreesFanChart is the UMD global exposed by the chart-page bundle;
+    // chart.phtml reads chartOptions from it.
+    const w = /** @type {{WebtreesFanChart?: {chartOptions?: object}}} */ (
+        /** @type {unknown} */ (window)
+    );
+    if (typeof w.WebtreesFanChart !== "undefined") {
+        w.WebtreesFanChart.chartOptions = chartOptions;
     }
 
     const ajaxUrl = getUrl(
         config.ajaxUrl,
-        storage.read("generations"),
+        /** @type {string|null} */ (storage.read("generations")),
         chartOptions.detailedDateGenerations,
         chartOptions.showPlaces,
-        storage.read("placeParts"),
-        chartOptions.showDescendants,
+        /** @type {string|null} */ (storage.read("placeParts")),
+        Boolean(chartOptions.showDescendants),
         chartOptions.showNicknames,
     );
 
-    document.getElementById("fan-chart-url").setAttribute("data-wt-ajax-url", ajaxUrl);
+    const ajaxContainer = document.getElementById("fan-chart-url");
+    if (ajaxContainer) {
+        ajaxContainer.setAttribute("data-wt-ajax-url", ajaxUrl);
+    }
 
     // showDescendants checkbox: persist to storage, restore raw fan degree, AJAX reload.
     // The slider max/value clamping is handled by the shared script in display.phtml
     // which fires first (registered earlier in DOM order, so the slider value is
     // already clamped when this handler reads it).
-    const showDescendantsCheckbox = document.getElementById("showDescendants-1");
+    const showDescendantsCheckbox = /** @type {HTMLInputElement|null} */ (
+        document.getElementById("showDescendants-1")
+    );
 
     if (showDescendantsCheckbox) {
         showDescendantsCheckbox.addEventListener("change", () => {
             const checked = showDescendantsCheckbox.checked;
-            const fanSlider = document.getElementById("fanDegree");
-            const fanOutput = document.getElementById("fanDegreeOutput");
+            const fanSlider = /** @type {HTMLInputElement|null} */ (
+                document.getElementById("fanDegree")
+            );
+            const fanOutput = /** @type {HTMLOutputElement|null} */ (
+                document.getElementById("fanDegreeOutput")
+            );
 
             storage.write("showDescendants", checked);
 
@@ -261,7 +321,7 @@ export function initPage(config) {
                 const raw = storage.read("fanDegreeRaw");
 
                 if (raw !== null && fanSlider) {
-                    fanSlider.value = raw;
+                    fanSlider.value = String(raw);
 
                     if (fanOutput) {
                         fanOutput.value = `${raw}°`;
@@ -274,16 +334,30 @@ export function initPage(config) {
             const container = document.getElementById("fan-chart-url");
             const newUrl = getUrl(
                 config.ajaxUrl,
-                storage.read("generations"),
-                storage.read("detailedDateGenerations") ?? config.defaultDetailedDateGenerations,
-                storage.read("showPlaces"),
-                storage.read("placeParts"),
+                /** @type {string|null} */ (storage.read("generations")),
+                /** @type {string|number|null} */ (
+                    storage.read("detailedDateGenerations") ?? config.defaultDetailedDateGenerations
+                ),
+                /** @type {string|boolean|null} */ (storage.read("showPlaces")),
+                /** @type {string|null} */ (storage.read("placeParts")),
                 checked,
-                storage.read("showNicknames") ?? config.defaultShowNicknames,
+                /** @type {boolean|null} */ (
+                    storage.read("showNicknames") ?? config.defaultShowNicknames
+                ),
             );
 
-            container.setAttribute("data-wt-ajax-url", newUrl);
-            webtrees.load(container, newUrl); // eslint-disable-line no-undef
+            // Note: storage.read returns a wider union than getUrl's params accept,
+            // but the actual stored values match the param shapes by convention
+            // (form inputs serialise as strings/booleans). Casts narrow the union.
+
+            if (container) {
+                container.setAttribute("data-wt-ajax-url", newUrl);
+            }
+            // window.webtrees is injected by the host page (webtrees core), not
+            // declared in our types. Reach for it via an opaque widening cast.
+            /** @type {{webtrees: {load: (el: HTMLElement|null, url: string) => void}}} */ (
+                /** @type {unknown} */ (window)
+            ).webtrees.load(container, newUrl);
         });
     }
 }

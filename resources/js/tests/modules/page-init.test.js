@@ -5,11 +5,34 @@ let storageData = {};
 
 await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
     Storage: jest.fn().mockImplementation(() => {
+        const read = (key) =>
+            Object.prototype.hasOwnProperty.call(storageData, key) ? storageData[key] : null;
+
         const instance = {
             register: jest.fn(),
-            read: jest.fn((key) =>
-                Object.prototype.hasOwnProperty.call(storageData, key) ? storageData[key] : null,
-            ),
+            read: jest.fn(read),
+            readString: jest.fn((key, fallback = null) => {
+                const value = read(key);
+                return value === null ? fallback : String(value);
+            }),
+            readBool: jest.fn((key, fallback = null) => {
+                const value = read(key);
+                if (value === null) return fallback;
+                if (typeof value === "boolean") return value;
+                if (typeof value === "number") return value !== 0;
+                if (value === "true" || value === "1") return true;
+                if (value === "false" || value === "0") return false;
+                return Boolean(value);
+            }),
+            readNumber: jest.fn((key, fallback = null) => {
+                const value = read(key);
+                if (value === null) return fallback;
+                if (typeof value === "number") {
+                    return Number.isFinite(value) ? value : fallback;
+                }
+                const parsed = Number(value);
+                return Number.isFinite(parsed) ? parsed : fallback;
+            }),
             write: jest.fn((key, value) => {
                 storageData[key] = value;
             }),

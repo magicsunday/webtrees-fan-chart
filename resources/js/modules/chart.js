@@ -15,6 +15,11 @@ import Geometry from "./svg/geometry.js";
 import FamilyColor from "./svg/family-color.js";
 import ChartUpdater from "./chart-updater.js";
 
+/**
+ * @import { Selection } from "d3-selection"
+ * @import Configuration from "./configuration.js"
+ */
+
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
 
 /**
@@ -28,7 +33,7 @@ const MIN_PADDING = 1; // Minimum padding around view box in "rem"
  */
 export default class Chart {
     /**
-     * @param {Selection}     parent        The selected D3 parent element container
+     * @param {Selection<any, any, any, any>}     parent        The selected D3 parent element container
      * @param {Configuration} configuration The application configuration
      */
     constructor(parent, configuration) {
@@ -46,14 +51,14 @@ export default class Chart {
     }
 
     /**
-     * @return {Selection}
+     * @return {Selection<any, any, any, any>}
      */
     get parent() {
         return this._parent;
     }
 
     /**
-     * @return {Object}
+     * @return {object}
      */
     get data() {
         return this._data;
@@ -62,7 +67,7 @@ export default class Chart {
     /**
      * Assigns new chart data and rebuilds the D3 hierarchy from it.
      *
-     * @param {Object} value The raw JSON data object from the server
+     * @param {object} value The raw JSON data object from the server
      */
     set data(value) {
         this._data = value;
@@ -114,8 +119,6 @@ export default class Chart {
      * Recalculates and sets the SVG viewBox so the chart fills its container
      * with a minimum 1 rem padding on every side. In fullscreen mode the SVG
      * dimensions are set to the full client area.
-     *
-     * @private
      */
     updateViewBox() {
         // Set width/height attributes
@@ -165,7 +168,7 @@ export default class Chart {
         const viewBox = this._computeViewBox(padding, svgBoundingBox, clientBoundingBox);
         const newViewBox = [viewBox.left, viewBox.top, viewBox.width, viewBox.height].join(" ");
 
-        this.svg
+        /** @type {any} */ (this.svg)
             .transition("viewBox")
             .duration(this._configuration.updateDuration)
             .attr("viewBox", newViewBox);
@@ -313,7 +316,7 @@ export default class Chart {
      * Lines run from the marriage arc gap through the partner and children rings.
      *
      * @param {Geometry}  geometry
-     * @param {Selection} separatorGroup
+     * @param {Selection<any, any, any, any>} separatorGroup
      *
      * @private
      */
@@ -500,8 +503,8 @@ export default class Chart {
      * Handles a click on a person arc. Redirects to the individual page for
      * the center node (depth 0); triggers a chart update for all other nodes.
      *
-     * @param {Event}  event The current event
-     * @param {Object} datum The D3 data object
+     * @param {Event}  _event The current event
+     * @param {object} datum  The D3 data object
      *
      * @private
      */

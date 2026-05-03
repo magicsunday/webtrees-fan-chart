@@ -8,6 +8,13 @@
 import Text from "./text.js";
 
 /**
+ * @import { Selection } from "d3-selection"
+ * @import Svg from "../svg.js"
+ * @import Configuration from "../configuration.js"
+ * @import Geometry from "./geometry.js"
+ */
+
+/**
  * Thin coordinator that creates the label <g> for a person arc, applies the
  * depth-scaled font size, hides the group immediately during update transitions
  * to prevent a visual flash, then delegates the actual text element creation
@@ -35,10 +42,10 @@ export default class LabelRenderer {
      * populate it. The group starts invisible when the parent is being updated
      * so the cross-fade transition controls its appearance.
      *
-     * @param {Selection} parent The person <g> element to append the label group to
-     * @param {Object}    datum  The D3 partition datum
+     * @param {Selection<any, any, any, any>} parent The person <g> element to append the label group to
+     * @param {object}    datum  The D3 partition datum
      *
-     * @return {Selection}
+     * @return {Selection<any, any, any, any>}
      */
     addLabel(parent, datum) {
         const label = parent

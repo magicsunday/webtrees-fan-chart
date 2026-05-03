@@ -10,6 +10,17 @@ import { SvgDefs, ChartZoom, ChartExportFactory } from "@magicsunday/webtrees-ch
 import Filter from "./svg/filter.js";
 
 /**
+ * @import { Selection } from "d3-selection"
+ * @import { Transition } from "d3-transition"
+ * @import {
+ *     ChartOverlay,
+ *     PngChartExport,
+ *     SvgChartExport,
+ * } from "@magicsunday/webtrees-chart-lib"
+ * @import Configuration from "./configuration.js"
+ */
+
+/**
  * Creates and manages the root SVG element for the fan chart. Owns the
  * <defs> block, the zoomable visual group, the floating tooltip div, and
  * the drop-shadow filter. Exposes a thin proxy API (select, selectAll,
@@ -22,16 +33,19 @@ import Filter from "./svg/filter.js";
  */
 export default class Svg {
     /**
-     * @param {Selection}     parent        The selected D3 parent element container
-     * @param {Configuration} configuration The application configuration
+     * @param {Selection<HTMLElement, unknown, HTMLElement, unknown>} parent The selected D3 parent element container
+     * @param {Configuration}                                          configuration The application configuration
      */
     constructor(parent, configuration) {
         // Create the <svg> element
         this._element = parent.append("svg");
         this._defs = new SvgDefs(this._element);
 
+        /** @type {Selection<SVGGElement, unknown, HTMLElement, unknown>|null} */
         this._visual = null;
+        /** @type {ChartZoom|null} */
         this._zoom = null;
+        /** @type {Selection<HTMLDivElement, unknown, HTMLElement, unknown>|null} */
         this._div = null;
         this._configuration = configuration;
 
@@ -46,7 +60,7 @@ export default class Svg {
     }
 
     /**
-     * @return {ChartZoom}
+     * @return {ChartZoom|null}
      */
     get zoom() {
         return this._zoom;
@@ -56,7 +70,7 @@ export default class Svg {
      * The inner <g> element that receives the D3 zoom transform. All chart
      * content (persons, marriages, separators) lives inside this group.
      *
-     * @return {Selection}
+     * @return {Selection<SVGGElement, unknown, HTMLElement, unknown>|null}
      */
     get visual() {
         return this._visual;
@@ -66,7 +80,7 @@ export default class Svg {
      * The floating tooltip <div> element. Carries an "active" property that
      * is set to true when the tooltip is pinned open via right-click.
      *
-     * @return {Selection}
+     * @return {Selection<HTMLDivElement, unknown, HTMLElement, unknown>|null}
      */
     get div() {
         return this._div;
@@ -127,19 +141,16 @@ export default class Svg {
             this._element.classed("rtl", true);
         }
 
-        /**
-         * @var {Selection} tooltip
-         */
-        const tooltip = d3.select("div.tooltip");
+        const tooltip = /** @type {Selection<HTMLDivElement, unknown, HTMLElement, unknown>} */ (
+            d3.select("div.tooltip")
+        );
 
         if (tooltip.empty()) {
-            this._div = d3
-                .select("body")
-                .append("div")
-                .attr("class", "tooltip")
-                .style("opacity", 0);
+            this._div = /** @type {any} */ (
+                d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0)
+            );
         } else {
-            this._div = tooltip.style("opacity", 0);
+            this._div = /** @type {any} */ (tooltip.style("opacity", 0));
         }
 
         // Add a group
@@ -170,7 +181,7 @@ export default class Svg {
      *
      * @param {string} type "png" or "svg"
      *
-     * @return {PngExport|SvgExport}
+     * @return {PngChartExport|SvgChartExport}
      */
     export(type) {
         const factory = new ChartExportFactory();
@@ -181,61 +192,63 @@ export default class Svg {
     /**
      * Returns the underlying SVG DOM node.
      *
-     * @return {SVGElement}
+     * @return {SVGSVGElement|null}
      */
     node() {
-        return this._element.node();
+        return /** @type {SVGSVGElement|null} */ (this._element.node());
     }
 
     /**
      * Selects the first descendant of the SVG element matching the selector.
      *
-     * @param {function|string} select CSS selector or D3 selector function
+     * @param {string} select CSS selector
      *
-     * @return {Selection}
+     * @return {Selection<SVGElement, unknown, SVGSVGElement, unknown>}
      */
     select(select) {
-        return this._element.select(select);
+        return /** @type {any} */ (this._element.select(select));
     }
 
     /**
      * Selects all descendants of the SVG element matching the selector.
      *
-     * @param {function|string|null} select CSS selector or D3 selector function
+     * @param {string} select CSS selector
      *
-     * @return {Selection}
+     * @return {Selection<SVGElement, unknown, SVGSVGElement, unknown>}
      */
     selectAll(select) {
-        return this._element.selectAll(select);
+        return /** @type {any} */ (this._element.selectAll(select));
     }
 
     /**
      * Gets or sets a CSS style on the SVG element. Proxies d3 selection.style().
      *
      * @param {string} name
+     * @param {string} [value]
      *
-     * @return {string|this}
+     * @return {any}
      */
-    style(_name) {
-        return this._element.style(...arguments);
+    style(name, value) {
+        return value === undefined ? this._element.style(name) : this._element.style(name, value);
     }
 
     /**
      * Gets or sets an attribute on the SVG element. Proxies d3 selection.attr().
      *
-     * @param {string} _name
+     * @param {string} name
+     * @param {any}    [value]
      *
-     * @return {string|this}
+     * @return {any}
      */
-    attr(_name) {
-        return this._element.attr(...arguments);
+    attr(name, value) {
+        return value === undefined ? this._element.attr(name) : this._element.attr(name, value);
     }
 
     /**
      * Creates a D3 transition on the SVG element. Used by Chart.center() to
      * animate the zoom reset.
      *
-     * @return {Transition}
+     * @return {Transition<SVGSVGElement, unknown, HTMLElement, unknown>}
      */
     transition() {
         return this._element.transition();

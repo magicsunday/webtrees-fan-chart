@@ -23,7 +23,6 @@ export {
 } from "d3-fetch";
 
 export {
-    Node,
     hierarchy,
     partition,
     tree,
