@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2024-12-22 13:03+0100\n"
-"PO-Revision-Date: 2026-04-10 07:09+0200\n"
+"PO-Revision-Date: 2026-05-03 08:27+0200\n"
 "Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -216,12 +216,6 @@ msgstr "Alleen jaren"
 msgid "Show full dates up to generation %s"
 msgstr "Toon volledige data tot generatie %s"
 
-#~ msgid "Presentation"
-#~ msgstr "Weergave"
-
-#~ msgid "reset"
-#~ msgstr "herstellen"
-
 msgid "Show descendants"
 msgstr "Nakomelingen tonen"
 
@@ -269,8 +263,14 @@ msgstr "Bepaalt welk naamdeel eerst wordt afgekort wanneer een boog te smal is v
 
 #: resources/views/modules/fan-chart/form/display.phtml
 msgid "Show nicknames in display names"
-msgstr "Bijnamen in weergavenamen tonen"
+msgstr "Toon bijnamen in weergavenamen"
 
 #: resources/views/modules/fan-chart/form/display.phtml
 msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
 msgstr "Voegt de GEDCOM NICK-waarde tussen aanhalingstekens in tussen de voornamen en de achternaam (bv. Martin \"Chalky\" White). Bootst het oude webtrees-gedrag na voor stambomen die bijnamen in het afzonderlijke GEDCOM NICK-veld opslaan."
+
+#~ msgid "Presentation"
+#~ msgstr "Weergave"
+
+#~ msgid "reset"
+#~ msgstr "herstellen"
