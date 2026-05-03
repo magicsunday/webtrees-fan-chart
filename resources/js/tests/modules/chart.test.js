@@ -170,13 +170,6 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
     hexToHsl: jest.fn(() => [0, 0, 50]),
 }));
 
-await jest.unstable_mockModule("resources/js/modules/gradient", () => ({
-    __esModule: true,
-    default: jest.fn(() => ({
-        init: jest.fn(),
-    })),
-}));
-
 const personConstructor = jest.fn(() => ({}));
 
 await jest.unstable_mockModule("resources/js/modules/svg/person", () => ({

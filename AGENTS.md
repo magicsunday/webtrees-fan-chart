@@ -52,7 +52,7 @@ Module.php (entry point, registers routes)
 Flat layout — every file is fan-chart-specific glue. Reusable base classes (Storage, ChartExport, ChartOverlay, ChartZoom, Orientations, measureText, truncateNames) live in the external [`@magicsunday/webtrees-chart-lib`](https://github.com/magicsunday/webtrees-chart-lib) package, shared with the pedigree- and descendants-chart modules. Consumed via Git URL pinned in `package.json` (`github:magicsunday/webtrees-chart-lib#vX.Y.Z`); chart-lib's `prepare` script builds its `dist/` during install, so `npm ci --ignore-scripts` will break the build.
 - **`index.js`** — Exports `FanChart` class (ES module entry point for Rollup).
 - **`page-entry.js` / `page-init.js`** — UMD bundle (`fan-chart-page.min.js`) loaded by `page.phtml`. Owns localStorage form-state wiring; `initPage()` resolves user options and publishes them under `WebtreesFanChart.chartOptions` for `chart.phtml` getters.
-- **`chart.js`** (D3 partition layout, click handling), **`chart-updater.js`** (AJAX update, transitions), **`hierarchy.js`** (D3 hierarchy, symbol constants), **`gradient.js`**, **`configuration.js`**, **`svg.js`**.
+- **`chart.js`** (D3 partition layout, click handling), **`chart-updater.js`** (AJAX update, transitions), **`hierarchy.js`** (D3 hierarchy, symbol constants), **`configuration.js`**, **`svg.js`**.
 - **`svg/`** — person/text/marriage/tooltip rendering, `arc.js` (shared arc DOM helper), `arc-factory.js`, `geometry.js`, `lifecycle.js`, `family-color.js`, `filter.js`, `label-renderer.js`, `tooltip-renderer.js`.
 - **`d3.js`** — D3 facade re-exporting only the d3 sub-packages used by the chart (selection, transition, zoom, hierarchy, scale, etc.).
 
