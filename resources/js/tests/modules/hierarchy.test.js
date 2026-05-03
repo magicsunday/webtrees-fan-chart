@@ -64,11 +64,7 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     scaleLinear: scaleLinearMock,
 }));
 
-const {
-    default: Hierarchy,
-    SEX_FEMALE,
-    SEX_MALE,
-} = await import("resources/js/modules/custom/hierarchy");
+const { default: Hierarchy, SEX_FEMALE, SEX_MALE } = await import("resources/js/modules/hierarchy");
 
 const createIndividual = ({ id = 1, generation = 1, sex = SEX_MALE, parents } = {}) => ({
     data: {

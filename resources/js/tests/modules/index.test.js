@@ -52,7 +52,7 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     select: selectMock,
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/chart", () => ({
+await jest.unstable_mockModule("resources/js/modules/chart", () => ({
     __esModule: true,
     default: StubChart,
     chartInstances,

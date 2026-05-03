@@ -6,8 +6,8 @@
  */
 
 import * as d3 from "./d3.js";
-import Configuration from "./custom/configuration.js";
-import Chart from "./custom/chart.js";
+import Configuration from "./configuration.js";
+import Chart from "./chart.js";
 
 /**
  * Top-level entry point for the fan chart. Wires together the Configuration,

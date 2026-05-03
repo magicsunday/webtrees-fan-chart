@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../../d3.js";
+import * as d3 from "../d3.js";
 import { appendArc } from "./arc.js";
 import { createMarriageArcGenerator } from "./arc-factory.js";
 import FamilyColor from "./family-color.js";

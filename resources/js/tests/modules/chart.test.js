@@ -144,7 +144,7 @@ const setSvgBoundingBox = (boundingBox) => {
     svgBoundingBox = boundingBox;
 };
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg", () => ({
     __esModule: true,
     default: MockSvg,
     mockSvgInstances,
@@ -170,7 +170,7 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
     hexToHsl: jest.fn(() => [0, 0, 50]),
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/gradient", () => ({
+await jest.unstable_mockModule("resources/js/modules/gradient", () => ({
     __esModule: true,
     default: jest.fn(() => ({
         init: jest.fn(),
@@ -179,24 +179,24 @@ await jest.unstable_mockModule("resources/js/modules/custom/gradient", () => ({
 
 const personConstructor = jest.fn(() => ({}));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/person", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/person", () => ({
     __esModule: true,
     default: personConstructor,
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/chart-updater", () => ({
+await jest.unstable_mockModule("resources/js/modules/chart-updater", () => ({
     __esModule: true,
     default: jest.fn(() => ({
         update: jest.fn(),
     })),
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/marriage", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/marriage", () => ({
     __esModule: true,
     default: jest.fn(() => ({})),
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/geometry", () => ({
     __esModule: true,
     MATH_DEG2RAD: Math.PI / 180,
     MATH_RAD2DEG: 180 / Math.PI,
@@ -231,7 +231,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
     },
 }));
 
-const { default: Chart } = await import("resources/js/modules/custom/chart");
+const { default: Chart } = await import("resources/js/modules/chart");
 
 const createConfiguration = (overrides = {}) => ({
     hideEmptySegments: false,

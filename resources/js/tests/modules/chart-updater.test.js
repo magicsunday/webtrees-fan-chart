@@ -71,17 +71,17 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
 
 const personConstructor = jest.fn(() => ({}));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/person", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/person", () => ({
     __esModule: true,
     default: personConstructor,
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/marriage", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/marriage", () => ({
     __esModule: true,
     default: jest.fn(() => ({})),
 }));
 
-const { default: Update } = await import("resources/js/modules/custom/chart-updater");
+const { default: Update } = await import("resources/js/modules/chart-updater");
 
 const flushPromises = () =>
     new Promise((resolve) => {

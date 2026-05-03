@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../../d3.js";
+import * as d3 from "../d3.js";
 import { appendArc } from "./arc.js";
 import { createPersonArcGenerator } from "./arc-factory.js";
 import TooltipRenderer from "./tooltip-renderer.js";

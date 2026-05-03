@@ -63,7 +63,7 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
     truncateToFit: jest.fn((tspan) => tspan.text()),
 }));
 
-const { default: Text } = await import("resources/js/modules/custom/svg/text");
+const { default: Text } = await import("resources/js/modules/svg/text");
 
 const createConfiguration = (overrides = {}) => ({
     numberOfInnerCircles: 2,

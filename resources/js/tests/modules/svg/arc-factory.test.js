@@ -15,7 +15,7 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
 }));
 
 const { createPersonArcGenerator, createMarriageArcGenerator } = await import(
-    "resources/js/modules/custom/svg/arc-factory"
+    "resources/js/modules/svg/arc-factory"
 );
 
 const mockGeometry = {

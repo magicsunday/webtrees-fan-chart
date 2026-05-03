@@ -60,7 +60,7 @@ Version: <%= pkg.version %>`
 
     // fan-chart-page.js (Storage + page initialisation)
     {
-        input: "resources/js/modules/custom/page-entry.js",
+        input: "resources/js/modules/page-entry.js",
         output: [
             {
                 name: "WebtreesFanChart",
@@ -73,7 +73,7 @@ Version: <%= pkg.version %>`
         ]
     },
     {
-        input: "resources/js/modules/custom/page-entry.js",
+        input: "resources/js/modules/page-entry.js",
         output: [
             {
                 name: "WebtreesFanChart",

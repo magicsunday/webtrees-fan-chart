@@ -4,7 +4,7 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
 }));
 
-const { appendArc } = await import("resources/js/modules/custom/svg/arc");
+const { appendArc } = await import("resources/js/modules/svg/arc");
 
 const createParentSelection = (isNew = false) => {
     const styles = {};

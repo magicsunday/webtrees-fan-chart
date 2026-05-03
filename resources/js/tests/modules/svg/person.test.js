@@ -31,19 +31,19 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
 
 const textCreateLabels = jest.fn();
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/text", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/text", () => ({
     __esModule: true,
     default: class {
         createLabels = textCreateLabels;
     },
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/arc", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/arc", () => ({
     __esModule: true,
     appendArc() {},
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/geometry", () => ({
     __esModule: true,
     MATH_DEG2RAD: Math.PI / 180,
     MATH_RAD2DEG: 180 / Math.PI,
@@ -66,7 +66,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
     },
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/label-renderer", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/label-renderer", () => ({
     __esModule: true,
     default: class {
         addLabel() {
@@ -75,7 +75,7 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/label-renderer",
     },
 }));
 
-const { default: Person } = await import("resources/js/modules/custom/svg/person");
+const { default: Person } = await import("resources/js/modules/svg/person");
 
 afterEach(() => {
     jest.clearAllMocks();

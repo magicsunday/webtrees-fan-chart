@@ -3,14 +3,14 @@ import { jest } from "@jest/globals";
 const SEX_MALE = "M";
 const SEX_FEMALE = "F";
 
-await jest.unstable_mockModule("resources/js/modules/custom/hierarchy", () => ({
+await jest.unstable_mockModule("resources/js/modules/hierarchy", () => ({
     __esModule: true,
     SEX_MALE,
     SEX_FEMALE,
     default: jest.fn(),
 }));
 
-const { default: Gradient } = await import("resources/js/modules/custom/gradient");
+const { default: Gradient } = await import("resources/js/modules/gradient");
 
 const createDefsContext = () => {
     const gradientAttrCalls = [];

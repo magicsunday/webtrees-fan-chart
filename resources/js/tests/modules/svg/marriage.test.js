@@ -14,14 +14,14 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     select: jest.fn(),
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/arc", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/arc", () => ({
     __esModule: true,
     appendArc(parent) {
         parent.append("g").attr("class", "arc").append("path");
     },
 }));
 
-await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () => ({
+await jest.unstable_mockModule("resources/js/modules/svg/geometry", () => ({
     __esModule: true,
     MATH_DEG2RAD: Math.PI / 180,
     MATH_RAD2DEG: 180 / Math.PI,
@@ -57,8 +57,8 @@ await jest.unstable_mockModule("resources/js/modules/custom/svg/geometry", () =>
     },
 }));
 
-const { default: Marriage } = await import("resources/js/modules/custom/svg/marriage");
-const { default: Geometry } = await import("resources/js/modules/custom/svg/geometry");
+const { default: Marriage } = await import("resources/js/modules/svg/marriage");
+const { default: Geometry } = await import("resources/js/modules/svg/geometry");
 
 const createSvgStub = () => ({
     defs: {

@@ -5,7 +5,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../d3.js";
+import * as d3 from "./d3.js";
 import Hierarchy from "./hierarchy.js";
 import { ChartOverlay } from "@magicsunday/webtrees-chart-lib";
 import Svg from "./svg.js";

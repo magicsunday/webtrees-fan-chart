@@ -40,7 +40,7 @@ class DataFacade
     /**
      * Angular gap in degrees between the ancestor fan and the descendant
      * sector, applied on both sides. Must match DESCENDANT_GAP_DEG in
-     * resources/js/modules/custom/hierarchy.js.
+     * resources/js/modules/hierarchy.js.
      */
     private const int DESCENDANT_GAP_DEG = 10;
 

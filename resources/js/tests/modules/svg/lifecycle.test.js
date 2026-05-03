@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@jest/globals";
-import { classifyElement, fadeIfUpdating } from "resources/js/modules/custom/svg/lifecycle";
+import { classifyElement, fadeIfUpdating } from "resources/js/modules/svg/lifecycle";
 
 function createMockElement(classes = {}) {
     const classMap = { new: false, update: false, remove: false, ...classes };

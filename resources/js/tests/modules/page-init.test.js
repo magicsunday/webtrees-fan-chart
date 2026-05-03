@@ -21,7 +21,7 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
     }),
 }));
 
-const { initPage } = await import("resources/js/modules/custom/page-init.js");
+const { initPage } = await import("resources/js/modules/page-init.js");
 
 function setupDom(overrides = {}) {
     document.body.innerHTML = `

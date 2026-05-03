@@ -1,4 +1,4 @@
-import Configuration from "resources/js/modules/custom/configuration";
+import Configuration from "resources/js/modules/configuration";
 
 describe("Configuration", () => {
     const labels = { zoom: "Zoom hint", move: "Move hint", 0: "Self", 1: "Parents" };

@@ -30,9 +30,7 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     scaleLinear: scaleLinearMock,
 }));
 
-const { default: Geometry, MATH_DEG2RAD } = await import(
-    "resources/js/modules/custom/svg/geometry"
-);
+const { default: Geometry, MATH_DEG2RAD } = await import("resources/js/modules/svg/geometry");
 
 describe("Geometry", () => {
     const createConfiguration = (overrides = {}) => ({

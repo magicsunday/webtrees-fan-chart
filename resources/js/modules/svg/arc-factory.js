@@ -5,7 +5,7 @@
  * LICENSE file distributed with this source code.
  */
 
-import * as d3 from "../../d3.js";
+import * as d3 from "../d3.js";
 
 /**
  * Creates a d3.arc() generator configured for a person arc segment using
