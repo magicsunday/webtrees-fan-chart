@@ -209,7 +209,7 @@ div.tooltip {
     height: auto;
     padding: 15px 15px;
     font: 12px sans-serif;
-    background: var(--bs-secondary-bg, rgb(240, 240, 240));
+    background: var(--bs-tertiary-bg, rgb(240, 240, 240));
     border: 2px solid var(--bs-border-color, rgb(127, 127, 127));
     border-radius: 10px;
     pointer-events: none;

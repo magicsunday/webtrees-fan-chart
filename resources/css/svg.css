@@ -16,7 +16,7 @@
 }
 
 .webtrees-fan-chart-container svg g.person g.arc path {
-    fill: var(--bs-tertiary-bg, rgb(235, 235, 235));
+    fill: var(--bs-secondary-bg, rgb(235, 235, 235));
     stroke: none;
 }
 
@@ -26,7 +26,7 @@
 }
 
 .webtrees-fan-chart-container svg g.marriage.empty g.arc path {
-    fill: var(--bs-tertiary-bg, rgb(235, 235, 235));
+    fill: var(--bs-secondary-bg, rgb(235, 235, 235));
 }
 
 .webtrees-fan-chart-container svg g.person.available g.arc path,
