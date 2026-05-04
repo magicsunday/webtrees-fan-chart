@@ -22,6 +22,7 @@ This repository hosts the webtrees fan chart module — an interactive SVG fan c
 - Translations: `make lang` (compile .po → .mo). All 24 locale files must have non-empty `msgstr` entries.
 - Keep PHPStan, PHPCS, and CPD clean on affected code; add PHPUnit attribute-based coverage (positive and negative cases) for every class/method introduced or modified.
 - If `node_modules` has permission issues (from node container), clean via: `docker compose run --rm buildbox-root bash -c "rm -rf app/vendor/magicsunday/webtrees-fan-chart/node_modules"`.
+- **Typecheck scope is intentionally limited to production sources** (`jsconfig.json` includes only `resources/js/modules/**/*.js`). Tests under `resources/js/tests/**` are validated by jest at runtime but skipped by `tsc --noEmit` because the partial mock objects required to isolate units would otherwise produce dozens of structural-incompatibility errors against the real `Configuration` / `Selection` shapes. The strict-typecheck gate applies to shipped code; test scaffolding stays loose.
 
 ## Architecture
 
