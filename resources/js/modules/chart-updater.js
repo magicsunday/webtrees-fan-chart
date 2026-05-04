@@ -136,6 +136,14 @@ export default class ChartUpdater {
                     .classed("update", false)
                     .classed("remove", false);
 
+                // Re-sync the family-colors class with the current
+                // configuration. The successful path sets it before the
+                // transition; if the fetch fails between a config toggle
+                // and the next successful recenter, the visual would
+                // otherwise stay in the previous mode until the next
+                // successful update.
+                this._svg.visual.classed("family-colors", this._configuration.showFamilyColors);
+
                 // Restore interactivity via the once-guarded callback
                 onceCallback();
             });
@@ -261,7 +269,11 @@ export default class ChartUpdater {
             (datum) => datum.children && datum.depth < configuration.generations - 1,
         );
 
-        // Flag all marriage elements which are subject to change (same pattern as persons)
+        // Flag existing marriage elements that are subject to change.
+        // Unlike _classifyPersonElements this is an update-only pass —
+        // marriage groups are pre-created during the initial draw and
+        // never enter/exit on a re-center; new descendant marriages are
+        // appended separately via redrawOverlayLayers().
         svg.selectAll("g.marriage:not(.descendant)")
             .data(marriageNodes, (/** @type {any} */ datum) => datum.id)
             .each((datum, i, nodes) => {

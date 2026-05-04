@@ -359,10 +359,15 @@ class SvgStub {
         this.personById = new Map(persons.map((person) => [person.id, person]));
         this.eventLog = [];
         this.div = { property: jest.fn() };
+        // jest.fn so chart-updater tests can assert that the
+        // family-colors class is (re-)applied on every recenter.
+        this.visualClassedCalls = [];
+        const stub = this;
         this.visual = {
-            classed: function () {
+            classed: jest.fn(function (name, value) {
+                stub.visualClassedCalls.push({ name, value });
                 return this;
-            },
+            }),
         };
         this.defs = {
             get: () => ({
@@ -591,6 +596,43 @@ describe("Update", () => {
         expect(document.querySelector(".wt-page-title").innerHTML).toBe(titleHtml);
         expect(document.title).toBe("Updated");
         expect(hierarchy.initCalls[0]).toEqual(createNodes());
+    });
+
+    test("toggles family-colors class on visual on every successful recenter", async () => {
+        const svg = createSvgWithPersons(["1"]);
+        const hierarchy = new HierarchyStub();
+        const configuration = defaultConfiguration({ showFamilyColors: true });
+        const update = new Update(svg, configuration, hierarchy);
+
+        jsonMock.mockResolvedValueOnce({ data: createNodes() });
+        update.update("/update", jest.fn(), jest.fn());
+        await flushPromises();
+
+        expect(svg.visualClassedCalls).toContainEqual({
+            name: "family-colors",
+            value: true,
+        });
+    });
+
+    test("re-syncs family-colors class on visual after a fetch failure", async () => {
+        const svg = createSvgWithPersons(["1"]);
+        const hierarchy = new HierarchyStub();
+        const configuration = defaultConfiguration({ showFamilyColors: true });
+        const update = new Update(svg, configuration, hierarchy);
+
+        jsonMock.mockRejectedValueOnce(new Error("network down"));
+        // Silence the expected console.error noise from the catch branch.
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+        update.update("/update", jest.fn(), jest.fn());
+        await flushPromises();
+
+        expect(svg.visualClassedCalls).toContainEqual({
+            name: "family-colors",
+            value: true,
+        });
+
+        errorSpy.mockRestore();
     });
 
     test("assigns classes based on data and applies transition styles", async () => {
