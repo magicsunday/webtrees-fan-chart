@@ -3,6 +3,10 @@
     min-height: 50dvh;
 }
 
+/* Slight global saturation boost on the sex/family-color arcs so the
+   pastel fills read more clearly without changing the configured
+   palette. Intentionally not scoped to .family-colors — the boost
+   helps the same arcs in the regular sex-only mode too. */
 .webtrees-fan-chart-container svg g.person g.color path {
     filter: saturate(1.25);
 }
@@ -104,6 +108,14 @@
     fill: rgb(90, 90, 90);
 }
 
+/* Two intentional .wt-chart-box-name-alt rules for family-colors mode:
+   the grouped rule above pins the centre-tile alt name to the body-text
+   colour (50,50,50) so it pairs with the main name; this one lowers the
+   alt name back to the muted tertiary tone (127,127,127) only when it
+   appears inside g.name (the per-arc labels), matching the regular-mode
+   alt-name fill defined above at line 60. Source order + specificity
+   means the more-specific g.name selector wins for arc labels and the
+   first rule wins for the centre tile. */
 .webtrees-fan-chart-container svg g.family-colors g.name .wt-chart-box-name-alt {
     fill: rgb(127, 127, 127);
 }
