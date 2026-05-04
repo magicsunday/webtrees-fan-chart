@@ -99,6 +99,8 @@ export default class ChartUpdater {
                     this._hierarchy.applyFamilyColors(familyColor);
                 }
 
+                this._svg.visual.classed("family-colors", this._configuration.showFamilyColors);
+
                 // Note: descendant marriage arcs are handled in drawDescendantMarriageArcs()
                 // via redrawOverlayLayers(), using the same enter/exit/update pattern.
                 this._classifyPersonElements();

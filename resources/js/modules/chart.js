@@ -208,6 +208,11 @@ export default class Chart {
             this._hierarchy.applyFamilyColors(familyColor);
         }
 
+        // Mark family-colors mode so svg.css can keep text dark on the
+        // theme-constant pastel arc backgrounds (otherwise dark-theme
+        // body-color renders white text on the pastel fills).
+        this._svg.visual.classed("family-colors", this._configuration.showFamilyColors);
+
         personGroup
             .selectAll("g.person")
             .data(this._hierarchy.nodes, (datum) => datum.id)

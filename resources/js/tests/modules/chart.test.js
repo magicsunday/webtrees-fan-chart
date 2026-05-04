@@ -69,6 +69,9 @@ class MockSvg {
         this.configuration = configuration;
         this.personGroup = new PersonGroupSelection();
         this.visual = {
+            classed: function () {
+                return this;
+            },
             node: () => ({
                 getBBox: () => svgBoundingBox,
             }),

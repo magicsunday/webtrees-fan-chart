@@ -3,6 +3,10 @@
     min-height: 50dvh;
 }
 
+.webtrees-fan-chart-container svg g.person g.color path {
+    filter: saturate(1.25);
+}
+
 .webtrees-fan-chart-container svg g.person g.color path.female {
     fill: var(--sex-f-bg, rgb(233, 218, 241));
 }
@@ -82,4 +86,28 @@
 
 .webtrees-fan-chart-container svg .wt-chart-box-name-alt {
     fill: var(--bs-body-color, rgb(50, 50, 50));
+}
+
+/*
+ * Family-colors mode renders pastel sex/family fills on the arcs that
+ * do not adapt to the active Bootstrap theme. Pin text and separator
+ * colors to fixed values so labels stay legible against the pastels in
+ * dark themes (where --bs-body-color flips to white otherwise).
+ */
+.webtrees-fan-chart-container svg g.family-colors .wt-chart-box-name,
+.webtrees-fan-chart-container svg g.family-colors .wt-chart-box-name-alt,
+.webtrees-fan-chart-container svg g.family-colors g.name .date {
+    fill: rgb(50, 50, 50);
+}
+
+.webtrees-fan-chart-container svg g.family-colors g.name .place {
+    fill: rgb(90, 90, 90);
+}
+
+.webtrees-fan-chart-container svg g.family-colors g.name .wt-chart-box-name-alt {
+    fill: rgb(127, 127, 127);
+}
+
+.webtrees-fan-chart-container svg g.family-colors g.separatorGroup line {
+    stroke: rgb(225, 225, 225);
 }
