@@ -64,7 +64,7 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
 
     public const string CUSTOM_AUTHOR = 'Rico Sonntag';
 
-    public const string CUSTOM_VERSION = '3.5.2-dev';
+    public const string CUSTOM_VERSION = '3.6.0';
 
     public const string CUSTOM_SUPPORT_URL = 'https://github.com/' . self::GITHUB_REPO . '/issues';
 
