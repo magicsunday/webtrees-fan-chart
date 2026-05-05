@@ -609,7 +609,6 @@ class Configuration
             'hideEmptySegments'       => $this->getHideEmptySegments() ? '1' : '0',
             'showFamilyColors'        => $this->getShowFamilyColors() ? '1' : '0',
             'showPlaces'              => $this->getShowPlaces() ? '1' : '0',
-            'placeParts'              => $this->getPlaceParts(),
             'showParentMarriageDates' => $this->getShowParentMarriageDates() ? '1' : '0',
             'showImages'              => $this->getShowImages() ? '1' : '0',
             'showNames'               => $this->getShowNames() ? '1' : '0',
@@ -617,7 +616,6 @@ class Configuration
             'innerArcs'               => $this->getInnerArcs(),
             'paternalColor'           => $this->getPaternalColor(),
             'maternalColor'           => $this->getMaternalColor(),
-            'detailedDateGenerations' => $this->getDetailedDateGenerations(),
             'showDescendants'         => $this->getShowDescendants() ? '1' : '0',
         ];
     }

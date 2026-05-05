@@ -119,7 +119,6 @@ final class ConfigurationTest extends TestCase
                 'hideEmptySegments',
                 'showFamilyColors',
                 'showPlaces',
-                'placeParts',
                 'showParentMarriageDates',
                 'showImages',
                 'showNames',
@@ -127,7 +126,6 @@ final class ConfigurationTest extends TestCase
                 'innerArcs',
                 'paternalColor',
                 'maternalColor',
-                'detailedDateGenerations',
                 'showDescendants',
             ],
             array_keys($configuration->getRouteToggleParams())

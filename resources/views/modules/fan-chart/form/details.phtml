@@ -31,17 +31,8 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         ]);
 ?>
         <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
-            <?php echo I18N::translate('Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below.'); ?>
+            <?php echo I18N::translate('Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings.'); ?>
         </small>
-        <div class="ps-4 mt-2">
-            <?php echo view('components/select', [
-                'name'     => 'placeParts',
-                'selected' => $configuration->getPlaceParts(),
-                'options'  => $configuration->getPlacePartsList(),
-                'class'    => 'form-control-sm',
-            ]);
-?>
-        </div>
 
         <div class="mt-3">
             <?php echo view($moduleName . '::modules/components/checkbox', [
@@ -54,10 +45,6 @@ use MagicSunday\Webtrees\FanChart\Configuration;
             <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
                 <?php echo I18N::translate('Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners.'); ?>
             </small>
-        </div>
-
-        <div class="mt-3">
-            <?php echo view($moduleName . '::modules/fan-chart/form/date-precision', ['moduleName' => $moduleName, 'configuration' => $configuration]); ?>
         </div>
     </div>
 </div>
