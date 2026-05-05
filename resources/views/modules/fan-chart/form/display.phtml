@@ -81,19 +81,6 @@ if ($showNames && $showImages) {
             ]);
 ?>
         </div>
-
-        <div class="mt-3">
-            <?php echo view($moduleName . '::modules/components/checkbox', [
-                'name'      => 'showNicknames',
-                'label'     => I18N::translate('Show nicknames in display names'),
-                'checked'   => $configuration->getShowNicknames(),
-                'unchecked' => '0',
-            ]);
-?>
-            <small class="ps-4 form-text text-muted form-element-description" style="box-decoration-break: clone;">
-                <?php echo I18N::translate('Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin "Chalky" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field.'); ?>
-            </small>
-        </div>
     </div>
 </div>
 
