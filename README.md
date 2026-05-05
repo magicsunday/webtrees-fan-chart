@@ -29,6 +29,10 @@ dates, places, and images.
 Requires **webtrees 2.2** and **PHP 8.3** or later.
 
 ### Manual installation
+
+> [!IMPORTANT]
+> **If a previous version of this module is already installed:** delete the entire `modules_v4/webtrees-fan-chart` folder *before* extracting the new ZIP. Extracting on top of an existing folder leaves stale files behind that can clash with the new release — a common cause of `Interface … not found` errors right after an update.
+
 1. Download the [latest release](https://github.com/magicsunday/webtrees-fan-chart/releases/latest) (the `.zip` file).
 2. Upload the `.zip` file to your web server.
 3. Unzip the package into your `modules_v4` directory.
