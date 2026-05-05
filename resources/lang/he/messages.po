@@ -45,23 +45,23 @@ msgstr ""
 
 #: resources/views/modules/components/buttonbar/center-button.phtml:18
 msgid "Re center"
-msgstr ""
+msgstr "מרכז מחדש"
 
 #: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
 msgid "Switch between full screen mode and normal view"
-msgstr ""
+msgstr "החלף בין מסך מלא לתצוגה רגילה"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:17
 msgid "Show help"
-msgstr ""
+msgstr "הצג עזרה"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
-msgstr ""
+msgstr "ייצא כ-PNG"
 
 #: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
 msgid "Export as SVG"
-msgstr ""
+msgstr "ייצא כ-SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
@@ -73,27 +73,27 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "General"
-msgstr ""
+msgstr "כללי"
 
 #: resources/views/modules/fan-chart/config.phtml:56
 msgid "Hide the SVG export button"
-msgstr ""
+msgstr "הסתר את כפתור ייצוא SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
-msgstr ""
+msgstr "הסתר את כפתור ייצוא PNG"
 
 #: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
-msgstr ""
+msgstr "שמור"
 
 #: resources/views/modules/fan-chart/config.phtml:84
 msgid "cancel"
-msgstr ""
+msgstr "בטל"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
-msgstr ""
+msgstr "גודל מאוורר"
 
 #: resources/views/modules/fan-chart/form/font-size.phtml:22
 msgid "Font size"
@@ -101,11 +101,11 @@ msgstr "גודל גופן"
 
 #: resources/views/modules/fan-chart/form/generations.phtml:22
 msgid "Generations"
-msgstr ""
+msgstr "דורות"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:22
 msgid "Number of inner levels"
-msgstr ""
+msgstr "מספר הרמות הפנימיות"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
@@ -114,11 +114,11 @@ msgstr "מציין את מספר הרמות שבהן הטקסט נכתב לאו�
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
-msgstr ""
+msgstr "מבנה"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
-msgstr ""
+msgstr "הסתר פלחים ריקים"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
 msgid "Show family colors"
@@ -160,26 +160,26 @@ msgstr "שלוש הרמות הנמוכות ביותר"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
-msgstr ""
+msgstr "הצג תאריכי נישואי הורים"
 
 msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
 msgstr "מציג את תאריך הנישואין של כל זוג בקשת צרה בין הדורות. כאשר צאצאים מופעלים, מציג גם את תאריך הנישואין בין האדם המרכזי לבני זוגו."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr ""
+msgstr "אדם"
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr ""
+msgstr "הראה"
 
 #: resources/views/modules/fan-chart/page.phtml:79
 msgid "Show more options"
-msgstr ""
+msgstr "הצג אפשרויות נוספות"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
-msgstr ""
+msgstr "הסתר אפשרויות נוספות"
 
 msgid "Right-click"
 msgstr "לחיצה ימנית"
@@ -274,3 +274,12 @@ msgstr "הצג כינויים בשמות המוצגים"
 #: resources/views/modules/fan-chart/form/display.phtml
 msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
 msgstr "מוסיף את ערך ה־GEDCOM NICK בתוך מירכאות בין השמות הפרטיים לשם המשפחה (למשל Martin \"Chalky\" White). משחזר את התנהגות webtrees הישנה עבור עצים השומרים כינויים בשדה GEDCOM NICK הנפרד."
+
+msgid "Place detail"
+msgstr "פירוט מקום"
+
+msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
+msgstr "איזה חלק מההיררכיה של כל מקום מוצג בקשתות התרשים (שם מלא או רק 1–3 הרמות הנמוכות ביותר). משתמשים מפעילים/מכבים את הצגת המקום בטופס התרשים."
+
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
+msgstr "מציג מקומות לידה ופטירה בקשתות התרשים כשיש מקום. עבור צאצאים עם ילדים רבים, המקומות מוסתרים אוטומטית. רמת הפירוט ודיוק התאריך מוגדרים לכלל האתר בהגדרות המודול."

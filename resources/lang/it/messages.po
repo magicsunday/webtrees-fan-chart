@@ -72,15 +72,15 @@ msgstr "Moduli"
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "General"
-msgstr ""
+msgstr "Impostazioni generali"
 
 #: resources/views/modules/fan-chart/config.phtml:56
 msgid "Hide the SVG export button"
-msgstr ""
+msgstr "Nascondi il pulsante di esportazione SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
-msgstr ""
+msgstr "Nascondi il pulsante di esportazione PNG"
 
 #: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
@@ -276,3 +276,12 @@ msgstr "Mostra soprannomi nei nomi visualizzati"
 #: resources/views/modules/fan-chart/form/display.phtml
 msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
 msgstr "Inserisce il valore GEDCOM NICK tra virgolette fra i nomi e il cognome (es. Martin \"Chalky\" White). Riproduce il comportamento storico di webtrees per alberi che memorizzano i soprannomi nel campo GEDCOM NICK separato."
+
+msgid "Place detail"
+msgstr "Dettaglio del luogo"
+
+msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
+msgstr "Quanta gerarchia di luogo viene mostrata negli archi del grafico (nome completo o solo i 1–3 livelli più bassi). Gli utenti attivano/disattivano la visualizzazione dei luoghi nel modulo del grafico."
+
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
+msgstr "Mostra i luoghi di nascita e morte negli archi del grafico dove lo spazio lo consente. Per discendenti con molti figli i luoghi vengono soppressi automaticamente. Il livello di dettaglio e la precisione della data sono configurati a livello di sito nelle impostazioni del modulo."

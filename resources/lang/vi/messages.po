@@ -27,7 +27,7 @@ msgstr "Biểu đồ cá nhân Tổ tiên"
 #: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
 #, php-format
 msgid "Fan chart of %s"
-msgstr ""
+msgstr "Biểu đồ hình quạt của %s"
 
 #: src/Module.php:260
 msgid "Use Ctrl + scroll to zoom in the view"
@@ -48,11 +48,11 @@ msgstr "Chỉnh biểu đồ về giữa màn hình"
 
 #: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
 msgid "Switch between full screen mode and normal view"
-msgstr ""
+msgstr "Chuyển giữa toàn màn hình và xem bình thường"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:17
 msgid "Show help"
-msgstr ""
+msgstr "Hiển thị trợ giúp"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -72,23 +72,23 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "General"
-msgstr ""
+msgstr "Tổng quát"
 
 #: resources/views/modules/fan-chart/config.phtml:56
 msgid "Hide the SVG export button"
-msgstr ""
+msgstr "Ẩn nút xuất SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
-msgstr ""
+msgstr "Ẩn nút xuất PNG"
 
 #: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
-msgstr ""
+msgstr "lưu"
 
 #: resources/views/modules/fan-chart/config.phtml:84
 msgid "cancel"
-msgstr ""
+msgstr "Hủy bỏ"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
@@ -113,7 +113,7 @@ msgstr "Cấp độ trong đó văn bản được viết dọc theo một vòng
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
-msgstr ""
+msgstr "Trình bày"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
@@ -159,7 +159,7 @@ msgstr "Ba cấp thấp nhất"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
-msgstr ""
+msgstr "Hiển thị ngày kết hôn của cha mẹ"
 
 msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
 msgstr "Hiển thị ngày kết hôn của mỗi cặp vợ chồng trong một cung hẹp giữa các thế hệ. Khi con cháu được bật, cũng hiển thị ngày kết hôn giữa người trung tâm và vợ/chồng của họ."
@@ -174,11 +174,11 @@ msgstr "Xem biểu đồ"
 
 #: resources/views/modules/fan-chart/page.phtml:79
 msgid "Show more options"
-msgstr ""
+msgstr "Hiển thị thêm tùy chọn"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
-msgstr ""
+msgstr "Ẩn thêm tùy chọn"
 
 #~ msgid "Presentation"
 #~ msgstr "Hình thức trình bày"
@@ -276,3 +276,12 @@ msgstr "Hiển thị biệt danh trong tên hiển thị"
 #: resources/views/modules/fan-chart/form/display.phtml
 msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
 msgstr "Chèn giá trị GEDCOM NICK trong dấu ngoặc kép giữa các tên đệm và họ (ví dụ Martin \"Chalky\" White). Tái hiện hành vi webtrees cũ cho cây gia phả lưu biệt danh trong trường GEDCOM NICK riêng."
+
+msgid "Place detail"
+msgstr "Chi tiết địa điểm"
+
+msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
+msgstr "Bao nhiêu phần của mỗi cấu trúc địa điểm được hiển thị trong các cung biểu đồ (tên đầy đủ hoặc chỉ 1–3 cấp thấp nhất). Người dùng bật/tắt hiển thị địa điểm trong biểu mẫu biểu đồ."
+
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
+msgstr "Hiển thị nơi sinh và nơi mất trong các cung biểu đồ khi đủ chỗ. Đối với hậu duệ có nhiều con, địa điểm tự động bị ẩn. Mức chi tiết và độ chính xác của ngày được cấu hình toàn trang trong cài đặt mô-đun."

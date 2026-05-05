@@ -18,11 +18,11 @@ msgstr ""
 
 #: src/Module.php:127 src/Module.php:243
 msgid "Fan chart"
-msgstr ""
+msgstr "扇形图"
 
 #: src/Module.php:137
 msgid "A fan chart of an individual’s ancestors."
-msgstr ""
+msgstr "一种以扇形样式显示个人祖先的图表。"
 
 #: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
 #, php-format
@@ -44,23 +44,23 @@ msgstr ""
 
 #: resources/views/modules/components/buttonbar/center-button.phtml:18
 msgid "Re center"
-msgstr ""
+msgstr "重新居中"
 
 #: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
 msgid "Switch between full screen mode and normal view"
-msgstr ""
+msgstr "切换全屏与普通视图"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:17
 msgid "Show help"
-msgstr ""
+msgstr "显示帮助"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
-msgstr ""
+msgstr "导出为 PNG"
 
 #: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
 msgid "Export as SVG"
-msgstr ""
+msgstr "导出为 SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
@@ -72,27 +72,27 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "General"
-msgstr ""
+msgstr "常规"
 
 #: resources/views/modules/fan-chart/config.phtml:56
 msgid "Hide the SVG export button"
-msgstr ""
+msgstr "隐藏 SVG 导出按钮"
 
 #: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
-msgstr ""
+msgstr "隐藏 PNG 导出按钮"
 
 #: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
-msgstr ""
+msgstr "保存"
 
 #: resources/views/modules/fan-chart/config.phtml:84
 msgid "cancel"
-msgstr ""
+msgstr "取消"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
-msgstr ""
+msgstr "扇形大小"
 
 #: resources/views/modules/fan-chart/form/font-size.phtml:22
 msgid "Font size"
@@ -104,7 +104,7 @@ msgstr "代"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:22
 msgid "Number of inner levels"
-msgstr ""
+msgstr "内圈级数"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
@@ -113,7 +113,7 @@ msgstr "指定沿弧线书写文本的层数。后代弧线会根据可用空间
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
-msgstr ""
+msgstr "布局"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
@@ -157,7 +157,7 @@ msgstr "最低三个层级"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
-msgstr ""
+msgstr "显示父母结婚日期"
 
 msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
 msgstr "在世代之间的窄弧中显示每对夫妇的结婚日期。启用后代时，还会显示中心人物与其配偶之间的结婚日期。"
@@ -172,11 +172,11 @@ msgstr "查看"
 
 #: resources/views/modules/fan-chart/page.phtml:79
 msgid "Show more options"
-msgstr ""
+msgstr "显示更多选项"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
-msgstr ""
+msgstr "隐藏更多选项"
 
 #~ msgid "reset"
 #~ msgstr "重置"
@@ -274,3 +274,12 @@ msgstr "在显示名中显示昵称"
 #: resources/views/modules/fan-chart/form/display.phtml
 msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
 msgstr "将 GEDCOM NICK 字段的值用引号插入在名字与姓氏之间（例如 Martin \"Chalky\" White）。模拟旧版 webtrees 的行为，适用于在单独的 GEDCOM NICK 字段中保存昵称的家谱。"
+
+msgid "Place detail"
+msgstr "地点详情"
+
+msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
+msgstr "每个地点层级在图表弧线中的显示量（完整名称，或仅最低 1–3 级）。用户在图表表单中切换地点显示。"
+
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
+msgstr "在空间允许的弧线段中显示出生和死亡地点。对于子女较多的后代，地点会自动隐藏。详细程度与日期精度由模块设置在站点级别配置。"

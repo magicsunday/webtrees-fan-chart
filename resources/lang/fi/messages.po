@@ -22,7 +22,7 @@ msgstr "Esipolvi-viuhkakaavio"
 
 #: src/Module.php:137
 msgid "A fan chart of an individual’s ancestors."
-msgstr ""
+msgstr "Viuhkakaavio henkilön esi-isistä."
 
 #: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
 #, php-format
@@ -44,23 +44,23 @@ msgstr ""
 
 #: resources/views/modules/components/buttonbar/center-button.phtml:18
 msgid "Re center"
-msgstr ""
+msgstr "Keskitä uudelleen"
 
 #: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
 msgid "Switch between full screen mode and normal view"
-msgstr ""
+msgstr "Vaihda kokoruudun ja normaalinäkymän välillä"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:17
 msgid "Show help"
-msgstr ""
+msgstr "Näytä ohje"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
-msgstr ""
+msgstr "Vie PNG-muodossa"
 
 #: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
 msgid "Export as SVG"
-msgstr ""
+msgstr "Vie SVG-muodossa"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
@@ -72,27 +72,27 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "General"
-msgstr ""
+msgstr "Yleinen"
 
 #: resources/views/modules/fan-chart/config.phtml:56
 msgid "Hide the SVG export button"
-msgstr ""
+msgstr "Piilota SVG-vientipainike"
 
 #: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
-msgstr ""
+msgstr "Piilota PNG-vientipainike"
 
 #: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
-msgstr ""
+msgstr "tallenna"
 
 #: resources/views/modules/fan-chart/config.phtml:84
 msgid "cancel"
-msgstr ""
+msgstr "peruuta"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
-msgstr ""
+msgstr "Viuhkan koko"
 
 #: resources/views/modules/fan-chart/form/font-size.phtml:22
 msgid "Font size"
@@ -100,11 +100,11 @@ msgstr "Fonttikoko"
 
 #: resources/views/modules/fan-chart/form/generations.phtml:22
 msgid "Generations"
-msgstr ""
+msgstr "Sukupolvet"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:22
 msgid "Number of inner levels"
-msgstr ""
+msgstr "Sisempien tasojen lukumäärä"
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:35
 msgid ""
@@ -113,11 +113,11 @@ msgstr "Määrittää tasojen lukumäärän, joilla teksti kirjoitetaan kaarta p
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
-msgstr ""
+msgstr "Näkymä"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
-msgstr ""
+msgstr "Piilota tyhjät segmentit"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:39
 msgid "Show family colors"
@@ -159,26 +159,26 @@ msgstr "Kolme alinta tasoa"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:62
 msgid "Show parent marriage dates"
-msgstr ""
+msgstr "Näytä vanhempien vihkipäivät"
 
 msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
 msgstr "Näyttää jokaisen pariskunnan vihkimispäivän kapeassa kaaressa sukupolvien välissä. Kun jälkeläiset ovat käytössä, näyttää myös keskihenkilön ja hänen puolisoidensa vihkimispäivän."
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr ""
+msgstr "Henkilö"
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr ""
+msgstr "näytä"
 
 #: resources/views/modules/fan-chart/page.phtml:79
 msgid "Show more options"
-msgstr ""
+msgstr "Näytä lisävaihtoehdot"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
-msgstr ""
+msgstr "Piilota lisävaihtoehdot"
 
 msgid "Right-click"
 msgstr "Napsauta hiiren oikealla painikkeella"
@@ -273,3 +273,12 @@ msgstr "Näytä lempinimet näyttönimissä"
 #: resources/views/modules/fan-chart/form/display.phtml
 msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
 msgstr "Lisää GEDCOM NICK -arvon lainausmerkeissä etunimien ja sukunimen väliin (esim. Martin \"Chalky\" White). Toistaa vanhan webtrees-käyttäytymisen sukupuille, joissa lempinimet on tallennettu erilliseen GEDCOM NICK -kenttään."
+
+msgid "Place detail"
+msgstr "Paikan tarkkuus"
+
+msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
+msgstr "Kuinka paljon paikkahierarkiaa näytetään kaaviokaarilla (koko nimi tai vain 1–3 alinta tasoa). Käyttäjät vaihtavat paikan näkyvyyttä kaaviomuodossa."
+
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
+msgstr "Näyttää syntymä- ja kuolinpaikat kaaviokaarilla, kun tilaa on. Jälkeläisillä, joilla on paljon lapsia, paikat jäävät automaattisesti pois. Yksityiskohtien taso ja päivämääräntarkkuus määritetään sivuston laajuisesti moduulin asetuksissa."

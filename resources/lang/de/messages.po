@@ -276,3 +276,12 @@ msgstr "Spitznamen in den angezeigten Namen anzeigen"
 #: resources/views/modules/fan-chart/form/display.phtml
 msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
 msgstr "Fügt den GEDCOM NICK-Wert in Anführungszeichen zwischen Vornamen und Nachnamen ein (z.B. Martin \"Chalky\" White). Bildet das alte webtrees-Verhalten für Bäume nach, die Spitznamen im separaten GEDCOM NICK-Feld speichern."
+
+msgid "Place detail"
+msgstr "Ortsdetail"
+
+msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
+msgstr "Wie viel jeder Ortshierarchie in den Diagrammbögen angezeigt wird (vollständiger Name oder nur die niedrigsten 1–3 Ebenen). Anwender schalten die Anzeige der Orte im Chart-Formular ein bzw. aus."
+
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
+msgstr "Zeigt Geburts- und Sterbeorte in den Diagrammbögen, wo Platz vorhanden ist. Bei Nachkommen mit vielen Kindern werden Orte automatisch unterdrückt. Detailtiefe und Datumsgenauigkeit werden seitenweit in den Moduleinstellungen konfiguriert."

@@ -51,11 +51,11 @@ msgstr "Återcentrera"
 
 #: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
 msgid "Switch between full screen mode and normal view"
-msgstr ""
+msgstr "Växla mellan helskärm och normal vy"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:17
 msgid "Show help"
-msgstr ""
+msgstr "Visa hjälp"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -75,23 +75,23 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "General"
-msgstr ""
+msgstr "Allmän"
 
 #: resources/views/modules/fan-chart/config.phtml:56
 msgid "Hide the SVG export button"
-msgstr ""
+msgstr "Dölj SVG-exportknappen"
 
 #: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
-msgstr ""
+msgstr "Dölj PNG-exportknappen"
 
 #: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
-msgstr ""
+msgstr "spara"
 
 #: resources/views/modules/fan-chart/config.phtml:84
 msgid "cancel"
-msgstr ""
+msgstr "avbryt"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
@@ -116,7 +116,7 @@ msgstr "Specificerar antalet inre nivåer i vilken texten skrivs längs en båge
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
-msgstr ""
+msgstr "Layout"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
@@ -279,3 +279,12 @@ msgstr "Visa smeknamn i visningsnamn"
 #: resources/views/modules/fan-chart/form/display.phtml
 msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
 msgstr "Infogar GEDCOM NICK-värdet inom citattecken mellan förnamnen och efternamnet (t.ex. Martin \"Chalky\" White). Återskapar det tidigare webtrees-beteendet för träd som lagrar smeknamn i det separata GEDCOM NICK-fältet."
+
+msgid "Place detail"
+msgstr "Platsdetaljer"
+
+msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
+msgstr "Hur mycket av varje plats-hierarki som visas i diagrambågar (fullständigt namn eller bara de 1–3 lägsta nivåerna). Användarna växlar plats­visningen på/av i diagramformuläret."
+
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
+msgstr "Visar födelse- och dödsorter i diagrambågar där utrymmet räcker. För ättlingar med många barn döljs platser automatiskt. Detaljnivå och datumprecision konfigureras för hela webbplatsen i modulinställningarna."

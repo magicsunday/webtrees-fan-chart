@@ -48,11 +48,11 @@ msgstr "Re centrer"
 
 #: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
 msgid "Switch between full screen mode and normal view"
-msgstr ""
+msgstr "Basculer entre le plein écran et la vue normale"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:17
 msgid "Show help"
-msgstr ""
+msgstr "Afficher l’aide"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -72,23 +72,23 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:50
 msgid "General"
-msgstr ""
+msgstr "Général"
 
 #: resources/views/modules/fan-chart/config.phtml:56
 msgid "Hide the SVG export button"
-msgstr ""
+msgstr "Masquer le bouton d’export SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
-msgstr ""
+msgstr "Masquer le bouton d’export PNG"
 
 #: resources/views/modules/fan-chart/config.phtml:79
 msgid "save"
-msgstr ""
+msgstr "enregistrer"
 
 #: resources/views/modules/fan-chart/config.phtml:84
 msgid "cancel"
-msgstr ""
+msgstr "annuler"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:22
 msgid "Fan size"
@@ -113,7 +113,7 @@ msgstr "Spécifie le nombre de niveaux pour lesquel le texte est écrit le long 
 
 #: resources/views/modules/fan-chart/form/layout.phtml:23
 msgid "Layout"
-msgstr ""
+msgstr "Affichage"
 
 #: resources/views/modules/fan-chart/form/layout.phtml:29
 msgid "Hide empty segments"
@@ -279,3 +279,12 @@ msgstr "Afficher les surnoms dans les noms affichés"
 #: resources/views/modules/fan-chart/form/display.phtml
 msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
 msgstr "Insère la valeur GEDCOM NICK entre guillemets entre les prénoms et le nom de famille (par ex. Martin \"Chalky\" White). Reproduit l'ancien comportement de webtrees pour les arbres qui stockent les surnoms dans le champ GEDCOM NICK séparé."
+
+msgid "Place detail"
+msgstr "Détail du lieu"
+
+msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
+msgstr "Quelle part de la hiérarchie de chaque lieu est affichée dans les arcs du diagramme (nom complet ou seulement les 1 à 3 niveaux les plus bas). Les utilisateurs activent ou désactivent l’affichage des lieux dans le formulaire du diagramme."
+
+msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
+msgstr "Affiche les lieux de naissance et de décès dans les arcs du diagramme lorsque l’espace le permet. Pour les descendants ayant de nombreux enfants, les lieux sont automatiquement supprimés. Le niveau de détail et la précision de la date se configurent à l’échelle du site dans les réglages du module."
