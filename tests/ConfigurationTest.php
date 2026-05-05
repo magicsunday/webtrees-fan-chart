@@ -99,6 +99,42 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
+     * Locks the route-toggle parameter list. Forgetting to add a new toggle here
+     * is the regression that lets a freshly added form option silently fall back
+     * to module-preference defaults on click-to-recenter.
+     */
+    #[Test]
+    public function routeToggleParamsCarryEveryFormToggle(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $module  = $this->createModuleWithPreferences([]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame(
+            [
+                'generations',
+                'fanDegree',
+                'fontScale',
+                'hideEmptySegments',
+                'showFamilyColors',
+                'showPlaces',
+                'placeParts',
+                'showParentMarriageDates',
+                'showImages',
+                'showNames',
+                'showNicknames',
+                'innerArcs',
+                'paternalColor',
+                'maternalColor',
+                'detailedDateGenerations',
+                'showDescendants',
+            ],
+            array_keys($configuration->getRouteToggleParams())
+        );
+    }
+
+    /**
      * Ensures POSTed values are validated against allowed ranges and sanitised.
      */
     #[Test]

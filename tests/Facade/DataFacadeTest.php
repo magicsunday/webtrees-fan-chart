@@ -187,7 +187,10 @@ final class DataFacadeTest extends TestCase
         $data           = $rootNode->getData();
         $serializedData = $data->jsonSerialize();
         self::assertSame('I1', $serializedData['xref']);
-        self::assertSame('/route/module?module=webtrees-fan-chart&action=update&xref=I1&tree=main&generations=2&detailedDateGenerations=0&showPlaces=0&placeParts=0&showDescendants=0', $serializedData['updateUrl']);
+        // The stub Configuration returns [] for getRouteToggleParams(), so the
+        // update URL only carries module/action/xref/tree here. The toggle-
+        // forwarding contract is verified separately via the helper itself.
+        self::assertSame('/route/module?module=webtrees-fan-chart&action=update&xref=I1&tree=main', $serializedData['updateUrl']);
 
         $serialized = $rootNode->jsonSerialize();
 
