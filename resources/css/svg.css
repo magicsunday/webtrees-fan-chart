@@ -93,6 +93,16 @@
 }
 
 /*
+ * Center-node nickname line — italicised and slightly muted so it reads
+ * as a secondary identity (mirrors the pedigree-chart top/bottom style).
+ */
+.webtrees-fan-chart-container svg text.nickname {
+    fill: var(--bs-body-color, rgb(50, 50, 50));
+    font-style: italic;
+    opacity: 0.85;
+}
+
+/*
  * Family-colors mode renders pastel sex/family fills on the arcs that
  * do not adapt to the active Bootstrap theme. Pin text and separator
  * colors to fixed values so labels stay legible against the pastels in

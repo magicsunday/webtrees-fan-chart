@@ -22,6 +22,7 @@ import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees
  * @property {string}  label
  * @property {boolean} [isPreferred]
  * @property {boolean} [isLastName]
+ * @property {boolean} [isNickname]
  * @property {boolean} [isNameRtl]
  */
 
@@ -161,6 +162,15 @@ export default class Text {
         } else {
             const nameGroups = this.createNamesData(datum);
             const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+            // Center node only: lift the inline nickname out of the
+            // given-names group and render it on its own line. The
+            // truncate-drops-nickname-first heuristic that protects narrow
+            // outer arcs would otherwise wipe the nickname inside the
+            // tight central radius. Mirrors the pedigree-chart top/bottom
+            // rendering, where the nickname sits between given names and
+            // surname. Other outer arcs keep the inline placement so they
+            // don't lose their tight horizontal layout.
+            const isCenter = datum.depth === 0;
 
             nameGroups.forEach((nameGroup, index) => {
                 if (nameGroup.length === 0) {
@@ -171,6 +181,40 @@ export default class Text {
                     datum,
                     positions.get(nameSlots[index]),
                 );
+
+                if (isCenter && index === 0) {
+                    const nickIdx = nameGroup.findIndex((entry) => entry.isNickname);
+
+                    if (nickIdx !== -1) {
+                        const givenNames = nameGroup.filter((entry) => !entry.isNickname);
+                        // Strip isNickname so truncateNamesData does not
+                        // drop this dedicated line first when the center
+                        // radius is narrow — the whole point of lifting
+                        // it out is that it survives truncation.
+                        const nickEntry = { ...nameGroup[nickIdx], isNickname: false };
+
+                        if (givenNames.length > 0) {
+                            const givenText = parent
+                                .append("text")
+                                .attr("dominant-baseline", "middle");
+                            this.addNameElements(
+                                givenText,
+                                this.truncateNamesData(givenText, givenNames, availableWidth),
+                            );
+                        }
+
+                        const nickText = parent
+                            .append("text")
+                            .attr("class", "nickname")
+                            .attr("dominant-baseline", "middle");
+                        this.addNameElements(
+                            nickText,
+                            this.truncateNamesData(nickText, [nickEntry], availableWidth),
+                        );
+                        return;
+                    }
+                }
+
                 const text = parent.append("text").attr("dominant-baseline", "middle");
 
                 this.addNameElements(text, this.truncateNamesData(text, nameGroup, availableWidth));
