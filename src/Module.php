@@ -165,23 +165,8 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
                     [
                         'tree' => $tree->name(),
                         // xref identifies the individual, not a chart setting — read directly from POST body
-                        'xref'                    => Validator::parsedBody($request)->string('xref', ''),
-                        'generations'             => $this->configuration->getGenerations(),
-                        'fanDegree'               => $this->configuration->getFanDegree(),
-                        'fontScale'               => $this->configuration->getFontScale(),
-                        'hideEmptySegments'       => $this->configuration->getHideEmptySegments() ? '1' : '0',
-                        'showFamilyColors'        => $this->configuration->getShowFamilyColors() ? '1' : '0',
-                        'showPlaces'              => $this->configuration->getShowPlaces() ? '1' : '0',
-                        'placeParts'              => $this->configuration->getPlaceParts(),
-                        'showParentMarriageDates' => $this->configuration->getShowParentMarriageDates() ? '1' : '0',
-                        'showImages'              => $this->configuration->getShowImages() ? '1' : '0',
-                        'showNames'               => $this->configuration->getShowNames() ? '1' : '0',
-                        'showNicknames'           => $this->configuration->getShowNicknames() ? '1' : '0',
-                        'innerArcs'               => $this->configuration->getInnerArcs(),
-                        'paternalColor'           => $this->configuration->getPaternalColor(),
-                        'maternalColor'           => $this->configuration->getMaternalColor(),
-                        'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
-                        'showDescendants'         => $this->configuration->getShowDescendants() ? '1' : '0',
+                        'xref' => Validator::parsedBody($request)->string('xref', ''),
+                        ...$this->configuration->getRouteToggleParams(),
                     ]
                 )
             );
@@ -288,24 +273,9 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
         return $this->chartUrl(
             $individual,
             [
-                'ajax'                    => true,
-                'generations'             => $this->configuration->getGenerations(),
-                'fanDegree'               => $this->configuration->getFanDegree(),
-                'fontScale'               => $this->configuration->getFontScale(),
-                'hideEmptySegments'       => $this->configuration->getHideEmptySegments(),
-                'showFamilyColors'        => $this->configuration->getShowFamilyColors(),
-                'showPlaces'              => $this->configuration->getShowPlaces(),
-                'placeParts'              => $this->configuration->getPlaceParts(),
-                'showParentMarriageDates' => $this->configuration->getShowParentMarriageDates(),
-                'showImages'              => $this->configuration->getShowImages(),
-                'showNames'               => $this->configuration->getShowNames(),
-                'showNicknames'           => $this->configuration->getShowNicknames(),
-                'innerArcs'               => $this->configuration->getInnerArcs(),
-                'paternalColor'           => $this->configuration->getPaternalColor(),
-                'maternalColor'           => $this->configuration->getMaternalColor(),
-                'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
-                'showDescendants'         => $this->configuration->getShowDescendants(),
-                'xref'                    => $xref,
+                'ajax' => true,
+                'xref' => $xref,
+                ...$this->configuration->getRouteToggleParams(),
             ]
         );
     }

@@ -590,4 +590,35 @@ class Configuration
             ? $value
             : NameAbbreviation::AUTO;
     }
+
+    /**
+     * Returns the form-toggle parameter set used by every URL the chart
+     * navigates to (POST → redirect, AJAX fragment, click-to-recenter).
+     * Centralising the list here keeps the three call sites in sync —
+     * dropping one parameter from a single URL silently flipped toggles
+     * back to module preference defaults on navigation.
+     *
+     * @return array<string, int|string>
+     */
+    public function getRouteToggleParams(): array
+    {
+        return [
+            'generations'             => $this->getGenerations(),
+            'fanDegree'               => $this->getFanDegree(),
+            'fontScale'               => $this->getFontScale(),
+            'hideEmptySegments'       => $this->getHideEmptySegments() ? '1' : '0',
+            'showFamilyColors'        => $this->getShowFamilyColors() ? '1' : '0',
+            'showPlaces'              => $this->getShowPlaces() ? '1' : '0',
+            'placeParts'              => $this->getPlaceParts(),
+            'showParentMarriageDates' => $this->getShowParentMarriageDates() ? '1' : '0',
+            'showImages'              => $this->getShowImages() ? '1' : '0',
+            'showNames'               => $this->getShowNames() ? '1' : '0',
+            'showNicknames'           => $this->getShowNicknames() ? '1' : '0',
+            'innerArcs'               => $this->getInnerArcs(),
+            'paternalColor'           => $this->getPaternalColor(),
+            'maternalColor'           => $this->getMaternalColor(),
+            'detailedDateGenerations' => $this->getDetailedDateGenerations(),
+            'showDescendants'         => $this->getShowDescendants() ? '1' : '0',
+        ];
+    }
 }

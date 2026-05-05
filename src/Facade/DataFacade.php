@@ -363,18 +363,19 @@ class DataFacade
      */
     private function getUpdateRoute(Individual $individual): string
     {
+        // Forward every form-toggle so re-centering on a different person
+        // (the click-to-recenter URL) preserves the current selection
+        // instead of falling back to module preference defaults — otherwise
+        // toggles like showNicknames silently flip off as soon as the user
+        // navigates to another box.
         return route(
             'module',
             [
-                'module'                  => $this->module->name(),
-                'action'                  => 'update',
-                'xref'                    => $individual->xref(),
-                'tree'                    => $individual->tree()->name(),
-                'generations'             => $this->configuration->getGenerations(),
-                'detailedDateGenerations' => $this->configuration->getDetailedDateGenerations(),
-                'showPlaces'              => $this->configuration->getShowPlaces() ? '1' : '0',
-                'placeParts'              => $this->configuration->getPlaceParts(),
-                'showDescendants'         => $this->configuration->getShowDescendants() ? '1' : '0',
+                'module' => $this->module->name(),
+                'action' => 'update',
+                'xref'   => $individual->xref(),
+                'tree'   => $individual->tree()->name(),
+                ...$this->configuration->getRouteToggleParams(),
             ]
         );
     }
