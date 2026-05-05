@@ -89,6 +89,32 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: install-state
+    attributes:
+      label: Was this a fresh install or an update?
+      description: |
+        If you updated, did you fully remove the old module folder before extracting the new ZIP? Partial updates can leave behind older PHP files that mismatch the new vendor classes (a common cause of "Interface … not found" errors).
+      options:
+        - Fresh install (module folder did not exist before)
+        - Update — old folder fully removed before extracting new version
+        - Update — extracted on top of existing folder
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: other-modules
+    attributes:
+      label: Other magicsunday/* modules installed
+      description: |
+        Are any other magicsunday charts (fan-chart, pedigree-chart, descendants-chart) active in this webtrees instance? Each ships its own scoped copy of `webtrees-module-base`, so version drift between modules is sometimes visible only when more than one is installed.
+      placeholder: |
+        - webtrees-fan-chart 3.6.0
+        - webtrees-pedigree-chart 2.7.0
+    validations:
+      required: false
+
   - type: input
     id: browser
     attributes:
