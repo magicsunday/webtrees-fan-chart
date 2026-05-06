@@ -66,7 +66,14 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
 
     public const string CUSTOM_VERSION = '3.6.2-dev';
 
-    public const string CUSTOM_SUPPORT_URL = 'https://github.com/' . self::GITHUB_REPO . '/issues';
+    /**
+     * Webtrees renders this URL as the "For more information, see …" link inside the
+     * "An upgrade is available" notice on the admin home (control-panel.phtml) and on
+     * the Modules admin pages. Pointed at the GitHub /releases/latest page so admins
+     * who notice an available update land directly on the release notes — including
+     * the "Manual / FTP installation" banner and the install-ready asset zip.
+     */
+    public const string CUSTOM_SUPPORT_URL = 'https://github.com/' . self::GITHUB_REPO . '/releases/latest';
 
     public const string CUSTOM_LATEST_VERSION = 'https://api.github.com/repos/' . self::GITHUB_REPO . '/releases/latest';
 
