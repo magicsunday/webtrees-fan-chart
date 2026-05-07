@@ -64,7 +64,7 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
 
     public const string CUSTOM_AUTHOR = 'Rico Sonntag';
 
-    public const string CUSTOM_VERSION = '3.6.2';
+    public const string CUSTOM_VERSION = '3.6.3-dev';
 
     /**
      * Webtrees renders this URL as the "For more information, see …" link inside the
