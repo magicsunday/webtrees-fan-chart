@@ -145,7 +145,7 @@ dist:
 		-e 's|MagicSunday\\\\Webtrees\\\\ModuleBase|MagicSunday\\\\$(SCOPE_NS)\\\\Webtrees\\\\ModuleBase|g' \
 		-e 's|MagicSunday\\Webtrees\\ModuleBase|MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase|g' \
 		{} +
-	@hits=$$(find $(MODULE_NAME) -type f -print0 \
+	@hits=$$(find $(MODULE_NAME) -type f \( -name '*.php' -o -name '*.phtml' \) -print0 \
 	    | xargs -0 grep -lE 'MagicSunday\\Webtrees\\ModuleBase' 2>/dev/null); \
 	if [ -n "$$hits" ]; then \
 		echo "Error: unprefixed MagicSunday\\Webtrees\\ModuleBase remains in dist:"; \
