@@ -1,6 +1,6 @@
 {
     "name": "webtrees-fan-chart",
-    "version": "3.6.3",
+    "version": "3.6.4-dev",
     "description": "This modules provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.",
     "keywords": [
         "webtrees",
@@ -54,7 +54,7 @@
         "d3-zoom": "^3.0",
         "jest": "^30.0",
         "jest-environment-jsdom": "^30.0",
-        "jscpd": "^4.0.9",
+        "jscpd": "^4.1.0",
         "pixelmatch": "^7.0",
         "playwright": "^1.0",
         "pngjs": "^7.0",
