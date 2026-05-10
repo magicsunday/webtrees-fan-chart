@@ -110,7 +110,8 @@
  */
 .webtrees-fan-chart-container svg g.family-colors .wt-chart-box-name,
 .webtrees-fan-chart-container svg g.family-colors .wt-chart-box-name-alt,
-.webtrees-fan-chart-container svg g.family-colors g.name .date {
+.webtrees-fan-chart-container svg g.family-colors g.name .date,
+.webtrees-fan-chart-container svg g.family-colors text.nickname {
     fill: rgb(50, 50, 50);
 }
 
@@ -132,4 +133,22 @@
 
 .webtrees-fan-chart-container svg g.family-colors g.separatorGroup line {
     stroke: rgb(225, 225, 225);
+}
+
+/*
+ * Pin sex-pastel arc fills in family-colors mode so the arcs stay
+ * pastel under dark themes that redefine --sex-*-bg to dark values.
+ * Inline paternal/maternal colors set via JS still win over these
+ * (inline style beats class-selector specificity).
+ */
+.webtrees-fan-chart-container svg g.family-colors g.person g.color path.female {
+    fill: rgb(233, 218, 241);
+}
+
+.webtrees-fan-chart-container svg g.family-colors g.person g.color path.male {
+    fill: rgb(237, 247, 253);
+}
+
+.webtrees-fan-chart-container svg g.family-colors g.person g.color path.unknown {
+    fill: rgb(255, 255, 255);
 }
