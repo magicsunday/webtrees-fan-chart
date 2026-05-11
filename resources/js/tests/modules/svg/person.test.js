@@ -229,7 +229,7 @@ describe("Person tooltips", () => {
         // Server has fallen back to silhouette because the person has no
         // media file (or its file is missing on disk): thumbnail and
         // silhouette URLs are identical.
-        const silhouetteUrl = "/silhouette-F.png";
+        const silhouetteUrl = "/silhouette-F.svg";
         const datum = {
             ...baseDatum,
             data: {
