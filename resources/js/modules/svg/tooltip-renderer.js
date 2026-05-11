@@ -37,6 +37,40 @@ function escapeHtml(value) {
  *
  * @return {string}
  */
+/**
+ * Detects whether the active theme renders on a dark surface by sampling the
+ * computed background colour of the document body and comparing its Rec. 709
+ * luma against a mid-grey threshold. Catches both `data-bs-theme="dark"` and
+ * theme-specific dark palettes (e.g. Clouds Dark) that don't set that
+ * attribute.
+ *
+ * @return {boolean}
+ */
+function isDarkSurface() {
+    if (typeof document === "undefined" || typeof getComputedStyle === "undefined") {
+        return false;
+    }
+
+    const bg = getComputedStyle(document.body).backgroundColor;
+
+    if (typeof bg !== "string") {
+        return false;
+    }
+
+    const m = bg.match(/rgba?\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+
+    if (m === null) {
+        return false;
+    }
+
+    const r = Number(m[1]);
+    const g = Number(m[2]);
+    const b = Number(m[3]);
+    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+    return luma < 128;
+}
+
 function buildFactRows(symbol, date, place) {
     let rows = `<tr class="date"><th>${symbol}</th><td>${date ? escapeHtml(date) : SYMBOL_ELLIPSIS}</td></tr>`;
 
@@ -130,7 +164,8 @@ export default class TooltipRenderer {
         }
 
         if (this._configuration.showSilhouettes && silhouette !== "") {
-            return `<div class="image"><img src="${escapeHtml(silhouette)}" alt="" /></div>`;
+            const darkClass = isDarkSurface() ? " image-silhouette-dark" : "";
+            return `<div class="image image-silhouette${darkClass}"><img src="${escapeHtml(silhouette)}" alt="" /></div>`;
         }
 
         return "";

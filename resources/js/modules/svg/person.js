@@ -263,6 +263,15 @@ export default class Person {
             return;
         }
 
+        // Letterbox background behind the (possibly aspect-clipped) foreground
+        // photo. Cream for silhouettes (warm backdrop matching the cameo
+        // aesthetic), plain white for real photos — stays neutral whether the
+        // arc carries a sex pastel, a family colour, or a dark-theme tint.
+        const isSilhouette =
+            datum.data.data.thumbnail !== "" &&
+            datum.data.data.thumbnail === datum.data.data.silhouette;
+        const imageBackgroundFill = isSilhouette ? "#FBF8F0" : "#FFFFFF";
+
         const nameGroup = person.select("g.name");
         let textWidth = 0;
 
@@ -298,14 +307,12 @@ export default class Person {
 
             const imageGroup = person.append("g").attr("class", "image");
 
-            // Plain white background behind the (possibly letterboxed)
-            // foreground photo so the boundary against the page is uniform.
             imageGroup
                 .append("circle")
                 .attr("cx", 0)
                 .attr("cy", centerY)
                 .attr("r", imageSize / 2)
-                .attr("fill", "#FFFFFF");
+                .attr("fill", imageBackgroundFill);
 
             imageGroup
                 .append("image")
@@ -356,14 +363,12 @@ export default class Person {
                 .attr("class", "image")
                 .attr("transform", `translate(${posX},${posY}) rotate(${rotateDeg})`);
 
-            // Plain white background behind the (possibly letterboxed)
-            // foreground photo so the boundary against the page is uniform.
             imageGroup
                 .append("circle")
                 .attr("cx", 0)
                 .attr("cy", 0)
                 .attr("r", imageSize / 2)
-                .attr("fill", "#FFFFFF");
+                .attr("fill", imageBackgroundFill);
 
             imageGroup
                 .append("image")

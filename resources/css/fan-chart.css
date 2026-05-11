@@ -225,8 +225,23 @@ div.tooltip .image {
     height: 100px;
     border-radius: 50%;
     overflow: hidden;
-    background-color: #f2f2f2;
+    background-color: var(--bs-tertiary-bg, rgb(240, 240, 240));
     border: 1px solid var(--bs-tertiary-color, rgb(127, 127, 127));
+}
+
+/* Silhouettes share the tooltip body's background so the round image well
+   merges with the surrounding text panel rather than introducing a separate
+   coloured tile. The tertiary-bg variable tracks the theme automatically. */
+div.tooltip .image.image-silhouette {
+    background-color: var(--bs-tertiary-bg, rgb(240, 240, 240));
+}
+
+/* On dark surfaces the cameo glyph is inverted so the (otherwise solid-black)
+   figure reads as light against the dark tooltip body. The class is attached
+   by tooltip-renderer.js based on a luma probe of the body background, so it
+   also covers themes that don't set data-bs-theme="dark". */
+div.tooltip .image.image-silhouette-dark img {
+    filter: invert(1);
 }
 
 div.tooltip .image + .text {
@@ -239,6 +254,14 @@ div.tooltip .image img {
     width: 100%;
     height: 100%;
     object-fit: scale-down;
+}
+
+/* Silhouette glyphs ship with very little internal padding; insetting the
+   image 5% inside the circular well keeps the figure clear of the border. */
+div.tooltip .image.image-silhouette img {
+    inset: 5%;
+    width: 90%;
+    height: 90%;
 }
 
 div.tooltip table {
