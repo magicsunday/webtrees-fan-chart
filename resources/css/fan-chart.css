@@ -25,8 +25,8 @@
 
 .webtrees-fan-fullscreen-container .btn-chart {
     color: var(--bs-btn-bg);
-    background: rgb(245, 245, 245);
-    border: 1px solid rgb(210, 210, 210);
+    background: var(--bs-secondary-bg, rgb(245, 245, 245));
+    border: 1px solid var(--bs-border-color, rgb(210, 210, 210));
     width: 40px;
     height: 32px;
     border-radius: 30%;
@@ -40,7 +40,7 @@
 }
 
 .webtrees-fan-fullscreen-container .btn-primary:hover {
-    background: rgb(245, 245, 245);
+    background: var(--bs-secondary-bg, rgb(245, 245, 245));
 }
 
 .webtrees-fan-fullscreen-container .btn-chart:hover {
