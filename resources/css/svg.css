@@ -1,3 +1,19 @@
+/*
+ * Chart-scoped CSS variables for box-internal text and structural strokes.
+ * Default to Bootstrap theme variables so the chart inherits the active
+ * theme's typography palette out of the box; consumers can override any of
+ * these in a theme stylesheet to decouple the chart from --bs-* shifts.
+ * Family-colors mode locks the same variables to fixed pastel-friendly
+ * tones further down so labels stay legible against the constant pastel
+ * arc fills even when --bs-body-color flips to light in dark mode.
+ */
+.webtrees-fan-chart-container {
+    --chart-text-primary: var(--bs-body-color, rgb(50, 50, 50));
+    --chart-text-secondary: var(--bs-secondary-color, rgb(90, 90, 90));
+    --chart-text-muted: var(--bs-tertiary-color, rgb(127, 127, 127));
+    --chart-separator-stroke: var(--bs-border-color, rgb(225, 225, 225));
+}
+
 /* SVG export styles */
 .webtrees-fan-chart-container svg {
     min-height: 50dvh;
@@ -43,7 +59,7 @@
 }
 
 .webtrees-fan-chart-container svg g.separatorGroup line {
-    stroke: var(--bs-border-color, rgb(225, 225, 225));
+    stroke: var(--chart-separator-stroke);
     stroke-width: 1px;
 }
 
@@ -58,14 +74,14 @@
 }
 
 .webtrees-fan-chart-container svg g.name .wt-chart-box-name-alt {
-    fill: var(--bs-tertiary-color, rgb(127, 127, 127));
+    fill: var(--chart-text-muted);
     font-weight: normal;
     direction: ltr;
     unicode-bidi: normal;
 }
 
 .webtrees-fan-chart-container svg g.name .date {
-    fill: var(--bs-body-color, rgb(50, 50, 50));
+    fill: var(--chart-text-primary);
     font-size: 85%;
     font-weight: normal;
     direction: ltr;
@@ -73,7 +89,7 @@
 }
 
 .webtrees-fan-chart-container svg g.name .place {
-    fill: var(--bs-secondary-color, rgb(90, 90, 90));
+    fill: var(--chart-text-secondary);
     font-weight: normal;
     font-style: italic;
     direction: ltr;
@@ -85,11 +101,11 @@
 }
 
 .webtrees-fan-chart-container svg .wt-chart-box-name {
-    fill: var(--bs-body-color, rgb(50, 50, 50));
+    fill: var(--chart-text-primary);
 }
 
 .webtrees-fan-chart-container svg .wt-chart-box-name-alt {
-    fill: var(--bs-body-color, rgb(50, 50, 50));
+    fill: var(--chart-text-primary);
 }
 
 /*
@@ -97,58 +113,36 @@
  * as a secondary identity (mirrors the pedigree-chart top/bottom style).
  */
 .webtrees-fan-chart-container svg text.nickname {
-    fill: var(--bs-body-color, rgb(50, 50, 50));
+    fill: var(--chart-text-primary);
     font-style: italic;
     opacity: 0.85;
 }
 
 /*
- * Family-colors mode renders pastel sex/family fills on the arcs that
- * do not adapt to the active Bootstrap theme. Pin text and separator
- * colors to fixed values so labels stay legible against the pastels in
- * dark themes (where --bs-body-color flips to white otherwise).
+ * Family-colors mode renders constant pastel fills on the arcs. Lock the
+ * chart text variables to fixed dark tones inside this scope so labels
+ * stay legible against the pastels even when the theme's --bs-body-color
+ * flips to light, and override --sex-*-bg to constant pastels so the
+ * sex-coded arc fills (driven by `g.color path.X { fill: var(--sex-X-bg) }`
+ * higher up) stay pastel even when the theme redefines --sex-*-bg to
+ * dark values. Inline paternal/maternal colors set via JS still win on
+ * specificity, so the var override only governs the arcs that have no
+ * lineage tint (typically the centre node and unconnected branches).
  */
-.webtrees-fan-chart-container svg g.family-colors .wt-chart-box-name,
-.webtrees-fan-chart-container svg g.family-colors .wt-chart-box-name-alt,
-.webtrees-fan-chart-container svg g.family-colors g.name .date,
-.webtrees-fan-chart-container svg g.family-colors text.nickname {
-    fill: rgb(50, 50, 50);
+.webtrees-fan-chart-container svg g.family-colors {
+    --chart-text-primary: rgb(50, 50, 50);
+    --chart-text-secondary: rgb(90, 90, 90);
+    --chart-text-muted: rgb(127, 127, 127);
+    --chart-separator-stroke: rgb(225, 225, 225);
+    --sex-f-bg: rgb(233, 218, 241);
+    --sex-m-bg: rgb(237, 247, 253);
+    --sex-u-bg: rgb(255, 255, 255);
 }
 
-.webtrees-fan-chart-container svg g.family-colors g.name .place {
-    fill: rgb(90, 90, 90);
-}
-
-/* Two intentional .wt-chart-box-name-alt rules for family-colors mode:
-   the grouped rule above pins the centre-tile alt name to the body-text
-   colour (50,50,50) so it pairs with the main name; this one lowers the
-   alt name back to the muted tertiary tone (127,127,127) only when it
-   appears inside g.name (the per-arc labels), matching the regular-mode
-   alt-name fill defined above at line 60. Source order + specificity
-   means the more-specific g.name selector wins for arc labels and the
-   first rule wins for the centre tile. */
+/* The arc-label alt name keeps its muted tone in family-colors mode too —
+   the centre-tile alt name has already been pinned to the body-text tone
+   via the var override above, but per-arc labels (inside g.name) should
+   read as the secondary identity, matching the regular-mode fill. */
 .webtrees-fan-chart-container svg g.family-colors g.name .wt-chart-box-name-alt {
-    fill: rgb(127, 127, 127);
-}
-
-.webtrees-fan-chart-container svg g.family-colors g.separatorGroup line {
-    stroke: rgb(225, 225, 225);
-}
-
-/*
- * Pin sex-pastel arc fills in family-colors mode so the arcs stay
- * pastel under dark themes that redefine --sex-*-bg to dark values.
- * Inline paternal/maternal colors set via JS still win over these
- * (inline style beats class-selector specificity).
- */
-.webtrees-fan-chart-container svg g.family-colors g.person g.color path.female {
-    fill: rgb(233, 218, 241);
-}
-
-.webtrees-fan-chart-container svg g.family-colors g.person g.color path.male {
-    fill: rgb(237, 247, 253);
-}
-
-.webtrees-fan-chart-container svg g.family-colors g.person g.color path.unknown {
-    fill: rgb(255, 255, 255);
+    fill: var(--chart-text-muted);
 }
