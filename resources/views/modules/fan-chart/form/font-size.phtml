@@ -22,8 +22,8 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     'id'     => 'fontScale',
     'label'  => I18N::translate('Font size'),
     'value'  => $configuration->getFontScale(),
-    'min'    => 75,
-    'max'    => 125,
+    'min'    => Configuration::MIN_FONT_SCALE,
+    'max'    => Configuration::MAX_FONT_SCALE,
     'step'   => 5,
     'suffix' => '%',
 ]); ?>

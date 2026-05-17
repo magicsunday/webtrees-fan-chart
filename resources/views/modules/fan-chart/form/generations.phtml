@@ -22,6 +22,6 @@ use MagicSunday\Webtrees\FanChart\Configuration;
     'id'    => 'generations',
     'label' => I18N::translate('Generations'),
     'value' => $configuration->getGenerations(),
-    'min'   => 2,
-    'max'   => 10,
+    'min'   => Configuration::MIN_GENERATIONS,
+    'max'   => Configuration::MAX_GENERATIONS,
 ]); ?>

@@ -241,31 +241,6 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Confirms list getters expose complete ranges derived from default configuration.
-     */
-    #[Test]
-    public function selectableListsReflectDefinedRanges(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-
-        $module = $this->createModuleWithPreferences([
-            'default_generations' => '6',
-            'default_fontScale'   => '100',
-            'default_fanDegree'   => '210',
-            'default_innerArcs'   => '3',
-        ]);
-
-        $configuration = new Configuration($request, $module);
-
-        self::assertCount(9, $configuration->getGenerationsList());
-        self::assertSame('2', $configuration->getGenerationsList()[2]);
-        self::assertSame('10', $configuration->getGenerationsList()[10]);
-        self::assertCount(6, $configuration->getInnerArcsList());
-        self::assertSame('0', $configuration->getInnerArcsList()[0]);
-        self::assertSame('5', $configuration->getInnerArcsList()[5]);
-    }
-
-    /**
      * Ensures getShowDescendants() defaults to false when not set.
      */
     #[Test]

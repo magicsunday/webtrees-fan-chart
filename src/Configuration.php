@@ -38,12 +38,12 @@ class Configuration
     /**
      * Minimum number of displayable generations.
      */
-    private const int MIN_GENERATIONS = 2;
+    public const int MIN_GENERATIONS = 2;
 
     /**
      * Maximum number of displayable generations.
      */
-    private const int MAX_GENERATIONS = 10;
+    public const int MAX_GENERATIONS = 10;
 
     /**
      * The default number of inner levels.
@@ -53,22 +53,48 @@ class Configuration
     /**
      * Minimum number of displayable inner levels.
      */
-    private const int MIN_INNER_ARCS = 0;
+    public const int MIN_INNER_ARCS = 0;
 
     /**
      * Maximum number of displayable inner levels.
      */
-    private const int MAX_INNER_ARCS = 5;
+    public const int MAX_INNER_ARCS = 5;
 
     /**
      * The default fan chart degree.
      */
-    private const int FAN_DEGREE_DEFAULT = 210;
+    private const int DEFAULT_FAN_DEGREE = 210;
+
+    /**
+     * Minimum opening angle of the fan in degrees.
+     */
+    public const int MIN_FAN_DEGREE = 180;
+
+    /**
+     * Maximum opening angle of the fan when descendants are hidden.
+     */
+    public const int MAX_FAN_DEGREE = 360;
+
+    /**
+     * Maximum opening angle when descendants are rendered; narrower than
+     * MAX_FAN_DEGREE to reserve angular space for the descendant section.
+     */
+    public const int MAX_FAN_DEGREE_WITH_DESCENDANTS = 270;
 
     /**
      * The default font size scaling factor in percent.
      */
-    private const int FONT_SCALE_DEFAULT = 100;
+    private const int DEFAULT_FONT_SCALE = 100;
+
+    /**
+     * Minimum font-scale percentage.
+     */
+    public const int MIN_FONT_SCALE = 75;
+
+    /**
+     * Maximum font-scale percentage.
+     */
+    public const int MAX_FONT_SCALE = 125;
 
     /**
      * The default color for the paternal lineage (blue).
@@ -138,22 +164,6 @@ class Configuration
     }
 
     /**
-     * Returns a localised label map keyed by generation count, suitable for select elements.
-     *
-     * @return string[]
-     */
-    public function getGenerationsList(): array
-    {
-        $result = [];
-
-        foreach (range(self::MIN_GENERATIONS, self::MAX_GENERATIONS) as $value) {
-            $result[$value] = I18N::number($value);
-        }
-
-        return $result;
-    }
-
-    /**
      * Returns how many innermost generations show full DD.MM.YYYY dates.
      * Generations beyond this threshold display year-only.
      *
@@ -202,12 +212,12 @@ class Configuration
     public function getFontScale(): int
     {
         return $this->validator()
-            ->isBetween(75, 125)
+            ->isBetween(self::MIN_FONT_SCALE, self::MAX_FONT_SCALE)
             ->integer(
                 'fontScale',
                 (int) $this->module->getPreference(
                     'default_fontScale',
-                    (string) self::FONT_SCALE_DEFAULT
+                    (string) self::DEFAULT_FONT_SCALE
                 )
             );
     }
@@ -241,7 +251,7 @@ class Configuration
         $value = $this->getFanDegreeUnclamped();
 
         if ($this->getShowDescendants()) {
-            return min(270, max(180, $value));
+            return min(self::MAX_FAN_DEGREE_WITH_DESCENDANTS, max(self::MIN_FAN_DEGREE, $value));
         }
 
         return $value;
@@ -256,12 +266,12 @@ class Configuration
     public function getFanDegreeUnclamped(): int
     {
         return $this->validator()
-            ->isBetween(180, 360)
+            ->isBetween(self::MIN_FAN_DEGREE, self::MAX_FAN_DEGREE)
             ->integer(
                 'fanDegree',
                 (int) $this->module->getPreference(
                     'default_fanDegree',
-                    (string) self::FAN_DEGREE_DEFAULT
+                    (string) self::DEFAULT_FAN_DEGREE
                 )
             );
     }
@@ -466,22 +476,6 @@ class Configuration
                     (string) self::DEFAULT_INNER_ARCS
                 )
             );
-    }
-
-    /**
-     * Returns a localised label map keyed by inner arc count, suitable for select elements.
-     *
-     * @return string[]
-     */
-    public function getInnerArcsList(): array
-    {
-        $result = [];
-
-        foreach (range(self::MIN_INNER_ARCS, self::MAX_INNER_ARCS) as $value) {
-            $result[$value] = I18N::number($value);
-        }
-
-        return $result;
     }
 
     /**

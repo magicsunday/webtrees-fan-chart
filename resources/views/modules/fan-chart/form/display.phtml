@@ -94,12 +94,12 @@ if ($showNames && $showImages) {
 
     if (checkbox && fanSlider) {
         checkbox.addEventListener("change", function () {
-            const maxDegree = checkbox.checked ? 270 : 360;
+            fanSlider.max = checkbox.checked
+                ? <?php echo Configuration::MAX_FAN_DEGREE_WITH_DESCENDANTS; ?>
+                : <?php echo Configuration::MAX_FAN_DEGREE; ?>;
 
-            fanSlider.max = maxDegree;
-
-            if (Number(fanSlider.value) > maxDegree) {
-                fanSlider.value = maxDegree;
+            if (Number(fanSlider.value) > Number(fanSlider.max)) {
+                fanSlider.value = fanSlider.max;
             }
 
             if (fanOutput) {
