@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Facade;
 
 use Fisharebest\Webtrees\Family;
-use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use MagicSunday\Webtrees\FanChart\Configuration;
@@ -24,6 +23,7 @@ use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
+use MagicSunday\Webtrees\ModuleBase\Support\TextDirection;
 
 /**
  * Assembles the nested Node tree passed to the JavaScript chart renderer.
@@ -587,6 +587,6 @@ class DataFacade
      */
     private function isRtl(string $text): bool
     {
-        return I18N::scriptDirection(I18N::textScript($text)) === 'rtl';
+        return TextDirection::isRtl($text);
     }
 }
