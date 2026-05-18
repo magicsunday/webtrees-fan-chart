@@ -3,7 +3,73 @@ import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 let storageInstances = [];
 let storageData = {};
 
-await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
+await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/chart-core", () => ({
+    buildChartAjaxUrl: (baseUrl, options = {}) => {
+        const url = new URL(baseUrl);
+        const xrefInput = document.getElementById(options.xrefInputId ?? "xref");
+        if (xrefInput) {
+            url.searchParams.set(options.xrefParam ?? "xref", xrefInput.value);
+        }
+
+        (options.query ?? []).forEach(({ key, value, mode }) => {
+            if (value === null || typeof value === "undefined") {
+                url.searchParams.delete(key);
+                return;
+            }
+
+            if (mode === "boolean-1-or-delete") {
+                if (value) {
+                    url.searchParams.set(key, "1");
+                } else {
+                    url.searchParams.delete(key);
+                }
+                return;
+            }
+
+            if (mode === "boolean-1-0") {
+                if (value === "0" || value === "false" || value === 0 || value === false) {
+                    url.searchParams.set(key, "0");
+                } else {
+                    url.searchParams.set(key, "1");
+                }
+                return;
+            }
+
+            url.searchParams.set(key, String(value));
+        });
+
+        return url.toString();
+    },
+    setChartAjaxUrl: (containerId, ajaxUrl, attributeName = "data-wt-ajax-url") => {
+        const container = document.getElementById(containerId);
+        if (!container) return false;
+        container.setAttribute(attributeName, ajaxUrl);
+        return true;
+    },
+    setChartOptionsGlobal: (globalNamespace, chartOptions) => {
+        if (!window[globalNamespace]) return false;
+        window[globalNamespace].chartOptions = chartOptions;
+        return true;
+    },
+    syncCollapseToggle: (storage) => {
+        const showMoreOptions = document.getElementById("showMoreOptions");
+        const optionsToggle = document.getElementById("options");
+        if (!showMoreOptions || !optionsToggle) return false;
+
+        showMoreOptions.addEventListener("shown.bs.collapse", () => storage.write("showMoreOptions", true));
+        showMoreOptions.addEventListener("hidden.bs.collapse", () => storage.write("showMoreOptions", false));
+        optionsToggle.addEventListener("click", () => {
+            Array.from(optionsToggle.children).forEach((element) => {
+                element.classList.toggle("d-none");
+            });
+        });
+
+        if (storage.read("showMoreOptions")) {
+            optionsToggle.click();
+        }
+
+        return true;
+    },
     Storage: jest.fn().mockImplementation(() => {
         const read = (key) =>
             Object.prototype.hasOwnProperty.call(storageData, key) ? storageData[key] : null;

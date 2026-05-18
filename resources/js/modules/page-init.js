@@ -5,88 +5,13 @@
  * LICENSE file distributed with this source code.
  */
 
-import { Storage } from "@magicsunday/webtrees-chart-lib";
-
-/**
- * Builds the AJAX URL for fetching chart data from the current form state.
- *
- * @param {string}              baseUrl              The base AJAX endpoint URL
- * @param {string|null}         generations          Number of ancestor generations to display
- * @param {string|number|null}  detailedDateGenerations Number of generations showing full dates
- * @param {string|number|boolean|null} showPlaces    Whether to display places in the arcs
- * @param {string|null}         placeParts           Number of place hierarchy levels to show
- * @param {boolean}             showDescendantsParam Whether to include descendants in the response
- * @param {boolean|null}        showNicknamesParam   Whether to inject GEDCOM NICK in display names
- *
- * @returns {string}
- */
-function getUrl(
-    baseUrl,
-    generations,
-    detailedDateGenerations,
-    showPlaces,
-    placeParts,
-    showDescendantsParam,
-    showNicknamesParam,
-) {
-    const url = new URL(baseUrl);
-    const xref = /** @type {HTMLInputElement} */ (document.getElementById("xref"));
-    url.searchParams.set("xref", xref.value);
-    url.searchParams.set("generations", String(generations));
-    url.searchParams.set("detailedDateGenerations", String(detailedDateGenerations));
-
-    if (showPlaces !== null && showPlaces !== undefined) {
-        url.searchParams.set("showPlaces", showPlaces ? "1" : "0");
-    }
-
-    if (placeParts !== null && placeParts !== undefined) {
-        url.searchParams.set("placeParts", String(placeParts));
-    }
-
-    if (showDescendantsParam) {
-        url.searchParams.set("showDescendants", "1");
-    } else {
-        url.searchParams.delete("showDescendants");
-    }
-
-    if (showNicknamesParam !== null && showNicknamesParam !== undefined) {
-        url.searchParams.set("showNicknames", showNicknamesParam ? "1" : "0");
-    }
-
-    return url.toString();
-}
-
-/**
- * Restores the "Show more options" collapse state from localStorage and
- * toggles the button label text on each click.
- *
- * @param {Storage} storage The storage instance for reading/writing collapse state
- */
-function toggleMoreOptions(storage) {
-    const showMoreOptions = document.getElementById("showMoreOptions");
-    const optionsToggle = document.getElementById("options");
-    if (!showMoreOptions || !optionsToggle) {
-        return;
-    }
-
-    showMoreOptions.addEventListener("shown.bs.collapse", () => {
-        storage.write("showMoreOptions", true);
-    });
-
-    showMoreOptions.addEventListener("hidden.bs.collapse", () => {
-        storage.write("showMoreOptions", false);
-    });
-
-    optionsToggle.addEventListener("click", () => {
-        Array.from(optionsToggle.children).forEach((element) => {
-            element.classList.toggle("d-none");
-        });
-    });
-
-    if (storage.read("showMoreOptions")) {
-        optionsToggle.click();
-    }
-}
+import {
+    buildChartAjaxUrl,
+    setChartAjaxUrl,
+    setChartOptionsGlobal,
+    Storage,
+    syncCollapseToggle,
+} from "@magicsunday/webtrees-chart-lib/chart-core";
 
 /**
  * Restores a range slider and its output display from localStorage.
@@ -147,7 +72,7 @@ export function initPage(config) {
     storage.register("showDescendants");
 
     // Restore collapse state and range sliders
-    toggleMoreOptions(storage);
+    syncCollapseToggle(storage);
 
     initRangeSlider(storage, "fanDegree", "°");
     initRangeSlider(storage, "generations");
@@ -275,27 +200,30 @@ export function initPage(config) {
     // Written after the clamp block so fanDegree is consistent with the slider.
     // WebtreesFanChart is the UMD global exposed by the chart-page bundle;
     // chart.phtml reads chartOptions from it.
-    const w = /** @type {{WebtreesFanChart?: {chartOptions?: object}}} */ (
-        /** @type {unknown} */ (window)
-    );
-    if (typeof w.WebtreesFanChart !== "undefined") {
-        w.WebtreesFanChart.chartOptions = chartOptions;
-    }
+    setChartOptionsGlobal("WebtreesFanChart", chartOptions);
 
-    const ajaxUrl = getUrl(
-        config.ajaxUrl,
-        /** @type {string|null} */ (storage.read("generations")),
-        chartOptions.detailedDateGenerations,
-        chartOptions.showPlaces,
-        /** @type {string|null} */ (storage.read("placeParts")),
-        Boolean(chartOptions.showDescendants),
-        chartOptions.showNicknames,
-    );
-
-    const ajaxContainer = document.getElementById("fan-chart-url");
-    if (ajaxContainer) {
-        ajaxContainer.setAttribute("data-wt-ajax-url", ajaxUrl);
-    }
+    const ajaxUrl = buildChartAjaxUrl(config.ajaxUrl, {
+        query: [
+            {
+                key: "generations",
+                value:
+                    storage.read("generations") ??
+                    /** @type {HTMLInputElement|null} */ (document.getElementById("generations"))
+                        ?.value ??
+                    null,
+            },
+            { key: "detailedDateGenerations", value: chartOptions.detailedDateGenerations },
+            { key: "showPlaces", value: chartOptions.showPlaces, mode: "boolean-1-0" },
+            { key: "placeParts", value: storage.read("placeParts") },
+            {
+                key: "showDescendants",
+                value: Boolean(chartOptions.showDescendants),
+                mode: "boolean-1-or-delete",
+            },
+            { key: "showNicknames", value: chartOptions.showNicknames, mode: "boolean-1-0" },
+        ],
+    });
+    setChartAjaxUrl("fan-chart-url", ajaxUrl);
 
     // showDescendants checkbox: persist to storage, restore raw fan degree, AJAX reload.
     // The slider max/value clamping is handled by the shared script in display.phtml
@@ -332,27 +260,35 @@ export function initPage(config) {
             storage.write("fanDegree", fanSlider ? fanSlider.value : null);
 
             const container = document.getElementById("fan-chart-url");
-            const newUrl = getUrl(
-                config.ajaxUrl,
-                /** @type {string|null} */ (storage.read("generations")),
-                /** @type {string|number|null} */ (
-                    storage.read("detailedDateGenerations") ?? config.defaultDetailedDateGenerations
-                ),
-                /** @type {string|boolean|null} */ (storage.read("showPlaces")),
-                /** @type {string|null} */ (storage.read("placeParts")),
-                checked,
-                /** @type {boolean|null} */ (
-                    storage.read("showNicknames") ?? config.defaultShowNicknames
-                ),
-            );
+            const newUrl = buildChartAjaxUrl(config.ajaxUrl, {
+                query: [
+                    {
+                        key: "generations",
+                        value:
+                            storage.read("generations") ??
+                            /** @type {HTMLInputElement|null} */ (
+                                document.getElementById("generations")
+                            )?.value ??
+                            null,
+                    },
+                    {
+                        key: "detailedDateGenerations",
+                        value:
+                            storage.read("detailedDateGenerations") ??
+                            config.defaultDetailedDateGenerations,
+                    },
+                    { key: "showPlaces", value: storage.read("showPlaces"), mode: "boolean-1-0" },
+                    { key: "placeParts", value: storage.read("placeParts") },
+                    { key: "showDescendants", value: checked, mode: "boolean-1-or-delete" },
+                    {
+                        key: "showNicknames",
+                        value: storage.read("showNicknames") ?? config.defaultShowNicknames,
+                        mode: "boolean-1-0",
+                    },
+                ],
+            });
 
-            // Note: storage.read returns a wider union than getUrl's params accept,
-            // but the actual stored values match the param shapes by convention
-            // (form inputs serialise as strings/booleans). Casts narrow the union.
-
-            if (container) {
-                container.setAttribute("data-wt-ajax-url", newUrl);
-            }
+            setChartAjaxUrl("fan-chart-url", newUrl);
             // window.webtrees is injected by the host page (webtrees core), not
             // declared in our types. Reach for it via an opaque widening cast.
             /** @type {{webtrees: {load: (el: HTMLElement|null, url: string) => void}}} */ (
