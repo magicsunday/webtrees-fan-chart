@@ -18,12 +18,12 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
+use MagicSunday\Webtrees\ModuleBase\Facade\RouteAwareDataFacadeTrait;
 use MagicSunday\Webtrees\ModuleBase\Model\Symbols;
 use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
-use MagicSunday\Webtrees\ModuleBase\Support\TextDirection;
 
 /**
  * Assembles the nested Node tree passed to the JavaScript chart renderer.
@@ -37,6 +37,8 @@ use MagicSunday\Webtrees\ModuleBase\Support\TextDirection;
  */
 class DataFacade
 {
+    use RouteAwareDataFacadeTrait;
+
     /**
      * Angular gap in degrees between the ancestor fan and the descendant
      * sector, applied on both sides. Must match DESCENDANT_GAP_DEG in
@@ -49,12 +51,6 @@ class DataFacade
      * and detailed dates are suppressed in favour of a compact format.
      */
     private const int MIN_CHILD_ARC_DEG = 20;
-
-    /**
-     * The module. Initialized by createTreeStructure() on each call.
-     * Accessing before createTreeStructure() throws "Uninitialized typed property".
-     */
-    private ModuleCustomInterface&ModuleAssetUrlInterface $module;
 
     /**
      * The configuration instance. Initialized by createTreeStructure() on each call.
@@ -83,7 +79,7 @@ class DataFacade
         Configuration $configuration,
         Individual $individual,
     ): ?Node {
-        $this->module        = $module;
+        $this->setModule($module);
         $this->configuration = $configuration;
         $this->nodeId        = 0;
 
@@ -576,17 +572,5 @@ class DataFacade
         }
 
         return $placeProcessor->shortPlaceName($family->getMarriagePlace());
-    }
-
-    /**
-     * Returns true when the dominant script of the given text runs right-to-left.
-     *
-     * @param string $text
-     *
-     * @return bool
-     */
-    private function isRtl(string $text): bool
-    {
-        return TextDirection::isRtl($text);
     }
 }
