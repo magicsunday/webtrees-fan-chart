@@ -18,7 +18,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
-use MagicSunday\Webtrees\ModuleBase\Facade\RouteAwareDataFacadeTrait;
+use MagicSunday\Webtrees\ModuleBase\Facade\ModuleAwareDataFacadeTrait;
 use MagicSunday\Webtrees\ModuleBase\Model\Symbols;
 use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
@@ -37,7 +37,7 @@ use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
  */
 class DataFacade
 {
-    use RouteAwareDataFacadeTrait;
+    use ModuleAwareDataFacadeTrait;
 
     /**
      * Angular gap in degrees between the ancestor fan and the descendant
