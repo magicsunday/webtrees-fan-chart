@@ -56,8 +56,12 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/chart-core", () 
         const optionsToggle = document.getElementById("options");
         if (!showMoreOptions || !optionsToggle) return false;
 
-        showMoreOptions.addEventListener("shown.bs.collapse", () => storage.write("showMoreOptions", true));
-        showMoreOptions.addEventListener("hidden.bs.collapse", () => storage.write("showMoreOptions", false));
+        showMoreOptions.addEventListener("shown.bs.collapse", () =>
+            storage.write("showMoreOptions", true),
+        );
+        showMoreOptions.addEventListener("hidden.bs.collapse", () =>
+            storage.write("showMoreOptions", false),
+        );
         optionsToggle.addEventListener("click", () => {
             Array.from(optionsToggle.children).forEach((element) => {
                 element.classList.toggle("d-none");
