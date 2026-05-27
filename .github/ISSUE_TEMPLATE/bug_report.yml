@@ -131,6 +131,31 @@ body:
     validations:
       required: false
 
+  - type: dropdown
+    id: database-engine
+    attributes:
+      label: Database engine
+      description: |
+        Which database is webtrees configured to use? Some bugs only surface on stricter engines — for example, MySQL 8 and MariaDB 10.5+ enable the `ONLY_FULL_GROUP_BY` SQL mode by default, which rejects queries that other engines accept.
+      options:
+        - MySQL
+        - MariaDB
+        - SQLite
+        - PostgreSQL
+        - Other
+    validations:
+      required: false
+
+  - type: input
+    id: database-version
+    attributes:
+      label: Database version
+      description: |
+        Server version string — e.g. the output of `SELECT VERSION();` or what your hoster shows in its control panel.
+      placeholder: "MariaDB 10.11.6 / MySQL 8.0.36 / SQLite 3.45"
+    validations:
+      required: false
+
   - type: textarea
     id: additional
     attributes:
