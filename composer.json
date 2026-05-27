@@ -31,6 +31,17 @@
         "discard-changes": true,
         "sort-packages": true,
         "optimize-autoloader": true,
+        "audit": {
+            "abandoned": "ignore",
+            "ignore": [
+                "PKSA-21fb-n1x5-5nf7",
+                "PKSA-2cx9-ynrq-qdk3",
+                "PKSA-rqc2-tcc6-nc79",
+                "PKSA-fndg-qryc-dyc9",
+                "PKSA-z7t6-zt6p-wtng",
+                "PKSA-28rh-rzzn-djk4"
+            ]
+        },
         "allow-plugins": {
             "magicsunday/webtrees-module-installer-plugin": true
         }
@@ -42,8 +53,8 @@
         "ext-dom": "*",
         "ext-json": "*",
         "fisharebest/webtrees": "~2.2.0 || dev-main",
-        "magicsunday/webtrees-module-base": "^2.2",
-        "magicsunday/webtrees-module-installer-plugin": "^1.3"
+        "magicsunday/webtrees-module-base": "^2.5",
+        "magicsunday/webtrees-module-installer-plugin": "^2.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.0",
