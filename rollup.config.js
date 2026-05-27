@@ -22,7 +22,6 @@ This file is part of the package magicsunday/<%= pkg.name %>.
 For the full copyright and license information, please read the
 LICENSE file that was distributed with this source code.
 
-Generated: <%= moment().format('YYYY-MM-DD HH:mm:ss') %>
 Version: <%= pkg.version %>`
             })
         ]
@@ -52,7 +51,6 @@ This file is part of the package magicsunday/<%= pkg.name %>.
 For the full copyright and license information, please read the
 LICENSE file that was distributed with this source code.
 
-Generated: <%= moment().format('YYYY-MM-DD HH:mm:ss') %>
 Version: <%= pkg.version %>`
             })
         ]
