@@ -30,7 +30,7 @@
         "typecheck": "tsc --noEmit -p jsconfig.json"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.4.11",
+        "@biomejs/biome": "2.4.15",
         "@rollup/plugin-node-resolve": "^16.0",
         "@rollup/plugin-terser": "^1.0",
         "@types/d3-fetch": "^3.0.7",
@@ -52,17 +52,17 @@
         "d3-timer": "^3.0",
         "d3-transition": "^3.0",
         "d3-zoom": "^3.0",
-        "jest": "^30.0",
-        "jest-environment-jsdom": "^30.0",
+        "jest": "^30.4",
+        "jest-environment-jsdom": "^30.4",
         "jscpd": "^4.2.4",
         "pixelmatch": "^7.0",
-        "playwright": "^1.0",
+        "playwright": "^1.60",
         "pngjs": "^7.0",
-        "rollup": "^4.0",
+        "rollup": "^4.60",
         "rollup-plugin-license": "^3.0",
         "typescript": "^6.0.3"
     },
     "dependencies": {
-        "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#1.8.0"
+        "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#1.10.0"
     }
 }
