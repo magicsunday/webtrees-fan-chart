@@ -17,11 +17,10 @@ export const MATH_RAD2DEG = 180 / Math.PI;
 const MATH_PI2 = Math.PI * 2;
 
 /**
- * All radial and angular geometry calculations for the fan chart. Converts
- * D3 partition coordinates (depth, x0, x1) into pixel radii and radian
- * angles, computes font sizes capped to the segment width, and determines
- * whether outer-arc labels need to be flipped for the bottom half of a
- * 360° chart.
+ * All radial and angular geometry calculations for the fan chart. Converts D3
+ * partition coordinates (depth, x0, x1) into pixel radii and radian angles,
+ * computes font sizes capped to the segment width, and determines whether
+ * outer-arc labels need to be flipped for the bottom half of a 360° chart.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -50,8 +49,8 @@ export default class Geometry {
     }
 
     /**
-     * End angle of the fan in radians. Symmetric with startPi for centered fans;
-     * equals fanDegree in radians for the 90° quarter-circle variant.
+     * End angle of the fan in radians. Symmetric with startPi for centered
+     * fans; equals fanDegree in radians for the 90° quarter-circle variant.
      *
      * @return {number}
      */
@@ -75,10 +74,10 @@ export default class Geometry {
 
     /**
      * Inner radius in pixels for the arc at the given depth. The center node
-     * (depth 0) has an inner radius of 0. Inner arcs use innerArcHeight;
-     * outer arcs beyond numberOfInnerCircles use outerArcHeight instead.
-     * Negative depths (descendants) use the same radii as their positive
-     * counterparts via Math.abs().
+     * (depth 0) has an inner radius of 0. Inner arcs use innerArcHeight; outer
+     * arcs beyond numberOfInnerCircles use outerArcHeight instead. Negative
+     * depths (descendants) use the same radii as their positive counterparts
+     * via Math.abs().
      *
      * @param {number} depth Hierarchy depth (0 = center node)
      *
@@ -159,7 +158,8 @@ export default class Geometry {
 
     /**
      * Interpolates between innerRadius and outerRadius by position percent.
-     * Used to place text paths at a specific vertical position within an arc band.
+     * Used to place text paths at a specific vertical position within an arc
+     * band.
      *
      * @param {number} depth    Hierarchy depth
      * @param {number} position Percentage within the arc band (0 = inner edge, 100 = outer edge)
@@ -173,7 +173,8 @@ export default class Geometry {
     }
 
     /**
-     * Converts a partition x-coordinate to radians, clamped to [startPi, endPi].
+     * Converts a partition x-coordinate to radians, clamped to [startPi,
+     * endPi].
      *
      * @param {number} value Partition x-coordinate in [0, 1]
      *
@@ -298,12 +299,12 @@ export default class Geometry {
 
     /**
      * Returns true when the arc's midpoint falls in the bottom half of the
-     * chart (between 90° and 270°), indicating that text path direction
-     * should be reversed so labels read left-to-right instead of upside-down.
+     * chart (between 90° and 270°), indicating that text path direction should
+     * be reversed so labels read left-to-right instead of upside-down.
      *
-     * Center node (depth 0): never flipped.
-     * Descendant nodes (depth < 0): always checked via childScale.
-     * Ancestor nodes (depth >= 1): only checked for 360° charts (fanDegree > 270).
+     * Center node (depth 0): never flipped. Descendant nodes (depth < 0):
+     * always checked via childScale. Ancestor nodes (depth >= 1): only checked
+     * for 360° charts (fanDegree > 270).
      *
      * @param {number} depth Hierarchy depth
      * @param {number} x0    Left partition boundary of the node

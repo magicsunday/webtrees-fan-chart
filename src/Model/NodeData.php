@@ -15,10 +15,10 @@ use Fisharebest\Webtrees\Individual;
 use JsonSerializable;
 
 /**
- * Data transfer object carrying all per-individual fields needed by the JavaScript
- * chart renderer. Implements JsonSerializable so it can be directly embedded in the
- * Node tree that is serialised to the page. The Individual instance is kept for
- * internal PHP use only and is excluded from JSON output.
+ * Data transfer object carrying all per-individual fields needed by the
+ * JavaScript chart renderer. Implements JsonSerializable so it can be directly
+ * embedded in the Node tree that is serialised to the page. The Individual
+ * instance is kept for internal PHP use only and is excluded from JSON output.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -42,7 +42,8 @@ class NodeData implements JsonSerializable
     private string $url = '';
 
     /**
-     * The URL used to update the clicked entry in the tree with this individual.
+     * The URL used to update the clicked entry in the tree with this
+     * individual.
      */
     private string $updateUrl = '';
 
@@ -343,7 +344,8 @@ class NodeData implements JsonSerializable
     }
 
     /**
-     * Sets the pre-assembled lifetime label rendered inside the arc (may contain newlines).
+     * Sets the pre-assembled lifetime label rendered inside the arc (may
+     * contain newlines).
      */
     public function setTimespan(string $timespan): NodeData
     {
@@ -405,7 +407,8 @@ class NodeData implements JsonSerializable
     }
 
     /**
-     * Stores the Individual reference for PHP-side use; excluded from JSON serialisation.
+     * Stores the Individual reference for PHP-side use; excluded from JSON
+     * serialisation.
      */
     public function setIndividual(?Individual $individual): NodeData
     {
@@ -415,8 +418,8 @@ class NodeData implements JsonSerializable
     }
 
     /**
-     * Serialises all chart-relevant fields to an array. The Individual instance is
-     * intentionally omitted to keep the JSON payload lean.
+     * Serialises all chart-relevant fields to an array. The Individual instance
+     * is intentionally omitted to keep the JSON payload lean.
      *
      * @return array<string, int|bool|string|string[]>
      */

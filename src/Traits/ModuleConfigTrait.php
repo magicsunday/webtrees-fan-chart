@@ -18,8 +18,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Provides the admin configuration page (GET) and the preference-save action (POST)
- * for the fan chart module's control-panel settings.
+ * Provides the admin configuration page (GET) and the preference-save action
+ * (POST) for the fan chart module's control-panel settings.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -30,7 +30,8 @@ trait ModuleConfigTrait
     use \Fisharebest\Webtrees\Module\ModuleConfigTrait;
 
     /**
-     * Renders the module configuration form in the webtrees administration layout.
+     * Renders the module configuration form in the webtrees administration
+     * layout.
      *
      * @param ServerRequestInterface $request
      *
@@ -52,8 +53,8 @@ trait ModuleConfigTrait
     }
 
     /**
-     * Persists all configuration form values as module preferences and redirects
-     * back to the configuration page with a success flash message.
+     * Persists all configuration form values as module preferences and
+     * redirects back to the configuration page with a success flash message.
      *
      * @param ServerRequestInterface $request
      *

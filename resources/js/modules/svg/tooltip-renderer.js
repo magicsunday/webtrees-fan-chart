@@ -99,7 +99,8 @@ export default class TooltipRenderer {
 
     /**
      * Attaches contextmenu, mouseenter, mouseleave, mousemove, mouseover, and
-     * mouseout handlers to the person element. No-ops for empty persons (no xref).
+     * mouseout handlers to the person element. No-ops for empty persons (no
+     * xref).
      *
      * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
      * @param {object}                         datum  The D3 partition datum
@@ -145,8 +146,8 @@ export default class TooltipRenderer {
     }
 
     /**
-     * Builds the HTML for the tooltip image (thumbnail or silhouette).
-     * Returns an empty string if no image should be shown.
+     * Builds the HTML for the tooltip image (thumbnail or silhouette). Returns
+     * an empty string if no image should be shown.
      *
      * @param {object} datum The D3 partition datum
      *
@@ -172,8 +173,8 @@ export default class TooltipRenderer {
     }
 
     /**
-     * Builds the HTML table rows for birth, marriage, and death data.
-     * Returns an empty string if no data is available.
+     * Builds the HTML table rows for birth, marriage, and death data. Returns
+     * an empty string if no data is available.
      *
      * @param {object} datum The D3 partition datum
      *

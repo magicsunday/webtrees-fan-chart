@@ -66,7 +66,8 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
-     * Ensures the facade builds a node hierarchy respecting generation limits and URLs.
+     * Ensures the facade builds a node hierarchy respecting generation limits
+     * and URLs.
      */
     #[Test]
     public function treeStructureIncludesParentsUntilConfiguredLimit(): void
@@ -204,7 +205,8 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
-     * Ensures descendants (partners + children) are included when showDescendants is true.
+     * Ensures descendants (partners + children) are included when
+     * showDescendants is true.
      */
     #[Test]
     public function treeStructureIncludesDescendantsWhenEnabled(): void

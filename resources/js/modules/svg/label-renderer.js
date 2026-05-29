@@ -17,8 +17,8 @@ import Text from "./text.js";
 /**
  * Thin coordinator that creates the label <g> for a person arc, applies the
  * depth-scaled font size, hides the group immediately during update transitions
- * to prevent a visual flash, then delegates the actual text element creation
- * to the Text class.
+ * to prevent a visual flash, then delegates the actual text element creation to
+ * the Text class.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0

@@ -84,7 +84,8 @@ class Node implements JsonSerializable
     }
 
     /**
-     * Appends a partner node. Partners are displayed as arcs in the descendant section.
+     * Appends a partner node. Partners are displayed as arcs in the descendant
+     * section.
      *
      * @param Node $partner
      *
@@ -156,8 +157,8 @@ class Node implements JsonSerializable
     }
 
     /**
-     * Serialises the node to an array for JSON output. The "parents" key is omitted
-     * when the node has no ancestors, keeping the payload compact.
+     * Serialises the node to an array for JSON output. The "parents" key is
+     * omitted when the node has no ancestors, keeping the payload compact.
      *
      * @return array<string, int|int[]|NodeData|Node[]>
      */

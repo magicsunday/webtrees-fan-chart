@@ -39,9 +39,9 @@ function initRangeSlider(storage, id, suffix = "") {
 }
 
 /**
- * Initialises the fan chart page: restores form values from localStorage,
- * sets up event listeners for interactive form elements, builds the initial
- * AJAX URL, and triggers the first chart data load.
+ * Initialises the fan chart page: restores form values from localStorage, sets
+ * up event listeners for interactive form elements, builds the initial AJAX
+ * URL, and triggers the first chart data load.
  *
  * @param {object}  config
  * @param {string}  config.ajaxUrl                        The base AJAX endpoint URL
@@ -122,8 +122,8 @@ export function initPage(config) {
      * Resolved user options. `null` here means "user has not overridden the
      * server default"; chart.phtml falls back to the PHP-side value via `??`.
      * `showDescendants` and `detailedDateGenerations` are pre-resolved with
-     * their server defaults because subsequent code in this function reads
-     * them unconditionally.
+     * their server defaults because subsequent code in this function reads them
+     * unconditionally.
      *
      * @type {{
      *   fanDegree: number|null,

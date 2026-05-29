@@ -28,11 +28,12 @@ import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees
 
 /**
  * Generates all text elements for a single person arc: first names, last names,
- * alternative name, and date lines. Inner arcs (depth 1 to numberOfInnerCircles)
- * render text along arc-shaped <path> definitions; outer arcs use rotated plain
- * <text> elements. Slot positions are calculated to vertically center the full
- * text block within the arc band with tighter intra-group and wider inter-group
- * spacing. Long names and dates are truncated with an ellipsis to fit.
+ * alternative name, and date lines. Inner arcs (depth 1 to
+ * numberOfInnerCircles) render text along arc-shaped <path> definitions; outer
+ * arcs use rotated plain <text> elements. Slot positions are calculated to
+ * vertically center the full text block within the arc band with tighter
+ * intra-group and wider inter-group spacing. Long names and dates are truncated
+ * with an ellipsis to fit.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -258,7 +259,8 @@ export default class Text {
      * Appends up to two date lines from datum.data.data.timespan to parent,
      * truncating each with an ellipsis when it exceeds the available arc width.
      * The createElement callback abstracts away the inner/outer difference:
-     * inner labels pass a textPath creator, outer labels pass a plain text creator.
+     * inner labels pass a textPath creator, outer labels pass a plain text
+     * creator.
      *
      * @param {Selection<any, any, any, any>} _parent  Unused; kept for symmetry with sibling renderers
      * @param {object}    datum
@@ -291,9 +293,9 @@ export default class Text {
 
     /**
      * Splits the individual's name into two arrays: first names and last names,
-     * preserving the order they appear in the full name string. Each entry carries
-     * flags for preferred-name underline and last-name bold styling. Returns
-     * [firstNamesArray, lastNamesArray].
+     * preserving the order they appear in the full name string. Each entry
+     * carries flags for preferred-name underline and last-name bold styling.
+     * Returns [firstNamesArray, lastNamesArray].
      *
      * @param {NameElementData} datum
      *
@@ -396,8 +398,8 @@ export default class Text {
     }
 
     /**
-     * Splits the alternative name into per-word LabelElementData entries,
-     * each marked with the isAltRtl flag for correct bidirectional spacing.
+     * Splits the alternative name into per-word LabelElementData entries, each
+     * marked with the isAltRtl flag for correct bidirectional spacing.
      *
      * @param {NameElementData} datum
      *
@@ -416,8 +418,8 @@ export default class Text {
 
     /**
      * Appends one <tspan> per name part to parent. Preferred names receive an
-     * underline decoration; last names receive the "lastName" CSS class. Adjacent
-     * name parts are spaced 0.25em apart (negated for RTL scripts).
+     * underline decoration; last names receive the "lastName" CSS class.
+     * Adjacent name parts are spaced 0.25em apart (negated for RTL scripts).
      *
      * @param {Selection}         parent The <text> or <textPath> element to append spans to
      * @param {LabelElementData[]} data  Array of name part descriptors
@@ -471,7 +473,8 @@ export default class Text {
 
     /**
      * Returns the pixel width of text rendered in the SVG's current font family
-     * at the given size and weight. Delegates to the shared canvas-based measure utility.
+     * at the given size and weight. Delegates to the shared canvas-based
+     * measure utility.
      *
      * @param {string} text
      * @param {string} fontSize   CSS font-size string (e.g. "14px")
@@ -488,9 +491,9 @@ export default class Text {
     }
 
     /**
-     * Returns true for generations 1 to numberOfInnerCircles, which render
-     * text along curved arc paths. Returns false for the center node (depth 0)
-     * and for outer generations that use rotated plain text elements.
+     * Returns true for generations 1 to numberOfInnerCircles, which render text
+     * along curved arc paths. Returns false for the center node (depth 0) and
+     * for outer generations that use rotated plain text elements.
      *
      * @param {object} data The D3 partition datum
      *
@@ -527,7 +530,8 @@ export default class Text {
      * the given text slot. The path ID is derived from parentId and slot.index.
      * During updates, if a path with that ID already exists, a numeric suffix
      * is appended so old and new textPaths can coexist during the cross-fade.
-     * Reverses start/end angles for flipped labels in the bottom half of 360° charts.
+     * Reverses start/end angles for flipped labels in the bottom half of 360°
+     * charts.
      *
      * @param {string} parentId The ID of the parent person/marriage element
      * @param {object} slot     One of the TEXT_SLOT constants (carries .index for the path ID)
@@ -576,7 +580,8 @@ export default class Text {
     }
 
     /**
-     * Check for the 360-degree chart if the current arc labels should be flipped for easier reading.
+     * Check for the 360-degree chart if the current arc labels should be
+     * flipped for easier reading.
      *
      * @param {number} depth The depth of the element inside the chart
      * @param {number} x0    The left edge (x0) of the rectangle
@@ -604,10 +609,10 @@ export default class Text {
     };
 
     /**
-     * Calculates text positions grouped by semantic relationship. Names
-     * (first, last, alternative) form one group, dates another. Items within
-     * a group use tighter spacing; groups are separated by a wider gap.
-     * The result is vertically centered in the available arc space.
+     * Calculates text positions grouped by semantic relationship. Names (first,
+     * last, alternative) form one group, dates another. Items within a group
+     * use tighter spacing; groups are separated by a wider gap. The result is
+     * vertically centered in the available arc space.
      *
      * @param {object} datum The D3 data object
      *
@@ -1019,10 +1024,10 @@ export default class Text {
 
     /**
      * Calculates angular offsets for outer text elements using the same
-     * semantic grouping as calculateSlotPositions: names form one tight
-     * group, dates another, with a wider gap between groups. Positions
-     * are returned as degree offsets from the arc center, vertically
-     * centered within the available angular span.
+     * semantic grouping as calculateSlotPositions: names form one tight group,
+     * dates another, with a wider gap between groups. Positions are returned as
+     * degree offsets from the arc center, vertically centered within the
+     * available angular span.
      *
      * @param {object}    datum        The D3 data object
      * @param {Selection} textElements The text elements to position

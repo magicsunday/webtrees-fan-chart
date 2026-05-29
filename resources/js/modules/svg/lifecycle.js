@@ -6,9 +6,9 @@
  */
 
 /**
- * Reads the D3 lifecycle CSS classes from an element and returns
- * a structured object indicating the element's current state in the
- * enter/update/exit data join.
+ * Reads the D3 lifecycle CSS classes from an element and returns a structured
+ * object indicating the element's current state in the enter/update/exit data
+ * join.
  *
  * @param {object} element D3 selection with .classed() method
  *
@@ -23,9 +23,9 @@ export function classifyElement(element) {
 }
 
 /**
- * Sets a selection's opacity to near-zero when the parent element is
- * in the "update" lifecycle state. Used for cross-fade transitions
- * where new content fades in while old content fades out.
+ * Sets a selection's opacity to near-zero when the parent element is in the
+ * "update" lifecycle state. Used for cross-fade transitions where new content
+ * fades in while old content fades out.
  *
  * @param {object} selection D3 selection to hide
  * @param {object} parent    D3 selection of the parent element

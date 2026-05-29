@@ -42,9 +42,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Entry point for the webtrees fan chart module. Registers the chart route, handles
- * GET/POST chart requests, builds AJAX data responses via DataFacade, and wires in
- * the module's custom translations, config page, and chart menu entries.
+ * Entry point for the webtrees fan chart module. Registers the chart route,
+ * handles GET/POST chart requests, builds AJAX data responses via DataFacade,
+ * and wires in the module's custom translations, config page, and chart menu
+ * entries.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -67,11 +68,12 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     public const string CUSTOM_VERSION = '3.6.6-dev';
 
     /**
-     * Webtrees renders this URL as the "For more information, see …" link inside the
-     * "An upgrade is available" notice on the admin home (control-panel.phtml) and on
-     * the Modules admin pages. Pointed at the GitHub /releases/latest page so admins
-     * who notice an available update land directly on the release notes — including
-     * the "Manual / FTP installation" banner and the install-ready asset zip.
+     * Webtrees renders this URL as the "For more information, see …" link
+     * inside the "An upgrade is available" notice on the admin home
+     * (control-panel.phtml) and on the Modules admin pages. Pointed at the
+     * GitHub /releases/latest page so admins who notice an available update
+     * land directly on the release notes — including the "Manual / FTP
+     * installation" banner and the install-ready asset zip.
      */
     public const string CUSTOM_SUPPORT_URL = 'https://github.com/' . self::GITHUB_REPO . '/releases/latest';
 
@@ -123,7 +125,8 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     }
 
     /**
-     * Returns a short description shown in the module list in the control panel.
+     * Returns a short description shown in the module list in the control
+     * panel.
      *
      * @return string
      */
@@ -145,9 +148,10 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     }
 
     /**
-     * Handles the chart route. POST requests are redirected to a canonical GET URL
-     * so the browser address bar always reflects the current settings. GET requests
-     * render the page shell or, when the "ajax" flag is set, the inner chart partial.
+     * Handles the chart route. POST requests are redirected to a canonical GET
+     * URL so the browser address bar always reflects the current settings. GET
+     * requests render the page shell or, when the "ajax" flag is set, the inner
+     * chart partial.
      *
      * @param ServerRequestInterface $request
      *
@@ -217,8 +221,8 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     }
 
     /**
-     * Returns the localised page title. Falls back to the generic "Fan chart" label
-     * when the individual's name is hidden by privacy settings.
+     * Returns the localised page title. Falls back to the generic "Fan chart"
+     * label when the individual's name is hidden by privacy settings.
      *
      * @param Individual $individual
      *
@@ -234,10 +238,10 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     }
 
     /**
-     * Returns the static chart parameters passed to the JavaScript initialiser —
-     * RTL direction flag, image/silhouette visibility, name-abbreviation
-     * strategy (resolved from the tree's surname tradition), and localised
-     * UI labels.
+     * Returns the static chart parameters passed to the JavaScript initialiser
+     * — RTL direction flag, image/silhouette visibility, name-abbreviation
+     * strategy (resolved from the tree's surname tradition), and localised UI
+     * labels.
      *
      * @param Individual $individual
      *
@@ -288,7 +292,8 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     }
 
     /**
-     * Returns true when highlight images are enabled for the tree and the individual is visible.
+     * Returns true when highlight images are enabled for the tree and the
+     * individual is visible.
      *
      * @param Individual $individual
      *
@@ -301,8 +306,9 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     }
 
     /**
-     * Returns true when silhouette placeholders should be shown as a fallback when
-     * the individual has no highlight image. Requires showImages() to also be true.
+     * Returns true when silhouette placeholders should be shown as a fallback
+     * when the individual has no highlight image. Requires showImages() to also
+     * be true.
      *
      * @param Individual $individual
      *
@@ -315,8 +321,9 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     }
 
     /**
-     * AJAX action called by the JavaScript when the user clicks an ancestor to re-root the chart.
-     * Validates access, rebuilds the tree structure for the new individual, and returns JSON.
+     * AJAX action called by the JavaScript when the user clicks an ancestor to
+     * re-root the chart. Validates access, rebuilds the tree structure for the
+     * new individual, and returns JSON.
      *
      * @param ServerRequestInterface $request
      *
@@ -359,8 +366,8 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     }
 
     /**
-     * Returns the stylesheets that must be inlined during SVG/PNG export —
-     * the active webtrees theme sheets plus the module's SVG-specific stylesheet.
+     * Returns the stylesheets that must be inlined during SVG/PNG export — the
+     * active webtrees theme sheets plus the module's SVG-specific stylesheet.
      *
      * @return array<string>
      *

@@ -16,8 +16,8 @@ use Fisharebest\Webtrees\Individual;
 use MagicSunday\Webtrees\ModuleBase\Traits\ModuleChartTrait as BaseModuleChartTrait;
 
 /**
- * Implements the webtrees ModuleChartInterface methods specific to the fan chart:
- * menu CSS class, chart box menu entry, title, and URL generation.
+ * Implements the webtrees ModuleChartInterface methods specific to the fan
+ * chart: menu CSS class, chart box menu entry, title, and URL generation.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -36,7 +36,8 @@ trait ModuleChartTrait
     }
 
     /**
-     * Returns the localised chart title shown in the chart box menu and page headings.
+     * Returns the localised chart title shown in the chart box menu and page
+     * headings.
      *
      * @return string
      */

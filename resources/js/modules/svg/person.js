@@ -37,10 +37,10 @@ const IMAGE_ANGULAR_MIN_DEG = 10;
 let clipIdCounter = 0;
 
 /**
- * Minimum angular width for descendants (depth < 0). Higher than the
- * ancestor threshold so the descendant ring stays uncluttered: 2-3
- * children each get a wide arc with their image, but 10+ siblings on
- * the same ring share narrow arcs and skip images.
+ * Minimum angular width for descendants (depth < 0). Higher than the ancestor
+ * threshold so the descendant ring stays uncluttered: 2-3 children each get a
+ * wide arc with their image, but 10+ siblings on the same ring share narrow
+ * arcs and skip images.
  */
 const IMAGE_ANGULAR_MIN_DEG_DESCENDANT = 25;
 
@@ -51,11 +51,11 @@ const IMAGE_TEXT_GAP = 6;
 const IMAGE_LABEL_GAP = 10;
 
 /**
- * Renders all visual elements for a single person arc: the filled arc path,
- * the SVG <title> for browser tooltips, the name/date label group, the
- * circular thumbnail image (clipped to a circle), the thin color-indicator
- * strip at the outer edge, and the hover/context-menu tooltip events.
- * Respects the new / update / remove lifecycle class flags set by Update.
+ * Renders all visual elements for a single person arc: the filled arc path, the
+ * SVG <title> for browser tooltips, the name/date label group, the circular
+ * thumbnail image (clipped to a circle), the thin color-indicator strip at the
+ * outer edge, and the hover/context-menu tooltip events. Respects the new /
+ * update / remove lifecycle class flags set by Update.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -79,8 +79,9 @@ export default class Person {
 
     /**
      * Builds all child elements of the person <g>. Skips outer generations when
-     * names are disabled. For nodes with data, pre-computes imageSize on the datum
-     * before calling LabelRenderer so text layout can account for the image width.
+     * names are disabled. For nodes with data, pre-computes imageSize on the
+     * datum before calling LabelRenderer so text layout can account for the
+     * image width.
      *
      * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
      * @param {object}    datum  The D3 partition datum
@@ -151,9 +152,9 @@ export default class Person {
 
     /**
      * Appends the thin color-indicator strip along the outer edge of the arc.
-     * The strip always carries the sex-based CSS class (male / female / unknown)
-     * so the gender remains visible regardless of whether family colors fill
-     * the arc body.
+     * The strip always carries the sex-based CSS class (male / female /
+     * unknown) so the gender remains visible regardless of whether family
+     * colors fill the arc body.
      *
      * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
      * @param {object}    datum  The D3 partition datum
@@ -186,8 +187,8 @@ export default class Person {
 
     /**
      * Computes the image size for a person arc based on arc height, angular
-     * width, and whether names are shown. Returns null if conditions aren't
-     * met (images disabled, no thumbnail, outer arc, or arc too narrow).
+     * width, and whether names are shown. Returns null if conditions aren't met
+     * (images disabled, no thumbnail, outer arc, or arc too narrow).
      *
      * @param {object} datum The D3 partition datum
      *
@@ -244,11 +245,11 @@ export default class Person {
     }
 
     /**
-     * Appends a circular thumbnail image to the person element.
-     * Called AFTER labels are rendered so getBBox() can measure text.
+     * Appends a circular thumbnail image to the person element. Called AFTER
+     * labels are rendered so getBBox() can measure text.
      *
-     * Center node: image above the text, horizontally centered.
-     * Inner arcs: image left of the text block, both centered on arc.
+     * Center node: image above the text, horizontally centered. Inner arcs:
+     * image left of the text block, both centered on arc.
      *
      * @param {Selection<any, any, any, any>} person    The parent element
      * @param {object}    datum     The D3 data object

@@ -19,11 +19,12 @@ import FamilyColor from "./svg/family-color.js";
  */
 
 /**
- * Handles the animated transition when the chart re-centers on a new individual.
- * Fetches new hierarchy data via AJAX, classifies each person and marriage element
- * as "new", "update", or "remove", then runs a cross-fade transition that fades
- * out stale arcs and labels while fading in replacements. Cleans up orphaned
- * path and clip-path definitions after the transition completes.
+ * Handles the animated transition when the chart re-centers on a new
+ * individual. Fetches new hierarchy data via AJAX, classifies each person and
+ * marriage element as "new", "update", or "remove", then runs a cross-fade
+ * transition that fades out stale arcs and labels while fading in replacements.
+ * Cleans up orphaned path and clip-path definitions after the transition
+ * completes.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -48,7 +49,8 @@ export default class ChartUpdater {
      * Loads new hierarchy data from the given URL, classifies DOM elements,
      * runs the cross-fade transition, and invokes callbacks when done. The
      * redrawOverlays callback is called mid-transition to swap separator lines;
-     * the callback is called after all transitions settle and cleanup is complete.
+     * the callback is called after all transitions settle and cleanup is
+     * complete.
      *
      * @param {string}   url            The JSON endpoint for the new center individual
      * @param {Function} redrawOverlays Called before transition ends to redraw separator lines
@@ -174,10 +176,10 @@ export default class ChartUpdater {
     }
 
     /**
-     * Runs the D3 data-join for all person elements, classifying each as
-     * "new", "update", or "remove" and rebuilding their SVG content.
-     * Descendant elements are always treated as "new" because their arc
-     * geometry changes on every re-center.
+     * Runs the D3 data-join for all person elements, classifying each as "new",
+     * "update", or "remove" and rebuilding their SVG content. Descendant
+     * elements are always treated as "new" because their arc geometry changes
+     * on every re-center.
      *
      * @private
      */
@@ -250,9 +252,9 @@ export default class ChartUpdater {
     }
 
     /**
-     * Runs the D3 data-join for ancestor marriage elements, classifying each
-     * as "new", "update", or "remove" and rebuilding their SVG content.
-     * No-ops when showParentMarriageDates is disabled.
+     * Runs the D3 data-join for ancestor marriage elements, classifying each as
+     * "new", "update", or "remove" and rebuilding their SVG content. No-ops
+     * when showParentMarriageDates is disabled.
      *
      * @private
      */
@@ -311,8 +313,8 @@ export default class ChartUpdater {
 
     /**
      * Schedules all D3 transitions for the cross-fade animation: fades out
-     * removed arcs, fades in new arcs with family colors, transitions colors
-     * on updated arcs, and cross-fades old/new labels and separator lines.
+     * removed arcs, fades in new arcs with family colors, transitions colors on
+     * updated arcs, and cross-fades old/new labels and separator lines.
      *
      * @param {Transition<any, any, any, any>} transition The shared D3 transition instance
      *

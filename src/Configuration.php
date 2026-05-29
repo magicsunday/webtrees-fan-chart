@@ -19,10 +19,10 @@ use MagicSunday\Webtrees\ModuleBase\Model\NameAbbreviation;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Holds all user-configurable chart settings, reading values from the HTTP request
- * (POST body or query params) and falling back to module-level preferences when absent.
- * Provides clamped, type-safe accessors used by both the chart renderer and the admin
- * configuration page.
+ * Holds all user-configurable chart settings, reading values from the HTTP
+ * request (POST body or query params) and falling back to module-level
+ * preferences when absent. Provides clamped, type-safe accessors used by both
+ * the chart renderer and the admin configuration page.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -107,13 +107,14 @@ class Configuration
     public const string MATERNAL_COLOR_DEFAULT = '#d06f94';
 
     /**
-     * The default number of place hierarchy parts to display.
-     * 1 = lowest level (parish/city), 0 = full place name.
+     * The default number of place hierarchy parts to display. 1 = lowest level
+     * (parish/city), 0 = full place name.
      */
     private const int DEFAULT_PLACE_PARTS = 1;
 
     /**
-     * The default number of generations for which detailed life event dates are displayed.
+     * The default number of generations for which detailed life event dates are
+     * displayed.
      */
     private const int DEFAULT_DETAILED_DATE_GENERATIONS = 0;
 
@@ -146,7 +147,8 @@ class Configuration
     }
 
     /**
-     * Returns the number of ancestor generations to render, clamped to [MIN, MAX].
+     * Returns the number of ancestor generations to render, clamped to [MIN,
+     * MAX].
      *
      * @return int
      */
@@ -240,9 +242,9 @@ class Configuration
     }
 
     /**
-     * Returns the opening angle of the fan in degrees (180–360).
-     * When showDescendants is active, the value is clamped to 180–270
-     * to reserve angular space for the descendant section.
+     * Returns the opening angle of the fan in degrees (180–360). When
+     * showDescendants is active, the value is clamped to 180–270 to reserve
+     * angular space for the descendant section.
      *
      * @return int
      */
@@ -258,8 +260,8 @@ class Configuration
     }
 
     /**
-     * Returns the opening angle of the fan in degrees WITHOUT descendant clamping.
-     * Used by page.phtml to initialise the fanDegreeRaw storage key.
+     * Returns the opening angle of the fan in degrees WITHOUT descendant
+     * clamping. Used by page.phtml to initialise the fanDegreeRaw storage key.
      *
      * @return int
      */
@@ -277,7 +279,8 @@ class Configuration
     }
 
     /**
-     * Returns true when ancestor arcs with no data should be omitted from the chart.
+     * Returns true when ancestor arcs with no data should be omitted from the
+     * chart.
      *
      * @return bool
      */
@@ -311,7 +314,8 @@ class Configuration
     }
 
     /**
-     * Returns true when birth/death place names should be rendered in chart arcs.
+     * Returns true when birth/death place names should be rendered in chart
+     * arcs.
      *
      * @return bool
      */
@@ -328,7 +332,8 @@ class Configuration
     }
 
     /**
-     * Returns the number of lowest place hierarchy levels to display (0 = full name, 1–3 = N lowest levels).
+     * Returns the number of lowest place hierarchy levels to display (0 = full
+     * name, 1–3 = N lowest levels).
      *
      * @return int
      */
@@ -346,7 +351,8 @@ class Configuration
     }
 
     /**
-     * Returns a localised label map for the place-parts selector (key 0 = full name).
+     * Returns a localised label map for the place-parts selector (key 0 = full
+     * name).
      *
      * @return string[]
      */
@@ -361,7 +367,8 @@ class Configuration
     }
 
     /**
-     * Returns true when the marriage date of an individual's parents should appear in arc text.
+     * Returns true when the marriage date of an individual's parents should
+     * appear in arc text.
      *
      * @return bool
      */
@@ -378,7 +385,8 @@ class Configuration
     }
 
     /**
-     * Returns true when highlight images (or silhouettes) should be rendered inside arcs.
+     * Returns true when highlight images (or silhouettes) should be rendered
+     * inside arcs.
      *
      * @return bool
      */
@@ -402,8 +410,9 @@ class Configuration
 
     /**
      * Returns true when the legacy GEDCOM `2 NICK` value should be displayed in
-     * quotes between the given names and the surname (e.g. `Martin "Chalky" White`).
-     * Default off so existing trees keep the post-2.0 webtrees rendering.
+     * quotes between the given names and the surname (e.g. `Martin "Chalky"
+     * White`). Default off so existing trees keep the post-2.0 webtrees
+     * rendering.
      *
      * @return bool
      */
@@ -420,7 +429,8 @@ class Configuration
     }
 
     /**
-     * Returns true when individual names should be rendered inside arc segments.
+     * Returns true when individual names should be rendered inside arc
+     * segments.
      *
      * @return bool
      */
@@ -443,8 +453,9 @@ class Configuration
     }
 
     /**
-     * Resolves the displayMode parameter from the request. Returns null if not present,
-     * allowing fallback to the individual showNames/showImages parameters.
+     * Resolves the displayMode parameter from the request. Returns null if not
+     * present, allowing fallback to the individual showNames/showImages
+     * parameters.
      *
      * @return string|null 'both', 'names', 'images', or null
      */
@@ -461,7 +472,8 @@ class Configuration
     }
 
     /**
-     * Returns the count of innermost arc rings that receive the wider "detailed" layout.
+     * Returns the count of innermost arc rings that receive the wider
+     * "detailed" layout.
      *
      * @return int
      */
@@ -479,7 +491,8 @@ class Configuration
     }
 
     /**
-     * Returns true when the SVG download button should be hidden from the chart toolbar.
+     * Returns true when the SVG download button should be hidden from the chart
+     * toolbar.
      *
      * @return bool
      */
@@ -496,7 +509,8 @@ class Configuration
     }
 
     /**
-     * Returns true when the PNG download button should be hidden from the chart toolbar.
+     * Returns true when the PNG download button should be hidden from the chart
+     * toolbar.
      *
      * @return bool
      */
@@ -547,8 +561,8 @@ class Configuration
     }
 
     /**
-     * Returns the dropdown options for the name-abbreviation strategy in
-     * the admin config form. Keyed by the persisted enum value.
+     * Returns the dropdown options for the name-abbreviation strategy in the
+     * admin config form. Keyed by the persisted enum value.
      *
      * @return array<string, string>
      */
@@ -562,10 +576,10 @@ class Configuration
     }
 
     /**
-     * Returns the name-abbreviation strategy as stored. One of
-     * {@see NameAbbreviation::AUTO}, GIVEN or SURNAME. The chart-render path
-     * resolves AUTO to GIVEN/SURNAME via the tree's SURNAME_TRADITION before
-     * serialising to the JS config — see {@see Module::getChartParameters()}.
+     * Returns the name-abbreviation strategy as stored. One of {@see
+     * NameAbbreviation::AUTO}, GIVEN or SURNAME. The chart-render path resolves
+     * AUTO to GIVEN/SURNAME via the tree's SURNAME_TRADITION before serialising
+     * to the JS config — see {@see Module::getChartParameters()}.
      *
      * @return string
      */
@@ -588,9 +602,9 @@ class Configuration
     /**
      * Returns the form-toggle parameter set used by every URL the chart
      * navigates to (POST → redirect, AJAX fragment, click-to-recenter).
-     * Centralising the list here keeps the three call sites in sync —
-     * dropping one parameter from a single URL silently flipped toggles
-     * back to module preference defaults on navigation.
+     * Centralising the list here keeps the three call sites in sync — dropping
+     * one parameter from a single URL silently flipped toggles back to module
+     * preference defaults on navigation.
      *
      * @return array<string, int|string>
      */

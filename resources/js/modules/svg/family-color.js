@@ -18,16 +18,16 @@ import { SEX_FEMALE, SEX_MALE } from "../hierarchy.js";
  */
 
 /**
- * This class computes family-branch colors for person arcs. The two
- * base colors (paternal / maternal) are configurable via the chart
- * settings. Sub-branches derive their hue from the base color with
- * slight positional offsets. Saturation decreases and lightness
- * increases with depth so outer rings become more pastel.
+ * This class computes family-branch colors for person arcs. The two base colors
+ * (paternal / maternal) are configurable via the chart settings. Sub-branches
+ * derive their hue from the base color with slight positional offsets.
+ * Saturation decreases and lightness increases with depth so outer rings become
+ * more pastel.
  *
- * Designed to work for up to 10 generations. The HSL math primitives
- * (hexToHsl, depthBounds, depthHsl) live in @magicsunday/webtrees-chart-lib
- * so they can be shared with webtrees-pedigree-chart, which uses the same
- * paternal/maternal color scheme but a linear (not radial) geometry.
+ * Designed to work for up to 10 generations. The HSL math primitives (hexToHsl,
+ * depthBounds, depthHsl) live in @magicsunday/webtrees-chart-lib so they can be
+ * shared with webtrees-pedigree-chart, which uses the same paternal/maternal
+ * color scheme but a linear (not radial) geometry.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -46,9 +46,9 @@ export default class FamilyColor {
     }
 
     /**
-     * Computes the family-branch color for a given datum. Both parents
-     * of the same child share the same hue so couples appear as a
-     * single colored family unit.
+     * Computes the family-branch color for a given datum. Both parents of the
+     * same child share the same hue so couples appear as a single colored
+     * family unit.
      *
      * @param {object} datum The D3 partition datum
      *
@@ -91,10 +91,10 @@ export default class FamilyColor {
     }
 
     /**
-     * Computes a family-branch color for descendant nodes. Each partner
-     * family gets a unique hue derived from its angular position in the
-     * descendant sector. Children share their partner's hue at a slightly
-     * deeper saturation/lightness level.
+     * Computes a family-branch color for descendant nodes. Each partner family
+     * gets a unique hue derived from its angular position in the descendant
+     * sector. Children share their partner's hue at a slightly deeper
+     * saturation/lightness level.
      *
      * @param {object} datum The D3 partition datum (depth < 0)
      *
@@ -143,8 +143,8 @@ export default class FamilyColor {
     }
 
     /**
-     * Pre-computes partner midpoints for descendant color lookups.
-     * Call once before computing colors for a new hierarchy.
+     * Pre-computes partner midpoints for descendant color lookups. Call once
+     * before computing colors for a new hierarchy.
      *
      * @param {Array} nodes All hierarchy nodes
      */
@@ -159,10 +159,10 @@ export default class FamilyColor {
     }
 
     /**
-     * Returns the family color for a marriage arc. For the root node
-     * (depth 0) this is the center node's own color since it spans
-     * both lineages. For deeper nodes it is the first available
-     * child's color (both parents share the same hue).
+     * Returns the family color for a marriage arc. For the root node (depth 0)
+     * this is the center node's own color since it spans both lineages. For
+     * deeper nodes it is the first available child's color (both parents share
+     * the same hue).
      *
      * @param {object} datum The D3 data object
      *

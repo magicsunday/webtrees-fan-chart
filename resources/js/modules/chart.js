@@ -143,8 +143,8 @@ export default class Chart {
 
     /**
      * Smoothly transitions the SVG viewBox to fit the final chart content.
-     * Temporarily hides elements marked for removal so getBBox() reflects
-     * only the incoming content, then restores them for the fade-out transition.
+     * Temporarily hides elements marked for removal so getBBox() reflects only
+     * the incoming content, then restores them for the fade-out transition.
      *
      * @private
      */
@@ -175,7 +175,8 @@ export default class Chart {
     }
 
     /**
-     * Animates the chart back to its initial zoom level and pan position (identity transform).
+     * Animates the chart back to its initial zoom level and pan position
+     * (identity transform).
      */
     center() {
         this.svg.transition().duration(750).call(this.svg.zoom.get().transform, d3.zoomIdentity);
@@ -256,9 +257,9 @@ export default class Chart {
     }
 
     /**
-     * Draws radial separator lines between different family branches at
-     * each generation level. Lines are drawn only between non-spouse
-     * segments (where the parent differs).
+     * Draws radial separator lines between different family branches at each
+     * generation level. Lines are drawn only between non-spouse segments (where
+     * the parent differs).
      *
      * @private
      */
@@ -318,7 +319,8 @@ export default class Chart {
 
     /**
      * Draws separator lines between partner families in the descendant section.
-     * Lines run from the marriage arc gap through the partner and children rings.
+     * Lines run from the marriage arc gap through the partner and children
+     * rings.
      *
      * @param {Geometry}  geometry
      * @param {Selection<any, any, any, any>} separatorGroup
@@ -367,9 +369,9 @@ export default class Chart {
 
     /**
      * Draws marriage arcs in the gap between generations. Each arc spans the
-     * angular range of a person who has parents shown in the chart. The arc
-     * is always drawn (for visual consistency), and the marriage date text
-     * is added when available.
+     * angular range of a person who has parents shown in the chart. The arc is
+     * always drawn (for visual consistency), and the marriage date text is
+     * added when available.
      *
      * @private
      */
@@ -406,10 +408,10 @@ export default class Chart {
     }
 
     /**
-     * Draws marriage arcs for descendant partners in the gap between the
-     * center circle and the partner ring. Each partner gets an arc showing
-     * the marriage date from the family record. Uses the childScale for
-     * angular positioning.
+     * Draws marriage arcs for descendant partners in the gap between the center
+     * circle and the partner ring. Each partner gets an arc showing the
+     * marriage date from the family record. Uses the childScale for angular
+     * positioning.
      *
      * @private
      */
@@ -464,8 +466,8 @@ export default class Chart {
 
     /**
      * Marks all persons with a non-empty xref as "available" (enabling hover
-     * styles) and binds the click handler. Also marks marriage arcs that have
-     * a date as "available" and empty ones as "empty" for CSS styling.
+     * styles) and binds the click handler. Also marks marriage arcs that have a
+     * date as "available" and empty ones as "empty" for CSS styling.
      *
      * @private
      */
@@ -505,8 +507,8 @@ export default class Chart {
     }
 
     /**
-     * Handles a click on a person arc. Redirects to the individual page for
-     * the center node (depth 0); triggers a chart update for all other nodes.
+     * Handles a click on a person arc. Redirects to the individual page for the
+     * center node (depth 0); triggers a chart update for all other nodes.
      *
      * @param {Event}  _event The current event
      * @param {object} datum  The D3 data object
@@ -537,8 +539,8 @@ export default class Chart {
     }
 
     /**
-     * Fetches new hierarchy data for the given individual URL and animates
-     * the chart transition, then redraws overlay layers and rebinds events.
+     * Fetches new hierarchy data for the given individual URL and animates the
+     * chart transition, then redraws overlay layers and rebinds events.
      *
      * @param {string} url The update URL for the new center individual
      */

@@ -24,7 +24,8 @@ use PHPUnit\Framework\TestCase;
 final class NodeTest extends TestCase
 {
     /**
-     * Ensures parent references are included during serialization when they exist.
+     * Ensures parent references are included during serialization when they
+     * exist.
      */
     #[Test]
     public function jsonSerializeAddsParentsWhenPresent(): void
@@ -134,7 +135,8 @@ final class NodeTest extends TestCase
     }
 
     /**
-     * UnassignedChildren key must appear when privacy-hidden spouse has visible children.
+     * UnassignedChildren key must appear when privacy-hidden spouse has visible
+     * children.
      */
     #[Test]
     public function jsonSerializeIncludesUnassignedChildrenWhenPresent(): void

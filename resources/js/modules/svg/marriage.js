@@ -32,8 +32,8 @@ let marriagePathCounter = 0;
  * and its parents, showing the marriage date of the couple. The arc fills the
  * space between outerRadius(depth) and innerRadius(depth+1). Text is rendered
  * along the arc mid-radius and flipped in the bottom half of 360° charts.
- * Mirrors the lifecycle pattern of the Person class (new / update / remove
- * CSS class classification).
+ * Mirrors the lifecycle pattern of the Person class (new / update / remove CSS
+ * class classification).
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -58,8 +58,8 @@ export default class Marriage {
     /**
      * Decides which elements to create based on the lifecycle state (new /
      * update / remove). Skips arc creation for elements being updated (the
-     * existing arc is reused) and skips label creation for elements being removed.
-     * Returns early for outer generations when names are disabled.
+     * existing arc is reused) and skips label creation for elements being
+     * removed. Returns early for outer generations when names are disabled.
      *
      * @param {Selection<any, any, any, any>} marriage The <g class="marriage"> D3 selection
      * @param {object}    datum    The D3 partition datum
@@ -135,10 +135,9 @@ export default class Marriage {
     }
 
     /**
-     * Builds the d3.arc() generator for the gap between outerRadius(depth)
-     * and innerRadius(depth+1) and delegates rendering to appendArc(). Skips
-     * if an arc already exists (update path reuse) or if the gap is zero or
-     * negative.
+     * Builds the d3.arc() generator for the gap between outerRadius(depth) and
+     * innerRadius(depth+1) and delegates rendering to appendArc(). Skips if an
+     * arc already exists (update path reuse) or if the gap is zero or negative.
      *
      * @param {Selection<any, any, any, any>} marriage The <g class="marriage"> D3 selection
      * @param {object}    datum    The D3 partition datum
@@ -169,10 +168,11 @@ export default class Marriage {
 
     /**
      * Appends a text label showing the marriage symbol and date along the arc
-     * mid-radius. Creates a <path> in SVG defs keyed by a unique ID so old
-     * and new labels can cross-fade at their respective positions during updates.
-     * Truncates the date string with an ellipsis if it overflows the arc length.
-     * No-ops when the datum has no marriageDateOfParents or the arc gap is zero.
+     * mid-radius. Creates a <path> in SVG defs keyed by a unique ID so old and
+     * new labels can cross-fade at their respective positions during updates.
+     * Truncates the date string with an ellipsis if it overflows the arc
+     * length. No-ops when the datum has no marriageDateOfParents or the arc gap
+     * is zero.
      *
      * @param {Selection<any, any, any, any>} marriage The <g class="marriage"> D3 selection
      * @param {object}    datum    The D3 partition datum

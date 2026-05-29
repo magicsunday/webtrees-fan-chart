@@ -6,8 +6,8 @@
  */
 
 /**
- * Coerce a value to a finite number, returning the fallback if the
- * result is NaN or Infinity. Handles strings from HTML inputs safely.
+ * Coerce a value to a finite number, returning the fallback if the result is
+ * NaN or Infinity. Handles strings from HTML inputs safely.
  *
  * @param {*}      value    The value to coerce
  * @param {number} fallback Default if value is not a finite number
@@ -21,9 +21,9 @@ export function toFiniteNumber(value, fallback = 0) {
 }
 
 /**
- * Holds all runtime settings for the fan chart (arc counts, font sizes,
- * feature flags, colors) and exposes them through typed getters and setters.
- * Default values are applied when options are omitted or non-finite.
+ * Holds all runtime settings for the fan chart (arc counts, font sizes, feature
+ * flags, colors) and exposes them through typed getters and setters. Default
+ * values are applied when options are omitted or non-finite.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -199,7 +199,8 @@ export default class Configuration {
     }
 
     /**
-     * When true, arc segments for individuals with no data are removed from the DOM.
+     * When true, arc segments for individuals with no data are removed from the
+     * DOM.
      *
      * @return {boolean}
      */
@@ -212,7 +213,8 @@ export default class Configuration {
     }
 
     /**
-     * When true, arc fills use branch-based family colors instead of sex-based colors.
+     * When true, arc fills use branch-based family colors instead of sex-based
+     * colors.
      *
      * @return {boolean}
      */
@@ -232,8 +234,9 @@ export default class Configuration {
     }
 
     /**
-     * When true, a narrow arc between each pair of parent arcs shows the marriage date.
-     * Enabling this also increases arc height (circlePadding) to accommodate the extra band.
+     * When true, a narrow arc between each pair of parent arcs shows the
+     * marriage date. Enabling this also increases arc height (circlePadding) to
+     * accommodate the extra band.
      *
      * @return {boolean}
      */
@@ -246,7 +249,8 @@ export default class Configuration {
     }
 
     /**
-     * When true, thumbnail images are rendered inside person arcs where space allows.
+     * When true, thumbnail images are rendered inside person arcs where space
+     * allows.
      *
      * @return {boolean}
      */
@@ -255,7 +259,8 @@ export default class Configuration {
     }
 
     /**
-     * When false, only images are rendered in the arcs and text labels are omitted.
+     * When false, only images are rendered in the arcs and text labels are
+     * omitted.
      *
      * @return {boolean}
      */
@@ -274,8 +279,8 @@ export default class Configuration {
     }
 
     /**
-     * When true, partners and children of the central person are rendered
-     * as arcs in the lower section of the fan chart.
+     * When true, partners and children of the central person are rendered as
+     * arcs in the lower section of the fan chart.
      *
      * @return {boolean}
      */
@@ -288,10 +293,9 @@ export default class Configuration {
     }
 
     /**
-     * D3 linear scale mapping descendant full-circle fractions [0,1] to
-     * radian angles in the descendant sector. Set by hierarchy.js after
-     * computing the descendant angle range. Null when no descendants are
-     * active.
+     * D3 linear scale mapping descendant full-circle fractions [0,1] to radian
+     * angles in the descendant sector. Set by hierarchy.js after computing the
+     * descendant angle range. Null when no descendants are active.
      *
      * @return {Function|null}
      */
@@ -304,9 +308,9 @@ export default class Configuration {
     }
 
     /**
-     * Number of generations rendered as wide inner arcs (tall enough for
-     * text along the arc path). Generations beyond this threshold use the
-     * narrower outer-arc height.
+     * Number of generations rendered as wide inner arcs (tall enough for text
+     * along the arc path). Generations beyond this threshold use the narrower
+     * outer-arc height.
      *
      * @return {number}
      */

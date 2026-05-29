@@ -66,8 +66,8 @@ export class FanChart {
     }
 
     /**
-     * Binds toolbar button clicks (center, export PNG, export SVG) and sets
-     * up fullscreen and orientation-change event listeners.
+     * Binds toolbar button clicks (center, export PNG, export SVG) and sets up
+     * fullscreen and orientation-change event listeners.
      */
     init() {
         // Bind click event on center button
@@ -83,8 +83,8 @@ export class FanChart {
     }
 
     /**
-     * Registers fullscreen and screen-orientation change listeners that
-     * toggle the body "fullscreen" attribute and recalculate the SVG viewBox.
+     * Registers fullscreen and screen-orientation change listeners that toggle
+     * the body "fullscreen" attribute and recalculate the SVG viewBox.
      *
      * @private
      */
@@ -127,7 +127,8 @@ export class FanChart {
     }
 
     /**
-     * Serializes the SVG to a canvas at A3 resolution and triggers a PNG download.
+     * Serializes the SVG to a canvas at A3 resolution and triggers a PNG
+     * download.
      *
      * @private
      */

@@ -31,8 +31,8 @@ export function createPersonArcGenerator(geometry, config, datum, padAngle) {
 }
 
 /**
- * Creates a d3.arc() generator configured for a marriage arc using
- * pre-computed geometry values from _resolveMarriageGeometry().
+ * Creates a d3.arc() generator configured for a marriage arc using pre-computed
+ * geometry values from _resolveMarriageGeometry().
  *
  * @param {object} config   Configuration with cornerRadius
  * @param {object} geometry Pre-computed { startAngle, endAngle, innerR, outerR }

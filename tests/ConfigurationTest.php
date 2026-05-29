@@ -29,7 +29,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 /**
- * Verifies that configuration handling honors defaults, validation, and selectable ranges.
+ * Verifies that configuration handling honors defaults, validation, and
+ * selectable ranges.
  */
 #[CoversClass(Configuration::class)]
 final class ConfigurationTest extends TestCase
@@ -52,7 +53,8 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Ensures GET requests fall back to configured defaults when parameters are absent.
+     * Ensures GET requests fall back to configured defaults when parameters are
+     * absent.
      */
     #[Test]
     public function queriesUseDefaultsWhenMissingParameters(): void
@@ -99,9 +101,9 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Locks the route-toggle parameter list. Forgetting to add a new toggle here
-     * is the regression that lets a freshly added form option silently fall back
-     * to module-preference defaults on click-to-recenter.
+     * Locks the route-toggle parameter list. Forgetting to add a new toggle
+     * here is the regression that lets a freshly added form option silently
+     * fall back to module-preference defaults on click-to-recenter.
      */
     #[Test]
     public function routeToggleParamsCarryEveryFormToggle(): void
@@ -205,7 +207,8 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Ensures placeParts values outside the allowed range 0-3 fall back to the default.
+     * Ensures placeParts values outside the allowed range 0-3 fall back to the
+     * default.
      */
     #[Test]
     public function placePartsOutOfRangeFallsBackToDefault(): void
@@ -256,7 +259,8 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Ensures getFanDegree() returns unclamped value when showDescendants is false.
+     * Ensures getFanDegree() returns unclamped value when showDescendants is
+     * false.
      */
     #[Test]
     public function fanDegreeUnclampedWhenDescendantsDisabled(): void
@@ -277,7 +281,8 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Ensures getFanDegree() clamps to 270 ceiling when showDescendants is true.
+     * Ensures getFanDegree() clamps to 270 ceiling when showDescendants is
+     * true.
      */
     #[Test]
     public function fanDegreeCeilingWhenDescendantsEnabled(): void
@@ -319,8 +324,9 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Ensures getFanDegree() returns default (210) when input is out of isBetween range,
-     * even when showDescendants is true (90 is rejected by validator, default 210 returned).
+     * Ensures getFanDegree() returns default (210) when input is out of
+     * isBetween range, even when showDescendants is true (90 is rejected by
+     * validator, default 210 returned).
      */
     #[Test]
     public function fanDegreeOutOfRangeFallsBackToDefault(): void
@@ -343,7 +349,8 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Ensures getFanDegreeUnclamped() returns the value WITHOUT descendant clamp.
+     * Ensures getFanDegreeUnclamped() returns the value WITHOUT descendant
+     * clamp.
      */
     #[Test]
     public function fanDegreeUnclampedIgnoresDescendantClamp(): void

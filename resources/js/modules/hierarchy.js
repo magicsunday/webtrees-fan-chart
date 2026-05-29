@@ -75,9 +75,9 @@ export default class Hierarchy {
     }
 
     /**
-     * Builds the D3 hierarchy from raw JSON data, pads missing parent slots with
-     * empty nodes, applies a partition layout, and assigns sequential IDs. Must
-     * be called before accessing nodes or root.
+     * Builds the D3 hierarchy from raw JSON data, pads missing parent slots
+     * with empty nodes, applies a partition layout, and assigns sequential IDs.
+     * Must be called before accessing nodes or root.
      *
      * @param {object} datum The raw JSON chart data object from the server
      */
@@ -131,8 +131,8 @@ export default class Hierarchy {
     }
 
     /**
-     * Flat array of all partition nodes (root plus all descendants) in
-     * top-down order, each augmented with a unique sequential id.
+     * Flat array of all partition nodes (root plus all descendants) in top-down
+     * order, each augmented with a unique sequential id.
      *
      * @return {Array}
      */
@@ -148,10 +148,10 @@ export default class Hierarchy {
     }
 
     /**
-     * Creates synthetic D3-compatible nodes for the partners and children
-     * of the central person and appends them to this._nodes. Also sets
-     * the childScale on the configuration so Geometry can resolve angles
-     * for negative depths.
+     * Creates synthetic D3-compatible nodes for the partners and children of
+     * the central person and appends them to this._nodes. Also sets the
+     * childScale on the configuration so Geometry can resolve angles for
+     * negative depths.
      *
      * @param {object} datum The raw JSON chart data object from the server
      *
@@ -254,8 +254,8 @@ export default class Hierarchy {
     }
 
     /**
-     * Creates descendant D3 datum nodes for each family block (partner arcs
-     * at depth -1, child arcs at depth -2) and pushes them into this._nodes.
+     * Creates descendant D3 datum nodes for each family block (partner arcs at
+     * depth -1, child arcs at depth -2) and pushes them into this._nodes.
      *
      * @param {Object[]} familyBlocks          Array of { type, partner, children, weight }
      * @param {string}   rootXref              The xref of the root individual
@@ -331,9 +331,9 @@ export default class Hierarchy {
     }
 
     /**
-     * Assigns a familyColor property to every node's data payload.
-     * Must be called after setPartnerMidpoints() and before any arc
-     * rendering so both Person and Marriage can read the pre-computed colors.
+     * Assigns a familyColor property to every node's data payload. Must be
+     * called after setPartnerMidpoints() and before any arc rendering so both
+     * Person and Marriage can read the pre-computed colors.
      *
      * @param {FamilyColor} familyColor The color calculator instance
      */

@@ -48,14 +48,15 @@ class DataFacade
     private const int DESCENDANT_GAP_DEG = 10;
 
     /**
-     * Minimum angular width in degrees per child arc below which places
-     * and detailed dates are suppressed in favour of a compact format.
+     * Minimum angular width in degrees per child arc below which places and
+     * detailed dates are suppressed in favour of a compact format.
      */
     private const int MIN_CHILD_ARC_DEG = 20;
 
     /**
-     * The configuration instance. Initialized by createTreeStructure() on each call.
-     * Accessing before createTreeStructure() throws "Uninitialized typed property".
+     * The configuration instance. Initialized by createTreeStructure() on each
+     * call. Accessing before createTreeStructure() throws "Uninitialized typed
+     * property".
      */
     private Configuration $configuration;
 
@@ -65,9 +66,9 @@ class DataFacade
     private int $nodeId = 0;
 
     /**
-     * Builds the complete Node tree rooted at the given individual and returns it
-     * ready for JSON serialisation. Resets the node counter on each call so IDs
-     * are always consecutive starting at 1.
+     * Builds the complete Node tree rooted at the given individual and returns
+     * it ready for JSON serialisation. Resets the node counter on each call so
+     * IDs are always consecutive starting at 1.
      *
      * @param ModuleCustomInterface&ModuleAssetUrlInterface $module
      * @param Configuration                                 $configuration
@@ -94,8 +95,8 @@ class DataFacade
     }
 
     /**
-     * Recursively constructs ancestor nodes. Returns null when the individual is
-     * absent or the generation ceiling has been reached.
+     * Recursively constructs ancestor nodes. Returns null when the individual
+     * is absent or the generation ceiling has been reached.
      *
      * @param Individual|null $individual
      * @param int             $generation 1-based depth; stops when it exceeds getGenerations()
@@ -139,9 +140,10 @@ class DataFacade
     }
 
     /**
-     * Builds the descendant section (partners + children) for the root individual.
-     * Each spouse family produces one partner node with its children attached.
-     * Privacy-hidden spouses are detected via HUSB/WIFE fact analysis.
+     * Builds the descendant section (partners + children) for the root
+     * individual. Each spouse family produces one partner node with its
+     * children attached. Privacy-hidden spouses are detected via HUSB/WIFE fact
+     * analysis.
      *
      * @param Node       $rootNode   The root node to attach descendants to
      * @param Individual $individual The root individual
@@ -351,8 +353,9 @@ class DataFacade
     }
 
     /**
-     * Builds the AJAX update route for an individual. The "xref" parameter is intentionally
-     * the last query param so the JS can replace it by appending a new xref when navigating.
+     * Builds the AJAX update route for an individual. The "xref" parameter is
+     * intentionally the last query param so the JS can replace it by appending
+     * a new xref when navigating.
      *
      * @param Individual $individual
      *
@@ -378,10 +381,9 @@ class DataFacade
     }
 
     /**
-     * Builds the timespan string from structured date and place data.
-     * For outer generations, returns a compact date-only format.
-     * For inner generations, assembles birth and death lines from
-     * individual event components.
+     * Builds the timespan string from structured date and place data. For outer
+     * generations, returns a compact date-only format. For inner generations,
+     * assembles birth and death lines from individual event components.
      *
      * @param DateProcessor  $dateProcessor
      * @param PlaceProcessor $placeProcessor
@@ -430,7 +432,8 @@ class DataFacade
     }
 
     /**
-     * Returns the year for a birth or death event as a string, or empty if unavailable or zero.
+     * Returns the year for a birth or death event as a string, or empty if
+     * unavailable or zero.
      *
      * @param DateProcessor $dateProcessor
      * @param bool          $isBirth       True = birth year, false = death year
@@ -454,8 +457,8 @@ class DataFacade
 
     /**
      * Rebuilds the timespan in compact year-only format (e.g. "1853–1933"),
-     * excluding places. Used when descendant arcs are too narrow for the
-     * full multi-line timespan with places.
+     * excluding places. Used when descendant arcs are too narrow for the full
+     * multi-line timespan with places.
      *
      * @param NodeData $nodeData The node data with dates already set
      */
@@ -488,8 +491,8 @@ class DataFacade
     }
 
     /**
-     * Builds a single event line from a symbol, date, and place.
-     * Returns an empty string if both date and place are absent.
+     * Builds a single event line from a symbol, date, and place. Returns an
+     * empty string if both date and place are absent.
      *
      * @param string $symbol The genealogical symbol (e.g. * or †)
      * @param string $date   The formatted date string
@@ -520,8 +523,8 @@ class DataFacade
     }
 
     /**
-     * Appends a place to a single date line. Only applied for
-     * generations within the inner arcs range.
+     * Appends a place to a single date line. Only applied for generations
+     * within the inner arcs range.
      *
      * @param string $dateLine   The date string
      * @param string $place      The place name
@@ -554,8 +557,9 @@ class DataFacade
     }
 
     /**
-     * Returns the abbreviated marriage place of the individual's parents for use in arc text.
-     * Applies the configured placeParts truncation. Returns empty string if no parent family exists.
+     * Returns the abbreviated marriage place of the individual's parents for
+     * use in arc text. Applies the configured placeParts truncation. Returns
+     * empty string if no parent family exists.
      *
      * @param Individual     $individual
      * @param PlaceProcessor $placeProcessor

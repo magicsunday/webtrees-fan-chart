@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 /**
  * This file represents the configuration for Code Sniffing PSR-2-related
- * automatic checks of coding guidelines
- * Install @fabpot's great php-cs-fixer tool via
+ * automatic checks of coding guidelines Install @fabpot's great php-cs-fixer
+ * tool via
  *
  *  $ composer global require friendsofphp/php-cs-fixer
  *

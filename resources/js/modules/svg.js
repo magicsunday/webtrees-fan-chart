@@ -21,11 +21,11 @@ import Filter from "./svg/filter.js";
  */
 
 /**
- * Creates and manages the root SVG element for the fan chart. Owns the
- * <defs> block, the zoomable visual group, the floating tooltip div, and
- * the drop-shadow filter. Exposes a thin proxy API (select, selectAll,
- * attr, style, transition) so callers do not need to hold a reference to
- * the raw D3 selection.
+ * Creates and manages the root SVG element for the fan chart. Owns the <defs>
+ * block, the zoomable visual group, the floating tooltip div, and the
+ * drop-shadow filter. Exposes a thin proxy API (select, selectAll, attr, style,
+ * transition) so callers do not need to hold a reference to the raw D3
+ * selection.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -77,8 +77,8 @@ export default class Svg {
     }
 
     /**
-     * The floating tooltip <div> element. Carries an "active" property that
-     * is set to true when the tooltip is pinned open via right-click.
+     * The floating tooltip <div> element. Carries an "active" property that is
+     * set to true when the tooltip is pinned open via right-click.
      *
      * @return {Selection<HTMLDivElement, unknown, HTMLElement, unknown>|null}
      */
@@ -106,8 +106,8 @@ export default class Svg {
 
     /**
      * Binds SVG-level events: suppresses the context menu, shows the zoom/pan
-     * overlay hint on wheel and touch gestures, creates the tooltip div, appends
-     * the zoomable visual group, and attaches the D3 zoom behavior.
+     * overlay hint on wheel and touch gestures, creates the tooltip div,
+     * appends the zoomable visual group, and attaches the D3 zoom behavior.
      *
      * @param {ChartOverlay} overlay The overlay used for zoom/pan hint messages
      */
@@ -177,7 +177,8 @@ export default class Svg {
     }
 
     /**
-     * Instantiates and returns the appropriate export handler for the given type.
+     * Instantiates and returns the appropriate export handler for the given
+     * type.
      *
      * @param {string} type "png" or "svg"
      *
@@ -221,7 +222,8 @@ export default class Svg {
     }
 
     /**
-     * Gets or sets a CSS style on the SVG element. Proxies d3 selection.style().
+     * Gets or sets a CSS style on the SVG element. Proxies d3
+     * selection.style().
      *
      * @param {string} name
      * @param {string} [value]
@@ -233,7 +235,8 @@ export default class Svg {
     }
 
     /**
-     * Gets or sets an attribute on the SVG element. Proxies d3 selection.attr().
+     * Gets or sets an attribute on the SVG element. Proxies d3
+     * selection.attr().
      *
      * @param {string} name
      * @param {any}    [value]
