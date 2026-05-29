@@ -1,0 +1,41 @@
+name: Security
+
+on:
+    push:
+        branches: [ main, master ]
+    pull_request:
+    schedule:
+        -   cron: '27 3 * * 1'
+
+permissions:
+    contents: read
+
+jobs:
+    code-scanning:
+        uses: magicsunday/.github/.github/workflows/code-scanning.yml@main
+        permissions:
+            contents: read
+            security-events: write
+
+    zizmor:
+        uses: magicsunday/.github/.github/workflows/zizmor.yml@main
+        permissions:
+            contents: read
+            security-events: write
+
+    scorecard:
+        # Scorecard publishes against the default branch; skip pull-request runs.
+        if: github.event_name != 'pull_request'
+        uses: magicsunday/.github/.github/workflows/scorecard.yml@main
+        permissions:
+            contents: read
+            security-events: write
+            id-token: write
+
+    dependency-review:
+        # The dependency-review action only runs in a pull-request context.
+        if: github.event_name == 'pull_request'
+        uses: magicsunday/.github/.github/workflows/dependency-review.yml@main
+        permissions:
+            contents: read
+            pull-requests: write
