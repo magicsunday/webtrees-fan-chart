@@ -1,0 +1,13 @@
+# zizmor (https://zizmor.sh) configuration.
+#
+# Tunes the unpinned-uses audit to the magicsunday convention so only
+# actionable findings are reported.
+rules:
+    unpinned-uses:
+        config:
+            policies:
+                # First-party reusable workflows track @main by policy and are
+                # never SHA-pinned, so fixes propagate to every consumer.
+                "magicsunday/*": ref-pin
+                # Everything else must be pinned to a full commit SHA.
+                "*": hash-pin
