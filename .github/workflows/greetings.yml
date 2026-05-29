@@ -1,0 +1,22 @@
+name: Greetings
+
+on:
+    issues:
+        types: [ opened ]
+    # pull_request_target is required so the greeting can be posted on
+    # first-time contributors' fork PRs; bot PRs are skipped in the job below.
+    pull_request_target:  # zizmor: ignore[dangerous-triggers]
+        types: [ opened ]
+
+permissions:
+    contents: read
+
+jobs:
+    greeting:
+        # Greet humans only — skip Dependabot / bot pull requests (their
+        # restricted token cannot be granted the write scope the greeting needs).
+        if: github.actor != 'dependabot[bot]' && github.event.pull_request.user.login != 'dependabot[bot]'
+        uses: magicsunday/.github/.github/workflows/greetings.yml@main
+        permissions:
+            issues: write
+            pull-requests: write
