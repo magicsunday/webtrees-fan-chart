@@ -3,8 +3,6 @@ name: Greetings
 on:
     issues:
         types: [ opened ]
-    # pull_request_target is required so the greeting can be posted on
-    # first-time contributors' fork PRs; bot PRs are skipped in the job below.
     pull_request_target:  # zizmor: ignore[dangerous-triggers]
         types: [ opened ]
 
@@ -13,10 +11,27 @@ permissions:
 
 jobs:
     greeting:
-        # Greet humans only — skip Dependabot / bot pull requests (their
-        # restricted token cannot be granted the write scope the greeting needs).
-        if: github.actor != 'dependabot[bot]' && github.event.pull_request.user.login != 'dependabot[bot]'
-        uses: magicsunday/.github/.github/workflows/greetings.yml@main
+        # Greet humans only; skip bot pull requests. A bot's restricted token
+        # cannot be granted the write scope, and bots need no welcome. Inlined
+        # (not a reusable call) so this job-level skip happens before any
+        # permission setup — a reusable call would fail at startup under
+        # Dependabot's read-only token.
+        if: github.actor != 'dependabot[bot]' && github.actor != 'github-actions[bot]'
+        runs-on: ubuntu-latest
         permissions:
             issues: write
             pull-requests: write
+        steps:
+            -   name: Greet first-time contributors
+                uses: actions/first-interaction@3c71ce730280171fd1cfb57c00c774f8998586f7 # v1
+                with:
+                    repo-token: ${{ github.token }}
+                    issue-message: >
+                        Thanks for opening your first issue in this project! A
+                        maintainer will take a look as soon as possible. For bugs,
+                        a minimal reproduction helps a lot; for feature requests,
+                        a clear use case does.
+                    pr-message: >
+                        Thanks for your first pull request to this project! Please
+                        make sure the project's checks pass before requesting
+                        review. A maintainer will get back to you soon.
