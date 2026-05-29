@@ -16,11 +16,11 @@ jobs:
         steps:
             -   id: checkout
                 name: Checkout
-                uses: actions/checkout@v4
+                uses: actions/checkout@v6
 
             -   id: setup_node
                 name: Set up Node.js
-                uses: actions/setup-node@v4
+                uses: actions/setup-node@v6
                 with:
                     node-version: 22
                     cache: npm
@@ -43,7 +43,7 @@ jobs:
 
             -   id: composer-cache-dependencies
                 name: Cache Composer dependencies
-                uses: actions/cache@v4
+                uses: actions/cache@v5
                 with:
                     path: ${{ steps.composer-cache-vars.outputs.dir }}
                     key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ steps.composer-cache-vars.outputs.timestamp }}
