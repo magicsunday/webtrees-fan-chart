@@ -15,6 +15,15 @@
 #   export GH_TOKEN=<token>   # instead of 'gh auth login'
 #   make release 3.1.0 NOTES_FILE=/tmp/notes.md
 #   make release VERSION=3.1.0 NOTES_FILE=/tmp/notes.md   (also supported)
+#
+# NOTES_FILE must be readable from the shell that runs make. When releasing
+# from inside the buildbox container, a host path like /tmp/notes.md is not
+# mounted — place the notes file under the (bind-mounted) module directory,
+# e.g. NOTES_FILE=.relnotes.md (untracked files are ignored by release-check
+# and excluded from the dist archive).
+#
+# Recovery: if release-prepare aborts mid-way, run 'make release-recover' to
+# restore the mutated release files and remove build artifacts.
 # =============================================================================
 
 #### Release
@@ -37,7 +46,7 @@ VERSION ?= $(filter-out release release-% dist,$(MAKECMDGOALS))
 REQUIRED_TOOLS := git node npm composer jq zip gh sed
 
 .PHONY: release release-check release-prepare release-publish release-bump \
-        dist dist-smoke clean-js release-clean build-js-fresh
+        release-recover dist dist-smoke clean-js release-clean build-js-fresh
 
 # release pipeline operates on shared repo state — must run sequentially.
 .NOTPARALLEL:
@@ -83,6 +92,13 @@ release-check:
 		echo "Error: $(MODULE_BASE_PATH) is a symlink (active 'make link-base')."; \
 		echo "Run 'make unlink-base' before releasing — a symlinked vendor copy"; \
 		echo "would ship as a broken absolute symlink inside the release zip."; \
+		exit 1; \
+	fi
+	@if [ -d node_modules ] && [ -n "$$(find node_modules ! -uid $$(id -u) -print -quit 2>/dev/null)" ]; then \
+		echo "Error: node_modules contains files not owned by the current user."; \
+		echo "Files left by a container run as root cannot be removed by the release"; \
+		echo "build and would abort build-js-fresh mid-way. Clear them as root first:"; \
+		echo "  docker run --rm -v \"\$$PWD\":/m alpine rm -rf /m/node_modules"; \
 		exit 1; \
 	fi
 	@if ! gh auth status >/dev/null 2>&1; then \
@@ -214,24 +230,32 @@ endef
 ## Tag runs AFTER dist succeeds so a dist failure does not leave a dangling tag.
 ## Recovery on dist failure: git reset --soft HEAD~1 (removes release commit).
 release-prepare: release-check
-	@echo -e "${FYELLOW}[1/5]${FRESET} Updating versions to $(VERSION)..."
+	@echo -e "${FYELLOW}[1/6]${FRESET} Verifying — running the full CI test suite..."
+	# Run the complete CI gate BEFORE mutating any tracked file, so a failing
+	# test aborts with a clean working tree instead of a half-applied version
+	# bump. npm ci first: ci:test's js:unit step needs node_modules present.
+	# (build-js-fresh below wipes + reinstalls node_modules for the clean-room
+	# build, so this install is intentionally separate, not a duplicate.)
+	@npm ci
+	@composer ci:test
+	@echo -e "${FYELLOW}[2/6]${FRESET} Updating versions to $(VERSION)..."
 	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(VERSION)'/","CUSTOM_VERSION = '$(VERSION)'")
 	@$(call jq_edit,package.json,.version = $$v,--arg v "$(VERSION)",.version == $$v)
 	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0",.require["fisharebest/webtrees"] == $$v)
-	@echo -e "${FYELLOW}[2/5]${FRESET} Cleaning + rebuilding JavaScript bundles..."
+	@echo -e "${FYELLOW}[3/6]${FRESET} Cleaning + rebuilding JavaScript bundles..."
 	# --ignore-scripts is required: npm 11 fires the package's "prepare" hook
 	# even on --package-lock-only, but devDeps (rollup) aren't installed yet,
 	# so the prepare script crashes with "rollup: not found". The actual build
 	# happens in build-js-fresh below, which runs npm ci first.
 	@npm install --package-lock-only --no-audit --no-fund --ignore-scripts
 	@$(MAKE) build-js-fresh
-	@echo -e "${FYELLOW}[3/5]${FRESET} Committing release commit..."
+	@echo -e "${FYELLOW}[4/6]${FRESET} Committing release commit..."
 	@git add src/Module.php package.json composer.json package-lock.json resources/js/
 	@git commit -m "Release $(VERSION)"
-	@echo -e "${FYELLOW}[4/5]${FRESET} Building + smoke-testing distribution archive..."
+	@echo -e "${FYELLOW}[5/6]${FRESET} Building + smoke-testing distribution archive..."
 	@$(MAKE) dist
 	@$(MAKE) dist-smoke
-	@echo -e "${FYELLOW}[5/5]${FRESET} Tagging $(VERSION)..."
+	@echo -e "${FYELLOW}[6/6]${FRESET} Tagging $(VERSION)..."
 	@git tag $(VERSION)
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) prepared"
 
@@ -315,6 +339,34 @@ release-bump:
 release-clean:
 	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp
 	@rm -f composer.json.tmp package.json.tmp
+
+## Recover from a failed release-prepare. Removes freshly-built versioned
+## bundles, restores the tracked files release-prepare mutates (version strings
+## + the bundle that clean-js may have git-rm'd) from HEAD, and clears build
+## artifacts. It does NOT undo a release commit or tag — if release-prepare got
+## that far, the printed hints show how to unwind those manually (kept manual
+## to avoid destroying work).
+release-recover:
+	# Restore ONLY what release-prepare mutates: the version strings and the
+	# versioned bundle. Both the rm (untracked fresh build + on-disk copy of the
+	# tracked bundle) and the checkout are scoped to the $(JS_NAME)-* pattern, so
+	# uncommitted edits to source under resources/js/modules|tests are neither
+	# deleted nor reverted (a directory-wide git clean/checkout would do both).
+	@rm -f resources/js/$(JS_NAME)-*.js resources/js/$(JS_NAME)-*.min.js
+	@git checkout HEAD -- src/Module.php package.json composer.json package-lock.json 2>/dev/null || true
+	# Two separate checkouts, each tolerant of its own empty glob: a single
+	# `git checkout -- <glob1> <glob2>` aborts entirely if EITHER pattern
+	# matches nothing in HEAD (e.g. a module that ships only a non-min bundle),
+	# silently leaving the bundle unrestored under the trailing `|| true`.
+	@git checkout HEAD -- resources/js/$(JS_NAME)-*.js 2>/dev/null || true
+	@git checkout HEAD -- resources/js/$(JS_NAME)-*.min.js 2>/dev/null || true
+	@$(MAKE) release-clean
+	@echo -e "${FGREEN} ✔${FRESET} Restored release files + removed build artifacts."
+	@if git log -1 --pretty=%s 2>/dev/null | grep -qE '^Release [0-9]+\.[0-9]+\.[0-9]+$$'; then \
+		echo "Note: HEAD is a 'Release' commit — if unpushed, undo it with:"; \
+		echo "  git reset --soft HEAD~1"; \
+	fi
+	@echo "If a tag was created, remove it with: git tag -d <VERSION>"
 
 ## Full release pipeline
 release: release-prepare release-publish release-bump release-clean ## Create and publish a release (usage: make release 3.1.0)
