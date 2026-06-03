@@ -96,7 +96,7 @@
             "@ci:rector --dry-run"
         ],
         "ci:test:cpd": [
-            "npx jscpd --config .jscpd.json"
+            "npx jscpd src resources/js/modules --config .jscpd.json"
         ],
         "ci:test:php:unit": [
             "phpunit --configuration phpunit.xml --display-all-issues"
