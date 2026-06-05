@@ -1,5 +1,11 @@
 blank_issues_enabled: false
 contact_links:
+  - name: "⚠️ Fatal error: Trait/Interface … not found?"
+    url: https://github.com/magicsunday/webtrees-fan-chart#troubleshooting
+    about: "Almost always a wrong download. Use the asset zip — not 'Code → Download ZIP' / 'Source code (zip)'. Read this before filing."
+  - name: "Installation & update guide"
+    url: https://github.com/magicsunday/webtrees-fan-chart#installation
+    about: "How to install and update correctly (asset zip, Composer, or from source)."
   - name: Webtrees Forum
     url: https://www.webtrees.net/index.php/forum
     about: For general questions about webtrees, please use the forum.

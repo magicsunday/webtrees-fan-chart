@@ -10,6 +10,17 @@ body:
       value: |
         Thank you for reporting a bug! Please fill in the following details so we can investigate the issue.
 
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you report
+      description: A few common installation mistakes cause most "not found" errors. Please rule them out first.
+      options:
+        - label: "My installation includes the bundled dependencies — I used the release **asset zip**, Composer, or a documented from-source setup (a bare *Code → Download ZIP* / *Source code (zip)* on its own omits them). ([Why this matters](https://github.com/magicsunday/webtrees-fan-chart#troubleshooting))"
+          required: true
+        - label: "I checked the [Troubleshooting](https://github.com/magicsunday/webtrees-fan-chart#troubleshooting) section and my problem is not covered (or its fix did not help)."
+          required: true
+
   - type: textarea
     id: description
     attributes:
