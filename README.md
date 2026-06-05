@@ -69,11 +69,45 @@ composer require magicsunday/webtrees-fan-chart:dev-main --update-no-dev
 ```
 
 ### Using Git
-Clone the repository directly into your `modules_v4` directory:
+Clone the repository into your `modules_v4` directory (a *Code → Download ZIP* of
+the source works the same way):
 
 ```shell
 git clone https://github.com/magicsunday/webtrees-fan-chart.git modules_v4/webtrees-fan-chart
 ```
+
+A source checkout contains the module code **only** — it does **not** include the
+shared `webtrees-module-base` library, so on its own it fails with
+`Trait "MagicSunday\Webtrees\ModuleBase\…" not found`. Supply that library in one
+of two ways:
+
+**Way A — drop-in (no code change).** Download
+[`webtrees-module-base`](https://github.com/magicsunday/webtrees-module-base) and
+copy its `src/` to the location this module's `module.php` already expects:
+
+```text
+modules_v4/webtrees-fan-chart/vendor/magicsunday/webtrees-module-base/src/…
+```
+
+**Way B — shared copy (one edit).** Place `webtrees-module-base` next to this
+module in `modules_v4/` (rename the extracted folder to `webtrees-module-base`),
+then point this module's `module.php` at it. A single shared copy then serves
+every magicsunday module installed this way:
+
+```php
+// modules_v4/webtrees-fan-chart/module.php
+$loader->addPsr4(
+    'MagicSunday\\Webtrees\\ModuleBase\\',
+    __DIR__ . '/../webtrees-module-base/src'
+);
+```
+
+> [!IMPORTANT]
+> Both ways are overwritten by every module update, so you must redo them after
+> each upgrade. For a maintenance-free install **without** Composer, use the
+> [asset zip](#manual-installation) (it bundles all dependencies). Inside a
+> **Composer-managed** webtrees, prefer `composer require magicsunday/webtrees-fan-chart:dev-main`
+> — see [Using Composer](#using-composer).
 
 
 ## Update
