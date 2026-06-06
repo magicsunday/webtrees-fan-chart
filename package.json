@@ -63,6 +63,6 @@
         "typescript": "^6.0.3"
     },
     "dependencies": {
-        "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#1.12.0"
+        "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#1.13.0"
     }
 }
