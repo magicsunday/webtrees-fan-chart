@@ -25,13 +25,13 @@ jobs:
             -   name: Greet first-time contributors
                 uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3.1.0
                 with:
-                    repo-token: ${{ github.token }}
-                    issue-message: >
+                    repo_token: ${{ github.token }}
+                    issue_message: >
                         Thanks for opening your first issue in this project! A
                         maintainer will take a look as soon as possible. For bugs,
                         a minimal reproduction helps a lot; for feature requests,
                         a clear use case does.
-                    pr-message: >
+                    pr_message: >
                         Thanks for your first pull request to this project! Please
                         make sure the project's checks pass before requesting
                         review. A maintainer will get back to you soon.
