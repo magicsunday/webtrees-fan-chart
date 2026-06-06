@@ -53,7 +53,7 @@ $(POT_FILE): $(shell find src resources/views -type f \( -name '*.php' -o -name 
 			--sort-output \
 			--output=$(POT_FILE) \
 			$$(find src resources/views -type f \( -name "*.php" -o -name "*.phtml" \) | sort) && \
-		sed -i "s/POT-Creation-Date: [0-9-]* [0-9:+]*/POT-Creation-Date: 1970-01-01 00:00+0000/" $(POT_FILE) && \
+		sed -i "s/POT-Creation-Date: [0-9-]* [0-9:+-]*/POT-Creation-Date: 1970-01-01 00:00+0000/" $(POT_FILE) && \
 		echo "  ✔ Extracted $(POT_FILE) ($$(grep -c ^msgid $(POT_FILE)) strings)"'
 
 # The follow-up `msgattrib --no-obsolete` pass drops `#~` entries whose
