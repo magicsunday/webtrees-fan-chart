@@ -1,7 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-22 13:03+0100\n"
+"Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
+"issues\n"
+"POT-Creation-Date: 2026-06-06 12:50+0000\n"
 "PO-Revision-Date: 2024-12-22 13:07+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -16,43 +18,88 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:127 src/Module.php:243
-msgid "Fan chart"
-msgstr "扇形圖"
-
-#: src/Module.php:137
+#: src/Module.php:136
 msgid "A fan chart of an individual’s ancestors."
 msgstr "一種以扇形樣式顯示個人祖先的圖表。"
 
-#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
-#, php-format
-msgid "Fan chart of %s"
-msgstr "%s的扇形圖"
+#: src/Configuration.php:573
+msgid "Abbreviate given names first"
+msgstr "優先縮寫名字"
 
-#: src/Module.php:260
-msgid "Use Ctrl + scroll to zoom in the view"
-msgstr "按住Ctrl鍵滾動鼠標滾輪放大縮小"
+#: src/Configuration.php:574
+msgid "Abbreviate surnames first"
+msgstr "優先縮寫姓氏"
 
-#: src/Module.php:261
-msgid "Move the view with two fingers"
-msgstr "用兩個手指移動視圖"
+#: src/Configuration.php:572
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "自動（根據族譜的姓氏傳統）"
 
-#: src/Traits/ModuleConfigTrait.php:99
-#, php-format
-msgid "The preferences for the module “%s” have been updated."
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
+msgid "Click and drag"
+msgstr "點擊並拖曳"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Click on a person"
+msgstr "點擊某人"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:23
+msgid "Colors"
+msgstr "顏色"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:34
+msgid ""
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
+msgstr ""
+"按家族分支為弧形著色。每對夫婦共享相同的顏色，由所選的基礎顏色派生而來。"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
-msgid "Re center"
-msgstr "重新置中"
+#: resources/views/modules/fan-chart/config.phtml:85
+msgid ""
+"Controls which name part shrinks first when an arc is too narrow for the "
+"full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
+"abbreviates surnames; everything else abbreviates given names)."
+msgstr ""
+"控制當弧形對完整姓名而言過窄時，先縮寫哪個名字部分。「自動」使用族譜的姓氏傳"
+"統（冰島語縮寫姓氏；其他所有傳統縮寫名字）。"
 
-#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
-msgid "Switch between full screen mode and normal view"
-msgstr "切換全螢幕與一般檢視"
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Ctrl + scroll"
+msgstr "Ctrl + 捲動"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:17
-msgid "Show help"
-msgstr "顯示說明"
+#: resources/views/modules/fan-chart/config.phtml:108
+msgid "Date precision"
+msgstr "日期精確度"
+
+#: resources/views/modules/fan-chart/form/details.phtml:23
+msgid "Details"
+msgstr "詳情"
+
+#: resources/views/modules/fan-chart/form/display.phtml:23
+msgid "Display"
+msgstr "顯示"
+
+#: resources/views/modules/fan-chart/form/details.phtml:46
+msgid ""
+"Displays birth and death places in the chart arcs where space allows. For "
+"descendants with many children, places are automatically suppressed. The "
+"level of detail and the date precision are configured site-wide in the "
+"module settings."
+msgstr ""
+"在空間允許的弧線段中顯示出生和死亡地點。對於子女眾多的後代，地點會自動隱藏。"
+"詳細程度與日期精度由模組設定於站台級別設定。"
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Displays the marriage date of each couple in a narrow arc between "
+"generations. When descendants are enabled, also shows the marriage date "
+"between the central person and their partners."
+msgstr ""
+"在世代之間的窄弧中顯示每對夫婦的結婚日期。啟用後代時，還會顯示中心人物與其配"
+"偶之間的結婚日期。"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -62,224 +109,238 @@ msgstr "匯出為 PNG"
 msgid "Export as SVG"
 msgstr "匯出為 SVG"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Control panel"
-msgstr ""
+#: src/Module.php:124 src/Module.php:237
+msgid "Fan chart"
+msgstr "扇形圖"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Modules"
-msgstr ""
+#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#, php-format
+msgid "Fan chart of %s"
+msgstr "%s的扇形圖"
 
-#: resources/views/modules/fan-chart/config.phtml:50
-msgid "General"
-msgstr "常規"
-
-#: resources/views/modules/fan-chart/config.phtml:56
-msgid "Hide the SVG export button"
-msgstr "隱藏 SVG 匯出按鈕"
-
-#: resources/views/modules/fan-chart/config.phtml:66
-msgid "Hide the PNG export button"
-msgstr "隱藏 PNG 匯出按鈕"
-
-#: resources/views/modules/fan-chart/config.phtml:79
-msgid "save"
-msgstr "保存"
-
-#: resources/views/modules/fan-chart/config.phtml:84
-msgid "cancel"
-msgstr "取消"
-
-#: resources/views/modules/fan-chart/form/fan-size.phtml:22
+#: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
 msgstr "扇形大小"
 
-#: resources/views/modules/fan-chart/form/font-size.phtml:22
+#: resources/views/modules/fan-chart/form/font-size.phtml:23
 msgid "Font size"
 msgstr "字體大小"
 
-#: resources/views/modules/fan-chart/form/generations.phtml:22
-msgid "Generations"
-msgstr "代"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
-msgid "Number of inner levels"
-msgstr "內圈層數"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
-msgid ""
-"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
-msgstr "指定沿弧線書寫文字的層數。後代弧線會根據可用空間自動在弧形文字和旋轉文字之間切換。"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:23
-msgid "Layout"
-msgstr "佈局"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:29
-msgid "Hide empty segments"
-msgstr "隱藏空白扇段"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show family colors"
-msgstr "顯示家族顏色"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:45
-msgid ""
-"Colors the arcs by family branch. Each couple shares the same color, derived "
-"from the chosen base colors."
-msgstr "按家族分支為弧形著色。每對夫婦共享相同的顏色，由所選的基礎顏色派生而來。"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:49
-msgid "Paternal"
-msgstr "父系"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:53
-msgid "Maternal"
-msgstr "母系"
-
-msgid "Show places"
-msgstr "顯示地點"
-
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
-msgstr "在圖表弧線中顯示出生和死亡地點（空間允許時）。對於子女較多的後代，地點會自動隱藏。請在下方選擇詳細程度。"
-
+#: src/Configuration.php:362
 msgid "Full place name"
 msgstr "完整地名"
 
-msgid "Lowest level (e.g. parish)"
-msgstr "最低層級（如教區）"
+#: resources/views/modules/fan-chart/config.phtml:51
+msgid "General"
+msgstr "常規"
 
-msgid "Lowest two levels"
-msgstr "最低兩個層級"
+#: resources/views/modules/fan-chart/form/generations.phtml:23
+msgid "Generations"
+msgstr "代"
 
-msgid "Lowest three levels"
-msgstr "最低三個層級"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:62
-msgid "Show parent marriage dates"
-msgstr "顯示父母結婚日期"
-
-msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
-msgstr "在世代之間的窄弧中顯示每對夫婦的結婚日期。啟用後代時，還會顯示中心人物與其配偶之間的結婚日期。"
-
-#: resources/views/modules/fan-chart/page.phtml:41
-msgid "Individual"
-msgstr "個人"
-
-#: resources/views/modules/fan-chart/page.phtml:68
-msgid "view"
-msgstr "查看"
-
-#: resources/views/modules/fan-chart/page.phtml:79
-msgid "Show more options"
-msgstr "顯示更多選項"
+#: resources/views/modules/fan-chart/form/display.phtml:78
+msgid "Hide empty segments"
+msgstr "隱藏空白扇段"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr "隱藏更多選項"
 
-#~ msgid "reset"
-#~ msgstr "重置"
+#: resources/views/modules/fan-chart/config.phtml:65
+msgid "Hide the PNG export button"
+msgstr "隱藏 PNG 匯出按鈕"
 
-msgid "Right-click"
-msgstr "右鍵點擊"
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr "隱藏 SVG 匯出按鈕"
 
-msgid "Show details of a person"
-msgstr "顯示某人的詳細資訊"
+#: resources/views/modules/fan-chart/config.phtml:102
+msgid ""
+"How much of each place hierarchy is shown in chart arcs (full name, or only "
+"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
+"form."
+msgstr ""
+"每個地點階層在圖表弧線中的顯示量（完整名稱，或僅最低 1–3 級）。使用者於圖表表"
+"單中切換地點顯示。"
 
-msgid "Ctrl + scroll"
-msgstr "Ctrl + 捲動"
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid ""
+"Images are only shown if the arc segment is wide enough. Images for "
+"descendants are not yet available."
+msgstr "僅當弧段足夠寬時才顯示圖片。後代的圖片尚不可用。"
 
-msgid "Zoom in/out"
-msgstr "放大/縮小"
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "個人"
 
-msgid "Click and drag"
-msgstr "點擊並拖曳"
+#: resources/views/modules/fan-chart/form/details.phtml:34
+msgid ""
+"Inserts the GEDCOM NICK value in quotes between the given names and the "
+"surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees "
+"behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr ""
+"將 GEDCOM NICK 欄位的值以引號插入在名字與姓氏之間（例如 Martin \"Chalky\" "
+"White）。模擬舊版 webtrees 的行為，適用於在獨立的 GEDCOM NICK 欄位中儲存暱稱"
+"的家譜。"
 
+#: src/Configuration.php:363
+msgid "Lowest level (e.g. parish)"
+msgstr "最低層級（如教區）"
+
+#: src/Configuration.php:365
+msgid "Lowest three levels"
+msgstr "最低三個層級"
+
+#: src/Configuration.php:364
+msgid "Lowest two levels"
+msgstr "最低兩個層級"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:43
+msgid "Maternal"
+msgstr "母系"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
 msgstr "移動圖表"
 
-msgid "Click on a person"
-msgstr "點擊某人"
+#: src/Module.php:262
+msgid "Move the view with two fingers"
+msgstr "用兩個手指移動視圖"
 
+#: resources/views/modules/fan-chart/config.phtml:74
+msgid "Name abbreviation when space is tight"
+msgstr "空間不足時的姓名縮寫方式"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:23
+msgid "Number of inner levels"
+msgstr "內圈層數"
+
+#: resources/views/modules/fan-chart/form/display.phtml:71
+msgid ""
+"Partners and children are shown as arcs below the ancestor section. The fan "
+"size is limited to 180–270 degrees when enabled."
+msgstr "配偶和子女顯示為祖先部分下方的弧形。啟用時扇形大小限制為180–270度。"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:39
+msgid "Paternal"
+msgstr "父系"
+
+#: resources/views/modules/fan-chart/config.phtml:91
+msgid "Place detail"
+msgstr "地點詳情"
+
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
+msgid "Re center"
+msgstr "重新置中"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Reload chart for that person"
 msgstr "為該人重新載入圖表"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Date precision"
-msgstr "日期精確度"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Right-click"
+msgstr "右鍵點擊"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "為早期世代顯示完整日期（出生、婚姻、死亡）。後期世代僅顯示年份。婚姻日期從第9代起隱藏。窄弧的後代自動使用緊湊的僅年份格式。"
+#: resources/views/modules/fan-chart/form/display.phtml:65
+msgid "Show descendants"
+msgstr "顯示後代"
 
-#: src/Configuration.php:191
-msgid "Years only"
-msgstr "僅顯示年份"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Show details of a person"
+msgstr "顯示某人的詳細資訊"
 
-#: src/Configuration.php:195
+#: resources/views/modules/fan-chart/form/colors.phtml:28
+msgid "Show family colors"
+msgstr "顯示家族顏色"
+
+#: resources/views/modules/fan-chart/config.phtml:119
+msgid ""
+"Show full dates (birth, marriage, death) for early generations. Later "
+"generations show year only. Marriage dates are hidden from generation 9. "
+"Descendants with narrow arcs automatically use a compact year-only format."
+msgstr ""
+"為早期世代顯示完整日期（出生、婚姻、死亡）。後期世代僅顯示年份。婚姻日期從第9"
+"代起隱藏。窄弧的後代自動使用緊湊的僅年份格式。"
+
+#: src/Configuration.php:201
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "顯示完整日期至第 %s 代"
 
-msgid "Show descendants"
-msgstr "顯示後代"
+#: resources/views/modules/components/buttonbar/help-button.phtml:18
+msgid "Show help"
+msgstr "顯示說明"
 
-msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
-msgstr "配偶和子女顯示為祖先部分下方的弧形。啟用時扇形大小限制為180–270度。"
-
-msgid "Show names and images"
-msgstr "顯示姓名和圖片"
-
-msgid "Show names only"
-msgstr "僅顯示姓名"
-
+#: resources/views/modules/fan-chart/form/display.phtml:55
 msgid "Show images only"
 msgstr "僅顯示圖片"
 
-msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
-msgstr "僅當弧段足夠寬時才顯示圖片。後代的圖片尚不可用。"
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "顯示更多選項"
 
-msgid "Display"
-msgstr "顯示"
+#: resources/views/modules/fan-chart/form/display.phtml:41
+msgid "Show names and images"
+msgstr "顯示姓名和圖片"
 
-msgid "Details"
-msgstr "詳情"
+#: resources/views/modules/fan-chart/form/display.phtml:48
+msgid "Show names only"
+msgstr "僅顯示姓名"
 
-msgid "Colors"
-msgstr "顏色"
-
-msgid "Appearance"
-msgstr "外觀"
-
-msgid "Name abbreviation when space is tight"
-msgstr "空間不足時的姓名縮寫方式"
-
-msgid "Automatic (based on tree's surname tradition)"
-msgstr "自動（根據族譜的姓氏傳統）"
-
-msgid "Abbreviate given names first"
-msgstr "優先縮寫名字"
-
-msgid "Abbreviate surnames first"
-msgstr "優先縮寫姓氏"
-
-msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
-msgstr "控制當弧形對完整姓名而言過窄時，先縮寫哪個名字部分。「自動」使用族譜的姓氏傳統（冰島語縮寫姓氏；其他所有傳統縮寫名字）。"
-
-#: resources/views/modules/fan-chart/form/display.phtml
+#: resources/views/modules/fan-chart/form/details.phtml:28
 msgid "Show nicknames in display names"
 msgstr "在顯示名中顯示暱稱"
 
-#: resources/views/modules/fan-chart/form/display.phtml
-msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
-msgstr "將 GEDCOM NICK 欄位的值以引號插入在名字與姓氏之間（例如 Martin \"Chalky\" White）。模擬舊版 webtrees 的行為，適用於在獨立的 GEDCOM NICK 欄位中儲存暱稱的家譜。"
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show parent marriage dates"
+msgstr "顯示父母結婚日期"
 
-msgid "Place detail"
-msgstr "地點詳情"
+#: resources/views/modules/fan-chart/form/details.phtml:40
+msgid "Show places"
+msgstr "顯示地點"
 
-msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
-msgstr "每個地點階層在圖表弧線中的顯示量（完整名稱，或僅最低 1–3 級）。使用者於圖表表單中切換地點顯示。"
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:27
+msgid ""
+"Specifies the number of levels in which the text is written along an arc. "
+"Descendant arcs switch between arc text and rotated text automatically based "
+"on available space."
+msgstr ""
+"指定沿弧線書寫文字的層數。後代弧線會根據可用空間自動在弧形文字和旋轉文字之間"
+"切換。"
 
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
-msgstr "在空間允許的弧線段中顯示出生和死亡地點。對於子女眾多的後代，地點會自動隱藏。詳細程度與日期精度由模組設定於站台級別設定。"
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr "切換全螢幕與一般檢視"
+
+#: src/Traits/ModuleConfigTrait.php:146
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr ""
+
+#: src/Module.php:261
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "按住Ctrl鍵滾動鼠標滾輪放大縮小"
+
+#: src/Configuration.php:196
+msgid "Years only"
+msgstr "僅顯示年份"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Zoom in/out"
+msgstr "放大/縮小"
+
+#: resources/views/modules/fan-chart/config.phtml:134
+msgid "cancel"
+msgstr "取消"
+
+#: resources/views/modules/fan-chart/config.phtml:129
+msgid "save"
+msgstr "保存"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "查看"

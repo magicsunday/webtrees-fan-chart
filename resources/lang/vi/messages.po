@@ -1,7 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-22 13:03+0100\n"
+"Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
+"issues\n"
+"POT-Creation-Date: 2026-06-06 12:50+0000\n"
 "PO-Revision-Date: 2024-12-22 13:07+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -16,43 +18,92 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:127 src/Module.php:243
-msgid "Fan chart"
-msgstr "Biểu đồ hình quạt"
-
-#: src/Module.php:137
+#: src/Module.php:136
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Biểu đồ cá nhân Tổ tiên"
 
-#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
-#, php-format
-msgid "Fan chart of %s"
-msgstr "Biểu đồ hình quạt của %s"
+#: src/Configuration.php:573
+msgid "Abbreviate given names first"
+msgstr "Viết tắt tên gọi trước"
 
-#: src/Module.php:260
-msgid "Use Ctrl + scroll to zoom in the view"
-msgstr "Kết hợp Ctrl + scroll để thu phóng biểu đồ"
+#: src/Configuration.php:574
+msgid "Abbreviate surnames first"
+msgstr "Viết tắt họ trước"
 
-#: src/Module.php:261
-msgid "Move the view with two fingers"
-msgstr "Di chuyển tầm nhìn bằng hai ngón tay"
+#: src/Configuration.php:572
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Tự động (dựa trên truyền thống họ của cây phả hệ)"
 
-#: src/Traits/ModuleConfigTrait.php:99
-#, php-format
-msgid "The preferences for the module “%s” have been updated."
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
+msgid "Click and drag"
+msgstr "Nhấp và kéo"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Click on a person"
+msgstr "Nhấp vào một người"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:23
+msgid "Colors"
+msgstr "Màu sắc"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:34
+msgid ""
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
+msgstr ""
+"Tô màu các cung theo nhánh gia đình. Mỗi cặp chia sẻ cùng một màu, được tạo "
+"từ các màu cơ sở đã chọn."
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
-msgid "Re center"
-msgstr "Chỉnh biểu đồ về giữa màn hình"
+#: resources/views/modules/fan-chart/config.phtml:85
+msgid ""
+"Controls which name part shrinks first when an arc is too narrow for the "
+"full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
+"abbreviates surnames; everything else abbreviates given names)."
+msgstr ""
+"Kiểm soát phần nào của tên được rút ngắn trước khi cung quá hẹp để hiển thị "
+"tên đầy đủ. \"Tự động\" sử dụng truyền thống họ của cây phả hệ (Iceland viết "
+"tắt họ; còn lại viết tắt tên gọi)."
 
-#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
-msgid "Switch between full screen mode and normal view"
-msgstr "Chuyển giữa toàn màn hình và xem bình thường"
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Ctrl + scroll"
+msgstr "Ctrl + cuộn chuột"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:17
-msgid "Show help"
-msgstr "Hiển thị trợ giúp"
+#: resources/views/modules/fan-chart/config.phtml:108
+msgid "Date precision"
+msgstr "Độ chính xác ngày tháng"
+
+#: resources/views/modules/fan-chart/form/details.phtml:23
+msgid "Details"
+msgstr "Chi tiết"
+
+#: resources/views/modules/fan-chart/form/display.phtml:23
+msgid "Display"
+msgstr "Hiển thị"
+
+#: resources/views/modules/fan-chart/form/details.phtml:46
+msgid ""
+"Displays birth and death places in the chart arcs where space allows. For "
+"descendants with many children, places are automatically suppressed. The "
+"level of detail and the date precision are configured site-wide in the "
+"module settings."
+msgstr ""
+"Hiển thị nơi sinh và nơi mất trong các cung biểu đồ khi đủ chỗ. Đối với hậu "
+"duệ có nhiều con, địa điểm tự động bị ẩn. Mức chi tiết và độ chính xác của "
+"ngày được cấu hình toàn trang trong cài đặt mô-đun."
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Displays the marriage date of each couple in a narrow arc between "
+"generations. When descendants are enabled, also shows the marriage date "
+"between the central person and their partners."
+msgstr ""
+"Hiển thị ngày kết hôn của mỗi cặp vợ chồng trong một cung hẹp giữa các thế "
+"hệ. Khi con cháu được bật, cũng hiển thị ngày kết hôn giữa người trung tâm "
+"và vợ/chồng của họ."
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -62,226 +113,245 @@ msgstr "Xuất định dạng PNG"
 msgid "Export as SVG"
 msgstr "Xuất định dạng SVG"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Control panel"
-msgstr ""
+#: src/Module.php:124 src/Module.php:237
+msgid "Fan chart"
+msgstr "Biểu đồ hình quạt"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Modules"
-msgstr ""
+#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#, php-format
+msgid "Fan chart of %s"
+msgstr "Biểu đồ hình quạt của %s"
 
-#: resources/views/modules/fan-chart/config.phtml:50
-msgid "General"
-msgstr "Tổng quát"
-
-#: resources/views/modules/fan-chart/config.phtml:56
-msgid "Hide the SVG export button"
-msgstr "Ẩn nút xuất SVG"
-
-#: resources/views/modules/fan-chart/config.phtml:66
-msgid "Hide the PNG export button"
-msgstr "Ẩn nút xuất PNG"
-
-#: resources/views/modules/fan-chart/config.phtml:79
-msgid "save"
-msgstr "lưu"
-
-#: resources/views/modules/fan-chart/config.phtml:84
-msgid "cancel"
-msgstr "Hủy bỏ"
-
-#: resources/views/modules/fan-chart/form/fan-size.phtml:22
+#: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
 msgstr "Kích thước biểu đồ"
 
-#: resources/views/modules/fan-chart/form/font-size.phtml:22
+#: resources/views/modules/fan-chart/form/font-size.phtml:23
 msgid "Font size"
 msgstr "Kích thước font chữ"
 
-#: resources/views/modules/fan-chart/form/generations.phtml:22
-msgid "Generations"
-msgstr "Các thế hệ"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
-msgid "Number of inner levels"
-msgstr "Độ rộng ô trong hình quạt"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
-msgid ""
-"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
-msgstr "Cấp độ trong đó văn bản được viết dọc theo một vòng cung. Các cung con cháu tự động chuyển đổi giữa văn bản theo cung và văn bản xoay dựa trên không gian có sẵn."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:23
-msgid "Layout"
-msgstr "Trình bày"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:29
-msgid "Hide empty segments"
-msgstr "Ẩn vùng trống"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show family colors"
-msgstr "Hiển thị màu gia đình"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:45
-msgid ""
-"Colors the arcs by family branch. Each couple shares the same color, derived "
-"from the chosen base colors."
-msgstr ""
-"Tô màu các cung theo nhánh gia đình. Mỗi cặp chia sẻ "
-"cùng một màu, được tạo từ các màu cơ sở đã chọn."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:49
-msgid "Paternal"
-msgstr "Bên nội"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:53
-msgid "Maternal"
-msgstr "Bên ngoại"
-
-msgid "Show places"
-msgstr "Hiển thị địa điểm"
-
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
-msgstr "Hiển thị nơi sinh và nơi mất trong các cung biểu đồ khi không gian cho phép. Đối với con cháu có nhiều con, địa điểm sẽ tự động bị ẩn. Chọn mức độ chi tiết bên dưới."
-
+#: src/Configuration.php:362
 msgid "Full place name"
 msgstr "Tên địa điểm đầy đủ"
 
-msgid "Lowest level (e.g. parish)"
-msgstr "Cấp thấp nhất (ví dụ: giáo xứ)"
+#: resources/views/modules/fan-chart/config.phtml:51
+msgid "General"
+msgstr "Tổng quát"
 
-msgid "Lowest two levels"
-msgstr "Hai cấp thấp nhất"
+#: resources/views/modules/fan-chart/form/generations.phtml:23
+msgid "Generations"
+msgstr "Các thế hệ"
 
-msgid "Lowest three levels"
-msgstr "Ba cấp thấp nhất"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:62
-msgid "Show parent marriage dates"
-msgstr "Hiển thị ngày kết hôn của cha mẹ"
-
-msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
-msgstr "Hiển thị ngày kết hôn của mỗi cặp vợ chồng trong một cung hẹp giữa các thế hệ. Khi con cháu được bật, cũng hiển thị ngày kết hôn giữa người trung tâm và vợ/chồng của họ."
-
-#: resources/views/modules/fan-chart/page.phtml:41
-msgid "Individual"
-msgstr "Cá nhân"
-
-#: resources/views/modules/fan-chart/page.phtml:68
-msgid "view"
-msgstr "Xem biểu đồ"
-
-#: resources/views/modules/fan-chart/page.phtml:79
-msgid "Show more options"
-msgstr "Hiển thị thêm tùy chọn"
+#: resources/views/modules/fan-chart/form/display.phtml:78
+msgid "Hide empty segments"
+msgstr "Ẩn vùng trống"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr "Ẩn thêm tùy chọn"
 
-#~ msgid "Presentation"
-#~ msgstr "Hình thức trình bày"
+#: resources/views/modules/fan-chart/config.phtml:65
+msgid "Hide the PNG export button"
+msgstr "Ẩn nút xuất PNG"
 
-msgid "Right-click"
-msgstr "Nhấp chuột phải"
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr "Ẩn nút xuất SVG"
 
-msgid "Show details of a person"
-msgstr "Hiển thị thông tin chi tiết của một người"
+#: resources/views/modules/fan-chart/config.phtml:102
+msgid ""
+"How much of each place hierarchy is shown in chart arcs (full name, or only "
+"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
+"form."
+msgstr ""
+"Bao nhiêu phần của mỗi cấu trúc địa điểm được hiển thị trong các cung biểu "
+"đồ (tên đầy đủ hoặc chỉ 1–3 cấp thấp nhất). Người dùng bật/tắt hiển thị địa "
+"điểm trong biểu mẫu biểu đồ."
 
-msgid "Ctrl + scroll"
-msgstr "Ctrl + cuộn chuột"
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid ""
+"Images are only shown if the arc segment is wide enough. Images for "
+"descendants are not yet available."
+msgstr ""
+"Hình ảnh chỉ hiển thị khi đoạn cung đủ rộng. Hình ảnh cho con cháu chưa có "
+"sẵn."
 
-msgid "Zoom in/out"
-msgstr "Phóng to/Thu nhỏ"
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "Cá nhân"
 
-msgid "Click and drag"
-msgstr "Nhấp và kéo"
+#: resources/views/modules/fan-chart/form/details.phtml:34
+msgid ""
+"Inserts the GEDCOM NICK value in quotes between the given names and the "
+"surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees "
+"behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr ""
+"Chèn giá trị GEDCOM NICK trong dấu ngoặc kép giữa các tên đệm và họ (ví dụ "
+"Martin \"Chalky\" White). Tái hiện hành vi webtrees cũ cho cây gia phả lưu "
+"biệt danh trong trường GEDCOM NICK riêng."
 
+#: src/Configuration.php:363
+msgid "Lowest level (e.g. parish)"
+msgstr "Cấp thấp nhất (ví dụ: giáo xứ)"
+
+#: src/Configuration.php:365
+msgid "Lowest three levels"
+msgstr "Ba cấp thấp nhất"
+
+#: src/Configuration.php:364
+msgid "Lowest two levels"
+msgstr "Hai cấp thấp nhất"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:43
+msgid "Maternal"
+msgstr "Bên ngoại"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
 msgstr "Di chuyển biểu đồ"
 
-msgid "Click on a person"
-msgstr "Nhấp vào một người"
+#: src/Module.php:262
+msgid "Move the view with two fingers"
+msgstr "Di chuyển tầm nhìn bằng hai ngón tay"
 
+#: resources/views/modules/fan-chart/config.phtml:74
+msgid "Name abbreviation when space is tight"
+msgstr "Viết tắt tên khi không đủ chỗ"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:23
+msgid "Number of inner levels"
+msgstr "Độ rộng ô trong hình quạt"
+
+#: resources/views/modules/fan-chart/form/display.phtml:71
+msgid ""
+"Partners and children are shown as arcs below the ancestor section. The fan "
+"size is limited to 180–270 degrees when enabled."
+msgstr ""
+"Vợ/chồng và con cái được hiển thị dưới dạng cung bên dưới phần tổ tiên. Kích "
+"thước quạt bị giới hạn ở 180–270 độ khi được bật."
+
+#: resources/views/modules/fan-chart/form/colors.phtml:39
+msgid "Paternal"
+msgstr "Bên nội"
+
+#: resources/views/modules/fan-chart/config.phtml:91
+msgid "Place detail"
+msgstr "Chi tiết địa điểm"
+
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
+msgid "Re center"
+msgstr "Chỉnh biểu đồ về giữa màn hình"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Reload chart for that person"
 msgstr "Tải lại biểu đồ cho người đó"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Date precision"
-msgstr "Độ chính xác ngày tháng"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Right-click"
+msgstr "Nhấp chuột phải"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "Hiển thị ngày đầy đủ (sinh, kết hôn, mất) cho các thế hệ gần. Các thế hệ sau chỉ hiển thị năm. Ngày kết hôn bị ẩn từ thế hệ 9. Con cháu có cung hẹp tự động sử dụng định dạng chỉ năm gọn."
+#: resources/views/modules/fan-chart/form/display.phtml:65
+msgid "Show descendants"
+msgstr "Hiển thị con cháu"
 
-#: src/Configuration.php:191
-msgid "Years only"
-msgstr "Chỉ năm"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Show details of a person"
+msgstr "Hiển thị thông tin chi tiết của một người"
 
-#: src/Configuration.php:195
+#: resources/views/modules/fan-chart/form/colors.phtml:28
+msgid "Show family colors"
+msgstr "Hiển thị màu gia đình"
+
+#: resources/views/modules/fan-chart/config.phtml:119
+msgid ""
+"Show full dates (birth, marriage, death) for early generations. Later "
+"generations show year only. Marriage dates are hidden from generation 9. "
+"Descendants with narrow arcs automatically use a compact year-only format."
+msgstr ""
+"Hiển thị ngày đầy đủ (sinh, kết hôn, mất) cho các thế hệ gần. Các thế hệ sau "
+"chỉ hiển thị năm. Ngày kết hôn bị ẩn từ thế hệ 9. Con cháu có cung hẹp tự "
+"động sử dụng định dạng chỉ năm gọn."
+
+#: src/Configuration.php:201
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Hiển thị đầy đủ ngày tháng đến thế hệ %s"
 
-msgid "Show descendants"
-msgstr "Hiển thị con cháu"
+#: resources/views/modules/components/buttonbar/help-button.phtml:18
+msgid "Show help"
+msgstr "Hiển thị trợ giúp"
 
-msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
-msgstr "Vợ/chồng và con cái được hiển thị dưới dạng cung bên dưới phần tổ tiên. Kích thước quạt bị giới hạn ở 180–270 độ khi được bật."
-
-msgid "Show names and images"
-msgstr "Hiển thị tên và hình ảnh"
-
-msgid "Show names only"
-msgstr "Chỉ hiển thị tên"
-
+#: resources/views/modules/fan-chart/form/display.phtml:55
 msgid "Show images only"
 msgstr "Chỉ hiển thị hình ảnh"
 
-msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
-msgstr "Hình ảnh chỉ hiển thị khi đoạn cung đủ rộng. Hình ảnh cho con cháu chưa có sẵn."
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "Hiển thị thêm tùy chọn"
 
-msgid "Display"
-msgstr "Hiển thị"
+#: resources/views/modules/fan-chart/form/display.phtml:41
+msgid "Show names and images"
+msgstr "Hiển thị tên và hình ảnh"
 
-msgid "Details"
-msgstr "Chi tiết"
+#: resources/views/modules/fan-chart/form/display.phtml:48
+msgid "Show names only"
+msgstr "Chỉ hiển thị tên"
 
-msgid "Colors"
-msgstr "Màu sắc"
-
-msgid "Appearance"
-msgstr "Giao diện"
-
-msgid "Name abbreviation when space is tight"
-msgstr "Viết tắt tên khi không đủ chỗ"
-
-msgid "Automatic (based on tree's surname tradition)"
-msgstr "Tự động (dựa trên truyền thống họ của cây phả hệ)"
-
-msgid "Abbreviate given names first"
-msgstr "Viết tắt tên gọi trước"
-
-msgid "Abbreviate surnames first"
-msgstr "Viết tắt họ trước"
-
-msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
-msgstr "Kiểm soát phần nào của tên được rút ngắn trước khi cung quá hẹp để hiển thị tên đầy đủ. \"Tự động\" sử dụng truyền thống họ của cây phả hệ (Iceland viết tắt họ; còn lại viết tắt tên gọi)."
-
-#: resources/views/modules/fan-chart/form/display.phtml
+#: resources/views/modules/fan-chart/form/details.phtml:28
 msgid "Show nicknames in display names"
 msgstr "Hiển thị biệt danh trong tên hiển thị"
 
-#: resources/views/modules/fan-chart/form/display.phtml
-msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
-msgstr "Chèn giá trị GEDCOM NICK trong dấu ngoặc kép giữa các tên đệm và họ (ví dụ Martin \"Chalky\" White). Tái hiện hành vi webtrees cũ cho cây gia phả lưu biệt danh trong trường GEDCOM NICK riêng."
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show parent marriage dates"
+msgstr "Hiển thị ngày kết hôn của cha mẹ"
 
-msgid "Place detail"
-msgstr "Chi tiết địa điểm"
+#: resources/views/modules/fan-chart/form/details.phtml:40
+msgid "Show places"
+msgstr "Hiển thị địa điểm"
 
-msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
-msgstr "Bao nhiêu phần của mỗi cấu trúc địa điểm được hiển thị trong các cung biểu đồ (tên đầy đủ hoặc chỉ 1–3 cấp thấp nhất). Người dùng bật/tắt hiển thị địa điểm trong biểu mẫu biểu đồ."
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:27
+msgid ""
+"Specifies the number of levels in which the text is written along an arc. "
+"Descendant arcs switch between arc text and rotated text automatically based "
+"on available space."
+msgstr ""
+"Cấp độ trong đó văn bản được viết dọc theo một vòng cung. Các cung con cháu "
+"tự động chuyển đổi giữa văn bản theo cung và văn bản xoay dựa trên không "
+"gian có sẵn."
 
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
-msgstr "Hiển thị nơi sinh và nơi mất trong các cung biểu đồ khi đủ chỗ. Đối với hậu duệ có nhiều con, địa điểm tự động bị ẩn. Mức chi tiết và độ chính xác của ngày được cấu hình toàn trang trong cài đặt mô-đun."
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr "Chuyển giữa toàn màn hình và xem bình thường"
+
+#: src/Traits/ModuleConfigTrait.php:146
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr ""
+
+#: src/Module.php:261
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Kết hợp Ctrl + scroll để thu phóng biểu đồ"
+
+#: src/Configuration.php:196
+msgid "Years only"
+msgstr "Chỉ năm"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Zoom in/out"
+msgstr "Phóng to/Thu nhỏ"
+
+#: resources/views/modules/fan-chart/config.phtml:134
+msgid "cancel"
+msgstr "Hủy bỏ"
+
+#: resources/views/modules/fan-chart/config.phtml:129
+msgid "save"
+msgstr "lưu"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "Xem biểu đồ"

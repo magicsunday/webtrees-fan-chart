@@ -1,7 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Hindi\n"
-"POT-Creation-Date: 2024-12-22 13:03+0100\n"
+"Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
+"issues\n"
+"POT-Creation-Date: 2026-06-06 12:50+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -15,43 +17,91 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:127 src/Module.php:243
-msgid "Fan chart"
-msgstr "फैन चार्ट"
-
-#: src/Module.php:137
+#: src/Module.php:136
 msgid "A fan chart of an individual’s ancestors."
 msgstr "किसी व्यक्ती के पूर्वजों का एक फैन चार्ट।"
 
-#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
-#, php-format
-msgid "Fan chart of %s"
-msgstr "%s का फैन चार्ट"
+#: src/Configuration.php:573
+msgid "Abbreviate given names first"
+msgstr "पहले प्रदत्त नामों को संक्षिप्त करें"
 
-#: src/Module.php:260
-msgid "Use Ctrl + scroll to zoom in the view"
-msgstr "Ctrl + Scroll से ज़ूम इन करें"
+#: src/Configuration.php:574
+msgid "Abbreviate surnames first"
+msgstr "पहले उपनामों को संक्षिप्त करें"
 
-#: src/Module.php:261
-msgid "Move the view with two fingers"
-msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
+#: src/Configuration.php:572
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "स्वचालित (वृक्ष की उपनाम परंपरा पर आधारित)"
 
-#: src/Traits/ModuleConfigTrait.php:99
-#, php-format
-msgid "The preferences for the module “%s” have been updated."
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
+msgid "Click and drag"
+msgstr "क्लिक करें और खींचें"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Click on a person"
+msgstr "किसी व्यक्ति पर क्लिक करें"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:23
+msgid "Colors"
+msgstr "रंग"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:34
+msgid ""
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
+msgstr ""
+"पारिवारिक शाखा के अनुसार चापों को रंगता है। प्रत्येक जोड़ा एक ही रंग साझा करता है, जो "
+"चुने गए आधार रंगों से प्राप्त होता है।"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
-msgid "Re center"
-msgstr "पुनः केंद्रित करें"
+#: resources/views/modules/fan-chart/config.phtml:85
+msgid ""
+"Controls which name part shrinks first when an arc is too narrow for the "
+"full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
+"abbreviates surnames; everything else abbreviates given names)."
+msgstr ""
+"नियंत्रित करता है कि चाप पूर्ण नाम के लिए बहुत संकरा होने पर कौन सा नाम भाग पहले छोटा "
+"होगा। \"स्वचालित\" वृक्ष की उपनाम परंपरा का उपयोग करता है (आइसलैंडिक उपनामों को "
+"संक्षिप्त करता है; बाकी सभी प्रदत्त नामों को संक्षिप्त करते हैं)।"
 
-#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
-msgid "Switch between full screen mode and normal view"
-msgstr "पूर्ण स्क्रीन और सामान्य दृश्य के बीच स्विच करें"
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Ctrl + scroll"
+msgstr "Ctrl + स्क्रॉल"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:17
-msgid "Show help"
-msgstr "मदद दिखाएँ"
+#: resources/views/modules/fan-chart/config.phtml:108
+msgid "Date precision"
+msgstr "तारीख सटीकता"
+
+#: resources/views/modules/fan-chart/form/details.phtml:23
+msgid "Details"
+msgstr "विवरण"
+
+#: resources/views/modules/fan-chart/form/display.phtml:23
+msgid "Display"
+msgstr "प्रदर्शन"
+
+#: resources/views/modules/fan-chart/form/details.phtml:46
+msgid ""
+"Displays birth and death places in the chart arcs where space allows. For "
+"descendants with many children, places are automatically suppressed. The "
+"level of detail and the date precision are configured site-wide in the "
+"module settings."
+msgstr ""
+"जहाँ स्थान हो वहाँ चार्ट चापों में जन्म और मृत्यु स्थान दिखाता है। कई बच्चों वाले वंशजों के लिए "
+"स्थान स्वतः छिपा दिए जाते हैं। विवरण स्तर और दिनांक सटीकता मॉड्यूल सेटिंग्स में साइट-व्यापी "
+"रूप से कॉन्फ़िगर की जाती है।"
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Displays the marriage date of each couple in a narrow arc between "
+"generations. When descendants are enabled, also shows the marriage date "
+"between the central person and their partners."
+msgstr ""
+"पीढ़ियों के बीच एक संकीर्ण चाप में प्रत्येक जोड़े की विवाह तिथि प्रदर्शित करता है। जब वंशज "
+"सक्षम होते हैं, तो केंद्रीय व्यक्ति और उनके साथियों के बीच विवाह तिथि भी दिखाता है।"
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -61,226 +111,243 @@ msgstr "PNG निकालें"
 msgid "Export as SVG"
 msgstr "SVG निकालें"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Control panel"
-msgstr ""
+#: src/Module.php:124 src/Module.php:237
+msgid "Fan chart"
+msgstr "फैन चार्ट"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Modules"
-msgstr ""
+#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#, php-format
+msgid "Fan chart of %s"
+msgstr "%s का फैन चार्ट"
 
-#: resources/views/modules/fan-chart/config.phtml:50
-msgid "General"
-msgstr "सामान्य"
-
-#: resources/views/modules/fan-chart/config.phtml:56
-msgid "Hide the SVG export button"
-msgstr "SVG निर्यात बटन छिपाएँ"
-
-#: resources/views/modules/fan-chart/config.phtml:66
-msgid "Hide the PNG export button"
-msgstr "PNG निर्यात बटन छिपाएँ"
-
-#: resources/views/modules/fan-chart/config.phtml:79
-msgid "save"
-msgstr "सुरक्षित"
-
-#: resources/views/modules/fan-chart/config.phtml:84
-msgid "cancel"
-msgstr "रद्द"
-
-#: resources/views/modules/fan-chart/form/fan-size.phtml:22
+#: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
 msgstr "फैन का आकार"
 
-#: resources/views/modules/fan-chart/form/font-size.phtml:22
+#: resources/views/modules/fan-chart/form/font-size.phtml:23
 msgid "Font size"
 msgstr "फ़ॉन्ट आकार"
 
-#: resources/views/modules/fan-chart/form/generations.phtml:22
-msgid "Generations"
-msgstr "पीढ़ियां"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
-msgid "Number of inner levels"
-msgstr "आंतरिक स्तरों की संख्या"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
-msgid ""
-"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
-msgstr "उस स्तर की संख्या निर्दिष्ट करता है जिसमें पाठ चाप के साथ लिखा जाता है। वंशज चाप उपलब्ध स्थान के आधार पर चाप पाठ और घुमाए गए पाठ के बीच स्वचालित रूप से बदलते हैं।"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:23
-msgid "Layout"
-msgstr "ख़ाका"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:29
-msgid "Hide empty segments"
-msgstr "खाली खंड छिपाएं"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show family colors"
-msgstr "पारिवारिक रंग दिखाएं"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:45
-msgid ""
-"Colors the arcs by family branch. Each couple shares the same color, derived "
-"from the chosen base colors."
-msgstr ""
-"पारिवारिक शाखा के अनुसार चापों को रंगता है। प्रत्येक जोड़ा एक ही "
-"रंग साझा करता है, जो चुने गए आधार रंगों से प्राप्त होता है।"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:49
-msgid "Paternal"
-msgstr "पैतृक"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:53
-msgid "Maternal"
-msgstr "मातृक"
-
-msgid "Show places"
-msgstr "स्थान दिखाएँ"
-
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
-msgstr "चार्ट चापों में जन्म और मृत्यु स्थान प्रदर्शित करता है जहाँ स्थान अनुमति देता है। बहुत सारे बच्चों वाले वंशजों के लिए, स्थान स्वचालित रूप से दबा दिए जाते हैं। नीचे विवरण का स्तर चुनें।"
-
+#: src/Configuration.php:362
 msgid "Full place name"
 msgstr "पूरा स्थान नाम"
 
-msgid "Lowest level (e.g. parish)"
-msgstr "सबसे निचला स्तर (जैसे पल्ली)"
+#: resources/views/modules/fan-chart/config.phtml:51
+msgid "General"
+msgstr "सामान्य"
 
-msgid "Lowest two levels"
-msgstr "सबसे निचले दो स्तर"
+#: resources/views/modules/fan-chart/form/generations.phtml:23
+msgid "Generations"
+msgstr "पीढ़ियां"
 
-msgid "Lowest three levels"
-msgstr "सबसे निचले तीन स्तर"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:62
-msgid "Show parent marriage dates"
-msgstr "माता-पिता की विवाह तिथियाँ दिखाएँ"
-
-msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
-msgstr "पीढ़ियों के बीच एक संकीर्ण चाप में प्रत्येक जोड़े की विवाह तिथि प्रदर्शित करता है। जब वंशज सक्षम होते हैं, तो केंद्रीय व्यक्ति और उनके साथियों के बीच विवाह तिथि भी दिखाता है।"
-
-#: resources/views/modules/fan-chart/page.phtml:41
-msgid "Individual"
-msgstr "व्यक्ति"
-
-#: resources/views/modules/fan-chart/page.phtml:68
-msgid "view"
-msgstr "देखें"
-
-#: resources/views/modules/fan-chart/page.phtml:79
-msgid "Show more options"
-msgstr "अधिक विकल्प दिखाएँ"
+#: resources/views/modules/fan-chart/form/display.phtml:78
+msgid "Hide empty segments"
+msgstr "खाली खंड छिपाएं"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr "अधिक विकल्प छिपाएँ"
 
-#~ msgid "Presentation"
-#~ msgstr "प्रस्तुतीकरण"
+#: resources/views/modules/fan-chart/config.phtml:65
+msgid "Hide the PNG export button"
+msgstr "PNG निर्यात बटन छिपाएँ"
 
-msgid "Right-click"
-msgstr "राइट-क्लिक"
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr "SVG निर्यात बटन छिपाएँ"
 
-msgid "Show details of a person"
-msgstr "किसी व्यक्ति का विवरण दिखाएँ"
+#: resources/views/modules/fan-chart/config.phtml:102
+msgid ""
+"How much of each place hierarchy is shown in chart arcs (full name, or only "
+"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
+"form."
+msgstr ""
+"चार्ट चापों में प्रत्येक स्थान पदानुक्रम का कितना भाग दिखाया जाए (पूरा नाम, या केवल सबसे "
+"निचले 1–3 स्तर)। उपयोगकर्ता चार्ट फ़ॉर्म में स्थान की दृश्यता चालू/बंद करते हैं।"
 
-msgid "Ctrl + scroll"
-msgstr "Ctrl + स्क्रॉल"
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid ""
+"Images are only shown if the arc segment is wide enough. Images for "
+"descendants are not yet available."
+msgstr ""
+"छवियाँ केवल तभी दिखाई जाती हैं जब चाप खंड पर्याप्त चौड़ा हो। वंशजों के लिए छवियाँ अभी तक "
+"उपलब्ध नहीं हैं।"
 
-msgid "Zoom in/out"
-msgstr "ज़ूम इन/आउट"
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "व्यक्ति"
 
-msgid "Click and drag"
-msgstr "क्लिक करें और खींचें"
+#: resources/views/modules/fan-chart/form/details.phtml:34
+msgid ""
+"Inserts the GEDCOM NICK value in quotes between the given names and the "
+"surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees "
+"behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr ""
+"GEDCOM NICK मान को उद्धरण चिह्नों में दिए गए नामों और उपनाम के बीच सम्मिलित करता है "
+"(जैसे Martin \"Chalky\" White)। उन वृक्षों के लिए पुराने webtrees व्यवहार का अनुकरण "
+"करता है जो उपनामों को अलग GEDCOM NICK फ़ील्ड में संग्रहीत करते हैं।"
 
+#: src/Configuration.php:363
+msgid "Lowest level (e.g. parish)"
+msgstr "सबसे निचला स्तर (जैसे पल्ली)"
+
+#: src/Configuration.php:365
+msgid "Lowest three levels"
+msgstr "सबसे निचले तीन स्तर"
+
+#: src/Configuration.php:364
+msgid "Lowest two levels"
+msgstr "सबसे निचले दो स्तर"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:43
+msgid "Maternal"
+msgstr "मातृक"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
 msgstr "चार्ट को स्थानांतरित करें"
 
-msgid "Click on a person"
-msgstr "किसी व्यक्ति पर क्लिक करें"
+#: src/Module.php:262
+msgid "Move the view with two fingers"
+msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
 
+#: resources/views/modules/fan-chart/config.phtml:74
+msgid "Name abbreviation when space is tight"
+msgstr "जब स्थान सीमित हो तो नाम का संक्षिप्तीकरण"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:23
+msgid "Number of inner levels"
+msgstr "आंतरिक स्तरों की संख्या"
+
+#: resources/views/modules/fan-chart/form/display.phtml:71
+msgid ""
+"Partners and children are shown as arcs below the ancestor section. The fan "
+"size is limited to 180–270 degrees when enabled."
+msgstr ""
+"साथी और बच्चे पूर्वज खंड के नीचे चापों के रूप में दिखाए जाते हैं। सक्षम होने पर पंखे का आकार "
+"180–270 डिग्री तक सीमित है।"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:39
+msgid "Paternal"
+msgstr "पैतृक"
+
+#: resources/views/modules/fan-chart/config.phtml:91
+msgid "Place detail"
+msgstr "स्थान विवरण"
+
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
+msgid "Re center"
+msgstr "पुनः केंद्रित करें"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Reload chart for that person"
 msgstr "उस व्यक्ति के लिए चार्ट पुनः लोड करें"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Date precision"
-msgstr "तारीख सटीकता"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Right-click"
+msgstr "राइट-क्लिक"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "प्रारंभिक पीढ़ियों के लिए पूर्ण तिथियाँ (जन्म, विवाह, मृत्यु) दिखाएँ। बाद की पीढ़ियाँ केवल वर्ष दिखाती हैं। विवाह तिथियाँ पीढ़ी 9 से छिपी होती हैं। संकीर्ण चापों वाले वंशज स्वचालित रूप से एक संक्षिप्त केवल-वर्ष प्रारूप का उपयोग करते हैं।"
+#: resources/views/modules/fan-chart/form/display.phtml:65
+msgid "Show descendants"
+msgstr "वंशज दिखाएँ"
 
-#: src/Configuration.php:191
-msgid "Years only"
-msgstr "केवल वर्ष"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Show details of a person"
+msgstr "किसी व्यक्ति का विवरण दिखाएँ"
 
-#: src/Configuration.php:195
+#: resources/views/modules/fan-chart/form/colors.phtml:28
+msgid "Show family colors"
+msgstr "पारिवारिक रंग दिखाएं"
+
+#: resources/views/modules/fan-chart/config.phtml:119
+msgid ""
+"Show full dates (birth, marriage, death) for early generations. Later "
+"generations show year only. Marriage dates are hidden from generation 9. "
+"Descendants with narrow arcs automatically use a compact year-only format."
+msgstr ""
+"प्रारंभिक पीढ़ियों के लिए पूर्ण तिथियाँ (जन्म, विवाह, मृत्यु) दिखाएँ। बाद की पीढ़ियाँ केवल "
+"वर्ष दिखाती हैं। विवाह तिथियाँ पीढ़ी 9 से छिपी होती हैं। संकीर्ण चापों वाले वंशज स्वचालित "
+"रूप से एक संक्षिप्त केवल-वर्ष प्रारूप का उपयोग करते हैं।"
+
+#: src/Configuration.php:201
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "पीढ़ी %s तक पूर्ण तिथियाँ दिखाएँ"
 
-msgid "Show descendants"
-msgstr "वंशज दिखाएँ"
+#: resources/views/modules/components/buttonbar/help-button.phtml:18
+msgid "Show help"
+msgstr "मदद दिखाएँ"
 
-msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
-msgstr "साथी और बच्चे पूर्वज खंड के नीचे चापों के रूप में दिखाए जाते हैं। सक्षम होने पर पंखे का आकार 180–270 डिग्री तक सीमित है।"
-
-msgid "Show names and images"
-msgstr "नाम और छवियाँ दिखाएँ"
-
-msgid "Show names only"
-msgstr "केवल नाम दिखाएँ"
-
+#: resources/views/modules/fan-chart/form/display.phtml:55
 msgid "Show images only"
 msgstr "केवल छवियाँ दिखाएँ"
 
-msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
-msgstr "छवियाँ केवल तभी दिखाई जाती हैं जब चाप खंड पर्याप्त चौड़ा हो। वंशजों के लिए छवियाँ अभी तक उपलब्ध नहीं हैं।"
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "अधिक विकल्प दिखाएँ"
 
-msgid "Display"
-msgstr "प्रदर्शन"
+#: resources/views/modules/fan-chart/form/display.phtml:41
+msgid "Show names and images"
+msgstr "नाम और छवियाँ दिखाएँ"
 
-msgid "Details"
-msgstr "विवरण"
+#: resources/views/modules/fan-chart/form/display.phtml:48
+msgid "Show names only"
+msgstr "केवल नाम दिखाएँ"
 
-msgid "Colors"
-msgstr "रंग"
-
-msgid "Appearance"
-msgstr "दिखावट"
-
-msgid "Name abbreviation when space is tight"
-msgstr "जब स्थान सीमित हो तो नाम का संक्षिप्तीकरण"
-
-msgid "Automatic (based on tree's surname tradition)"
-msgstr "स्वचालित (वृक्ष की उपनाम परंपरा पर आधारित)"
-
-msgid "Abbreviate given names first"
-msgstr "पहले प्रदत्त नामों को संक्षिप्त करें"
-
-msgid "Abbreviate surnames first"
-msgstr "पहले उपनामों को संक्षिप्त करें"
-
-msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
-msgstr "नियंत्रित करता है कि चाप पूर्ण नाम के लिए बहुत संकरा होने पर कौन सा नाम भाग पहले छोटा होगा। \"स्वचालित\" वृक्ष की उपनाम परंपरा का उपयोग करता है (आइसलैंडिक उपनामों को संक्षिप्त करता है; बाकी सभी प्रदत्त नामों को संक्षिप्त करते हैं)।"
-
-#: resources/views/modules/fan-chart/form/display.phtml
+#: resources/views/modules/fan-chart/form/details.phtml:28
 msgid "Show nicknames in display names"
 msgstr "प्रदर्शन नामों में उपनाम दिखाएँ"
 
-#: resources/views/modules/fan-chart/form/display.phtml
-msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
-msgstr "GEDCOM NICK मान को उद्धरण चिह्नों में दिए गए नामों और उपनाम के बीच सम्मिलित करता है (जैसे Martin \"Chalky\" White)। उन वृक्षों के लिए पुराने webtrees व्यवहार का अनुकरण करता है जो उपनामों को अलग GEDCOM NICK फ़ील्ड में संग्रहीत करते हैं।"
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show parent marriage dates"
+msgstr "माता-पिता की विवाह तिथियाँ दिखाएँ"
 
-msgid "Place detail"
-msgstr "स्थान विवरण"
+#: resources/views/modules/fan-chart/form/details.phtml:40
+msgid "Show places"
+msgstr "स्थान दिखाएँ"
 
-msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
-msgstr "चार्ट चापों में प्रत्येक स्थान पदानुक्रम का कितना भाग दिखाया जाए (पूरा नाम, या केवल सबसे निचले 1–3 स्तर)। उपयोगकर्ता चार्ट फ़ॉर्म में स्थान की दृश्यता चालू/बंद करते हैं।"
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:27
+msgid ""
+"Specifies the number of levels in which the text is written along an arc. "
+"Descendant arcs switch between arc text and rotated text automatically based "
+"on available space."
+msgstr ""
+"उस स्तर की संख्या निर्दिष्ट करता है जिसमें पाठ चाप के साथ लिखा जाता है। वंशज चाप उपलब्ध "
+"स्थान के आधार पर चाप पाठ और घुमाए गए पाठ के बीच स्वचालित रूप से बदलते हैं।"
 
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
-msgstr "जहाँ स्थान हो वहाँ चार्ट चापों में जन्म और मृत्यु स्थान दिखाता है। कई बच्चों वाले वंशजों के लिए स्थान स्वतः छिपा दिए जाते हैं। विवरण स्तर और दिनांक सटीकता मॉड्यूल सेटिंग्स में साइट-व्यापी रूप से कॉन्फ़िगर की जाती है।"
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr "पूर्ण स्क्रीन और सामान्य दृश्य के बीच स्विच करें"
+
+#: src/Traits/ModuleConfigTrait.php:146
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr ""
+
+#: src/Module.php:261
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Ctrl + Scroll से ज़ूम इन करें"
+
+#: src/Configuration.php:196
+msgid "Years only"
+msgstr "केवल वर्ष"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Zoom in/out"
+msgstr "ज़ूम इन/आउट"
+
+#: resources/views/modules/fan-chart/config.phtml:134
+msgid "cancel"
+msgstr "रद्द"
+
+#: resources/views/modules/fan-chart/config.phtml:129
+msgid "save"
+msgstr "सुरक्षित"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "देखें"

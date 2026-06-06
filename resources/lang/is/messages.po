@@ -1,7 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-22 13:03+0100\n"
+"Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
+"issues\n"
+"POT-Creation-Date: 2026-06-06 12:50+0000\n"
 "PO-Revision-Date: 2024-12-22 13:05+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -16,43 +18,93 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:127 src/Module.php:243
-msgid "Fan chart"
-msgstr "Forfeðraskífa"
-
-#: src/Module.php:137
+#: src/Module.php:136
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Skífurit yfir forfeður einstaklings."
 
-#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
-#, php-format
-msgid "Fan chart of %s"
-msgstr "Forfeðraskífa fyrir %s"
+#: src/Configuration.php:573
+msgid "Abbreviate given names first"
+msgstr "Stytta eiginnöfn fyrst"
 
-#: src/Module.php:260
-msgid "Use Ctrl + scroll to zoom in the view"
-msgstr "Notaðu Ctrl + skruna til að þysja í ættartrénu"
+#: src/Configuration.php:574
+msgid "Abbreviate surnames first"
+msgstr "Stytta eftirnöfn fyrst"
 
-#: src/Module.php:261
-msgid "Move the view with two fingers"
-msgstr "Færðu yfirlitið með tveimur fingrum"
+#: src/Configuration.php:572
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Sjálfvirkt (byggt á eftirnafnshefð trésins)"
 
-#: src/Traits/ModuleConfigTrait.php:99
-#, php-format
-msgid "The preferences for the module “%s” have been updated."
-msgstr "Kjörstillingar fyrir eininguna “%s” hafa verið uppfærðar."
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
+msgid "Click and drag"
+msgstr "Smella og draga"
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
-msgid "Re center"
-msgstr "Endurmiðja"
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Click on a person"
+msgstr "Smella á einstakling"
 
-#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
-msgid "Switch between full screen mode and normal view"
-msgstr "Skiptu á milli fullskjás og venjulegs skjás"
+#: resources/views/modules/fan-chart/form/colors.phtml:23
+msgid "Colors"
+msgstr "Litir"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:17
-msgid "Show help"
-msgstr "Sýna hjálp"
+#: resources/views/modules/fan-chart/form/colors.phtml:34
+msgid ""
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
+msgstr ""
+"Litar bogana eftir fjölskyldugrein. Hvert par deilir sama litnum, sem er "
+"leiddur af völdum grunnlitum."
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
+msgstr "Stjórnborð"
+
+#: resources/views/modules/fan-chart/config.phtml:85
+msgid ""
+"Controls which name part shrinks first when an arc is too narrow for the "
+"full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
+"abbreviates surnames; everything else abbreviates given names)."
+msgstr ""
+"Stjórnar því hvaða nafnshluti er styttur fyrst þegar bogi er of þröngur "
+"fyrir fullt nafn. „Sjálfvirkt“ notar eftirnafnshefð trésins (íslensk hefð "
+"styttir eftirnöfn; aðrar stytta eiginnöfn)."
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Ctrl + scroll"
+msgstr "Ctrl + skruna"
+
+#: resources/views/modules/fan-chart/config.phtml:108
+msgid "Date precision"
+msgstr "Nákvæmni dagsetningar"
+
+#: resources/views/modules/fan-chart/form/details.phtml:23
+msgid "Details"
+msgstr "Upplýsingar"
+
+#: resources/views/modules/fan-chart/form/display.phtml:23
+msgid "Display"
+msgstr "Birting"
+
+#: resources/views/modules/fan-chart/form/details.phtml:46
+msgid ""
+"Displays birth and death places in the chart arcs where space allows. For "
+"descendants with many children, places are automatically suppressed. The "
+"level of detail and the date precision are configured site-wide in the "
+"module settings."
+msgstr ""
+"Sýnir fæðingar- og dánarstaði í bogum töflunnar þar sem pláss leyfir. Fyrir "
+"afkomendur með mörg börn eru staðirnir sjálfkrafa faldir. Stig nákvæmni og "
+"nákvæmni dagsetninga eru stillt fyrir allan vefinn í stillingum "
+"einingarinnar."
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Displays the marriage date of each couple in a narrow arc between "
+"generations. When descendants are enabled, also shows the marriage date "
+"between the central person and their partners."
+msgstr ""
+"Sýnir giftingardagsetningu hvers pars í mjóum boga milli kynslóða. Þegar "
+"afkomendur eru virkjaðir, sýnir einnig giftingardagsetningu milli "
+"miðpersónunnar og maka hennar."
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -62,226 +114,246 @@ msgstr "Flytja út sem PNG"
 msgid "Export as SVG"
 msgstr "Flytja út sem SVG"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Control panel"
-msgstr "Stjórnborð"
+#: src/Module.php:124 src/Module.php:237
+msgid "Fan chart"
+msgstr "Forfeðraskífa"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Modules"
-msgstr "Einingar"
+#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#, php-format
+msgid "Fan chart of %s"
+msgstr "Forfeðraskífa fyrir %s"
 
-#: resources/views/modules/fan-chart/config.phtml:50
-msgid "General"
-msgstr "Almennt"
-
-#: resources/views/modules/fan-chart/config.phtml:56
-msgid "Hide the SVG export button"
-msgstr "Fela SVG útflutningshnappinn"
-
-#: resources/views/modules/fan-chart/config.phtml:66
-msgid "Hide the PNG export button"
-msgstr "Fela PNG útflutningshnappinn"
-
-#: resources/views/modules/fan-chart/config.phtml:79
-msgid "save"
-msgstr "vista"
-
-#: resources/views/modules/fan-chart/config.phtml:84
-msgid "cancel"
-msgstr "hætta"
-
-#: resources/views/modules/fan-chart/form/fan-size.phtml:22
+#: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
 msgstr "Skífustærð"
 
-#: resources/views/modules/fan-chart/form/font-size.phtml:22
+#: resources/views/modules/fan-chart/form/font-size.phtml:23
 msgid "Font size"
 msgstr "Leturstærð"
 
-#: resources/views/modules/fan-chart/form/generations.phtml:22
-msgid "Generations"
-msgstr "Ættliðir"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
-msgid "Number of inner levels"
-msgstr "Fjöldi innri þrepa"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
-msgid ""
-"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
-msgstr "Tilgreinir fjölda þrepa þar sem textinn er skrifaður eftir boga. Bogar afkomenda skipta sjálfkrafa á milli bogatexta og snúins texta eftir tiltæku plássi."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:23
-msgid "Layout"
-msgstr "Útlit"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:29
-msgid "Hide empty segments"
-msgstr "Fela tóma hluta"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show family colors"
-msgstr "Sýna fjölskylduliti"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:45
-msgid ""
-"Colors the arcs by family branch. Each couple shares the same color, derived "
-"from the chosen base colors."
-msgstr ""
-"Litar bogana eftir fjölskyldugrein. Hvert par deilir "
-"sama litnum, sem er leiddur af völdum grunnlitum."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:49
-msgid "Paternal"
-msgstr "Föðurleg"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:53
-msgid "Maternal"
-msgstr "Móðurleg"
-
-msgid "Show places"
-msgstr "Sýna staði"
-
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
-msgstr "Sýnir fæðingar- og dánarstaði í bogum skýringarmyndarinnar þar sem pláss leyfir. Fyrir afkomendur með mörg börn eru staðir sjálfkrafa faldir. Veldu smáatriðastig hér að neðan."
-
+#: src/Configuration.php:362
 msgid "Full place name"
 msgstr "Fullt heiti staðar"
 
-msgid "Lowest level (e.g. parish)"
-msgstr "Lægsta stig (t.d. sókn)"
+#: resources/views/modules/fan-chart/config.phtml:51
+msgid "General"
+msgstr "Almennt"
 
-msgid "Lowest two levels"
-msgstr "Tvö lægstu stig"
+#: resources/views/modules/fan-chart/form/generations.phtml:23
+msgid "Generations"
+msgstr "Ættliðir"
 
-msgid "Lowest three levels"
-msgstr "Þrjú lægstu stig"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:62
-msgid "Show parent marriage dates"
-msgstr "Sýna giftingardagsetningar foreldra"
-
-msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
-msgstr "Sýnir giftingardagsetningu hvers pars í mjóum boga milli kynslóða. Þegar afkomendur eru virkjaðir, sýnir einnig giftingardagsetningu milli miðpersónunnar og maka hennar."
-
-#: resources/views/modules/fan-chart/page.phtml:41
-msgid "Individual"
-msgstr "Einstaklingur"
-
-#: resources/views/modules/fan-chart/page.phtml:68
-msgid "view"
-msgstr "skoða"
-
-#: resources/views/modules/fan-chart/page.phtml:79
-msgid "Show more options"
-msgstr "Sýna fleiri valkosti"
+#: resources/views/modules/fan-chart/form/display.phtml:78
+msgid "Hide empty segments"
+msgstr "Fela tóma hluta"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr "Fela fleiri valkosti"
 
-#~ msgid "Presentation"
-#~ msgstr "Kynning"
+#: resources/views/modules/fan-chart/config.phtml:65
+msgid "Hide the PNG export button"
+msgstr "Fela PNG útflutningshnappinn"
 
-msgid "Right-click"
-msgstr "Hægri-smella"
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr "Fela SVG útflutningshnappinn"
 
-msgid "Show details of a person"
-msgstr "Sýna upplýsingar um einstakling"
+#: resources/views/modules/fan-chart/config.phtml:102
+msgid ""
+"How much of each place hierarchy is shown in chart arcs (full name, or only "
+"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
+"form."
+msgstr ""
+"Hversu mikið af hverri staðarstigskipan er sýnt í bogum töflunnar (fullt "
+"nafn eða aðeins lægstu 1–3 stigin). Notendur kveikja/slökkva á sýnileika "
+"staða í töfluformi."
 
-msgid "Ctrl + scroll"
-msgstr "Ctrl + skruna"
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid ""
+"Images are only shown if the arc segment is wide enough. Images for "
+"descendants are not yet available."
+msgstr ""
+"Myndir birtast aðeins ef bogahlutinn er nógu breiður. Myndir af afkomendum "
+"eru ekki enn tiltækar."
 
-msgid "Zoom in/out"
-msgstr "Þysja inn/út"
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "Einstaklingur"
 
-msgid "Click and drag"
-msgstr "Smella og draga"
+#: resources/views/modules/fan-chart/form/details.phtml:34
+msgid ""
+"Inserts the GEDCOM NICK value in quotes between the given names and the "
+"surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees "
+"behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr ""
+"Setur GEDCOM NICK-gildið innan gæsalappa milli skírnarnafna og ættarnafns "
+"(t.d. Martin \"Chalky\" White). Líkir eftir gamla webtrees-hegðuninni fyrir "
+"tré sem geyma gælunöfn í sérstaka GEDCOM NICK-reitinn."
 
+#: src/Configuration.php:363
+msgid "Lowest level (e.g. parish)"
+msgstr "Lægsta stig (t.d. sókn)"
+
+#: src/Configuration.php:365
+msgid "Lowest three levels"
+msgstr "Þrjú lægstu stig"
+
+#: src/Configuration.php:364
+msgid "Lowest two levels"
+msgstr "Tvö lægstu stig"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:43
+msgid "Maternal"
+msgstr "Móðurleg"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr "Einingar"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
 msgstr "Færa línuritið"
 
-msgid "Click on a person"
-msgstr "Smella á einstakling"
+#: src/Module.php:262
+msgid "Move the view with two fingers"
+msgstr "Færðu yfirlitið með tveimur fingrum"
 
+#: resources/views/modules/fan-chart/config.phtml:74
+msgid "Name abbreviation when space is tight"
+msgstr "Nafnastytting þegar pláss er lítið"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:23
+msgid "Number of inner levels"
+msgstr "Fjöldi innri þrepa"
+
+#: resources/views/modules/fan-chart/form/display.phtml:71
+msgid ""
+"Partners and children are shown as arcs below the ancestor section. The fan "
+"size is limited to 180–270 degrees when enabled."
+msgstr ""
+"Makar og börn eru sýnd sem bogar undir forfeðrahlutanum. Viftustærðin er "
+"takmörkuð við 180–270 gráður þegar þetta er virkt."
+
+#: resources/views/modules/fan-chart/form/colors.phtml:39
+msgid "Paternal"
+msgstr "Föðurleg"
+
+#: resources/views/modules/fan-chart/config.phtml:91
+msgid "Place detail"
+msgstr "Smáatriði staðar"
+
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
+msgid "Re center"
+msgstr "Endurmiðja"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Reload chart for that person"
 msgstr "Endurhlaða línurit fyrir þann einstakling"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Date precision"
-msgstr "Nákvæmni dagsetningar"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Right-click"
+msgstr "Hægri-smella"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "Sýna fulla dagsetningu (fæðingar-, hjónabands- og dánardaga) fyrir fyrstu kynslóðir. Síðari kynslóðir sýna aðeins ár. Hjónabandsdagar eru faldir frá kynslóð 9. Afkomendur með mjóa boga nota sjálfkrafa þjappað snið með aðeins ári."
+#: resources/views/modules/fan-chart/form/display.phtml:65
+msgid "Show descendants"
+msgstr "Sýna afkomendur"
 
-#: src/Configuration.php:191
-msgid "Years only"
-msgstr "Aðeins ár"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Show details of a person"
+msgstr "Sýna upplýsingar um einstakling"
 
-#: src/Configuration.php:195
+#: resources/views/modules/fan-chart/form/colors.phtml:28
+msgid "Show family colors"
+msgstr "Sýna fjölskylduliti"
+
+#: resources/views/modules/fan-chart/config.phtml:119
+msgid ""
+"Show full dates (birth, marriage, death) for early generations. Later "
+"generations show year only. Marriage dates are hidden from generation 9. "
+"Descendants with narrow arcs automatically use a compact year-only format."
+msgstr ""
+"Sýna fulla dagsetningu (fæðingar-, hjónabands- og dánardaga) fyrir fyrstu "
+"kynslóðir. Síðari kynslóðir sýna aðeins ár. Hjónabandsdagar eru faldir frá "
+"kynslóð 9. Afkomendur með mjóa boga nota sjálfkrafa þjappað snið með aðeins "
+"ári."
+
+#: src/Configuration.php:201
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Sýna fulla dagsetningar til kynslóðar %s"
 
-msgid "Show descendants"
-msgstr "Sýna afkomendur"
+#: resources/views/modules/components/buttonbar/help-button.phtml:18
+msgid "Show help"
+msgstr "Sýna hjálp"
 
-msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
-msgstr "Makar og börn eru sýnd sem bogar undir forfeðrahlutanum. Viftustærðin er takmörkuð við 180–270 gráður þegar þetta er virkt."
-
-msgid "Show names and images"
-msgstr "Sýna nöfn og myndir"
-
-msgid "Show names only"
-msgstr "Sýna aðeins nöfn"
-
+#: resources/views/modules/fan-chart/form/display.phtml:55
 msgid "Show images only"
 msgstr "Sýna aðeins myndir"
 
-msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
-msgstr "Myndir birtast aðeins ef bogahlutinn er nógu breiður. Myndir af afkomendum eru ekki enn tiltækar."
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "Sýna fleiri valkosti"
 
-msgid "Display"
-msgstr "Birting"
+#: resources/views/modules/fan-chart/form/display.phtml:41
+msgid "Show names and images"
+msgstr "Sýna nöfn og myndir"
 
-msgid "Details"
-msgstr "Upplýsingar"
+#: resources/views/modules/fan-chart/form/display.phtml:48
+msgid "Show names only"
+msgstr "Sýna aðeins nöfn"
 
-msgid "Colors"
-msgstr "Litir"
-
-msgid "Appearance"
-msgstr "Útlit"
-
-msgid "Name abbreviation when space is tight"
-msgstr "Nafnastytting þegar pláss er lítið"
-
-msgid "Automatic (based on tree's surname tradition)"
-msgstr "Sjálfvirkt (byggt á eftirnafnshefð trésins)"
-
-msgid "Abbreviate given names first"
-msgstr "Stytta eiginnöfn fyrst"
-
-msgid "Abbreviate surnames first"
-msgstr "Stytta eftirnöfn fyrst"
-
-msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
-msgstr "Stjórnar því hvaða nafnshluti er styttur fyrst þegar bogi er of þröngur fyrir fullt nafn. „Sjálfvirkt“ notar eftirnafnshefð trésins (íslensk hefð styttir eftirnöfn; aðrar stytta eiginnöfn)."
-
-#: resources/views/modules/fan-chart/form/display.phtml
+#: resources/views/modules/fan-chart/form/details.phtml:28
 msgid "Show nicknames in display names"
 msgstr "Sýna gælunöfn í birtingarnafni"
 
-#: resources/views/modules/fan-chart/form/display.phtml
-msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
-msgstr "Setur GEDCOM NICK-gildið innan gæsalappa milli skírnarnafna og ættarnafns (t.d. Martin \"Chalky\" White). Líkir eftir gamla webtrees-hegðuninni fyrir tré sem geyma gælunöfn í sérstaka GEDCOM NICK-reitinn."
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show parent marriage dates"
+msgstr "Sýna giftingardagsetningar foreldra"
 
-msgid "Place detail"
-msgstr "Smáatriði staðar"
+#: resources/views/modules/fan-chart/form/details.phtml:40
+msgid "Show places"
+msgstr "Sýna staði"
 
-msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
-msgstr "Hversu mikið af hverri staðarstigskipan er sýnt í bogum töflunnar (fullt nafn eða aðeins lægstu 1–3 stigin). Notendur kveikja/slökkva á sýnileika staða í töfluformi."
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:27
+msgid ""
+"Specifies the number of levels in which the text is written along an arc. "
+"Descendant arcs switch between arc text and rotated text automatically based "
+"on available space."
+msgstr ""
+"Tilgreinir fjölda þrepa þar sem textinn er skrifaður eftir boga. Bogar "
+"afkomenda skipta sjálfkrafa á milli bogatexta og snúins texta eftir tiltæku "
+"plássi."
 
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
-msgstr "Sýnir fæðingar- og dánarstaði í bogum töflunnar þar sem pláss leyfir. Fyrir afkomendur með mörg börn eru staðirnir sjálfkrafa faldir. Stig nákvæmni og nákvæmni dagsetninga eru stillt fyrir allan vefinn í stillingum einingarinnar."
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr "Skiptu á milli fullskjás og venjulegs skjás"
+
+#: src/Traits/ModuleConfigTrait.php:146
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr "Kjörstillingar fyrir eininguna “%s” hafa verið uppfærðar."
+
+#: src/Module.php:261
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Notaðu Ctrl + skruna til að þysja í ættartrénu"
+
+#: src/Configuration.php:196
+msgid "Years only"
+msgstr "Aðeins ár"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Zoom in/out"
+msgstr "Þysja inn/út"
+
+#: resources/views/modules/fan-chart/config.phtml:134
+msgid "cancel"
+msgstr "hætta"
+
+#: resources/views/modules/fan-chart/config.phtml:129
+msgid "save"
+msgstr "vista"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "skoða"

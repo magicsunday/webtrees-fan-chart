@@ -1,7 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-22 13:03+0100\n"
+"Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
+"issues\n"
+"POT-Creation-Date: 2026-06-06 12:50+0000\n"
 "PO-Revision-Date: 2024-12-22 13:04+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -16,43 +18,93 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:127 src/Module.php:243
-msgid "Fan chart"
-msgstr "Waaierdiagram"
-
-#: src/Module.php:137
+#: src/Module.php:136
 msgid "A fan chart of an individual’s ancestors."
 msgstr "'n Waaierdiagram van 'n persoon se voorouers."
 
-#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
-#, php-format
-msgid "Fan chart of %s"
-msgstr "%s se waaierdiagram"
+#: src/Configuration.php:573
+msgid "Abbreviate given names first"
+msgstr "Verkort eers voorname"
 
-#: src/Module.php:260
-msgid "Use Ctrl + scroll to zoom in the view"
-msgstr "Gebruik Ctrl + rol om te vergroot"
+#: src/Configuration.php:574
+msgid "Abbreviate surnames first"
+msgstr "Verkort eers vanne"
 
-#: src/Module.php:261
-msgid "Move the view with two fingers"
-msgstr "Beweeg die aansig met twee vingers"
+#: src/Configuration.php:572
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Outomaties (gebaseer op die boom se vannaam-tradisie)"
 
-#: src/Traits/ModuleConfigTrait.php:99
-#, php-format
-msgid "The preferences for the module “%s” have been updated."
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
+msgid "Click and drag"
+msgstr "Klik en sleep"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Click on a person"
+msgstr "Klik op 'n persoon"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:23
+msgid "Colors"
+msgstr "Kleure"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:34
+msgid ""
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
+msgstr ""
+"Kleur die boë volgens familietak. Elke egpaar deel dieselfde kleur, afgelei "
+"van die gekose basiskleuring."
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
-msgid "Re center"
-msgstr "Her sentreer"
+#: resources/views/modules/fan-chart/config.phtml:85
+msgid ""
+"Controls which name part shrinks first when an arc is too narrow for the "
+"full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
+"abbreviates surnames; everything else abbreviates given names)."
+msgstr ""
+"Bepaal watter naamdeel eerste verkort word wanneer 'n boog te smal is vir "
+"die volle naam. \"Outomaties\" gebruik die boom se vannaam-tradisie (Yslands "
+"verkort vanne; alles anders verkort voorname)."
 
-#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
-msgid "Switch between full screen mode and normal view"
-msgstr "Wissel tussen volskerm en normale aansig"
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Ctrl + scroll"
+msgstr "Ctrl + blaai"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:17
-msgid "Show help"
-msgstr "Wys hulp"
+#: resources/views/modules/fan-chart/config.phtml:108
+msgid "Date precision"
+msgstr "Datumpresisie"
+
+#: resources/views/modules/fan-chart/form/details.phtml:23
+msgid "Details"
+msgstr "Besonderhede"
+
+#: resources/views/modules/fan-chart/form/display.phtml:23
+msgid "Display"
+msgstr "Vertoon"
+
+#: resources/views/modules/fan-chart/form/details.phtml:46
+msgid ""
+"Displays birth and death places in the chart arcs where space allows. For "
+"descendants with many children, places are automatically suppressed. The "
+"level of detail and the date precision are configured site-wide in the "
+"module settings."
+msgstr ""
+"Wys geboorte- en sterfplekke in die kaartboë waar plek dit toelaat. By "
+"afstammelinge met baie kinders word plekke outomaties weggelaat. Die mate "
+"van besonderheid en die datumakkuraatheid word werfwyd in die "
+"moduleinstellings opgestel."
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Displays the marriage date of each couple in a narrow arc between "
+"generations. When descendants are enabled, also shows the marriage date "
+"between the central person and their partners."
+msgstr ""
+"Vertoon die huweliksdatum van elke egpaar in 'n smal boog tussen generasies. "
+"Wanneer afstammelinge geaktiveer is, word die huweliksdatum tussen die "
+"sentrale persoon en hul lewensmaats ook gewys."
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -62,226 +114,246 @@ msgstr "Voer as PNG uit"
 msgid "Export as SVG"
 msgstr "Voer as SVG uit"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Control panel"
-msgstr ""
+#: src/Module.php:124 src/Module.php:237
+msgid "Fan chart"
+msgstr "Waaierdiagram"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Modules"
-msgstr ""
+#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#, php-format
+msgid "Fan chart of %s"
+msgstr "%s se waaierdiagram"
 
-#: resources/views/modules/fan-chart/config.phtml:50
-msgid "General"
-msgstr "Algemeen"
-
-#: resources/views/modules/fan-chart/config.phtml:56
-msgid "Hide the SVG export button"
-msgstr "Versteek die SVG-uitvoerknoppie"
-
-#: resources/views/modules/fan-chart/config.phtml:66
-msgid "Hide the PNG export button"
-msgstr "Versteek die PNG-uitvoerknoppie"
-
-#: resources/views/modules/fan-chart/config.phtml:79
-msgid "save"
-msgstr "bewaar"
-
-#: resources/views/modules/fan-chart/config.phtml:84
-msgid "cancel"
-msgstr "kanselleer"
-
-#: resources/views/modules/fan-chart/form/fan-size.phtml:22
+#: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
 msgstr "Waaiergrootte"
 
-#: resources/views/modules/fan-chart/form/font-size.phtml:22
+#: resources/views/modules/fan-chart/form/font-size.phtml:23
 msgid "Font size"
 msgstr "Skrifgrootte"
 
-#: resources/views/modules/fan-chart/form/generations.phtml:22
-msgid "Generations"
-msgstr "Geslagte"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
-msgid "Number of inner levels"
-msgstr "Aantal binnevlakke"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
-msgid ""
-"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
-msgstr "Bepaal die aantal vlakke waarin die teks langs 'n boog geskryf word. Afstammelingboë wissel outomaties tussen boogteks en geroteerde teks op grond van beskikbare spasie."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:23
-msgid "Layout"
-msgstr "Uitleg"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:29
-msgid "Hide empty segments"
-msgstr "Steek leë segmente weg"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show family colors"
-msgstr "Wys familiekleuring"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:45
-msgid ""
-"Colors the arcs by family branch. Each couple shares the same color, derived "
-"from the chosen base colors."
-msgstr ""
-"Kleur die boë volgens familietak. Elke egpaar deel dieselfde "
-"kleur, afgelei van die gekose basiskleuring."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:49
-msgid "Paternal"
-msgstr "Vaderlik"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:53
-msgid "Maternal"
-msgstr "Moederlik"
-
-msgid "Show places"
-msgstr "Wys plekke"
-
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
-msgstr "Vertoon geboorte- en sterfplekke in die diagramboë waar spasie dit toelaat. Vir afstammelinge met baie kinders word plekke outomaties onderdruk. Kies die vlak van detail hieronder."
-
+#: src/Configuration.php:362
 msgid "Full place name"
 msgstr "Volledige pleknaam"
 
-msgid "Lowest level (e.g. parish)"
-msgstr "Laagste vlak (bv. gemeente)"
+#: resources/views/modules/fan-chart/config.phtml:51
+msgid "General"
+msgstr "Algemeen"
 
-msgid "Lowest two levels"
-msgstr "Laagste twee vlakke"
+#: resources/views/modules/fan-chart/form/generations.phtml:23
+msgid "Generations"
+msgstr "Geslagte"
 
-msgid "Lowest three levels"
-msgstr "Laagste drie vlakke"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:62
-msgid "Show parent marriage dates"
-msgstr "Wys troudatums van ouers"
-
-msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
-msgstr "Vertoon die huweliksdatum van elke egpaar in 'n smal boog tussen generasies. Wanneer afstammelinge geaktiveer is, word die huweliksdatum tussen die sentrale persoon en hul lewensmaats ook gewys."
-
-#: resources/views/modules/fan-chart/page.phtml:41
-msgid "Individual"
-msgstr "Persoon"
-
-#: resources/views/modules/fan-chart/page.phtml:68
-msgid "view"
-msgstr "bekyk"
-
-#: resources/views/modules/fan-chart/page.phtml:79
-msgid "Show more options"
-msgstr "Wys meer opsies"
+#: resources/views/modules/fan-chart/form/display.phtml:78
+msgid "Hide empty segments"
+msgstr "Steek leë segmente weg"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr "Versteek meer opsies"
 
-#~ msgid "Presentation"
-#~ msgstr "Voorlegging"
+#: resources/views/modules/fan-chart/config.phtml:65
+msgid "Hide the PNG export button"
+msgstr "Versteek die PNG-uitvoerknoppie"
 
-msgid "Right-click"
-msgstr "Regskliek"
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr "Versteek die SVG-uitvoerknoppie"
 
-msgid "Show details of a person"
-msgstr "Wys besonderhede van 'n persoon"
+#: resources/views/modules/fan-chart/config.phtml:102
+msgid ""
+"How much of each place hierarchy is shown in chart arcs (full name, or only "
+"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
+"form."
+msgstr ""
+"Hoeveel van elke plekhiërargie in die kaartboë gewys word (volledige naam of "
+"net die laagste 1–3 vlakke). Gebruikers skakel die plekvertoning in die "
+"kaartvorm aan/af."
 
-msgid "Ctrl + scroll"
-msgstr "Ctrl + blaai"
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid ""
+"Images are only shown if the arc segment is wide enough. Images for "
+"descendants are not yet available."
+msgstr ""
+"Beelde word slegs gewys as die boogsegment breed genoeg is. Beelde vir "
+"afstammelinge is nog nie beskikbaar nie."
 
-msgid "Zoom in/out"
-msgstr "Zoom in/uit"
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "Persoon"
 
-msgid "Click and drag"
-msgstr "Klik en sleep"
+#: resources/views/modules/fan-chart/form/details.phtml:34
+msgid ""
+"Inserts the GEDCOM NICK value in quotes between the given names and the "
+"surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees "
+"behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr ""
+"Voeg die GEDCOM NICK-waarde tussen aanhalingstekens tussen die voorname en "
+"die van in (bv. Martin \"Chalky\" White). Boots die ouer webtrees-gedrag na "
+"vir bome wat bynaame in die afsonderlike GEDCOM NICK-veld stoor."
 
+#: src/Configuration.php:363
+msgid "Lowest level (e.g. parish)"
+msgstr "Laagste vlak (bv. gemeente)"
+
+#: src/Configuration.php:365
+msgid "Lowest three levels"
+msgstr "Laagste drie vlakke"
+
+#: src/Configuration.php:364
+msgid "Lowest two levels"
+msgstr "Laagste twee vlakke"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:43
+msgid "Maternal"
+msgstr "Moederlik"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
 msgstr "Skuif die diagram"
 
-msgid "Click on a person"
-msgstr "Klik op 'n persoon"
+#: src/Module.php:262
+msgid "Move the view with two fingers"
+msgstr "Beweeg die aansig met twee vingers"
 
+#: resources/views/modules/fan-chart/config.phtml:74
+msgid "Name abbreviation when space is tight"
+msgstr "Naamafkorting wanneer ruimte beperk is"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:23
+msgid "Number of inner levels"
+msgstr "Aantal binnevlakke"
+
+#: resources/views/modules/fan-chart/form/display.phtml:71
+msgid ""
+"Partners and children are shown as arcs below the ancestor section. The fan "
+"size is limited to 180–270 degrees when enabled."
+msgstr ""
+"Lewensmaats en kinders word as boë onder die voorouergedeelte gewys. Die "
+"waaiergrootte is beperk tot 180–270 grade wanneer geaktiveer."
+
+#: resources/views/modules/fan-chart/form/colors.phtml:39
+msgid "Paternal"
+msgstr "Vaderlik"
+
+#: resources/views/modules/fan-chart/config.phtml:91
+msgid "Place detail"
+msgstr "Plekbesonderhede"
+
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
+msgid "Re center"
+msgstr "Her sentreer"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Reload chart for that person"
 msgstr "Herlaai diagram vir daardie persoon"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Date precision"
-msgstr "Datumpresisie"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Right-click"
+msgstr "Regskliek"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "Toon volledige datums (geboorte, huwelik, sterfte) vir vroeë generasies. Latere generasies toon slegs die jaar. Huweliksdatums word vanaf generasie 9 verberg. Afstammelinge met smal boogies gebruik outomaties 'n kompakte slegs-jaar-formaat."
+#: resources/views/modules/fan-chart/form/display.phtml:65
+msgid "Show descendants"
+msgstr "Wys afstammelinge"
 
-#: src/Configuration.php:191
-msgid "Years only"
-msgstr "Slegs jare"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Show details of a person"
+msgstr "Wys besonderhede van 'n persoon"
 
-#: src/Configuration.php:195
+#: resources/views/modules/fan-chart/form/colors.phtml:28
+msgid "Show family colors"
+msgstr "Wys familiekleuring"
+
+#: resources/views/modules/fan-chart/config.phtml:119
+msgid ""
+"Show full dates (birth, marriage, death) for early generations. Later "
+"generations show year only. Marriage dates are hidden from generation 9. "
+"Descendants with narrow arcs automatically use a compact year-only format."
+msgstr ""
+"Toon volledige datums (geboorte, huwelik, sterfte) vir vroeë generasies. "
+"Latere generasies toon slegs die jaar. Huweliksdatums word vanaf generasie 9 "
+"verberg. Afstammelinge met smal boogies gebruik outomaties 'n kompakte slegs-"
+"jaar-formaat."
+
+#: src/Configuration.php:201
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Wys volledige datums tot generasie %s"
 
-msgid "Show descendants"
-msgstr "Wys afstammelinge"
+#: resources/views/modules/components/buttonbar/help-button.phtml:18
+msgid "Show help"
+msgstr "Wys hulp"
 
-msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
-msgstr "Lewensmaats en kinders word as boë onder die voorouergedeelte gewys. Die waaiergrootte is beperk tot 180–270 grade wanneer geaktiveer."
-
-msgid "Show names and images"
-msgstr "Wys name en beelde"
-
-msgid "Show names only"
-msgstr "Wys slegs name"
-
+#: resources/views/modules/fan-chart/form/display.phtml:55
 msgid "Show images only"
 msgstr "Wys slegs beelde"
 
-msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
-msgstr "Beelde word slegs gewys as die boogsegment breed genoeg is. Beelde vir afstammelinge is nog nie beskikbaar nie."
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "Wys meer opsies"
 
-msgid "Display"
-msgstr "Vertoon"
+#: resources/views/modules/fan-chart/form/display.phtml:41
+msgid "Show names and images"
+msgstr "Wys name en beelde"
 
-msgid "Details"
-msgstr "Besonderhede"
+#: resources/views/modules/fan-chart/form/display.phtml:48
+msgid "Show names only"
+msgstr "Wys slegs name"
 
-msgid "Colors"
-msgstr "Kleure"
-
-msgid "Appearance"
-msgstr "Voorkoms"
-
-msgid "Name abbreviation when space is tight"
-msgstr "Naamafkorting wanneer ruimte beperk is"
-
-msgid "Automatic (based on tree's surname tradition)"
-msgstr "Outomaties (gebaseer op die boom se vannaam-tradisie)"
-
-msgid "Abbreviate given names first"
-msgstr "Verkort eers voorname"
-
-msgid "Abbreviate surnames first"
-msgstr "Verkort eers vanne"
-
-msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
-msgstr "Bepaal watter naamdeel eerste verkort word wanneer 'n boog te smal is vir die volle naam. \"Outomaties\" gebruik die boom se vannaam-tradisie (Yslands verkort vanne; alles anders verkort voorname)."
-
-#: resources/views/modules/fan-chart/form/display.phtml
+#: resources/views/modules/fan-chart/form/details.phtml:28
 msgid "Show nicknames in display names"
 msgstr "Wys bynaam in vertoonname"
 
-#: resources/views/modules/fan-chart/form/display.phtml
-msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
-msgstr "Voeg die GEDCOM NICK-waarde tussen aanhalingstekens tussen die voorname en die van in (bv. Martin \"Chalky\" White). Boots die ouer webtrees-gedrag na vir bome wat bynaame in die afsonderlike GEDCOM NICK-veld stoor."
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show parent marriage dates"
+msgstr "Wys troudatums van ouers"
 
-msgid "Place detail"
-msgstr "Plekbesonderhede"
+#: resources/views/modules/fan-chart/form/details.phtml:40
+msgid "Show places"
+msgstr "Wys plekke"
 
-msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
-msgstr "Hoeveel van elke plekhiërargie in die kaartboë gewys word (volledige naam of net die laagste 1–3 vlakke). Gebruikers skakel die plekvertoning in die kaartvorm aan/af."
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:27
+msgid ""
+"Specifies the number of levels in which the text is written along an arc. "
+"Descendant arcs switch between arc text and rotated text automatically based "
+"on available space."
+msgstr ""
+"Bepaal die aantal vlakke waarin die teks langs 'n boog geskryf word. "
+"Afstammelingboë wissel outomaties tussen boogteks en geroteerde teks op "
+"grond van beskikbare spasie."
 
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
-msgstr "Wys geboorte- en sterfplekke in die kaartboë waar plek dit toelaat. By afstammelinge met baie kinders word plekke outomaties weggelaat. Die mate van besonderheid en die datumakkuraatheid word werfwyd in die moduleinstellings opgestel."
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr "Wissel tussen volskerm en normale aansig"
+
+#: src/Traits/ModuleConfigTrait.php:146
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr ""
+
+#: src/Module.php:261
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Gebruik Ctrl + rol om te vergroot"
+
+#: src/Configuration.php:196
+msgid "Years only"
+msgstr "Slegs jare"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Zoom in/out"
+msgstr "Zoom in/uit"
+
+#: resources/views/modules/fan-chart/config.phtml:134
+msgid "cancel"
+msgstr "kanselleer"
+
+#: resources/views/modules/fan-chart/config.phtml:129
+msgid "save"
+msgstr "bewaar"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "bekyk"

@@ -1,8 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-20 17:40+0100\n"
+"Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
+"issues\n"
+"POT-Creation-Date: 2026-06-06 12:50+0000\n"
 "PO-Revision-Date: 2025-11-20 17:44+0100\n"
 "Last-Translator: Gregor Anželj <gregor.anzelj@gmail.com>\n"
 "Language-Team: Slovenian\n"
@@ -20,43 +21,92 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:134 src/Module.php:250
-msgid "Fan chart"
-msgstr "Pahljačasti diagram"
-
-#: src/Module.php:144
+#: src/Module.php:136
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Pahljačasti diagram posameznikovih prednikov."
 
-#: src/Module.php:247 src/Traits/ModuleChartTrait.php:41
-#, php-format
-msgid "Fan chart of %s"
-msgstr "Pahljačasti diagram osebe %s"
+#: src/Configuration.php:573
+msgid "Abbreviate given names first"
+msgstr "Najprej skrajšaj osebna imena"
 
-#: src/Module.php:267
-msgid "Use Ctrl + scroll to zoom in the view"
-msgstr "Uporabi Ctrl+Scroll kolesce za povečavo diagrama"
+#: src/Configuration.php:574
+msgid "Abbreviate surnames first"
+msgstr "Najprej skrajšaj priimke"
 
-#: src/Module.php:268
-msgid "Move the view with two fingers"
-msgstr "Premakni pogled z dvema prstoma"
+#: src/Configuration.php:572
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Samodejno (glede na drevesno tradicijo priimkov)"
 
-#: src/Traits/ModuleConfigTrait.php:99
-#, php-format
-msgid "The preferences for the module “%s” have been updated."
-msgstr "Nastavitve modula “%s” so posodobljene."
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
+msgid "Click and drag"
+msgstr "Kliknite in povlecite"
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
-msgid "Re center"
-msgstr "Znova na sredino"
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Click on a person"
+msgstr "Kliknite na osebo"
 
-#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
-msgid "Switch between full screen mode and normal view"
-msgstr "Preklopi med celozaslonskim in običajnim načinom"
+#: resources/views/modules/fan-chart/form/colors.phtml:23
+msgid "Colors"
+msgstr "Barve"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:17
-msgid "Show help"
-msgstr "Prikaži pomoč"
+#: resources/views/modules/fan-chart/form/colors.phtml:34
+msgid ""
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
+msgstr ""
+"Obarva loke po družinski veji. Vsak par si deli isto barvo, izpeljano iz "
+"izbranih osnovnih barv."
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
+msgstr "Nadzorna plošča"
+
+#: resources/views/modules/fan-chart/config.phtml:85
+msgid ""
+"Controls which name part shrinks first when an arc is too narrow for the "
+"full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
+"abbreviates surnames; everything else abbreviates given names)."
+msgstr ""
+"Določa, kateri del imena se najprej skrajša, ko je lok preozek za polno ime. "
+"»Samodejno« uporablja drevesno tradicijo priimkov (islandska tradicija "
+"krajša priimke; vse ostale krajšajo osebna imena)."
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Ctrl + scroll"
+msgstr "Ctrl + drsenje"
+
+#: resources/views/modules/fan-chart/config.phtml:108
+msgid "Date precision"
+msgstr "Natančnost datumov"
+
+#: resources/views/modules/fan-chart/form/details.phtml:23
+msgid "Details"
+msgstr "Podrobnosti"
+
+#: resources/views/modules/fan-chart/form/display.phtml:23
+msgid "Display"
+msgstr "Prikaz"
+
+#: resources/views/modules/fan-chart/form/details.phtml:46
+msgid ""
+"Displays birth and death places in the chart arcs where space allows. For "
+"descendants with many children, places are automatically suppressed. The "
+"level of detail and the date precision are configured site-wide in the "
+"module settings."
+msgstr ""
+"Prikazuje kraje rojstva in smrti v lokih grafa, kjer je dovolj prostora. Pri "
+"potomcih z veliko otroki so kraji samodejno skriti. Stopnja podrobnosti in "
+"natančnost datumov se nastavi za celotno spletno mesto v nastavitvah modula."
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Displays the marriage date of each couple in a narrow arc between "
+"generations. When descendants are enabled, also shows the marriage date "
+"between the central person and their partners."
+msgstr ""
+"Prikazuje datum poroke vsakega para v ozkem loku med generacijami. Ko so "
+"potomci omogočeni, prikazuje tudi datum poroke med osrednjo osebo in njenimi "
+"partnerji."
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -66,225 +116,247 @@ msgstr "Izvozi kot PNG"
 msgid "Export as SVG"
 msgstr "Izvozi kot SVG"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Control panel"
-msgstr "Nadzorna plošča"
+#: src/Module.php:124 src/Module.php:237
+msgid "Fan chart"
+msgstr "Pahljačasti diagram"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Modules"
-msgstr "Moduli"
+#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#, php-format
+msgid "Fan chart of %s"
+msgstr "Pahljačasti diagram osebe %s"
 
-#: resources/views/modules/fan-chart/config.phtml:50
+#: resources/views/modules/fan-chart/form/fan-size.phtml:23
+msgid "Fan size"
+msgstr "Velikost pahljače"
+
+#: resources/views/modules/fan-chart/form/font-size.phtml:23
+msgid "Font size"
+msgstr "Velikost pisave"
+
+#: src/Configuration.php:362
+msgid "Full place name"
+msgstr "Polno ime kraja"
+
+#: resources/views/modules/fan-chart/config.phtml:51
 #, fuzzy
 #| msgid "Generations"
 msgid "General"
 msgstr "Generacije"
 
-#: resources/views/modules/fan-chart/config.phtml:56
-msgid "Hide the SVG export button"
-msgstr "Skrij gumb za izvoz SVG"
-
-#: resources/views/modules/fan-chart/config.phtml:66
-msgid "Hide the PNG export button"
-msgstr "Skrij gumb za izvoz PNG"
-
-#: resources/views/modules/fan-chart/config.phtml:79
-msgid "save"
-msgstr "Shrani"
-
-#: resources/views/modules/fan-chart/config.phtml:84
-msgid "cancel"
-msgstr "Prekliči"
-
-#: resources/views/modules/fan-chart/form/fan-size.phtml:22
-msgid "Fan size"
-msgstr "Velikost pahljače"
-
-#: resources/views/modules/fan-chart/form/font-size.phtml:22
-msgid "Font size"
-msgstr "Velikost pisave"
-
-#: resources/views/modules/fan-chart/form/generations.phtml:22
+#: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
 msgstr "Generacije"
 
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
-msgid "Number of inner levels"
-msgstr "Število notranjih ravni"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
-msgid ""
-"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
-msgstr "Določi število ravni, v katerih je besedilo zapisano vzdolž loka. Loki potomcev samodejno preklapljajo med besedilom ob loku in zasukanim besedilom glede na razpoložljiv prostor."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:23
-msgid "Layout"
-msgstr "Postavitev"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:29
+#: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
 msgstr "Skrij prazne dele"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show family colors"
-msgstr "Prikaži družinske barve"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:45
-msgid ""
-"Colors the arcs by family branch. Each couple shares the same color, derived "
-"from the chosen base colors."
-msgstr ""
-"Obarva loke po družinski veji. Vsak par si deli isto "
-"barvo, izpeljano iz izbranih osnovnih barv."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:49
-msgid "Paternal"
-msgstr "Očetov"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:53
-msgid "Maternal"
-msgstr "Materin"
-
-msgid "Show places"
-msgstr "Prikaži kraje"
-
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
-msgstr "Prikazuje kraje rojstva in smrti v lokih diagrama, kjer to prostor dopušča. Za potomce z veliko otroki so kraji samodejno skriti. Spodaj izberite stopnjo podrobnosti."
-
-msgid "Full place name"
-msgstr "Polno ime kraja"
-
-msgid "Lowest level (e.g. parish)"
-msgstr "Najnižja raven (npr. župnija)"
-
-msgid "Lowest two levels"
-msgstr "Najnižji dve ravni"
-
-msgid "Lowest three levels"
-msgstr "Najnižje tri ravni"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:62
-msgid "Show parent marriage dates"
-msgstr "Prikaži datum poroke staršev"
-
-msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
-msgstr "Prikazuje datum poroke vsakega para v ozkem loku med generacijami. Ko so potomci omogočeni, prikazuje tudi datum poroke med osrednjo osebo in njenimi partnerji."
-
-#: resources/views/modules/fan-chart/page.phtml:41
-msgid "Individual"
-msgstr "Posameznik"
-
-#: resources/views/modules/fan-chart/page.phtml:68
-msgid "view"
-msgstr "Prikaži"
-
-#: resources/views/modules/fan-chart/page.phtml:79
-msgid "Show more options"
-msgstr "Prikaži več možnosti"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr "Skrij več možnosti"
 
-msgid "Right-click"
-msgstr "Desni klik"
+#: resources/views/modules/fan-chart/config.phtml:65
+msgid "Hide the PNG export button"
+msgstr "Skrij gumb za izvoz PNG"
 
-msgid "Show details of a person"
-msgstr "Prikaži podrobnosti o osebi"
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr "Skrij gumb za izvoz SVG"
 
-msgid "Ctrl + scroll"
-msgstr "Ctrl + drsenje"
+#: resources/views/modules/fan-chart/config.phtml:102
+msgid ""
+"How much of each place hierarchy is shown in chart arcs (full name, or only "
+"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
+"form."
+msgstr ""
+"Koliko hierarhije kraja je prikazane v lokih grafa (polno ime ali samo "
+"najnižje 1–3 stopnje). Uporabniki vklopijo ali izklopijo vidnost krajev v "
+"obrazcu grafa."
 
-msgid "Zoom in/out"
-msgstr "Povečaj/pomanjšaj"
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid ""
+"Images are only shown if the arc segment is wide enough. Images for "
+"descendants are not yet available."
+msgstr ""
+"Slike so prikazane samo, če je segment loka dovolj širok. Slike za potomce "
+"še niso na voljo."
 
-msgid "Click and drag"
-msgstr "Kliknite in povlecite"
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "Posameznik"
 
+#: resources/views/modules/fan-chart/form/details.phtml:34
+msgid ""
+"Inserts the GEDCOM NICK value in quotes between the given names and the "
+"surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees "
+"behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr ""
+"Vstavi vrednost GEDCOM NICK v narekovajih med osebna imena in priimek (npr. "
+"Martin \"Chalky\" White). Posnema staro vedenje webtrees za drevesa, ki "
+"vzdevke shranjujejo v ločenem polju GEDCOM NICK."
+
+#: src/Configuration.php:363
+msgid "Lowest level (e.g. parish)"
+msgstr "Najnižja raven (npr. župnija)"
+
+#: src/Configuration.php:365
+msgid "Lowest three levels"
+msgstr "Najnižje tri ravni"
+
+#: src/Configuration.php:364
+msgid "Lowest two levels"
+msgstr "Najnižji dve ravni"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:43
+msgid "Maternal"
+msgstr "Materin"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr "Moduli"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
 msgstr "Premakni diagram"
 
-msgid "Click on a person"
-msgstr "Kliknite na osebo"
+#: src/Module.php:262
+msgid "Move the view with two fingers"
+msgstr "Premakni pogled z dvema prstoma"
 
+#: resources/views/modules/fan-chart/config.phtml:74
+msgid "Name abbreviation when space is tight"
+msgstr "Krajšanje imena, ko je prostor omejen"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:23
+msgid "Number of inner levels"
+msgstr "Število notranjih ravni"
+
+#: resources/views/modules/fan-chart/form/display.phtml:71
+msgid ""
+"Partners and children are shown as arcs below the ancestor section. The fan "
+"size is limited to 180–270 degrees when enabled."
+msgstr ""
+"Partnerji in otroci so prikazani kot loki pod razdelkom prednikov. Velikost "
+"pahljače je omejena na 180–270 stopinj, ko je omogočeno."
+
+#: resources/views/modules/fan-chart/form/colors.phtml:39
+msgid "Paternal"
+msgstr "Očetov"
+
+#: resources/views/modules/fan-chart/config.phtml:91
+msgid "Place detail"
+msgstr "Podrobnost kraja"
+
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
+msgid "Re center"
+msgstr "Znova na sredino"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Reload chart for that person"
 msgstr "Ponovno naloži diagram za to osebo"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Date precision"
-msgstr "Natančnost datumov"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Right-click"
+msgstr "Desni klik"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "Prikaži polne datume (rojstvo, poroka, smrt) za zgodnje generacije. Kasnejše generacije prikazujejo samo leto. Datumi poroke so skriti od generacije 9. Potomci z ozkimi loki samodejno uporabljajo kompakten format samo z letom."
+#: resources/views/modules/fan-chart/form/display.phtml:65
+msgid "Show descendants"
+msgstr "Prikaži potomce"
 
-#: src/Configuration.php:191
-msgid "Years only"
-msgstr "Samo leta"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Show details of a person"
+msgstr "Prikaži podrobnosti o osebi"
 
-#: src/Configuration.php:195
+#: resources/views/modules/fan-chart/form/colors.phtml:28
+msgid "Show family colors"
+msgstr "Prikaži družinske barve"
+
+#: resources/views/modules/fan-chart/config.phtml:119
+msgid ""
+"Show full dates (birth, marriage, death) for early generations. Later "
+"generations show year only. Marriage dates are hidden from generation 9. "
+"Descendants with narrow arcs automatically use a compact year-only format."
+msgstr ""
+"Prikaži polne datume (rojstvo, poroka, smrt) za zgodnje generacije. Kasnejše "
+"generacije prikazujejo samo leto. Datumi poroke so skriti od generacije 9. "
+"Potomci z ozkimi loki samodejno uporabljajo kompakten format samo z letom."
+
+#: src/Configuration.php:201
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Prikaži polne datume do generacije %s"
 
-msgid "Show descendants"
-msgstr "Prikaži potomce"
+#: resources/views/modules/components/buttonbar/help-button.phtml:18
+msgid "Show help"
+msgstr "Prikaži pomoč"
 
-msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
-msgstr "Partnerji in otroci so prikazani kot loki pod razdelkom prednikov. Velikost pahljače je omejena na 180–270 stopinj, ko je omogočeno."
-
-msgid "Show names and images"
-msgstr "Pokaži imena in slike"
-
-msgid "Show names only"
-msgstr "Pokaži samo imena"
-
+#: resources/views/modules/fan-chart/form/display.phtml:55
 msgid "Show images only"
 msgstr "Pokaži samo slike"
 
-msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
-msgstr "Slike so prikazane samo, če je segment loka dovolj širok. Slike za potomce še niso na voljo."
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "Prikaži več možnosti"
 
-msgid "Display"
-msgstr "Prikaz"
+#: resources/views/modules/fan-chart/form/display.phtml:41
+msgid "Show names and images"
+msgstr "Pokaži imena in slike"
 
-msgid "Details"
-msgstr "Podrobnosti"
+#: resources/views/modules/fan-chart/form/display.phtml:48
+msgid "Show names only"
+msgstr "Pokaži samo imena"
 
-msgid "Colors"
-msgstr "Barve"
-
-msgid "Appearance"
-msgstr "Videz"
-
-msgid "Name abbreviation when space is tight"
-msgstr "Krajšanje imena, ko je prostor omejen"
-
-msgid "Automatic (based on tree's surname tradition)"
-msgstr "Samodejno (glede na drevesno tradicijo priimkov)"
-
-msgid "Abbreviate given names first"
-msgstr "Najprej skrajšaj osebna imena"
-
-msgid "Abbreviate surnames first"
-msgstr "Najprej skrajšaj priimke"
-
-msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
-msgstr "Določa, kateri del imena se najprej skrajša, ko je lok preozek za polno ime. »Samodejno« uporablja drevesno tradicijo priimkov (islandska tradicija krajša priimke; vse ostale krajšajo osebna imena)."
-
-#: resources/views/modules/fan-chart/form/display.phtml
+#: resources/views/modules/fan-chart/form/details.phtml:28
 msgid "Show nicknames in display names"
 msgstr "Prikaži vzdevke v prikaznih imenih"
 
-#: resources/views/modules/fan-chart/form/display.phtml
-msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
-msgstr "Vstavi vrednost GEDCOM NICK v narekovajih med osebna imena in priimek (npr. Martin \"Chalky\" White). Posnema staro vedenje webtrees za drevesa, ki vzdevke shranjujejo v ločenem polju GEDCOM NICK."
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show parent marriage dates"
+msgstr "Prikaži datum poroke staršev"
 
-msgid "Place detail"
-msgstr "Podrobnost kraja"
+#: resources/views/modules/fan-chart/form/details.phtml:40
+msgid "Show places"
+msgstr "Prikaži kraje"
 
-msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
-msgstr "Koliko hierarhije kraja je prikazane v lokih grafa (polno ime ali samo najnižje 1–3 stopnje). Uporabniki vklopijo ali izklopijo vidnost krajev v obrazcu grafa."
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:27
+msgid ""
+"Specifies the number of levels in which the text is written along an arc. "
+"Descendant arcs switch between arc text and rotated text automatically based "
+"on available space."
+msgstr ""
+"Določi število ravni, v katerih je besedilo zapisano vzdolž loka. Loki "
+"potomcev samodejno preklapljajo med besedilom ob loku in zasukanim besedilom "
+"glede na razpoložljiv prostor."
 
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
-msgstr "Prikazuje kraje rojstva in smrti v lokih grafa, kjer je dovolj prostora. Pri potomcih z veliko otroki so kraji samodejno skriti. Stopnja podrobnosti in natančnost datumov se nastavi za celotno spletno mesto v nastavitvah modula."
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr "Preklopi med celozaslonskim in običajnim načinom"
+
+#: src/Traits/ModuleConfigTrait.php:146
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr "Nastavitve modula “%s” so posodobljene."
+
+#: src/Module.php:261
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Uporabi Ctrl+Scroll kolesce za povečavo diagrama"
+
+#: src/Configuration.php:196
+msgid "Years only"
+msgstr "Samo leta"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Zoom in/out"
+msgstr "Povečaj/pomanjšaj"
+
+#: resources/views/modules/fan-chart/config.phtml:134
+msgid "cancel"
+msgstr "Prekliči"
+
+#: resources/views/modules/fan-chart/config.phtml:129
+msgid "save"
+msgstr "Shrani"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "Prikaži"
