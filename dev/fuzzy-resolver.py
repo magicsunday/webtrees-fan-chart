@@ -41,6 +41,12 @@ from pathlib import Path
 MODULE_ROOT = Path(__file__).resolve().parent.parent
 LANG_DIR = MODULE_ROOT / "resources" / "lang"
 
+# A PO string literal: a quoted run in which a backslash escapes the next
+# character, so an escaped quote (\") does not prematurely end the literal.
+# `_INNER` captures the still-escaped body for concatenation + unescaping.
+_PO_LITERAL = r'"(?:[^"\\]|\\.)*"'
+_PO_LITERAL_INNER = r'"((?:[^"\\]|\\.)*)"'
+
 # Pairs that are accepted as equivalent — the resolver swaps one for the
 # other in the msgstr to track the msgid change.
 PUNCT_PAIRS: list[tuple[str, str]] = [
@@ -118,28 +124,54 @@ def extract_string_literal(block: str, prefix: str) -> str | None:
         pat = (
             r"^"
             + re.escape(prefix)
-            + r"\s+((?:\"[^\"]*\"\s*)+(?:\n#\|\s*\"[^\"]*\"\s*)*)"
+            + r"\s+((?:" + _PO_LITERAL + r"\s*)+(?:\n#\|\s*" + _PO_LITERAL + r"\s*)*)"
         )
         m = re.search(pat, block, flags=re.MULTILINE)
         if not m:
             return None
         raw = m.group(1)
         # Pull every "..." literal regardless of intervening "#|" markers
-        chunks = re.findall(r"\"([^\"]*)\"", raw)
-        return "".join(chunks)
-    pat = r"^" + re.escape(prefix) + r"\s+((?:\"[^\"]*\"\s*)+)"
+        chunks = re.findall(_PO_LITERAL_INNER, raw)
+        return unescape_po_string("".join(chunks))
+    pat = r"^" + re.escape(prefix) + r"\s+((?:" + _PO_LITERAL + r"\s*)+)"
     m = re.search(pat, block, flags=re.MULTILINE)
     if not m:
         return None
-    chunks = re.findall(r"\"([^\"]*)\"", m.group(1))
-    return "".join(chunks)
+    chunks = re.findall(_PO_LITERAL_INNER, m.group(1))
+    return unescape_po_string("".join(chunks))
+
+
+def unescape_po_string(text: str) -> str:
+    """Decode PO backslash escapes (\\\\, \\", \\n, \\t, \\r) to their
+    literal characters. Inverse of encode_po_string, so extract → encode
+    round-trips a value that contains quotes, backslashes or control
+    characters instead of truncating or double-escaping it."""
+    mapping = {"\\": "\\", "\"": "\"", "n": "\n", "t": "\t", "r": "\r"}
+    out: list[str] = []
+    i = 0
+    length = len(text)
+    while i < length:
+        ch = text[i]
+        if (ch == "\\") and ((i + 1) < length):
+            out.append(mapping.get(text[i + 1], text[i + 1]))
+            i += 2
+        else:
+            out.append(ch)
+            i += 1
+    return "".join(out)
 
 
 def encode_po_string(text: str) -> str:
     """Encode a string as a PO multi-line literal. Short strings get
     a single-line form; longer ones get the canonical empty-first-line
     + wrapped continuation lines."""
-    escaped = text.replace("\\", "\\\\").replace("\"", "\\\"")
+    escaped = (
+        text.replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+        .replace("\n", "\\n")
+        .replace("\t", "\\t")
+        .replace("\r", "\\r")
+    )
     if len(escaped) < 70:
         return f'"{escaped}"'
     lines = ['""']
@@ -171,10 +203,11 @@ def rewrite_block(block: str, new_msgstr: str) -> str:
     # Drop previous-msgid stubs
     out = re.sub(r"^#\|\s*msgid.*(?:\n#\|\s*\".*\")*\n", "", out, flags=re.MULTILINE)
     out = re.sub(r"^#\|\s*msgctxt.*\n", "", out, flags=re.MULTILINE)
-    # Replace msgstr block
+    # Replace msgstr block. A function replacement avoids re.sub treating
+    # backslashes in the encoded value (\n, \", \\) as group/escape refs.
     out = re.sub(
-        r"msgstr\s+((?:\"[^\"]*\"\s*)+)",
-        f"msgstr {encode_po_string(new_msgstr)}",
+        r"msgstr\s+((?:" + _PO_LITERAL + r"\s*)+)",
+        lambda _m: f"msgstr {encode_po_string(new_msgstr)}",
         out,
         count=1,
     )
