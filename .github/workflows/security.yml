@@ -2,10 +2,10 @@ name: Security
 
 on:
     push:
-        branches: [ main, master ]
+        branches: [main, master]
     pull_request:
     schedule:
-        -   cron: '27 3 * * 1'
+        - cron: '27 3 * * 1'
 
 permissions:
     contents: read
@@ -39,3 +39,8 @@ jobs:
         permissions:
             contents: read
             pull-requests: write
+
+    yamllint:
+        uses: magicsunday/.github/.github/workflows/yamllint.yml@main
+        permissions:
+            contents: read

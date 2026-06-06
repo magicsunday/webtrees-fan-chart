@@ -14,121 +14,121 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php: [ '8.3', '8.4', '8.5' ]
+                php: ['8.3', '8.4', '8.5']
 
         steps:
-            -   id: checkout
-                name: Checkout
-                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-                with:
-                    persist-credentials: false
+            - id: checkout
+              name: Checkout
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+              with:
+                  persist-credentials: false
 
-            -   id: setup_node
-                name: Set up Node.js
-                uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-                with:
-                    node-version: 22
-                    cache: npm
+            - id: setup_node
+              name: Set up Node.js
+              uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+              with:
+                  node-version: 22
+                  cache: npm
 
-            -   id: setup_php
-                name: Set up PHP version ${{ matrix.php }}
-                uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # v2
-                with:
-                    php-version: ${{ matrix.php }}
-                    tools: composer:v2
+            - id: setup_php
+              name: Set up PHP version ${{ matrix.php }}
+              uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  tools: composer:v2
 
-            -   name: Validate composer.json and composer.lock
-                run: composer validate
+            - name: Validate composer.json and composer.lock
+              run: composer validate
 
-            -   id: composer-cache-vars
-                name: Composer Cache Vars
-                run: |
-                    echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-                    echo "timestamp=$(date +"%s")" >> $GITHUB_OUTPUT
+            - id: composer-cache-vars
+              name: Composer Cache Vars
+              run: |
+                  echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+                  echo "timestamp=$(date +"%s")" >> $GITHUB_OUTPUT
 
-            -   id: composer-cache-dependencies
-                name: Cache Composer dependencies
-                uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
-                with:
-                    path: ${{ steps.composer-cache-vars.outputs.dir }}
-                    key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ steps.composer-cache-vars.outputs.timestamp }}
-                    restore-keys: |
-                        ${{ runner.os }}-composer-${{ matrix.php }}-
-                        ${{ runner.os }}-composer-
+            - id: composer-cache-dependencies
+              name: Cache Composer dependencies
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+              with:
+                  path: ${{ steps.composer-cache-vars.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ steps.composer-cache-vars.outputs.timestamp }}
+                  restore-keys: |
+                      ${{ runner.os }}-composer-${{ matrix.php }}-
+                      ${{ runner.os }}-composer-
 
-            -   id: install
-                name: Install dependencies
-                run: |
-                    composer install --no-progress --no-interaction
-                    npm ci
+            - id: install
+              name: Install dependencies
+              run: |
+                  composer install --no-progress --no-interaction
+                  npm ci
 
-            -   id: php-lint
-                name: PHP Lint
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    composer ci:test:php:lint
+            - id: php-lint
+              name: PHP Lint
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: |
+                  composer ci:test:php:lint
 
-            -   id: js-lint
-                name: JS Lint
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    composer ci:test:js:lint
+            - id: js-lint
+              name: JS Lint
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: |
+                  composer ci:test:js:lint
 
-            -   id: js-format
-                name: JS Format
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    composer ci:test:js:format
+            - id: js-format
+              name: JS Format
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: |
+                  composer ci:test:js:format
 
-            -   id: js-typecheck
-                name: JS Typecheck
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    composer ci:test:js:typecheck
+            - id: js-typecheck
+              name: JS Typecheck
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: |
+                  composer ci:test:js:typecheck
 
-            -   id: phpstan
-                name: PHPStan
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    composer ci:test:php:phpstan -- --error-format=github
+            - id: phpstan
+              name: PHPStan
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: |
+                  composer ci:test:php:phpstan -- --error-format=github
 
-            -   id: rector
-                name: Rector
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    composer ci:test:php:rector
+            - id: rector
+              name: Rector
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: |
+                  composer ci:test:php:rector
 
-            -   id: cpd
-                name: Copy/Paste Detection
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    composer ci:test:cpd
+            - id: cpd
+              name: Copy/Paste Detection
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: |
+                  composer ci:test:cpd
 
-            -   id: php-unit
-                name: PHP Unit Tests
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    composer ci:test:php:unit
+            - id: php-unit
+              name: PHP Unit Tests
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: |
+                  composer ci:test:php:unit
 
-            -   id: js-unit
-                name: JS Unit Tests
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    composer ci:test:js:unit
+            - id: js-unit
+              name: JS Unit Tests
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: |
+                  composer ci:test:js:unit
 
-            -   id: cgl
-                name: CGL
-                if: ${{ always() && steps.install.conclusion == 'success' }}
-                run: |
-                    composer ci:cgl -- --dry-run
+            - id: cgl
+              name: CGL
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: |
+                  composer ci:cgl -- --dry-run
 
             # Runs LAST: 'make dist' invokes 'composer install --no-dev'
             # which strips dev packages (php-cs-fixer, phpstan, ...) from
             # .build/vendor. Any later composer-driven step would fail.
-            -   id: dist-smoke
-                name: Release zip smoke test
-                if: ${{ success() }}
-                run: |
-                    make dist
-                    make dist-smoke
-                    rm -f *.zip
+            - id: dist-smoke
+              name: Release zip smoke test
+              if: ${{ success() }}
+              run: |
+                  make dist
+                  make dist-smoke
+                  rm -f *.zip
