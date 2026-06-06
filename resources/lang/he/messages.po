@@ -1,7 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-22 13:03+0100\n"
+"Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
+"issues\n"
+"POT-Creation-Date: 2026-06-06 12:50+0000\n"
 "PO-Revision-Date: 2024-12-22 13:03+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -17,43 +19,91 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:127 src/Module.php:243
-msgid "Fan chart"
-msgstr "תרשים מניפה של אבות"
-
-#: src/Module.php:137
+#: src/Module.php:136
 msgid "A fan chart of an individual’s ancestors."
 msgstr "תרשים מעריצים של אבותיו של אדם."
 
-#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
-#, php-format
-msgid "Fan chart of %s"
-msgstr "תרשים מניפה של אבות של %s"
+#: src/Configuration.php:573
+msgid "Abbreviate given names first"
+msgstr "קצר תחילה את השמות הפרטיים"
 
-#: src/Module.php:260
-msgid "Use Ctrl + scroll to zoom in the view"
-msgstr "השתמש ב- Ctrl + גלילה כדי להגדיל את התצוגה"
+#: src/Configuration.php:574
+msgid "Abbreviate surnames first"
+msgstr "קצר תחילה את שמות המשפחה"
 
-#: src/Module.php:261
-msgid "Move the view with two fingers"
-msgstr "הזז את התצוגה בשתי אצבעות"
+#: src/Configuration.php:572
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "אוטומטי (על פי מסורת שם המשפחה של העץ)"
 
-#: src/Traits/ModuleConfigTrait.php:99
-#, php-format
-msgid "The preferences for the module “%s” have been updated."
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
+msgid "Click and drag"
+msgstr "לחיצה וגרירה"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Click on a person"
+msgstr "לחיצה על אדם"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:23
+msgid "Colors"
+msgstr "צבעים"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:34
+msgid ""
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
+msgstr ""
+"צובע את הקשתות לפי ענף משפחתי. כל זוג חולק את אותו הצבע, הנגזר מצבעי הבסיס "
+"שנבחרו."
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
-msgid "Re center"
-msgstr "מרכז מחדש"
+#: resources/views/modules/fan-chart/config.phtml:85
+msgid ""
+"Controls which name part shrinks first when an arc is too narrow for the "
+"full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
+"abbreviates surnames; everything else abbreviates given names)."
+msgstr ""
+"קובע איזה חלק של השם יקוצר ראשון כאשר קשת צרה מדי להכיל את השם המלא. "
+"\"אוטומטי\" משתמש במסורת שם המשפחה של העץ (איסלנדית מקצרת שמות משפחה; כל "
+"השאר מקצרים שמות פרטיים)."
 
-#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
-msgid "Switch between full screen mode and normal view"
-msgstr "החלף בין מסך מלא לתצוגה רגילה"
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Ctrl + scroll"
+msgstr "Ctrl + גלילה"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:17
-msgid "Show help"
-msgstr "הצג עזרה"
+#: resources/views/modules/fan-chart/config.phtml:108
+msgid "Date precision"
+msgstr "דיוק תאריכים"
+
+#: resources/views/modules/fan-chart/form/details.phtml:23
+msgid "Details"
+msgstr "פרטים"
+
+#: resources/views/modules/fan-chart/form/display.phtml:23
+msgid "Display"
+msgstr "תצוגה"
+
+#: resources/views/modules/fan-chart/form/details.phtml:46
+msgid ""
+"Displays birth and death places in the chart arcs where space allows. For "
+"descendants with many children, places are automatically suppressed. The "
+"level of detail and the date precision are configured site-wide in the "
+"module settings."
+msgstr ""
+"מציג מקומות לידה ופטירה בקשתות התרשים כשיש מקום. עבור צאצאים עם ילדים רבים, "
+"המקומות מוסתרים אוטומטית. רמת הפירוט ודיוק התאריך מוגדרים לכלל האתר בהגדרות "
+"המודול."
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Displays the marriage date of each couple in a narrow arc between "
+"generations. When descendants are enabled, also shows the marriage date "
+"between the central person and their partners."
+msgstr ""
+"מציג את תאריך הנישואין של כל זוג בקשת צרה בין הדורות. כאשר צאצאים מופעלים, "
+"מציג גם את תאריך הנישואין בין האדם המרכזי לבני זוגו."
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -63,223 +113,242 @@ msgstr "ייצא כ-PNG"
 msgid "Export as SVG"
 msgstr "ייצא כ-SVG"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Control panel"
-msgstr ""
+#: src/Module.php:124 src/Module.php:237
+msgid "Fan chart"
+msgstr "תרשים מניפה של אבות"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Modules"
-msgstr ""
+#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#, php-format
+msgid "Fan chart of %s"
+msgstr "תרשים מניפה של אבות של %s"
 
-#: resources/views/modules/fan-chart/config.phtml:50
-msgid "General"
-msgstr "כללי"
-
-#: resources/views/modules/fan-chart/config.phtml:56
-msgid "Hide the SVG export button"
-msgstr "הסתר את כפתור ייצוא SVG"
-
-#: resources/views/modules/fan-chart/config.phtml:66
-msgid "Hide the PNG export button"
-msgstr "הסתר את כפתור ייצוא PNG"
-
-#: resources/views/modules/fan-chart/config.phtml:79
-msgid "save"
-msgstr "שמור"
-
-#: resources/views/modules/fan-chart/config.phtml:84
-msgid "cancel"
-msgstr "בטל"
-
-#: resources/views/modules/fan-chart/form/fan-size.phtml:22
+#: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
 msgstr "גודל מאוורר"
 
-#: resources/views/modules/fan-chart/form/font-size.phtml:22
+#: resources/views/modules/fan-chart/form/font-size.phtml:23
 msgid "Font size"
 msgstr "גודל גופן"
 
-#: resources/views/modules/fan-chart/form/generations.phtml:22
-msgid "Generations"
-msgstr "דורות"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
-msgid "Number of inner levels"
-msgstr "מספר הרמות הפנימיות"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
-msgid ""
-"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
-msgstr "מציין את מספר הרמות שבהן הטקסט נכתב לאורך קשת. קשתות צאצאים עוברות אוטומטית בין טקסט קשת לטקסט מסובב בהתאם למקום הזמין."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:23
-msgid "Layout"
-msgstr "מבנה"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:29
-msgid "Hide empty segments"
-msgstr "הסתר פלחים ריקים"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show family colors"
-msgstr "הצג צבעי משפחה"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:45
-msgid ""
-"Colors the arcs by family branch. Each couple shares the same color, derived "
-"from the chosen base colors."
-msgstr ""
-"צובע את הקשתות לפי ענף משפחתי. כל זוג חולק "
-"את אותו הצבע, הנגזר מצבעי הבסיס שנבחרו."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:49
-msgid "Paternal"
-msgstr "אבהי"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:53
-msgid "Maternal"
-msgstr "אימהי"
-
-msgid "Show places"
-msgstr "הצג מקומות"
-
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
-msgstr "מציג מקומות לידה ופטירה בקשתות התרשים כשהמקום מאפשר. עבור צאצאים עם ילדים רבים, מקומות מודחקים אוטומטית. בחר את רמת הפירוט למטה."
-
+#: src/Configuration.php:362
 msgid "Full place name"
 msgstr "שם מקום מלא"
 
-msgid "Lowest level (e.g. parish)"
-msgstr "רמה נמוכה ביותר (למשל קהילה)"
+#: resources/views/modules/fan-chart/config.phtml:51
+msgid "General"
+msgstr "כללי"
 
-msgid "Lowest two levels"
-msgstr "שתי הרמות הנמוכות ביותר"
+#: resources/views/modules/fan-chart/form/generations.phtml:23
+msgid "Generations"
+msgstr "דורות"
 
-msgid "Lowest three levels"
-msgstr "שלוש הרמות הנמוכות ביותר"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:62
-msgid "Show parent marriage dates"
-msgstr "הצג תאריכי נישואי הורים"
-
-msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
-msgstr "מציג את תאריך הנישואין של כל זוג בקשת צרה בין הדורות. כאשר צאצאים מופעלים, מציג גם את תאריך הנישואין בין האדם המרכזי לבני זוגו."
-
-#: resources/views/modules/fan-chart/page.phtml:41
-msgid "Individual"
-msgstr "אדם"
-
-#: resources/views/modules/fan-chart/page.phtml:68
-msgid "view"
-msgstr "הראה"
-
-#: resources/views/modules/fan-chart/page.phtml:79
-msgid "Show more options"
-msgstr "הצג אפשרויות נוספות"
+#: resources/views/modules/fan-chart/form/display.phtml:78
+msgid "Hide empty segments"
+msgstr "הסתר פלחים ריקים"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr "הסתר אפשרויות נוספות"
 
-msgid "Right-click"
-msgstr "לחיצה ימנית"
+#: resources/views/modules/fan-chart/config.phtml:65
+msgid "Hide the PNG export button"
+msgstr "הסתר את כפתור ייצוא PNG"
 
-msgid "Show details of a person"
-msgstr "הצגת פרטי אדם"
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr "הסתר את כפתור ייצוא SVG"
 
-msgid "Ctrl + scroll"
-msgstr "Ctrl + גלילה"
+#: resources/views/modules/fan-chart/config.phtml:102
+msgid ""
+"How much of each place hierarchy is shown in chart arcs (full name, or only "
+"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
+"form."
+msgstr ""
+"איזה חלק מההיררכיה של כל מקום מוצג בקשתות התרשים (שם מלא או רק 1–3 הרמות "
+"הנמוכות ביותר). משתמשים מפעילים/מכבים את הצגת המקום בטופס התרשים."
 
-msgid "Zoom in/out"
-msgstr "הגדלה/הקטנה"
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid ""
+"Images are only shown if the arc segment is wide enough. Images for "
+"descendants are not yet available."
+msgstr ""
+"תמונות מוצגות רק אם קטע הקשת רחב מספיק. תמונות עבור צאצאים עדיין לא זמינות."
 
-msgid "Click and drag"
-msgstr "לחיצה וגרירה"
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "אדם"
 
+#: resources/views/modules/fan-chart/form/details.phtml:34
+msgid ""
+"Inserts the GEDCOM NICK value in quotes between the given names and the "
+"surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees "
+"behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr ""
+"מוסיף את ערך ה־GEDCOM NICK בתוך מירכאות בין השמות הפרטיים לשם המשפחה (למשל "
+"Martin \"Chalky\" White). משחזר את התנהגות webtrees הישנה עבור עצים השומרים "
+"כינויים בשדה GEDCOM NICK הנפרד."
+
+#: src/Configuration.php:363
+msgid "Lowest level (e.g. parish)"
+msgstr "רמה נמוכה ביותר (למשל קהילה)"
+
+#: src/Configuration.php:365
+msgid "Lowest three levels"
+msgstr "שלוש הרמות הנמוכות ביותר"
+
+#: src/Configuration.php:364
+msgid "Lowest two levels"
+msgstr "שתי הרמות הנמוכות ביותר"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:43
+msgid "Maternal"
+msgstr "אימהי"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
 msgstr "הזזת התרשים"
 
-msgid "Click on a person"
-msgstr "לחיצה על אדם"
+#: src/Module.php:262
+msgid "Move the view with two fingers"
+msgstr "הזז את התצוגה בשתי אצבעות"
 
+#: resources/views/modules/fan-chart/config.phtml:74
+msgid "Name abbreviation when space is tight"
+msgstr "קיצור שם כאשר המקום מצומצם"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:23
+msgid "Number of inner levels"
+msgstr "מספר הרמות הפנימיות"
+
+#: resources/views/modules/fan-chart/form/display.phtml:71
+msgid ""
+"Partners and children are shown as arcs below the ancestor section. The fan "
+"size is limited to 180–270 degrees when enabled."
+msgstr ""
+"בני זוג וילדים מוצגים כקשתות מתחת לאזור האבות. גודל המניפה מוגבל ל-180–270 "
+"מעלות כאשר מופעל."
+
+#: resources/views/modules/fan-chart/form/colors.phtml:39
+msgid "Paternal"
+msgstr "אבהי"
+
+#: resources/views/modules/fan-chart/config.phtml:91
+msgid "Place detail"
+msgstr "פירוט מקום"
+
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
+msgid "Re center"
+msgstr "מרכז מחדש"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Reload chart for that person"
 msgstr "טעינת התרשים מחדש עבור אותו אדם"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Date precision"
-msgstr "דיוק תאריכים"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Right-click"
+msgstr "לחיצה ימנית"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "הצג תאריכים מלאים (לידה, נישואין, פטירה) לדורות הקרובים. דורות מאוחרים מציגים שנה בלבד. תאריכי נישואין מוסתרים מדור 9. צאצאים עם קשתות צרות משתמשים אוטומטית בפורמט שנה בלבד."
+#: resources/views/modules/fan-chart/form/display.phtml:65
+msgid "Show descendants"
+msgstr "הצג צאצאים"
 
-#: src/Configuration.php:191
-msgid "Years only"
-msgstr "שנים בלבד"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Show details of a person"
+msgstr "הצגת פרטי אדם"
 
-#: src/Configuration.php:195
+#: resources/views/modules/fan-chart/form/colors.phtml:28
+msgid "Show family colors"
+msgstr "הצג צבעי משפחה"
+
+#: resources/views/modules/fan-chart/config.phtml:119
+msgid ""
+"Show full dates (birth, marriage, death) for early generations. Later "
+"generations show year only. Marriage dates are hidden from generation 9. "
+"Descendants with narrow arcs automatically use a compact year-only format."
+msgstr ""
+"הצג תאריכים מלאים (לידה, נישואין, פטירה) לדורות הקרובים. דורות מאוחרים "
+"מציגים שנה בלבד. תאריכי נישואין מוסתרים מדור 9. צאצאים עם קשתות צרות משתמשים "
+"אוטומטית בפורמט שנה בלבד."
+
+#: src/Configuration.php:201
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "הצג תאריכים מלאים עד דור %s"
 
-msgid "Show descendants"
-msgstr "הצג צאצאים"
+#: resources/views/modules/components/buttonbar/help-button.phtml:18
+msgid "Show help"
+msgstr "הצג עזרה"
 
-msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
-msgstr "בני זוג וילדים מוצגים כקשתות מתחת לאזור האבות. גודל המניפה מוגבל ל-180–270 מעלות כאשר מופעל."
-
-msgid "Show names and images"
-msgstr "הצג שמות ותמונות"
-
-msgid "Show names only"
-msgstr "הצג שמות בלבד"
-
+#: resources/views/modules/fan-chart/form/display.phtml:55
 msgid "Show images only"
 msgstr "הצג תמונות בלבד"
 
-msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
-msgstr "תמונות מוצגות רק אם קטע הקשת רחב מספיק. תמונות עבור צאצאים עדיין לא זמינות."
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "הצג אפשרויות נוספות"
 
-msgid "Display"
-msgstr "תצוגה"
+#: resources/views/modules/fan-chart/form/display.phtml:41
+msgid "Show names and images"
+msgstr "הצג שמות ותמונות"
 
-msgid "Details"
-msgstr "פרטים"
+#: resources/views/modules/fan-chart/form/display.phtml:48
+msgid "Show names only"
+msgstr "הצג שמות בלבד"
 
-msgid "Colors"
-msgstr "צבעים"
-
-msgid "Appearance"
-msgstr "מראה"
-
-msgid "Name abbreviation when space is tight"
-msgstr "קיצור שם כאשר המקום מצומצם"
-
-msgid "Automatic (based on tree's surname tradition)"
-msgstr "אוטומטי (על פי מסורת שם המשפחה של העץ)"
-
-msgid "Abbreviate given names first"
-msgstr "קצר תחילה את השמות הפרטיים"
-
-msgid "Abbreviate surnames first"
-msgstr "קצר תחילה את שמות המשפחה"
-
-msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
-msgstr "קובע איזה חלק של השם יקוצר ראשון כאשר קשת צרה מדי להכיל את השם המלא. \"אוטומטי\" משתמש במסורת שם המשפחה של העץ (איסלנדית מקצרת שמות משפחה; כל השאר מקצרים שמות פרטיים)."
-
-#: resources/views/modules/fan-chart/form/display.phtml
+#: resources/views/modules/fan-chart/form/details.phtml:28
 msgid "Show nicknames in display names"
 msgstr "הצג כינויים בשמות המוצגים"
 
-#: resources/views/modules/fan-chart/form/display.phtml
-msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
-msgstr "מוסיף את ערך ה־GEDCOM NICK בתוך מירכאות בין השמות הפרטיים לשם המשפחה (למשל Martin \"Chalky\" White). משחזר את התנהגות webtrees הישנה עבור עצים השומרים כינויים בשדה GEDCOM NICK הנפרד."
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show parent marriage dates"
+msgstr "הצג תאריכי נישואי הורים"
 
-msgid "Place detail"
-msgstr "פירוט מקום"
+#: resources/views/modules/fan-chart/form/details.phtml:40
+msgid "Show places"
+msgstr "הצג מקומות"
 
-msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
-msgstr "איזה חלק מההיררכיה של כל מקום מוצג בקשתות התרשים (שם מלא או רק 1–3 הרמות הנמוכות ביותר). משתמשים מפעילים/מכבים את הצגת המקום בטופס התרשים."
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:27
+msgid ""
+"Specifies the number of levels in which the text is written along an arc. "
+"Descendant arcs switch between arc text and rotated text automatically based "
+"on available space."
+msgstr ""
+"מציין את מספר הרמות שבהן הטקסט נכתב לאורך קשת. קשתות צאצאים עוברות אוטומטית "
+"בין טקסט קשת לטקסט מסובב בהתאם למקום הזמין."
 
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
-msgstr "מציג מקומות לידה ופטירה בקשתות התרשים כשיש מקום. עבור צאצאים עם ילדים רבים, המקומות מוסתרים אוטומטית. רמת הפירוט ודיוק התאריך מוגדרים לכלל האתר בהגדרות המודול."
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr "החלף בין מסך מלא לתצוגה רגילה"
+
+#: src/Traits/ModuleConfigTrait.php:146
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr ""
+
+#: src/Module.php:261
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "השתמש ב- Ctrl + גלילה כדי להגדיל את התצוגה"
+
+#: src/Configuration.php:196
+msgid "Years only"
+msgstr "שנים בלבד"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Zoom in/out"
+msgstr "הגדלה/הקטנה"
+
+#: resources/views/modules/fan-chart/config.phtml:134
+msgid "cancel"
+msgstr "בטל"
+
+#: resources/views/modules/fan-chart/config.phtml:129
+msgid "save"
+msgstr "שמור"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "הראה"

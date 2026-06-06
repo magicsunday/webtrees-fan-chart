@@ -1,7 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-22 13:03+0100\n"
+"Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
+"issues\n"
+"POT-Creation-Date: 2026-06-06 12:50+0000\n"
 "PO-Revision-Date: 2024-12-22 13:06+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: z-yurets\n"
@@ -17,43 +19,92 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:127 src/Module.php:243
-msgid "Fan chart"
-msgstr "Веерный график"
-
-#: src/Module.php:137
+#: src/Module.php:136
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Веерный график персоны."
 
-#: src/Module.php:240 src/Traits/ModuleChartTrait.php:41
-#, php-format
-msgid "Fan chart of %s"
-msgstr "Веерный график для %s"
+#: src/Configuration.php:573
+msgid "Abbreviate given names first"
+msgstr "Сокращать сначала имена"
 
-#: src/Module.php:260
-msgid "Use Ctrl + scroll to zoom in the view"
-msgstr "Используйте Ctrl + колёсико мыши, чтобы увеличить"
+#: src/Configuration.php:574
+msgid "Abbreviate surnames first"
+msgstr "Сокращать сначала фамилии"
 
-#: src/Module.php:261
-msgid "Move the view with two fingers"
-msgstr "Перемещайте, используя два пальца"
+#: src/Configuration.php:572
+msgid "Automatic (based on tree's surname tradition)"
+msgstr "Автоматически (по традиции фамилий дерева)"
 
-#: src/Traits/ModuleConfigTrait.php:99
-#, php-format
-msgid "The preferences for the module “%s” have been updated."
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
+msgid "Click and drag"
+msgstr "Нажмите и перетащите"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Click on a person"
+msgstr "Нажмите на персону"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:23
+msgid "Colors"
+msgstr "Цвета"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:34
+msgid ""
+"Colors the arcs by family branch. Each couple shares the same color, derived "
+"from the chosen base colors."
+msgstr ""
+"Окрашивает дуги по семейным ветвям. Каждая пара имеет общий цвет, полученный "
+"из выбранных базовых цветов."
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
-msgid "Re center"
-msgstr "Выровнять"
+#: resources/views/modules/fan-chart/config.phtml:85
+msgid ""
+"Controls which name part shrinks first when an arc is too narrow for the "
+"full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
+"abbreviates surnames; everything else abbreviates given names)."
+msgstr ""
+"Определяет, какая часть имени сокращается первой, если дуга слишком узкая "
+"для полного имени. «Автоматически» использует традицию фамилий дерева "
+"(исландская традиция сокращает фамилии; все остальные сокращают имена)."
 
-#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
-msgid "Switch between full screen mode and normal view"
-msgstr "Переключение между полноэкранным и обычным режимом"
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Ctrl + scroll"
+msgstr "Ctrl + колёсико мыши"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:17
-msgid "Show help"
-msgstr "Показать справку"
+#: resources/views/modules/fan-chart/config.phtml:108
+msgid "Date precision"
+msgstr "Точность дат"
+
+#: resources/views/modules/fan-chart/form/details.phtml:23
+msgid "Details"
+msgstr "Подробности"
+
+#: resources/views/modules/fan-chart/form/display.phtml:23
+msgid "Display"
+msgstr "Отображение"
+
+#: resources/views/modules/fan-chart/form/details.phtml:46
+msgid ""
+"Displays birth and death places in the chart arcs where space allows. For "
+"descendants with many children, places are automatically suppressed. The "
+"level of detail and the date precision are configured site-wide in the "
+"module settings."
+msgstr ""
+"Отображает места рождения и смерти в дугах диаграммы, где есть место. У "
+"потомков с большим числом детей места скрываются автоматически. Уровень "
+"детализации и точность дат задаются для всего сайта в настройках модуля."
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Displays the marriage date of each couple in a narrow arc between "
+"generations. When descendants are enabled, also shows the marriage date "
+"between the central person and their partners."
+msgstr ""
+"Отображает дату бракосочетания каждой пары в узкой дуге между поколениями. "
+"Когда потомки включены, также показывает дату бракосочетания между "
+"центральной персоной и её супругами."
 
 #: resources/views/modules/components/buttonbar/png-export-button.phtml:18
 msgid "Export as PNG"
@@ -63,226 +114,246 @@ msgstr "Экспорт в PNG"
 msgid "Export as SVG"
 msgstr "Экспорт в SVG"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Control panel"
-msgstr ""
+#: src/Module.php:124 src/Module.php:237
+msgid "Fan chart"
+msgstr "Веерный график"
 
-#: resources/views/modules/fan-chart/config.phtml:25
-msgid "Modules"
-msgstr ""
+#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#, php-format
+msgid "Fan chart of %s"
+msgstr "Веерный график для %s"
 
-#: resources/views/modules/fan-chart/config.phtml:50
-msgid "General"
-msgstr "Общие"
-
-#: resources/views/modules/fan-chart/config.phtml:56
-msgid "Hide the SVG export button"
-msgstr "Скрыть кнопку экспорта в SVG"
-
-#: resources/views/modules/fan-chart/config.phtml:66
-msgid "Hide the PNG export button"
-msgstr "Скрыть кнопку экспорта в PNG"
-
-#: resources/views/modules/fan-chart/config.phtml:79
-msgid "save"
-msgstr "Сохранить"
-
-#: resources/views/modules/fan-chart/config.phtml:84
-msgid "cancel"
-msgstr "Отмена"
-
-#: resources/views/modules/fan-chart/form/fan-size.phtml:22
+#: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
 msgstr "Размер веера"
 
-#: resources/views/modules/fan-chart/form/font-size.phtml:22
+#: resources/views/modules/fan-chart/form/font-size.phtml:23
 msgid "Font size"
 msgstr "Размер шрифта"
 
-#: resources/views/modules/fan-chart/form/generations.phtml:22
-msgid "Generations"
-msgstr "Поколения"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:22
-msgid "Number of inner levels"
-msgstr "Ширина"
-
-#: resources/views/modules/fan-chart/form/inner-levels.phtml:35
-msgid ""
-"Specifies the number of levels in which the text is written along an arc. Descendant arcs switch between arc text and rotated text automatically based on available space."
-msgstr "Указать ширину строчек для написания по дуге. Дуги потомков автоматически переключаются между текстом по дуге и повёрнутым текстом в зависимости от доступного пространства."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:23
-msgid "Layout"
-msgstr "Макет"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:29
-msgid "Hide empty segments"
-msgstr "Скрыть пустое"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:39
-msgid "Show family colors"
-msgstr "Показать цвета семей"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:45
-msgid ""
-"Colors the arcs by family branch. Each couple shares the same color, derived "
-"from the chosen base colors."
-msgstr ""
-"Окрашивает дуги по семейным ветвям. Каждая пара имеет "
-"общий цвет, полученный из выбранных базовых цветов."
-
-#: resources/views/modules/fan-chart/form/layout.phtml:49
-msgid "Paternal"
-msgstr "Отцовская линия"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:53
-msgid "Maternal"
-msgstr "Материнская линия"
-
-msgid "Show places"
-msgstr "Показать места"
-
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail below."
-msgstr "Отображает места рождения и смерти на дугах диаграммы, где позволяет место. Для потомков с большим количеством детей места автоматически скрываются. Выберите уровень детализации ниже."
-
+#: src/Configuration.php:362
 msgid "Full place name"
 msgstr "Полное название места"
 
-msgid "Lowest level (e.g. parish)"
-msgstr "Нижний уровень (напр. приход)"
+#: resources/views/modules/fan-chart/config.phtml:51
+msgid "General"
+msgstr "Общие"
 
-msgid "Lowest two levels"
-msgstr "Два нижних уровня"
+#: resources/views/modules/fan-chart/form/generations.phtml:23
+msgid "Generations"
+msgstr "Поколения"
 
-msgid "Lowest three levels"
-msgstr "Три нижних уровня"
-
-#: resources/views/modules/fan-chart/form/layout.phtml:62
-msgid "Show parent marriage dates"
-msgstr "Показать даты бракосочетания"
-
-msgid "Displays the marriage date of each couple in a narrow arc between generations. When descendants are enabled, also shows the marriage date between the central person and their partners."
-msgstr "Отображает дату бракосочетания каждой пары в узкой дуге между поколениями. Когда потомки включены, также показывает дату бракосочетания между центральной персоной и её супругами."
-
-#: resources/views/modules/fan-chart/page.phtml:41
-msgid "Individual"
-msgstr "Персона"
-
-#: resources/views/modules/fan-chart/page.phtml:68
-msgid "view"
-msgstr "Обновить"
-
-#: resources/views/modules/fan-chart/page.phtml:79
-msgid "Show more options"
-msgstr "Дополнительные опции"
+#: resources/views/modules/fan-chart/form/display.phtml:78
+msgid "Hide empty segments"
+msgstr "Скрыть пустое"
 
 #: resources/views/modules/fan-chart/page.phtml:80
 msgid "Hide more options"
 msgstr "Спрятать доп. опции"
 
-#~ msgid "Presentation"
-#~ msgstr "Отображение"
+#: resources/views/modules/fan-chart/config.phtml:65
+msgid "Hide the PNG export button"
+msgstr "Скрыть кнопку экспорта в PNG"
 
-msgid "Right-click"
-msgstr "Правый клик"
+#: resources/views/modules/fan-chart/config.phtml:56
+msgid "Hide the SVG export button"
+msgstr "Скрыть кнопку экспорта в SVG"
 
-msgid "Show details of a person"
-msgstr "Показать сведения о персоне"
+#: resources/views/modules/fan-chart/config.phtml:102
+msgid ""
+"How much of each place hierarchy is shown in chart arcs (full name, or only "
+"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
+"form."
+msgstr ""
+"Какая часть иерархии места отображается в дугах диаграммы (полное название "
+"или только 1–3 нижних уровня). Пользователи переключают видимость места в "
+"форме диаграммы."
 
-msgid "Ctrl + scroll"
-msgstr "Ctrl + колёсико мыши"
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid ""
+"Images are only shown if the arc segment is wide enough. Images for "
+"descendants are not yet available."
+msgstr ""
+"Изображения показываются только если сегмент дуги достаточно широкий. "
+"Изображения для потомков пока не доступны."
 
-msgid "Zoom in/out"
-msgstr "Увеличить/Уменьшить"
+#: resources/views/modules/fan-chart/page.phtml:41
+msgid "Individual"
+msgstr "Персона"
 
-msgid "Click and drag"
-msgstr "Нажмите и перетащите"
+#: resources/views/modules/fan-chart/form/details.phtml:34
+msgid ""
+"Inserts the GEDCOM NICK value in quotes between the given names and the "
+"surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees "
+"behaviour for trees that store nicknames in the separate GEDCOM NICK field."
+msgstr ""
+"Вставляет значение GEDCOM NICK в кавычках между именами и фамилией "
+"(например, Martin \"Chalky\" White). Повторяет прежнее поведение webtrees "
+"для деревьев, в которых прозвища хранятся в отдельном поле GEDCOM NICK."
 
+#: src/Configuration.php:363
+msgid "Lowest level (e.g. parish)"
+msgstr "Нижний уровень (напр. приход)"
+
+#: src/Configuration.php:365
+msgid "Lowest three levels"
+msgstr "Три нижних уровня"
+
+#: src/Configuration.php:364
+msgid "Lowest two levels"
+msgstr "Два нижних уровня"
+
+#: resources/views/modules/fan-chart/form/colors.phtml:43
+msgid "Maternal"
+msgstr "Материнская линия"
+
+#: resources/views/modules/fan-chart/config.phtml:25
+msgid "Modules"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
 msgstr "Переместить диаграмму"
 
-msgid "Click on a person"
-msgstr "Нажмите на персону"
+#: src/Module.php:262
+msgid "Move the view with two fingers"
+msgstr "Перемещайте, используя два пальца"
 
+#: resources/views/modules/fan-chart/config.phtml:74
+msgid "Name abbreviation when space is tight"
+msgstr "Сокращение имени при недостатке места"
+
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:23
+msgid "Number of inner levels"
+msgstr "Ширина"
+
+#: resources/views/modules/fan-chart/form/display.phtml:71
+msgid ""
+"Partners and children are shown as arcs below the ancestor section. The fan "
+"size is limited to 180–270 degrees when enabled."
+msgstr ""
+"Супруги и дети отображаются в виде дуг под секцией предков. Размер веера "
+"ограничен 180–270 градусами при включении."
+
+#: resources/views/modules/fan-chart/form/colors.phtml:39
+msgid "Paternal"
+msgstr "Отцовская линия"
+
+#: resources/views/modules/fan-chart/config.phtml:91
+msgid "Place detail"
+msgstr "Детализация места"
+
+#: resources/views/modules/components/buttonbar/center-button.phtml:18
+msgid "Re center"
+msgstr "Выровнять"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Reload chart for that person"
 msgstr "Перезагрузить диаграмму для этой персоны"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:22
-msgid "Date precision"
-msgstr "Точность дат"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Right-click"
+msgstr "Правый клик"
 
-#: resources/views/modules/fan-chart/form/date-precision.phtml:34
-msgid "Show full dates (birth, marriage, death) for early generations. Later generations show year only. Marriage dates are hidden from generation 9. Descendants with narrow arcs automatically use a compact year-only format."
-msgstr "Показывать полные даты (рождения, брака, смерти) для ближайших поколений. Более поздние поколения показывают только год. Даты бракосочетания скрываются с поколения 9. Потомки с узкими дугами автоматически используют компактный формат только с годом."
+#: resources/views/modules/fan-chart/form/display.phtml:65
+msgid "Show descendants"
+msgstr "Показать потомков"
 
-#: src/Configuration.php:191
-msgid "Years only"
-msgstr "Только годы"
+#: resources/views/modules/components/buttonbar/help-button.phtml:30
+msgid "Show details of a person"
+msgstr "Показать сведения о персоне"
 
-#: src/Configuration.php:195
+#: resources/views/modules/fan-chart/form/colors.phtml:28
+msgid "Show family colors"
+msgstr "Показать цвета семей"
+
+#: resources/views/modules/fan-chart/config.phtml:119
+msgid ""
+"Show full dates (birth, marriage, death) for early generations. Later "
+"generations show year only. Marriage dates are hidden from generation 9. "
+"Descendants with narrow arcs automatically use a compact year-only format."
+msgstr ""
+"Показывать полные даты (рождения, брака, смерти) для ближайших поколений. "
+"Более поздние поколения показывают только год. Даты бракосочетания "
+"скрываются с поколения 9. Потомки с узкими дугами автоматически используют "
+"компактный формат только с годом."
+
+#: src/Configuration.php:201
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Показать полные даты до поколения %s"
 
-msgid "Show descendants"
-msgstr "Показать потомков"
+#: resources/views/modules/components/buttonbar/help-button.phtml:18
+msgid "Show help"
+msgstr "Показать справку"
 
-msgid "Partners and children are shown as arcs below the ancestor section. The fan size is limited to 180–270 degrees when enabled."
-msgstr "Супруги и дети отображаются в виде дуг под секцией предков. Размер веера ограничен 180–270 градусами при включении."
-
-msgid "Show names and images"
-msgstr "Показать имена и изображения"
-
-msgid "Show names only"
-msgstr "Показать только имена"
-
+#: resources/views/modules/fan-chart/form/display.phtml:55
 msgid "Show images only"
 msgstr "Показать только изображения"
 
-msgid "Images are only shown if the arc segment is wide enough. Images for descendants are not yet available."
-msgstr "Изображения показываются только если сегмент дуги достаточно широкий. Изображения для потомков пока не доступны."
+#: resources/views/modules/fan-chart/page.phtml:79
+msgid "Show more options"
+msgstr "Дополнительные опции"
 
-msgid "Display"
-msgstr "Отображение"
+#: resources/views/modules/fan-chart/form/display.phtml:41
+msgid "Show names and images"
+msgstr "Показать имена и изображения"
 
-msgid "Details"
-msgstr "Подробности"
+#: resources/views/modules/fan-chart/form/display.phtml:48
+msgid "Show names only"
+msgstr "Показать только имена"
 
-msgid "Colors"
-msgstr "Цвета"
-
-msgid "Appearance"
-msgstr "Внешний вид"
-
-msgid "Name abbreviation when space is tight"
-msgstr "Сокращение имени при недостатке места"
-
-msgid "Automatic (based on tree's surname tradition)"
-msgstr "Автоматически (по традиции фамилий дерева)"
-
-msgid "Abbreviate given names first"
-msgstr "Сокращать сначала имена"
-
-msgid "Abbreviate surnames first"
-msgstr "Сокращать сначала фамилии"
-
-msgid "Controls which name part shrinks first when an arc is too narrow for the full name. \"Automatic\" uses the tree's surname tradition (Icelandic abbreviates surnames; everything else abbreviates given names)."
-msgstr "Определяет, какая часть имени сокращается первой, если дуга слишком узкая для полного имени. «Автоматически» использует традицию фамилий дерева (исландская традиция сокращает фамилии; все остальные сокращают имена)."
-
-#: resources/views/modules/fan-chart/form/display.phtml
+#: resources/views/modules/fan-chart/form/details.phtml:28
 msgid "Show nicknames in display names"
 msgstr "Показывать прозвища в отображаемых именах"
 
-#: resources/views/modules/fan-chart/form/display.phtml
-msgid "Inserts the GEDCOM NICK value in quotes between the given names and the surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behaviour for trees that store nicknames in the separate GEDCOM NICK field."
-msgstr "Вставляет значение GEDCOM NICK в кавычках между именами и фамилией (например, Martin \"Chalky\" White). Повторяет прежнее поведение webtrees для деревьев, в которых прозвища хранятся в отдельном поле GEDCOM NICK."
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show parent marriage dates"
+msgstr "Показать даты бракосочетания"
 
-msgid "Place detail"
-msgstr "Детализация места"
+#: resources/views/modules/fan-chart/form/details.phtml:40
+msgid "Show places"
+msgstr "Показать места"
 
-msgid "How much of each place hierarchy is shown in chart arcs (full name, or only the lowest 1–3 levels). Users toggle place visibility on/off in the chart form."
-msgstr "Какая часть иерархии места отображается в дугах диаграммы (полное название или только 1–3 нижних уровня). Пользователи переключают видимость места в форме диаграммы."
+#: resources/views/modules/fan-chart/form/inner-levels.phtml:27
+msgid ""
+"Specifies the number of levels in which the text is written along an arc. "
+"Descendant arcs switch between arc text and rotated text automatically based "
+"on available space."
+msgstr ""
+"Указать ширину строчек для написания по дуге. Дуги потомков автоматически "
+"переключаются между текстом по дуге и повёрнутым текстом в зависимости от "
+"доступного пространства."
 
-msgid "Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. The level of detail and the date precision are configured site-wide in the module settings."
-msgstr "Отображает места рождения и смерти в дугах диаграммы, где есть место. У потомков с большим числом детей места скрываются автоматически. Уровень детализации и точность дат задаются для всего сайта в настройках модуля."
+#: resources/views/modules/components/buttonbar/fullscreen-button.phtml:18
+msgid "Switch between full screen mode and normal view"
+msgstr "Переключение между полноэкранным и обычным режимом"
+
+#: src/Traits/ModuleConfigTrait.php:146
+#, php-format
+msgid "The preferences for the module “%s” have been updated."
+msgstr ""
+
+#: src/Module.php:261
+msgid "Use Ctrl + scroll to zoom in the view"
+msgstr "Используйте Ctrl + колёсико мыши, чтобы увеличить"
+
+#: src/Configuration.php:196
+msgid "Years only"
+msgstr "Только годы"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
+msgid "Zoom in/out"
+msgstr "Увеличить/Уменьшить"
+
+#: resources/views/modules/fan-chart/config.phtml:134
+msgid "cancel"
+msgstr "Отмена"
+
+#: resources/views/modules/fan-chart/config.phtml:129
+msgid "save"
+msgstr "Сохранить"
+
+#: resources/views/modules/fan-chart/page.phtml:68
+msgid "view"
+msgstr "Обновить"
