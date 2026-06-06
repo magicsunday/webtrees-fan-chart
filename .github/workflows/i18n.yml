@@ -10,6 +10,8 @@ permissions:
 
 jobs:
     catalogue:
-        uses: magicsunday/.github/.github/workflows/i18n.yml@main
+        uses: magicsunday/.github/.github/workflows/i18n.yml@add-i18n-pipeline-freshness-check
         permissions:
             contents: read
+        with:
+            check-pipeline: true
