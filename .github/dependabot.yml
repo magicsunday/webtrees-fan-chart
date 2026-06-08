@@ -24,6 +24,12 @@ updates:
             npm:
                 patterns:
                     - "*"
+                # The chart-lib bundle is baked into the committed *.min.js at
+                # `make build` time, which Dependabot cannot run. Keep it out of
+                # the grouped, auto-merged PR so it always arrives as its own
+                # PR that a human reviews and rebuilds the bundle for.
+                exclude-patterns:
+                    - "@magicsunday/webtrees-chart-lib"
 
     -   package-ecosystem: github-actions
         directory: /
