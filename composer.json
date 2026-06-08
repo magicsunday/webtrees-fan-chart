@@ -119,9 +119,6 @@
             "@ci:test:php:unit",
             "@ci:test:js:unit",
             "@ci:test:php:cgl"
-        ],
-        "post-update-cmd": [
-            "npm install --save-dev jscpd"
         ]
     }
 }
