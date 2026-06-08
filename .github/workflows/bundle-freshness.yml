@@ -1,0 +1,14 @@
+name: Bundle
+
+on:
+    push:
+    pull_request:
+
+permissions:
+    contents: read
+
+jobs:
+    bundle-freshness:
+        uses: magicsunday/.github/.github/workflows/bundle-freshness.yml@main
+        permissions:
+            contents: read
