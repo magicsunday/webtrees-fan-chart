@@ -31,17 +31,6 @@
         "discard-changes": true,
         "sort-packages": true,
         "optimize-autoloader": true,
-        "audit": {
-            "abandoned": "ignore",
-            "ignore": [
-                "PKSA-21fb-n1x5-5nf7",
-                "PKSA-2cx9-ynrq-qdk3",
-                "PKSA-rqc2-tcc6-nc79",
-                "PKSA-fndg-qryc-dyc9",
-                "PKSA-z7t6-zt6p-wtng",
-                "PKSA-28rh-rzzn-djk4"
-            ]
-        },
         "allow-plugins": {
             "magicsunday/webtrees-module-installer-plugin": true
         }
