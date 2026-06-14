@@ -24,7 +24,7 @@ fi
 staged_po=()
 while IFS= read -r po_file; do
     staged_po+=("$po_file")
-done < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.po$' || true)
+done < <(git diff --cached --name-only --diff-filter=ACMR -- '*.po')
 
 if [[ ${#staged_po[@]} -eq 0 ]]; then
     exit 0
