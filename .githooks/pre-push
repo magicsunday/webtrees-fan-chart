@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Block a push whose committed translation catalogue is stale. Any line shift
+# in a file carrying I18N::translate() drifts the catalogue's `#:` source
+# references, which the GitHub `catalogue / Pipeline freshness` job then fails —
+# a class of red that has bitten more than once because nothing caught it
+# locally. This hook mirrors that gate before the push: `make lang-check`
+# regenerates the catalogue (in the project's node container, so the gettext
+# version matches CI) and fails if the working tree changed.
+#
+# Resolution path on a block:
+#   make lang && git add resources/lang && git commit  # then push again
+#
+# Bypass once for a deliberate hand-off: AUDIT_BYPASS=1 git push …
+
+set -euo pipefail
+
+if [[ "${AUDIT_BYPASS:-0}" = "1" ]]; then
+    exit 0
+fi
+
+# Only repositories with a translation pipeline have anything to check.
+if [[ ! -d resources/lang ]]; then
+    exit 0
+fi
+
+# A pre-push hook receives the ref updates on stdin as
+# "<local-ref> <local-sha> <remote-ref> <remote-sha>" lines. Skip the check when
+# every pushed ref is a deletion (local sha is the all-zero oid) — a branch
+# deletion adds nothing whose line shift could drift the catalogue, and the node
+# container is needless overhead there.
+has_update=0
+while read -r _local_ref local_sha _remote_ref _remote_sha; do
+    if [[ ! "$local_sha" =~ ^0+$ ]]; then
+        has_update=1
+    fi
+done
+
+if [[ "$has_update" -eq 0 ]]; then
+    exit 0
+fi
+
+exec make lang-check

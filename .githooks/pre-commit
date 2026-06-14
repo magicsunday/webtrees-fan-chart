@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Block commits that introduce or leave fuzzy translation entries in any PO
+# file. msgfmt drops fuzzy entries from the compiled MO, so a committed
+# fuzzy entry silently ships as the English fallback for that locale.
+#
+# Resolution path on a block:
+#   1) `make lang-resolve-fuzzy` — auto-fixes punctuation-only drift.
+#   2) If anything stays fuzzy, edit the msgstr by hand (or the dev/i18n
+#      JSON catalogue) and re-run `make lang` to recompile.
+#   3) Override for a deliberate hand-off: `AUDIT_BYPASS=1 git commit …`.
+#
+# The hook only runs when a PO file is part of the staged change set, so
+# commits that don't touch translations skip the scan entirely.
+
+set -euo pipefail
+
+if [[ "${AUDIT_BYPASS:-0}" = "1" ]]; then
+    exit 0
+fi
+
+# Identify staged PO files. If none — exit silently, nothing to gate.
+# A while-read loop (not mapfile/readarray, which is Bash 4.0+) keeps the hook
+# working on the Bash 3.2 that macOS still ships as /bin/bash.
+staged_po=()
+while IFS= read -r po_file; do
+    staged_po+=("$po_file")
+done < <(git diff --cached --name-only --diff-filter=ACMR -- '*.po')
+
+if [[ ${#staged_po[@]} -eq 0 ]]; then
+    exit 0
+fi
+
+# Count fuzzy entries inside each staged PO. Read the STAGED blob
+# (`git show :path`), not the working-tree file — a partial commit (`git add
+# -p`) can stage a clean PO while the working tree still carries fuzzy entries
+# (or vice versa), and the index is what actually gets committed. Active fuzzy
+# is a comment line starting with `#,` whose flag list mentions `fuzzy`; skip
+# obsolete blocks (prefixed `#~`). Avoid awk `\b` because busybox / mawk
+# variants don't grok the word-boundary escape.
+declare -a offenders=()
+for po in "${staged_po[@]}"; do
+    fuzzy_count=$(git show ":$po" | awk '
+        /^#~/         { next }
+        /^#,.*fuzzy/  { c++ }
+        END           { print c+0 }
+    ')
+
+    if [[ "$fuzzy_count" -gt 0 ]]; then
+        offenders+=("  ${po}: ${fuzzy_count} fuzzy entries")
+    fi
+done
+
+if [[ ${#offenders[@]} -eq 0 ]]; then
+    exit 0
+fi
+
+echo
+echo "✘ pre-commit: PO files contain fuzzy entries that will be dropped from the MO."
+echo
+printf '%s\n' "${offenders[@]}"
+echo
+echo "Resolve via:"
+echo "    make lang-resolve-fuzzy   # punctuation-only drift is auto-fixed"
+echo "    make lang                 # full extract → merge → resolve → compile"
+echo
+echo "Or stage explicit translations, then re-commit."
+echo "Bypass once with AUDIT_BYPASS=1 git commit …"
+echo
+exit 1

@@ -4,7 +4,7 @@
 
 #### Language & Translations
 
-.PHONY: lang lang-extract lang-merge lang-resolve-fuzzy lang-compile
+.PHONY: lang lang-check setup-hooks lang-extract lang-merge lang-resolve-fuzzy lang-compile
 
 # Locales the module ships translations for. Auto-discovered from the
 # existing per-locale directories rather than a hardcoded list — a
@@ -87,3 +87,15 @@ lang-compile: ## Compile every messages.po to its sibling messages.mo.
 			msgfmt -o "$$dir/messages.mo" "$$po" && \
 				echo "  ✔ Compiled $$po"; \
 		done'
+
+setup-hooks: ## Activate the tracked .githooks/ directory for this clone.
+	@git config core.hooksPath .githooks && \
+		echo "  ✔ core.hooksPath = .githooks (pre-commit gate active)"
+
+lang-check: lang ## Fail if the committed catalogue is stale (local mirror of the CI Pipeline-freshness gate); the pre-push hook runs this.
+	@if [ -n "$$(git status --porcelain -- resources/lang)" ]; then \
+		echo "  ✘ catalogue stale — run 'make lang' and commit the result:"; \
+		git status --porcelain -- resources/lang; \
+		exit 1; \
+	fi; \
+	echo "  ✔ catalogue fresh — make lang is a no-op"
