@@ -23,4 +23,20 @@ if [[ ! -d resources/lang ]]; then
     exit 0
 fi
 
+# A pre-push hook receives the ref updates on stdin as
+# "<local-ref> <local-sha> <remote-ref> <remote-sha>" lines. Skip the check when
+# every pushed ref is a deletion (local sha is the all-zero oid) — a branch
+# deletion adds nothing whose line shift could drift the catalogue, and the node
+# container is needless overhead there.
+has_update=0
+while read -r _local_ref local_sha _remote_ref _remote_sha; do
+    if [[ ! "$local_sha" =~ ^0+$ ]]; then
+        has_update=1
+    fi
+done
+
+if [[ "$has_update" -eq 0 ]]; then
+    exit 0
+fi
+
 exec make lang-check

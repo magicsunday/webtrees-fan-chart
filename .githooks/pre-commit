@@ -19,22 +19,31 @@ if [[ "${AUDIT_BYPASS:-0}" = "1" ]]; then
 fi
 
 # Identify staged PO files. If none — exit silently, nothing to gate.
-mapfile -t staged_po < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.po$' || true)
+# A while-read loop (not mapfile/readarray, which is Bash 4.0+) keeps the hook
+# working on the Bash 3.2 that macOS still ships as /bin/bash.
+staged_po=()
+while IFS= read -r po_file; do
+    staged_po+=("$po_file")
+done < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.po$' || true)
+
 if [[ ${#staged_po[@]} -eq 0 ]]; then
     exit 0
 fi
 
-# Count fuzzy entries inside each staged PO. Active fuzzy is a comment
-# line starting with `#,` whose flag list mentions `fuzzy`. Skip
-# obsolete blocks (prefixed `#~`). Avoid awk `\b` because busybox /
-# mawk variants don't grok the word-boundary escape.
+# Count fuzzy entries inside each staged PO. Read the STAGED blob
+# (`git show :path`), not the working-tree file — a partial commit (`git add
+# -p`) can stage a clean PO while the working tree still carries fuzzy entries
+# (or vice versa), and the index is what actually gets committed. Active fuzzy
+# is a comment line starting with `#,` whose flag list mentions `fuzzy`; skip
+# obsolete blocks (prefixed `#~`). Avoid awk `\b` because busybox / mawk
+# variants don't grok the word-boundary escape.
 declare -a offenders=()
 for po in "${staged_po[@]}"; do
-    fuzzy_count=$(awk '
+    fuzzy_count=$(git show ":$po" | awk '
         /^#~/         { next }
         /^#,.*fuzzy/  { c++ }
         END           { print c+0 }
-    ' "$po")
+    ')
 
     if [[ "$fuzzy_count" -gt 0 ]]; then
         offenders+=("  ${po}: ${fuzzy_count} fuzzy entries")
