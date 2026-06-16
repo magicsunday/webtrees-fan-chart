@@ -1,20 +1,20 @@
 {
-    "languages": [
+    "format": [
         "php",
         "javascript"
     ],
     "threshold": 0,
     "reporters": [
-        "consoleFull"
+        "console-full"
     ],
     "minTokens": 100,
     "minLines": 5,
     "path": [
-        "src/",
-        "resources/js/modules/"
+        "src",
+        "resources/js/modules"
     ],
     "ignore": [
         "**/*.min.js"
     ],
-    "exitCode": true
+    "exitCode": 1
 }

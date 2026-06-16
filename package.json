@@ -54,7 +54,7 @@
         "d3-zoom": "^3.0",
         "jest": "^30.4",
         "jest-environment-jsdom": "^30.4",
-        "jscpd": "^4.2.4",
+        "jscpd": "^5.0.9",
         "pixelmatch": "^7.0",
         "playwright": "^1.60",
         "pngjs": "^7.0",
