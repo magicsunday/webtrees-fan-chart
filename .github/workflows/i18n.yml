@@ -15,3 +15,4 @@ jobs:
             contents: read
         with:
             check-pipeline: true
+            node-image: node:24-alpine

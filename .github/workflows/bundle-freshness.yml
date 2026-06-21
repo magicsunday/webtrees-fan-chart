@@ -12,3 +12,5 @@ jobs:
         uses: magicsunday/.github/.github/workflows/bundle-freshness.yml@main
         permissions:
             contents: read
+        with:
+            node-image: node:24-alpine
