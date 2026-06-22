@@ -33,6 +33,13 @@
         "optimize-autoloader": true,
         "allow-plugins": {
             "magicsunday/webtrees-module-installer-plugin": true
+        },
+        "policy": {
+            "advisories": {
+                "ignore": {
+                    "guzzlehttp/guzzle": "Transitive dev/test dependency pinned exactly by fisharebest/webtrees; the module ships no guzzle and the admin's webtrees install governs the upgrade. New guzzle CVEs still surface via composer audit, and advisories on any other package still block resolution."
+                }
+            }
         }
     },
     "minimum-stability": "dev",
