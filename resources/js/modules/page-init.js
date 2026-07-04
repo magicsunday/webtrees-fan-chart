@@ -68,7 +68,6 @@ export function initPage(config) {
     storage.register("showNicknames");
     storage.register("innerArcs");
     storage.register("fontScale");
-    storage.register("detailedDateGenerations");
     storage.register("showDescendants");
 
     // Restore collapse state and range sliders
@@ -121,9 +120,8 @@ export function initPage(config) {
     /**
      * Resolved user options. `null` here means "user has not overridden the
      * server default"; chart.phtml falls back to the PHP-side value via `??`.
-     * `showDescendants` and `detailedDateGenerations` are pre-resolved with
-     * their server defaults because subsequent code in this function reads them
-     * unconditionally.
+     * `showDescendants` is pre-resolved with its server default because
+     * subsequent code in this function reads it unconditionally.
      *
      * @type {{
      *   fanDegree: number|null,
@@ -140,7 +138,6 @@ export function initPage(config) {
      *   innerArcs: number|null,
      *   fontScale: number|null,
      *   showDescendants: boolean,
-     *   detailedDateGenerations: number,
      * }}
      */
     const chartOptions = {
@@ -162,10 +159,6 @@ export function initPage(config) {
         innerArcs: storage.readNumber("innerArcs"),
         fontScale: storage.readNumber("fontScale"),
         showDescendants: storage.readBool("showDescendants", config.defaultShowDescendants),
-        detailedDateGenerations: storage.readNumber(
-            "detailedDateGenerations",
-            config.defaultDetailedDateGenerations,
-        ),
     };
 
     // Clamp the fan degree slider when descendants are active (covers the case
@@ -212,7 +205,15 @@ export function initPage(config) {
                         ?.value ??
                     null,
             },
-            { key: "detailedDateGenerations", value: chartOptions.detailedDateGenerations },
+            {
+                // Admin-only preference with no client-side control, so always
+                // use the server default — never a (possibly stale) localStorage
+                // value left by an older module version that had a slider. Kept
+                // out of the published chartOptions global (it is not a client
+                // override). The toggle-rebuild path below resolves it the same way.
+                key: "detailedDateGenerations",
+                value: config.defaultDetailedDateGenerations,
+            },
             { key: "showPlaces", value: chartOptions.showPlaces, mode: "boolean-1-0" },
             { key: "placeParts", value: storage.read("placeParts") },
             {
@@ -272,10 +273,10 @@ export function initPage(config) {
                             null,
                     },
                     {
+                        // Admin-only preference — always the server default, never
+                        // a stale localStorage value (see the initial URL build above).
                         key: "detailedDateGenerations",
-                        value:
-                            storage.read("detailedDateGenerations") ??
-                            config.defaultDetailedDateGenerations,
+                        value: config.defaultDetailedDateGenerations,
                     },
                     { key: "showPlaces", value: storage.read("showPlaces"), mode: "boolean-1-0" },
                     { key: "placeParts", value: storage.read("placeParts") },
