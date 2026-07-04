@@ -187,7 +187,11 @@ describe("getUrl (via initPage AJAX URL)", () => {
         expect(getAjaxUrl().searchParams.get("placeParts")).toBe("2");
     });
 
-    it("uses defaultDetailedDateGenerations when storage is empty", () => {
+    it("uses defaultDetailedDateGenerations for the initial URL, ignoring a stale storage value", () => {
+        // A value left in localStorage by an older module version (which had a
+        // slider) must not override the admin preference on the initial render.
+        storageData.detailedDateGenerations = "0";
+
         initPage({ ...defaultConfig, defaultDetailedDateGenerations: 3 });
 
         expect(getAjaxUrl().searchParams.get("detailedDateGenerations")).toBe("3");
@@ -217,7 +221,6 @@ describe("showDescendants change handler", () => {
             if (key === "showPlaces") return true;
             if (key === "generations") return "6";
             if (key === "placeParts") return "1";
-            if (key === "detailedDateGenerations") return "3";
 
             return null;
         });
@@ -230,13 +233,13 @@ describe("showDescendants change handler", () => {
         expect(getAjaxUrl().searchParams.get("showPlaces")).toBe("1");
     });
 
-    it("reads detailedDateGenerations live from storage on toggle", () => {
-        initPage(defaultConfig);
+    it("keeps the admin default detailedDateGenerations on toggle, ignoring a stale storage value", () => {
+        initPage({ ...defaultConfig, defaultDetailedDateGenerations: 2 });
 
         const storage = storageInstances[0];
 
         storage.read.mockImplementation((key) => {
-            if (key === "detailedDateGenerations") return "5";
+            if (key === "detailedDateGenerations") return "5"; // stale — must be ignored
             if (key === "generations") return "6";
 
             return null;
@@ -247,7 +250,7 @@ describe("showDescendants change handler", () => {
         cb.checked = true;
         cb.dispatchEvent(new Event("change"));
 
-        expect(getAjaxUrl().searchParams.get("detailedDateGenerations")).toBe("5");
+        expect(getAjaxUrl().searchParams.get("detailedDateGenerations")).toBe("2");
     });
 
     it("includes placeParts from storage in rebuilt URL", () => {
