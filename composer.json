@@ -37,9 +37,7 @@
         "policy": {
             "advisories": {
                 "ignore": {
-                    "guzzlehttp/guzzle": "Transitive dev/test dependency pinned exactly by fisharebest/webtrees; the module ships no guzzle and the admin's webtrees install governs the upgrade. New guzzle CVEs still surface via composer audit, and advisories on any other package still block resolution.",
-                    "league/commonmark": "Transitive dependency pinned exactly by fisharebest/webtrees; the module ships no commonmark and the admin's webtrees install governs the upgrade. webtrees dev-main already pins the patched 2.8.2 — the released 2.2.6 still pins the advisory-affected 2.8.0. TEMPORARY: remove once webtrees 2.2.7 (with the fixed pin) is released. New CVEs still surface via composer audit.",
-                    "symfony/cache": "Transitive dependency pinned exactly by fisharebest/webtrees; the module ships no symfony/cache and the admin's webtrees install governs the upgrade. webtrees dev-main already pins the patched 7.4.13 — the released 2.2.6 still pins the advisory-affected 7.4.8. TEMPORARY: remove once webtrees 2.2.7 is released. New CVEs still surface via composer audit."
+                    "guzzlehttp/guzzle": "Transitive dev/test dependency pinned exactly by fisharebest/webtrees; the module ships no guzzle and the admin's webtrees install governs the upgrade. New guzzle CVEs still surface via composer audit, and advisories on any other package still block resolution."
                 }
             }
         }
