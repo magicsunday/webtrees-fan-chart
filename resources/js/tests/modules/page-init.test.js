@@ -143,6 +143,7 @@ const defaultConfig = {
     defaultShowDescendants: false,
     defaultFanDegreeRaw: 210,
     defaultDetailedDateGenerations: 0,
+    defaultPlaceParts: -1,
 };
 
 function getAjaxUrl() {
@@ -179,12 +180,15 @@ describe("getUrl (via initPage AJAX URL)", () => {
         expect(getAjaxUrl().searchParams.get("showPlaces")).toBe("0");
     });
 
-    it("includes placeParts in URL when storage has a value", () => {
+    it("uses defaultPlaceParts for the initial URL, ignoring a stale storage value", () => {
+        // placeParts is admin-only (the chart-page slider was removed); a value left
+        // in localStorage by an older module version must not override the server
+        // setting (here Automatic, -1) on the initial render.
         storageData.placeParts = "2";
 
-        initPage(defaultConfig);
+        initPage({ ...defaultConfig, defaultPlaceParts: -1 });
 
-        expect(getAjaxUrl().searchParams.get("placeParts")).toBe("2");
+        expect(getAjaxUrl().searchParams.get("placeParts")).toBe("-1");
     });
 
     it("uses defaultDetailedDateGenerations for the initial URL, ignoring a stale storage value", () => {
@@ -220,7 +224,6 @@ describe("showDescendants change handler", () => {
         storage.read.mockImplementation((key) => {
             if (key === "showPlaces") return true;
             if (key === "generations") return "6";
-            if (key === "placeParts") return "1";
 
             return null;
         });
@@ -253,13 +256,13 @@ describe("showDescendants change handler", () => {
         expect(getAjaxUrl().searchParams.get("detailedDateGenerations")).toBe("2");
     });
 
-    it("includes placeParts from storage in rebuilt URL", () => {
-        initPage(defaultConfig);
+    it("keeps the admin default placeParts on toggle, ignoring a stale storage value", () => {
+        initPage({ ...defaultConfig, defaultPlaceParts: 2 });
 
         const storage = storageInstances[0];
 
         storage.read.mockImplementation((key) => {
-            if (key === "placeParts") return "3";
+            if (key === "placeParts") return "3"; // stale — must be ignored
             if (key === "generations") return "6";
 
             return null;
@@ -270,7 +273,7 @@ describe("showDescendants change handler", () => {
         cb.checked = true;
         cb.dispatchEvent(new Event("change"));
 
-        expect(getAjaxUrl().searchParams.get("placeParts")).toBe("3");
+        expect(getAjaxUrl().searchParams.get("placeParts")).toBe("2");
     });
 
     it("restores fanDegreeRaw when unchecking descendants", () => {

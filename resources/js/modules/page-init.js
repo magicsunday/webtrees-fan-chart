@@ -49,6 +49,7 @@ function initRangeSlider(storage, id, suffix = "") {
  * @param {boolean} [config.defaultShowNicknames]         Server-side default for showNicknames
  * @param {number}  config.defaultFanDegreeRaw            Server-side unclamped fan degree
  * @param {number}  config.defaultDetailedDateGenerations Server-side default for detailed date generations
+ * @param {number}  config.defaultPlaceParts              Server-side raw placeParts setting (-1 = automatic, 0-3 = explicit)
  */
 export function initPage(config) {
     const storage = new Storage("webtrees-fan-chart");
@@ -61,7 +62,6 @@ export function initPage(config) {
     storage.register("paternalColor");
     storage.register("maternalColor");
     storage.register("showPlaces");
-    storage.register("placeParts");
     storage.register("showParentMarriageDates");
     storage.register("showImages");
     storage.register("showNames");
@@ -215,7 +215,14 @@ export function initPage(config) {
                 value: config.defaultDetailedDateGenerations,
             },
             { key: "showPlaces", value: chartOptions.showPlaces, mode: "boolean-1-0" },
-            { key: "placeParts", value: storage.read("placeParts") },
+            {
+                // Admin-only preference (the chart-page select was moved to admin
+                // config); like detailedDateGenerations above, always use the server
+                // default so the "Automatic" setting is not defeated by a stale
+                // localStorage value left by an older module version that had a slider.
+                key: "placeParts",
+                value: config.defaultPlaceParts,
+            },
             {
                 key: "showDescendants",
                 value: Boolean(chartOptions.showDescendants),
@@ -279,7 +286,9 @@ export function initPage(config) {
                         value: config.defaultDetailedDateGenerations,
                     },
                     { key: "showPlaces", value: storage.read("showPlaces"), mode: "boolean-1-0" },
-                    { key: "placeParts", value: storage.read("placeParts") },
+                    // Admin-only preference — always the server default, never a
+                    // stale localStorage value (see the initial URL build above).
+                    { key: "placeParts", value: config.defaultPlaceParts },
                     { key: "showDescendants", value: checked, mode: "boolean-1-or-delete" },
                     {
                         key: "showNicknames",
