@@ -398,8 +398,6 @@ class NodeData implements JsonSerializable
 
     /**
      * Returns the underlying Individual instance. Not included in JSON output.
-     *
-     * @return Individual|null
      */
     public function getIndividual(): ?Individual
     {

@@ -75,8 +75,6 @@ class DataFacade
      * @param ModuleCustomInterface&ModuleAssetUrlInterface $module
      * @param Configuration                                 $configuration
      * @param Individual                                    $individual    The root individual (generation 1)
-     *
-     * @return Node|null
      */
     public function createTreeStructure(
         ModuleCustomInterface&ModuleAssetUrlInterface $module,
@@ -102,8 +100,6 @@ class DataFacade
      *
      * @param Individual|null $individual
      * @param int             $generation 1-based depth; stops when it exceeds getGenerations()
-     *
-     * @return Node|null
      */
     private function buildTreeStructure(
         ?Individual $individual,
