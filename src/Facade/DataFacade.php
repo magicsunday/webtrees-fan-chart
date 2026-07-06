@@ -68,6 +68,14 @@ class DataFacade
     private int $nodeId = 0;
 
     /**
+     * The locale-aware compact date format for the current request. Resolved once in
+     * createTreeStructure() and reused for every node — the active locale does not
+     * change within a request, and CompactDateFormat::forLocale() parses an ICU
+     * pattern that is wasteful to recompute per node (up to ~1023 for 10 generations).
+     */
+    private string $compactDateFormat = CompactDateFormat::FALLBACK;
+
+    /**
      * Builds the complete Node tree rooted at the given individual and returns
      * it ready for JSON serialisation. Resets the node counter on each call so
      * IDs are always consecutive starting at 1.
@@ -82,8 +90,9 @@ class DataFacade
         Individual $individual,
     ): ?Node {
         $this->setModule($module);
-        $this->configuration = $configuration;
-        $this->nodeId        = 0;
+        $this->configuration     = $configuration;
+        $this->nodeId            = 0;
+        $this->compactDateFormat = CompactDateFormat::forLocale(I18N::languageTag());
 
         $rootNode = $this->buildTreeStructure($individual);
 
@@ -188,7 +197,7 @@ class DataFacade
                             $marriageDate,
                             0,
                             $this->configuration->getDetailedDateGenerations(),
-                            $this->compactDateFormat()
+                            $this->compactDateFormat
                         )
                         : ''
                 );
@@ -280,21 +289,6 @@ class DataFacade
     }
 
     /**
-     * Returns the locale-aware compact date format pattern for chart arcs.
-     *
-     * Derived from the active locale's CLDR/ICU short-date pattern (field order,
-     * separators and native digits), applied through webtrees' calendar formatter
-     * so every locale is covered automatically without a hand-maintained catalogue,
-     * while non-Gregorian calendars and B.C.E. years keep rendering correctly.
-     *
-     * @return string
-     */
-    private function compactDateFormat(): string
-    {
-        return CompactDateFormat::forLocale(I18N::languageTag());
-    }
-
-    /**
      * Populates a NodeData DTO from all processors for the given individual.
      *
      * @param int        $generation 1-based generation depth, used to select date format
@@ -312,7 +306,7 @@ class DataFacade
             $individual,
             $generation,
             $this->configuration->getDetailedDateGenerations(),
-            $this->compactDateFormat(),
+            $this->compactDateFormat,
         );
         $placeProcessor = new PlaceProcessor(
             $individual,
