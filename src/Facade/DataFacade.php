@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Facade;
 
 use Fisharebest\Webtrees\Family;
+use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use MagicSunday\Webtrees\FanChart\Configuration;
@@ -24,6 +25,7 @@ use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
+use MagicSunday\Webtrees\ModuleBase\Support\CompactDateFormat;
 use MagicSunday\Webtrees\ModuleBase\Support\TextDirection;
 
 /**
@@ -66,6 +68,14 @@ class DataFacade
     private int $nodeId = 0;
 
     /**
+     * The locale-aware compact date format for the current request. Resolved once in
+     * createTreeStructure() and reused for every node — the active locale does not
+     * change within a request, and CompactDateFormat::forLocale() parses an ICU
+     * pattern that is wasteful to recompute per node (up to ~1023 for 10 generations).
+     */
+    private string $compactDateFormat = CompactDateFormat::FALLBACK;
+
+    /**
      * Builds the complete Node tree rooted at the given individual and returns
      * it ready for JSON serialisation. Resets the node counter on each call so
      * IDs are always consecutive starting at 1.
@@ -73,8 +83,6 @@ class DataFacade
      * @param ModuleCustomInterface&ModuleAssetUrlInterface $module
      * @param Configuration                                 $configuration
      * @param Individual                                    $individual    The root individual (generation 1)
-     *
-     * @return Node|null
      */
     public function createTreeStructure(
         ModuleCustomInterface&ModuleAssetUrlInterface $module,
@@ -82,8 +90,9 @@ class DataFacade
         Individual $individual,
     ): ?Node {
         $this->setModule($module);
-        $this->configuration = $configuration;
-        $this->nodeId        = 0;
+        $this->configuration     = $configuration;
+        $this->nodeId            = 0;
+        $this->compactDateFormat = CompactDateFormat::forLocale(I18N::languageTag());
 
         $rootNode = $this->buildTreeStructure($individual);
 
@@ -100,8 +109,6 @@ class DataFacade
      *
      * @param Individual|null $individual
      * @param int             $generation 1-based depth; stops when it exceeds getGenerations()
-     *
-     * @return Node|null
      */
     private function buildTreeStructure(
         ?Individual $individual,
@@ -189,7 +196,8 @@ class DataFacade
                         ? DateProcessor::formatMarriageDate(
                             $marriageDate,
                             0,
-                            $this->configuration->getDetailedDateGenerations()
+                            $this->configuration->getDetailedDateGenerations(),
+                            $this->compactDateFormat
                         )
                         : ''
                 );
@@ -298,10 +306,12 @@ class DataFacade
             $individual,
             $generation,
             $this->configuration->getDetailedDateGenerations(),
+            $this->compactDateFormat,
         );
         $placeProcessor = new PlaceProcessor(
             $individual,
             $this->configuration->getPlaceParts(),
+            $this->configuration->getPlaceSuffix(),
         );
 
         $showNicknames = $this->configuration->getShowNicknames();

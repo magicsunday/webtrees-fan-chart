@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
-"POT-Creation-Date: 2026-06-06 12:50+0000\n"
+"POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: 2024-12-22 13:07+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -22,17 +22,21 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Biểu đồ cá nhân Tổ tiên"
 
-#: src/Configuration.php:573
+#: src/Configuration.php:632
 msgid "Abbreviate given names first"
 msgstr "Viết tắt tên gọi trước"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:633
 msgid "Abbreviate surnames first"
 msgstr "Viết tắt họ trước"
 
-#: src/Configuration.php:572
+#: src/Configuration.php:631
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Tự động (dựa trên truyền thống họ của cây phả hệ)"
+
+#: src/Configuration.php:420
+msgid "Automatic (from the tree configuration)"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
@@ -130,7 +134,7 @@ msgstr "Kích thước biểu đồ"
 msgid "Font size"
 msgstr "Kích thước font chữ"
 
-#: src/Configuration.php:362
+#: src/Configuration.php:421
 msgid "Full place name"
 msgstr "Tên địa điểm đầy đủ"
 
@@ -190,15 +194,15 @@ msgstr ""
 "Martin \"Chalky\" White). Tái hiện hành vi webtrees cũ cho cây gia phả lưu "
 "biệt danh trong trường GEDCOM NICK riêng."
 
-#: src/Configuration.php:363
+#: src/Configuration.php:422
 msgid "Lowest level (e.g. parish)"
 msgstr "Cấp thấp nhất (ví dụ: giáo xứ)"
 
-#: src/Configuration.php:365
+#: src/Configuration.php:424
 msgid "Lowest three levels"
 msgstr "Ba cấp thấp nhất"
 
-#: src/Configuration.php:364
+#: src/Configuration.php:423
 msgid "Lowest two levels"
 msgstr "Hai cấp thấp nhất"
 
@@ -276,7 +280,7 @@ msgstr ""
 "chỉ hiển thị năm. Ngày kết hôn bị ẩn từ thế hệ 9. Con cháu có cung hẹp tự "
 "động sử dụng định dạng chỉ năm gọn."
 
-#: src/Configuration.php:201
+#: src/Configuration.php:214
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Hiển thị đầy đủ ngày tháng đến thế hệ %s"
@@ -336,7 +340,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Kết hợp Ctrl + scroll để thu phóng biểu đồ"
 
-#: src/Configuration.php:196
+#: src/Configuration.php:209
 msgid "Years only"
 msgstr "Chỉ năm"
 

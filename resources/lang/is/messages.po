@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
-"POT-Creation-Date: 2026-06-06 12:50+0000\n"
+"POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: 2024-12-22 13:05+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -22,17 +22,21 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Skífurit yfir forfeður einstaklings."
 
-#: src/Configuration.php:573
+#: src/Configuration.php:632
 msgid "Abbreviate given names first"
 msgstr "Stytta eiginnöfn fyrst"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:633
 msgid "Abbreviate surnames first"
 msgstr "Stytta eftirnöfn fyrst"
 
-#: src/Configuration.php:572
+#: src/Configuration.php:631
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Sjálfvirkt (byggt á eftirnafnshefð trésins)"
+
+#: src/Configuration.php:420
+msgid "Automatic (from the tree configuration)"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
@@ -131,7 +135,7 @@ msgstr "Skífustærð"
 msgid "Font size"
 msgstr "Leturstærð"
 
-#: src/Configuration.php:362
+#: src/Configuration.php:421
 msgid "Full place name"
 msgstr "Fullt heiti staðar"
 
@@ -191,15 +195,15 @@ msgstr ""
 "(t.d. Martin \"Chalky\" White). Líkir eftir gamla webtrees-hegðuninni fyrir "
 "tré sem geyma gælunöfn í sérstaka GEDCOM NICK-reitinn."
 
-#: src/Configuration.php:363
+#: src/Configuration.php:422
 msgid "Lowest level (e.g. parish)"
 msgstr "Lægsta stig (t.d. sókn)"
 
-#: src/Configuration.php:365
+#: src/Configuration.php:424
 msgid "Lowest three levels"
 msgstr "Þrjú lægstu stig"
 
-#: src/Configuration.php:364
+#: src/Configuration.php:423
 msgid "Lowest two levels"
 msgstr "Tvö lægstu stig"
 
@@ -278,7 +282,7 @@ msgstr ""
 "kynslóð 9. Afkomendur með mjóa boga nota sjálfkrafa þjappað snið með aðeins "
 "ári."
 
-#: src/Configuration.php:201
+#: src/Configuration.php:214
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Sýna fulla dagsetningar til kynslóðar %s"
@@ -338,7 +342,7 @@ msgstr "Kjörstillingar fyrir eininguna “%s” hafa verið uppfærðar."
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Notaðu Ctrl + skruna til að þysja í ættartrénu"
 
-#: src/Configuration.php:196
+#: src/Configuration.php:209
 msgid "Years only"
 msgstr "Aðeins ár"
 

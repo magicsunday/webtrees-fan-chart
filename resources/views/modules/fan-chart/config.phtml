@@ -93,7 +93,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                     <?php echo view('components/select', [
                         'name'     => 'placeParts',
                         'id'       => 'placeParts',
-                        'selected' => $configuration->getPlaceParts(),
+                        'selected' => $configuration->getPlacePartsSetting(),
                         'options'  => $configuration->getPlacePartsList(),
                         'class'    => 'form-control-sm',
                     ]);

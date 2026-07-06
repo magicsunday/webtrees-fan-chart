@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
-"POT-Creation-Date: 2026-06-06 12:50+0000\n"
+"POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: 2024-12-22 13:04+0100\n"
 "Last-Translator: Josef Prause <josef.prause@gmail.com>\n"
 "Language-Team: Josef Prause josef.prause@gmail.com\n"
@@ -22,17 +22,21 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Vějíř předků osoby."
 
-#: src/Configuration.php:573
+#: src/Configuration.php:632
 msgid "Abbreviate given names first"
 msgstr "Nejprve zkrátit křestní jména"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:633
 msgid "Abbreviate surnames first"
 msgstr "Nejprve zkrátit příjmení"
 
-#: src/Configuration.php:572
+#: src/Configuration.php:631
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automaticky (podle tradice příjmení stromu)"
+
+#: src/Configuration.php:420
+msgid "Automatic (from the tree configuration)"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
@@ -130,7 +134,7 @@ msgstr "Velikost vějíře"
 msgid "Font size"
 msgstr "Velikost písma"
 
-#: src/Configuration.php:362
+#: src/Configuration.php:421
 msgid "Full place name"
 msgstr "Úplný název místa"
 
@@ -190,15 +194,15 @@ msgstr ""
 "Martin \"Chalky\" White). Napodobuje původní chování webtrees pro stromy, "
 "které přezdívky ukládají do samostatného pole GEDCOM NICK."
 
-#: src/Configuration.php:363
+#: src/Configuration.php:422
 msgid "Lowest level (e.g. parish)"
 msgstr "Nejnižší úroveň (např. farnost)"
 
-#: src/Configuration.php:365
+#: src/Configuration.php:424
 msgid "Lowest three levels"
 msgstr "Nejnižší tři úrovně"
 
-#: src/Configuration.php:364
+#: src/Configuration.php:423
 msgid "Lowest two levels"
 msgstr "Nejnižší dvě úrovně"
 
@@ -277,7 +281,7 @@ msgstr ""
 "generace 9. Potomci s úzkými oblouky automaticky používají kompaktní formát "
 "pouze s rokem."
 
-#: src/Configuration.php:201
+#: src/Configuration.php:214
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Zobrazit úplná data do generace %s"
@@ -337,7 +341,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Pomocí Ctrl + kolečko zvětšit pohled"
 
-#: src/Configuration.php:196
+#: src/Configuration.php:209
 msgid "Years only"
 msgstr "Pouze roky"
 

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
-"POT-Creation-Date: 2026-06-06 12:50+0000\n"
+"POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: 2024-12-22 13:07+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -22,17 +22,21 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "一种以扇形样式显示个人祖先的图表。"
 
-#: src/Configuration.php:573
+#: src/Configuration.php:632
 msgid "Abbreviate given names first"
 msgstr "优先缩写名字"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:633
 msgid "Abbreviate surnames first"
 msgstr "优先缩写姓氏"
 
-#: src/Configuration.php:572
+#: src/Configuration.php:631
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "自动（根据族谱的姓氏传统）"
+
+#: src/Configuration.php:420
+msgid "Automatic (from the tree configuration)"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
@@ -126,7 +130,7 @@ msgstr "扇形大小"
 msgid "Font size"
 msgstr "字体大小"
 
-#: src/Configuration.php:362
+#: src/Configuration.php:421
 msgid "Full place name"
 msgstr "完整地名"
 
@@ -183,15 +187,15 @@ msgstr ""
 "White）。模拟旧版 webtrees 的行为，适用于在单独的 GEDCOM NICK 字段中保存昵称"
 "的家谱。"
 
-#: src/Configuration.php:363
+#: src/Configuration.php:422
 msgid "Lowest level (e.g. parish)"
 msgstr "最低层级（如教区）"
 
-#: src/Configuration.php:365
+#: src/Configuration.php:424
 msgid "Lowest three levels"
 msgstr "最低三个层级"
 
-#: src/Configuration.php:364
+#: src/Configuration.php:423
 msgid "Lowest two levels"
 msgstr "最低两个层级"
 
@@ -266,7 +270,7 @@ msgstr ""
 "为早期世代显示完整日期（出生、婚姻、死亡）。后期世代仅显示年份。婚姻日期从第9"
 "代起隐藏。窄弧的后代自动使用紧凑的仅年份格式。"
 
-#: src/Configuration.php:201
+#: src/Configuration.php:214
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "显示完整日期至第 %s 代"
@@ -325,7 +329,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "按住Ctrl键滚动鼠标滚轮放大缩小"
 
-#: src/Configuration.php:196
+#: src/Configuration.php:209
 msgid "Years only"
 msgstr "仅显示年份"
 

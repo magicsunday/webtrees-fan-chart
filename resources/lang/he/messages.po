@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
-"POT-Creation-Date: 2026-06-06 12:50+0000\n"
+"POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: 2024-12-22 13:03+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -23,17 +23,21 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "תרשים מעריצים של אבותיו של אדם."
 
-#: src/Configuration.php:573
+#: src/Configuration.php:632
 msgid "Abbreviate given names first"
 msgstr "קצר תחילה את השמות הפרטיים"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:633
 msgid "Abbreviate surnames first"
 msgstr "קצר תחילה את שמות המשפחה"
 
-#: src/Configuration.php:572
+#: src/Configuration.php:631
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "אוטומטי (על פי מסורת שם המשפחה של העץ)"
+
+#: src/Configuration.php:420
+msgid "Automatic (from the tree configuration)"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
@@ -130,7 +134,7 @@ msgstr "גודל מאוורר"
 msgid "Font size"
 msgstr "גודל גופן"
 
-#: src/Configuration.php:362
+#: src/Configuration.php:421
 msgid "Full place name"
 msgstr "שם מקום מלא"
 
@@ -188,15 +192,15 @@ msgstr ""
 "Martin \"Chalky\" White). משחזר את התנהגות webtrees הישנה עבור עצים השומרים "
 "כינויים בשדה GEDCOM NICK הנפרד."
 
-#: src/Configuration.php:363
+#: src/Configuration.php:422
 msgid "Lowest level (e.g. parish)"
 msgstr "רמה נמוכה ביותר (למשל קהילה)"
 
-#: src/Configuration.php:365
+#: src/Configuration.php:424
 msgid "Lowest three levels"
 msgstr "שלוש הרמות הנמוכות ביותר"
 
-#: src/Configuration.php:364
+#: src/Configuration.php:423
 msgid "Lowest two levels"
 msgstr "שתי הרמות הנמוכות ביותר"
 
@@ -274,7 +278,7 @@ msgstr ""
 "מציגים שנה בלבד. תאריכי נישואין מוסתרים מדור 9. צאצאים עם קשתות צרות משתמשים "
 "אוטומטית בפורמט שנה בלבד."
 
-#: src/Configuration.php:201
+#: src/Configuration.php:214
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "הצג תאריכים מלאים עד דור %s"
@@ -333,7 +337,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "השתמש ב- Ctrl + גלילה כדי להגדיל את התצוגה"
 
-#: src/Configuration.php:196
+#: src/Configuration.php:209
 msgid "Years only"
 msgstr "שנים בלבד"
 

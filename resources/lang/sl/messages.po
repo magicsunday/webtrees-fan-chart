@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
-"POT-Creation-Date: 2026-06-06 12:50+0000\n"
+"POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: 2025-11-20 17:44+0100\n"
 "Last-Translator: Gregor Anželj <gregor.anzelj@gmail.com>\n"
 "Language-Team: Slovenian\n"
@@ -25,17 +25,21 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Pahljačasti diagram posameznikovih prednikov."
 
-#: src/Configuration.php:573
+#: src/Configuration.php:632
 msgid "Abbreviate given names first"
 msgstr "Najprej skrajšaj osebna imena"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:633
 msgid "Abbreviate surnames first"
 msgstr "Najprej skrajšaj priimke"
 
-#: src/Configuration.php:572
+#: src/Configuration.php:631
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Samodejno (glede na drevesno tradicijo priimkov)"
+
+#: src/Configuration.php:420
+msgid "Automatic (from the tree configuration)"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
@@ -133,15 +137,13 @@ msgstr "Velikost pahljače"
 msgid "Font size"
 msgstr "Velikost pisave"
 
-#: src/Configuration.php:362
+#: src/Configuration.php:421
 msgid "Full place name"
 msgstr "Polno ime kraja"
 
 #: resources/views/modules/fan-chart/config.phtml:51
-#, fuzzy
-#| msgid "Generations"
 msgid "General"
-msgstr "Generacije"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
@@ -195,15 +197,15 @@ msgstr ""
 "Martin \"Chalky\" White). Posnema staro vedenje webtrees za drevesa, ki "
 "vzdevke shranjujejo v ločenem polju GEDCOM NICK."
 
-#: src/Configuration.php:363
+#: src/Configuration.php:422
 msgid "Lowest level (e.g. parish)"
 msgstr "Najnižja raven (npr. župnija)"
 
-#: src/Configuration.php:365
+#: src/Configuration.php:424
 msgid "Lowest three levels"
 msgstr "Najnižje tri ravni"
 
-#: src/Configuration.php:364
+#: src/Configuration.php:423
 msgid "Lowest two levels"
 msgstr "Najnižji dve ravni"
 
@@ -281,7 +283,7 @@ msgstr ""
 "generacije prikazujejo samo leto. Datumi poroke so skriti od generacije 9. "
 "Potomci z ozkimi loki samodejno uporabljajo kompakten format samo z letom."
 
-#: src/Configuration.php:201
+#: src/Configuration.php:214
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Prikaži polne datume do generacije %s"
@@ -341,7 +343,7 @@ msgstr "Nastavitve modula “%s” so posodobljene."
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Uporabi Ctrl+Scroll kolesce za povečavo diagrama"
 
-#: src/Configuration.php:196
+#: src/Configuration.php:209
 msgid "Years only"
 msgstr "Samo leta"
 
