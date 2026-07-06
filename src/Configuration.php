@@ -14,6 +14,7 @@ namespace MagicSunday\Webtrees\FanChart;
 use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Module\AbstractModule;
+use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Validator;
 use MagicSunday\Webtrees\ModuleBase\Model\NameAbbreviation;
 use Psr\Http\Message\ServerRequestInterface;
@@ -108,9 +109,17 @@ class Configuration
 
     /**
      * The default number of place hierarchy parts to display. 1 = lowest level
-     * (parish/city), 0 = full place name.
+     * (parish/city), 0 = full place name. Used as the effective fallback when the
+     * "Automatic" setting cannot resolve a tree preference.
      */
     private const int DEFAULT_PLACE_PARTS = 1;
+
+    /**
+     * The placeParts sentinel meaning "inherit the tree's SHOW_PEDIGREE_PLACES /
+     * SHOW_PEDIGREE_PLACES_SUFFIX preference". The default setting, so a central
+     * tree configuration takes effect without per-module setup.
+     */
+    public const int PLACE_PARTS_AUTOMATIC = -1;
 
     /**
      * The default number of generations for which detailed life event dates are
@@ -126,10 +135,14 @@ class Configuration
     /**
      * @param ServerRequestInterface $request
      * @param AbstractModule         $module
+     * @param Tree|null              $tree    The active tree, used to resolve the "Automatic" placeParts
+     *                                        setting from SHOW_PEDIGREE_PLACES / _SUFFIX; null in
+     *                                        tree-agnostic contexts such as the admin configuration page
      */
     public function __construct(
         private readonly ServerRequestInterface $request,
         private readonly AbstractModule $module,
+        private readonly ?Tree $tree = null,
     ) {
     }
 
@@ -332,22 +345,67 @@ class Configuration
     }
 
     /**
-     * Returns the number of lowest place hierarchy levels to display (0 = full
-     * name, 1–3 = N lowest levels).
+     * Returns the raw place-parts setting: PLACE_PARTS_AUTOMATIC (-1, inherit the
+     * tree preference) or an explicit override (0 = full name, 1–3 = N levels). This
+     * is the value shown in the configuration select and forwarded on navigation.
+     *
+     * @return int
+     */
+    public function getPlacePartsSetting(): int
+    {
+        return $this->validator()
+            ->isBetween(self::PLACE_PARTS_AUTOMATIC, 3)
+            ->integer(
+                'placeParts',
+                (int) $this->module->getPreference(
+                    'default_placeParts',
+                    (string) self::PLACE_PARTS_AUTOMATIC
+                )
+            );
+    }
+
+    /**
+     * Returns the effective number of place hierarchy levels to display. Resolves the
+     * "Automatic" setting to the tree's SHOW_PEDIGREE_PLACES preference (webtrees'
+     * own default applies when unset; DEFAULT_PLACE_PARTS when no tree is available),
+     * otherwise the explicit 0–3 override.
      *
      * @return int
      */
     public function getPlaceParts(): int
     {
-        return $this->validator()
-            ->isBetween(0, 3)
-            ->integer(
-                'placeParts',
-                (int) $this->module->getPreference(
-                    'default_placeParts',
-                    (string) self::DEFAULT_PLACE_PARTS
-                )
-            );
+        $setting = $this->getPlacePartsSetting();
+
+        if ($setting !== self::PLACE_PARTS_AUTOMATIC) {
+            return $setting;
+        }
+
+        if (!$this->tree instanceof Tree) {
+            return self::DEFAULT_PLACE_PARTS;
+        }
+
+        return (int) $this->tree->getPreference('SHOW_PEDIGREE_PLACES');
+    }
+
+    /**
+     * Returns whether the last (country-end) place parts should be kept instead of the
+     * first (locality-end). Mirrors the tree's SHOW_PEDIGREE_PLACES_SUFFIX preference in
+     * "Automatic" mode; an explicit 0–3 override always keeps the first parts (the module
+     * exposes no suffix control of its own).
+     *
+     * @return bool
+     */
+    public function getPlaceSuffix(): bool
+    {
+        if ($this->getPlacePartsSetting() !== self::PLACE_PARTS_AUTOMATIC) {
+            return false;
+        }
+
+        if (!$this->tree instanceof Tree) {
+            return false;
+        }
+
+        return $this->tree->getPreference('SHOW_PEDIGREE_PLACES_SUFFIX') === '1';
     }
 
     /**
@@ -359,10 +417,11 @@ class Configuration
     public function getPlacePartsList(): array
     {
         return [
-            0 => I18N::translate('Full place name'),
-            1 => I18N::translate('Lowest level (e.g. parish)'),
-            2 => I18N::translate('Lowest two levels'),
-            3 => I18N::translate('Lowest three levels'),
+            self::PLACE_PARTS_AUTOMATIC => I18N::translate('Automatic (from the tree configuration)'),
+            0                           => I18N::translate('Full place name'),
+            1                           => I18N::translate('Lowest level (e.g. parish)'),
+            2                           => I18N::translate('Lowest two levels'),
+            3                           => I18N::translate('Lowest three levels'),
         ];
     }
 
@@ -617,6 +676,7 @@ class Configuration
             'hideEmptySegments'       => $this->getHideEmptySegments() ? '1' : '0',
             'showFamilyColors'        => $this->getShowFamilyColors() ? '1' : '0',
             'showPlaces'              => $this->getShowPlaces() ? '1' : '0',
+            'placeParts'              => $this->getPlacePartsSetting(),
             'showParentMarriageDates' => $this->getShowParentMarriageDates() ? '1' : '0',
             'showImages'              => $this->getShowImages() ? '1' : '0',
             'showNames'               => $this->getShowNames() ? '1' : '0',

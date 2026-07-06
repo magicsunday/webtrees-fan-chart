@@ -18,6 +18,7 @@ use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Services\ChartService;
+use Fisharebest\Webtrees\Tree;
 use GuzzleHttp\Psr7\ServerRequest;
 use Illuminate\Database\Schema\Blueprint;
 use MagicSunday\Webtrees\FanChart\Configuration;
@@ -121,6 +122,7 @@ final class ConfigurationTest extends TestCase
                 'hideEmptySegments',
                 'showFamilyColors',
                 'showPlaces',
+                'placeParts',
                 'showParentMarriageDates',
                 'showImages',
                 'showNames',
@@ -241,6 +243,81 @@ final class ConfigurationTest extends TestCase
         $configuration = new Configuration($request, $module);
 
         self::assertSame(3, $configuration->getPlaceParts());
+    }
+
+    /**
+     * Ensures the placeParts setting defaults to "Automatic" when no module preference exists.
+     */
+    #[Test]
+    public function placePartsSettingDefaultsToAutomatic(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $module  = $this->createModuleWithPreferences([]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame(Configuration::PLACE_PARTS_AUTOMATIC, $configuration->getPlacePartsSetting());
+    }
+
+    /**
+     * Ensures "Automatic" resolves the effective place parts and suffix from the tree
+     * preferences SHOW_PEDIGREE_PLACES / SHOW_PEDIGREE_PLACES_SUFFIX.
+     */
+    #[Test]
+    public function placePartsAutomaticResolvesTreePreferences(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $module  = $this->createModuleWithPreferences([]);
+
+        $tree = self::createStub(Tree::class);
+        $tree->method('getPreference')->willReturnMap([
+            ['SHOW_PEDIGREE_PLACES', '2'],
+            ['SHOW_PEDIGREE_PLACES_SUFFIX', '1'],
+        ]);
+
+        $configuration = new Configuration($request, $module, $tree);
+
+        self::assertSame(2, $configuration->getPlaceParts());
+        self::assertTrue($configuration->getPlaceSuffix());
+    }
+
+    /**
+     * Ensures "Automatic" falls back to the default part count and no suffix when no tree
+     * is available (e.g. the admin configuration page).
+     */
+    #[Test]
+    public function placePartsAutomaticWithoutTreeFallsBackToDefault(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $module  = $this->createModuleWithPreferences([]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame(1, $configuration->getPlaceParts());
+        self::assertFalse($configuration->getPlaceSuffix());
+    }
+
+    /**
+     * Ensures an explicit place-parts override ignores the tree suffix preference.
+     */
+    #[Test]
+    public function explicitPlacePartsIgnoresTreeSuffix(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams(['placeParts' => '2']);
+
+        $module = $this->createModuleWithPreferences([]);
+
+        $tree = self::createStub(Tree::class);
+        $tree->method('getPreference')->willReturnMap([
+            ['SHOW_PEDIGREE_PLACES', '3'],
+            ['SHOW_PEDIGREE_PLACES_SUFFIX', '1'],
+        ]);
+
+        $configuration = new Configuration($request, $module, $tree);
+
+        self::assertSame(2, $configuration->getPlaceParts());
+        self::assertFalse($configuration->getPlaceSuffix());
     }
 
     /**

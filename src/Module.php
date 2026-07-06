@@ -165,7 +165,7 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
         $user = Validator::attributes($request)->user();
         $ajax = Validator::queryParams($request)->boolean('ajax', false);
 
-        $this->configuration = new Configuration($request, $this);
+        $this->configuration = new Configuration($request, $this, $tree);
 
         // Convert POST requests into GET requests for pretty URLs.
         // This also updates the name above the form, which won't get updated if only a POST request is used
@@ -335,11 +335,11 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
      */
     public function getUpdateAction(ServerRequestInterface $request): ResponseInterface
     {
-        $this->configuration = new Configuration($request, $this);
-
         $tree = Validator::attributes($request)->tree();
         $user = Validator::attributes($request)->user();
-        $xref = Validator::queryParams($request)->isXref()->string('xref');
+
+        $this->configuration = new Configuration($request, $this, $tree);
+        $xref                = Validator::queryParams($request)->isXref()->string('xref');
 
         Auth::checkComponentAccess($this, ModuleChartInterface::class, $tree, $user);
 

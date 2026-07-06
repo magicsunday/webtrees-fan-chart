@@ -94,7 +94,7 @@ trait ModuleConfigTrait
         );
         $this->setPreference(
             'default_placeParts',
-            (string) $configuration->getPlaceParts()
+            (string) $configuration->getPlacePartsSetting()
         );
         $this->setPreference(
             'default_showParentMarriageDates',

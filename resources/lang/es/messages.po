@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
-"POT-Creation-Date: 2026-06-06 12:50+0000\n"
+"POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: 2024-12-22 13:05+0100\n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -22,17 +22,21 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Un diagrama de abanico de los antepasados de un individuo."
 
-#: src/Configuration.php:573
+#: src/Configuration.php:632
 msgid "Abbreviate given names first"
 msgstr "Abreviar primero los nombres de pila"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:633
 msgid "Abbreviate surnames first"
 msgstr "Abreviar primero los apellidos"
 
-#: src/Configuration.php:572
+#: src/Configuration.php:631
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automático (según la tradición de apellidos del árbol)"
+
+#: src/Configuration.php:420
+msgid "Automatic (from the tree configuration)"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
@@ -132,7 +136,7 @@ msgstr "Ángulo del abanico"
 msgid "Font size"
 msgstr "Tamaño tipografía"
 
-#: src/Configuration.php:362
+#: src/Configuration.php:421
 msgid "Full place name"
 msgstr "Nombre completo del lugar"
 
@@ -193,15 +197,15 @@ msgstr ""
 "webtrees para árboles que guardan los apodos en el campo GEDCOM NICK "
 "separado."
 
-#: src/Configuration.php:363
+#: src/Configuration.php:422
 msgid "Lowest level (e.g. parish)"
 msgstr "Nivel más bajo (p. ej. parroquia)"
 
-#: src/Configuration.php:365
+#: src/Configuration.php:424
 msgid "Lowest three levels"
 msgstr "Tres niveles más bajos"
 
-#: src/Configuration.php:364
+#: src/Configuration.php:423
 msgid "Lowest two levels"
 msgstr "Dos niveles más bajos"
 
@@ -282,7 +286,7 @@ msgstr ""
 "descendientes con arcos estrechos usan automáticamente un formato compacto "
 "de solo año."
 
-#: src/Configuration.php:201
+#: src/Configuration.php:214
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Mostrar fechas completas hasta la generación %s"
@@ -342,7 +346,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Use Ctrl + scroll para acercar la vista"
 
-#: src/Configuration.php:196
+#: src/Configuration.php:209
 msgid "Years only"
 msgstr "Solo años"
 

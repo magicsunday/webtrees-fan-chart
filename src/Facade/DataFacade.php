@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Facade;
 
 use Fisharebest\Webtrees\Family;
+use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use MagicSunday\Webtrees\FanChart\Configuration;
@@ -24,6 +25,7 @@ use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
+use MagicSunday\Webtrees\ModuleBase\Support\CompactDateFormat;
 use MagicSunday\Webtrees\ModuleBase\Support\TextDirection;
 
 /**
@@ -189,7 +191,8 @@ class DataFacade
                         ? DateProcessor::formatMarriageDate(
                             $marriageDate,
                             0,
-                            $this->configuration->getDetailedDateGenerations()
+                            $this->configuration->getDetailedDateGenerations(),
+                            $this->compactDateFormat()
                         )
                         : ''
                 );
@@ -281,6 +284,21 @@ class DataFacade
     }
 
     /**
+     * Returns the locale-aware compact date format pattern for chart arcs.
+     *
+     * Derived from the active locale's CLDR/ICU short-date pattern (field order,
+     * separators and native digits), applied through webtrees' calendar formatter
+     * so every locale is covered automatically without a hand-maintained catalogue,
+     * while non-Gregorian calendars and B.C.E. years keep rendering correctly.
+     *
+     * @return string
+     */
+    private function compactDateFormat(): string
+    {
+        return CompactDateFormat::forLocale(I18N::languageTag());
+    }
+
+    /**
      * Populates a NodeData DTO from all processors for the given individual.
      *
      * @param int        $generation 1-based generation depth, used to select date format
@@ -298,10 +316,12 @@ class DataFacade
             $individual,
             $generation,
             $this->configuration->getDetailedDateGenerations(),
+            $this->compactDateFormat(),
         );
         $placeProcessor = new PlaceProcessor(
             $individual,
             $this->configuration->getPlaceParts(),
+            $this->configuration->getPlaceSuffix(),
         );
 
         $showNicknames = $this->configuration->getShowNicknames();

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Hindi\n"
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
-"POT-Creation-Date: 2026-06-06 12:50+0000\n"
+"POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Rico Sonntag <mail@ricosonntag.de>\n"
 "Language-Team: \n"
@@ -21,17 +21,21 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "किसी व्यक्ती के पूर्वजों का एक फैन चार्ट।"
 
-#: src/Configuration.php:573
+#: src/Configuration.php:632
 msgid "Abbreviate given names first"
 msgstr "पहले प्रदत्त नामों को संक्षिप्त करें"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:633
 msgid "Abbreviate surnames first"
 msgstr "पहले उपनामों को संक्षिप्त करें"
 
-#: src/Configuration.php:572
+#: src/Configuration.php:631
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "स्वचालित (वृक्ष की उपनाम परंपरा पर आधारित)"
+
+#: src/Configuration.php:420
+msgid "Automatic (from the tree configuration)"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
@@ -128,7 +132,7 @@ msgstr "फैन का आकार"
 msgid "Font size"
 msgstr "फ़ॉन्ट आकार"
 
-#: src/Configuration.php:362
+#: src/Configuration.php:421
 msgid "Full place name"
 msgstr "पूरा स्थान नाम"
 
@@ -187,15 +191,15 @@ msgstr ""
 "(जैसे Martin \"Chalky\" White)। उन वृक्षों के लिए पुराने webtrees व्यवहार का अनुकरण "
 "करता है जो उपनामों को अलग GEDCOM NICK फ़ील्ड में संग्रहीत करते हैं।"
 
-#: src/Configuration.php:363
+#: src/Configuration.php:422
 msgid "Lowest level (e.g. parish)"
 msgstr "सबसे निचला स्तर (जैसे पल्ली)"
 
-#: src/Configuration.php:365
+#: src/Configuration.php:424
 msgid "Lowest three levels"
 msgstr "सबसे निचले तीन स्तर"
 
-#: src/Configuration.php:364
+#: src/Configuration.php:423
 msgid "Lowest two levels"
 msgstr "सबसे निचले दो स्तर"
 
@@ -273,7 +277,7 @@ msgstr ""
 "वर्ष दिखाती हैं। विवाह तिथियाँ पीढ़ी 9 से छिपी होती हैं। संकीर्ण चापों वाले वंशज स्वचालित "
 "रूप से एक संक्षिप्त केवल-वर्ष प्रारूप का उपयोग करते हैं।"
 
-#: src/Configuration.php:201
+#: src/Configuration.php:214
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "पीढ़ी %s तक पूर्ण तिथियाँ दिखाएँ"
@@ -332,7 +336,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Ctrl + Scroll से ज़ूम इन करें"
 
-#: src/Configuration.php:196
+#: src/Configuration.php:209
 msgid "Years only"
 msgstr "केवल वर्ष"
 
