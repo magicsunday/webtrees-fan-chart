@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
 "POT-Creation-Date: 1970-01-01 00:00+0000\n"
-"PO-Revision-Date: 2026-05-03 08:27+0200\n"
+"PO-Revision-Date: 2026-07-06 18:02+0200\n"
 "Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -36,7 +36,7 @@ msgstr "Automatisch (op basis van de achternaamtraditie van de stamboom)"
 
 #: src/Configuration.php:420
 msgid "Automatic (from the tree configuration)"
-msgstr ""
+msgstr "Automatisch (op basis van de stamboomconfiguratie)"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
