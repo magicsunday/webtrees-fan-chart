@@ -123,7 +123,11 @@ Pipeline (`make release X.Y.Z`):
 
 ## PR/commit checklist
 - `composer ci:test` must pass before every commit.
-- Use Conventional Commits; include ticket IDs in titles when available (e.g. `Fixes #182`).
+- Commit subjects match `^(GH-<N>: )?[A-ZÄÖÜ]` — a capitalised imperative, with the
+  `GH-<N>: ` prefix on issue-tied work. **No conventional-commit prefixes**
+  (`feat:`, `fix:`, `chore:` …), no lowercase or path-like starts. Branches for an
+  issue are named exactly `GH-<N>`.
+- Never add a `Co-Authored-By:` trailer or any other AI attribution.
 - Keep PRs small and focused (~≤300 net LOC) with atomic commits.
 - Ensure coverage ≥90% on touched PHP paths.
 - After PR receives review comments: assess, fix, commit, reply with commit hash, resolve threads via GraphQL.
