@@ -218,7 +218,7 @@ dist-smoke:
 	fi
 	@paths=$$(unzip -Z1 $(MODULE_NAME).zip); \
 	for f in module.php LICENSE; do \
-		echo "$$paths" | grep -Fxq "$$f" || { echo "Error: required file missing from zip: $$f"; exit 1; }; \
+		grep -Fxq "$$f" <<<"$$paths" || { echo "Error: required file missing from zip: $$f"; exit 1; }; \
 	done; \
 	for prefix in \
 		resources/js/$(JS_NAME)-[0-9] \
@@ -227,20 +227,20 @@ dist-smoke:
 		vendor/magicsunday/webtrees-module-base/src/Module/ \
 		vendor/magicsunday/webtrees-module-base/src/Processor/ \
 	; do \
-		echo "$$paths" | grep -qE "^$$prefix" || { echo "Error: required prefix has no entries in zip: $$prefix"; exit 1; }; \
+		grep -qE "^$$prefix" <<<"$$paths" || { echo "Error: required prefix has no entries in zip: $$prefix"; exit 1; }; \
 	done; \
-	if echo "$$paths" | grep -qE '(^|/)composer\.json$$'; then \
+	if grep -qE '(^|/)composer\.json$$' <<<"$$paths"; then \
 		echo "Error: composer.json found in zip"; exit 1; \
 	fi; \
-	if echo "$$paths" | grep -qE '^assets/'; then \
+	if grep -qE '^assets/' <<<"$$paths"; then \
 		echo "Error: assets/ found in zip"; exit 1; \
 	fi; \
-	for dir in dev .githooks; do \
-		if echo "$$paths" | grep -qE "^$$dir/"; then \
-			echo "Error: $$dir/ found in zip"; exit 1; \
+	for dir in 'dev' '\.githooks'; do \
+		if grep -qE "^$$dir/" <<<"$$paths"; then \
+			echo "Error: $${dir#\\}/ found in zip"; exit 1; \
 		fi; \
 	done; \
-	if echo "$$paths" | grep -qE '(^|/)jsconfig\.json$$'; then \
+	if grep -qE '(^|/)jsconfig\.json$$' <<<"$$paths"; then \
 		echo "Error: jsconfig.json found in zip"; exit 1; \
 	fi
 	@unzip -p $(MODULE_NAME).zip module.php | grep -qF 'MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase' \
