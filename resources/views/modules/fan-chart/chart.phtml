@@ -11,14 +11,15 @@ declare(strict_types=1);
 
 use Fisharebest\Webtrees\View;
 use MagicSunday\Webtrees\FanChart\Configuration;
+use MagicSunday\Webtrees\FanChart\Model\Node;
 
 /**
  * @var string        $javascript
  * @var Configuration $configuration
- * @var array         $id                The unique chart ID
+ * @var string        $id                The unique chart ID
  * @var array         $chartParams
  * @var string[]      $exportStylesheets A list of stylesheets used by SVG export
- * @var array         $data              The chart data
+ * @var Node|null     $data              The chart data tree, JSON-serialized into the FanChart "data" option
  */
 ?>
 
