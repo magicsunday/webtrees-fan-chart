@@ -17,6 +17,7 @@ import { classifyElement } from "./lifecycle.js";
  * @import { Selection } from "d3-selection"
  * @import Svg from "../svg.js"
  * @import Configuration from "../configuration.js"
+ * @import { HierarchyNode } from "../hierarchy.js"
  * @import Geometry from "./geometry.js"
  */
 
@@ -67,7 +68,7 @@ export default class Person {
      * @param {Configuration} configuration The application configuration
      * @param {Geometry}      geometry      Shared geometry instance for this render pass
      * @param {Selection<any, any, any, any>} person        The <g class="person"> D3 selection
-     * @param {object}        children      The D3 partition datum for this person
+     * @param {HierarchyNode} children      The D3 partition datum for this person
      */
     constructor(svg, configuration, geometry, person, children) {
         this._svg = svg;
@@ -84,7 +85,7 @@ export default class Person {
      * image width.
      *
      * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
-     * @param {object}    datum  The D3 partition datum
+     * @param {HierarchyNode}                 datum  The D3 partition datum
      */
     init(person, datum) {
         // Hide outer generations when only images are shown (no names)
@@ -157,7 +158,7 @@ export default class Person {
      * colors fill the arc body.
      *
      * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
-     * @param {object}    datum  The D3 partition datum
+     * @param {HierarchyNode}                 datum  The D3 partition datum
      *
      * @private
      */
@@ -190,7 +191,7 @@ export default class Person {
      * width, and whether names are shown. Returns null if conditions aren't met
      * (images disabled, no thumbnail, outer arc, or arc too narrow).
      *
-     * @param {object} datum The D3 partition datum
+     * @param {HierarchyNode} datum The D3 partition datum
      *
      * @return {number|null}
      *
@@ -252,8 +253,8 @@ export default class Person {
      * image left of the text block, both centered on arc.
      *
      * @param {Selection<any, any, any, any>} person    The parent element
-     * @param {object}    datum     The D3 data object
-     * @param {boolean}   showNames Whether name labels are rendered
+     * @param {HierarchyNode}                 datum     The D3 data object
+     * @param {boolean}                       showNames Whether name labels are rendered
      *
      * @private
      */
@@ -414,7 +415,7 @@ export default class Person {
      * appendArc() with the pre-computed family color (if any).
      *
      * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
-     * @param {object}    datum  The D3 partition datum
+     * @param {HierarchyNode}                 datum  The D3 partition datum
      *
      * @private
      */
@@ -447,7 +448,7 @@ export default class Person {
      * spouse segments (sharing the same parent) use no padding so they appear
      * as a single joined block.
      *
-     * @param {object} datum The D3 data object
+     * @param {HierarchyNode} datum The D3 data object
      *
      * @return {number}
      *

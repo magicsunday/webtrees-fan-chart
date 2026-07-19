@@ -17,7 +17,20 @@ import { truncateToFit } from "@magicsunday/webtrees-chart-lib";
  * @import { Selection } from "d3-selection"
  * @import Svg from "../svg.js"
  * @import Configuration from "../configuration.js"
+ * @import { HierarchyNode } from "../hierarchy.js"
  * @import Geometry from "./geometry.js"
+ */
+
+/**
+ * The radii and angles of a single marriage arc, as resolved by
+ * Marriage._resolveMarriageGeometry() and consumed by
+ * createMarriageArcGenerator().
+ *
+ * @typedef {object} MarriageArcGeometry
+ * @property {number} innerR     Inner radius in pixels
+ * @property {number} outerR     Outer radius in pixels
+ * @property {number} startAngle Start angle in radians
+ * @property {number} endAngle   End angle in radians
  */
 
 /**
@@ -44,8 +57,8 @@ export default class Marriage {
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      * @param {Geometry}      geometry      Shared geometry instance for this render pass
-     * @param {Selection<any, any, any, any>}     marriage      The <g class="marriage"> D3 selection
-     * @param {object}        datum         The D3 partition datum for the parent node
+     * @param {Selection<any, any, any, any>} marriage      The <g class="marriage"> D3 selection
+     * @param {HierarchyNode} datum         The D3 partition datum for the parent node
      */
     constructor(svg, configuration, geometry, marriage, datum) {
         this._svg = svg;
@@ -62,7 +75,7 @@ export default class Marriage {
      * removed. Returns early for outer generations when names are disabled.
      *
      * @param {Selection<any, any, any, any>} marriage The <g class="marriage"> D3 selection
-     * @param {object}    datum    The D3 partition datum
+     * @param {HierarchyNode}                 datum    The D3 partition datum
      */
     init(marriage, datum) {
         // Hide marriage arcs for outer generations when names are disabled
@@ -104,9 +117,9 @@ export default class Marriage {
     /**
      * Resolves the radial and angular geometry for a marriage arc.
      *
-     * @param {object} datum The D3 partition datum
+     * @param {HierarchyNode} datum The D3 partition datum
      *
-     * @return {{ innerR: number, outerR: number, startAngle: number, endAngle: number }}
+     * @return {MarriageArcGeometry}
      *
      * @private
      */
@@ -140,7 +153,7 @@ export default class Marriage {
      * arc already exists (update path reuse) or if the gap is zero or negative.
      *
      * @param {Selection<any, any, any, any>} marriage The <g class="marriage"> D3 selection
-     * @param {object}    datum    The D3 partition datum
+     * @param {HierarchyNode}                 datum    The D3 partition datum
      *
      * @private
      */
@@ -175,7 +188,7 @@ export default class Marriage {
      * is zero.
      *
      * @param {Selection<any, any, any, any>} marriage The <g class="marriage"> D3 selection
-     * @param {object}    datum    The D3 partition datum
+     * @param {HierarchyNode}                 datum    The D3 partition datum
      *
      * @private
      */
@@ -254,7 +267,7 @@ export default class Marriage {
      * marriage arc occupies the gap that visually belongs to the parent
      * generation, so the text should match parent-generation sizing.
      *
-     * @param {object} datum The D3 partition datum
+     * @param {HierarchyNode} datum The D3 partition datum
      *
      * @return {number}
      *

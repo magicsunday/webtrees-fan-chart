@@ -9,6 +9,7 @@ import * as d3 from "../d3.js";
 
 /**
  * @import Configuration from "../configuration.js"
+ * @import { HierarchyNode } from "../hierarchy.js"
  */
 
 export const MATH_DEG2RAD = Math.PI / 180;
@@ -232,8 +233,8 @@ export default class Geometry {
      * Arc length in pixels at the given radial position inside the arc band.
      * Used to determine whether truncated text fits within the segment.
      *
-     * @param {object} datum    D3 partition datum (needs depth, x0, x1)
-     * @param {number} position Percentage within the arc band (0 = inner, 100 = outer)
+     * @param {HierarchyNode} datum    D3 partition datum (needs depth, x0, x1)
+     * @param {number}        position Percentage within the arc band (0 = inner, 100 = outer)
      *
      * @return {number}
      */
@@ -250,7 +251,7 @@ export default class Geometry {
      * for outer arcs caps the result so text fits within 55% of the angular
      * segment width (80% for single-line arcs at depth ≥ 7).
      *
-     * @param {object} datum D3 partition datum (needs depth, x0, x1)
+     * @param {HierarchyNode} datum D3 partition datum (needs depth, x0, x1)
      *
      * @return {number}
      */

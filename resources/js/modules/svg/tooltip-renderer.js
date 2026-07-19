@@ -10,6 +10,7 @@ import { SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_ELLIPSIS, SYMBOL_MARRIAGE } from "..
 
 /**
  * @import { Selection } from "d3-selection"
+ * @import { HierarchyNode } from "../hierarchy.js"
  */
 
 /**
@@ -103,7 +104,7 @@ export default class TooltipRenderer {
      * xref).
      *
      * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
-     * @param {object}                         datum  The D3 partition datum
+     * @param {HierarchyNode}                 datum  The D3 partition datum
      */
     bindEvents(person, datum) {
         if (datum.data.data.xref === "") {
@@ -149,7 +150,7 @@ export default class TooltipRenderer {
      * Builds the HTML for the tooltip image (thumbnail or silhouette). Returns
      * an empty string if no image should be shown.
      *
-     * @param {object} datum The D3 partition datum
+     * @param {HierarchyNode} datum The D3 partition datum
      *
      * @return {string}
      *
@@ -176,7 +177,7 @@ export default class TooltipRenderer {
      * Builds the HTML table rows for birth, marriage, and death data. Returns
      * an empty string if no data is available.
      *
-     * @param {object} datum The D3 partition datum
+     * @param {HierarchyNode} datum The D3 partition datum
      *
      * @return {string}
      *
@@ -220,8 +221,8 @@ export default class TooltipRenderer {
      * div near the cursor. When the tooltip is pinned (active = true), also
      * fades it in. No-ops for empty persons.
      *
-     * @param {MouseEvent} event The triggering mouse event (used for cursor position)
-     * @param {object}     datum The D3 partition datum
+     * @param {MouseEvent}    event The triggering mouse event (used for cursor position)
+     * @param {HierarchyNode} datum The D3 partition datum
      *
      * @private
      */
