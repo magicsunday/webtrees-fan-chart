@@ -228,9 +228,12 @@ export default class Hierarchy {
 
     /**
      * Creates synthetic D3-compatible nodes for the partners and children of
-     * the central person and appends them to this._nodes. Also sets the
-     * childScale on the configuration so Geometry can resolve angles for
-     * negative depths.
+     * the central person and appends them to this._nodes.
+     *
+     * Writes both descendant layout results onto the configuration, on every
+     * exit path: childScale, so Geometry can resolve angles for negative
+     * depths, and smallestChildFraction, so it can cap all child font sizes
+     * uniformly. Both are cleared when no descendant sector is laid out.
      *
      * @param {NodeDatum} datum The raw JSON chart data object from the server
      *
@@ -242,6 +245,7 @@ export default class Hierarchy {
 
         if (partners.length === 0 && unassignedChildren.length === 0) {
             this._configuration.childScale = null;
+            this._configuration.smallestChildFraction = 0;
 
             return;
         }
@@ -259,6 +263,7 @@ export default class Hierarchy {
         // Not enough room for descendants
         if (endChildPi <= startChildPi) {
             this._configuration.childScale = null;
+            this._configuration.smallestChildFraction = 0;
 
             return;
         }
@@ -327,7 +332,7 @@ export default class Hierarchy {
             }
         }
 
-        /** @type {any} */ (this._configuration).smallestChildFraction = smallestChildFraction;
+        this._configuration.smallestChildFraction = smallestChildFraction;
 
         this._createDescendantNodes(familyBlocks, rootXref, useEqualDistribution, totalWeight);
     }

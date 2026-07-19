@@ -320,18 +320,54 @@ describe("Hierarchy.initDescendants", () => {
         expect(descNodes[1].x1).toBeCloseTo(1, 10);
     });
 
-    test("sets childScale to null when no descendants exist", () => {
+    test("clears childScale and smallestChildFraction when no descendants exist", () => {
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         const config = {
             generations: 2,
             showDescendants: true,
             fanDegree: 210,
             childScale: "stale",
+            smallestChildFraction: 0.05,
+        };
+        const hierarchy = new Hierarchy(config);
+
+        hierarchy.init(rootDatum);
+
+        // Both descendant layout results must be cleared together: a stale
+        // fraction surviving an update would cap the font of a later chart
+        // against a sector that is no longer rendered.
+        expect(config.childScale).toBeNull();
+        expect(config.smallestChildFraction).toBe(0);
+    });
+
+    test("clears childScale and smallestChildFraction when the sector has no room", () => {
+        // A full circle leaves no descendant sector: the ancestor fan already
+        // spans 360 degrees, so startChildPi ends up beyond endChildPi. This is
+        // the second early return — reached only when partners or unassigned
+        // children exist, so the "no descendants" guard above does not swallow
+        // it first.
+        //
+        // The real Configuration cannot produce this state: its constructor
+        // clamps fanDegree to [180, 270] whenever showDescendants is set. The
+        // plain object below bypasses that clamp deliberately, so this covers
+        // defensive code rather than a reachable path — worth knowing before
+        // anyone considers deleting the branch.
+        const partner = createPartner({ xref: "I2", children: [createChild({ xref: "I10" })] });
+        const rootDatum = createIndividual({ id: 1, generation: 1 });
+        rootDatum.partners = [partner];
+
+        const config = {
+            generations: 2,
+            showDescendants: true,
+            fanDegree: 360,
+            childScale: "stale",
+            smallestChildFraction: 0.05,
         };
         const hierarchy = new Hierarchy(config);
 
         hierarchy.init(rootDatum);
 
         expect(config.childScale).toBeNull();
+        expect(config.smallestChildFraction).toBe(0);
     });
 });

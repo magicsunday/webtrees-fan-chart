@@ -285,10 +285,9 @@ export default class Geometry {
         }
 
         // Uniform font cap for all children based on the narrowest child arc
-        const cfg = /** @type {any} */ (this._configuration);
-        if (isChild && cfg.smallestChildFraction) {
+        if (isChild && this._configuration.smallestChildFraction) {
             const totalSectorRad = this.endAngle(datum.depth, 1) - this.startAngle(datum.depth, 0);
-            const narrowestRad = cfg.smallestChildFraction * totalSectorRad;
+            const narrowestRad = this._configuration.smallestChildFraction * totalSectorRad;
             const narrowestWidth = narrowestRad * this.centerRadius(datum.depth);
             const maxFont = (narrowestWidth * 0.55) / 2;
 

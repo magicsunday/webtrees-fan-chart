@@ -173,6 +173,62 @@ describe("Geometry", () => {
         expect(fontAtMinus1).toBeCloseTo(fontAtPlus1);
     });
 
+    // The child font cap. Every input below is deterministic, so the expected
+    // values are stated in closed form rather than as inequalities — an
+    // inequality would survive a mutation of any constant in the cap formula.
+    //
+    //   centerRadius(-2)  = (innerRadius 70 + outerRadius 90) / 2 = 80
+    //   totalSectorRad    = childScale(1) - childScale(0)         = π
+    //   maxFont(fraction) = (fraction · π · 80 · 0.55) / 2
+    //
+    // Uncapped, a depth -2 node scales to (22 - 2) · 100 / 100 = 20.
+    const createChildCapConfiguration = (smallestChildFraction) =>
+        createConfiguration({
+            fontSize: 22,
+            fontScale: 100,
+            childScale: (v) => v * Math.PI,
+            smallestChildFraction,
+        });
+
+    const CHILD_DATUM = { depth: -2, x0: 0, x1: 1 };
+    const UNCAPPED_FONT_SIZE = 20;
+
+    it("caps a child font size to the width of the narrowest child arc", () => {
+        const geometry = new Geometry(createChildCapConfiguration(0.02));
+
+        // (0.02 · π · 80 · 0.55) / 2
+        expect(geometry.getFontSize(CHILD_DATUM)).toBeCloseTo(1.3823, 4);
+    });
+
+    it("leaves the child font size uncapped when no narrowest arc is known", () => {
+        const geometry = new Geometry(createChildCapConfiguration(0));
+
+        expect(geometry.getFontSize(CHILD_DATUM)).toBe(UNCAPPED_FONT_SIZE);
+    });
+
+    it("caps a wider narrowest arc to a proportionally larger font", () => {
+        const geometry = new Geometry(createChildCapConfiguration(0.2));
+
+        // (0.2 · π · 80 · 0.55) / 2 — still below the uncapped 20
+        expect(geometry.getFontSize(CHILD_DATUM)).toBeCloseTo(13.823, 3);
+    });
+
+    it("leaves ancestor font sizes untouched by the child cap", () => {
+        const geometry = new Geometry(createChildCapConfiguration(0.02));
+
+        expect(geometry.getFontSize({ depth: 2, x0: 0, x1: 1 })).toBe(UNCAPPED_FONT_SIZE);
+    });
+
+    it("caps every child to the same size regardless of its own arc width", () => {
+        const geometry = new Geometry(createChildCapConfiguration(0.02));
+
+        // The cap is measured against the FULL descendant sector, never the
+        // node's own arc, so a node spanning a fifth of the sector lands on the
+        // same value as the full-width node above. This is what
+        // smallestChildFraction is for.
+        expect(geometry.getFontSize({ depth: -2, x0: 0.4, x1: 0.6 })).toBeCloseTo(1.3823, 4);
+    });
+
     it("mirrors innerRadius symmetrically for negative and positive depths", () => {
         const geometry = new Geometry(createConfiguration({ circlePadding: 0 }));
 
