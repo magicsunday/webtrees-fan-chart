@@ -173,10 +173,6 @@ export default class Configuration {
         return this._generations;
     }
 
-    set generations(value) {
-        this._generations = value;
-    }
-
     /**
      * Total angular span of the fan in degrees (e.g. 180, 210, 270, 360).
      *
@@ -186,10 +182,6 @@ export default class Configuration {
         return this._fanDegree;
     }
 
-    set fanDegree(value) {
-        this._fanDegree = this._showDescendants ? Math.min(270, Math.max(180, value)) : value;
-    }
-
     /**
      * Font scaling factor as a percentage (100 = default size).
      *
@@ -197,10 +189,6 @@ export default class Configuration {
      */
     get fontScale() {
         return this._fontScale;
-    }
-
-    set fontScale(value) {
-        this._fontScale = value;
     }
 
     /**
@@ -213,10 +201,6 @@ export default class Configuration {
         return this._hideEmptySegments;
     }
 
-    set hideEmptySegments(value) {
-        this._hideEmptySegments = value;
-    }
-
     /**
      * When true, arc fills use branch-based family colors instead of sex-based
      * colors.
@@ -225,10 +209,6 @@ export default class Configuration {
      */
     get showFamilyColors() {
         return this._showFamilyColors;
-    }
-
-    set showFamilyColors(value) {
-        this._showFamilyColors = value;
     }
 
     /**
@@ -247,10 +227,6 @@ export default class Configuration {
      */
     get showParentMarriageDates() {
         return this._showParentMarriageDates;
-    }
-
-    set showParentMarriageDates(value) {
-        this._showParentMarriageDates = value;
     }
 
     /**
@@ -291,10 +267,6 @@ export default class Configuration {
      */
     get showDescendants() {
         return this._showDescendants;
-    }
-
-    set showDescendants(value) {
-        this._showDescendants = value;
     }
 
     /**
@@ -338,10 +310,6 @@ export default class Configuration {
      */
     get numberOfInnerCircles() {
         return this._numberOfInnerCircles;
-    }
-
-    set numberOfInnerCircles(value) {
-        this._numberOfInnerCircles = value;
     }
 
     /**

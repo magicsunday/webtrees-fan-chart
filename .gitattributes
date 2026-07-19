@@ -1,5 +1,6 @@
 # Exclude from distribution archives (composer --prefer-dist, git archive)
 /.github/              export-ignore
+/.githooks/            export-ignore
 .gitattributes         export-ignore
 .gitignore             export-ignore
 /.jscpd.json           export-ignore
@@ -10,7 +11,9 @@
 /assets/              export-ignore
 /biome.json            export-ignore
 /compose.yaml          export-ignore
+/dev/                  export-ignore
 /jest.config.mjs       export-ignore
+/jsconfig.json         export-ignore
 /Make/                 export-ignore
 /Makefile              export-ignore
 /package.json          export-ignore

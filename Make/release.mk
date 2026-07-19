@@ -218,7 +218,7 @@ dist-smoke:
 	fi
 	@paths=$$(unzip -Z1 $(MODULE_NAME).zip); \
 	for f in module.php LICENSE; do \
-		echo "$$paths" | grep -Fxq "$$f" || { echo "Error: required file missing from zip: $$f"; exit 1; }; \
+		grep -Fxq "$$f" <<<"$$paths" || { echo "Error: required file missing from zip: $$f"; exit 1; }; \
 	done; \
 	for prefix in \
 		resources/js/$(JS_NAME)-[0-9] \
@@ -227,17 +227,27 @@ dist-smoke:
 		vendor/magicsunday/webtrees-module-base/src/Module/ \
 		vendor/magicsunday/webtrees-module-base/src/Processor/ \
 	; do \
-		echo "$$paths" | grep -qE "^$$prefix" || { echo "Error: required prefix has no entries in zip: $$prefix"; exit 1; }; \
+		grep -qE "^$$prefix" <<<"$$paths" || { echo "Error: required prefix has no entries in zip: $$prefix"; exit 1; }; \
 	done; \
-	if echo "$$paths" | grep -qE '(^|/)composer\.json$$'; then \
+	if grep -qE '(^|/)composer\.json$$' <<<"$$paths"; then \
 		echo "Error: composer.json found in zip"; exit 1; \
 	fi; \
-	if echo "$$paths" | grep -qE '^assets/'; then \
+	if grep -qE '^assets/' <<<"$$paths"; then \
 		echo "Error: assets/ found in zip"; exit 1; \
+	fi; \
+	if grep -qE '^dev/' <<<"$$paths"; then \
+		echo "Error: dev/ found in zip"; exit 1; \
+	fi; \
+	if grep -qE '^\.githooks/' <<<"$$paths"; then \
+		echo "Error: .githooks/ found in zip"; exit 1; \
+	fi; \
+	if grep -qE '(^|/)jsconfig\.json$$' <<<"$$paths"; then \
+		echo "Error: jsconfig.json found in zip"; exit 1; \
 	fi
-	@unzip -p $(MODULE_NAME).zip module.php | grep -qF 'MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase' \
-		|| { echo "Error: module.php in zip is missing prefixed namespace ($(SCOPE_NS))"; exit 1; }
-	@if unzip -p $(MODULE_NAME).zip module.php | grep -qE 'MagicSunday\\Webtrees\\ModuleBase'; then \
+	@module=$$(unzip -p $(MODULE_NAME).zip module.php); \
+	grep -qF 'MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase' <<<"$$module" \
+		|| { echo "Error: module.php in zip is missing prefixed namespace ($(SCOPE_NS))"; exit 1; }; \
+	if grep -qF 'MagicSunday\\Webtrees\\ModuleBase' <<<"$$module"; then \
 		echo "Error: module.php in zip still contains unprefixed MagicSunday\\Webtrees\\ModuleBase"; \
 		exit 1; \
 	fi
@@ -255,7 +265,8 @@ dist-smoke:
 	bundle=$$(ls "$$tmp"/resources/js/$(JS_NAME)-[0-9]*.min.js 2>/dev/null | head -1); \
 	[ -s "$$bundle" ] || { echo "Error: versioned JS bundle missing or empty in extracted resources/js/"; exit 1; }; \
 	for d in Contract Model Module Processor; do \
-		find "$$tmp/vendor/magicsunday/webtrees-module-base/src/$$d" -name '*.php' -print 2>/dev/null | grep -q . \
+		files=$$(find "$$tmp/vendor/magicsunday/webtrees-module-base/src/$$d" -name '*.php' -print 2>/dev/null); \
+		[ -n "$$files" ] \
 			|| { echo "Error: bundled module-base src/$$d has no PHP files in extracted zip"; exit 1; }; \
 	done
 	@echo -e "${FGREEN} ✔${FRESET} dist-smoke passed: $(MODULE_NAME).zip extracts to a well-formed module"
