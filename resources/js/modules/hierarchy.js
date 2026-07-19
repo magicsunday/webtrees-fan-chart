@@ -242,6 +242,7 @@ export default class Hierarchy {
 
         if (partners.length === 0 && unassignedChildren.length === 0) {
             this._configuration.childScale = null;
+            this._configuration.smallestChildFraction = 0;
 
             return;
         }
@@ -259,6 +260,7 @@ export default class Hierarchy {
         // Not enough room for descendants
         if (endChildPi <= startChildPi) {
             this._configuration.childScale = null;
+            this._configuration.smallestChildFraction = 0;
 
             return;
         }
@@ -327,7 +329,7 @@ export default class Hierarchy {
             }
         }
 
-        /** @type {any} */ (this._configuration).smallestChildFraction = smallestChildFraction;
+        this._configuration.smallestChildFraction = smallestChildFraction;
 
         this._createDescendantNodes(familyBlocks, rootXref, useEqualDistribution, totalWeight);
     }

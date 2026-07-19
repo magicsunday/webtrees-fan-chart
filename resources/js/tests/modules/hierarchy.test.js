@@ -320,18 +320,23 @@ describe("Hierarchy.initDescendants", () => {
         expect(descNodes[1].x1).toBeCloseTo(1, 10);
     });
 
-    test("sets childScale to null when no descendants exist", () => {
+    test("clears childScale and smallestChildFraction when no descendants exist", () => {
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         const config = {
             generations: 2,
             showDescendants: true,
             fanDegree: 210,
             childScale: "stale",
+            smallestChildFraction: 0.05,
         };
         const hierarchy = new Hierarchy(config);
 
         hierarchy.init(rootDatum);
 
+        // Both descendant layout results must be cleared together: a stale
+        // fraction surviving an update would cap the font of a later chart
+        // against a sector that is no longer rendered.
         expect(config.childScale).toBeNull();
+        expect(config.smallestChildFraction).toBe(0);
     });
 });
