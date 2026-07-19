@@ -21,7 +21,6 @@
         "watch": "rollup --watch --config rollup.config.js",
         "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
         "test:coverage": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-        "test:exports": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --runTestsByPath resources/js/tests/export.integration.test.js resources/js/tests/export.large.integration.test.js",
         "test:watch": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
         "lint": "biome lint --error-on-warnings resources/js/modules/",
         "lint:fix": "biome lint --fix --unsafe resources/js/modules/",
@@ -55,9 +54,6 @@
         "jest": "^30.4",
         "jest-environment-jsdom": "^30.4",
         "jscpd": "^5.0.12",
-        "pixelmatch": "^7.0",
-        "playwright": "^1.61",
-        "pngjs": "^7.0",
         "rollup": "^4.62",
         "rollup-plugin-license": "^3.0",
         "typescript": "^7.0.2"

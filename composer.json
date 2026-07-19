@@ -110,7 +110,7 @@
             "npm run typecheck"
         ],
         "ci:test:js:unit": [
-            "SKIP_EXPORT_BUILD=true node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests --ignore=resources/js/tests/export"
+            "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests"
         ],
         "ci:compliance": [
             "php scripts/analyze-exif-compliance.php 50"
