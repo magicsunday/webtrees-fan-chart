@@ -173,46 +173,50 @@ describe("Geometry", () => {
         expect(fontAtMinus1).toBeCloseTo(fontAtPlus1);
     });
 
-    it("caps the child font size by the narrowest child arc", () => {
-        const withoutCap = new Geometry(
-            createConfiguration({
-                fontSize: 22,
-                fontScale: 100,
-                childScale: (v) => v * Math.PI,
-                smallestChildFraction: 0,
-            }),
-        );
-        const withCap = new Geometry(
-            createConfiguration({
-                fontSize: 22,
-                fontScale: 100,
-                childScale: (v) => v * Math.PI,
-                smallestChildFraction: 0.02,
-            }),
-        );
+    // The child font cap. Every input below is deterministic, so the expected
+    // values are stated in closed form rather than as inequalities — an
+    // inequality would survive a mutation of any constant in the cap formula.
+    //
+    //   centerRadius(-2)  = (innerRadius 70 + outerRadius 90) / 2 = 80
+    //   totalSectorRad    = childScale(1) - childScale(0)         = π
+    //   maxFont(fraction) = (fraction · π · 80 · 0.55) / 2
+    //
+    // Uncapped, a depth -2 node scales to (22 - 2) · 100 / 100 = 20.
+    const createChildCapConfiguration = (smallestChildFraction) =>
+        createConfiguration({
+            fontSize: 22,
+            fontScale: 100,
+            childScale: (v) => v * Math.PI,
+            smallestChildFraction,
+        });
 
-        const child = { depth: -2, x0: 0, x1: 1 };
+    const CHILD_DATUM = { depth: -2, x0: 0, x1: 1 };
+    const UNCAPPED_FONT_SIZE = 20;
 
-        // A narrow smallest arc must shrink the font of EVERY child, not just
-        // the narrow one — the cap is deliberately uniform across children.
-        expect(withCap.getFontSize(child)).toBeLessThan(withoutCap.getFontSize(child));
+    it("caps a child font size to the width of the narrowest child arc", () => {
+        const geometry = new Geometry(createChildCapConfiguration(0.02));
 
-        // The cap scales with the fraction: a wider narrowest arc permits more.
-        const wider = new Geometry(
-            createConfiguration({
-                fontSize: 22,
-                fontScale: 100,
-                childScale: (v) => v * Math.PI,
-                smallestChildFraction: 0.2,
-            }),
-        );
+        // (0.02 · π · 80 · 0.55) / 2
+        expect(geometry.getFontSize(CHILD_DATUM)).toBeCloseTo(1.3823, 4);
+    });
 
-        expect(wider.getFontSize(child)).toBeGreaterThan(withCap.getFontSize(child));
+    it("leaves the child font size uncapped when no narrowest arc is known", () => {
+        const geometry = new Geometry(createChildCapConfiguration(0));
 
-        // Ancestors are untouched by the child cap.
-        const ancestor = { depth: 2, x0: 0, x1: 1 };
+        expect(geometry.getFontSize(CHILD_DATUM)).toBe(UNCAPPED_FONT_SIZE);
+    });
 
-        expect(withCap.getFontSize(ancestor)).toBe(withoutCap.getFontSize(ancestor));
+    it("permits a larger child font when the narrowest arc is wider", () => {
+        const geometry = new Geometry(createChildCapConfiguration(0.2));
+
+        // (0.2 · π · 80 · 0.55) / 2 — still below the uncapped 20
+        expect(geometry.getFontSize(CHILD_DATUM)).toBeCloseTo(13.823, 3);
+    });
+
+    it("leaves ancestor font sizes untouched by the child cap", () => {
+        const geometry = new Geometry(createChildCapConfiguration(0.02));
+
+        expect(geometry.getFontSize({ depth: 2, x0: 0, x1: 1 })).toBe(UNCAPPED_FONT_SIZE);
     });
 
     it("mirrors innerRadius symmetrically for negative and positive depths", () => {
