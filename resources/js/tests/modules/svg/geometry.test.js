@@ -206,7 +206,7 @@ describe("Geometry", () => {
         expect(geometry.getFontSize(CHILD_DATUM)).toBe(UNCAPPED_FONT_SIZE);
     });
 
-    it("permits a larger child font when the narrowest arc is wider", () => {
+    it("caps a wider narrowest arc to a proportionally larger font", () => {
         const geometry = new Geometry(createChildCapConfiguration(0.2));
 
         // (0.2 · π · 80 · 0.55) / 2 — still below the uncapped 20
@@ -222,12 +222,10 @@ describe("Geometry", () => {
     it("caps every child to the same size regardless of its own arc width", () => {
         const geometry = new Geometry(createChildCapConfiguration(0.02));
 
-        // This is what smallestChildFraction exists for: the cap is measured
-        // against the FULL descendant sector, never the node's own arc, so all
-        // children end up at one size. A node spanning a fifth of the sector
-        // must therefore land on the same value as the full-width node above.
-        // Every other case here uses x0:0/x1:1, where the two readings are
-        // numerically identical and the distinction stays invisible.
+        // The cap is measured against the FULL descendant sector, never the
+        // node's own arc, so a node spanning a fifth of the sector lands on the
+        // same value as the full-width node above. This is what
+        // smallestChildFraction is for.
         expect(geometry.getFontSize({ depth: -2, x0: 0.4, x1: 0.6 })).toBeCloseTo(1.3823, 4);
     });
 

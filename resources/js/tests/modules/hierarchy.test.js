@@ -343,8 +343,9 @@ describe("Hierarchy.initDescendants", () => {
     test("clears childScale and smallestChildFraction when the sector has no room", () => {
         // A full circle leaves no descendant sector: the ancestor fan already
         // spans 360 degrees, so startChildPi ends up beyond endChildPi. This is
-        // the second early return — reached only with partners present, so the
-        // "no descendants" guard above does not swallow it first.
+        // the second early return — reached only when partners or unassigned
+        // children exist, so the "no descendants" guard above does not swallow
+        // it first.
         //
         // The real Configuration cannot produce this state: its constructor
         // clamps fanDegree to [180, 270] whenever showDescendants is set. The
