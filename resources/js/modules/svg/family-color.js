@@ -15,6 +15,7 @@ import { SEX_FEMALE, SEX_MALE } from "../hierarchy.js";
 
 /**
  * @import Configuration from "../configuration.js"
+ * @import { HierarchyNode } from "../hierarchy.js"
  */
 
 /**
@@ -50,7 +51,7 @@ export default class FamilyColor {
      * same child share the same hue so couples appear as a single colored
      * family unit.
      *
-     * @param {object} datum The D3 partition datum
+     * @param {HierarchyNode} datum The D3 partition datum
      *
      * @return {string|null} HSL color string, or null for the root node
      */
@@ -96,7 +97,7 @@ export default class FamilyColor {
      * sector. Children share their partner's hue at a slightly deeper
      * saturation/lightness level.
      *
-     * @param {object} datum The D3 partition datum (depth < 0)
+     * @param {HierarchyNode} datum The D3 partition datum (depth < 0)
      *
      * @return {string} HSL color string
      *
@@ -129,7 +130,7 @@ export default class FamilyColor {
     /**
      * Finds the angular midpoint of a partner node by its ID.
      *
-     * @param {string} partnerId The synthetic partner node ID
+     * @param {number} partnerId The synthetic partner node ID
      *
      * @return {number} Midpoint in [0,1] range, or 0.5 as fallback
      *
@@ -146,7 +147,7 @@ export default class FamilyColor {
      * Pre-computes partner midpoints for descendant color lookups. Call once
      * before computing colors for a new hierarchy.
      *
-     * @param {Array} nodes All hierarchy nodes
+     * @param {HierarchyNode[]} nodes All hierarchy nodes
      */
     setPartnerMidpoints(nodes) {
         this._partnerMidpoints = new Map();
@@ -164,7 +165,7 @@ export default class FamilyColor {
      * deeper nodes it is the first available child's color (both parents share
      * the same hue).
      *
-     * @param {object} datum The D3 data object
+     * @param {HierarchyNode} datum The D3 data object
      *
      * @return {string|null}
      */

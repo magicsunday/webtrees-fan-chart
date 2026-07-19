@@ -11,8 +11,7 @@ import Chart from "./chart.js";
 
 /**
  * @import { Selection } from "d3-selection"
- *
- * @typedef {object} Data
+ * @import { NodeDatum } from "./hierarchy.js"
  */
 
 /**
@@ -29,18 +28,24 @@ export class FanChart {
      * @param {object} options  Configuration values passed from the server-rendered page
      *
      * @param {Object<string, string>} options.labels
-     * @param {number}   options.generations
-     * @param {number}   options.fanDegree
-     * @param {number}   options.fontScale
-     * @param {boolean}  options.hideEmptySegments
-     * @param {boolean}  options.showFamilyColors
-     * @param {boolean}  options.showParentMarriageDates
-     * @param {boolean}  options.showImages
-     * @param {boolean}  options.showSilhouettes
-     * @param {boolean}  options.rtl
-     * @param {number}   options.innerArcs
-     * @param {string[]} options.cssFiles
-     * @param {Data[]}   options.data
+     * @param {number}    options.generations
+     * @param {number}    options.fanDegree
+     * @param {number}    options.fontScale
+     * @param {boolean}   options.hideEmptySegments
+     * @param {boolean}   options.showFamilyColors
+     * @param {boolean}   options.showParentMarriageDates
+     * @param {boolean}   options.showImages
+     * @param {boolean}   options.showSilhouettes
+     * @param {boolean}   options.showPlaces
+     * @param {boolean}   options.showNames
+     * @param {boolean}   options.showDescendants
+     * @param {string}    options.paternalColor
+     * @param {string}    options.maternalColor
+     * @param {string}    options.nameAbbreviation
+     * @param {boolean}   options.rtl
+     * @param {number}    options.innerArcs
+     * @param {string[]}  options.cssFiles
+     * @param {NodeDatum} options.data
      */
     constructor(selector, options) {
         this._selector = selector;
@@ -119,7 +124,7 @@ export class FanChart {
     /**
      * Passes data to the chart and triggers the initial render.
      *
-     * @param {object} data The JSON-encoded chart data from the server
+     * @param {NodeDatum} data The JSON-encoded chart data from the server
      */
     render(data) {
         this._chart.data = data;

@@ -16,6 +16,15 @@ import FamilyColor from "./svg/family-color.js";
  * @import Svg from "./svg.js"
  * @import Configuration from "./configuration.js"
  * @import Hierarchy from "./hierarchy.js"
+ * @import { NodeDatum } from "./hierarchy.js"
+ */
+
+/**
+ * The JSON body of the chart AJAX endpoint.
+ *
+ * @typedef {object} ChartResponse
+ * @property {string}    title The rendered page title, may contain HTML markup
+ * @property {NodeDatum} data  The raw JSON chart data tree
  */
 
 /**
@@ -84,7 +93,7 @@ export default class ChartUpdater {
         };
 
         d3.json(url, { signal })
-            .then((/** @type {any} */ data) => {
+            .then((/** @type {ChartResponse} */ data) => {
                 this._fetchController = null;
 
                 this._updatePageTitle(data);
@@ -154,7 +163,7 @@ export default class ChartUpdater {
     /**
      * Updates the page header and browser tab title from AJAX response data.
      *
-     * @param {object} data The AJAX response object
+     * @param {ChartResponse} data The AJAX response object
      *
      * @private
      */

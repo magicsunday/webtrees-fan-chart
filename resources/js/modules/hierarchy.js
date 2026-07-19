@@ -11,6 +11,7 @@ import { MATH_DEG2RAD } from "./svg/geometry.js";
 /**
  * @import Configuration from "./configuration.js"
  * @import FamilyColor from "./svg/family-color.js"
+ * @import { HierarchyNode as D3HierarchyNode } from "d3-hierarchy"
  */
 
 export const SEX_MALE = "M";
@@ -30,6 +31,70 @@ export const SYMBOL_ELLIPSIS = "\u2026";
 export const DESCENDANT_GAP_DEG = 10;
 
 /**
+ * The individual record as serialised by the server (see NodeData::jsonSerialize()),
+ * plus the two properties the client computes and writes back onto it.
+ *
+ * The server payload always carries every field. The properties marked optional
+ * are the ones createEmptyNode() leaves out on client-side placeholder nodes, so
+ * they read as undefined for unknown ancestors.
+ *
+ * @typedef {object} PersonData
+ * @property {number}      id                      Sequential server-side record number
+ * @property {string}      xref                    GEDCOM identifier, empty string for placeholders
+ * @property {string}      url                     Link to the webtrees individual page
+ * @property {string}      updateUrl               AJAX route that re-centers the chart on this person
+ * @property {number}      generation              Ancestor generation, 1 for the central person
+ * @property {string}      name                    Full name as a single string
+ * @property {string[]}    firstNames              Given name parts, in display order
+ * @property {string[]}    lastNames               Surname parts, in display order
+ * @property {string}      preferredName           The given name part rendered underlined
+ * @property {string}      alternativeName         Alternative (e.g. married or romanised) name
+ * @property {boolean}     isAltRtl                Whether the alternative name is right-to-left
+ * @property {string}      sex                     SEX_MALE, SEX_FEMALE or "U"
+ * @property {string}      timespan                Birth/death lines, separated by "\n"
+ * @property {boolean}     [isNameRtl]             Whether the primary name is right-to-left
+ * @property {string}      [nickname]              GEDCOM NICK value, without quotes
+ * @property {string}      [thumbnail]             URL of the highlight image
+ * @property {string}      [silhouette]            URL of the sex-specific fallback image
+ * @property {string}      [birth]                 Short birth date
+ * @property {string}      [death]                 Short death date
+ * @property {string}      [marriageDate]          Short marriage date of this individual
+ * @property {string}      [marriageDateOfParents] Short marriage date of this individual's parents
+ * @property {string}      [birthDateFull]         Full birth date for the tooltip
+ * @property {string}      [deathDateFull]         Full death date for the tooltip
+ * @property {string}      [marriageDateFull]      Full marriage date for the tooltip
+ * @property {string}      [birthPlace]            Birth place for the tooltip
+ * @property {string}      [deathPlace]            Death place for the tooltip
+ * @property {string}      [marriagePlace]         Marriage place for the tooltip
+ * @property {string|null} [familyColor]           Pre-computed HSL color string (set by applyFamilyColors)
+ * @property {number|null} [imageSize]             Pre-computed thumbnail size in px (set by Person)
+ */
+
+/**
+ * A node of the raw JSON tree the server sends, and the datum d3.hierarchy() is
+ * built from. Only the "data" wrapper is always present; the relation arrays are
+ * omitted when empty.
+ *
+ * @typedef {object} NodeDatum
+ * @property {PersonData}  data                 The individual's record
+ * @property {NodeDatum[]} [parents]            Father and mother, in that order
+ * @property {NodeDatum[]} [partners]           Spouses of the central person
+ * @property {NodeDatum[]} [children]           Children of a partner block
+ * @property {NodeDatum[]} [unassignedChildren] Children without a known other parent
+ */
+
+/**
+ * One angular block of the descendant sector: either a partner together with
+ * that couple's children, or the children without a known other parent.
+ *
+ * @typedef {object} FamilyBlock
+ * @property {string}         type     "family" or "unassigned"
+ * @property {NodeDatum|null} partner  The partner node, null for the unassigned block
+ * @property {NodeDatum[]}    children The block's children, youngest first
+ * @property {number}         weight   Relative angular share of the descendant sector
+ */
+
+/**
  * A single node in the D3 partition hierarchy, as stored in Hierarchy._nodes.
  * Ancestor nodes come from d3.partition(); descendant nodes are synthetic and
  * appended by initDescendants().
@@ -43,11 +108,7 @@ export const DESCENDANT_GAP_DEG = 10;
  * @property {HierarchyNode[]|null} children    D3 child nodes, or null for leaves
  * @property {number}          height           D3 partition height
  * @property {number}          value            D3 partition value
- * @property {object}          data             Server payload wrapper ({ data: PersonData })
- * @property {object}          data.data        Person record from the server
- * @property {string}          data.data.xref   GEDCOM identifier, empty string for placeholders
- * @property {string}          [data.data.familyColor]  Pre-computed HSL color string (set by applyFamilyColors)
- * @property {number}          [data.data.imageSize]    Pre-computed thumbnail size in px (set by Person)
+ * @property {NodeDatum}       data             Server payload wrapper for this node
  * @property {string}          [descendantType] "partner" | "child" — only on synthetic descendant nodes
  * @property {string}          [partnerXref]    Partner's GEDCOM xref — only on synthetic descendant nodes
  * @property {string}          [rootXref]       Central person's xref — only on synthetic descendant nodes
@@ -70,7 +131,17 @@ export default class Hierarchy {
      */
     constructor(configuration) {
         this._configuration = configuration;
+
+        /** @type {HierarchyNode[]|null} */
         this._nodes = null;
+
+        /**
+         * The d3-hierarchy root. Distinct from our own HierarchyNode typedef:
+         * d3 describes the node with its own interface, so the root getter
+         * hands out a converted view (see the note in init()).
+         *
+         * @type {D3HierarchyNode<NodeDatum>|null}
+         */
         this._root = null;
     }
 
@@ -79,7 +150,7 @@ export default class Hierarchy {
      * with empty nodes, applies a partition layout, and assigns sequential IDs.
      * Must be called before accessing nodes or root.
      *
-     * @param {object} datum The raw JSON chart data object from the server
+     * @param {NodeDatum} datum The raw JSON chart data object from the server
      */
     init(datum) {
         // Construct root node from the hierarchical data
@@ -115,8 +186,12 @@ export default class Hierarchy {
         // Create partition layout
         const partitionLayout = d3.partition();
 
-        // Map the node data to the partition layout
-        this._nodes = partitionLayout(this._root).descendants();
+        // Map the node data to the partition layout. D3 describes the result
+        // with its own node interface, whose readonly string `id` conflicts
+        // with the numeric one assigned below, so take our own typed view.
+        this._nodes = /** @type {HierarchyNode[]} */ (
+            /** @type {unknown} */ (partitionLayout(this._root).descendants())
+        );
 
         // Assign a unique ID to each node — d3 HierarchyNode `id` is a
         // readonly getter, so we attach our own property under a typed view.
@@ -132,19 +207,23 @@ export default class Hierarchy {
 
     /**
      * Flat array of all partition nodes (root plus all descendants) in top-down
-     * order, each augmented with a unique sequential id.
+     * order, each augmented with a unique sequential id. Null until init() runs.
      *
-     * @return {Array}
+     * @return {HierarchyNode[]|null}
      */
     get nodes() {
         return this._nodes;
     }
 
     /**
-     * @return {object}
+     * The root of the D3 partition hierarchy, exposed as our own typed view
+     * (see the note in init() on the diverging `id` property). Null until
+     * init() runs.
+     *
+     * @return {HierarchyNode|null}
      */
     get root() {
-        return this._root;
+        return /** @type {HierarchyNode|null} */ (/** @type {unknown} */ (this._root));
     }
 
     /**
@@ -153,7 +232,7 @@ export default class Hierarchy {
      * childScale on the configuration so Geometry can resolve angles for
      * negative depths.
      *
-     * @param {object} datum The raw JSON chart data object from the server
+     * @param {NodeDatum} datum The raw JSON chart data object from the server
      *
      * @private
      */
@@ -257,10 +336,10 @@ export default class Hierarchy {
      * Creates descendant D3 datum nodes for each family block (partner arcs at
      * depth -1, child arcs at depth -2) and pushes them into this._nodes.
      *
-     * @param {Object[]} familyBlocks          Array of { type, partner, children, weight }
-     * @param {string}   rootXref              The xref of the root individual
-     * @param {boolean}  useEqualDistribution  Whether to distribute angles equally
-     * @param {number}   totalWeight           Sum of all block weights
+     * @param {FamilyBlock[]} familyBlocks          The family blocks to lay out
+     * @param {string}        rootXref              The xref of the root individual
+     * @param {boolean}       useEqualDistribution  Whether to distribute angles equally
+     * @param {number}        totalWeight           Sum of all block weights
      *
      * @private
      */
@@ -351,7 +430,7 @@ export default class Hierarchy {
      * @param {number} generation Depth of the placeholder in the tree
      * @param {string} sex        SEX_MALE or SEX_FEMALE constant
      *
-     * @return {object}
+     * @return {NodeDatum}
      *
      * @private
      */

@@ -18,6 +18,7 @@ import ChartUpdater from "./chart-updater.js";
 /**
  * @import { Selection } from "d3-selection"
  * @import Configuration from "./configuration.js"
+ * @import { HierarchyNode, NodeDatum } from "./hierarchy.js"
  */
 
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
@@ -33,14 +34,15 @@ const MIN_PADDING = 1; // Minimum padding around view box in "rem"
  */
 export default class Chart {
     /**
-     * @param {Selection<any, any, any, any>}     parent        The selected D3 parent element container
-     * @param {Configuration} configuration The application configuration
+     * @param {Selection<any, any, any, any>} parent        The selected D3 parent element container
+     * @param {Configuration}                 configuration The application configuration
      */
     constructor(parent, configuration) {
         this._configuration = configuration;
         this._parent = parent;
         this._hierarchy = new Hierarchy(this._configuration);
-        this._data = {};
+        /** @type {NodeDatum|null} */
+        this._data = null;
     }
 
     /**
@@ -58,7 +60,7 @@ export default class Chart {
     }
 
     /**
-     * @return {object}
+     * @return {NodeDatum|null}
      */
     get data() {
         return this._data;
@@ -67,7 +69,7 @@ export default class Chart {
     /**
      * Assigns new chart data and rebuilds the D3 hierarchy from it.
      *
-     * @param {object} value The raw JSON data object from the server
+     * @param {NodeDatum} value The raw JSON data object from the server
      */
     set data(value) {
         this._data = value;
@@ -510,8 +512,8 @@ export default class Chart {
      * Handles a click on a person arc. Redirects to the individual page for the
      * center node (depth 0); triggers a chart update for all other nodes.
      *
-     * @param {Event}  _event The current event
-     * @param {object} datum  The D3 data object
+     * @param {Event}         _event The current event
+     * @param {HierarchyNode} datum  The D3 data object
      *
      * @private
      */

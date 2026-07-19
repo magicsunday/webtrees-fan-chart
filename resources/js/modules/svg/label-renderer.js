@@ -11,6 +11,7 @@ import Text from "./text.js";
  * @import { Selection } from "d3-selection"
  * @import Svg from "../svg.js"
  * @import Configuration from "../configuration.js"
+ * @import { HierarchyNode } from "../hierarchy.js"
  * @import Geometry from "./geometry.js"
  */
 
@@ -43,7 +44,7 @@ export default class LabelRenderer {
      * so the cross-fade transition controls its appearance.
      *
      * @param {Selection<any, any, any, any>} parent The person <g> element to append the label group to
-     * @param {object}    datum  The D3 partition datum
+     * @param {HierarchyNode}                 datum  The D3 partition datum
      *
      * @return {Selection<any, any, any, any>}
      */

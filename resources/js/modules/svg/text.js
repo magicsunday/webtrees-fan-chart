@@ -13,10 +13,7 @@ import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees
  * @import { Selection } from "d3-selection"
  * @import Svg from "../svg.js"
  * @import Configuration from "../configuration.js"
- *
- * @typedef {object} NameElementData
- * @property {{data: object}} data
- * @property {boolean}        [isPreferred]
+ * @import { HierarchyNode } from "../hierarchy.js"
  *
  * @typedef {object} LabelElementData
  * @property {string}  label
@@ -55,7 +52,7 @@ export default class Text {
      * Creates all the labels and all dependent elements for a single person.
      *
      * @param {Selection<any, any, any, any>} parent The parent element to which the elements are to be attached
-     * @param {object}    datum  The D3 data object
+     * @param {HierarchyNode}                 datum  The D3 data object
      */
     createLabels(parent, datum) {
         const positions = this.calculateSlotPositions(datum);
@@ -74,8 +71,8 @@ export default class Text {
      * Creates labels for inner arc generations (text along arc paths).
      *
      * @param {Selection<any, any, any, any>} parent
-     * @param {object}    datum
-     * @param {Map}       positions
+     * @param {HierarchyNode}                 datum
+     * @param {Map}                           positions
      *
      * @private
      */
@@ -143,8 +140,8 @@ export default class Text {
      * Creates labels for outer arc generations (plain text elements).
      *
      * @param {Selection<any, any, any, any>} parent
-     * @param {object}    datum
-     * @param {Map}       positions
+     * @param {HierarchyNode}                 datum
+     * @param {Map}                           positions
      *
      * @private
      */
@@ -262,10 +259,10 @@ export default class Text {
      * inner labels pass a textPath creator, outer labels pass a plain text
      * creator.
      *
-     * @param {Selection<any, any, any, any>} _parent  Unused; kept for symmetry with sibling renderers
-     * @param {object}    datum
-     * @param {Map}       positions        Slot-to-position map from calculateSlotPositions()
-     * @param {Function}  createElement    Called as (slot, position) => container element
+     * @param {Selection<any, any, any, any>} _parent       Unused; kept for symmetry with sibling renderers
+     * @param {HierarchyNode}                 datum         The D3 partition datum
+     * @param {Map}                           positions     Slot-to-position map from calculateSlotPositions()
+     * @param {Function}                      createElement Called as (slot, position) => container element
      *
      * @private
      */
@@ -297,7 +294,7 @@ export default class Text {
      * carries flags for preferred-name underline and last-name bold styling.
      * Returns [firstNamesArray, lastNamesArray].
      *
-     * @param {NameElementData} datum
+     * @param {HierarchyNode} datum The D3 partition datum
      *
      * @return {LabelElementData[][]}
      *
@@ -401,7 +398,7 @@ export default class Text {
      * Splits the alternative name into per-word LabelElementData entries, each
      * marked with the isAltRtl flag for correct bidirectional spacing.
      *
-     * @param {NameElementData} datum
+     * @param {HierarchyNode} datum The D3 partition datum
      *
      * @return {LabelElementData[]}
      *
@@ -495,7 +492,7 @@ export default class Text {
      * along curved arc paths. Returns false for the center node (depth 0) and
      * for outer generations that use rotated plain text elements.
      *
-     * @param {object} data The D3 partition datum
+     * @param {HierarchyNode} data The D3 partition datum
      *
      * @return {boolean}
      *
@@ -533,10 +530,10 @@ export default class Text {
      * Reverses start/end angles for flipped labels in the bottom half of 360°
      * charts.
      *
-     * @param {string} parentId The ID of the parent person/marriage element
-     * @param {object} slot     One of the TEXT_SLOT constants (carries .index for the path ID)
+     * @param {string}                            parentId The ID of the parent person/marriage element
+     * @param {{index: number}}                   slot     One of the TEXT_SLOT constants (carries .index for the path ID)
      * @param {{normal: number, flipped: number}} position Radial percentage positions for this slot
-     * @param {object} data     The D3 partition datum
+     * @param {HierarchyNode}                     data     The D3 partition datum
      *
      * @return {string} The id attribute of the newly created <path> element
      *
@@ -614,7 +611,7 @@ export default class Text {
      * use tighter spacing; groups are separated by a wider gap. The result is
      * vertically centered in the available arc space.
      *
-     * @param {object} datum The D3 data object
+     * @param {HierarchyNode} datum The D3 data object
      *
      * @return {Map<Object, {normal: number, flipped: number}>}
      *
@@ -789,7 +786,7 @@ export default class Text {
      * circle uses a fraction of its diameter. Image presence further reduces
      * the width by imageSize + 10 px gap.
      *
-     * @param {object}                            data     The D3 partition datum
+     * @param {HierarchyNode}                     data     The D3 partition datum
      * @param {{normal: number, flipped: number}} position Radial slot position from calculateSlotPositions()
      *
      * @return {number}
@@ -870,7 +867,7 @@ export default class Text {
      * center using semantic group spacing (see calculateOuterSlotPositions).
      *
      * @param {Selection<any, any, any, any>} parent The label <g> element whose <text> children to position
-     * @param {object}    datum  The D3 partition datum
+     * @param {HierarchyNode}                 datum  The D3 partition datum
      *
      * @private
      */
@@ -1029,8 +1026,8 @@ export default class Text {
      * degree offsets from the arc center, vertically centered within the
      * available angular span.
      *
-     * @param {object}    datum        The D3 data object
-     * @param {Selection} textElements The text elements to position
+     * @param {HierarchyNode} datum        The D3 data object
+     * @param {Selection}     textElements The text elements to position
      *
      * @return {number[]} Angular offset in degrees for each text element
      *
