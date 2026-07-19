@@ -94,9 +94,9 @@ export default class Chart {
     /**
      * Computes viewBox coordinates from padding and bounding boxes.
      *
-     * @param {number} padding          Padding in pixels
-     * @param {DOMRect} svgBoundingBox  Bounding box of the SVG visual group
-     * @param {DOMRect} clientBoundingBox Bounding box of the parent container
+     * @param {number}  padding            Padding in pixels
+     * @param {DOMRect} svgBoundingBox     Bounding box of the SVG visual group
+     * @param {DOMRect} clientBoundingBox  Bounding box of the parent container
      *
      * @return {{ left: number, top: number, width: number, height: number }}
      *
@@ -324,7 +324,7 @@ export default class Chart {
      * Lines run from the marriage arc gap through the partner and children
      * rings.
      *
-     * @param {Geometry}  geometry
+     * @param {Geometry}                      geometry
      * @param {Selection<any, any, any, any>} separatorGroup
      *
      * @private

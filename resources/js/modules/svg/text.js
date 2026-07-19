@@ -36,6 +36,15 @@ import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
+
+/**
+ * Vertical offsets of every text slot within an arc band, keyed by the slot
+ * objects in Text.TEXT_SLOT. The two variants correspond to arcs read in
+ * reading direction and arcs flipped by 180 degrees.
+ *
+ * @typedef {Map<Object, {normal: number, flipped: number}>} SlotPositions
+ */
+
 export default class Text {
     /**
      * @param {Svg}           svg
@@ -72,7 +81,7 @@ export default class Text {
      *
      * @param {Selection<any, any, any, any>} parent
      * @param {HierarchyNode}                 datum
-     * @param {Map}                           positions
+     * @param {SlotPositions}                 positions
      *
      * @private
      */
@@ -141,7 +150,7 @@ export default class Text {
      *
      * @param {Selection<any, any, any, any>} parent
      * @param {HierarchyNode}                 datum
-     * @param {Map}                           positions
+     * @param {SlotPositions}                 positions
      *
      * @private
      */
@@ -261,7 +270,7 @@ export default class Text {
      *
      * @param {Selection<any, any, any, any>} _parent       Unused; kept for symmetry with sibling renderers
      * @param {HierarchyNode}                 datum         The D3 partition datum
-     * @param {Map}                           positions     Slot-to-position map from calculateSlotPositions()
+     * @param {SlotPositions}                 positions     Slot-to-position map from calculateSlotPositions()
      * @param {Function}                      createElement Called as (slot, position) => container element
      *
      * @private
@@ -613,7 +622,7 @@ export default class Text {
      *
      * @param {HierarchyNode} datum The D3 data object
      *
-     * @return {Map<Object, {normal: number, flipped: number}>}
+     * @return {SlotPositions}
      *
      * @private
      */
