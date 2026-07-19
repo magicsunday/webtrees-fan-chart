@@ -345,6 +345,12 @@ describe("Hierarchy.initDescendants", () => {
         // spans 360 degrees, so startChildPi ends up beyond endChildPi. This is
         // the second early return — reached only with partners present, so the
         // "no descendants" guard above does not swallow it first.
+        //
+        // The real Configuration cannot produce this state: its constructor
+        // clamps fanDegree to [180, 270] whenever showDescendants is set. The
+        // plain object below bypasses that clamp deliberately, so this covers
+        // defensive code rather than a reachable path — worth knowing before
+        // anyone considers deleting the branch.
         const partner = createPartner({ xref: "I2", children: [createChild({ xref: "I10" })] });
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         rootDatum.partners = [partner];

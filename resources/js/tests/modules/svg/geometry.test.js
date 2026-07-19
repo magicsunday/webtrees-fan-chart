@@ -219,6 +219,18 @@ describe("Geometry", () => {
         expect(geometry.getFontSize({ depth: 2, x0: 0, x1: 1 })).toBe(UNCAPPED_FONT_SIZE);
     });
 
+    it("caps every child to the same size regardless of its own arc width", () => {
+        const geometry = new Geometry(createChildCapConfiguration(0.02));
+
+        // This is what smallestChildFraction exists for: the cap is measured
+        // against the FULL descendant sector, never the node's own arc, so all
+        // children end up at one size. A node spanning a fifth of the sector
+        // must therefore land on the same value as the full-width node above.
+        // Every other case here uses x0:0/x1:1, where the two readings are
+        // numerically identical and the distinction stays invisible.
+        expect(geometry.getFontSize({ depth: -2, x0: 0.4, x1: 0.6 })).toBeCloseTo(1.3823, 4);
+    });
+
     it("mirrors innerRadius symmetrically for negative and positive depths", () => {
         const geometry = new Geometry(createConfiguration({ circlePadding: 0 }));
 
