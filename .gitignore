@@ -17,7 +17,6 @@ resources/js/fan-chart-*.js
 # Allow minified file
 !resources/js/fan-chart-*.min.js
 webtrees-fan-chart.zip
-RELEASE_NOTES.md
 
 # Generated translation template (extracted by `make lang`, never committed)
 resources/lang/messages.pot

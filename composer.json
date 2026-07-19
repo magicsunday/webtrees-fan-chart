@@ -112,9 +112,6 @@
         "ci:test:js:unit": [
             "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests"
         ],
-        "ci:compliance": [
-            "php scripts/analyze-exif-compliance.php 50"
-        ],
         "ci:test": [
             "@ci:test:php:lint",
             "@ci:test:js:lint",

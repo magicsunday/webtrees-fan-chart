@@ -25,17 +25,3 @@ export function classifyElement(element) {
         isRemove: element.classed("remove"),
     };
 }
-
-/**
- * Sets a selection's opacity to near-zero when the parent element is in the
- * "update" lifecycle state. Used for cross-fade transitions where new content
- * fades in while old content fades out.
- *
- * @param {Selection<any, any, any, any>} selection D3 selection to hide
- * @param {Selection<any, any, any, any>} parent    D3 selection of the parent element
- */
-export function fadeIfUpdating(selection, parent) {
-    if (parent.classed("update")) {
-        selection.style("opacity", 1e-6);
-    }
-}

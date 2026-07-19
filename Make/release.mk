@@ -234,6 +234,14 @@ dist-smoke:
 	fi; \
 	if echo "$$paths" | grep -qE '^assets/'; then \
 		echo "Error: assets/ found in zip"; exit 1; \
+	fi; \
+	for dir in dev .githooks; do \
+		if echo "$$paths" | grep -qE "^$$dir/"; then \
+			echo "Error: $$dir/ found in zip"; exit 1; \
+		fi; \
+	done; \
+	if echo "$$paths" | grep -qE '(^|/)jsconfig\.json$$'; then \
+		echo "Error: jsconfig.json found in zip"; exit 1; \
 	fi
 	@unzip -p $(MODULE_NAME).zip module.php | grep -qF 'MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase' \
 		|| { echo "Error: module.php in zip is missing prefixed namespace ($(SCOPE_NS))"; exit 1; }

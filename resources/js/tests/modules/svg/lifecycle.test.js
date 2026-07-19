@@ -1,22 +1,11 @@
 import { describe, it, expect } from "@jest/globals";
-import { classifyElement, fadeIfUpdating } from "resources/js/modules/svg/lifecycle";
+import { classifyElement } from "resources/js/modules/svg/lifecycle";
 
 function createMockElement(classes = {}) {
     const classMap = { new: false, update: false, remove: false, ...classes };
 
     return {
         classed: (name) => classMap[name] ?? false,
-    };
-}
-
-function createMockSelection() {
-    let opacity = null;
-
-    return {
-        style: (prop, value) => {
-            if (prop === "opacity") opacity = value;
-        },
-        getOpacity: () => opacity,
     };
 }
 
@@ -47,25 +36,5 @@ describe("classifyElement", () => {
         const result = classifyElement(el);
 
         expect(result).toEqual({ isNew: false, isUpdate: false, isRemove: false });
-    });
-});
-
-describe("fadeIfUpdating", () => {
-    it("sets opacity to 1e-6 when parent is updating", () => {
-        const parent = createMockElement({ update: true });
-        const selection = createMockSelection();
-
-        fadeIfUpdating(selection, parent);
-
-        expect(selection.getOpacity()).toBe(1e-6);
-    });
-
-    it("does not set opacity when parent is not updating", () => {
-        const parent = createMockElement();
-        const selection = createMockSelection();
-
-        fadeIfUpdating(selection, parent);
-
-        expect(selection.getOpacity()).toBeNull();
     });
 });
