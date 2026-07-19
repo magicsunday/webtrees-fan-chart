@@ -235,17 +235,19 @@ dist-smoke:
 	if grep -qE '^assets/' <<<"$$paths"; then \
 		echo "Error: assets/ found in zip"; exit 1; \
 	fi; \
-	for dir in 'dev' '\.githooks'; do \
-		if grep -qE "^$$dir/" <<<"$$paths"; then \
-			echo "Error: $${dir#\\}/ found in zip"; exit 1; \
-		fi; \
-	done; \
+	if grep -qE '^dev/' <<<"$$paths"; then \
+		echo "Error: dev/ found in zip"; exit 1; \
+	fi; \
+	if grep -qE '^\.githooks/' <<<"$$paths"; then \
+		echo "Error: .githooks/ found in zip"; exit 1; \
+	fi; \
 	if grep -qE '(^|/)jsconfig\.json$$' <<<"$$paths"; then \
 		echo "Error: jsconfig.json found in zip"; exit 1; \
 	fi
-	@unzip -p $(MODULE_NAME).zip module.php | grep -qF 'MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase' \
-		|| { echo "Error: module.php in zip is missing prefixed namespace ($(SCOPE_NS))"; exit 1; }
-	@if unzip -p $(MODULE_NAME).zip module.php | grep -qE 'MagicSunday\\Webtrees\\ModuleBase'; then \
+	@module=$$(unzip -p $(MODULE_NAME).zip module.php); \
+	grep -qF 'MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase' <<<"$$module" \
+		|| { echo "Error: module.php in zip is missing prefixed namespace ($(SCOPE_NS))"; exit 1; }; \
+	if grep -qE 'MagicSunday\\Webtrees\\ModuleBase' <<<"$$module"; then \
 		echo "Error: module.php in zip still contains unprefixed MagicSunday\\Webtrees\\ModuleBase"; \
 		exit 1; \
 	fi
@@ -263,7 +265,8 @@ dist-smoke:
 	bundle=$$(ls "$$tmp"/resources/js/$(JS_NAME)-[0-9]*.min.js 2>/dev/null | head -1); \
 	[ -s "$$bundle" ] || { echo "Error: versioned JS bundle missing or empty in extracted resources/js/"; exit 1; }; \
 	for d in Contract Model Module Processor; do \
-		find "$$tmp/vendor/magicsunday/webtrees-module-base/src/$$d" -name '*.php' -print 2>/dev/null | grep -q . \
+		files=$$(find "$$tmp/vendor/magicsunday/webtrees-module-base/src/$$d" -name '*.php' -print 2>/dev/null); \
+		[ -n "$$files" ] \
 			|| { echo "Error: bundled module-base src/$$d has no PHP files in extracted zip"; exit 1; }; \
 	done
 	@echo -e "${FGREEN} ✔${FRESET} dist-smoke passed: $(MODULE_NAME).zip extracts to a well-formed module"
