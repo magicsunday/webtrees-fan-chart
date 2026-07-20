@@ -147,7 +147,7 @@ Pipeline (`make release X.Y.Z`):
   Commits on such a branch must carry the `GH-<N>: ` subject prefix, except the merge
   and revert commits git writes itself — those keep their generated subject. Not every
   git-written subject is exempt, though: `fixup!` and `squash!` start lowercase and
-  fail, so autosquash before opening the PR. The gate does not check this half; keyed
+  fail, so autosquash them before opening the PR. The gate does not check this half; keyed
   on the subject alone, it asks only `^[A-ZÄÖÜ]` of an unprefixed subject, whatever
   branch the commit sits on.
 - The PR body closes the issue with a `Closes #<N>` keyword. The `GH-<N>: ` subject
