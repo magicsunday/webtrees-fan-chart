@@ -126,12 +126,12 @@ Pipeline (`make release X.Y.Z`):
 - Commit subjects match `^GH-\d+: [A-ZÄÖÜ]` on issue-tied work and `^[A-ZÄÖÜ]`
   otherwise — a capitalised imperative either way. **No conventional-commit prefixes**
   (`feat:`, `fix:`, `chore:` …), no lowercase and no path-like starts
-  (`src/Module.php: …`). Branches for an issue are named exactly `GH-<N>`, where
-  `<N>` is the issue number.
+  (`src/Module.php: …`).
     - The two patterns are deliberately kept separate. Folded into
       `^(GH-\d+: )?[A-ZÄÖÜ]` the rule stops enforcing the capital *after* the
       prefix: the optional group can be skipped, and the `G` of `GH-` then
-      satisfies `[A-ZÄÖÜ]` on its own.
+      satisfies `[A-ZÄÖÜ]` on its own — `GH-12: fix typo` would pass.
+- Branches for an issue are named exactly `GH-<N>`, where `<N>` is the issue number.
 - Never add a `Co-Authored-By:` trailer or any other AI attribution.
 - Keep PRs small and focused (~≤300 net LOC) with atomic commits.
 - Ensure coverage ≥90% on touched PHP paths.
