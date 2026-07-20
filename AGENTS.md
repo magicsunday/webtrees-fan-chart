@@ -134,16 +134,21 @@ Pipeline (`make release X.Y.Z`):
       `GH-12: fix typo` would pass. Keying on the subject rather than on the branch
       also keeps this check decidable for commits already on `main`, where the issue
       branch no longer exists.
-    - This is enforced, not merely documented: `.github/workflows/commit-lint.yml`
-      calls the shared gate, which judges the pull-request title and the subject of
-      every commit — not the message body — against a decision table it self-tests
-      first. Where this text and the gate disagree, the gate is authoritative — fix
-      the text.
+    - The same two patterns judge the **pull-request title**, which under
+      squash-merge is the subject that reaches `main`.
+    - This is checked, not only documented: `.github/workflows/commit-lint.yml` calls
+      `magicsunday/.github/.github/workflows/commit-convention.yml`, which holds the
+      normative definition and judges the title and the subject of every commit — not
+      the message body. Where this text and that workflow disagree, the workflow is
+      authoritative and this text is what gets fixed. It is **not yet a required
+      status check** on `main`, so a red run is advisory until the context
+      `commit-convention / Commit convention` is added to branch protection.
+      `fixup!` / `squash!` subjects fail it; autosquash before opening the PR.
 - Branches for an issue are named exactly `GH-<N>`, where `<N>` is the issue number.
   Commits on such a branch must carry the `GH-<N>: ` subject prefix, except the merge
   and revert commits git writes itself — those keep their generated subject. The gate
-  cannot check this half: it is keyed on the subject alone, so a subject with no
-  prefix passes the gate regardless of the branch the commit sits on.
+  does not check this half; keyed on the subject alone, it asks only `^[A-ZÄÖÜ]` of an
+  unprefixed subject, whatever branch the commit sits on.
 - The PR body closes the issue with a `Closes #<N>` keyword. The `GH-<N>: ` subject
   prefix is not a GitHub link and closes nothing.
 - Never add a `Co-Authored-By:` trailer or any other AI attribution.
