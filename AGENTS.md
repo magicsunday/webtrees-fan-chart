@@ -134,9 +134,15 @@ Pipeline (`make release X.Y.Z`):
       `GH-12: fix typo` would pass. Keying on the subject rather than on the branch
       also keeps this check decidable for commits already on `main`, where the issue
       branch no longer exists.
+    - This is enforced, not merely documented: `.github/workflows/commit-lint.yml`
+      calls the shared gate, which judges the pull-request title and every commit
+      against a decision table it self-tests first. Where this text and the gate
+      disagree, the gate is authoritative — fix the text.
 - Branches for an issue are named exactly `GH-<N>`, where `<N>` is the issue number.
   Commits on such a branch must carry the `GH-<N>: ` subject prefix, except the merge
-  and revert commits git writes itself — those keep their generated subject.
+  and revert commits git writes itself — those keep their generated subject. The gate
+  cannot check this half: it is keyed on the subject alone, so a subject with no
+  prefix passes it whatever branch the commit sits on.
 - The PR body closes the issue with a `Closes #<N>` keyword. The `GH-<N>: ` subject
   prefix is not a GitHub link and closes nothing.
 - Never add a `Co-Authored-By:` trailer or any other AI attribution.
