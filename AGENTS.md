@@ -140,15 +140,16 @@ Pipeline (`make release X.Y.Z`):
       `magicsunday/.github/.github/workflows/commit-convention.yml`, which holds the
       normative definition and judges the title and the subject of every commit — not
       the message body. Where this text and that workflow disagree, the workflow is
-      authoritative and this text is what gets fixed. It is **not yet a required
-      status check** on `main`, so a red run is advisory until the context
+      authoritative and this text is what gets fixed. That check is **not yet
+      required** on `main`, so a red run is advisory until the context
       `commit-convention / Commit convention` is added to branch protection.
-      `fixup!` / `squash!` subjects fail it; autosquash before opening the PR.
 - Branches for an issue are named exactly `GH-<N>`, where `<N>` is the issue number.
   Commits on such a branch must carry the `GH-<N>: ` subject prefix, except the merge
-  and revert commits git writes itself — those keep their generated subject. The gate
-  does not check this half; keyed on the subject alone, it asks only `^[A-ZÄÖÜ]` of an
-  unprefixed subject, whatever branch the commit sits on.
+  and revert commits git writes itself — those keep their generated subject. Not every
+  git-written subject is exempt, though: `fixup!` and `squash!` start lowercase and
+  fail, so autosquash before opening the PR. The gate does not check this half; keyed
+  on the subject alone, it asks only `^[A-ZÄÖÜ]` of an unprefixed subject, whatever
+  branch the commit sits on.
 - The PR body closes the issue with a `Closes #<N>` keyword. The `GH-<N>: ` subject
   prefix is not a GitHub link and closes nothing.
 - Never add a `Co-Authored-By:` trailer or any other AI attribution.
