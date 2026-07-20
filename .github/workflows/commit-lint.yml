@@ -1,0 +1,30 @@
+name: Commit lint
+
+# `edited` and the concurrency group are a package, not two independent choices.
+# The gate checks the pull-request title because this repository squash-merges,
+# and the default activity types do not include title edits — without `edited` a
+# title broken after a green run is never re-judged, and a title fixed after a red
+# one has nothing to re-run. But `edited` also makes several runs fire against the
+# same head commit, and branch protection keeps whichever finishes last: a green
+# run started before a title was broken can overwrite the red one that followed.
+# Cancelling in progress removes that race, and is safe because this gate mutates
+# nothing — only the newest title is meant to be judged.
+#
+# The calling job deliberately declares no `permissions:` block of its own: a
+# job-level block would replace the top-level one rather than merge with it, so
+# leaving it off is what makes the top-level grant below the one in effect.
+on:
+    pull_request:
+        types: [opened, reopened, synchronize, edited]
+
+permissions:
+    contents: read
+    pull-requests: read
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    commit-convention:
+        uses: magicsunday/.github/.github/workflows/commit-convention.yml@main
