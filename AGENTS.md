@@ -123,8 +123,11 @@ Pipeline (`make release X.Y.Z`):
 
 ## PR/commit checklist
 - `composer ci:test` must pass before every commit.
-- Commit subjects match `^(GH-\d+: )?[A-ZÄÖÜ]` — a capitalised imperative, with the
-  `GH-<N>: ` prefix (`<N>` being the issue number) on issue-tied work. **No conventional-commit prefixes**
+- Commit subjects match `^GH-\d+: [A-ZÄÖÜ]` on issue-tied work (`<N>` being the issue
+  number) and `^[A-ZÄÖÜ]` otherwise — a capitalised imperative either way. The two
+  cases are stated separately on purpose: folded into `^(GH-\d+: )?[A-ZÄÖÜ]` the rule
+  enforces nothing for a prefixed subject, because the optional group can be skipped
+  and the `G` of `GH-` then satisfies `[A-ZÄÖÜ]`. **No conventional-commit prefixes**
   (`feat:`, `fix:`, `chore:` …), no lowercase or path-like starts. Branches for an
   issue are named exactly `GH-<N>`.
 - Never add a `Co-Authored-By:` trailer or any other AI attribution.
