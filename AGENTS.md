@@ -124,9 +124,10 @@ Pipeline (`make release X.Y.Z`):
 ## PR/commit checklist
 - `composer ci:test` must pass before every commit.
 - A subject starting with `GH-` must match `^GH-\d+: [A-ZÄÖÜ]`; every other subject
-  must match `^[A-ZÄÖÜ]` — a capitalised imperative either way. **No
-  conventional-commit prefixes** (`feat:`, `fix:`, `chore:` …), no lowercase and no
-  path-like starts (`src/Module.php: …`).
+  must match `^[A-ZÄÖÜ]` — a capitalised imperative either way. The patterns check
+  only the leading capital; two starts are banned whatever their case:
+  **conventional-commit prefixes** (`feat:`, `Fix:`, `chore:` …) and path-like starts
+  (`src/Module.php: …`, `Src/Module.php: …`).
     - The two patterns are deliberately kept separate: `^(GH-\d+: )?[A-ZÄÖÜ]` (wrong)
       stops enforcing the capital *after* the prefix, because the optional group can
       be skipped and the `G` of `GH-` then satisfies `[A-ZÄÖÜ]` on its own —
