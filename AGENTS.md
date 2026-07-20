@@ -137,7 +137,7 @@ Pipeline (`make release X.Y.Z`):
     - The same two patterns judge the **pull-request title**, which under
       squash-merge is the subject that reaches `main`.
     - This is checked, not only documented: `.github/workflows/commit-lint.yml` calls
-      `magicsunday/.github/.github/workflows/commit-convention.yml`, which holds the
+      `magicsunday/.github/.github/workflows/commit-convention.yml@main`, which holds the
       normative definition and judges the title and the subject of every commit — not
       the message body. Where this text and that workflow disagree, the workflow is
       authoritative and this text is what gets fixed. That check is **not yet
