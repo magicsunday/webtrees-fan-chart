@@ -123,17 +123,21 @@ Pipeline (`make release X.Y.Z`):
 
 ## PR/commit checklist
 - `composer ci:test` must pass before every commit.
-- Commit subjects match `^GH-\d+: [A-ZÄÖÜ]` on issue-tied work and `^[A-ZÄÖÜ]`
-  otherwise — a capitalised imperative either way. **No conventional-commit prefixes**
+- A subject starting with `GH-` must match `^GH-\d+: [A-ZÄÖÜ]`; every other subject
+  must match `^[A-ZÄÖÜ]` — a capitalised imperative either way. On a `GH-<N>` branch
+  the `GH-<N>: ` prefix is mandatory. **No conventional-commit prefixes**
   (`feat:`, `fix:`, `chore:` …), no lowercase and no path-like starts
   (`src/Module.php: …`). Tool-generated subjects (`Merge …`, `Revert "…"`,
   Dependabot) are exempt.
-    - The two patterns are deliberately kept separate. Folded into
-      `^(GH-\d+: )?[A-ZÄÖÜ]` the rule stops enforcing the capital *after* the
-      prefix: the optional group can be skipped, and the `G` of `GH-` then
-      satisfies `[A-ZÄÖÜ]` on its own — `GH-12: fix typo` would pass.
+    - The two patterns are deliberately kept separate: `^(GH-\d+: )?[A-ZÄÖÜ]` (wrong)
+      stops enforcing the capital *after* the prefix, because the optional group can
+      be skipped and the `G` of `GH-` then satisfies `[A-ZÄÖÜ]` on its own —
+      `GH-12: fix typo` would pass. Keying on the subject rather than on the branch
+      also keeps the rule decidable for commits already on `main`, where the issue
+      branch no longer exists.
 - Branches for an issue are named exactly `GH-<N>`, where `<N>` is the issue number.
-  Every commit on such a branch counts as issue-tied.
+- The PR body closes the issue with a `Closes #<N>` keyword. The `GH-<N>: ` subject
+  prefix is not a GitHub link and closes nothing.
 - Never add a `Co-Authored-By:` trailer or any other AI attribution.
 - Keep PRs small and focused (~≤300 net LOC) with atomic commits.
 - Ensure coverage ≥90% on touched PHP paths.
