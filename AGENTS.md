@@ -123,33 +123,49 @@ Pipeline (`make release X.Y.Z`):
 
 ## PR/commit checklist
 - `composer ci:test` must pass before every commit.
-- A subject starting with `GH-` must match `^GH-\d+: [A-ZÄÖÜ]`; every other subject
-  must match `^[A-ZÄÖÜ]` — a capitalised imperative either way. The patterns check
-  only the leading capital; two starts are banned whatever their case:
-  **conventional-commit prefixes** (`feat:`, `Fix:`, `chore:` …) and path-like starts
-  (`src/Module.php: …`, `Src/Module.php: …`).
-    - The two patterns are deliberately kept separate: `^(GH-\d+: )?[A-ZÄÖÜ]` (wrong)
-      stops enforcing the capital *after* the prefix, because the optional group can
-      be skipped and the `G` of `GH-` then satisfies `[A-ZÄÖÜ]` on its own —
-      `GH-12: fix typo` would pass. Keying on the subject rather than on the branch
-      also keeps this check decidable for commits already on `main`, where the issue
-      branch no longer exists.
-    - The same two patterns judge the **pull-request title**, which under
-      squash-merge is the subject that reaches `main`.
-    - This is checked, not only documented: `.github/workflows/commit-lint.yml` calls
-      `magicsunday/.github/.github/workflows/commit-convention.yml@main`, which holds the
-      normative definition and judges the title and the subject of every commit — not
-      the message body. Where this text and that workflow disagree, the workflow is
-      authoritative and this text is what gets fixed. That check is **not yet
-      required** on `main`, so a red run is advisory until the context
-      `commit-convention / Commit convention` is added to branch protection.
+- Commit subjects and the pull-request title are enforced by
+  `.github/workflows/commit-lint.yml`, which calls
+  `magicsunday/.github/.github/workflows/commit-convention.yml@main`. That workflow
+  holds the normative rule and self-tests it against a decision table before applying
+  it; where this summary and the workflow disagree, the workflow is authoritative on
+  what is *accepted* and this text is what gets fixed — except where this text is
+  deliberately narrower about what is *written* (ASCII `[A-Z]`, below). The invariant to
+  preserve is that this text must never accept a subject the workflow blocks. Both the
+  title and every commit in the pull request are judged, because which of them reaches
+  `main` depends on how the pull request lands: a multi-commit squash uses the title, a
+  single-commit squash keeps that commit's own subject, and a merge or rebase merge
+  keeps the commits' subjects. Checking both makes the rule hold either way. The message
+  body and existing history are never judged. The check is advisory until
+  `commit-convention / Commit convention` is a required context in branch protection.
+- The rule in short: a subject starting with `GH-` must match `^GH-\d+: [A-Z]`, every
+  other subject `^[A-Z]` — a capitalised imperative either way. Two starts are rejected
+  whatever their case: **conventional-commit prefixes**, including the capitalised
+  `Fix:` and the scoped breaking-change `Feat(api)!:` as much as a plain `feat:`, and
+  **path-like starts** such as `src/Module.php: …` and the capitalised
+  `Src/Module.php:fix` — no space after the colon is needed to count. Subjects beginning
+  `Merge ` or `Revert ` pass — by prefix rather than by provenance, and in any case on
+  their leading capital, since neither ban can fire on them: the path ban needs a slash
+  before the first colon with no whitespace in between, and the conventional-commit ban
+  needs one of its type words followed immediately by an optional scope or `!` and then
+  a colon — these have a space there. The same check judges the pull-request title, so
+  never title a pull request `Merge …`. `fixup!` and `squash!` do not pass, so
+  autosquash them before opening the PR. Commit subjects are English, so the documented
+  capital is ASCII `[A-Z]`, while the gate accepts the wider `[[:upper:]]` under the
+  UTF-8 locale it pins — under `LC_ALL=C` that width disappears. The width only ever
+  adds PASSes: the class sits in two accept positions, and its third use — lowercasing
+  the subject before the conventional-commit test — is byte-based and touches ASCII
+  only. This holds for the capital class alone: the gate is **not** a superset of
+  `^[A-Z]`, because the `GH-` routing and the two banned starts above reject capitalised
+  subjects too.
+    - The two patterns stay separate on purpose. Folding them into
+      `^(GH-\d+: )?[A-Z]` breaks the rule: the optional group can be skipped and the
+      `G` of `GH-` then satisfies `[A-Z]` on its own, so `GH-12: fix typo` would pass.
 - Branches for an issue are named exactly `GH-<N>`, where `<N>` is the issue number.
-  Commits on such a branch must carry the `GH-<N>: ` subject prefix, except the merge
-  and revert commits git writes itself — those keep their generated subject. Not every
-  git-written subject is exempt, though: `fixup!` and `squash!` start lowercase and
-  fail, so autosquash them before opening the PR. The gate does not check this half; keyed
-  on the subject alone, it asks only `^[A-ZÄÖÜ]` of an unprefixed subject, whatever
-  branch the commit sits on.
+  The `GH-<N>: ` prefix marks work that belongs to the issue, so a commit on that
+  branch whose concern is something else — a drive-by lint fix, a dependency bump —
+  keeps its own unprefixed subject. The gate keys on the subject alone and never asks
+  which branch a commit sits on, which is what keeps it decidable for commits already
+  on `main`.
 - The PR body closes the issue with a `Closes #<N>` keyword. The `GH-<N>: ` subject
   prefix is not a GitHub link and closes nothing.
 - Never add a `Co-Authored-By:` trailer or any other AI attribution.
