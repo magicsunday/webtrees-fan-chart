@@ -32,6 +32,8 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
+use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatSpec;
+use MagicSunday\Webtrees\ModuleBase\Model\PlaceStyle;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -110,6 +112,7 @@ final class DataFacadeTest extends TestCase
 
         $configuration = self::createStub(Configuration::class);
         $configuration->method('getGenerations')->willReturn(2);
+        $configuration->method('getPlaceFormat')->willReturn(new PlaceFormatSpec(PlaceStyle::Full));
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
@@ -215,6 +218,7 @@ final class DataFacadeTest extends TestCase
 
         $configuration = self::createStub(Configuration::class);
         $configuration->method('getGenerations')->willReturn(2);
+        $configuration->method('getPlaceFormat')->willReturn(new PlaceFormatSpec(PlaceStyle::Full));
         $configuration->method('getShowDescendants')->willReturn(true);
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
@@ -318,6 +322,7 @@ final class DataFacadeTest extends TestCase
         // No partners when showDescendants is false
         $configNoDesc = self::createStub(Configuration::class);
         $configNoDesc->method('getGenerations')->willReturn(2);
+        $configNoDesc->method('getPlaceFormat')->willReturn(new PlaceFormatSpec(PlaceStyle::Full));
         $configNoDesc->method('getShowDescendants')->willReturn(false);
 
         $facade2   = new DataFacade();

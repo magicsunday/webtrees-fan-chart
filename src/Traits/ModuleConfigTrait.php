@@ -93,8 +93,8 @@ trait ModuleConfigTrait
             (string) $configuration->getShowPlaces()
         );
         $this->setPreference(
-            'default_placeParts',
-            (string) $configuration->getPlacePartsSetting()
+            'default_placeFormat',
+            $configuration->getPlaceFormatChoice()->value
         );
         $this->setPreference(
             'default_showParentMarriageDates',

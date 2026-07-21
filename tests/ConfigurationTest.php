@@ -24,10 +24,16 @@ use Illuminate\Database\Schema\Blueprint;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
+use MagicSunday\Webtrees\ModuleBase\Model\PlaceStyle;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
+
+use function array_keys;
+use function array_map;
 
 /**
  * Verifies that configuration handling honors defaults, validation, and
@@ -70,7 +76,7 @@ final class ConfigurationTest extends TestCase
             'default_showFamilyColors'        => '1',
             'default_showParentMarriageDates' => '1',
             'default_showPlaces'              => '1',
-            'default_placeParts'              => '2',
+            'default_placeFormat'             => 'levels-2',
             'default_showImages'              => '1',
             'default_showNames'               => '0',
             'default_innerArcs'               => '2',
@@ -90,7 +96,7 @@ final class ConfigurationTest extends TestCase
         self::assertTrue($configuration->getShowFamilyColors());
         self::assertTrue($configuration->getShowParentMarriageDates());
         self::assertTrue($configuration->getShowPlaces());
-        self::assertSame(2, $configuration->getPlaceParts());
+        self::assertSame(PlaceFormatChoice::Levels2, $configuration->getPlaceFormatChoice());
         self::assertTrue($configuration->getShowImages());
         self::assertFalse($configuration->getShowNames());
         self::assertSame(2, $configuration->getInnerArcs());
@@ -122,7 +128,7 @@ final class ConfigurationTest extends TestCase
                 'hideEmptySegments',
                 'showFamilyColors',
                 'showPlaces',
-                'placeParts',
+                'placeFormat',
                 'showParentMarriageDates',
                 'showImages',
                 'showNames',
@@ -157,7 +163,7 @@ final class ConfigurationTest extends TestCase
             'hideEmptySegments'       => '1',
             'showFamilyColors'        => '1',
             'showPlaces'              => '1',
-            'placeParts'              => '2',
+            'placeFormat'             => 'levels-2',
             'showParentMarriageDates' => '1',
             'showImages'              => '1',
             'showNames'               => '0',
@@ -176,7 +182,7 @@ final class ConfigurationTest extends TestCase
             'default_hideEmptySegments'       => '0',
             'default_showFamilyColors'        => '0',
             'default_showPlaces'              => '0',
-            'default_placeParts'              => '1',
+            'default_placeFormat'             => 'levels-1',
             'default_showParentMarriageDates' => '0',
             'default_showImages'              => '0',
             'default_showNames'               => '1',
@@ -196,7 +202,7 @@ final class ConfigurationTest extends TestCase
         self::assertTrue($configuration->getHideEmptySegments());
         self::assertTrue($configuration->getShowFamilyColors());
         self::assertTrue($configuration->getShowPlaces());
-        self::assertSame(2, $configuration->getPlaceParts());
+        self::assertSame(PlaceFormatChoice::Levels2, $configuration->getPlaceFormatChoice());
         self::assertTrue($configuration->getShowParentMarriageDates());
         self::assertTrue($configuration->getShowImages());
         self::assertFalse($configuration->getShowNames());
@@ -209,115 +215,255 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Ensures placeParts values outside the allowed range 0-3 fall back to the
-     * default.
+     * A stored legacy integer preference keeps working after the upgrade: this is
+     * every installation that configured the option before the format model
+     * existed.
+     *
+     * @param string            $legacyValue
+     * @param PlaceFormatChoice $expected
+     *
+     * @return void
      */
     #[Test]
-    public function placePartsOutOfRangeFallsBackToDefault(): void
-    {
+    #[DataProvider('legacyPlacePartsProvider')]
+    public function legacyPlacePartsPreferenceMapsOntoAChoice(
+        string $legacyValue,
+        PlaceFormatChoice $expected,
+    ): void {
         $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $request = $request->withQueryParams(['placeParts' => '4']);
 
         $module = $this->createModuleWithPreferences([
-            'default_placeParts' => '1',
+            'default_placeParts' => $legacyValue,
         ]);
 
-        $configuration = new Configuration($request, $module);
-
-        self::assertSame(1, $configuration->getPlaceParts());
+        self::assertSame($expected, (new Configuration($request, $module))->getPlaceFormatChoice());
     }
 
     /**
-     * Ensures the maximum allowed placeParts value (3) is accepted.
+     * @return array<string, array{0: string, 1: PlaceFormatChoice}>
+     */
+    public static function legacyPlacePartsProvider(): array
+    {
+        return [
+            'automatic sentinel'        => ['-1', PlaceFormatChoice::Automatic],
+            'full name'                 => ['0', PlaceFormatChoice::Full],
+            'one level'                 => ['1', PlaceFormatChoice::Levels1],
+            'two levels'                => ['2', PlaceFormatChoice::Levels2],
+            'three levels'              => ['3', PlaceFormatChoice::Levels3],
+            'no legacy value'           => ['', PlaceFormatChoice::Automatic],
+            'out-of-range legacy value' => ['9', PlaceFormatChoice::Automatic],
+            'garbage legacy value'      => ['nonsense', PlaceFormatChoice::Automatic],
+        ];
+    }
+
+    /**
+     * The new preference wins over a leftover legacy value.
+     *
+     * @return void
      */
     #[Test]
-    public function placePartsMaximumValueIsAccepted(): void
+    public function newPreferenceTakesPrecedenceOverTheLegacyOne(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $request = $request->withQueryParams(['placeParts' => '3']);
 
         $module = $this->createModuleWithPreferences([
-            'default_placeParts' => '1',
+            'default_placeParts'  => '2',
+            'default_placeFormat' => 'city-iso2',
         ]);
 
-        $configuration = new Configuration($request, $module);
-
-        self::assertSame(3, $configuration->getPlaceParts());
+        self::assertSame(PlaceFormatChoice::CityIso2, (new Configuration($request, $module))->getPlaceFormatChoice());
     }
 
     /**
-     * Ensures the placeParts setting defaults to "Automatic" when no module preference exists.
+     * An unusable query parameter must not discard the admin's stored setting.
+     * The pre-3.0 behaviour was exactly this: a value failing isBetween() fell
+     * back to the preference, not to the built-in default.
+     *
+     * @return void
      */
     #[Test]
-    public function placePartsSettingDefaultsToAutomatic(): void
+    public function anInvalidQueryParameterKeepsTheStoredPreference(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $module  = $this->createModuleWithPreferences([]);
+        $request = $request->withQueryParams(['placeFormat' => 'nonsense']);
 
-        $configuration = new Configuration($request, $module);
+        $module = $this->createModuleWithPreferences([
+            'default_placeFormat' => 'city-iso2',
+        ]);
 
-        self::assertSame(Configuration::PLACE_PARTS_AUTOMATIC, $configuration->getPlacePartsSetting());
+        self::assertSame(PlaceFormatChoice::CityIso2, (new Configuration($request, $module))->getPlaceFormatChoice());
     }
 
     /**
-     * Ensures "Automatic" resolves the effective place parts and suffix from the tree
-     * preferences SHOW_PEDIGREE_PLACES / SHOW_PEDIGREE_PLACES_SUFFIX.
+     * A stored value written by a newer version — the downgrade case — is not
+     * usable either, and must fall through to the legacy key rather than being
+     * treated as valid.
+     *
+     * @return void
      */
     #[Test]
-    public function placePartsAutomaticResolvesTreePreferences(): void
+    public function anUnknownStoredPreferenceFallsBackToTheLegacyKey(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $module  = $this->createModuleWithPreferences([]);
+
+        $module = $this->createModuleWithPreferences([
+            'default_placeFormat' => 'city-iso4',
+            'default_placeParts'  => '2',
+        ]);
+
+        self::assertSame(PlaceFormatChoice::Levels2, (new Configuration($request, $module))->getPlaceFormatChoice());
+    }
+
+    /**
+     * With no preference at all the option inherits the tree settings.
+     *
+     * @return void
+     */
+    #[Test]
+    public function placeFormatDefaultsToAutomatic(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+
+        self::assertSame(
+            PlaceFormatChoice::Automatic,
+            (new Configuration($request, $this->createModuleWithPreferences([])))->getPlaceFormatChoice()
+        );
+    }
+
+    /**
+     * The query parameter overrides the stored preference — this is how the
+     * chart's navigation URLs carry the setting.
+     *
+     * @return void
+     */
+    #[Test]
+    public function placeFormatQueryParameterOverridesThePreference(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $request = $request->withQueryParams(['placeFormat' => 'city-country']);
+
+        $module = $this->createModuleWithPreferences([
+            'default_placeFormat' => 'full',
+        ]);
+
+        self::assertSame(PlaceFormatChoice::CityCountry, (new Configuration($request, $module))->getPlaceFormatChoice());
+    }
+
+    /**
+     * The admin form posts its value; the POST path is the one that actually
+     * configures the module.
+     *
+     * @return void
+     */
+    #[Test]
+    public function placeFormatIsReadFromThePostBody(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_POST, '/');
+        $request = $request->withParsedBody(['placeFormat' => 'city-iso3']);
+
+        $module = $this->createModuleWithPreferences([
+            'default_placeFormat' => 'full',
+        ]);
+
+        self::assertSame(PlaceFormatChoice::CityIso3, (new Configuration($request, $module))->getPlaceFormatChoice());
+    }
+
+    /**
+     * Automatic resolves against the tree preferences — and against the RIGHT
+     * ones: swapping SHOW_PEDIGREE_PLACES with its _SUFFIX sibling must fail this.
+     *
+     * @return void
+     */
+    #[Test]
+    public function automaticResolvesTheTreePreferencesIntoASpec(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
 
         $tree = self::createStub(Tree::class);
+        // Two-element rows: getPreference() is called with ONE argument, and
+        // ReturnValueMap matches on the arguments actually passed. A three-element
+        // row would never match, the stub would return null, and the string return
+        // type would throw.
         $tree->method('getPreference')->willReturnMap([
             ['SHOW_PEDIGREE_PLACES', '2'],
             ['SHOW_PEDIGREE_PLACES_SUFFIX', '1'],
         ]);
 
-        $configuration = new Configuration($request, $module, $tree);
+        $configuration = new Configuration($request, $this->createModuleWithPreferences([]), $tree);
+        $spec          = $configuration->getPlaceFormat();
 
-        self::assertSame(2, $configuration->getPlaceParts());
-        self::assertTrue($configuration->getPlaceSuffix());
+        self::assertSame(PlaceStyle::Levels, $spec->style);
+        self::assertSame(2, $spec->levels);
+        self::assertTrue($spec->fromEnd);
     }
 
     /**
-     * Ensures "Automatic" falls back to the default part count and no suffix when no tree
-     * is available (e.g. the admin configuration page).
+     * Without a tree there is nothing to inherit; the module falls back to a
+     * single level, matching the pre-3.0 DEFAULT_PLACE_PARTS.
+     *
+     * @return void
      */
     #[Test]
-    public function placePartsAutomaticWithoutTreeFallsBackToDefault(): void
+    public function automaticWithoutATreeFallsBackToOneLevel(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $module  = $this->createModuleWithPreferences([]);
 
-        $configuration = new Configuration($request, $module);
+        $spec = (new Configuration($request, $this->createModuleWithPreferences([])))->getPlaceFormat();
 
-        self::assertSame(1, $configuration->getPlaceParts());
-        self::assertFalse($configuration->getPlaceSuffix());
+        self::assertSame(PlaceStyle::Levels, $spec->style);
+        self::assertSame(1, $spec->levels);
+        self::assertFalse($spec->fromEnd);
     }
 
     /**
-     * Ensures an explicit place-parts override ignores the tree suffix preference.
+     * An explicit choice ignores the tree's suffix preference — the module
+     * exposes no direction control of its own.
+     *
+     * @return void
      */
     #[Test]
-    public function explicitPlacePartsIgnoresTreeSuffix(): void
+    public function anExplicitChoiceIgnoresTheTreeSuffix(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $request = $request->withQueryParams(['placeParts' => '2']);
-
-        $module = $this->createModuleWithPreferences([]);
 
         $tree = self::createStub(Tree::class);
+        // Two-element rows: getPreference() is called with ONE argument, and
+        // ReturnValueMap matches on the arguments actually passed. A three-element
+        // row would never match, the stub would return null, and the string return
+        // type would throw.
         $tree->method('getPreference')->willReturnMap([
-            ['SHOW_PEDIGREE_PLACES', '3'],
+            ['SHOW_PEDIGREE_PLACES', '2'],
             ['SHOW_PEDIGREE_PLACES_SUFFIX', '1'],
         ]);
 
-        $configuration = new Configuration($request, $module, $tree);
+        $module = $this->createModuleWithPreferences(['default_placeFormat' => 'levels-3']);
+        $spec   = (new Configuration($request, $module, $tree))->getPlaceFormat();
 
-        self::assertSame(2, $configuration->getPlaceParts());
-        self::assertFalse($configuration->getPlaceSuffix());
+        // All three axes: the predecessor asserted the level count as well, and a
+        // regression mapping levels-3 onto Full or Levels1 must not slip through.
+        self::assertSame(PlaceStyle::Levels, $spec->style);
+        self::assertSame(3, $spec->levels);
+        self::assertFalse($spec->fromEnd, 'the module exposes no direction control');
+    }
+
+    /**
+     * Every choice needs a label, and every label key must round-trip through
+     * tryFrom() — otherwise a select option silently fails to store.
+     *
+     * @return void
+     */
+    #[Test]
+    public function everyChoiceHasALabelKeyedByItsStoredValue(): void
+    {
+        $request       = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $configuration = new Configuration($request, $this->createModuleWithPreferences([]));
+
+        // Canonicalising: every choice needs a label and every key must be a valid
+        // backing value, but the display order of the select is not a contract.
+        self::assertEqualsCanonicalizing(
+            array_map(static fn (PlaceFormatChoice $case): string => $case->value, PlaceFormatChoice::cases()),
+            array_keys($configuration->getPlaceFormatList())
+        );
     }
 
     /**
