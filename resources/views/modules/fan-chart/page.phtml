@@ -118,7 +118,7 @@ WebtreesFanChart.initPage({
     defaultShowNicknames:           <?php echo json_encode($configuration->getShowNicknames()); ?>,
     defaultFanDegreeRaw:            <?php echo json_encode($configuration->getFanDegreeUnclamped()); ?>,
     defaultDetailedDateGenerations: <?php echo json_encode($configuration->getDetailedDateGenerations()); ?>,
-    defaultPlaceParts:              <?php echo json_encode($configuration->getPlacePartsSetting()); ?>
+    defaultPlaceFormat:             <?php echo json_encode($configuration->getPlaceFormatChoice()->value); ?>
 });
 </script>
 <?php View::endpush(); ?>
