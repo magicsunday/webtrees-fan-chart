@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
 "POT-Creation-Date: 1970-01-01 00:00+0000\n"
-"PO-Revision-Date: 2026-07-06 18:02+0200\n"
+"PO-Revision-Date: 2026-07-21 19:21+0200\n"
 "Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -169,6 +169,10 @@ msgid ""
 "lowest levels, or the place combined with its country as a name or country "
 "code. Users toggle place visibility on/off in the chart form."
 msgstr ""
+"Hoe uitgebreid plaatsen in de diagramsegmenten worden getoond — de volledige "
+"naam, alleen de laagste niveaus, of de plaats gecombineerd met het land, als "
+"naam of als landcode. Gebruikers kunnen de plaatsweergave in- of "
+"uitschakelen in het diagramformulier."
 
 #: resources/views/modules/fan-chart/form/display.phtml:59
 msgid ""
@@ -243,15 +247,15 @@ msgstr "Vaderlijk"
 
 #: src/Configuration.php:567
 msgid "Place and country"
-msgstr ""
+msgstr "Plaats en land"
 
 #: src/Configuration.php:568
 msgid "Place and country code (2 letters)"
-msgstr ""
+msgstr "Plaats en landcode (2 letters)"
 
 #: src/Configuration.php:569
 msgid "Place and country code (3 letters)"
-msgstr ""
+msgstr "Plaats en landcode (3 letters)"
 
 #: resources/views/modules/fan-chart/config.phtml:91
 msgid "Place detail"
