@@ -169,6 +169,9 @@ msgid ""
 "lowest levels, or the place combined with its country as a name or country "
 "code. Users toggle place visibility on/off in the chart form."
 msgstr ""
+"How much of each place is shown in chart arcs — the full name, only the "
+"lowest levels, or the place combined with its country as a name or country "
+"code. Users toggle place visibility on/off in the chart form."
 
 #: resources/views/modules/fan-chart/form/display.phtml:59
 msgid ""
@@ -242,15 +245,15 @@ msgstr "Paternal"
 
 #: src/Configuration.php:430
 msgid "Place and country"
-msgstr ""
+msgstr "Place and country"
 
 #: src/Configuration.php:431
 msgid "Place and country code (2 letters)"
-msgstr ""
+msgstr "Place and country code (2 letters)"
 
 #: src/Configuration.php:432
 msgid "Place and country code (3 letters)"
-msgstr ""
+msgstr "Place and country code (3 letters)"
 
 #: resources/views/modules/fan-chart/config.phtml:91
 msgid "Place detail"
