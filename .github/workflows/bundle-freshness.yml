@@ -2,6 +2,7 @@ name: Bundle
 
 on:
     push:
+        branches: [main, master, '*.x', WIP]
     pull_request:
 
 permissions:
