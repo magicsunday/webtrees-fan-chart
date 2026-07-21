@@ -169,10 +169,10 @@ msgid ""
 "lowest levels, or the place combined with its country as a name or ISO code. "
 "Users toggle place visibility on/off in the chart form."
 msgstr ""
-"Wie ausführlich Orte in den Diagrammbögen erscheinen: als vollständiger "
-"Name, nur mit den untersten Ebenen oder als Ort mit seinem Land, "
+"Wie ausführlich Orte in den Diagrammbögen erscheinen: der vollständige Name, "
+"nur die untersten Ebenen, oder der Ort zusammen mit seinem Land, "
 "ausgeschrieben oder als ISO-Kürzel. Anwender schalten die Anzeige der Orte "
-"im Chart-Formular ein bzw. aus."
+"im Diagramm-Formular ein bzw. aus."
 
 #: resources/views/modules/fan-chart/form/display.phtml:59
 msgid ""
