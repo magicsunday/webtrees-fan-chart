@@ -143,6 +143,55 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
+     * The place format is the only toggle whose emitted value is not a plain
+     * int/bool, so it is the one that can silently stop round-tripping: the list
+     * test above pins the key only, and an emitted value outside the enum's
+     * backing set is never rejected — getPlaceFormatChoice() just falls back to
+     * the stored preference. Assert the value a recentre link actually carries.
+     */
+    #[Test]
+    public function theRouteTogglePlaceFormatValueRoundTripsThroughTheChoice(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $module  = $this->createModuleWithPreferences([
+            'default_placeFormat' => 'city-iso2',
+        ]);
+
+        $emitted = (new Configuration($request, $module))
+            ->getRouteToggleParams()[Configuration::PLACE_FORMAT_PARAM];
+
+        // The backing value, not the case name: emitting "CityIso2" would be
+        // rejected by tryFrom() on the way back in and silently fall back to the
+        // stored preference, which is precisely the regression this pins.
+        self::assertSame(PlaceFormatChoice::CityIso2->value, $emitted);
+    }
+
+    /**
+     * The admin form's field name and the request key Configuration reads back
+     * are two independent strings that must match. A mismatch does not error —
+     * every save would persist the stored choice and discard the admin's
+     * selection — so the view builds its field from this constant and this test
+     * pins the constant to the key the reader actually consumes.
+     */
+    #[Test]
+    public function thePlaceFormatParameterNameIsTheOneTheReaderConsumes(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_POST, '/');
+        $request = $request->withParsedBody([
+            Configuration::PLACE_FORMAT_PARAM => 'city-iso3',
+        ]);
+
+        $module = $this->createModuleWithPreferences([
+            'default_placeFormat' => 'full',
+        ]);
+
+        self::assertSame(
+            PlaceFormatChoice::CityIso3,
+            (new Configuration($request, $module))->getPlaceFormatChoice()
+        );
+    }
+
+    /**
      * Ensures POSTed values are validated against allowed ranges and sanitised.
      */
     #[Test]
@@ -240,6 +289,10 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
+     * Every value the pre-3.0 `default_placeParts` preference could hold, including
+     * the ones that must degrade to Automatic: the old "inherit" sentinel, an unset
+     * preference, a value outside the old range, and a non-numeric string.
+     *
      * @return array<string, array{0: string, 1: PlaceFormatChoice}>
      */
     public static function legacyPlacePartsProvider(): array

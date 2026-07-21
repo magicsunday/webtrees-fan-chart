@@ -110,6 +110,16 @@ class Configuration
     public const string MATERNAL_COLOR_DEFAULT = '#d06f94';
 
     /**
+     * Name of the request parameter and admin form field carrying the place
+     * format. The admin form's field name and the key read back here have to be
+     * the same string, and nothing else enforces that: a mismatch does not
+     * error, it makes every save persist the previously stored choice and
+     * silently discard the admin's selection. Both sides reference this
+     * constant so they cannot drift apart.
+     */
+    public const string PLACE_FORMAT_PARAM = 'placeFormat';
+
+    /**
      * Hierarchy levels shown when no tree is available to inherit from. Matches
      * the pre-3.0 DEFAULT_PLACE_PARTS.
      */
@@ -353,11 +363,10 @@ class Configuration
     public function getPlaceFormatChoice(): PlaceFormatChoice
     {
         $stored = PlaceFormatChoice::tryFrom($this->module->getPreference('default_placeFormat', ''))
-            ?? PlaceFormatChoice::tryFrom($this->legacyPlaceFormat())
-            ?? PlaceFormatChoice::Automatic;
+            ?? $this->legacyPlaceFormat();
 
         return PlaceFormatChoice::tryFrom(
-            $this->validator()->string('placeFormat', $stored->value)
+            $this->validator()->string(self::PLACE_FORMAT_PARAM, $stored->value)
         ) ?? $stored;
     }
 
@@ -366,16 +375,20 @@ class Configuration
      * the old key is never rewritten, so downgrading to an earlier module
      * version keeps working. Anything unrecognised means "inherit from the tree".
      *
-     * @return string
+     * Returns the case rather than its backing value: every arm yields a valid
+     * choice, so handing the caller a string would only invite a `tryFrom()`
+     * that can never fail and a fallback arm that can never run.
+     *
+     * @return PlaceFormatChoice
      */
-    private function legacyPlaceFormat(): string
+    private function legacyPlaceFormat(): PlaceFormatChoice
     {
         return match ($this->module->getPreference('default_placeParts', '')) {
-            '0'     => PlaceFormatChoice::Full->value,
-            '1'     => PlaceFormatChoice::Levels1->value,
-            '2'     => PlaceFormatChoice::Levels2->value,
-            '3'     => PlaceFormatChoice::Levels3->value,
-            default => PlaceFormatChoice::Automatic->value,
+            '0'     => PlaceFormatChoice::Full,
+            '1'     => PlaceFormatChoice::Levels1,
+            '2'     => PlaceFormatChoice::Levels2,
+            '3'     => PlaceFormatChoice::Levels3,
+            default => PlaceFormatChoice::Automatic,
         };
     }
 
@@ -671,7 +684,7 @@ class Configuration
             'hideEmptySegments'       => $this->getHideEmptySegments() ? '1' : '0',
             'showFamilyColors'        => $this->getShowFamilyColors() ? '1' : '0',
             'showPlaces'              => $this->getShowPlaces() ? '1' : '0',
-            'placeFormat'             => $this->getPlaceFormatChoice()->value,
+            self::PLACE_FORMAT_PARAM  => $this->getPlaceFormatChoice()->value,
             'showParentMarriageDates' => $this->getShowParentMarriageDates() ? '1' : '0',
             'showImages'              => $this->getShowImages() ? '1' : '0',
             'showNames'               => $this->getShowNames() ? '1' : '0',
