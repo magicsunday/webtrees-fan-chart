@@ -1,0 +1,28 @@
+name: Labels
+
+# Apply the canonical magicsunday label set to this repository. The manifest
+# lives in magicsunday/.github; the sync is non-destructive, so labels specific
+# to this repository are preserved.
+on:
+    push:
+        branches: [main]
+        paths: ['.github/workflows/labels.yml']
+    schedule:
+        - cron: '15 4 * * 1'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+# Serialise runs so an overlapping schedule/dispatch/push cannot drive two
+# concurrent label mutations; do not cancel an in-flight sync mid-write.
+concurrency:
+    group: ${{ github.workflow }}
+    cancel-in-progress: false
+
+jobs:
+    sync:
+        uses: magicsunday/.github/.github/workflows/label-sync.yml@main
+        permissions:
+            contents: read
+            issues: write
