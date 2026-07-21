@@ -23,19 +23,19 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Віялова діаграма предків особи."
 
-#: src/Configuration.php:640
+#: src/Configuration.php:805
 msgid "Abbreviate given names first"
 msgstr "Спершу скорочувати імена"
 
-#: src/Configuration.php:641
+#: src/Configuration.php:806
 msgid "Abbreviate surnames first"
 msgstr "Спершу скорочувати прізвища"
 
-#: src/Configuration.php:639
+#: src/Configuration.php:804
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Автоматично (за традицією прізвищ дерева)"
 
-#: src/Configuration.php:425
+#: src/Configuration.php:562
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
@@ -135,7 +135,7 @@ msgstr "Розмір віяла"
 msgid "Font size"
 msgstr "Розмір шрифту"
 
-#: src/Configuration.php:426
+#: src/Configuration.php:563
 msgid "Full place name"
 msgstr "Повна назва місця"
 
@@ -192,15 +192,15 @@ msgstr ""
 "Martin \"Chalky\" White). Повторює попередню поведінку webtrees для дерев, "
 "які зберігають прізвиська в окремому полі GEDCOM NICK."
 
-#: src/Configuration.php:427
+#: src/Configuration.php:564
 msgid "Lowest level (e.g. parish)"
 msgstr "Найнижчий рівень (напр. парафія)"
 
-#: src/Configuration.php:429
+#: src/Configuration.php:566
 msgid "Lowest three levels"
 msgstr "Три найнижчих рівні"
 
-#: src/Configuration.php:428
+#: src/Configuration.php:565
 msgid "Lowest two levels"
 msgstr "Два найнижчих рівні"
 
@@ -240,15 +240,15 @@ msgstr ""
 msgid "Paternal"
 msgstr "По батьківській лінії"
 
-#: src/Configuration.php:430
+#: src/Configuration.php:567
 msgid "Place and country"
 msgstr ""
 
-#: src/Configuration.php:431
+#: src/Configuration.php:568
 msgid "Place and country code (2 letters)"
 msgstr ""
 
-#: src/Configuration.php:432
+#: src/Configuration.php:569
 msgid "Place and country code (3 letters)"
 msgstr ""
 
@@ -291,7 +291,7 @@ msgstr ""
 "Нащадки з вузькими дугами автоматично використовують компактний формат лише "
 "з роком."
 
-#: src/Configuration.php:218
+#: src/Configuration.php:318
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Показати повні дати до покоління %s"
@@ -351,7 +351,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Використовуйте Ctrl + коліщатко миші для збільшення зображення"
 
-#: src/Configuration.php:213
+#: src/Configuration.php:313
 msgid "Years only"
 msgstr "Лише роки"
 

@@ -32,8 +32,11 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
+use function array_filter;
 use function array_keys;
 use function array_map;
+use function count;
+use function str_contains;
 
 /**
  * Verifies that configuration handling honors defaults, validation, and
@@ -647,6 +650,101 @@ final class ConfigurationTest extends TestCase
         self::assertSame(300, $configuration->getFanDegreeUnclamped());
         // getFanDegree should return 270 (clamped)
         self::assertSame(270, $configuration->getFanDegree());
+    }
+
+    /**
+     * Pins the per-request query cost: however often the getters are called
+     * while the tree is built, each preference is read at most once.
+     */
+    #[Test]
+    public function readsEachPreferenceOnceHoweverOftenTheGettersAreCalled(): void
+    {
+        // Compares one round against ten rather than asserting a fixed number.
+        // A fixed bound would encode today's preference count and fail on an
+        // unrelated future addition while blaming memoisation. It would also pass
+        // vacuously if the getters stopped querying at all. Constant cost is the
+        // property that matters.
+        $oneRound  = $this->countPreferenceQueries(1);
+        $tenRounds = $this->countPreferenceQueries(10);
+
+        self::assertGreaterThan(0, $oneRound, 'the first round must actually read the preferences');
+        self::assertSame(
+            $oneRound,
+            $tenRounds,
+            'preference lookups are not memoised — the query cost scales with the number of nodes'
+        );
+    }
+
+    /**
+     * Runs every per-node getter $rounds times against a FRESH configuration and
+     * returns how many `module_setting` queries that produced. The instance has
+     * to be fresh per measurement — reusing one would leave it memoised from the
+     * previous round and report zero.
+     *
+     * The getter list mirrors the settings the DataFacade resolves per individual
+     * while building the tree (up to ~1023 nodes for ten generations): every
+     * getRouteToggleParams() member plus getDetailedDateGenerations() and
+     * getPlaceFormat(), which getNodeData() reads directly.
+     *
+     * @param int $rounds The number of times to invoke each getter
+     *
+     * @return int
+     */
+    private function countPreferenceQueries(int $rounds): int
+    {
+        $request       = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $configuration = new Configuration($request, $this->createModuleWithPreferences([]));
+
+        $connection = DB::connection();
+        $connection->flushQueryLog();
+        $connection->enableQueryLog();
+
+        try {
+            for ($i = 0; $i < $rounds; ++$i) {
+                $configuration->getGenerations();
+                $configuration->getDetailedDateGenerations();
+                $configuration->getFontScale();
+                $configuration->getShowDescendants();
+                $configuration->getFanDegree();
+                $configuration->getFanDegreeUnclamped();
+                $configuration->getHideEmptySegments();
+                $configuration->getShowFamilyColors();
+                $configuration->getShowPlaces();
+                $configuration->getPlaceFormatChoice();
+                $configuration->getPlaceFormat();
+                $configuration->getShowParentMarriageDates();
+                $configuration->getShowImages();
+                $configuration->getShowNames();
+                $configuration->getShowNicknames();
+                $configuration->getInnerArcs();
+                $configuration->getPaternalColor();
+                $configuration->getMaternalColor();
+            }
+
+            // Counts only the preference reads the assertion talks about, so an
+            // unrelated query inside the window cannot change the verdict.
+            return count(array_filter($connection->getQueryLog(), $this->isPreferenceQuery(...)));
+        } finally {
+            $connection->disableQueryLog();
+            $connection->flushQueryLog();
+        }
+    }
+
+    /**
+     * Whether a query-log entry is a preference read.
+     *
+     * Declared as a named method with the log entry's shape rather than an
+     * inline closure: without the shape Rector wants a `(string)` cast on the
+     * query and PHPStan rejects that same cast as useless, so the two gates
+     * contradict each other.
+     *
+     * @param array{query: string, bindings: array<mixed>, time: float|null} $entry
+     *
+     * @return bool
+     */
+    private function isPreferenceQuery(array $entry): bool
+    {
+        return str_contains($entry['query'], 'module_setting');
     }
 
     /**
