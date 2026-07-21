@@ -22,19 +22,19 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Biểu đồ cá nhân Tổ tiên"
 
-#: src/Configuration.php:632
+#: src/Configuration.php:640
 msgid "Abbreviate given names first"
 msgstr "Viết tắt tên gọi trước"
 
-#: src/Configuration.php:633
+#: src/Configuration.php:641
 msgid "Abbreviate surnames first"
 msgstr "Viết tắt họ trước"
 
-#: src/Configuration.php:631
+#: src/Configuration.php:639
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Tự động (dựa trên truyền thống họ của cây phả hệ)"
 
-#: src/Configuration.php:420
+#: src/Configuration.php:425
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
@@ -134,7 +134,7 @@ msgstr "Kích thước biểu đồ"
 msgid "Font size"
 msgstr "Kích thước font chữ"
 
-#: src/Configuration.php:421
+#: src/Configuration.php:426
 msgid "Full place name"
 msgstr "Tên địa điểm đầy đủ"
 
@@ -164,13 +164,10 @@ msgstr "Ẩn nút xuất SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:102
 msgid ""
-"How much of each place hierarchy is shown in chart arcs (full name, or only "
-"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
-"form."
+"How much of each place is shown in chart arcs — the full name, only the "
+"lowest levels, or the place combined with its country as a name or ISO code. "
+"Users toggle place visibility on/off in the chart form."
 msgstr ""
-"Bao nhiêu phần của mỗi cấu trúc địa điểm được hiển thị trong các cung biểu "
-"đồ (tên đầy đủ hoặc chỉ 1–3 cấp thấp nhất). Người dùng bật/tắt hiển thị địa "
-"điểm trong biểu mẫu biểu đồ."
 
 #: resources/views/modules/fan-chart/form/display.phtml:59
 msgid ""
@@ -194,15 +191,15 @@ msgstr ""
 "Martin \"Chalky\" White). Tái hiện hành vi webtrees cũ cho cây gia phả lưu "
 "biệt danh trong trường GEDCOM NICK riêng."
 
-#: src/Configuration.php:422
+#: src/Configuration.php:427
 msgid "Lowest level (e.g. parish)"
 msgstr "Cấp thấp nhất (ví dụ: giáo xứ)"
 
-#: src/Configuration.php:424
+#: src/Configuration.php:429
 msgid "Lowest three levels"
 msgstr "Ba cấp thấp nhất"
 
-#: src/Configuration.php:423
+#: src/Configuration.php:428
 msgid "Lowest two levels"
 msgstr "Hai cấp thấp nhất"
 
@@ -242,6 +239,18 @@ msgstr ""
 msgid "Paternal"
 msgstr "Bên nội"
 
+#: src/Configuration.php:430
+msgid "Place and country"
+msgstr ""
+
+#: src/Configuration.php:431
+msgid "Place and country code (2 letters)"
+msgstr ""
+
+#: src/Configuration.php:432
+msgid "Place and country code (3 letters)"
+msgstr ""
+
 #: resources/views/modules/fan-chart/config.phtml:91
 msgid "Place detail"
 msgstr "Chi tiết địa điểm"
@@ -280,7 +289,7 @@ msgstr ""
 "chỉ hiển thị năm. Ngày kết hôn bị ẩn từ thế hệ 9. Con cháu có cung hẹp tự "
 "động sử dụng định dạng chỉ năm gọn."
 
-#: src/Configuration.php:214
+#: src/Configuration.php:218
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Hiển thị đầy đủ ngày tháng đến thế hệ %s"
@@ -340,7 +349,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Kết hợp Ctrl + scroll để thu phóng biểu đồ"
 
-#: src/Configuration.php:209
+#: src/Configuration.php:213
 msgid "Years only"
 msgstr "Chỉ năm"
 

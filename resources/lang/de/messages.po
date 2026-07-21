@@ -22,19 +22,19 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Ein Fächerdiagramm der Vorfahren einer Person."
 
-#: src/Configuration.php:632
+#: src/Configuration.php:640
 msgid "Abbreviate given names first"
 msgstr "Zuerst Vornamen abkürzen"
 
-#: src/Configuration.php:633
+#: src/Configuration.php:641
 msgid "Abbreviate surnames first"
 msgstr "Zuerst Nachnamen abkürzen"
 
-#: src/Configuration.php:631
+#: src/Configuration.php:639
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automatisch (basierend auf der Nachnamen-Tradition des Stammbaums)"
 
-#: src/Configuration.php:420
+#: src/Configuration.php:425
 msgid "Automatic (from the tree configuration)"
 msgstr "Automatisch (aus der Baumkonfiguration)"
 
@@ -135,7 +135,7 @@ msgstr "Fächergröße"
 msgid "Font size"
 msgstr "Schriftgröße"
 
-#: src/Configuration.php:421
+#: src/Configuration.php:426
 msgid "Full place name"
 msgstr "Vollständiger Ortsname"
 
@@ -165,13 +165,14 @@ msgstr "Die Schaltfläche für den SVG-Export ausblenden"
 
 #: resources/views/modules/fan-chart/config.phtml:102
 msgid ""
-"How much of each place hierarchy is shown in chart arcs (full name, or only "
-"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
-"form."
+"How much of each place is shown in chart arcs — the full name, only the "
+"lowest levels, or the place combined with its country as a name or ISO code. "
+"Users toggle place visibility on/off in the chart form."
 msgstr ""
-"Wie viel jeder Ortshierarchie in den Diagrammbögen angezeigt wird "
-"(vollständiger Name oder nur die niedrigsten 1–3 Ebenen). Anwender schalten "
-"die Anzeige der Orte im Chart-Formular ein bzw. aus."
+"Wie ausführlich Orte in den Diagrammbögen erscheinen: als vollständiger "
+"Name, nur mit den untersten Ebenen oder als Ort mit seinem Land, "
+"ausgeschrieben oder als ISO-Kürzel. Anwender schalten die Anzeige der Orte "
+"im Chart-Formular ein bzw. aus."
 
 #: resources/views/modules/fan-chart/form/display.phtml:59
 msgid ""
@@ -196,15 +197,15 @@ msgstr ""
 "Verhalten für Bäume nach, die Spitznamen im separaten GEDCOM NICK-Feld "
 "speichern."
 
-#: src/Configuration.php:422
+#: src/Configuration.php:427
 msgid "Lowest level (e.g. parish)"
 msgstr "Unterste Ebene (z.B. Kirchgemeinde)"
 
-#: src/Configuration.php:424
+#: src/Configuration.php:429
 msgid "Lowest three levels"
 msgstr "Unterste drei Ebenen"
 
-#: src/Configuration.php:423
+#: src/Configuration.php:428
 msgid "Lowest two levels"
 msgstr "Unterste zwei Ebenen"
 
@@ -243,6 +244,18 @@ msgstr ""
 #: resources/views/modules/fan-chart/form/colors.phtml:39
 msgid "Paternal"
 msgstr "Väterlich"
+
+#: src/Configuration.php:430
+msgid "Place and country"
+msgstr "Ort und Land"
+
+#: src/Configuration.php:431
+msgid "Place and country code (2 letters)"
+msgstr "Ort und Ländercode (2 Buchstaben)"
+
+#: src/Configuration.php:432
+msgid "Place and country code (3 letters)"
+msgstr "Ort und Ländercode (3 Buchstaben)"
 
 #: resources/views/modules/fan-chart/config.phtml:91
 msgid "Place detail"
@@ -283,7 +296,7 @@ msgstr ""
 "ab Generation 9 ausgeblendet. Nachkommen mit schmalen Bögen verwenden "
 "automatisch ein kompaktes Nur-Jahr-Format."
 
-#: src/Configuration.php:214
+#: src/Configuration.php:218
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Zeige vollständige Daten bis Generation %s"
@@ -343,7 +356,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Verwende Strg+Scrollen zum Zoomen der Ansicht"
 
-#: src/Configuration.php:209
+#: src/Configuration.php:213
 msgid "Years only"
 msgstr "Nur Jahreszahlen"
 

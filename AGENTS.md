@@ -64,7 +64,7 @@ Flat layout — every file is fan-chart-specific glue. Reusable base classes (St
 
 ### Data-relevant config parameters
 These must be passed in both `getUrl()` (initial AJAX) and `getUpdateRoute()` (person click):
-- `generations`, `detailedDateGenerations`, `showPlaces`, `placeParts`
+- `generations`, `detailedDateGenerations`, `showPlaces`, `placeFormat`
 - Other options (`showImages`, `showNames`, `hideEmptySegments`, etc.) are JS-only.
 - Boolean parameters must be sent as `"1"`/`"0"` — webtrees `Validator::boolean()` only accepts `'1'`, `'on'`, `true`, not the string `"true"`.
 - Places are displayed only for generations within the `innerArcs` boundary (not `detailedDateGenerations`).
