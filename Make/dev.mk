@@ -18,8 +18,8 @@ link-base: .logo ## Symlink .build/vendor/.../webtrees-module-base to the siblin
 		echo -e "${FRED} ✘${FRESET} Expected sibling clone at $(MODULE_BASE_CLONE)"; \
 		exit 1; \
 	fi
-	@rm -rf $(MODULE_BASE_VENDOR)
-	@ln -s "$$(cd $(MODULE_BASE_CLONE) && pwd)" $(MODULE_BASE_VENDOR)
+	@rm -rf "$(MODULE_BASE_VENDOR)"
+	@ln -s "$$(cd $(MODULE_BASE_CLONE) && pwd)" "$(MODULE_BASE_VENDOR)"
 	@echo -e "${FGREEN} ✔${FRESET} Symlinked $(MODULE_BASE_VENDOR) → $$(cd $(MODULE_BASE_CLONE) && pwd)"
 	@echo -e "${FYELLOW}   Note:${FRESET} composer install/update will replace this symlink with a fresh checkout."
 
