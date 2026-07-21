@@ -17,6 +17,8 @@ use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Validator;
 use MagicSunday\Webtrees\ModuleBase\Model\NameAbbreviation;
+use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
+use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatSpec;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -108,18 +110,20 @@ class Configuration
     public const string MATERNAL_COLOR_DEFAULT = '#d06f94';
 
     /**
-     * The default number of place hierarchy parts to display. 1 = lowest level
-     * (parish/city), 0 = full place name. Used as the effective fallback when the
-     * "Automatic" setting cannot resolve a tree preference.
+     * Name of the request parameter and admin form field carrying the place
+     * format. The admin form's field name and the key read back here have to be
+     * the same string, and nothing else enforces that: a mismatch does not
+     * error, it makes every save persist the previously stored choice and
+     * silently discard the admin's selection. Both sides reference this
+     * constant so they cannot drift apart.
      */
-    private const int DEFAULT_PLACE_PARTS = 1;
+    public const string PLACE_FORMAT_PARAM = 'placeFormat';
 
     /**
-     * The placeParts sentinel meaning "inherit the tree's SHOW_PEDIGREE_PLACES /
-     * SHOW_PEDIGREE_PLACES_SUFFIX preference". The default setting, so a central
-     * tree configuration takes effect without per-module setup.
+     * Hierarchy levels shown when no tree is available to inherit from. Matches
+     * the pre-3.0 DEFAULT_PLACE_PARTS.
      */
-    public const int PLACE_PARTS_AUTOMATIC = -1;
+    private const int DEFAULT_PLACE_LEVELS = 1;
 
     /**
      * The default number of generations for which detailed life event dates are
@@ -135,8 +139,8 @@ class Configuration
     /**
      * @param ServerRequestInterface $request
      * @param AbstractModule         $module
-     * @param Tree|null              $tree    The active tree, used to resolve the "Automatic" placeParts
-     *                                        setting from SHOW_PEDIGREE_PLACES / _SUFFIX; null in
+     * @param Tree|null              $tree    The active tree, used to resolve the "Automatic" place-format
+     *                                        choice from SHOW_PEDIGREE_PLACES / _SUFFIX; null in
      *                                        tree-agnostic contexts such as the admin configuration page
      */
     public function __construct(
@@ -345,83 +349,87 @@ class Configuration
     }
 
     /**
-     * Returns the raw place-parts setting: PLACE_PARTS_AUTOMATIC (-1, inherit the
-     * tree preference) or an explicit override (0 = full name, 1–3 = N levels). This
-     * is the value shown in the configuration select and forwarded on navigation.
+     * The place-detail option as selected, before the tree preferences are
+     * applied. This is the value the configuration select shows and the value
+     * forwarded on navigation.
      *
-     * @return int
+     * An unusable value — a tampered query parameter, or a preference written by
+     * a newer version before a downgrade — never silently resets the admin's
+     * choice: the query parameter falls back to the stored preference, and an
+     * unusable stored preference falls through to the legacy key.
+     *
+     * @return PlaceFormatChoice
      */
-    public function getPlacePartsSetting(): int
+    public function getPlaceFormatChoice(): PlaceFormatChoice
     {
-        return $this->validator()
-            ->isBetween(self::PLACE_PARTS_AUTOMATIC, 3)
-            ->integer(
-                'placeParts',
-                (int) $this->module->getPreference(
-                    'default_placeParts',
-                    (string) self::PLACE_PARTS_AUTOMATIC
-                )
-            );
+        $stored = PlaceFormatChoice::tryFrom($this->module->getPreference('default_placeFormat', ''))
+            ?? $this->legacyPlaceFormat();
+
+        return PlaceFormatChoice::tryFrom(
+            $this->validator()->string(self::PLACE_FORMAT_PARAM, $stored->value)
+        ) ?? $stored;
     }
 
     /**
-     * Returns the effective number of place hierarchy levels to display. Resolves the
-     * "Automatic" setting to the tree's SHOW_PEDIGREE_PLACES preference (webtrees'
-     * own default applies when unset; DEFAULT_PLACE_PARTS when no tree is available),
-     * otherwise the explicit 0–3 override.
+     * Translate the pre-3.0 integer preference into a choice value. Read-only:
+     * the old key is never rewritten, so downgrading to an earlier module
+     * version keeps working. Anything unrecognised means "inherit from the tree".
      *
-     * @return int
+     * Returns the case rather than its backing value: every arm yields a valid
+     * choice, so handing the caller a string would only invite a `tryFrom()`
+     * that can never fail and a fallback arm that can never run.
+     *
+     * @return PlaceFormatChoice
      */
-    public function getPlaceParts(): int
+    private function legacyPlaceFormat(): PlaceFormatChoice
     {
-        $setting = $this->getPlacePartsSetting();
+        return match ($this->module->getPreference('default_placeParts', '')) {
+            '0'     => PlaceFormatChoice::Full,
+            '1'     => PlaceFormatChoice::Levels1,
+            '2'     => PlaceFormatChoice::Levels2,
+            '3'     => PlaceFormatChoice::Levels3,
+            default => PlaceFormatChoice::Automatic,
+        };
+    }
 
-        if ($setting !== self::PLACE_PARTS_AUTOMATIC) {
-            return $setting;
-        }
-
+    /**
+     * The fully resolved formatting instruction. The automatic choice is applied
+     * against the tree's SHOW_PEDIGREE_PLACES / SHOW_PEDIGREE_PLACES_SUFFIX
+     * preferences here, because this is where the tree is available — the
+     * processor stays free of webtrees configuration.
+     *
+     * @return PlaceFormatSpec
+     */
+    public function getPlaceFormat(): PlaceFormatSpec
+    {
         if (!$this->tree instanceof Tree) {
-            return self::DEFAULT_PLACE_PARTS;
+            return $this->getPlaceFormatChoice()->toSpec(self::DEFAULT_PLACE_LEVELS, false);
         }
 
-        return (int) $this->tree->getPreference('SHOW_PEDIGREE_PLACES');
+        return $this->getPlaceFormatChoice()->toSpec(
+            (int) $this->tree->getPreference('SHOW_PEDIGREE_PLACES'),
+            $this->tree->getPreference('SHOW_PEDIGREE_PLACES_SUFFIX') === '1'
+        );
     }
 
     /**
-     * Returns whether the last (country-end) place parts should be kept instead of the
-     * first (locality-end). Mirrors the tree's SHOW_PEDIGREE_PLACES_SUFFIX preference in
-     * "Automatic" mode; an explicit 0–3 override always keeps the first parts (the module
-     * exposes no suffix control of its own).
+     * Localised labels for the place-detail selector, keyed by stored value. The
+     * literals live here rather than in the shared package so xgettext can
+     * extract them into this module's catalogue.
      *
-     * @return bool
+     * @return array<string, string>
      */
-    public function getPlaceSuffix(): bool
-    {
-        if ($this->getPlacePartsSetting() !== self::PLACE_PARTS_AUTOMATIC) {
-            return false;
-        }
-
-        if (!$this->tree instanceof Tree) {
-            return false;
-        }
-
-        return $this->tree->getPreference('SHOW_PEDIGREE_PLACES_SUFFIX') === '1';
-    }
-
-    /**
-     * Returns a localised label map for the place-parts selector (key 0 = full
-     * name).
-     *
-     * @return string[]
-     */
-    public function getPlacePartsList(): array
+    public function getPlaceFormatList(): array
     {
         return [
-            self::PLACE_PARTS_AUTOMATIC => I18N::translate('Automatic (from the tree configuration)'),
-            0                           => I18N::translate('Full place name'),
-            1                           => I18N::translate('Lowest level (e.g. parish)'),
-            2                           => I18N::translate('Lowest two levels'),
-            3                           => I18N::translate('Lowest three levels'),
+            PlaceFormatChoice::Automatic->value   => I18N::translate('Automatic (from the tree configuration)'),
+            PlaceFormatChoice::Full->value        => I18N::translate('Full place name'),
+            PlaceFormatChoice::Levels1->value     => I18N::translate('Lowest level (e.g. parish)'),
+            PlaceFormatChoice::Levels2->value     => I18N::translate('Lowest two levels'),
+            PlaceFormatChoice::Levels3->value     => I18N::translate('Lowest three levels'),
+            PlaceFormatChoice::CityCountry->value => I18N::translate('Place and country'),
+            PlaceFormatChoice::CityIso2->value    => I18N::translate('Place and country code (2 letters)'),
+            PlaceFormatChoice::CityIso3->value    => I18N::translate('Place and country code (3 letters)'),
         ];
     }
 
@@ -676,7 +684,7 @@ class Configuration
             'hideEmptySegments'       => $this->getHideEmptySegments() ? '1' : '0',
             'showFamilyColors'        => $this->getShowFamilyColors() ? '1' : '0',
             'showPlaces'              => $this->getShowPlaces() ? '1' : '0',
-            'placeParts'              => $this->getPlacePartsSetting(),
+            self::PLACE_FORMAT_PARAM  => $this->getPlaceFormatChoice()->value,
             'showParentMarriageDates' => $this->getShowParentMarriageDates() ? '1' : '0',
             'showImages'              => $this->getShowImages() ? '1' : '0',
             'showNames'               => $this->getShowNames() ? '1' : '0',

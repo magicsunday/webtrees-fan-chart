@@ -26,6 +26,7 @@ use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
 use MagicSunday\Webtrees\ModuleBase\Support\CompactDateFormat;
+use MagicSunday\Webtrees\ModuleBase\Support\Locale\IsoCountryMap;
 use MagicSunday\Webtrees\ModuleBase\Support\TextDirection;
 
 /**
@@ -310,8 +311,8 @@ class DataFacade
         );
         $placeProcessor = new PlaceProcessor(
             $individual,
-            $this->configuration->getPlaceParts(),
-            $this->configuration->getPlaceSuffix(),
+            $this->configuration->getPlaceFormat(),
+            new IsoCountryMap()
         );
 
         $showNicknames = $this->configuration->getShowNicknames();
@@ -568,8 +569,8 @@ class DataFacade
 
     /**
      * Returns the abbreviated marriage place of the individual's parents for
-     * use in arc text. Applies the configured placeParts truncation. Returns
-     * empty string if no parent family exists.
+     * use in arc text. Applies the configured place format. Returns empty
+     * string if no parent family exists.
      *
      * @param Individual     $individual
      * @param PlaceProcessor $placeProcessor

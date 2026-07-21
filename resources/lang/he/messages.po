@@ -23,19 +23,19 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "תרשים מעריצים של אבותיו של אדם."
 
-#: src/Configuration.php:632
+#: src/Configuration.php:640
 msgid "Abbreviate given names first"
 msgstr "קצר תחילה את השמות הפרטיים"
 
-#: src/Configuration.php:633
+#: src/Configuration.php:641
 msgid "Abbreviate surnames first"
 msgstr "קצר תחילה את שמות המשפחה"
 
-#: src/Configuration.php:631
+#: src/Configuration.php:639
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "אוטומטי (על פי מסורת שם המשפחה של העץ)"
 
-#: src/Configuration.php:420
+#: src/Configuration.php:425
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
@@ -134,7 +134,7 @@ msgstr "גודל מאוורר"
 msgid "Font size"
 msgstr "גודל גופן"
 
-#: src/Configuration.php:421
+#: src/Configuration.php:426
 msgid "Full place name"
 msgstr "שם מקום מלא"
 
@@ -164,12 +164,10 @@ msgstr "הסתר את כפתור ייצוא SVG"
 
 #: resources/views/modules/fan-chart/config.phtml:102
 msgid ""
-"How much of each place hierarchy is shown in chart arcs (full name, or only "
-"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
-"form."
+"How much of each place is shown in chart arcs — the full name, only the "
+"lowest levels, or the place combined with its country as a name or country "
+"code. Users toggle place visibility on/off in the chart form."
 msgstr ""
-"איזה חלק מההיררכיה של כל מקום מוצג בקשתות התרשים (שם מלא או רק 1–3 הרמות "
-"הנמוכות ביותר). משתמשים מפעילים/מכבים את הצגת המקום בטופס התרשים."
 
 #: resources/views/modules/fan-chart/form/display.phtml:59
 msgid ""
@@ -192,15 +190,15 @@ msgstr ""
 "Martin \"Chalky\" White). משחזר את התנהגות webtrees הישנה עבור עצים השומרים "
 "כינויים בשדה GEDCOM NICK הנפרד."
 
-#: src/Configuration.php:422
+#: src/Configuration.php:427
 msgid "Lowest level (e.g. parish)"
 msgstr "רמה נמוכה ביותר (למשל קהילה)"
 
-#: src/Configuration.php:424
+#: src/Configuration.php:429
 msgid "Lowest three levels"
 msgstr "שלוש הרמות הנמוכות ביותר"
 
-#: src/Configuration.php:423
+#: src/Configuration.php:428
 msgid "Lowest two levels"
 msgstr "שתי הרמות הנמוכות ביותר"
 
@@ -240,6 +238,18 @@ msgstr ""
 msgid "Paternal"
 msgstr "אבהי"
 
+#: src/Configuration.php:430
+msgid "Place and country"
+msgstr ""
+
+#: src/Configuration.php:431
+msgid "Place and country code (2 letters)"
+msgstr ""
+
+#: src/Configuration.php:432
+msgid "Place and country code (3 letters)"
+msgstr ""
+
 #: resources/views/modules/fan-chart/config.phtml:91
 msgid "Place detail"
 msgstr "פירוט מקום"
@@ -278,7 +288,7 @@ msgstr ""
 "מציגים שנה בלבד. תאריכי נישואין מוסתרים מדור 9. צאצאים עם קשתות צרות משתמשים "
 "אוטומטית בפורמט שנה בלבד."
 
-#: src/Configuration.php:214
+#: src/Configuration.php:218
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "הצג תאריכים מלאים עד דור %s"
@@ -337,7 +347,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "השתמש ב- Ctrl + גלילה כדי להגדיל את התצוגה"
 
-#: src/Configuration.php:209
+#: src/Configuration.php:213
 msgid "Years only"
 msgstr "שנים בלבד"
 

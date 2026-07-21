@@ -22,19 +22,19 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Viuhkakaavio henkilön esi-isistä."
 
-#: src/Configuration.php:632
+#: src/Configuration.php:640
 msgid "Abbreviate given names first"
 msgstr "Lyhennä ensin etunimet"
 
-#: src/Configuration.php:633
+#: src/Configuration.php:641
 msgid "Abbreviate surnames first"
 msgstr "Lyhennä ensin sukunimet"
 
-#: src/Configuration.php:631
+#: src/Configuration.php:639
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automaattinen (sukupuun sukunimitradition mukaan)"
 
-#: src/Configuration.php:420
+#: src/Configuration.php:425
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
@@ -135,7 +135,7 @@ msgstr "Viuhkan koko"
 msgid "Font size"
 msgstr "Fonttikoko"
 
-#: src/Configuration.php:421
+#: src/Configuration.php:426
 msgid "Full place name"
 msgstr "Koko paikannimi"
 
@@ -165,12 +165,10 @@ msgstr "Piilota SVG-vientipainike"
 
 #: resources/views/modules/fan-chart/config.phtml:102
 msgid ""
-"How much of each place hierarchy is shown in chart arcs (full name, or only "
-"the lowest 1–3 levels). Users toggle place visibility on/off in the chart "
-"form."
+"How much of each place is shown in chart arcs — the full name, only the "
+"lowest levels, or the place combined with its country as a name or country "
+"code. Users toggle place visibility on/off in the chart form."
 msgstr ""
-"Kuinka paljon paikkahierarkiaa näytetään kaaviokaarilla (koko nimi tai vain "
-"1–3 alinta tasoa). Käyttäjät vaihtavat paikan näkyvyyttä kaaviomuodossa."
 
 #: resources/views/modules/fan-chart/form/display.phtml:59
 msgid ""
@@ -195,15 +193,15 @@ msgstr ""
 "sukupuille, joissa lempinimet on tallennettu erilliseen GEDCOM NICK "
 "-kenttään."
 
-#: src/Configuration.php:422
+#: src/Configuration.php:427
 msgid "Lowest level (e.g. parish)"
 msgstr "Alin taso (esim. seurakunta)"
 
-#: src/Configuration.php:424
+#: src/Configuration.php:429
 msgid "Lowest three levels"
 msgstr "Kolme alinta tasoa"
 
-#: src/Configuration.php:423
+#: src/Configuration.php:428
 msgid "Lowest two levels"
 msgstr "Kaksi alinta tasoa"
 
@@ -242,6 +240,18 @@ msgstr ""
 #: resources/views/modules/fan-chart/form/colors.phtml:39
 msgid "Paternal"
 msgstr "Isänpuoleinen"
+
+#: src/Configuration.php:430
+msgid "Place and country"
+msgstr ""
+
+#: src/Configuration.php:431
+msgid "Place and country code (2 letters)"
+msgstr ""
+
+#: src/Configuration.php:432
+msgid "Place and country code (3 letters)"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:91
 msgid "Place detail"
@@ -282,7 +292,7 @@ msgstr ""
 "Avioliittopäivämäärät piilotetaan sukupolvesta 9 alkaen. Kapeiden kaarien "
 "jälkeläiset käyttävät automaattisesti kompaktia vain vuosi -muotoa."
 
-#: src/Configuration.php:214
+#: src/Configuration.php:218
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Näytä tarkat päivämäärät sukupolveen %s asti"
@@ -342,7 +352,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Zoomaa näkymää käyttämällä ohjausnäppäintä (Ctrl) + rullauslaitetta"
 
-#: src/Configuration.php:209
+#: src/Configuration.php:213
 msgid "Years only"
 msgstr "Vain vuodet"
 
