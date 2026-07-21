@@ -25,19 +25,19 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Pahljačasti diagram posameznikovih prednikov."
 
-#: src/Configuration.php:640
+#: src/Configuration.php:805
 msgid "Abbreviate given names first"
 msgstr "Najprej skrajšaj osebna imena"
 
-#: src/Configuration.php:641
+#: src/Configuration.php:806
 msgid "Abbreviate surnames first"
 msgstr "Najprej skrajšaj priimke"
 
-#: src/Configuration.php:639
+#: src/Configuration.php:804
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Samodejno (glede na drevesno tradicijo priimkov)"
 
-#: src/Configuration.php:425
+#: src/Configuration.php:562
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
@@ -137,7 +137,7 @@ msgstr "Velikost pahljače"
 msgid "Font size"
 msgstr "Velikost pisave"
 
-#: src/Configuration.php:426
+#: src/Configuration.php:563
 msgid "Full place name"
 msgstr "Polno ime kraja"
 
@@ -194,15 +194,15 @@ msgstr ""
 "Martin \"Chalky\" White). Posnema staro vedenje webtrees za drevesa, ki "
 "vzdevke shranjujejo v ločenem polju GEDCOM NICK."
 
-#: src/Configuration.php:427
+#: src/Configuration.php:564
 msgid "Lowest level (e.g. parish)"
 msgstr "Najnižja raven (npr. župnija)"
 
-#: src/Configuration.php:429
+#: src/Configuration.php:566
 msgid "Lowest three levels"
 msgstr "Najnižje tri ravni"
 
-#: src/Configuration.php:428
+#: src/Configuration.php:565
 msgid "Lowest two levels"
 msgstr "Najnižji dve ravni"
 
@@ -242,15 +242,15 @@ msgstr ""
 msgid "Paternal"
 msgstr "Očetov"
 
-#: src/Configuration.php:430
+#: src/Configuration.php:567
 msgid "Place and country"
 msgstr ""
 
-#: src/Configuration.php:431
+#: src/Configuration.php:568
 msgid "Place and country code (2 letters)"
 msgstr ""
 
-#: src/Configuration.php:432
+#: src/Configuration.php:569
 msgid "Place and country code (3 letters)"
 msgstr ""
 
@@ -292,7 +292,7 @@ msgstr ""
 "generacije prikazujejo samo leto. Datumi poroke so skriti od generacije 9. "
 "Potomci z ozkimi loki samodejno uporabljajo kompakten format samo z letom."
 
-#: src/Configuration.php:218
+#: src/Configuration.php:318
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Prikaži polne datume do generacije %s"
@@ -352,7 +352,7 @@ msgstr "Nastavitve modula “%s” so posodobljene."
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Uporabi Ctrl+Scroll kolesce za povečavo diagrama"
 
-#: src/Configuration.php:213
+#: src/Configuration.php:313
 msgid "Years only"
 msgstr "Samo leta"
 

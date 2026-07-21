@@ -136,6 +136,98 @@ class Configuration
      */
     private const int MIN_DETAILED_DATE_GENERATIONS = 0;
 
+    // The getters below are each called once per individual while the tree is
+    // built — up to ~1023 nodes for ten generations, via getRouteToggleParams()
+    // on the click-to-recenter URL and directly from the DataFacade. Both
+    // AbstractModule::getPreference() (an uncached `module_setting` query on
+    // every call) and Validator::__construct() (which re-scans every request
+    // parameter for valid UTF-8) would otherwise put the cost in linear
+    // proportion to the chart size. Each getter therefore returns its memoised
+    // value before doing either — an assignment at the return site would be too
+    // late, because the validator is built above it. The configuration is
+    // constructed per request, so a resolved value cannot go stale within its
+    // lifetime.
+
+    /**
+     * The resolved number of generations to display, or null until first resolved.
+     */
+    private ?int $generations = null;
+
+    /**
+     * The resolved detailed-date generation threshold, or null until first resolved.
+     */
+    private ?int $detailedDateGenerations = null;
+
+    /**
+     * The resolved font-scale percentage, or null until first resolved.
+     */
+    private ?int $fontScale = null;
+
+    /**
+     * Whether descendant support is active, or null until first resolved.
+     */
+    private ?bool $showDescendants = null;
+
+    /**
+     * The resolved unclamped fan degree, or null until first resolved.
+     */
+    private ?int $fanDegreeUnclamped = null;
+
+    /**
+     * Whether empty ancestor arcs are hidden, or null until first resolved.
+     */
+    private ?bool $hideEmptySegments = null;
+
+    /**
+     * Whether lineage colouring is enabled, or null until first resolved.
+     */
+    private ?bool $showFamilyColors = null;
+
+    /**
+     * Whether place names are rendered, or null until first resolved.
+     */
+    private ?bool $showPlaces = null;
+
+    /**
+     * The resolved place-format choice, or null until first resolved.
+     */
+    private ?PlaceFormatChoice $placeFormatChoice = null;
+
+    /**
+     * Whether parent marriage dates are shown, or null until first resolved.
+     */
+    private ?bool $showParentMarriageDates = null;
+
+    /**
+     * Whether highlight images are rendered, or null until first resolved.
+     */
+    private ?bool $showImages = null;
+
+    /**
+     * Whether individual names are rendered, or null until first resolved.
+     */
+    private ?bool $showNames = null;
+
+    /**
+     * Whether nicknames are shown, or null until first resolved.
+     */
+    private ?bool $showNicknames = null;
+
+    /**
+     * The resolved number of inner arcs, or null until first resolved.
+     */
+    private ?int $innerArcs = null;
+
+    /**
+     * The resolved paternal arc colour, or null until first resolved.
+     */
+    private ?string $paternalColor = null;
+
+    /**
+     * The resolved maternal arc colour, or null until first resolved.
+     */
+    private ?string $maternalColor = null;
+
     /**
      * @param ServerRequestInterface $request
      * @param AbstractModule         $module
@@ -171,7 +263,11 @@ class Configuration
      */
     public function getGenerations(): int
     {
-        return $this->validator()
+        if ($this->generations !== null) {
+            return $this->generations;
+        }
+
+        return $this->generations = $this->validator()
             ->isBetween(self::MIN_GENERATIONS, self::MAX_GENERATIONS)
             ->integer(
                 'generations',
@@ -190,7 +286,11 @@ class Configuration
      */
     public function getDetailedDateGenerations(): int
     {
-        return $this->validator()
+        if ($this->detailedDateGenerations !== null) {
+            return $this->detailedDateGenerations;
+        }
+
+        return $this->detailedDateGenerations = $this->validator()
             ->isBetween(self::MIN_DETAILED_DATE_GENERATIONS, self::MAX_GENERATIONS)
             ->integer(
                 'detailedDateGenerations',
@@ -230,7 +330,11 @@ class Configuration
      */
     public function getFontScale(): int
     {
-        return $this->validator()
+        if ($this->fontScale !== null) {
+            return $this->fontScale;
+        }
+
+        return $this->fontScale = $this->validator()
             ->isBetween(self::MIN_FONT_SCALE, self::MAX_FONT_SCALE)
             ->integer(
                 'fontScale',
@@ -248,7 +352,11 @@ class Configuration
      */
     public function getShowDescendants(): bool
     {
-        return $this->validator()
+        if ($this->showDescendants !== null) {
+            return $this->showDescendants;
+        }
+
+        return $this->showDescendants = $this->validator()
             ->boolean(
                 'showDescendants',
                 (bool) $this->module->getPreference(
@@ -262,6 +370,10 @@ class Configuration
      * Returns the opening angle of the fan in degrees (180–360). When
      * showDescendants is active, the value is clamped to 180–270 to reserve
      * angular space for the descendant section.
+     *
+     * Deliberately not memoised: it only combines two already-memoised getters
+     * with a clamp, so it reads no preference and builds no validator of its
+     * own — a property here would cache nothing that is not already cached.
      *
      * @return int
      */
@@ -284,7 +396,11 @@ class Configuration
      */
     public function getFanDegreeUnclamped(): int
     {
-        return $this->validator()
+        if ($this->fanDegreeUnclamped !== null) {
+            return $this->fanDegreeUnclamped;
+        }
+
+        return $this->fanDegreeUnclamped = $this->validator()
             ->isBetween(self::MIN_FAN_DEGREE, self::MAX_FAN_DEGREE)
             ->integer(
                 'fanDegree',
@@ -303,7 +419,11 @@ class Configuration
      */
     public function getHideEmptySegments(): bool
     {
-        return $this->validator()
+        if ($this->hideEmptySegments !== null) {
+            return $this->hideEmptySegments;
+        }
+
+        return $this->hideEmptySegments = $this->validator()
             ->boolean(
                 'hideEmptySegments',
                 (bool) $this->module->getPreference(
@@ -320,7 +440,11 @@ class Configuration
      */
     public function getShowFamilyColors(): bool
     {
-        return $this->validator()
+        if ($this->showFamilyColors !== null) {
+            return $this->showFamilyColors;
+        }
+
+        return $this->showFamilyColors = $this->validator()
             ->boolean(
                 'showFamilyColors',
                 (bool) $this->module->getPreference(
@@ -338,7 +462,11 @@ class Configuration
      */
     public function getShowPlaces(): bool
     {
-        return $this->validator()
+        if ($this->showPlaces !== null) {
+            return $this->showPlaces;
+        }
+
+        return $this->showPlaces = $this->validator()
             ->boolean(
                 'showPlaces',
                 (bool) $this->module->getPreference(
@@ -362,10 +490,14 @@ class Configuration
      */
     public function getPlaceFormatChoice(): PlaceFormatChoice
     {
+        if ($this->placeFormatChoice instanceof PlaceFormatChoice) {
+            return $this->placeFormatChoice;
+        }
+
         $stored = PlaceFormatChoice::tryFrom($this->module->getPreference('default_placeFormat', ''))
             ?? $this->legacyPlaceFormat();
 
-        return PlaceFormatChoice::tryFrom(
+        return $this->placeFormatChoice = PlaceFormatChoice::tryFrom(
             $this->validator()->string(self::PLACE_FORMAT_PARAM, $stored->value)
         ) ?? $stored;
     }
@@ -397,6 +529,11 @@ class Configuration
      * against the tree's SHOW_PEDIGREE_PLACES / SHOW_PEDIGREE_PLACES_SUFFIX
      * preferences here, because this is where the tree is available — the
      * processor stays free of webtrees configuration.
+     *
+     * Deliberately not memoised: it reads no module preference of its own — the
+     * choice comes from the memoised getPlaceFormatChoice() and the tree
+     * preferences are already cached in the Tree instance — so the per-node cost
+     * this fix targets (the uncached `module_setting` query) never arises here.
      *
      * @return PlaceFormatSpec
      */
@@ -441,7 +578,11 @@ class Configuration
      */
     public function getShowParentMarriageDates(): bool
     {
-        return $this->validator()
+        if ($this->showParentMarriageDates !== null) {
+            return $this->showParentMarriageDates;
+        }
+
+        return $this->showParentMarriageDates = $this->validator()
             ->boolean(
                 'showParentMarriageDates',
                 (bool) $this->module->getPreference(
@@ -459,13 +600,17 @@ class Configuration
      */
     public function getShowImages(): bool
     {
+        if ($this->showImages !== null) {
+            return $this->showImages;
+        }
+
         $displayMode = $this->resolveDisplayMode();
 
         if ($displayMode !== null) {
-            return in_array($displayMode, ['both', 'images'], true);
+            return $this->showImages = in_array($displayMode, ['both', 'images'], true);
         }
 
-        return $this->validator()
+        return $this->showImages = $this->validator()
             ->boolean(
                 'showImages',
                 (bool) $this->module->getPreference(
@@ -485,7 +630,11 @@ class Configuration
      */
     public function getShowNicknames(): bool
     {
-        return $this->validator()
+        if ($this->showNicknames !== null) {
+            return $this->showNicknames;
+        }
+
+        return $this->showNicknames = $this->validator()
             ->boolean(
                 'showNicknames',
                 (bool) $this->module->getPreference(
@@ -503,13 +652,17 @@ class Configuration
      */
     public function getShowNames(): bool
     {
+        if ($this->showNames !== null) {
+            return $this->showNames;
+        }
+
         $displayMode = $this->resolveDisplayMode();
 
         if ($displayMode !== null) {
-            return in_array($displayMode, ['both', 'names'], true);
+            return $this->showNames = in_array($displayMode, ['both', 'names'], true);
         }
 
-        return $this->validator()
+        return $this->showNames = $this->validator()
             ->boolean(
                 'showNames',
                 (bool) $this->module->getPreference(
@@ -546,7 +699,11 @@ class Configuration
      */
     public function getInnerArcs(): int
     {
-        return $this->validator()
+        if ($this->innerArcs !== null) {
+            return $this->innerArcs;
+        }
+
+        return $this->innerArcs = $this->validator()
             ->isBetween(self::MIN_INNER_ARCS, self::MAX_INNER_ARCS)
             ->integer(
                 'innerArcs',
@@ -600,7 +757,11 @@ class Configuration
      */
     public function getPaternalColor(): string
     {
-        return $this->validator()
+        if ($this->paternalColor !== null) {
+            return $this->paternalColor;
+        }
+
+        return $this->paternalColor = $this->validator()
             ->string(
                 'paternalColor',
                 $this->module->getPreference(
@@ -617,7 +778,11 @@ class Configuration
      */
     public function getMaternalColor(): string
     {
-        return $this->validator()
+        if ($this->maternalColor !== null) {
+            return $this->maternalColor;
+        }
+
+        return $this->maternalColor = $this->validator()
             ->string(
                 'maternalColor',
                 $this->module->getPreference(
