@@ -166,13 +166,13 @@ msgstr "Die Schaltfläche für den SVG-Export ausblenden"
 #: resources/views/modules/fan-chart/config.phtml:102
 msgid ""
 "How much of each place is shown in chart arcs — the full name, only the "
-"lowest levels, or the place combined with its country as a name or ISO code. "
-"Users toggle place visibility on/off in the chart form."
+"lowest levels, or the place combined with its country as a name or country "
+"code. Users toggle place visibility on/off in the chart form."
 msgstr ""
 "Wie ausführlich Orte in den Diagrammbögen erscheinen: der vollständige Name, "
-"nur die untersten Ebenen, oder der Ort zusammen mit seinem Land, "
-"ausgeschrieben oder als ISO-Kürzel. Anwender schalten die Anzeige der Orte "
-"im Diagramm-Formular ein bzw. aus."
+"nur die untersten Ebenen oder der Ort zusammen mit seinem Land, "
+"ausgeschrieben oder als Ländercode. Anwender schalten die Anzeige der Orte "
+"im Diagrammformular ein bzw. aus."
 
 #: resources/views/modules/fan-chart/form/display.phtml:59
 msgid ""
