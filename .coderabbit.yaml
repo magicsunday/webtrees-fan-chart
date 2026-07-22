@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# Shared CodeRabbit configuration for the magicsunday/* repositories.
+# Replaces the sunset gemini-code-assist auto-review slot: an independent,
+# cross-model reviewer that runs automatically on every pull request and
+# re-reviews each new commit. It supplements — never replaces — the local
+# reviewer crew + Codex + CI gate.
+language: en-US
+early_access: false
+tone_instructions: >-
+    Senior reviewer for the magicsunday PHP/JS modules. Comment in English,
+    verify each claim against the code, and prefer correctness, security and
+    API-contract findings over style nits the linters already enforce.
+
+reviews:
+    profile: assertive
+    # Comment-only: the merge gate is the local crew + Codex + required CI checks,
+    # not the bot. Never let the bot block a merge.
+    request_changes_workflow: false
+    high_level_summary: true
+    poem: false
+    review_status: true
+    collapse_walkthrough: false
+    auto_review:
+        enabled: true
+        drafts: false
+        # Re-review on every pushed commit (the slot gemini filled): incremental
+        # review on, and the default 5-commit pause disabled so it never stops.
+        auto_incremental_review: true
+        auto_pause_after_reviewed_commits: 0
+    path_filters:
+        # Generated / vendored artefacts carry no review value and drown signal.
+        # Lockfiles are left to CodeRabbit's default ignore: dependency changes
+        # are already gated by the required dependency-review CI check and by
+        # Dependabot, so a prose review of a machine-generated lockfile is noise.
+        - "!**/.build/**"
+        - "!**/vendor/**"
+        - "!**/node_modules/**"
+        - "!**/resources/js/**/*.min.js"
+        - "!**/resources/lang/**/*.mo"
+    path_instructions:
+        - path: "src/**/*.php"
+          instructions: >-
+              Enforce the house PHP style: declare(strict_types=1); no `mixed`,
+              no `empty()`, no nested ternaries; `use function`/`use const` for
+              built-ins; never `@phpstan-ignore` (fix the type instead); every
+              method and constant needs a real PHPDoc with capitalised
+              descriptions; final readonly value objects. Flag any stdClass use.
+        - path: "tests/**/*.php"
+          instructions: >-
+              Behavioural assertions only — flag getter/setter or coverage-only
+              tests, vacuous assertions, over-mocking the unit under test, and
+              access-control tests that run as a privileged identity.
+        - path: "**/*.{js,ts,css,svg}"
+          instructions: >-
+              Enforce Biome style (4-space, double quotes, lineWidth 100),
+              `.js` extension on local ESM imports, and defensive DOM/SVG/D3
+              handling. Comments in English.
+        - path: ".github/workflows/**"
+          instructions: >-
+              Check least-privilege permissions, persist-credentials on
+              checkout, reusable-workflow permission caps, and cron/dispatch
+              concurrency races.
+
+chat:
+    auto_reply: true
