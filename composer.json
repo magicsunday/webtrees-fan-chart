@@ -37,7 +37,11 @@
         "policy": {
             "advisories": {
                 "ignore": {
-                    "guzzlehttp/guzzle": "Transitive dev/test dependency pinned exactly by fisharebest/webtrees; the module ships no guzzle and the admin's webtrees install governs the upgrade. New guzzle CVEs still surface via composer audit, and advisories on any other package still block resolution."
+                    "guzzlehttp/guzzle": "Transitive dev/test dependency pinned exactly by fisharebest/webtrees; the module ships no guzzle and the admin's webtrees install governs the upgrade. New guzzle CVEs still surface via composer audit, and advisories on any other package still block resolution.",
+                    "symfony/cache": "Transitive dev/test dependency exact-pinned by fisharebest/webtrees (stable 2.2.6 pins 7.4.8); the module ships no symfony/cache and the admin's webtrees install governs the upgrade. Advisories on any unpinned package still block resolution.",
+                    "league/commonmark": "Transitive dev/test dependency exact-pinned by fisharebest/webtrees across the 2.2.x range; the module ships no commonmark and the admin's webtrees install governs the upgrade. Advisories on any unpinned package still block resolution.",
+                    "symfony/mailer": "Transitive dev/test dependency exact-pinned by fisharebest/webtrees (stable 2.2.6 pins 7.4.8); the module ships no symfony/mailer and the admin's webtrees install governs the upgrade. Advisories on any unpinned package still block resolution.",
+                    "nesbot/carbon": "Transitive dev/test dependency exact-pinned by fisharebest/webtrees across the 2.2.x range; the module ships no nesbot/carbon and the admin's webtrees install governs the upgrade. Advisories on any unpinned package still block resolution."
                 }
             }
         }
@@ -48,7 +52,7 @@
         "php": "8.3 - 8.5",
         "ext-dom": "*",
         "ext-json": "*",
-        "fisharebest/webtrees": "~2.2.0 || dev-main",
+        "fisharebest/webtrees": "~2.2.0",
         "magicsunday/webtrees-module-base": "^3.0",
         "magicsunday/webtrees-module-installer-plugin": "^2.0"
     },
