@@ -18,7 +18,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:136
+#: src/Module.php:135
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Biểu đồ cá nhân Tổ tiên"
 
@@ -117,11 +117,11 @@ msgstr "Xuất định dạng PNG"
 msgid "Export as SVG"
 msgstr "Xuất định dạng SVG"
 
-#: src/Module.php:124 src/Module.php:237
+#: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
 msgstr "Biểu đồ hình quạt"
 
-#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#: src/Module.php:233 src/Traits/ModuleChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Biểu đồ hình quạt của %s"
@@ -215,7 +215,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Di chuyển biểu đồ"
 
-#: src/Module.php:262
+#: src/Module.php:260
 msgid "Move the view with two fingers"
 msgstr "Di chuyển tầm nhìn bằng hai ngón tay"
 
@@ -345,7 +345,7 @@ msgstr "Chuyển giữa toàn màn hình và xem bình thường"
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:261
+#: src/Module.php:259
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Kết hợp Ctrl + scroll để thu phóng biểu đồ"
 

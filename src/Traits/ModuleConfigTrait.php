@@ -138,7 +138,7 @@ trait ModuleConfigTrait
         );
         $this->setPreference(
             'default_nameAbbreviation',
-            $configuration->getNameAbbreviation()
+            $configuration->getNameAbbreviation()->value
         );
 
         FlashMessages::addMessage(

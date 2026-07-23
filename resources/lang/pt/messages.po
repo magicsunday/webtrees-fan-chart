@@ -18,7 +18,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:136
+#: src/Module.php:135
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Diagrama em leque dos ascendentes de um indivíduo."
 
@@ -118,11 +118,11 @@ msgstr "Exportar como PNG"
 msgid "Export as SVG"
 msgstr "Exportar como SVG"
 
-#: src/Module.php:124 src/Module.php:237
+#: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
 msgstr "Diagrama em leque"
 
-#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#: src/Module.php:233 src/Traits/ModuleChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Diagrama em leque de %s"
@@ -216,7 +216,7 @@ msgstr "Módulos"
 msgid "Move the chart"
 msgstr "Mover o diagrama"
 
-#: src/Module.php:262
+#: src/Module.php:260
 msgid "Move the view with two fingers"
 msgstr "Mover a vista com dois dedos"
 
@@ -347,7 +347,7 @@ msgstr "Alternar entre vista em ecrã completo e vista normal"
 msgid "The preferences for the module “%s” have been updated."
 msgstr "As preferências do módulo \"%s\" foram atualizadas."
 
-#: src/Module.php:261
+#: src/Module.php:259
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Usar Ctrl + roda do rato para aproximar ou afastar"
 

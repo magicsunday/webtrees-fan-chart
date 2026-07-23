@@ -76,7 +76,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                     <?php echo view('components/select', [
                         'name'     => 'nameAbbreviation',
                         'id'       => 'nameAbbreviation',
-                        'selected' => $configuration->getNameAbbreviation(),
+                        'selected' => $configuration->getNameAbbreviation()->value,
                         'options'  => $configuration->getNameAbbreviationList(),
                         'class'    => 'form-control-sm',
                     ]);
