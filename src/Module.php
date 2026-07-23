@@ -33,7 +33,6 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
 use MagicSunday\Webtrees\FanChart\Traits\ModuleConfigTrait;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
-use MagicSunday\Webtrees\ModuleBase\Model\NameAbbreviation;
 use MagicSunday\Webtrees\ModuleBase\Traits\ModuleCustomTrait;
 use Override;
 use Psr\Container\ContainerExceptionInterface;
@@ -253,10 +252,9 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
             'rtl'              => I18N::direction() === 'rtl',
             'showImages'       => $this->showImages($individual),
             'showSilhouettes'  => $this->showSilhouettes($individual),
-            'nameAbbreviation' => NameAbbreviation::resolve(
-                $this->configuration->getNameAbbreviation(),
-                $individual->tree()->getPreference('SURNAME_TRADITION')
-            ),
+            'nameAbbreviation' => $this->configuration->getNameAbbreviation()
+                ->resolve($individual->tree()->getPreference('SURNAME_TRADITION'))
+                ->value,
             'labels' => [
                 'zoom' => I18N::translate('Use Ctrl + scroll to zoom in the view'),
                 'move' => I18N::translate('Move the view with two fingers'),

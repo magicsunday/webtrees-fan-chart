@@ -801,34 +801,33 @@ class Configuration
     public function getNameAbbreviationList(): array
     {
         return [
-            NameAbbreviation::AUTO    => I18N::translate("Automatic (based on tree's surname tradition)"),
-            NameAbbreviation::GIVEN   => I18N::translate('Abbreviate given names first'),
-            NameAbbreviation::SURNAME => I18N::translate('Abbreviate surnames first'),
+            NameAbbreviation::Auto->value    => I18N::translate("Automatic (based on tree's surname tradition)"),
+            NameAbbreviation::Given->value   => I18N::translate('Abbreviate given names first'),
+            NameAbbreviation::Surname->value => I18N::translate('Abbreviate surnames first'),
         ];
     }
 
     /**
-     * Returns the name-abbreviation strategy as stored. One of {@see
-     * NameAbbreviation::AUTO}, GIVEN or SURNAME. The chart-render path resolves
-     * AUTO to GIVEN/SURNAME via the tree's SURNAME_TRADITION before serialising
-     * to the JS config — see {@see Module::getChartParameters()}.
+     * Returns the configured name-abbreviation strategy. A stale or invalid
+     * stored value falls back to {@see NameAbbreviation::Auto} rather than being
+     * passed through. The chart-render path resolves Auto to Given/Surname via
+     * the tree's SURNAME_TRADITION before serialising to the JS config — see
+     * {@see Module::getChartParameters()}.
      *
-     * @return string
+     * @return NameAbbreviation
      */
-    public function getNameAbbreviation(): string
+    public function getNameAbbreviation(): NameAbbreviation
     {
         $value = $this->validator()
             ->string(
                 'nameAbbreviation',
                 $this->module->getPreference(
                     'default_nameAbbreviation',
-                    NameAbbreviation::AUTO
+                    NameAbbreviation::Auto->value
                 )
             );
 
-        return in_array($value, NameAbbreviation::CHOICES, true)
-            ? $value
-            : NameAbbreviation::AUTO;
+        return NameAbbreviation::tryFrom($value) ?? NameAbbreviation::Auto;
     }
 
     /**

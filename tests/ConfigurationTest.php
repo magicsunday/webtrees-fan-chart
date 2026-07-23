@@ -24,6 +24,7 @@ use Illuminate\Database\Schema\Blueprint;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\ModuleBase\Model\NameAbbreviation;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceStyle;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -191,6 +192,141 @@ final class ConfigurationTest extends TestCase
         self::assertSame(
             PlaceFormatChoice::CityIso3,
             (new Configuration($request, $module))->getPlaceFormatChoice()
+        );
+    }
+
+    /**
+     * The stored name-abbreviation preference is converted to its typed case at
+     * the boundary, so a valid stored value round-trips to the matching enum
+     * case.
+     */
+    #[Test]
+    public function nameAbbreviationReturnsTheStoredCase(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $module  = $this->createModuleWithPreferences([
+            'default_nameAbbreviation' => 'SURNAME',
+        ]);
+
+        self::assertSame(
+            NameAbbreviation::Surname,
+            (new Configuration($request, $module))->getNameAbbreviation()
+        );
+    }
+
+    /**
+     * A stored value outside the enum's backing set (a stale or typo'd
+     * preference) no longer propagates silently: tryFrom() rejects it and the
+     * getter falls back to Auto instead of passing the raw string through — the
+     * regression the old string-in/string-out shape allowed.
+     */
+    #[Test]
+    public function nameAbbreviationFallsBackToAutoForAnUnknownStoredValue(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $module  = $this->createModuleWithPreferences([
+            'default_nameAbbreviation' => 'not-a-strategy',
+        ]);
+
+        self::assertSame(
+            NameAbbreviation::Auto,
+            (new Configuration($request, $module))->getNameAbbreviation()
+        );
+    }
+
+    /**
+     * Absent both a request parameter and a stored preference, the strategy
+     * defaults to Auto.
+     */
+    #[Test]
+    public function nameAbbreviationDefaultsToAutoWhenUnset(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $module  = $this->createModuleWithPreferences([]);
+
+        self::assertSame(
+            NameAbbreviation::Auto,
+            (new Configuration($request, $module))->getNameAbbreviation()
+        );
+    }
+
+    /**
+     * A POSTed nameAbbreviation parameter is validated through validator() and
+     * takes precedence over the stored preference.
+     */
+    #[Test]
+    public function nameAbbreviationReadsThePostedParameter(): void
+    {
+        $request = new ServerRequest(
+            RequestMethodInterface::METHOD_POST,
+            '/',
+            [],
+            null,
+            '1.1'
+        );
+
+        $request = $request->withParsedBody([
+            'nameAbbreviation' => 'GIVEN',
+        ]);
+
+        $module = $this->createModuleWithPreferences([
+            'default_nameAbbreviation' => 'SURNAME',
+        ]);
+
+        self::assertSame(
+            NameAbbreviation::Given,
+            (new Configuration($request, $module))->getNameAbbreviation()
+        );
+    }
+
+    /**
+     * A POSTed value takes precedence over the stored preference, so an invalid
+     * POSTed value falls back to Auto rather than silently keeping a valid
+     * stored strategy — the posted (invalid) value wins the precedence, then
+     * tryFrom() rejects it.
+     */
+    #[Test]
+    public function nameAbbreviationFallsBackToAutoForAnInvalidPostedValue(): void
+    {
+        $request = new ServerRequest(
+            RequestMethodInterface::METHOD_POST,
+            '/',
+            [],
+            null,
+            '1.1'
+        );
+
+        $request = $request->withParsedBody([
+            'nameAbbreviation' => 'not-a-strategy',
+        ]);
+
+        $module = $this->createModuleWithPreferences([
+            'default_nameAbbreviation' => 'SURNAME',
+        ]);
+
+        self::assertSame(
+            NameAbbreviation::Auto,
+            (new Configuration($request, $module))->getNameAbbreviation()
+        );
+    }
+
+    /**
+     * The admin dropdown is keyed by the persisted enum backing values so the
+     * posted selection round-trips through tryFrom() on the way back in.
+     */
+    #[Test]
+    public function nameAbbreviationListIsKeyedByTheEnumBackingValues(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+        $module  = $this->createModuleWithPreferences([]);
+
+        self::assertSame(
+            [
+                NameAbbreviation::Auto->value,
+                NameAbbreviation::Given->value,
+                NameAbbreviation::Surname->value,
+            ],
+            array_keys((new Configuration($request, $module))->getNameAbbreviationList())
         );
     }
 

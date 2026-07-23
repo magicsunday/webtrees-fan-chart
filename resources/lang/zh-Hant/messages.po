@@ -18,7 +18,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:136
+#: src/Module.php:135
 msgid "A fan chart of an individual’s ancestors."
 msgstr "一種以扇形樣式顯示個人祖先的圖表。"
 
@@ -113,11 +113,11 @@ msgstr "匯出為 PNG"
 msgid "Export as SVG"
 msgstr "匯出為 SVG"
 
-#: src/Module.php:124 src/Module.php:237
+#: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
 msgstr "扇形圖"
 
-#: src/Module.php:234 src/Traits/ModuleChartTrait.php:46
+#: src/Module.php:233 src/Traits/ModuleChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr "%s的扇形圖"
@@ -209,7 +209,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "移動圖表"
 
-#: src/Module.php:262
+#: src/Module.php:260
 msgid "Move the view with two fingers"
 msgstr "用兩個手指移動視圖"
 
@@ -335,7 +335,7 @@ msgstr "切換全螢幕與一般檢視"
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:261
+#: src/Module.php:259
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "按住Ctrl鍵滾動鼠標滾輪放大縮小"
 
