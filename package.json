@@ -29,7 +29,7 @@
         "typecheck": "tsc --noEmit -p jsconfig.json"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.5.3",
+        "@biomejs/biome": "2.5.4",
         "@rollup/plugin-node-resolve": "^16.0",
         "@rollup/plugin-terser": "^1.0",
         "@types/d3-fetch": "^3.0.7",
