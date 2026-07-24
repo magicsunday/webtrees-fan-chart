@@ -57,7 +57,7 @@
         "magicsunday/webtrees-module-installer-plugin": "^2.0"
     },
     "require-dev": {
-        "magicsunday/coding-standard": "^1.4"
+        "magicsunday/coding-standard": "^1.5"
     },
     "autoload": {
         "psr-4": {
@@ -118,12 +118,16 @@
             "@ci:test:php:rector",
             "@ci:test:php:cpd",
             "@ci:test:php:templates",
+            "@ci:test:php:phpat-subjects",
             "@ci:test:php:unit",
             "@ci:test:js:unit",
             "@ci:test:php:cgl"
         ],
         "ci:test:php:templates": [
             "check-consumer-config.php ."
+        ],
+        "ci:test:php:phpat-subjects": [
+            "check-phpat-subjects.php ."
         ]
     }
 }
