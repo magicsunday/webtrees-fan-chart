@@ -13,7 +13,7 @@ jobs:
     # in one place. Copy-paste detection stays below: jscpd is a Node tool and
     # needs this repository's JS lane.
     php:
-        uses: magicsunday/.github/.github/workflows/php-quality.yml@main
+        uses: magicsunday/.github/.github/workflows/php-quality.yml@GH-31
         permissions:
             contents: read
 
