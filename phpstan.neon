@@ -1,13 +1,7 @@
 includes:
-    - %currentWorkingDirectory%/.build/vendor/phpstan/phpstan-strict-rules/rules.neon
-    - %currentWorkingDirectory%/.build/vendor/phpstan/phpstan-deprecation-rules/rules.neon
-    - %currentWorkingDirectory%/.build/vendor/phpstan/phpstan-phpunit/extension.neon
-    - %currentWorkingDirectory%/.build/vendor/phpstan/phpstan-phpunit/rules.neon
+    - %currentWorkingDirectory%/.build/vendor/magicsunday/coding-standard/phpstan/base.neon
 
 parameters:
-    # You can currently choose from 11 levels (0 is the loosest and 10 is the strictest).
-    level: max
-
     # PHP Version to check against (PHP 8.3 as minimum target)
     phpVersion: 80300
 
@@ -16,9 +10,6 @@ parameters:
     paths:
         - %currentWorkingDirectory%/src/
         - %currentWorkingDirectory%/tests/
-
-    fileExtensions:
-        - php
 
     excludePaths:
         - %currentWorkingDirectory%/.build/

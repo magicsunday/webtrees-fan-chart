@@ -57,14 +57,7 @@
         "magicsunday/webtrees-module-installer-plugin": "^2.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.0",
-        "overtrue/phplint": "^9.0",
-        "phpstan/phpstan": "^2.0",
-        "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "phpstan/phpstan-strict-rules": "^2.0",
-        "phpunit/phpunit": "^12.0 || ^13.0",
-        "rector/rector": "^2.0"
+        "magicsunday/coding-standard": "^1.3"
     },
     "autoload": {
         "psr-4": {
@@ -95,7 +88,7 @@
         "ci:test:php:rector": [
             "@ci:rector --dry-run"
         ],
-        "ci:test:cpd": [
+        "ci:test:php:cpd": [
             "npx jscpd src resources/js/modules --config .jscpd.json --skip-comments --no-tips"
         ],
         "ci:test:php:unit": [
@@ -123,7 +116,7 @@
             "@ci:test:js:typecheck",
             "@ci:test:php:phpstan",
             "@ci:test:php:rector",
-            "@ci:test:cpd",
+            "@ci:test:php:cpd",
             "@ci:test:php:unit",
             "@ci:test:js:unit",
             "@ci:test:php:cgl"
