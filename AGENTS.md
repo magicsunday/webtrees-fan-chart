@@ -15,7 +15,7 @@ This repository hosts the webtrees fan chart module — an interactive SVG fan c
 
 ## Build & tests
 - **`composer ci:test` MUST run before every commit** — catches Biome lint, PHPStan, PHP-CS-Fixer, Rector, PHPUnit, Jest, and jscpd issues before they reach GitHub CI.
-- Individual checks: `composer ci:test:php:phpstan`, `composer ci:test:php:unit`, `composer ci:test:php:cgl`, `composer ci:test:js:lint`, `composer ci:test:js:unit`, `composer ci:test:cpd` (PHP + JS duplicate detection).
+- Individual checks: `composer ci:test:php:phpstan`, `composer ci:test:php:unit`, `composer ci:test:php:cgl`, `composer ci:test:js:lint`, `composer ci:test:js:unit`, `composer ci:test:php:cpd` (PHP + JS duplicate detection).
 - Single PHPUnit test: `composer ci:test:php:unit -- --filter TestClassName`.
 - Auto-fix: `composer ci:cgl` (PHP style), `composer ci:rector` (Rector), `npm run lint:fix` + `npm run format` (Biome).
 - JS bundles: `make build` (rollup), `make watch` (dev rebuild loop).
