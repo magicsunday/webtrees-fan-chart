@@ -8,9 +8,13 @@
          colors="true"
          displayDetailsOnPhpunitDeprecations="true"
          executionOrder="depends,defects"
+         failOnDeprecation="true"
+         failOnNotice="true"
          failOnPhpunitDeprecation="true"
+         failOnPhpunitNotice="true"
          failOnRisky="true"
          failOnWarning="true"
+         requireCoverageMetadata="true"
 >
     <testsuites>
         <testsuite name="Unit Tests">
