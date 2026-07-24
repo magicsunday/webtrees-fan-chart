@@ -13,3 +13,9 @@ parameters:
 
     excludePaths:
         - %currentWorkingDirectory%/.build/
+
+services:
+    -
+        class: MagicSunday\Webtrees\FanChart\Test\Architecture\ArchitectureTest
+        tags:
+            - phpat.test
