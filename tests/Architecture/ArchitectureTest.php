@@ -19,9 +19,9 @@ use PHPat\Test\PHPat;
 /**
  * Architecture rules enforced by PHPat (runs as part of PHPStan).
  *
- * The layer-DEPENDENCY directions (Model/Configuration are leaves, the facade
- * reaches only Configuration and Model, nothing depends on the composition root)
- * are now enforced centrally by the shared Deptrac ruleset (`deptrac.yaml` imports
+ * The layer-DEPENDENCY directions — the permissive canonical-layer ruleset,
+ * within which nothing may depend on the composition root — are now enforced
+ * centrally by the shared Deptrac ruleset (`deptrac.yaml` imports
  * `magicsunday/coding-standard`'s canonical layers). What remains here is the one
  * structural invariant Deptrac's layer model cannot express.
  *
