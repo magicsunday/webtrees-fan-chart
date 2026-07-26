@@ -119,7 +119,7 @@ msgstr "SVG निकालें"
 msgid "Fan chart"
 msgstr "फैन चार्ट"
 
-#: src/Module.php:233 src/Traits/ModuleChartTrait.php:46
+#: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr "%s का फैन चार्ट"
@@ -337,7 +337,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "पूर्ण स्क्रीन और सामान्य दृश्य के बीच स्विच करें"
 
-#: src/Traits/ModuleConfigTrait.php:146
+#: src/Module/ConfigTrait.php:147
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""

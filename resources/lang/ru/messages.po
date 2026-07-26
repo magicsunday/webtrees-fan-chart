@@ -122,7 +122,7 @@ msgstr "Экспорт в SVG"
 msgid "Fan chart"
 msgstr "Веерный график"
 
-#: src/Module.php:233 src/Traits/ModuleChartTrait.php:46
+#: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Веерный график для %s"
@@ -342,7 +342,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Переключение между полноэкранным и обычным режимом"
 
-#: src/Traits/ModuleConfigTrait.php:146
+#: src/Module/ConfigTrait.php:147
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""

@@ -124,7 +124,7 @@ msgstr "Izvozi kot SVG"
 msgid "Fan chart"
 msgstr "Pahljačasti diagram"
 
-#: src/Module.php:233 src/Traits/ModuleChartTrait.php:46
+#: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Pahljačasti diagram osebe %s"
@@ -343,7 +343,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Preklopi med celozaslonskim in običajnim načinom"
 
-#: src/Traits/ModuleConfigTrait.php:146
+#: src/Module/ConfigTrait.php:147
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr "Nastavitve modula “%s” so posodobljene."

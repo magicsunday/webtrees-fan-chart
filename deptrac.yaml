@@ -1,0 +1,30 @@
+# Deptrac configuration — imports the shared magicsunday/coding-standard ruleset.
+# This repository installs its dev tooling into .build/vendor, so the import path
+# points there (as the PHPStan include does).
+imports:
+    - .build/vendor/magicsunday/coding-standard/deptrac/layers.yaml
+
+deptrac:
+    paths:
+        - src
+
+    # `Facade\` and `Model\` are canonical (the shared directory layers cover them),
+    # and the Module-behaviour traits now live under `Module\` (also directory-covered).
+    # The `Module` and `Configuration` entry classes stay at the source root — a single
+    # class is its own layer, and moving it into a same-named subdirectory would only
+    # produce a redundant `Module/Module.php` and churn the entry FQCN — so each is
+    # mapped to its canonical layer by an exact FQCN (which cannot collide with a vendor
+    # class).
+    layers:
+        -
+            name: Module
+            collectors:
+                -
+                    type: classNameRegex
+                    value: '#^MagicSunday\\Webtrees\\FanChart\\Module$#'
+        -
+            name: Configuration
+            collectors:
+                -
+                    type: classNameRegex
+                    value: '#^MagicSunday\\Webtrees\\FanChart\\Configuration$#'

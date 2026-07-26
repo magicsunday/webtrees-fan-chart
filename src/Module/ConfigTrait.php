@@ -9,10 +9,11 @@
 
 declare(strict_types=1);
 
-namespace MagicSunday\Webtrees\FanChart\Traits;
+namespace MagicSunday\Webtrees\FanChart\Module;
 
 use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Module\ModuleConfigTrait;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,9 +26,9 @@ use Psr\Http\Message\ServerRequestInterface;
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-trait ModuleConfigTrait
+trait ConfigTrait
 {
-    use \Fisharebest\Webtrees\Module\ModuleConfigTrait;
+    use ModuleConfigTrait;
 
     /**
      * Renders the module configuration form in the webtrees administration
