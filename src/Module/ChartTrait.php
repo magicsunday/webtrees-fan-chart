@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace MagicSunday\Webtrees\FanChart\Traits;
+namespace MagicSunday\Webtrees\FanChart\Module;
 
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
@@ -23,7 +23,7 @@ use MagicSunday\Webtrees\ModuleBase\Traits\ModuleChartTrait as BaseModuleChartTr
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-trait ModuleChartTrait
+trait ChartTrait
 {
     use BaseModuleChartTrait;
 

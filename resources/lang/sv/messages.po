@@ -123,7 +123,7 @@ msgstr "Exportera som SVG"
 msgid "Fan chart"
 msgstr "Solfjäderdiagram"
 
-#: src/Module.php:233 src/Traits/ModuleChartTrait.php:46
+#: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Solfjäderdiagram för %s"
@@ -343,7 +343,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Växla mellan helskärm och normal vy"
 
-#: src/Traits/ModuleConfigTrait.php:146
+#: src/Module/ConfigTrait.php:147
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""

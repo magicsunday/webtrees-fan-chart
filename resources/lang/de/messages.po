@@ -122,7 +122,7 @@ msgstr "Als SVG exportieren"
 msgid "Fan chart"
 msgstr "Fächerdiagramm"
 
-#: src/Module.php:233 src/Traits/ModuleChartTrait.php:46
+#: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Fächerdiagramm von %s"
@@ -347,7 +347,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Zwischen Vollbildmodus und normaler Ansicht umschalten"
 
-#: src/Traits/ModuleConfigTrait.php:146
+#: src/Module/ConfigTrait.php:147
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""

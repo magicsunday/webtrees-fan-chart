@@ -121,7 +121,7 @@ msgstr "Извези као SVG"
 msgid "Fan chart"
 msgstr "Лепеза графикон"
 
-#: src/Module.php:233 src/Traits/ModuleChartTrait.php:46
+#: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr "Лепеза графикон %s"
@@ -341,7 +341,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Пребацивање између целог екрана и обичног приказа"
 
-#: src/Traits/ModuleConfigTrait.php:146
+#: src/Module/ConfigTrait.php:147
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""

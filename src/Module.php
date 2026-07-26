@@ -30,8 +30,8 @@ use Fisharebest\Webtrees\Services\ChartService;
 use Fisharebest\Webtrees\Validator;
 use Fisharebest\Webtrees\View;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
-use MagicSunday\Webtrees\FanChart\Traits\ModuleChartTrait;
-use MagicSunday\Webtrees\FanChart\Traits\ModuleConfigTrait;
+use MagicSunday\Webtrees\FanChart\Module\ChartTrait;
+use MagicSunday\Webtrees\FanChart\Module\ConfigTrait;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Traits\ModuleCustomTrait;
 use Override;
@@ -53,8 +53,8 @@ use Psr\Http\Message\ServerRequestInterface;
 class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCustomInterface, ModuleConfigInterface
 {
     use ModuleCustomTrait;
-    use ModuleChartTrait;
-    use ModuleConfigTrait;
+    use ChartTrait;
+    use ConfigTrait;
 
     private const string ROUTE_DEFAULT = 'webtrees-fan-chart';
 
