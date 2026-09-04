@@ -1,0 +1,31 @@
+name: Issue labels
+
+# Thin caller for the reusable AI issue labeler
+# (magicsunday/.github's ai-issue-labeler.yml). See that workflow's own
+# header comment for the full contract (label-set enum constraint,
+# needs-triage fallback, residual-risk acceptance).
+#
+# `uses: magicsunday/.github/.github/workflows/ai-issue-labeler.yml@main`
+# (the fully-qualified form) - a caller in a DIFFERENT repository than the
+# one that owns the reusable workflow, per that workflow's own documented
+# CALLER REQUIREMENTS block.
+#
+# REQUIRES the `ANTHROPIC_API_KEY` repository secret to be set on THIS repo
+# - this account has no org-wide secret inheritance (see
+# ai-issue-labeler.yml's own header comment for what happens, and its own
+# fail-loudly contract, when the secret is missing or invalid). That
+# failure is harmless here: it never blocks issue creation itself, since
+# `issues: write` is the only permission this caller grants.
+on:
+    issues:
+        types: [opened]
+
+permissions: {}
+
+jobs:
+    label:
+        uses: magicsunday/.github/.github/workflows/ai-issue-labeler.yml@main
+        permissions:
+            issues: write
+        secrets:
+            anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
