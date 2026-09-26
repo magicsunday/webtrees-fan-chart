@@ -57,7 +57,8 @@
         "magicsunday/webtrees-module-installer-plugin": "^2.0"
     },
     "require-dev": {
-        "magicsunday/coding-standard": "^1.6"
+        "magicsunday/coding-standard": "^2.1",
+        "phpat/phpat": "^0.12.4"
     },
     "autoload": {
         "psr-4": {

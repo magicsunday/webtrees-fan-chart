@@ -17,7 +17,8 @@ use PHPat\Test\Builder\Rule;
 use PHPat\Test\PHPat;
 
 /**
- * Architecture rules enforced by PHPat (runs as part of PHPStan).
+ * Architecture rules enforced by phpat (runs as part of PHPStan, loaded through
+ * magicsunday/coding-standard's opt-in phpstan/phpat.neon preset).
  *
  * The layer-DEPENDENCY directions — the permissive canonical-layer ruleset,
  * within which nothing may depend on the composition root — are now enforced
@@ -33,6 +34,8 @@ final class ArchitectureTest
      * Every abstract class carries the `Abstract` name prefix. The pattern is
      * matched against the fully qualified name, so `[^\\]*$` pins it to the
      * short class name rather than any namespace segment.
+     *
+     * Why phpat: a structural invariant (a class name) Deptrac cannot inspect.
      *
      * @return Rule
      */
