@@ -1,9 +1,13 @@
 includes:
     - %currentWorkingDirectory%/.build/vendor/magicsunday/coding-standard/phpstan/base.neon
+    # Opt-in phpat preset: only the structural rule in tests/Architecture/ArchitectureTest.php,
+    # which Deptrac cannot express. Layer dependencies are enforced by Deptrac (deptrac.yaml).
+    - %currentWorkingDirectory%/.build/vendor/magicsunday/coding-standard/phpstan/phpat.neon
 
 parameters:
-    # PHP Version to check against (PHP 8.3 as minimum target)
-    phpVersion: 80300
+    phpVersion:
+        min: 80300
+        max: 80500
 
     tmpDir: %currentWorkingDirectory%/.build/cache/.phpstan.cache
 
