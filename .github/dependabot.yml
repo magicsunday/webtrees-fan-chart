@@ -1,5 +1,10 @@
 version: 2
 
+# Every ecosystem sets an explicit commit-message prefix. Without one,
+# Dependabot copies the patterns it detects in the history, which can produce
+# `chore(deps): …` subjects and PR titles the commit-convention gate rejects.
+# A prefix ending in a letter gets a colon appended:
+# "Update dependencies: bump …".
 updates:
     -   package-ecosystem: composer
         directory: /
@@ -8,6 +13,8 @@ updates:
         open-pull-requests-limit: 5
         cooldown:
             default-days: 7
+        commit-message:
+            prefix: "Update dependencies"
         groups:
             composer:
                 patterns:
@@ -20,6 +27,8 @@ updates:
         open-pull-requests-limit: 5
         cooldown:
             default-days: 7
+        commit-message:
+            prefix: "Update dependencies"
         groups:
             npm:
                 patterns:
@@ -37,6 +46,8 @@ updates:
             interval: weekly
         cooldown:
             default-days: 7
+        commit-message:
+            prefix: "Update dependencies"
         groups:
             github-actions:
                 patterns:
