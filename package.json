@@ -30,7 +30,7 @@
     },
     "devDependencies": {
         "@biomejs/biome": "2.5.14",
-        "@magicsunday/coding-standard": "github:magicsunday/coding-standard#3.0.0",
+        "@magicsunday/coding-standard": "github:magicsunday/coding-standard#3.1.0",
         "@rollup/plugin-node-resolve": "^16.0",
         "@rollup/plugin-terser": "^1.0",
         "@types/d3-fetch": "^3.0.7",
