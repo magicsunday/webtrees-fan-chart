@@ -158,7 +158,9 @@ export function initPage(config) {
         showNicknames: storage.readBool("showNicknames", config.defaultShowNicknames ?? null),
         innerArcs: storage.readNumber("innerArcs"),
         fontScale: storage.readNumber("fontScale"),
-        showDescendants: storage.readBool("showDescendants", config.defaultShowDescendants),
+        showDescendants:
+            storage.readBool("showDescendants", config.defaultShowDescendants) ??
+            config.defaultShowDescendants,
     };
 
     // Clamp the fan degree slider when descendants are active (covers the case
@@ -265,7 +267,12 @@ export function initPage(config) {
                 }
             }
 
-            storage.write("fanDegree", fanSlider ? fanSlider.value : null);
+            // Storage.write() is typed for set values only; without a slider the
+            // entry is written as null, which every Storage reader treats as unset.
+            storage.write(
+                "fanDegree",
+                /** @type {string} */ (/** @type {unknown} */ (fanSlider ? fanSlider.value : null)),
+            );
 
             const container = document.getElementById("fan-chart-url");
             const newUrl = buildChartAjaxUrl(config.ajaxUrl, {

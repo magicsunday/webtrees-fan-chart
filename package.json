@@ -26,7 +26,7 @@
         "lint:fix": "biome lint --fix --unsafe resources/js/modules/",
         "format": "biome format --write resources/js/modules/ resources/js/tests/",
         "format:check": "biome format resources/js/modules/ resources/js/tests/",
-        "typecheck": "tsc --noEmit -p jsconfig.json"
+        "typecheck": "tsc --noEmit -p tsconfig.json"
     },
     "devDependencies": {
         "@biomejs/biome": "2.5.14",

@@ -60,29 +60,45 @@ export default class Svg {
     }
 
     /**
-     * @return {ChartZoom|null}
+     * Returns the SVG zoom instance. Only available once initEvents() has run.
+     *
+     * @return {ChartZoom}
      */
     get zoom() {
+        if (this._zoom === null) {
+            throw new Error("Svg.zoom is not available before initEvents() has been called");
+        }
+
         return this._zoom;
     }
 
     /**
      * The inner <g> element that receives the D3 zoom transform. All chart
-     * content (persons, marriages, separators) lives inside this group.
+     * content (persons, marriages, separators) lives inside this group. Only
+     * available once initEvents() has run.
      *
-     * @return {Selection<SVGGElement, unknown, HTMLElement, unknown>|null}
+     * @return {Selection<SVGGElement, unknown, HTMLElement, unknown>}
      */
     get visual() {
+        if (this._visual === null) {
+            throw new Error("Svg.visual is not available before initEvents() has been called");
+        }
+
         return this._visual;
     }
 
     /**
      * The floating tooltip <div> element. Carries an "active" property that is
-     * set to true when the tooltip is pinned open via right-click.
+     * set to true when the tooltip is pinned open via right-click. Only
+     * available once initEvents() has run.
      *
-     * @return {Selection<HTMLDivElement, unknown, HTMLElement, unknown>|null}
+     * @return {Selection<HTMLDivElement, unknown, HTMLElement, unknown>}
      */
     get div() {
+        if (this._div === null) {
+            throw new Error("Svg.div is not available before initEvents() has been called");
+        }
+
         return this._div;
     }
 

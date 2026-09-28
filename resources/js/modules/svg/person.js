@@ -260,8 +260,11 @@ export default class Person {
      */
     addImageToPerson(person, datum, showNames = true) {
         const imageSize = datum.data.data.imageSize;
+        const thumbnail = datum.data.data.thumbnail;
 
-        if (!imageSize) {
+        // _computeImageSize() only sets an image size for a person with a
+        // thumbnail, so both are present together
+        if (!imageSize || !thumbnail) {
             return;
         }
 
@@ -269,9 +272,7 @@ export default class Person {
         // photo. Cream for silhouettes (warm backdrop matching the cameo
         // aesthetic), plain white for real photos — stays neutral whether the
         // arc carries a sex pastel, a family colour, or a dark-theme tint.
-        const isSilhouette =
-            datum.data.data.thumbnail !== "" &&
-            datum.data.data.thumbnail === datum.data.data.silhouette;
+        const isSilhouette = thumbnail !== "" && thumbnail === datum.data.data.silhouette;
         const imageBackgroundFill = isSilhouette ? "#FBF8F0" : "#FFFFFF";
 
         const nameGroup = person.select("g.name");
@@ -318,7 +319,7 @@ export default class Person {
 
             imageGroup
                 .append("image")
-                .attr("href", datum.data.data.thumbnail)
+                .attr("href", thumbnail)
                 .attr("x", -(imageSize / 2))
                 .attr("y", centerY - imageSize / 2)
                 .attr("width", imageSize)
@@ -374,7 +375,7 @@ export default class Person {
 
             imageGroup
                 .append("image")
-                .attr("href", datum.data.data.thumbnail)
+                .attr("href", thumbnail)
                 .attr("x", -(imageSize / 2))
                 .attr("y", -(imageSize / 2))
                 .attr("width", imageSize)

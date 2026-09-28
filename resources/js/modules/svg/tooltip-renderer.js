@@ -10,6 +10,8 @@ import { SYMBOL_BIRTH, SYMBOL_DEATH, SYMBOL_ELLIPSIS, SYMBOL_MARRIAGE } from "..
 
 /**
  * @import { Selection } from "d3-selection"
+ * @import Svg from "../svg.js"
+ * @import Configuration from "../configuration.js"
  * @import { HierarchyNode } from "../hierarchy.js"
  */
 
@@ -29,15 +31,6 @@ function escapeHtml(value) {
         .replace(/'/g, "&#39;");
 }
 
-/**
- * Builds the HTML rows for a single fact (date + optional place).
- *
- * @param {string} symbol Unicode symbol for the fact type
- * @param {string} date   Date string (may be empty)
- * @param {string} place  Place string (may be empty)
- *
- * @return {string}
- */
 /**
  * Detects whether the active theme renders on a dark surface by sampling the
  * computed background colour of the document body and comparing its Rec. 709
@@ -72,6 +65,15 @@ function isDarkSurface() {
     return luma < 128;
 }
 
+/**
+ * Builds the HTML rows for a single fact (date + optional place).
+ *
+ * @param {string} symbol Unicode symbol for the fact type
+ * @param {string} date   Date string (may be empty)
+ * @param {string} place  Place string (may be empty)
+ *
+ * @return {string}
+ */
 function buildFactRows(symbol, date, place) {
     let rows = `<tr class="date"><th>${symbol}</th><td>${date ? escapeHtml(date) : SYMBOL_ELLIPSIS}</td></tr>`;
 
@@ -93,6 +95,10 @@ function buildFactRows(symbol, date, place) {
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 export default class TooltipRenderer {
+    /**
+     * @param {Svg}           svg
+     * @param {Configuration} configuration The application configuration
+     */
     constructor(svg, configuration) {
         this._svg = svg;
         this._configuration = configuration;
@@ -157,8 +163,8 @@ export default class TooltipRenderer {
      * @private
      */
     _buildTooltipImage(datum) {
-        const thumbnail = datum.data.data.thumbnail;
-        const silhouette = datum.data.data.silhouette;
+        const thumbnail = datum.data.data.thumbnail ?? "";
+        const silhouette = datum.data.data.silhouette ?? "";
         const isPhoto = thumbnail !== "" && thumbnail !== silhouette;
 
         if (isPhoto) {

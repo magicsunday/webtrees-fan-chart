@@ -43,12 +43,22 @@ export default class Chart {
         this._hierarchy = new Hierarchy(this._configuration);
         /** @type {NodeDatum|null} */
         this._data = null;
+        /** @type {Svg|null} */
+        this._svg = null;
+        /** @type {ChartOverlay|null} */
+        this._overlay = null;
     }
 
     /**
+     * Returns the chart's SVG. Only available once render() has run.
+     *
      * @return {Svg}
      */
     get svg() {
+        if (this._svg === null) {
+            throw new Error("Chart.svg is not available before render() has been called");
+        }
+
         return this._svg;
     }
 
@@ -127,8 +137,11 @@ export default class Chart {
         this.svg.attr("width", "100%").attr("height", "100%");
 
         const padding = this.convertRemToPixels(MIN_PADDING);
-        const svgBoundingBox = this.svg.visual.node().getBBox();
-        const clientBoundingBox = this.parent.node().getBoundingClientRect();
+        // Both selections hold exactly one element once render() has run
+        const svgBoundingBox = /** @type {SVGGElement} */ (this.svg.visual.node()).getBBox();
+        const clientBoundingBox = /** @type {HTMLElement} */ (
+            this.parent.node()
+        ).getBoundingClientRect();
 
         // In fullscreen mode, use the full available height
         if (document.fullscreenElement) {
@@ -152,17 +165,19 @@ export default class Chart {
      */
     transitionViewBox() {
         const padding = this.convertRemToPixels(MIN_PADDING);
-        const clientBoundingBox = this.parent.node().getBoundingClientRect();
+        const clientBoundingBox = /** @type {HTMLElement} */ (
+            this.parent.node()
+        ).getBoundingClientRect();
 
         // Hide all outgoing content with display:none so getBBox measures
         // only the incoming chart. This includes:
         // - Top-level elements marked for removal (.remove)
         // - Old sub-elements within updating elements (.old)
         // - Old separator lines
-        const outgoing = this._svg.visual.selectAll("g.person.remove, g.marriage.remove, .old");
+        const outgoing = this.svg.visual.selectAll("g.person.remove, g.marriage.remove, .old");
         outgoing.style("display", "none");
 
-        const svgBoundingBox = this.svg.visual.node().getBBox();
+        const svgBoundingBox = /** @type {SVGGElement} */ (this.svg.visual.node()).getBBox();
 
         // Restore for the fade-out transition
         outgoing.style("display", null);
@@ -200,9 +215,9 @@ export default class Chart {
         this._overlay = new ChartOverlay(this._parent);
 
         // Init the <svg> events
-        this._svg.initEvents(this._overlay);
+        this.svg.initEvents(this._overlay);
 
-        const personGroup = this._svg.select("g.personGroup");
+        const personGroup = this.svg.select("g.personGroup");
         const geometry = new Geometry(this._configuration);
         const familyColor = new FamilyColor(this._configuration);
         familyColor.setPartnerMidpoints(this._hierarchy.nodes);
@@ -214,7 +229,7 @@ export default class Chart {
         // Mark family-colors mode so svg.css can keep text dark on the
         // theme-constant pastel arc backgrounds (otherwise dark-theme
         // body-color renders white text on the pastel fills).
-        this._svg.visual.classed("family-colors", this._configuration.showFamilyColors);
+        this.svg.visual.classed("family-colors", this._configuration.showFamilyColors);
 
         personGroup
             .selectAll("g.person")
@@ -235,12 +250,12 @@ export default class Chart {
             .attr("class", "person")
             .attr("id", (datum) => `person-${datum.id}`);
 
-        const svg = this._svg;
+        const svg = this.svg;
         const configuration = this._configuration;
 
         // Create a new selection in order to leave the previous enter() selection
         personGroup.selectAll("g.person").each((datum, i, nodes) => {
-            const person = d3.select(nodes[i]);
+            const person = d3.select(/** @type {SVGGElement} */ (nodes[i]));
 
             new Person(svg, configuration, geometry, person, datum);
         });
@@ -267,10 +282,11 @@ export default class Chart {
      */
     drawFamilySeparators() {
         const geometry = new Geometry(this._configuration);
-        let separatorGroup = this._svg.visual.select("g.separatorGroup");
+        /** @type {Selection<SVGGElement, unknown, HTMLElement, unknown>} */
+        let separatorGroup = this.svg.visual.select("g.separatorGroup");
 
         if (separatorGroup.empty()) {
-            separatorGroup = this._svg.visual.append("g").attr("class", "separatorGroup");
+            separatorGroup = this.svg.visual.append("g").attr("class", "separatorGroup");
         }
 
         const maxDepth = this._configuration.showNames
@@ -287,6 +303,10 @@ export default class Chart {
             for (let i = 0; i < nodesAtDepth.length - 1; i++) {
                 const current = nodesAtDepth[i];
                 const next = nodesAtDepth[i + 1];
+
+                if (current === undefined || next === undefined) {
+                    continue;
+                }
 
                 // Only draw separator between different families
                 if (current.parent !== next.parent) {
@@ -343,6 +363,11 @@ export default class Chart {
         for (let i = 0; i < partnerNodes.length - 1; i++) {
             const current = partnerNodes[i];
             const next = partnerNodes[i + 1];
+
+            if (current === undefined || next === undefined) {
+                continue;
+            }
+
             const angle = this._configuration.childScale(current.x1);
 
             // Check whether the adjacent partners have children
@@ -378,10 +403,11 @@ export default class Chart {
      * @private
      */
     drawMarriageArcs() {
-        let marriageGroup = this._svg.visual.select("g.marriageGroup");
+        /** @type {Selection<SVGGElement, unknown, HTMLElement, unknown>} */
+        let marriageGroup = this.svg.visual.select("g.marriageGroup");
 
         if (marriageGroup.empty()) {
-            marriageGroup = this._svg.visual.append("g").attr("class", "marriageGroup");
+            marriageGroup = this.svg.visual.append("g").attr("class", "marriageGroup");
         }
 
         // All nodes that have children and are within display range
@@ -398,13 +424,13 @@ export default class Chart {
             .attr("class", "marriage")
             .attr("id", (datum) => `marriage-${datum.id}`);
 
-        const svg = this._svg;
+        const svg = this.svg;
         const configuration = this._configuration;
         const geometry = new Geometry(configuration);
 
         // Create a new selection in order to leave the previous enter() selection
         marriageGroup.selectAll("g.marriage").each((datum, i, nodes) => {
-            const marriage = d3.select(nodes[i]);
+            const marriage = d3.select(/** @type {SVGGElement} */ (nodes[i]));
             new Marriage(svg, configuration, geometry, marriage, datum);
         });
     }
@@ -418,10 +444,11 @@ export default class Chart {
      * @private
      */
     drawDescendantMarriageArcs() {
-        let marriageGroup = this._svg.visual.select("g.marriageGroup");
+        /** @type {Selection<SVGGElement, unknown, HTMLElement, unknown>} */
+        let marriageGroup = this.svg.visual.select("g.marriageGroup");
 
         if (marriageGroup.empty()) {
-            marriageGroup = this._svg.visual.append("g").attr("class", "marriageGroup");
+            marriageGroup = this.svg.visual.append("g").attr("class", "marriageGroup");
         }
 
         // Empty array when descendants are disabled or no partners exist,
@@ -435,14 +462,14 @@ export default class Chart {
             .selectAll("g.marriage.descendant")
             .data(partnerNodes, (datum) => datum.id);
 
-        const svg = this._svg;
+        const svg = this.svg;
         const configuration = this._configuration;
         const geometry = new Geometry(configuration);
 
         // Matched (update): mark old content for fade-out, create new content
         // (geometry changes on re-center so arcs must be rebuilt)
         marriageJoin.each((datum, i, nodes) => {
-            const marriage = d3.select(nodes[i]);
+            const marriage = d3.select(/** @type {SVGGElement} */ (nodes[i]));
 
             marriage.selectAll("g.content").classed("old", true);
 
@@ -461,7 +488,7 @@ export default class Chart {
             .attr("class", "marriage descendant")
             .attr("id", (datum) => `marriage-${datum.id}`)
             .each((datum, i, nodes) => {
-                const marriage = d3.select(nodes[i]);
+                const marriage = d3.select(/** @type {SVGGElement} */ (nodes[i]));
                 new Marriage(svg, configuration, geometry, marriage, datum);
             });
     }
@@ -474,7 +501,7 @@ export default class Chart {
      * @private
      */
     bindClickEventListener() {
-        const persons = this._svg
+        const persons = this.svg
             .select("g.personGroup")
             .selectAll("g.person")
             .filter((datum) => datum?.data?.data?.xref !== "")
@@ -484,7 +511,7 @@ export default class Chart {
         persons.on("click", this.personClick.bind(this));
 
         // Set available on marriage arcs that have content
-        this._svg
+        this.svg
             .select("g.marriageGroup")
             .selectAll("g.marriage")
             .filter(
@@ -494,10 +521,10 @@ export default class Chart {
             .classed("available", true);
 
         // Mark empty marriage arcs (no parents shown) for CSS styling
-        this._svg
+        this.svg
             .select("g.marriageGroup")
             .selectAll("g.marriage")
-            .each(function (datum) {
+            .each(function (/** @type {HierarchyNode|undefined} */ datum) {
                 if (!datum?.children) {
                     return;
                 }
@@ -547,7 +574,7 @@ export default class Chart {
      * @param {string} url The update URL for the new center individual
      */
     update(url) {
-        const updater = new ChartUpdater(this._svg, this._configuration, this._hierarchy);
+        const updater = new ChartUpdater(this.svg, this._configuration, this._hierarchy);
 
         updater.update(
             url,
@@ -565,7 +592,7 @@ export default class Chart {
      */
     redrawOverlayLayers() {
         // Separators: mark old, draw new
-        this._svg.visual.selectAll("g.separatorGroup line").classed("old", true);
+        this.svg.visual.selectAll("g.separatorGroup line").classed("old", true);
 
         this.drawFamilySeparators();
 

@@ -175,9 +175,9 @@ export default class FamilyColor {
         }
 
         if (datum.children) {
-            for (let i = 0; i < datum.children.length; i++) {
-                if (datum.children[i].data.data.familyColor) {
-                    return datum.children[i].data.data.familyColor;
+            for (const child of datum.children) {
+                if (child.data.data.familyColor) {
+                    return child.data.data.familyColor;
                 }
             }
         }
