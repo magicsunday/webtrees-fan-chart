@@ -234,7 +234,12 @@ export default class Marriage {
             pathId += `-${++marriagePathCounter}`;
         }
 
-        this._svg.defs.append("path").attr("id", pathId).attr("d", textPathGenerator);
+        // The generator only reads its constant angles and radii, never the
+        // datum d3 passes in, so the untyped defs datum is fine here.
+        this._svg.defs
+            .append("path")
+            .attr("id", pathId)
+            .attr("d", /** @type {any} */ (textPathGenerator));
 
         const labelGroup = marriage
             .append("g")

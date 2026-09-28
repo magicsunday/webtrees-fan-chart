@@ -46,7 +46,7 @@ export default class Configuration {
 
     /**
      * @param {object}   options
-     * @param {Object<string, string>} [options.labels]  Label strings keyed by name (e.g. zoom, move) and generation index
+     * @param {{ zoom: string, move: string }} [options.labels] The zoom and move hint texts of the overlay
      * @param {number}   [options.generations=6]
      * @param {number}   [options.fanDegree=210]
      * @param {number}   [options.fontScale=100]

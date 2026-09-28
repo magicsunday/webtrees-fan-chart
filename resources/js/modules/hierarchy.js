@@ -156,8 +156,10 @@ export default class Hierarchy {
         // Construct root node from the hierarchical data
         this._root = d3
             .hierarchy(datum, (datum) => {
-                // Build a parents array without mutating the original server JSON
-                let parents = datum.parents;
+                // Build a parents array without mutating the original server JSON.
+                // An empty array is treated like a missing one (the server omits
+                // empty relation arrays, so none should arrive).
+                let parents = datum.parents && datum.parents.length > 0 ? datum.parents : undefined;
 
                 // Fill up the missing parents to the requested number of generations
                 if (!parents && datum.data.generation < this._configuration.generations) {
@@ -169,9 +171,10 @@ export default class Hierarchy {
 
                 // Add missing parent record if we got only one
                 if (parents && parents.length < 2) {
+                    const [knownParent] = parents;
                     parents = [...parents];
 
-                    if (parents[0].data.sex === SEX_MALE) {
+                    if (knownParent?.data.sex === SEX_MALE) {
                         parents.push(this.createEmptyNode(datum.data.generation + 1, SEX_FEMALE));
                     } else {
                         parents.unshift(this.createEmptyNode(datum.data.generation + 1, SEX_MALE));
@@ -207,23 +210,32 @@ export default class Hierarchy {
 
     /**
      * Flat array of all partition nodes (root plus all descendants) in top-down
-     * order, each augmented with a unique sequential id. Null until init() runs.
+     * order, each augmented with a unique sequential id. Only available once
+     * init() has run.
      *
-     * @return {HierarchyNode[]|null}
+     * @return {HierarchyNode[]}
      */
     get nodes() {
+        if (this._nodes === null) {
+            throw new Error("Hierarchy.nodes is not available before init() has been called");
+        }
+
         return this._nodes;
     }
 
     /**
      * The root of the D3 partition hierarchy, exposed as our own typed view
-     * (see the note in init() on the diverging `id` property). Null until
-     * init() runs.
+     * (see the note in init() on the diverging `id` property). Only available
+     * once init() has run.
      *
-     * @return {HierarchyNode|null}
+     * @return {HierarchyNode}
      */
     get root() {
-        return /** @type {HierarchyNode|null} */ (/** @type {unknown} */ (this._root));
+        if (this._root === null) {
+            throw new Error("Hierarchy.root is not available before init() has been called");
+        }
+
+        return /** @type {HierarchyNode} */ (/** @type {unknown} */ (this._root));
     }
 
     /**
@@ -346,7 +358,8 @@ export default class Hierarchy {
      * @private
      */
     _createDescendantNodes(familyBlocks, rootXref, useEqualDistribution, totalWeight) {
-        let nextId = this._nodes.length;
+        const nodes = this.nodes;
+        let nextId = nodes.length;
         let currentFraction = 0;
 
         for (const block of familyBlocks) {
@@ -364,7 +377,7 @@ export default class Hierarchy {
                 partnerXref = block.partner.data.xref || "";
                 parentForChildren = nextId++;
 
-                this._nodes.push(
+                nodes.push(
                     /** @type {any} */ ({
                         id: parentForChildren,
                         depth: -1,
@@ -387,7 +400,7 @@ export default class Hierarchy {
                 const childFraction = blockFraction / block.children.length;
 
                 for (let i = 0; i < block.children.length; i++) {
-                    this._nodes.push(
+                    nodes.push(
                         /** @type {any} */ ({
                             id: nextId++,
                             depth: -2,
@@ -419,7 +432,7 @@ export default class Hierarchy {
      * @param {FamilyColor} familyColor The color calculator instance
      */
     applyFamilyColors(familyColor) {
-        this._nodes.forEach((datum) => {
+        this.nodes.forEach((datum) => {
             datum.data.data.familyColor = familyColor.getColor(datum);
         });
     }

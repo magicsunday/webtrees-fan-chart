@@ -20,7 +20,7 @@ import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees
  * @property {boolean} [isPreferred]
  * @property {boolean} [isLastName]
  * @property {boolean} [isNickname]
- * @property {boolean} [isNameRtl]
+ * @property {boolean|undefined} [isNameRtl] Undefined when the payload does not carry the flag
  */
 
 /**
@@ -42,7 +42,23 @@ import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees
  * objects in Text.TEXT_SLOT. The two variants correspond to arcs read in
  * reading direction and arcs flipped by 180 degrees.
  *
- * @typedef {Map<Object, {normal: number, flipped: number}>} SlotPositions
+ * @typedef {Map<TextSlot, SlotPosition>} SlotPositions
+ */
+
+/**
+ * One of the Text.TEXT_SLOT identifiers; its index names the slot's path.
+ *
+ * @typedef {object} TextSlot
+ * @property {number} index The slot index used in the path ID
+ */
+
+/**
+ * Radial percentage positions of one text slot (0 = inner radius, 100 =
+ * outer radius), for arcs read in reading direction and for flipped arcs.
+ *
+ * @typedef {object} SlotPosition
+ * @property {number} normal  The position on an arc read in reading direction
+ * @property {number} flipped The position on an arc flipped by 180 degrees
  */
 
 export default class Text {
@@ -96,8 +112,8 @@ export default class Text {
                 return;
             }
 
-            const slot = nameSlots[index];
-            const position = positions.get(slot);
+            const slot = this.getSlot(nameSlots, index);
+            const position = this.getSlotPosition(positions, slot);
             const availableWidth = this.getAvailableWidth(datum, position);
             const pathId = this.createPathDefinition(parentId, slot, position, datum);
             const textPath = parent
@@ -114,7 +130,7 @@ export default class Text {
 
         if (datum.data.data.alternativeName !== "") {
             const slot = Text.TEXT_SLOT.ALTERNATIVE_NAME;
-            const position = positions.get(slot);
+            const position = this.getSlotPosition(positions, slot);
             const pathId = this.createPathDefinition(parentId, slot, position, datum);
             const availableWidth = this.getAvailableWidth(datum, position);
             const nameGroup = this.createAlternativeNamesData(datum);
@@ -159,7 +175,7 @@ export default class Text {
             const nameGroups = this.createNamesData(datum);
             const availableWidth = this.getAvailableWidth(
                 datum,
-                positions.get(Text.TEXT_SLOT.FIRST_NAMES),
+                this.getSlotPosition(positions, Text.TEXT_SLOT.FIRST_NAMES),
             );
             const combined = nameGroups.flat();
 
@@ -186,19 +202,19 @@ export default class Text {
 
                 const availableWidth = this.getAvailableWidth(
                     datum,
-                    positions.get(nameSlots[index]),
+                    this.getSlotPosition(positions, this.getSlot(nameSlots, index)),
                 );
 
                 if (isCenter && index === 0) {
-                    const nickIdx = nameGroup.findIndex((entry) => entry.isNickname);
+                    const nickname = nameGroup.find((entry) => entry.isNickname);
 
-                    if (nickIdx !== -1) {
+                    if (nickname !== undefined) {
                         const givenNames = nameGroup.filter((entry) => !entry.isNickname);
                         // Strip isNickname so truncateNamesData does not
                         // drop this dedicated line first when the center
                         // radius is narrow — the whole point of lifting
                         // it out is that it survives truncation.
-                        const nickEntry = { ...nameGroup[nickIdx], isNickname: false };
+                        const nickEntry = { ...nickname, isNickname: false };
 
                         if (givenNames.length > 0) {
                             const givenText = parent
@@ -231,7 +247,7 @@ export default class Text {
             if (datum.data.data.alternativeName !== "" && datum.depth >= 0) {
                 const availableWidth = this.getAvailableWidth(
                     datum,
-                    positions.get(Text.TEXT_SLOT.ALTERNATIVE_NAME),
+                    this.getSlotPosition(positions, Text.TEXT_SLOT.ALTERNATIVE_NAME),
                 );
                 const nameGroup = this.createAlternativeNamesData(datum);
 
@@ -271,7 +287,8 @@ export default class Text {
      * @param {Selection<any, any, any, any>} _parent       Unused; kept for symmetry with sibling renderers
      * @param {HierarchyNode}                 datum         The D3 partition datum
      * @param {SlotPositions}                 positions     Slot-to-position map from calculateSlotPositions()
-     * @param {Function}                      createElement Called as (slot, position) => container element
+     * @param {(slot: TextSlot, position: SlotPosition) => Selection<any, any, any, any>} createElement
+     *                                                    Creates the container element of one line
      *
      * @private
      */
@@ -284,8 +301,8 @@ export default class Text {
         const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
 
         timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
-            const slot = dateSlots[lineIndex];
-            const position = positions.get(slot);
+            const slot = this.getSlot(dateSlots, lineIndex);
+            const position = this.getSlotPosition(positions, slot);
             const container = createElement(slot, position);
 
             container.append("title").text(line);
@@ -311,13 +328,17 @@ export default class Text {
      */
     createNamesData(datum) {
         /**
-         * @var {LabelElementData[][]} names
+         * Name groups keyed by the position of their first part in the full
+         * name, so Object.values() returns them in name order.
+         *
+         * @type {Object<number, LabelElementData[]>}
          */
         const names = {};
         let minPosFirstnames = Number.MAX_SAFE_INTEGER;
         let minPosLastnames = Number.MAX_SAFE_INTEGER;
 
         let firstnameOffset = 0;
+        /** @type {Map<number, LabelElementData>} */
         const firstnameMap = new Map();
 
         // Iterate over the individual name components and determine their position in the overall
@@ -367,6 +388,7 @@ export default class Text {
         names[minPosFirstnames] = [...firstnameMap].map(([, value]) => value);
 
         let lastnameOffset = 0;
+        /** @type {Map<number, LabelElementData>} */
         const lastnameMap = new Map();
 
         for (const lastName of datum.data.data.lastNames) {
@@ -427,8 +449,8 @@ export default class Text {
      * underline decoration; last names receive the "lastName" CSS class.
      * Adjacent name parts are spaced 0.25em apart (negated for RTL scripts).
      *
-     * @param {Selection}         parent The <text> or <textPath> element to append spans to
-     * @param {LabelElementData[]} data  Array of name part descriptors
+     * @param {Selection<any, any, any, any>} parent The <text> or <textPath> element to append spans to
+     * @param {LabelElementData[]}            data   Array of name part descriptors
      *
      * @private
      */
@@ -447,7 +469,7 @@ export default class Text {
                     })
                     // Highlight the preferred and last name
                     .attr("text-decoration", (datum) => (datum.isPreferred ? "underline" : null))
-                    .classed("lastName", (datum) => datum.isLastName);
+                    .classed("lastName", (datum) => Boolean(datum.isLastName));
             });
     }
 
@@ -455,9 +477,9 @@ export default class Text {
      * Reads the current font-size and font-weight from the parent element and
      * delegates to truncateNames() with those metrics.
      *
-     * @param {Selection}          parent         The <text> or <textPath> element whose font metrics to use
-     * @param {LabelElementData[]} names          The name parts to truncate
-     * @param {number}             availableWidth Maximum pixel width for the combined name string
+     * @param {Selection<any, any, any, any>} parent         The <text> or <textPath> element whose font metrics to use
+     * @param {LabelElementData[]}            names          The name parts to truncate
+     * @param {number}                        availableWidth Maximum pixel width for the combined name string
      *
      * @return {LabelElementData[]}
      *
@@ -539,10 +561,10 @@ export default class Text {
      * Reverses start/end angles for flipped labels in the bottom half of 360°
      * charts.
      *
-     * @param {string}                            parentId The ID of the parent person/marriage element
-     * @param {{index: number}}                   slot     One of the TEXT_SLOT constants (carries .index for the path ID)
-     * @param {{normal: number, flipped: number}} position Radial percentage positions for this slot
-     * @param {HierarchyNode}                     data     The D3 partition datum
+     * @param {string}        parentId The ID of the parent person/marriage element
+     * @param {TextSlot}      slot     One of the TEXT_SLOT constants (carries .index for the path ID)
+     * @param {SlotPosition}  position Radial percentage positions for this slot
+     * @param {HierarchyNode} data     The D3 partition datum
      *
      * @return {string} The id attribute of the newly created <path> element
      *
@@ -580,7 +602,12 @@ export default class Text {
 
         // Store the <path> inside the definition list, so we could
         // access it later on by its id
-        this._svg.defs.append("path").attr("id", pathId).attr("d", arcGenerator);
+        // The generator only reads its constant angles and radii, never the
+        // datum d3 passes in, so the untyped defs datum is fine here.
+        this._svg.defs
+            .append("path")
+            .attr("id", pathId)
+            .attr("d", /** @type {any} */ (arcGenerator));
 
         return pathId;
     }
@@ -604,7 +631,13 @@ export default class Text {
     /**
      * Text slot identifiers used for unique path IDs.
      *
-     * @type {Object<string, {index: number}>}
+     * @type {{
+     *     FIRST_NAMES: TextSlot,
+     *     LAST_NAMES: TextSlot,
+     *     ALTERNATIVE_NAME: TextSlot,
+     *     DATE_LINE_1: TextSlot,
+     *     DATE_LINE_2: TextSlot,
+     * }}
      */
     static TEXT_SLOT = {
         FIRST_NAMES: { index: 0 },
@@ -633,6 +666,7 @@ export default class Text {
         // so slot lookups don't fail.
         const hasFirstNames = datum.data.data.firstNames && datum.data.data.firstNames.length > 0;
         const hasLastNames = datum.data.data.lastNames && datum.data.data.lastNames.length > 0;
+        /** @type {TextSlot[]} */
         const nameGroup = [];
 
         if (hasFirstNames) {
@@ -647,7 +681,9 @@ export default class Text {
             nameGroup.push(Text.TEXT_SLOT.FIRST_NAMES);
         }
 
+        /** @type {TextSlot[]} */
         const altGroup = [];
+        /** @type {TextSlot[]} */
         const dateGroup = [];
 
         if (datum.data.data.alternativeName !== "") {
@@ -733,6 +769,7 @@ export default class Text {
         const normalOffsetPercent = ((fontSize * 0.375) / arcHeight) * 100;
         const flippedOffsetPercent = ((fontSize * 0.2) / arcHeight) * 100;
 
+        /** @type {SlotPositions} */
         const positions = new Map();
         const normalOffset = datum.depth < 0 ? 0 : normalOffsetPercent;
 
@@ -758,27 +795,65 @@ export default class Text {
 
         // Ensure both name slots have a position even if one was excluded
         // from spacing. Copy the other's position so lookups don't fail.
-        if (
-            !positions.has(Text.TEXT_SLOT.FIRST_NAMES) &&
-            positions.has(Text.TEXT_SLOT.LAST_NAMES)
-        ) {
-            positions.set(Text.TEXT_SLOT.FIRST_NAMES, positions.get(Text.TEXT_SLOT.LAST_NAMES));
-        } else if (
-            !positions.has(Text.TEXT_SLOT.LAST_NAMES) &&
-            positions.has(Text.TEXT_SLOT.FIRST_NAMES)
-        ) {
-            positions.set(Text.TEXT_SLOT.LAST_NAMES, positions.get(Text.TEXT_SLOT.FIRST_NAMES));
+        const firstNamesPosition = positions.get(Text.TEXT_SLOT.FIRST_NAMES);
+        const lastNamesPosition = positions.get(Text.TEXT_SLOT.LAST_NAMES);
+
+        if (firstNamesPosition === undefined && lastNamesPosition !== undefined) {
+            positions.set(Text.TEXT_SLOT.FIRST_NAMES, lastNamesPosition);
+        } else if (lastNamesPosition === undefined && firstNamesPosition !== undefined) {
+            positions.set(Text.TEXT_SLOT.LAST_NAMES, firstNamesPosition);
         }
 
         return positions;
     }
 
     /**
+     * Returns the text slot at the given index of a slot list.
+     *
+     * @param {TextSlot[]} slots The slot list
+     * @param {number}     index The index of the slot
+     *
+     * @return {TextSlot}
+     *
+     * @private
+     */
+    getSlot(slots, index) {
+        const slot = slots[index];
+
+        if (slot === undefined) {
+            throw new Error(`No text slot at index ${index}`);
+        }
+
+        return slot;
+    }
+
+    /**
+     * Returns the position calculateSlotPositions() assigned to the given slot.
+     * Every slot a label is rendered in has one.
+     *
+     * @param {SlotPositions} positions The slot positions of the datum
+     * @param {TextSlot}      slot      The slot to look up
+     *
+     * @return {SlotPosition}
+     *
+     * @private
+     */
+    getSlotPosition(positions, slot) {
+        const position = positions.get(slot);
+
+        if (position === undefined) {
+            throw new Error(`No text position calculated for slot ${slot.index}`);
+        }
+
+        return position;
+    }
+
+    /**
      * Get the relative position offset in percent for a text slot.
      *   => (0 = inner radius, 100 = outer radius)
      *
-     * @param {boolean}                           positionFlipped TRUE if the labels should be flipped
-     * @param {{normal: number, flipped: number}} position        The calculated position for this slot
+     * @param {boolean}      positionFlipped TRUE if the labels should be flipped
+     * @param {SlotPosition} position        The calculated position for this slot
      *
      * @return {number}
      *
@@ -795,8 +870,8 @@ export default class Text {
      * circle uses a fraction of its diameter. Image presence further reduces
      * the width by imageSize + 10 px gap.
      *
-     * @param {HierarchyNode}                     data     The D3 partition datum
-     * @param {{normal: number, flipped: number}} position Radial slot position from calculateSlotPositions()
+     * @param {HierarchyNode} data     The D3 partition datum
+     * @param {SlotPosition}  position Radial slot position from calculateSlotPositions()
      *
      * @return {number}
      *
@@ -937,6 +1012,7 @@ export default class Text {
                 const interGroupGap = fontSize * 0.5;
 
                 // First pass: compute raw positions
+                /** @type {number[]} */
                 const positions = [];
                 let currentY = 0;
                 let prevGroup = "name";
@@ -967,8 +1043,11 @@ export default class Text {
                 const mean = positions.reduce((sum, p) => sum + p, 0) / positions.length;
                 const baselineShift = fontSize * 0.2;
 
+                // Both passes walk the same selection, one position per element
                 textElements.each(function (_ignore, i) {
-                    d3.select(this).attr("dy", `${positions[i] - mean + baselineShift}px`);
+                    const position = /** @type {number} */ (positions[i]);
+
+                    d3.select(this).attr("dy", `${position - mean + baselineShift}px`);
                 });
             }
 
@@ -979,8 +1058,10 @@ export default class Text {
         // labels in calculateSlotPositions) but in angular degrees.
         const angularPositions = this.calculateOuterSlotPositions(datum, textElements);
 
+        // calculateOuterSlotPositions() returns one offset per text element
         textElements.each(function (_ignore, i) {
-            const offsetRotate = (angularPositions[i] * that._configuration.fontScale) / 100.0;
+            const angularPosition = /** @type {number} */ (angularPositions[i]);
+            const offsetRotate = (angularPosition * that._configuration.fontScale) / 100.0;
 
             d3.select(this).attr("transform", () => {
                 const dx = datum.x1 - datum.x0;
@@ -1035,8 +1116,8 @@ export default class Text {
      * degree offsets from the arc center, vertically centered within the
      * available angular span.
      *
-     * @param {HierarchyNode} datum        The D3 data object
-     * @param {Selection}     textElements The text elements to position
+     * @param {HierarchyNode}                 datum        The D3 data object
+     * @param {Selection<any, any, any, any>} textElements The text elements to position
      *
      * @return {number[]} Angular offset in degrees for each text element
      *
@@ -1044,21 +1125,23 @@ export default class Text {
      */
     calculateOuterSlotPositions(datum, textElements) {
         // Build element groups: [names...], [dates...]
-        const groups = [{ items: [], isDate: false }];
+        /** @type {{ items: unknown[], isDate: boolean }} */
+        const nameGroup = { items: [], isDate: false };
+        const groups = [nameGroup];
+        // The group dates are appended to, always the last one in groups
+        let lastGroup = nameGroup;
 
         textElements.each(function () {
             if (d3.select(this).classed("date")) {
                 // Start a new group for the first date
-                if (
-                    groups[groups.length - 1].items.length > 0 &&
-                    !groups[groups.length - 1].isDate
-                ) {
-                    groups.push({ items: [], isDate: true });
+                if (lastGroup.items.length > 0 && !lastGroup.isDate) {
+                    lastGroup = { items: [], isDate: true };
+                    groups.push(lastGroup);
                 }
 
-                groups[groups.length - 1].items.push(this);
+                lastGroup.items.push(this);
             } else {
-                groups[0].items.push(this);
+                nameGroup.items.push(this);
             }
         });
 
@@ -1108,6 +1191,7 @@ export default class Text {
         // Center and assign positions (names at negative = inner side,
         // dates at positive = outer side, matching the old convention)
         let currentPos = -(totalDeg / 2);
+        /** @type {number[]} */
         const positions = [];
 
         groups.forEach((group, gi) => {

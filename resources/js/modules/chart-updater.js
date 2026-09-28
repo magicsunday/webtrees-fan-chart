@@ -16,7 +16,16 @@ import FamilyColor from "./svg/family-color.js";
  * @import Svg from "./svg.js"
  * @import Configuration from "./configuration.js"
  * @import Hierarchy from "./hierarchy.js"
- * @import { NodeDatum } from "./hierarchy.js"
+ * @import { HierarchyNode, NodeDatum } from "./hierarchy.js"
+ */
+
+/**
+ * Extracts the fill color of an arc from its datum, or null when it has none.
+ *
+ * @callback ColorAccessor
+ * @param {HierarchyNode} datum The D3 partition datum of the arc's group
+ *
+ * @return {string|null}
  */
 
 /**
@@ -92,8 +101,8 @@ export default class ChartUpdater {
             }
         };
 
-        d3.json(url, { signal })
-            .then((/** @type {ChartResponse} */ data) => {
+        /** @type {Promise<ChartResponse>} */ (d3.json(url, { signal }))
+            .then((data) => {
                 this._fetchController = null;
 
                 this._updatePageTitle(data);
@@ -209,7 +218,7 @@ export default class ChartUpdater {
         // Process matched (update) elements
         personJoin.each((datum, i, nodes) => {
             const empty = datum.data.data.xref === "";
-            const person = d3.select(nodes[i]);
+            const person = d3.select(/** @type {SVGGElement} */ (nodes[i]));
             const isDescendant = datum.depth < 0;
 
             // Descendants are always treated as "new" because their
@@ -254,7 +263,7 @@ export default class ChartUpdater {
             .attr("class", "person new")
             .attr("id", (datum) => `person-${datum.id}`)
             .each((datum, i, nodes) => {
-                const person = d3.select(nodes[i]);
+                const person = d3.select(/** @type {SVGGElement} */ (nodes[i]));
 
                 new Person(svg, configuration, geometry, person, datum);
             });
@@ -291,7 +300,7 @@ export default class ChartUpdater {
                 const hasChildren = datum.children?.some((child) => child.data.data.xref !== "");
 
                 const empty = !hasChildren;
-                const marriage = d3.select(nodes[i]);
+                const marriage = d3.select(/** @type {SVGGElement} */ (nodes[i]));
 
                 marriage
                     .classed("remove", empty)
@@ -485,8 +494,8 @@ export default class ChartUpdater {
     /**
      * Re-applies family colors on arc paths after clearing transition styles.
      *
-     * @param {string}   groupSelector The group type selector (e.g. "g.person")
-     * @param {Function} getColor      Extracts the color from a datum
+     * @param {string}        groupSelector The group type selector (e.g. "g.person")
+     * @param {ColorAccessor} getColor      Extracts the color from a datum
      *
      * @private
      */
@@ -532,8 +541,8 @@ export default class ChartUpdater {
      * Fades in new arc paths with their family color.
      *
      * @param {Transition<any, any, any, any>} transition
-     * @param {string}     groupSelector The group type selector (e.g. "g.person")
-     * @param {Function}   getColor      Extracts the color from a datum
+     * @param {string}                         groupSelector The group type selector (e.g. "g.person")
+     * @param {ColorAccessor}                  getColor      Extracts the color from a datum
      *
      * @private
      */
@@ -556,8 +565,8 @@ export default class ChartUpdater {
      * Transitions family colors on updated (existing) arc paths.
      *
      * @param {Transition<any, any, any, any>} transition
-     * @param {string}     groupSelector The group type selector (e.g. "g.person")
-     * @param {Function}   getColor      Extracts the color from a datum
+     * @param {string}                         groupSelector The group type selector (e.g. "g.person")
+     * @param {ColorAccessor}                  getColor      Extracts the color from a datum
      *
      * @private
      */
