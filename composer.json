@@ -57,7 +57,7 @@
         "magicsunday/webtrees-module-installer-plugin": "^2.0"
     },
     "require-dev": {
-        "magicsunday/coding-standard": "^2.1",
+        "magicsunday/coding-standard": "^3.0",
         "phpat/phpat": "^0.12.4"
     },
     "autoload": {
@@ -128,7 +128,11 @@
             "check-consumer-config.php ."
         ],
         "ci:test:php:deptrac": [
-            "deptrac analyse --no-progress"
+            "deptrac analyse --no-progress",
+            "deptrac debug:unassigned",
+            "@php -r \"is_dir('.build') || mkdir('.build', 0777, true);\"",
+            "deptrac analyse --no-progress --formatter=graphviz-dot --output=.build/deptrac-layers.dot",
+            "check-deptrac-cycles.php .build/deptrac-layers.dot"
         ]
     }
 }

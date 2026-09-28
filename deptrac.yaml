@@ -1,4 +1,8 @@
-# Deptrac configuration — imports the shared magicsunday/coding-standard ruleset.
+# Deptrac configuration — imports the shared magicsunday/coding-standard ruleset
+# (^3.0: one strict, acyclic order Support < Enum < Model, Configuration < Contract
+# < Repository, Adapter, Service < Facade < Module; a layer depends only on layers
+# below it). The two local entries below only add a collector to a shared layer of
+# the same name; they grant no dependency of their own.
 # This repository installs its dev tooling into .build/vendor, so the import path
 # points there (as the PHPStan include does).
 imports:
