@@ -241,8 +241,8 @@ dist-smoke:
 	if grep -qE '^\.githooks/' <<<"$$paths"; then \
 		echo "Error: .githooks/ found in zip"; exit 1; \
 	fi; \
-	if grep -qE '(^|/)jsconfig\.json$$' <<<"$$paths"; then \
-		echo "Error: jsconfig.json found in zip"; exit 1; \
+	if grep -qE '(^|/)tsconfig\.json$$' <<<"$$paths"; then \
+		echo "Error: tsconfig.json found in zip"; exit 1; \
 	fi
 	@module=$$(unzip -p $(MODULE_NAME).zip module.php); \
 	grep -qF 'MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase' <<<"$$module" \
