@@ -7,7 +7,7 @@
          cacheDirectory="./.build/cache/.phpunit.cache"
          colors="true"
          displayDetailsOnPhpunitDeprecations="true"
-         executionOrder="depends,defects"
+         executionOrder="defects"
          failOnDeprecation="true"
          failOnNotice="true"
          failOnPhpunitDeprecation="true"
