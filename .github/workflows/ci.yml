@@ -10,10 +10,15 @@ permissions:
 
 jobs:
     # The PHP gates come from the shared reusable so the canonical step list lives
-    # in one place. Copy-paste detection stays below: jscpd is a Node tool and
-    # needs this repository's JS lane.
+    # in one place. Copy-paste detection runs in the shared Node-only lane below,
+    # since jscpd is a Node tool.
     php:
         uses: magicsunday/.github/.github/workflows/php-quality.yml@main
+        permissions:
+            contents: read
+
+    cpd:
+        uses: magicsunday/.github/.github/workflows/cpd.yml@main
         permissions:
             contents: read
 
@@ -70,11 +75,6 @@ jobs:
               name: JS Unit Tests
               if: ${{ always() && steps.install.conclusion == 'success' }}
               run: composer ci:test:js:unit
-
-            - id: cpd
-              name: Copy/Paste Detection
-              if: ${{ always() && steps.install.conclusion == 'success' }}
-              run: composer ci:test:php:cpd
 
             # Runs LAST: 'make dist' invokes 'composer install --no-dev' which
             # strips the dev packages from .build/vendor, so any later
