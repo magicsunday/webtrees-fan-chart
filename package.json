@@ -54,7 +54,7 @@
         "d3-zoom": "^3.0",
         "jest": "^30.5",
         "jest-environment-jsdom": "^30.5",
-        "jscpd": "^5.2.0",
+        "jscpd": "5.3.2",
         "rollup": "^4.63",
         "rollup-plugin-license": "^3.0",
         "typescript": "^7.0.2"
