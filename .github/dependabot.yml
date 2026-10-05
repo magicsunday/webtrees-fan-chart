@@ -27,6 +27,10 @@ updates:
         open-pull-requests-limit: 5
         cooldown:
             default-days: 7
+            # Cooldown filtering on this git tag pin has made Dependabot
+            # propose older tags instead of newer ones.
+            exclude:
+                - "@magicsunday/coding-standard"
         commit-message:
             prefix: "Update dependencies"
         groups:
