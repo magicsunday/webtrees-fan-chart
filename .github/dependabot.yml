@@ -27,8 +27,8 @@ updates:
         open-pull-requests-limit: 5
         cooldown:
             default-days: 7
-            # Cooldown filtering on this git tag pin has made Dependabot
-            # propose older tags instead of newer ones.
+            # A cooldown on this git tag pin can make Dependabot propose an
+            # older tag, as observed in repositories with the same pin.
             exclude:
                 - "@magicsunday/coding-standard"
         commit-message:
