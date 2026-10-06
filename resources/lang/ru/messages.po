@@ -120,12 +120,12 @@ msgstr "Экспорт в SVG"
 
 #: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
-msgstr "Веерный график"
+msgstr ""
 
 #: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Веерный график для %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -141,11 +141,11 @@ msgstr "Полное название места"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr "Общие"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Поколения"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -180,7 +180,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Персона"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -361,11 +361,11 @@ msgstr "Увеличить/Уменьшить"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
-msgstr "Отмена"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "Сохранить"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"

@@ -20,7 +20,7 @@ msgstr ""
 
 #: src/Module.php:135
 msgid "A fan chart of an individual’s ancestors."
-msgstr "Viuhkakaavio henkilön esi-isistä."
+msgstr ""
 
 #: src/Configuration.php:805
 msgid "Abbreviate given names first"
@@ -82,7 +82,7 @@ msgstr "Päivämäärien tarkkuus"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "Tiedot"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -141,11 +141,11 @@ msgstr "Koko paikannimi"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr "Yleinen"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Sukupolvet"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -180,7 +180,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Henkilö"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -362,12 +362,12 @@ msgstr "Lähennä/loitonna"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
-msgstr "peruuta"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "tallenna"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr "näytä"
+msgstr ""

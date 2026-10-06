@@ -84,7 +84,7 @@ msgstr "Datumprecision"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "Detaljer"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -121,12 +121,12 @@ msgstr "Exportera som SVG"
 
 #: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
-msgstr "Solfjäderdiagram"
+msgstr ""
 
 #: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Solfjäderdiagram för %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -142,11 +142,11 @@ msgstr "Fullständigt platsnamn"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr "Allmän"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Generationer"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -362,12 +362,12 @@ msgstr "Zooma in/ut"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
-msgstr "avbryt"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "spara"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr "visa"
+msgstr ""

@@ -82,7 +82,7 @@ msgstr "Độ chính xác ngày tháng"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "Chi tiết"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -119,12 +119,12 @@ msgstr "Xuất định dạng SVG"
 
 #: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
-msgstr "Biểu đồ hình quạt"
+msgstr ""
 
 #: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Biểu đồ hình quạt của %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -140,7 +140,7 @@ msgstr "Tên địa điểm đầy đủ"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr "Tổng quát"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
@@ -179,7 +179,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Cá nhân"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -363,7 +363,7 @@ msgstr "Hủy bỏ"
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "lưu"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"

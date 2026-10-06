@@ -60,7 +60,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
-msgstr "Pannello di controllo"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:85
 msgid ""
@@ -83,7 +83,7 @@ msgstr "Precisione delle date"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "Dettagli"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -142,7 +142,7 @@ msgstr "Nome completo del luogo"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr "Impostazioni generali"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
@@ -181,7 +181,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Persona"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -211,7 +211,7 @@ msgstr "Materno"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Modules"
-msgstr "Moduli"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
@@ -367,7 +367,7 @@ msgstr "cancella"
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "salva"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"

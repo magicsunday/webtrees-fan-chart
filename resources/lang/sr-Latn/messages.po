@@ -11,7 +11,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
@@ -82,7 +83,7 @@ msgstr "Preciznost datuma"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "Detalji"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -140,11 +141,11 @@ msgstr "Puno ime mesta"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr "Opšte"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Generacije"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -360,11 +361,11 @@ msgstr "Uvećaj/Umanji"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
-msgstr "odustani"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "snimi"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
