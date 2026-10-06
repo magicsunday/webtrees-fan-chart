@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
 "POT-Creation-Date: 1970-01-01 00:00+0000\n"
-"PO-Revision-Date: 2026-07-21 19:21+0200\n"
+"PO-Revision-Date: 2026-10-06 18:45+0200\n"
 "Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: src/Module.php:135
 msgid "A fan chart of an individual’s ancestors."
-msgstr ""
+msgstr "Een waaierdiagram van de voorouders van een persoon."
 
 #: src/Configuration.php:805
 msgid "Abbreviate given names first"
@@ -60,7 +60,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
-msgstr ""
+msgstr "Configuratiescherm"
 
 #: resources/views/modules/fan-chart/config.phtml:85
 msgid ""
@@ -82,7 +82,7 @@ msgstr "Datumnauwkeurigheid"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr ""
+msgstr "Details"
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -120,12 +120,12 @@ msgstr "Exporteren als SVG"
 
 #: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
-msgstr ""
+msgstr "Waaierdiagram"
 
 #: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr ""
+msgstr "Waaierdiagram van %s"
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -141,11 +141,11 @@ msgstr "Volledige plaatsnaam"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr ""
+msgstr "Algemeen"
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr ""
+msgstr "Generaties"
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -184,7 +184,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr ""
+msgstr "Persoon"
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -215,7 +215,7 @@ msgstr "Moederlijk"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Modules"
-msgstr ""
+msgstr "Modules"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
@@ -366,11 +366,11 @@ msgstr "In-/uitzoomen"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
-msgstr ""
+msgstr "annuleren"
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr ""
+msgstr "opslaan"
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
