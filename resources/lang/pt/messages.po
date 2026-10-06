@@ -60,7 +60,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
-msgstr "Painel de controlo"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:85
 msgid ""
@@ -82,7 +82,7 @@ msgstr "Precisão das datas"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "Detalhes"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -120,12 +120,12 @@ msgstr "Exportar como SVG"
 
 #: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
-msgstr "Diagrama em leque"
+msgstr ""
 
 #: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Diagrama em leque de %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -141,11 +141,11 @@ msgstr "Nome completo do local"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr "Geral"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Gerações"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -180,7 +180,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Indivíduo"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -210,7 +210,7 @@ msgstr "Materno"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Modules"
-msgstr "Módulos"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"

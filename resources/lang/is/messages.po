@@ -60,7 +60,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
-msgstr "Stjórnborð"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:85
 msgid ""
@@ -82,7 +82,7 @@ msgstr "Nákvæmni dagsetningar"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "Upplýsingar"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -120,12 +120,12 @@ msgstr "Flytja út sem SVG"
 
 #: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
-msgstr "Forfeðraskífa"
+msgstr ""
 
 #: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Forfeðraskífa fyrir %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -141,11 +141,11 @@ msgstr "Fullt heiti staðar"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr "Almennt"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Ættliðir"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -180,7 +180,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Einstaklingur"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -210,7 +210,7 @@ msgstr "Móðurleg"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Modules"
-msgstr "Einingar"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
@@ -365,8 +365,8 @@ msgstr "hætta"
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "vista"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr "skoða"
+msgstr ""

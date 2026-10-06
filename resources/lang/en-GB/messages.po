@@ -20,7 +20,7 @@ msgstr ""
 
 #: src/Module.php:135
 msgid "A fan chart of an individual’s ancestors."
-msgstr "A fan chart of an individual’s ancestors."
+msgstr ""
 
 #: src/Configuration.php:805
 msgid "Abbreviate given names first"
@@ -60,7 +60,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
-msgstr "Control panel"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:85
 msgid ""
@@ -82,7 +82,7 @@ msgstr "Date precision"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "Details"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -120,12 +120,12 @@ msgstr "Export as SVG"
 
 #: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
-msgstr "Fan chart"
+msgstr ""
 
 #: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Fan chart of %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -141,11 +141,11 @@ msgstr "Full place name"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr "General"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Generations"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -183,7 +183,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Individual"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -213,7 +213,7 @@ msgstr "Maternal"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Modules"
-msgstr "Modules"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
@@ -363,12 +363,12 @@ msgstr "Zoom in/out"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
-msgstr "cancel"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "save"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr "view"
+msgstr ""

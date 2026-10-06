@@ -20,7 +20,7 @@ msgstr ""
 
 #: src/Module.php:135
 msgid "A fan chart of an individual’s ancestors."
-msgstr "Ein Fächerdiagramm der Vorfahren einer Person."
+msgstr ""
 
 #: src/Configuration.php:805
 msgid "Abbreviate given names first"
@@ -82,7 +82,7 @@ msgstr "Datumsgenauigkeit"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "Details"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -145,7 +145,7 @@ msgstr "Allgemein"
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Generationen"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -184,7 +184,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Person"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -366,11 +366,11 @@ msgstr "Vergrößern/Verkleinern"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
-msgstr "Abbrechen"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "Speichern"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"

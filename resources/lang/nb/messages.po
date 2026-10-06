@@ -20,7 +20,7 @@ msgstr ""
 
 #: src/Module.php:135
 msgid "A fan chart of an individual’s ancestors."
-msgstr "Et viftediagram over en persons aner."
+msgstr ""
 
 #: src/Configuration.php:805
 msgid "Abbreviate given names first"
@@ -82,7 +82,7 @@ msgstr "Datopresisjon"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "Detaljer"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -119,7 +119,7 @@ msgstr "Eksporter som SVG"
 
 #: src/Module.php:123 src/Module.php:236
 msgid "Fan chart"
-msgstr "Viftediagram"
+msgstr ""
 
 #: src/Module.php:233 src/Module/ChartTrait.php:46
 #, php-format
@@ -140,11 +140,11 @@ msgstr "Fullt stedsnavn"
 
 #: resources/views/modules/fan-chart/config.phtml:51
 msgid "General"
-msgstr "Generelt"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Generasjoner"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -179,7 +179,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Person"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -360,12 +360,12 @@ msgstr "Zoom inn/ut"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
-msgstr "Avbryt"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "lagre"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr "vis"
+msgstr ""
