@@ -72,13 +72,36 @@ lang-merge: $(POT_FILE) ## Update each locale's PO from the latest POT (drops ob
 				echo "  ↻ Merged $$po"; \
 		done'
 
-# Heuristic resolver for entries msgmerge marked fuzzy due to trivial
-# punctuation drift (em-dash ↔ middle dot, comma/period swap, whitespace,
-# "Dekade" ↔ "Jahrzehnt" in DE). German-tuned: for other languages it
-# leaves the fuzzy flag for community review, consistent with the shared
-# i18n CI check where fuzzy is advisory. Idempotent: a clean PO is a no-op.
-lang-resolve-fuzzy: ## Auto-resolve fuzzy entries with trivial punctuation diffs in the new msgid.
-	@python3 dev/fuzzy-resolver.py
+# Resolves the fuzzy entries msgmerge left behind whose source text only
+# changed in punctuation or whitespace, with the resolve-fuzzy binary of
+# magicsunday/webtrees-module-base. Every other fuzzy entry stays fuzzy and is
+# listed for a person to judge, consistent with the shared i18n CI check where
+# fuzzy is advisory. A catalogue the resolver refuses fails the recipe.
+# The binary is PHP, so the recipe installs PHP and Composer on demand, like the
+# gettext tools above. The Composer install runs only in a checkout without a
+# vendor directory, which is the CI case, and hands its files back to the owner
+# of the checkout, also when it fails, so the root user of the container leaves
+# nothing behind that blocks a later Composer run on the host. A checkout that
+# has a vendor directory is left alone, it holds the dev packages, and the recipe
+# stops with the command that brings the binary in. Platform checks and security
+# blocking are off, a translation run must not fail on them. The PHP package
+# names follow the PHP release of the Alpine image.
+lang-resolve-fuzzy: lang-merge ## Auto-resolve fuzzy entries that only differ in punctuation, with the shared resolve-fuzzy binary.
+	@$(COMPOSE_RUN) sh -c 'set -eu; \
+		command -v msgmerge >/dev/null 2>&1 || apk add --no-cache gettext >/dev/null 2>&1; \
+		command -v php >/dev/null 2>&1 || { \
+			apk add --no-cache composer php85 php85-ctype php85-curl php85-dom php85-iconv php85-intl php85-mbstring php85-openssl php85-phar php85-simplexml php85-tokenizer php85-xml php85-xmlwriter php85-zip >/dev/null 2>&1; \
+			ln -s /usr/bin/php85 /usr/local/bin/php; \
+		}; \
+		[ -x .build/bin/resolve-fuzzy ] || [ -e .build/vendor ] || { \
+			trap "chown -R $$(stat -c %u:%g .) .build composer.lock 2>/dev/null || true" EXIT; \
+			COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_NO_BLOCKING=1 composer install --no-dev --no-interaction --no-progress --no-scripts --no-plugins --ignore-platform-reqs --quiet; \
+		}; \
+		[ -x .build/bin/resolve-fuzzy ] || { \
+			echo "  ✘ .build/bin/resolve-fuzzy is missing, run composer update magicsunday/webtrees-module-base in the buildbox"; \
+			exit 1; \
+		}; \
+		.build/bin/resolve-fuzzy $(POT_FILE) $(PO_FILES)'
 
 lang-compile: ## Compile every messages.po to its sibling messages.mo.
 	@$(COMPOSE_RUN) sh -c 'apk add --no-cache gettext >/dev/null 2>&1; \

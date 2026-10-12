@@ -21,9 +21,6 @@ webtrees-fan-chart.zip
 # Generated translation template (extracted by `make lang`, never committed)
 resources/lang/messages.pot
 
-# Python bytecode cache (dev/ tooling)
-__pycache__/
-
 # Playwright
 .playwright-mcp/
 /.deptrac.cache
