@@ -55,7 +55,7 @@
         "jest": "^30.5",
         "jest-environment-jsdom": "^30.5",
         "jscpd": "5.4.0",
-        "rollup": "^4.63",
+        "rollup": "^4.64",
         "rollup-plugin-license": "^3.0",
         "typescript": "^7.0.2"
     },
