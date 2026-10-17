@@ -145,10 +145,12 @@ export default class TooltipRenderer {
                     .style("top", `${event.pageY - 30}px`);
             })
             .on("mouseover", (event) => {
-                d3.select(event.currentTarget).classed("hover", true).raise();
+                d3.select(/** @type {Element} */ (event.currentTarget))
+                    .classed("hover", true)
+                    .raise();
             })
             .on("mouseout", (event) => {
-                d3.select(event.currentTarget).classed("hover", false);
+                d3.select(/** @type {Element} */ (event.currentTarget)).classed("hover", false);
             });
     }
 
