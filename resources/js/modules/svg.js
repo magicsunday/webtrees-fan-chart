@@ -6,7 +6,7 @@
  */
 
 import * as d3 from "./d3.js";
-import { SvgDefs, ChartZoom, ChartExportFactory } from "@magicsunday/webtrees-chart-lib";
+import { SvgDefs, ChartZoom, createChartExport } from "@magicsunday/webtrees-chart-lib";
 import Filter from "./svg/filter.js";
 
 /**
@@ -201,9 +201,7 @@ export default class Svg {
      * @return {PngChartExport|SvgChartExport}
      */
     export(type) {
-        const factory = new ChartExportFactory();
-
-        return factory.createExport(type);
+        return createChartExport(type);
     }
 
     /**
