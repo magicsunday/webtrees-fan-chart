@@ -10,7 +10,7 @@ import {
     familyBranchHsl,
     familyCenterHsl,
     hexToHsl,
-} from "@magicsunday/webtrees-chart-lib";
+} from "@magicsunday/webtrees-chart-lib/infra";
 import { SEX_FEMALE, SEX_MALE } from "../hierarchy.js";
 
 /**

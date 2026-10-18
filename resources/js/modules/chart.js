@@ -7,7 +7,7 @@
 
 import * as d3 from "./d3.js";
 import Hierarchy from "./hierarchy.js";
-import { ChartOverlay } from "@magicsunday/webtrees-chart-lib";
+import { ChartOverlay } from "@magicsunday/webtrees-chart-lib/infra";
 import Svg from "./svg.js";
 import Person from "./svg/person.js";
 import Marriage from "./svg/marriage.js";

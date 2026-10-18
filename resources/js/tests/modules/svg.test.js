@@ -3,7 +3,7 @@ import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 const exportHandler = { svgToImage: jest.fn() };
 const createChartExport = jest.fn(() => exportHandler);
 
-await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
+await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/infra", () => ({
     ChartZoom: jest.fn(),
     SvgDefs: jest.fn(() => ({ get: jest.fn(() => ({})) })),
     createChartExport,
