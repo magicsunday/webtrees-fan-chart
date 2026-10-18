@@ -154,7 +154,7 @@ await jest.unstable_mockModule("resources/js/modules/svg", () => ({
     setSvgBoundingBox,
 }));
 
-await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib", () => ({
+await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/infra", () => ({
     ChartOverlay: jest.fn(() => ({
         hide: jest.fn(),
         show: jest.fn(),

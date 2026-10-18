@@ -6,7 +6,7 @@
  */
 
 import * as d3 from "./d3.js";
-import { SvgDefs, ChartZoom, createChartExport } from "@magicsunday/webtrees-chart-lib";
+import { SvgDefs, ChartZoom, createChartExport } from "@magicsunday/webtrees-chart-lib/infra";
 import Filter from "./svg/filter.js";
 
 /**
@@ -16,7 +16,7 @@ import Filter from "./svg/filter.js";
  *     ChartOverlay,
  *     PngChartExport,
  *     SvgChartExport,
- * } from "@magicsunday/webtrees-chart-lib"
+ * } from "@magicsunday/webtrees-chart-lib/infra"
  * @import Configuration from "./configuration.js"
  */
 

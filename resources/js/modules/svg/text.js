@@ -7,7 +7,7 @@
 
 import * as d3 from "../d3.js";
 import Geometry, { MATH_RAD2DEG } from "./geometry.js";
-import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees-chart-lib";
+import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees-chart-lib/infra";
 
 /**
  * @import { Selection } from "d3-selection"
