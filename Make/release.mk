@@ -67,7 +67,7 @@ release-bootstrap:
 		echo -e "${FYELLOW}[bootstrap]${FRESET} Restoring dev toolchain ($(VENDOR_DIR))..."; \
 		composer install --no-interaction --no-progress; \
 	fi
-	@if [ ! -f node_modules/@magicsunday/webtrees-chart-lib/dist/webtrees-chart-lib.es.js ]; then \
+	@if [ ! -f node_modules/@magicsunday/webtrees-chart-lib/dist/webtrees-chart-lib-infra.es.js ]; then \
 		echo -e "${FYELLOW}[bootstrap]${FRESET} Installing node deps + building chart-lib dist (npm ci)..."; \
 		npm ci; \
 	fi
