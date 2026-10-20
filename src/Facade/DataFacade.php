@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Facade;
 
+use Fisharebest\Webtrees\Date;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
@@ -28,6 +29,11 @@ use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
 use MagicSunday\Webtrees\ModuleBase\Support\CompactDateFormat;
 use MagicSunday\Webtrees\ModuleBase\Support\Locale\IsoCountryMap;
 use MagicSunday\Webtrees\ModuleBase\Support\TextDirection;
+
+use function html_entity_decode;
+use function strip_tags;
+
+use const ENT_QUOTES;
 
 /**
  * Assembles the nested Node tree passed to the JavaScript chart renderer.
@@ -216,22 +222,9 @@ class DataFacade
                     // Spouse is privacy-hidden -- no partner arc (would leak existence)
                     // Visible children go to unassignedChildren on root
                     foreach ($visibleChildren as $child) {
-                        $childNodeData = $this->getNodeData(2, $child);
-                        $childNodeData->setGeneration(-2);
-                        $childNodeData
-                            ->setMarriageDate('')
-                            ->setMarriageDateOfParents('');
-
-                        if ($suppressChildPlaces) {
-                            $childNodeData
-                                ->setBirthPlace('')
-                                ->setDeathPlace('')
-                                ->setMarriagePlace('');
-
-                            $this->rebuildTimespanWithoutPlaces($childNodeData);
-                        }
-
-                        $rootNode->addUnassignedChild(new Node($childNodeData));
+                        $rootNode->addUnassignedChild(
+                            $this->buildDescendantChildNode($child, $suppressChildPlaces)
+                        );
                     }
 
                     continue;
@@ -250,27 +243,35 @@ class DataFacade
             $childNodes = [];
 
             foreach ($visibleChildren as $child) {
-                $childNodeData = $this->getNodeData(2, $child);
-                $childNodeData->setGeneration(-2);
-                $childNodeData
-                    ->setMarriageDate('')
-                    ->setMarriageDateOfParents('');
-
-                if ($suppressChildPlaces) {
-                    $childNodeData
-                        ->setBirthPlace('')
-                        ->setDeathPlace('')
-                        ->setMarriagePlace('');
-
-                    $this->rebuildTimespanWithoutPlaces($childNodeData);
-                }
-
-                $childNodes[] = new Node($childNodeData);
+                $childNodes[] = $this->buildDescendantChildNode($child, $suppressChildPlaces);
             }
 
             $partnerNode->setChildren($childNodes);
             $rootNode->addPartner($partnerNode);
         }
+    }
+
+    /**
+     * Builds the node of a descendant child. A child sits at generation -2 and
+     * never shows a marriage date. On narrow arcs its places are left out and
+     * its timespan is the compact year range.
+     *
+     * @param Individual $child          The child to build the node for
+     * @param bool       $suppressPlaces True when the arc is too narrow for places
+     *
+     * @return Node
+     */
+    private function buildDescendantChildNode(
+        Individual $child,
+        bool $suppressPlaces,
+    ): Node {
+        $childNodeData = $this->getNodeData(2, $child, $suppressPlaces);
+        $childNodeData
+            ->setGeneration(-2)
+            ->setMarriageDate('')
+            ->setMarriageDateOfParents('');
+
+        return new Node($childNodeData);
     }
 
     /**
@@ -292,14 +293,16 @@ class DataFacade
     /**
      * Populates a NodeData DTO from all processors for the given individual.
      *
-     * @param int        $generation 1-based generation depth, used to select date format
+     * @param int        $generation     1-based generation depth, used to select date format
      * @param Individual $individual
+     * @param bool       $suppressPlaces True to leave out all places and use the compact year range as timespan
      *
      * @return NodeData
      */
     private function getNodeData(
         int $generation,
         Individual $individual,
+        bool $suppressPlaces = false,
     ): NodeData {
         $nameProcessor  = new NameProcessor($individual);
         $imageProcessor = new ImageProcessor($this->module, $individual);
@@ -350,14 +353,16 @@ class DataFacade
                 )
             )
             ->setTimespan(
-                $this->buildTimespan($dateProcessor, $placeProcessor, $generation)
+                $suppressPlaces
+                    ? $this->buildCompactYearTimespan($individual)
+                    : $this->buildTimespan($dateProcessor, $placeProcessor, $generation)
             )
             ->setBirthDateFull($dateProcessor->getBirthDateFull())
             ->setDeathDateFull($dateProcessor->getDeathDateFull())
             ->setMarriageDateFull($dateProcessor->getMarriageDateFull())
-            ->setBirthPlace($placeProcessor->getBirthPlace())
-            ->setDeathPlace($placeProcessor->getDeathPlace())
-            ->setMarriagePlace($placeProcessor->getMarriagePlace())
+            ->setBirthPlace($suppressPlaces ? '' : $placeProcessor->getBirthPlace())
+            ->setDeathPlace($suppressPlaces ? '' : $placeProcessor->getDeathPlace())
+            ->setMarriagePlace($suppressPlaces ? '' : $placeProcessor->getMarriagePlace())
             ->setIndividual($individual);
 
         return $treeData;
@@ -467,38 +472,62 @@ class DataFacade
     }
 
     /**
-     * Rebuilds the timespan in compact year-only format (e.g. "1853–1933"),
-     * excluding places. Used when descendant arcs are too narrow for the full
-     * multi-line timespan with places.
+     * Builds the compact year-only timespan (for example "1853–1933") without
+     * places. Used when descendant arcs are too narrow for the full multi-line
+     * timespan. The years come from the structured dates and not from their
+     * display strings, so years below one thousand and years before the common
+     * era are kept.
      *
-     * @param NodeData $nodeData The node data with dates already set
+     * @param Individual $individual The individual to build the timespan for
+     *
+     * @return string
      */
-    private function rebuildTimespanWithoutPlaces(NodeData $nodeData): void
+    private function buildCompactYearTimespan(Individual $individual): string
     {
-        // Extract 4-digit year from formatted date strings
-        $birthYear = (preg_match('/(\d{4})/', $nodeData->getBirth(), $m) === 1) ? $m[1] : '';
-        $deathYear = (preg_match('/(\d{4})/', $nodeData->getDeath(), $m) === 1) ? $m[1] : '';
+        $birthYear = $this->formatYear($individual->getBirthDate());
+        $deathYear = $this->formatYear($individual->getDeathDate());
 
         // Compact single-line format: "1853–1933"
         if (($birthYear !== '') && ($deathYear !== '')) {
-            $nodeData->setTimespan($birthYear . Symbols::DateRangeSeparator->value . $deathYear);
-
-            return;
+            return $birthYear . Symbols::DateRangeSeparator->value . $deathYear;
         }
 
         if ($birthYear !== '') {
-            $nodeData->setTimespan(Symbols::Birth->value . ' ' . $birthYear);
-
-            return;
+            return Symbols::Birth->value . ' ' . $birthYear;
         }
 
         if ($deathYear !== '') {
-            $nodeData->setTimespan(Symbols::Death->value . ' ' . $deathYear);
-
-            return;
+            return Symbols::Death->value . ' ' . $deathYear;
         }
 
-        $nodeData->setTimespan('');
+        return '';
+    }
+
+    /**
+     * Formats the year of the earliest date of a date range, or returns an empty
+     * string when the date is not usable. A year of the common era is the bare
+     * number, like the compact lifetime of the outer generations. A year before
+     * the common era carries the era suffix of the visitor locale, reduced from
+     * the display markup of webtrees to plain text, because the value ends up in
+     * an SVG text node and is escaped there.
+     *
+     * @param Date $date The date to take the year from
+     *
+     * @return string
+     */
+    private function formatYear(Date $date): string
+    {
+        if (!$date->isOK()) {
+            return '';
+        }
+
+        $earliestDate = $date->minimumDate();
+
+        if ($earliestDate->year() > 0) {
+            return (string) $earliestDate->year();
+        }
+
+        return html_entity_decode(strip_tags($earliestDate->format('%Y')), ENT_QUOTES, 'UTF-8');
     }
 
     /**
