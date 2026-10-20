@@ -360,6 +360,27 @@ describe("Person image size", () => {
         expect(datum.data.data).not.toHaveProperty("imageSize");
     });
 
+    it("tells the label there is no image and places none when the arc spans too few degrees", () => {
+        const { personSelection } = createPersonSelection();
+        const { div } = createDivSelection();
+        const datum = {
+            ...baseDatum,
+            depth: 1,
+            data: { data: { ...baseDatum.data.data, thumbnail: "thumb.jpg" } },
+        };
+
+        new Person(
+            { div },
+            { ...imageConfiguration, showNames: true },
+            arc({ degrees: 5 }),
+            personSelection,
+            datum,
+        );
+
+        expect(addLabelMock).toHaveBeenCalledWith(expect.anything(), datum, 0);
+        expect(Person.prototype.addImageToPerson).not.toHaveBeenCalled();
+    });
+
     it("sizes the image from the arc height when names are shown", () => {
         expect(renderPerson(1, arc(), { ...imageConfiguration, showNames: true })).toBe(40);
     });
@@ -406,6 +427,70 @@ describe("Person.addImageToPerson", () => {
 
         expect(person.select).not.toHaveBeenCalled();
         expect(person.append).not.toHaveBeenCalled();
+    });
+});
+
+describe("Person.addImageToPerson drawing", () => {
+    // Records every append and attr call, so a test can read off what was
+    // drawn without a DOM
+    const createRecorder = () => {
+        const recorded = [];
+        const node = {
+            append: (name) => {
+                recorded.push(["append", name]);
+
+                return node;
+            },
+            attr: (name, value) => {
+                recorded.push([name, value]);
+
+                return node;
+            },
+            select: () => node,
+            selectAll: () => node,
+            each: () => node,
+        };
+
+        return { node, recorded };
+    };
+
+    const drawImage = (depth, imageSize) => {
+        const { node, recorded } = createRecorder();
+        const context = {
+            _svg: { defs: node },
+            _geometry: {
+                getFontSize: () => 14,
+                startAngle: () => 0,
+                endAngle: () => 1,
+                centerRadius: () => 100,
+                isPositionFlipped: () => false,
+            },
+        };
+        const datum = {
+            ...baseDatum,
+            id: 7,
+            depth,
+            x0: 0,
+            x1: 1,
+            data: { data: { ...baseDatum.data.data, thumbnail: "thumb.png" } },
+        };
+
+        Person.prototype.addImageToPerson.call(context, node, datum, false, imageSize);
+
+        return recorded;
+    };
+
+    it.each([
+        ["the center", 0],
+        ["an inner ancestor arc", 2],
+    ])("draws the image of %s with the given size", (_label, depth) => {
+        const recorded = drawImage(depth, 40);
+
+        expect(recorded).toContainEqual(["width", 40]);
+        expect(recorded).toContainEqual(["height", 40]);
+        expect(recorded).toContainEqual(["x", -20]);
+        expect(recorded).toContainEqual(["y", -20]);
+        expect(recorded.filter(([name, value]) => name === "r" && value === 20)).toHaveLength(3);
     });
 });
 

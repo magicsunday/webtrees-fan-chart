@@ -80,9 +80,9 @@ export default class Person {
 
     /**
      * Builds all child elements of the person <g>. Skips outer generations when
-     * names are disabled. For nodes with data, pre-computes imageSize on the
-     * datum before calling LabelRenderer so text layout can account for the
-     * image width.
+     * names are disabled. For nodes with data, computes the image size first and
+     * hands it to the label renderer and to the image placement, so the text
+     * layout can account for the image width.
      *
      * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
      * @param {HierarchyNode}                 datum  The D3 partition datum
