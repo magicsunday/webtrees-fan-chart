@@ -22,15 +22,15 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Biểu đồ cá nhân Tổ tiên"
 
-#: src/Configuration.php:805
+#: src/Configuration.php:803
 msgid "Abbreviate given names first"
 msgstr "Viết tắt tên gọi trước"
 
-#: src/Configuration.php:806
+#: src/Configuration.php:804
 msgid "Abbreviate surnames first"
 msgstr "Viết tắt họ trước"
 
-#: src/Configuration.php:804
+#: src/Configuration.php:802
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Tự động (dựa trên truyền thống họ của cây phả hệ)"
 

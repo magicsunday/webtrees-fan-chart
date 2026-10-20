@@ -22,15 +22,15 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
-#: src/Configuration.php:805
+#: src/Configuration.php:803
 msgid "Abbreviate given names first"
 msgstr "Forkort fornavn først"
 
-#: src/Configuration.php:806
+#: src/Configuration.php:804
 msgid "Abbreviate surnames first"
 msgstr "Forkort etternavn først"
 
-#: src/Configuration.php:804
+#: src/Configuration.php:802
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automatisk (basert på treets etternavnstradisjon)"
 

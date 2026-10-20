@@ -23,15 +23,15 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Lepeza grafikon predaka pojedinca."
 
-#: src/Configuration.php:805
+#: src/Configuration.php:803
 msgid "Abbreviate given names first"
 msgstr "Prvo skrati lična imena"
 
-#: src/Configuration.php:806
+#: src/Configuration.php:804
 msgid "Abbreviate surnames first"
 msgstr "Prvo skrati prezimena"
 
-#: src/Configuration.php:804
+#: src/Configuration.php:802
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automatski (na osnovu tradicije prezimena stabla)"
 
