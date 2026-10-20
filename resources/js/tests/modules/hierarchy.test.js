@@ -379,6 +379,25 @@ describe("Hierarchy.initDescendants", () => {
         expect(hierarchy.descendantLayout.smallestChildFraction).toBe(0);
     });
 
+    test("keeps the same descendant layout object across later init calls", () => {
+        const child = createChild({ xref: "I10" });
+        const rootDatum = createIndividual({ id: 1, generation: 1 });
+        rootDatum.partners = [createPartner({ xref: "I2", children: [child] })];
+        const hierarchy = new Hierarchy({ generations: 2, showDescendants: true, fanDegree: 210 });
+        const layout = hierarchy.descendantLayout;
+
+        hierarchy.init(rootDatum);
+        const scaleAfterFirstInit = layout.childScale;
+        hierarchy.init(rootDatum);
+
+        // A geometry created before the second init holds this very object, so
+        // the hierarchy must rewrite it in place instead of replacing it.
+        expect(hierarchy.descendantLayout).toBe(layout);
+        expect(scaleAfterFirstInit).not.toBeNull();
+        expect(layout.childScale).not.toBeNull();
+        expect(layout.childScale).not.toBe(scaleAfterFirstInit);
+    });
+
     test("keeps the configuration free of descendant layout results", () => {
         const child = createChild({ xref: "I10" });
         const rootDatum = createIndividual({ id: 1, generation: 1 });
