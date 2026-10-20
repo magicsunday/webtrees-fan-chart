@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import * as d3 from "resources/js/modules/d3";
 import {
     SYMBOL_BIRTH,
@@ -48,6 +48,10 @@ describe("TooltipRenderer", () => {
     beforeEach(() => {
         document.body.innerHTML = "";
         renderer = build();
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
     });
 
     it("escapes markup, ampersands and quotes in the name", () => {
@@ -182,6 +186,27 @@ describe("TooltipRenderer", () => {
 
         expect(image.getAttribute("src")).toBe(`x" onerror="alert(1)`);
         expect(image.hasAttribute("onerror")).toBe(false);
+    });
+
+    it.each([
+        ["a dark page background", "rgb(10, 10, 10)", true],
+        ["a light page background", "rgb(250, 250, 250)", false],
+        ["a saturated green page background", "rgb(0, 200, 0)", false],
+        ["a saturated blue page background", "rgb(0, 0, 200)", true],
+        ["a saturated red page background", "rgb(200, 0, 0)", true],
+        ["a grey just below the threshold", "rgb(120, 120, 120)", true],
+        ["a grey just above the threshold", "rgb(136, 136, 136)", false],
+        ["a missing computed colour", undefined, false],
+        ["a page without a background colour", "", false],
+    ])("marks the silhouette for %s", (_label, background, isDark) => {
+        jest.spyOn(window, "getComputedStyle").mockReturnValue({ backgroundColor: background });
+        renderer = build({ showSilhouettes: true });
+        renderer.setTooltipHtml(event, createDatum({ silhouette: "silhouette.svg" }));
+
+        const image = div.node().querySelector(".image-silhouette");
+
+        expect(image).not.toBeNull();
+        expect(image.classList.contains("image-silhouette-dark")).toBe(isDark);
     });
 
     it("shows no image for a silhouette when silhouettes are disabled", () => {
