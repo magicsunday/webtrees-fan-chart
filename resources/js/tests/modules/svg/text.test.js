@@ -345,6 +345,59 @@ describe("Text", () => {
         });
     });
 
+    describe("calculateSlotPositions", () => {
+        const createSlotGeometry = (compactChildren) => ({
+            compactChildren,
+            getFontSize: () => 10,
+            innerRadius: () => 100,
+            outerRadius: () => 200,
+        });
+
+        const createSlotDatum = (timespan, compactTimespan) => {
+            const datum = createDatum({ depth: -2 });
+            datum.data.data.timespan = timespan;
+            datum.data.data.compactTimespan = compactTimespan;
+
+            return datum;
+        };
+
+        const calculate = (compactChildren, timespan, compactTimespan) =>
+            new Text(
+                svgStub,
+                createConfiguration({ colorArcWidth: 10 }),
+                createSlotGeometry(compactChildren),
+            ).calculateSlotPositions(createSlotDatum(timespan, compactTimespan));
+
+        it("reserves the date slots of the compact range while the child arcs are narrow", () => {
+            const positions = calculate(true, "", "\u2605 1900");
+
+            expect(positions.has(Text.TEXT_SLOT.DATE_LINE_1)).toBe(true);
+            expect(positions.has(Text.TEXT_SLOT.DATE_LINE_2)).toBe(false);
+        });
+
+        it("reserves no date slot when only the regular range exists and the arcs are narrow", () => {
+            const positions = calculate(true, "\u2605 1900 Rome", "");
+
+            expect(positions.has(Text.TEXT_SLOT.DATE_LINE_1)).toBe(false);
+        });
+
+        it("counts the lines of the compact range while the child arcs are narrow", () => {
+            const positions = calculate(true, "\u2605 1900 Rome\n\u2020 1980 Paris", "\u2605 1900");
+
+            expect(positions.has(Text.TEXT_SLOT.DATE_LINE_2)).toBe(false);
+        });
+
+        it("counts the lines of the regular range while the child arcs are wide", () => {
+            const positions = calculate(
+                false,
+                "\u2605 1900 Rome\n\u2020 1980 Paris",
+                "\u2605 1900",
+            );
+
+            expect(positions.has(Text.TEXT_SLOT.DATE_LINE_2)).toBe(true);
+        });
+    });
+
     describe("slot lookups", () => {
         it("returns the slot at the given index", () => {
             const text = new Text(svgStub, createConfiguration());
