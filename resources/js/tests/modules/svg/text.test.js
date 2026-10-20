@@ -317,6 +317,7 @@ describe("Text", () => {
         it("renders the compact range of a narrow child", () => {
             const text = new Text(svgStub, createConfiguration(), createCompactGeometry(true));
             const titles = [];
+            const tspans = [];
 
             // The arc width is irrelevant here, the test only reads the rendered line.
             text.getAvailableWidth = jest.fn(() => 1000);
@@ -326,6 +327,10 @@ describe("Text", () => {
                         const child = { text: jest.fn(() => child) };
                         if (name === "title") {
                             titles.push(child);
+                        }
+
+                        if (name === "tspan") {
+                            tspans.push(child);
                         }
 
                         return child;
@@ -342,6 +347,7 @@ describe("Text", () => {
             text.renderTimespanLines(createChildDatum(-2), positions, createElement);
 
             expect(titles[0].text).toHaveBeenCalledWith("\u2605 1900");
+            expect(tspans[0].text).toHaveBeenCalledWith("\u2605 1900");
         });
     });
 

@@ -350,6 +350,10 @@ class NodeData implements JsonSerializable
 
     /**
      * Sets the year-only lifetime label of a descendant child.
+     *
+     * @param string $compactTimespan The year-only lifetime label
+     *
+     * @return NodeData
      */
     public function setCompactTimespan(string $compactTimespan): NodeData
     {

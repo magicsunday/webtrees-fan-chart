@@ -386,6 +386,12 @@ final class DataFacadeTest extends TestCase
 
         self::assertSame('Rome, Italy', $narrow['birthPlace']);
         self::assertSame('Paris, France', $narrow['deathPlace']);
+        self::assertIsString($narrow['timespan']);
+        self::assertIsString($wide['timespan']);
+        self::assertStringContainsString('Rome, Italy', $narrow['timespan']);
+        self::assertStringContainsString('Paris, France', $narrow['timespan']);
+        self::assertStringContainsString('Rome, Italy', $wide['timespan']);
+        self::assertStringContainsString('Paris, France', $wide['timespan']);
         self::assertSame($wide['timespan'], $narrow['timespan']);
     }
 
@@ -443,6 +449,8 @@ final class DataFacadeTest extends TestCase
         $configuration->method('getGenerations')->willReturn(2);
         $configuration->method('getPlaceFormat')->willReturn(new PlaceFormatSpec(PlaceStyle::Full));
         $configuration->method('getShowDescendants')->willReturn(true);
+        $configuration->method('getShowPlaces')->willReturn(true);
+        $configuration->method('getInnerArcs')->willReturn(1);
         $configuration->method('getFanDegree')->willReturn($fanDegree);
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
