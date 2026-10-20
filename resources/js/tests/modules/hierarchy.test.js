@@ -142,6 +142,30 @@ describe("Hierarchy.init", () => {
         expect(hierarchy.nodes).toHaveLength(3);
     });
 
+    test("treats an empty parents array like a missing one", () => {
+        const rootDatum = createIndividual({ id: 1, generation: 1, parents: [] });
+        const hierarchy = new Hierarchy({ generations: 3 });
+
+        hierarchy.init(rootDatum);
+
+        const children = hierarchy.root.children;
+
+        expect(children).toHaveLength(2);
+        expect(children.map((child) => child.data.data.sex)).toEqual([SEX_MALE, SEX_FEMALE]);
+        expect(hierarchy.nodes).toHaveLength(7);
+        expect(rootDatum.parents).toEqual([]);
+    });
+
+    test("keeps a person with an empty parents array a leaf at the generation limit", () => {
+        const rootDatum = createIndividual({ id: 1, generation: 2, parents: [] });
+        const hierarchy = new Hierarchy({ generations: 2 });
+
+        hierarchy.init(rootDatum);
+
+        expect(hierarchy.root.children).toHaveLength(0);
+        expect(hierarchy.nodes).toHaveLength(1);
+    });
+
     test("assigns unique numeric identifiers to all nodes", () => {
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         const hierarchy = new Hierarchy({ generations: 3 });
@@ -153,6 +177,24 @@ describe("Hierarchy.init", () => {
         expect(ids.every((id) => typeof id === "number")).toBe(true);
         expect(new Set(ids).size).toBe(hierarchy.nodes.length);
         expect(ids).toEqual(ids.map((_, index) => index));
+    });
+});
+
+describe("Hierarchy accessors", () => {
+    test.each(["nodes", "root"])("%s throws before init() has been called", (accessor) => {
+        const hierarchy = new Hierarchy({ generations: 3 });
+
+        expect(() => hierarchy[accessor]).toThrow(
+            `Hierarchy.${accessor} is not available before init() has been called`,
+        );
+    });
+
+    test.each(["nodes", "root"])("%s is available once init() has been called", (accessor) => {
+        const hierarchy = new Hierarchy({ generations: 2 });
+
+        hierarchy.init(createIndividual({ id: 1, generation: 1 }));
+
+        expect(() => hierarchy[accessor]).not.toThrow();
     });
 });
 
