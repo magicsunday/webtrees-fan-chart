@@ -76,12 +76,15 @@ await jest.unstable_mockModule("resources/js/modules/svg/person", () => ({
     default: personConstructor,
 }));
 
+const marriageConstructor = jest.fn(() => ({}));
+
 await jest.unstable_mockModule("resources/js/modules/svg/marriage", () => ({
     __esModule: true,
-    default: jest.fn(() => ({})),
+    default: marriageConstructor,
 }));
 
 const { default: Update } = await import("resources/js/modules/chart-updater");
+const { default: DescendantLayout } = await import("resources/js/modules/descendant-layout");
 
 const flushPromises = () =>
     new Promise((resolve) => {
@@ -524,6 +527,7 @@ class HierarchyStub {
     constructor() {
         this.nodes = [];
         this.initCalls = [];
+        this.descendantLayout = new DescendantLayout();
     }
 
     init(data) {
@@ -562,6 +566,7 @@ beforeEach(() => {
     transitionMock.mockClear();
     transitionInstances.length = 0;
     personConstructor.mockClear();
+    marriageConstructor.mockClear();
     selectMock.mockClear();
     document.title = "";
     document.body.innerHTML = "";
@@ -596,6 +601,62 @@ describe("Update", () => {
         expect(document.querySelector(".wt-page-title").innerHTML).toBe(titleHtml);
         expect(document.title).toBe("Updated");
         expect(hierarchy.initCalls[0]).toEqual(createNodes());
+    });
+
+    test("builds the arcs with the descendant layout of the hierarchy", async () => {
+        const svg = createSvgWithPersons(["1"]);
+        const hierarchy = new HierarchyStub();
+        const childScale = (fraction) => fraction * Math.PI;
+        const configuration = defaultConfiguration({ showParentMarriageDates: true });
+        const update = new Update(svg, configuration, hierarchy);
+
+        hierarchy.descendantLayout.childScale = childScale;
+        jsonMock.mockResolvedValueOnce({ data: createNodes() });
+
+        update.update("/update", jest.fn(), jest.fn());
+        await flushPromises();
+        await flushPromises();
+
+        const geometries = [...personConstructor.mock.calls, ...marriageConstructor.mock.calls].map(
+            (call) => call[2],
+        );
+
+        expect(personConstructor).toHaveBeenCalled();
+        expect(geometries.length).toBeGreaterThan(0);
+
+        for (const geometry of geometries) {
+            expect(geometry.childScale).toBe(childScale);
+        }
+    });
+
+    test("classifies the marriage arcs with the descendant layout of the hierarchy", () => {
+        const marriageSelection = {
+            classed: (_name, value) => (value === undefined ? false : marriageSelection),
+            selectAll: () => marriageSelection,
+        };
+        const element = { __selection: marriageSelection };
+        const svg = {
+            selectAll: () => ({
+                data: (nodes) => ({
+                    each: (callback) => nodes.forEach((node, i) => callback(node, i, [element])),
+                }),
+            }),
+        };
+        const hierarchy = new HierarchyStub();
+        const childScale = (fraction) => fraction * Math.PI;
+        const update = new Update(
+            svg,
+            defaultConfiguration({ showParentMarriageDates: true }),
+            hierarchy,
+        );
+
+        hierarchy.descendantLayout.childScale = childScale;
+        hierarchy.nodes = [{ id: "m", depth: 0, children: [{ data: { data: { xref: "I2" } } }] }];
+
+        update._classifyMarriageElements();
+
+        expect(marriageConstructor).toHaveBeenCalledTimes(1);
+        expect(marriageConstructor.mock.calls[0][2].childScale).toBe(childScale);
     });
 
     test("toggles family-colors class on visual on every successful recenter", async () => {

@@ -6,6 +6,7 @@
  */
 
 import * as d3 from "../d3.js";
+import DescendantLayout from "../descendant-layout.js";
 
 /**
  * @import Configuration from "../configuration.js"
@@ -29,10 +30,23 @@ const MATH_PI2 = Math.PI * 2;
  */
 export default class Geometry {
     /**
-     * @param {Configuration} configuration The application configuration
+     * @param {Configuration}    configuration      The application configuration
+     * @param {DescendantLayout} [descendantLayout] The descendant sector layout of the hierarchy,
+     *                                              empty when no descendants are laid out
      */
-    constructor(configuration) {
+    constructor(configuration, descendantLayout = new DescendantLayout()) {
         this._configuration = configuration;
+        this._descendantLayout = descendantLayout;
+    }
+
+    /**
+     * D3 linear scale mapping descendant fractions in [0, 1] to radians, or
+     * null while no descendant sector is laid out.
+     *
+     * @return {((fraction: number) => number)|null}
+     */
+    get childScale() {
+        return this._descendantLayout.childScale;
     }
 
     /**
@@ -201,7 +215,9 @@ export default class Geometry {
         }
 
         if (depth < 0) {
-            return this._configuration.childScale ? this._configuration.childScale(x0) : 0;
+            const childScale = this.childScale;
+
+            return childScale ? childScale(x0) : 0;
         }
 
         return this.calcAngle(x0);
@@ -223,7 +239,9 @@ export default class Geometry {
         }
 
         if (depth < 0) {
-            return this._configuration.childScale ? this._configuration.childScale(x1) : 0;
+            const childScale = this.childScale;
+
+            return childScale ? childScale(x1) : 0;
         }
 
         return this.calcAngle(x1);
@@ -313,9 +331,9 @@ export default class Geometry {
         }
 
         // Uniform font cap for all children based on the narrowest child arc
-        if (isChild && this._configuration.smallestChildFraction) {
+        if (isChild && this._descendantLayout.smallestChildFraction) {
             const totalSectorRad = this.endAngle(datum.depth, 1) - this.startAngle(datum.depth, 0);
-            const narrowestRad = this._configuration.smallestChildFraction * totalSectorRad;
+            const narrowestRad = this._descendantLayout.smallestChildFraction * totalSectorRad;
             const narrowestWidth = narrowestRad * this.centerRadius(datum.depth);
             const maxFont = (narrowestWidth * 0.55) / 2;
 
@@ -350,11 +368,13 @@ export default class Geometry {
         // for left-to-right readability. Outer radial labels use this same
         // flag to determine rotation direction.
         if (depth < 0) {
-            if (!this._configuration.childScale) {
+            const childScale = this.childScale;
+
+            if (!childScale) {
                 return false;
             }
 
-            const midAngle = this._configuration.childScale((x0 + x1) / 2);
+            const midAngle = childScale((x0 + x1) / 2);
             const normalized = ((midAngle % MATH_PI2) + MATH_PI2) % MATH_PI2;
 
             return normalized > 90 * MATH_DEG2RAD && normalized < 270 * MATH_DEG2RAD;

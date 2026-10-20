@@ -39,6 +39,11 @@ const selectMock = (node) => ({
     classed(name) {
         return (node.classes ?? []).includes(name);
     },
+    attr(name, value) {
+        node.attrs = { ...node.attrs, [name]: typeof value === "function" ? value() : value };
+
+        return this;
+    },
 });
 
 await jest.unstable_mockModule("resources/js/modules/d3", () => ({
@@ -302,6 +307,47 @@ describe("Text", () => {
             expect(() => text.getSlotPosition(new Map(), Text.TEXT_SLOT.DATE_LINE_2)).toThrow(
                 `No text position calculated for slot ${Text.TEXT_SLOT.DATE_LINE_2.index}`,
             );
+        });
+    });
+
+    describe("transformOuterText", () => {
+        const createDescendantText = (childScale) =>
+            new Text(svgStub, createConfiguration(), {
+                childScale,
+                getFontSize: () => 10,
+                centerRadius: () => 100,
+                angularWidthDeg: () => 100,
+            });
+
+        const transformOf = (text) => {
+            const node = { classes: [] };
+            const parent = {
+                selectAll: () => ({
+                    size: () => 1,
+                    each(callback) {
+                        callback.call(node, node, 0);
+                    },
+                }),
+            };
+
+            text.transformOuterText(parent, { depth: -2, x0: 0.4, x1: 0.6 });
+
+            return node.attrs.transform;
+        };
+
+        it("rotates a descendant label to the middle of its arc on the child scale", () => {
+            const transform = transformOf(
+                createDescendantText((fraction) => fraction * 2 * Math.PI),
+            );
+
+            // Middle of the arc at half a turn, flipped: 180 - (90 - baseline angle)
+            expect(transform).toMatch(/^rotate\(90\.57\d*\) translate\(90\)$/);
+        });
+
+        it("falls back to the top when the descendant sector has no scale", () => {
+            const transform = transformOf(createDescendantText(null));
+
+            expect(transform).toMatch(/^rotate\(-89\.42\d*\) translate\(90\)$/);
         });
     });
 

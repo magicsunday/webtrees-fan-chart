@@ -6,6 +6,7 @@
  */
 
 import * as d3 from "./d3.js";
+import DescendantLayout from "./descendant-layout.js";
 import { MATH_DEG2RAD } from "./svg/geometry.js";
 
 /**
@@ -132,6 +133,13 @@ export default class Hierarchy {
     constructor(configuration) {
         this._configuration = configuration;
 
+        /**
+         * The result of laying out the descendant sector, rewritten in place
+         * by init() whenever descendants are shown and read by the Geometry
+         * instances of the chart.
+         */
+        this._descendantLayout = new DescendantLayout();
+
         /** @type {HierarchyNode[]|null} */
         this._nodes = null;
 
@@ -209,6 +217,18 @@ export default class Hierarchy {
     }
 
     /**
+     * The layout of the descendant sector, laid out by the latest init() that
+     * showed descendants and empty until then. The same object is kept for the
+     * lifetime of the hierarchy, so a Geometry handed this object always sees
+     * the latest layout.
+     *
+     * @return {DescendantLayout}
+     */
+    get descendantLayout() {
+        return this._descendantLayout;
+    }
+
+    /**
      * Flat array of all partition nodes (root plus all descendants) in top-down
      * order, each augmented with a unique sequential id. Only available once
      * init() has run.
@@ -242,8 +262,8 @@ export default class Hierarchy {
      * Creates synthetic D3-compatible nodes for the partners and children of
      * the central person and appends them to this._nodes.
      *
-     * Writes both descendant layout results onto the configuration, on every
-     * exit path: childScale, so Geometry can resolve angles for negative
+     * Writes both descendant layout results into the descendant layout, on
+     * every exit path: childScale, so Geometry can resolve angles for negative
      * depths, and smallestChildFraction, so it can cap all child font sizes
      * uniformly. Both are cleared when no descendant sector is laid out.
      *
@@ -256,8 +276,7 @@ export default class Hierarchy {
         const unassignedChildren = datum.unassignedChildren || [];
 
         if (partners.length === 0 && unassignedChildren.length === 0) {
-            this._configuration.childScale = null;
-            this._configuration.smallestChildFraction = 0;
+            this._descendantLayout.reset();
 
             return;
         }
@@ -280,7 +299,7 @@ export default class Hierarchy {
 
         // Create the linear scale: [0,1] fractions → descendant sector radians
         const childScale = d3.scaleLinear().domain([0, 1]).range([startChildPi, endChildPi]);
-        this._configuration.childScale = childScale;
+        this._descendantLayout.childScale = childScale;
 
         const totalAngleDeg = (endChildPi - startChildPi) / MATH_DEG2RAD;
         const rootXref = datum.data.xref || "";
@@ -342,7 +361,7 @@ export default class Hierarchy {
             }
         }
 
-        this._configuration.smallestChildFraction = smallestChildFraction;
+        this._descendantLayout.smallestChildFraction = smallestChildFraction;
 
         this._createDescendantNodes(familyBlocks, rootXref, useEqualDistribution, totalWeight);
     }

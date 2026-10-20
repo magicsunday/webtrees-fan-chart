@@ -204,7 +204,7 @@ export default class ChartUpdater {
     _classifyPersonElements() {
         const svg = this._svg;
         const configuration = this._configuration;
-        const geometry = new Geometry(configuration);
+        const geometry = new Geometry(configuration, this._hierarchy.descendantLayout);
 
         // Flag all person elements which are subject to change.
         // Descendant person elements participate in the same data-join
@@ -283,7 +283,7 @@ export default class ChartUpdater {
 
         const svg = this._svg;
         const configuration = this._configuration;
-        const geometry = new Geometry(configuration);
+        const geometry = new Geometry(configuration, this._hierarchy.descendantLayout);
 
         const marriageNodes = this._hierarchy.nodes.filter(
             (datum) => datum.children && datum.depth < configuration.generations - 1,

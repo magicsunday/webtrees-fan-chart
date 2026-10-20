@@ -1073,9 +1073,8 @@ export default class Text {
                     // right-side text (independent of isPositionFlipped
                     // which always returns true for inner arc-path labels)
                     const midFrac = datum.x0 + dx / 2;
-                    const midRad = that._configuration.childScale
-                        ? that._configuration.childScale(midFrac)
-                        : 0;
+                    const childScale = that._geometry.childScale;
+                    const midRad = childScale ? childScale(midFrac) : 0;
 
                     angle = midRad * MATH_RAD2DEG;
                     flipped = midRad <= Math.PI;
