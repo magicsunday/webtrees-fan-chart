@@ -138,6 +138,12 @@ class NodeData implements JsonSerializable
     private string $timespan = '';
 
     /**
+     * The year-only timespan of a descendant child, shown instead of the
+     * timespan when the arcs are too narrow for places.
+     */
+    private string $compactTimespan = '';
+
+    /**
      * Full compact birth date for tooltip display.
      */
     private string $birthDateFull = '';
@@ -342,6 +348,16 @@ class NodeData implements JsonSerializable
         return $this;
     }
 
+    /**
+     * Sets the year-only lifetime label of a descendant child.
+     */
+    public function setCompactTimespan(string $compactTimespan): NodeData
+    {
+        $this->compactTimespan = $compactTimespan;
+
+        return $this;
+    }
+
     public function setBirthDateFull(string $birthDateFull): NodeData
     {
         $this->birthDateFull = $birthDateFull;
@@ -413,6 +429,7 @@ class NodeData implements JsonSerializable
             'marriageDate'          => $this->marriageDate,
             'marriageDateOfParents' => $this->marriageDateOfParents,
             'timespan'              => $this->timespan,
+            'compactTimespan'       => $this->compactTimespan,
             'birthDateFull'         => $this->birthDateFull,
             'deathDateFull'         => $this->deathDateFull,
             'marriageDateFull'      => $this->marriageDateFull,

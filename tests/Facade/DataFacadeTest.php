@@ -338,14 +338,14 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
-     * Narrow descendant arcs show a place-less year timespan. Years below one
-     * thousand have fewer than four digits and years before the common era have
-     * a suffix, and the timespan must still carry them instead of silently
-     * dropping the dates.
+     * The compact timespan of a descendant child is built from the structured
+     * years. Years below one thousand have fewer than four digits and years
+     * before the common era have a suffix, and it must still carry them instead
+     * of silently dropping the dates.
      *
      * @return array<string, array{string, string, string}>
      */
-    public static function narrowArcTimespanProvider(): array
+    public static function compactTimespanProvider(): array
     {
         return [
             'both years below one thousand'           => ['1 JAN 923', '1 JAN 987', '923–987'],
@@ -359,33 +359,34 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
-     * Narrow descendant arcs build their timespan from the structured years and
-     * leave out the places.
+     * A descendant child carries the year-only timespan next to its regular
+     * timespan, so the client can choose by the width of the arc.
      */
     #[Test]
-    #[DataProvider('narrowArcTimespanProvider')]
-    public function narrowDescendantArcsKeepEveryYear(
+    #[DataProvider('compactTimespanProvider')]
+    public function descendantChildrenCarryACompactTimespan(
         string $birth,
         string $death,
         string $expected,
     ): void {
-        $childData = $this->buildDescendantChildData($birth, $death, 340);
+        $childData = $this->buildDescendantChildData($birth, $death);
 
-        self::assertSame($expected, $childData['timespan']);
-        self::assertSame('', $childData['birthPlace']);
-        self::assertSame('', $childData['deathPlace']);
+        self::assertSame($expected, $childData['compactTimespan']);
     }
 
     /**
-     * Wide descendant arcs keep the places of the child.
+     * The places and the regular timespan of a child do not depend on the
+     * fan degree, because the client decides about the compact form.
      */
     #[Test]
-    public function wideDescendantArcsKeepThePlaces(): void
+    public function descendantChildrenKeepThePlacesWhateverTheFanDegree(): void
     {
-        $childData = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 0);
+        $narrow = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 340);
+        $wide   = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 0);
 
-        self::assertSame('Rome, Italy', $childData['birthPlace']);
-        self::assertSame('Paris, France', $childData['deathPlace']);
+        self::assertSame('Rome, Italy', $narrow['birthPlace']);
+        self::assertSame('Paris, France', $narrow['deathPlace']);
+        self::assertSame($wide['timespan'], $narrow['timespan']);
     }
 
     /**
@@ -414,8 +415,8 @@ final class DataFacadeTest extends TestCase
         self::assertSame(-2, $childData['generation']);
         self::assertSame('', $childData['marriageDate']);
         self::assertSame('', $childData['marriageDateOfParents']);
-        self::assertSame('923–987', $childData['timespan']);
-        self::assertSame('', $childData['birthPlace']);
+        self::assertSame('923–987', $childData['compactTimespan']);
+        self::assertSame('Rome, Italy', $childData['birthPlace']);
     }
 
     /**
@@ -433,7 +434,7 @@ final class DataFacadeTest extends TestCase
     private function buildDescendantChildData(
         string $birth,
         string $death,
-        int $fanDegree,
+        int $fanDegree = 0,
         bool $hiddenPartner = false,
     ): array {
         $this->setUpRouting();

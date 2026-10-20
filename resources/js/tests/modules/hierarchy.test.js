@@ -369,6 +369,7 @@ describe("Hierarchy.initDescendants", () => {
 
         hierarchy.descendantLayout.childScale = "stale";
         hierarchy.descendantLayout.smallestChildFraction = 0.05;
+        hierarchy.descendantLayout.compactChildren = true;
 
         hierarchy.init(rootDatum);
 
@@ -377,6 +378,46 @@ describe("Hierarchy.initDescendants", () => {
         // against a sector that is no longer rendered.
         expect(hierarchy.descendantLayout.childScale).toBeNull();
         expect(hierarchy.descendantLayout.smallestChildFraction).toBe(0);
+        expect(hierarchy.descendantLayout.compactChildren).toBe(false);
+    });
+
+    test.each([
+        ["a few children get arcs wide enough for places", 2, false],
+        ["the widest crowd that still fits the places", 6, false],
+        ["more children than the sector holds at the minimum arc width", 7, true],
+    ])(
+        "marks the children compact only when the arcs are too narrow: %s",
+        (_label, count, expected) => {
+            const children = Array.from({ length: count }, (_, index) =>
+                createChild({ xref: `I${100 + index}` }),
+            );
+            const rootDatum = createIndividual({ id: 1, generation: 1 });
+            rootDatum.partners = [createPartner({ xref: "I2", children })];
+            const hierarchy = new Hierarchy({
+                generations: 2,
+                showDescendants: true,
+                fanDegree: 210,
+            });
+
+            hierarchy.init(rootDatum);
+
+            expect(hierarchy.descendantLayout.compactChildren).toBe(expected);
+        },
+    );
+
+    test("resets the compact flag when a later init has fewer children", () => {
+        const crowd = Array.from({ length: 7 }, (_, index) =>
+            createChild({ xref: `I${100 + index}` }),
+        );
+        const rootDatum = createIndividual({ id: 1, generation: 1 });
+        rootDatum.partners = [createPartner({ xref: "I2", children: crowd })];
+        const hierarchy = new Hierarchy({ generations: 2, showDescendants: true, fanDegree: 210 });
+
+        hierarchy.init(rootDatum);
+        rootDatum.partners = [createPartner({ xref: "I2", children: [crowd[0]] })];
+        hierarchy.init(rootDatum);
+
+        expect(hierarchy.descendantLayout.compactChildren).toBe(false);
     });
 
     test("keeps the same descendant layout object across later init calls", () => {

@@ -53,6 +53,8 @@ export const DESCENDANT_GAP_DEG = 10;
  * @property {boolean}     isAltRtl                Whether the alternative name is right-to-left
  * @property {string}      sex                     SEX_MALE, SEX_FEMALE or "U"
  * @property {string}      timespan                Birth/death lines, separated by "\n"
+ * @property {string}      [compactTimespan]       Year-only birth/death lines of a descendant child, shown
+ *                                                 instead of the timespan when the child arcs are narrow
  * @property {boolean}     [isNameRtl]             Whether the primary name is right-to-left
  * @property {string}      [nickname]              GEDCOM NICK value, without quotes
  * @property {string}      [thumbnail]             URL of the highlight image
@@ -362,6 +364,7 @@ export default class Hierarchy {
         }
 
         this._descendantLayout.smallestChildFraction = smallestChildFraction;
+        this._descendantLayout.compactChildren = useEqualDistribution;
 
         this._createDescendantNodes(familyBlocks, rootXref, useEqualDistribution, totalWeight);
     }

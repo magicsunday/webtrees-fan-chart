@@ -277,6 +277,74 @@ describe("Text", () => {
         });
     });
 
+    describe("getTimespan", () => {
+        const createCompactGeometry = (compactChildren) => ({ compactChildren });
+
+        const createChildDatum = (depth) => {
+            const datum = createDatum({ depth });
+            datum.data.data.timespan = "\u2605 1900 Rome";
+            datum.data.data.compactTimespan = "\u2605 1900";
+
+            return datum;
+        };
+
+        it("uses the compact range for a child while the child arcs are narrow", () => {
+            const text = new Text(svgStub, createConfiguration(), createCompactGeometry(true));
+
+            expect(text.getTimespan(createChildDatum(-2))).toBe("\u2605 1900");
+        });
+
+        it("keeps the regular timespan for a child while the child arcs are wide", () => {
+            const text = new Text(svgStub, createConfiguration(), createCompactGeometry(false));
+
+            expect(text.getTimespan(createChildDatum(-2))).toBe("\u2605 1900 Rome");
+        });
+
+        it.each([[-1], [1], [3]])("keeps the regular timespan at depth %i", (depth) => {
+            const text = new Text(svgStub, createConfiguration(), createCompactGeometry(true));
+
+            expect(text.getTimespan(createChildDatum(depth))).toBe("\u2605 1900 Rome");
+        });
+
+        it("keeps the regular timespan when the payload has no compact range", () => {
+            const text = new Text(svgStub, createConfiguration(), createCompactGeometry(true));
+            const datum = createChildDatum(-2);
+            delete datum.data.data.compactTimespan;
+
+            expect(text.getTimespan(datum)).toBe("\u2605 1900 Rome");
+        });
+
+        it("renders the compact range of a narrow child", () => {
+            const text = new Text(svgStub, createConfiguration(), createCompactGeometry(true));
+            const titles = [];
+
+            // The arc width is irrelevant here, the test only reads the rendered line.
+            text.getAvailableWidth = jest.fn(() => 1000);
+            const createElement = jest.fn(() => {
+                const container = {
+                    append: jest.fn((name) => {
+                        const child = { text: jest.fn(() => child) };
+                        if (name === "title") {
+                            titles.push(child);
+                        }
+
+                        return child;
+                    }),
+                };
+
+                return container;
+            });
+            const positions = new Map([
+                [Text.TEXT_SLOT.DATE_LINE_1, { normal: 40, flipped: 60 }],
+                [Text.TEXT_SLOT.DATE_LINE_2, { normal: 50, flipped: 50 }],
+            ]);
+
+            text.renderTimespanLines(createChildDatum(-2), positions, createElement);
+
+            expect(titles[0].text).toHaveBeenCalledWith("\u2605 1900");
+        });
+    });
+
     describe("slot lookups", () => {
         it("returns the slot at the given index", () => {
             const text = new Text(svgStub, createConfiguration());

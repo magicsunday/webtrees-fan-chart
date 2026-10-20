@@ -33,11 +33,16 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
 const { default: Geometry, MATH_DEG2RAD } = await import("resources/js/modules/svg/geometry");
 const { default: DescendantLayout } = await import("resources/js/modules/descendant-layout");
 
-const createLayout = ({ childScale = null, smallestChildFraction = 0 } = {}) => {
+const createLayout = ({
+    childScale = null,
+    smallestChildFraction = 0,
+    compactChildren = false,
+} = {}) => {
     const layout = new DescendantLayout();
 
     layout.childScale = childScale;
     layout.smallestChildFraction = smallestChildFraction;
+    layout.compactChildren = compactChildren;
 
     return layout;
 };
@@ -59,6 +64,15 @@ describe("Geometry", () => {
 
     beforeEach(() => {
         scaleLinearMock.mockClear();
+    });
+
+    it("reads the compact children flag from the descendant layout", () => {
+        const configuration = createConfiguration();
+
+        expect(new Geometry(configuration).compactChildren).toBe(false);
+        expect(
+            new Geometry(configuration, createLayout({ compactChildren: true })).compactChildren,
+        ).toBe(true);
     });
 
     it("calculates start and end angles in radians", () => {

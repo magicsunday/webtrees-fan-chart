@@ -50,6 +50,16 @@ export default class Geometry {
     }
 
     /**
+     * True when the child arcs of the descendant sector are too narrow for
+     * places and show the compact year range instead.
+     *
+     * @return {boolean}
+     */
+    get compactChildren() {
+        return this._descendantLayout.compactChildren;
+    }
+
+    /**
      * Start angle of the fan in radians. For a 90° chart the fan begins at 0
      * (top); for all others it is centered on 0 (i.e. -fanDegree/2 radians).
      *

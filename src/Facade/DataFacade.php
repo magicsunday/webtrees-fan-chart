@@ -50,19 +50,6 @@ class DataFacade
     use ModuleAwareDataFacadeTrait;
 
     /**
-     * Angular gap in degrees between the ancestor fan and the descendant
-     * sector, applied on both sides. Must match DESCENDANT_GAP_DEG in
-     * resources/js/modules/hierarchy.js.
-     */
-    private const int DESCENDANT_GAP_DEG = 10;
-
-    /**
-     * Minimum angular width in degrees per child arc below which places and
-     * detailed dates are suppressed in favour of a compact format.
-     */
-    private const int MIN_CHILD_ARC_DEG = 20;
-
-    /**
      * The configuration instance. Initialized by createTreeStructure() on each
      * call. Accessing before createTreeStructure() throws "Uninitialized typed
      * property".
@@ -164,18 +151,6 @@ class DataFacade
      */
     private function buildDescendantStructure(Node $rootNode, Individual $individual): void
     {
-        // Count total children across all families to estimate angular width.
-        // When arcs are too narrow, places are suppressed for children.
-        $totalChildSlots = 0;
-
-        foreach ($individual->spouseFamilies() as $family) {
-            $totalChildSlots += max(1, $family->children()->count());
-        }
-
-        $descendantSectorDeg = 360 - $this->configuration->getFanDegree() - (2 * self::DESCENDANT_GAP_DEG);
-        $perChildDeg         = ($totalChildSlots > 0) ? ($descendantSectorDeg / $totalChildSlots) : 360;
-        $suppressChildPlaces = $perChildDeg < self::MIN_CHILD_ARC_DEG;
-
         foreach ($individual->spouseFamilies() as $family) {
             $spouse          = $family->spouse($individual);
             $visibleChildren = $family->children();
@@ -222,9 +197,7 @@ class DataFacade
                     // Spouse is privacy-hidden -- no partner arc (would leak existence)
                     // Visible children go to unassignedChildren on root
                     foreach ($visibleChildren as $child) {
-                        $rootNode->addUnassignedChild(
-                            $this->buildDescendantChildNode($child, $suppressChildPlaces)
-                        );
+                        $rootNode->addUnassignedChild($this->buildDescendantChildNode($child));
                     }
 
                     continue;
@@ -243,7 +216,7 @@ class DataFacade
             $childNodes = [];
 
             foreach ($visibleChildren as $child) {
-                $childNodes[] = $this->buildDescendantChildNode($child, $suppressChildPlaces);
+                $childNodes[] = $this->buildDescendantChildNode($child);
             }
 
             $partnerNode->setChildren($childNodes);
@@ -253,20 +226,19 @@ class DataFacade
 
     /**
      * Builds the node of a descendant child. A child sits at generation -2 and
-     * never shows a marriage date. On narrow arcs its places are left out and
-     * its timespan is the compact year range.
+     * never shows a marriage date. It also carries the compact year range that
+     * the client shows instead of the timespan when the arcs are too narrow
+     * for places.
      *
-     * @param Individual $child          The child to build the node for
-     * @param bool       $suppressPlaces True when the arc is too narrow for places
+     * @param Individual $child The child to build the node for
      *
      * @return Node
      */
-    private function buildDescendantChildNode(
-        Individual $child,
-        bool $suppressPlaces,
-    ): Node {
-        $childNodeData = $this->getNodeData(2, $child, $suppressPlaces);
+    private function buildDescendantChildNode(Individual $child): Node
+    {
+        $childNodeData = $this->getNodeData(2, $child);
         $childNodeData
+            ->setCompactTimespan($this->buildCompactYearTimespan($child))
             ->setGeneration(-2)
             ->setMarriageDate('')
             ->setMarriageDateOfParents('');
@@ -293,17 +265,13 @@ class DataFacade
     /**
      * Populates a NodeData DTO from all processors for the given individual.
      *
-     * @param int        $generation     1-based generation depth, used to select date format
+     * @param int        $generation 1-based generation depth, used to select date format
      * @param Individual $individual
-     * @param bool       $suppressPlaces True to leave out all places and use the compact year range as timespan
      *
      * @return NodeData
      */
-    private function getNodeData(
-        int $generation,
-        Individual $individual,
-        bool $suppressPlaces = false,
-    ): NodeData {
+    private function getNodeData(int $generation, Individual $individual): NodeData
+    {
         $nameProcessor  = new NameProcessor($individual);
         $imageProcessor = new ImageProcessor($this->module, $individual);
         $dateProcessor  = new DateProcessor(
@@ -352,17 +320,13 @@ class DataFacade
                     $generation
                 )
             )
-            ->setTimespan(
-                $suppressPlaces
-                    ? $this->buildCompactYearTimespan($individual)
-                    : $this->buildTimespan($dateProcessor, $placeProcessor, $generation)
-            )
+            ->setTimespan($this->buildTimespan($dateProcessor, $placeProcessor, $generation))
             ->setBirthDateFull($dateProcessor->getBirthDateFull())
             ->setDeathDateFull($dateProcessor->getDeathDateFull())
             ->setMarriageDateFull($dateProcessor->getMarriageDateFull())
-            ->setBirthPlace($suppressPlaces ? '' : $placeProcessor->getBirthPlace())
-            ->setDeathPlace($suppressPlaces ? '' : $placeProcessor->getDeathPlace())
-            ->setMarriagePlace($suppressPlaces ? '' : $placeProcessor->getMarriagePlace());
+            ->setBirthPlace($placeProcessor->getBirthPlace())
+            ->setDeathPlace($placeProcessor->getDeathPlace())
+            ->setMarriagePlace($placeProcessor->getMarriagePlace());
 
         return $treeData;
     }
