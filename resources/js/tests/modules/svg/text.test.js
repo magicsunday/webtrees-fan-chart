@@ -404,6 +404,126 @@ describe("Text", () => {
         });
     });
 
+    describe("slot positions of the label stack", () => {
+        // The expected values are the recorded output of the layout for a font
+        // size of 10 px on an arc band that is 100 px high with a 10 px color
+        // arc. They pin the layout before it is moved, so a rewrite that shifts
+        // a label by even a fraction of a percent turns a test red.
+        const createLayoutText = () =>
+            new Text(svgStub, createConfiguration({ colorArcWidth: 10 }), {
+                compactChildren: false,
+                getFontSize: () => 10,
+                innerRadius: () => 100,
+                outerRadius: () => 200,
+            });
+
+        const positionsOf = (data, depth = 1) => {
+            const datum = createDatum({ depth });
+
+            Object.assign(datum.data.data, data);
+
+            return [...createLayoutText().calculateSlotPositions(datum).entries()].map(
+                ([slot, position]) => [slot.index, position.normal, position.flipped],
+            );
+        };
+
+        it.each([
+            [
+                "first and last names only",
+                { alternativeName: "", timespan: "" },
+                1,
+                [
+                    [0, 46.75, 51.5],
+                    [1, 35.75, 62.5],
+                ],
+            ],
+            [
+                "names, an alternative name and two date lines",
+                { alternativeName: "Jana", timespan: "a\nb" },
+                1,
+                [
+                    [0, 66.75, 31.5],
+                    [1, 55.75, 42.5],
+                    [2, 40.75, 57.5],
+                    [3, 25.75, 72.5],
+                    [4, 15.75, 82.5],
+                ],
+            ],
+            [
+                "a first name only with one date line shares its position with the last name slot",
+                { lastNames: [], alternativeName: "", timespan: "a" },
+                1,
+                [
+                    [0, 48.75, 49.5],
+                    [3, 33.75, 64.5],
+                    [1, 48.75, 49.5],
+                ],
+            ],
+            [
+                "a descendant label without the baseline shift of the ancestors",
+                { alternativeName: "", timespan: "a" },
+                -2,
+                [
+                    [0, 58, 44],
+                    [1, 47, 55],
+                    [3, 32, 70],
+                ],
+            ],
+        ])("stacks %s", (_label, data, depth, expected) => {
+            const actual = positionsOf(data, depth);
+
+            expect(actual.map(([slot]) => slot)).toEqual(expected.map(([slot]) => slot));
+
+            actual.forEach(([, normal, flipped], index) => {
+                expect(normal).toBeCloseTo(expected[index][1], 6);
+                expect(flipped).toBeCloseTo(expected[index][2], 6);
+            });
+        });
+    });
+
+    describe("vertical stack of the center label", () => {
+        const dyOf = (imageSize, classesList) => {
+            const nodes = classesList.map((classes) => ({ classes }));
+            const parent = {
+                selectAll: () => ({
+                    size: () => nodes.length,
+                    each(callback) {
+                        nodes.forEach((node, index) => callback.call(node, node, index));
+                    },
+                }),
+            };
+            const datum = createDatum({ depth: 0 });
+
+            datum.data.data.imageSize = imageSize;
+
+            new Text(svgStub, createConfiguration(), { getFontSize: () => 10 }).transformOuterText(
+                parent,
+                datum,
+            );
+
+            return nodes.map((node) => node.attrs.dy);
+        };
+
+        it("centers a name, alternative name and date stack without an image", () => {
+            expect(dyOf(0, [[], [], ["wt-chart-box-name-alt"], ["date"], ["date"]])).toEqual([
+                "-22px",
+                "-12.5px",
+                "2px",
+                "16.5px",
+                "26px",
+            ]);
+        });
+
+        it("places the stack below the image when there is one", () => {
+            expect(dyOf(40, [[], [], ["date"], ["date"]])).toEqual([
+                "6.5px",
+                "16px",
+                "30px",
+                "39.5px",
+            ]);
+        });
+    });
+
     describe("slot lookups", () => {
         it("returns the slot at the given index", () => {
             const text = new Text(svgStub, createConfiguration());
