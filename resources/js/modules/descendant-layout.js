@@ -32,13 +32,22 @@ export default class DescendantLayout {
          * @type {number}
          */
         this.smallestChildFraction = 0;
+
+        /**
+         * True when the child arcs are too narrow for places, so that they show
+         * the compact year range instead of the regular timespan.
+         *
+         * @type {boolean}
+         */
+        this.compactChildren = false;
     }
 
     /**
-     * Clears both results, as when no descendant sector is laid out.
+     * Clears all results, as when no descendant sector is laid out.
      */
     reset() {
         this.childScale = null;
         this.smallestChildFraction = 0;
+        this.compactChildren = false;
     }
 }

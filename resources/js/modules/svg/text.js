@@ -278,7 +278,32 @@ export default class Text {
     }
 
     /**
-     * Appends up to two date lines from datum.data.data.timespan to parent,
+     * Returns the timespan to render for the datum. A descendant child shows its
+     * year-only range instead of the regular timespan while the child arcs are
+     * too narrow for places.
+     *
+     * @param {HierarchyNode} datum The D3 partition datum
+     *
+     * @return {string}
+     *
+     * @private
+     */
+    getTimespan(datum) {
+        const data = datum.data.data;
+
+        if (
+            datum.depth <= -2 &&
+            this._geometry.compactChildren &&
+            data.compactTimespan !== undefined
+        ) {
+            return data.compactTimespan;
+        }
+
+        return data.timespan;
+    }
+
+    /**
+     * Appends up to two date lines from the timespan of the datum to parent,
      * truncating each with an ellipsis when it exceeds the available arc width.
      * The createElement callback abstracts away the inner/outer difference:
      * inner labels pass a textPath creator, outer labels pass a plain text
@@ -292,11 +317,13 @@ export default class Text {
      * @private
      */
     renderTimespanLines(datum, positions, createElement) {
-        if (datum.data.data.timespan === "") {
+        const timespan = this.getTimespan(datum);
+
+        if (timespan === "") {
             return;
         }
 
-        const timespanLines = datum.data.data.timespan.split("\n");
+        const timespanLines = timespan.split("\n");
         const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
 
         timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
@@ -689,8 +716,10 @@ export default class Text {
             altGroup.push(Text.TEXT_SLOT.ALTERNATIVE_NAME);
         }
 
-        if (datum.data.data.timespan !== "") {
-            const lines = datum.data.data.timespan.split("\n");
+        const timespan = this.getTimespan(datum);
+
+        if (timespan !== "") {
+            const lines = timespan.split("\n");
             dateGroup.push(Text.TEXT_SLOT.DATE_LINE_1);
 
             if (lines.length > 1) {
