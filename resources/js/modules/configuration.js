@@ -132,11 +132,6 @@ export default class Configuration {
 
         this._showDescendants = showDescendants;
 
-        // Clamp fan degree when descendants are shown
-        if (this._showDescendants) {
-            this._fanDegree = Math.min(270, Math.max(180, this._fanDegree));
-        }
-
         // D3 linear scale mapping descendant full-circle fractions to radians.
         // Set by hierarchy.js::initDescendants() once the descendant angle
         // range is known. All Geometry instances read this via the getter.

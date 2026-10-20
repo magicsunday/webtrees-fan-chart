@@ -19,6 +19,16 @@ describe("Configuration", () => {
         expect(config.fontScale).toBe(100);
     });
 
+    it("takes the fan degree as given because the server already clamped it", () => {
+        const configuration = new Configuration({
+            labels,
+            fanDegree: 340,
+            showDescendants: true,
+        });
+
+        expect(configuration.fanDegree).toBe(340);
+    });
+
     it("expands spacing when parent marriage dates are shown", () => {
         const configuration = new Configuration({
             labels,

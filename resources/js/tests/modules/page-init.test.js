@@ -142,6 +142,8 @@ const defaultConfig = {
     ajaxUrl: "https://example.com/chart",
     defaultShowDescendants: false,
     defaultFanDegreeRaw: 210,
+    fanDegreeMin: 180,
+    fanDegreeMaxWithDescendants: 270,
     defaultDetailedDateGenerations: 0,
     defaultPlaceFormat: "auto",
 };
@@ -328,6 +330,48 @@ describe("chartOptions namespace", () => {
         initPage({ ...defaultConfig, defaultShowDescendants: true });
 
         expect(Number(window.WebtreesFanChart.chartOptions.fanDegree)).toBe(270);
+    });
+
+    it("takes the clamp bounds for descendants from the page configuration", () => {
+        storageData.fanDegree = "340";
+        storageData.showDescendants = true;
+        setupDom({ fanDegree: "340" });
+
+        initPage({
+            ...defaultConfig,
+            defaultShowDescendants: true,
+            fanDegreeMin: 100,
+            fanDegreeMaxWithDescendants: 200,
+        });
+
+        expect(window.WebtreesFanChart.chartOptions.fanDegree).toBe(200);
+        expect(document.getElementById("fanDegree").max).toBe("200");
+    });
+
+    it("raises a fanDegree to the lower bound of the page configuration", () => {
+        storageData.fanDegree = "200";
+        storageData.showDescendants = true;
+        setupDom({ fanDegree: "200" });
+
+        initPage({
+            ...defaultConfig,
+            defaultShowDescendants: true,
+            fanDegreeMin: 220,
+            fanDegreeMaxWithDescendants: 250,
+        });
+
+        expect(window.WebtreesFanChart.chartOptions.fanDegree).toBe(220);
+    });
+
+    it("raises a fanDegree below the lower bound when descendants are enabled", () => {
+        storageData.fanDegree = "90";
+        storageData.showDescendants = true;
+        setupDom({ fanDegree: "90" });
+
+        initPage({ ...defaultConfig, defaultShowDescendants: true });
+
+        expect(window.WebtreesFanChart.chartOptions.fanDegree).toBe(180);
+        expect(document.getElementById("fanDegreeOutput").value).toBe("180°");
     });
 
     it("does not register fanDegreeRaw as a DOM element", () => {

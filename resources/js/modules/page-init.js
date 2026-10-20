@@ -48,6 +48,8 @@ function initRangeSlider(storage, id, suffix = "") {
  * @param {boolean} config.defaultShowDescendants         Server-side default for showDescendants
  * @param {boolean} [config.defaultShowNicknames]         Server-side default for showNicknames
  * @param {number}  config.defaultFanDegreeRaw            Server-side unclamped fan degree
+ * @param {number}  config.fanDegreeMin                   Lowest fan degree the server accepts
+ * @param {number}  config.fanDegreeMaxWithDescendants    Highest fan degree while descendants are shown
  * @param {number}  config.defaultDetailedDateGenerations Server-side default for detailed date generations
  * @param {string}  config.defaultPlaceFormat             Server-side place-detail setting (enum backing value)
  */
@@ -180,8 +182,11 @@ export function initPage(config) {
             // a previous session with a different degree.
             storage.write("fanDegreeRaw", fanSlider.value);
 
-            fanSlider.max = "270";
-            chartOptions.fanDegree = Math.min(270, Math.max(180, Number(fanSlider.value)));
+            fanSlider.max = String(config.fanDegreeMaxWithDescendants);
+            chartOptions.fanDegree = Math.min(
+                config.fanDegreeMaxWithDescendants,
+                Math.max(config.fanDegreeMin, Number(fanSlider.value)),
+            );
             fanSlider.value = String(chartOptions.fanDegree);
 
             if (fanOutput) {
