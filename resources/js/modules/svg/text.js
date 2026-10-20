@@ -79,7 +79,7 @@ export default class Text {
         const parentId = d3.select(parent.node().parentNode).attr("id");
         const nameGroups = createNamesData(datum);
         const textStartOffset = "25%";
-        const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+        const nameSlots = [TEXT_SLOT.FIRST_NAMES, TEXT_SLOT.LAST_NAMES];
 
         nameGroups.forEach((nameGroup, index) => {
             if (nameGroup.length === 0) {
@@ -103,7 +103,7 @@ export default class Text {
         });
 
         if (datum.data.data.alternativeName !== "") {
-            const slot = Text.TEXT_SLOT.ALTERNATIVE_NAME;
+            const slot = TEXT_SLOT.ALTERNATIVE_NAME;
             const position = this.getSlotPosition(positions, slot);
             const pathId = this.createPathDefinition(parentId, slot, position, datum);
             const availableWidth = this._layout.getAvailableWidth(datum, position);
@@ -149,7 +149,7 @@ export default class Text {
             const nameGroups = createNamesData(datum);
             const availableWidth = this._layout.getAvailableWidth(
                 datum,
-                this.getSlotPosition(positions, Text.TEXT_SLOT.FIRST_NAMES),
+                this.getSlotPosition(positions, TEXT_SLOT.FIRST_NAMES),
             );
             const combined = nameGroups.flat();
 
@@ -158,7 +158,7 @@ export default class Text {
             this.addNameElements(text, this.truncateNamesData(text, combined, availableWidth));
         } else {
             const nameGroups = createNamesData(datum);
-            const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+            const nameSlots = [TEXT_SLOT.FIRST_NAMES, TEXT_SLOT.LAST_NAMES];
             // Center node only: lift the inline nickname out of the
             // given-names group and render it on its own line. The
             // truncate-drops-nickname-first heuristic that protects narrow
@@ -221,7 +221,7 @@ export default class Text {
             if (datum.data.data.alternativeName !== "" && datum.depth >= 0) {
                 const availableWidth = this._layout.getAvailableWidth(
                     datum,
-                    this.getSlotPosition(positions, Text.TEXT_SLOT.ALTERNATIVE_NAME),
+                    this.getSlotPosition(positions, TEXT_SLOT.ALTERNATIVE_NAME),
                 );
                 const nameGroup = createAlternativeNamesData(datum);
 
@@ -273,7 +273,7 @@ export default class Text {
         }
 
         const timespanLines = timespan.split("\n");
-        const dateSlots = [Text.TEXT_SLOT.DATE_LINE_1, Text.TEXT_SLOT.DATE_LINE_2];
+        const dateSlots = [TEXT_SLOT.DATE_LINE_1, TEXT_SLOT.DATE_LINE_2];
 
         timespanLines.slice(0, dateSlots.length).forEach((line, lineIndex) => {
             const slot = this.getSlot(dateSlots, lineIndex);
@@ -437,8 +437,6 @@ export default class Text {
     isPositionFlipped(depth, x0, x1) {
         return this._geometry.isPositionFlipped(depth, x0, x1);
     }
-
-    static TEXT_SLOT = TEXT_SLOT;
 
     /**
      * Returns the text slot at the given index of a slot list.

@@ -89,6 +89,7 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/infra", () => ({
 }));
 
 const { default: Text } = await import("resources/js/modules/svg/text");
+const { TEXT_SLOT } = await import("resources/js/modules/svg/arc-label-layout");
 
 const createConfiguration = (overrides = {}) => ({
     numberOfInnerCircles: 2,
@@ -193,8 +194,8 @@ describe("Text", () => {
     describe("renderTimespanLines", () => {
         const createPositions = () =>
             new Map([
-                [Text.TEXT_SLOT.DATE_LINE_1, { normal: 40, flipped: 60 }],
-                [Text.TEXT_SLOT.DATE_LINE_2, { normal: 50, flipped: 50 }],
+                [TEXT_SLOT.DATE_LINE_1, { normal: 40, flipped: 60 }],
+                [TEXT_SLOT.DATE_LINE_2, { normal: 50, flipped: 50 }],
             ]);
 
         const createLineContainer = () => {
@@ -236,11 +237,11 @@ describe("Text", () => {
             text.renderTimespanLines(datum, positions, createElement);
 
             expect(createElement).toHaveBeenCalledTimes(2);
-            expect(createElement).toHaveBeenNthCalledWith(1, Text.TEXT_SLOT.DATE_LINE_1, {
+            expect(createElement).toHaveBeenNthCalledWith(1, TEXT_SLOT.DATE_LINE_1, {
                 normal: 40,
                 flipped: 60,
             });
-            expect(createElement).toHaveBeenNthCalledWith(2, Text.TEXT_SLOT.DATE_LINE_2, {
+            expect(createElement).toHaveBeenNthCalledWith(2, TEXT_SLOT.DATE_LINE_2, {
                 normal: 50,
                 flipped: 50,
             });
@@ -297,8 +298,8 @@ describe("Text", () => {
                 return container;
             });
             const positions = new Map([
-                [Text.TEXT_SLOT.DATE_LINE_1, { normal: 40, flipped: 60 }],
-                [Text.TEXT_SLOT.DATE_LINE_2, { normal: 50, flipped: 50 }],
+                [TEXT_SLOT.DATE_LINE_1, { normal: 40, flipped: 60 }],
+                [TEXT_SLOT.DATE_LINE_2, { normal: 50, flipped: 50 }],
             ]);
 
             text.renderTimespanLines(createCompactChildDatum(), positions, createElement);
@@ -357,7 +358,7 @@ describe("Text", () => {
 
             text.createPathDefinition(
                 "person-1",
-                Text.TEXT_SLOT.FIRST_NAMES,
+                TEXT_SLOT.FIRST_NAMES,
                 { normal: 40, flipped: 60 },
                 createDatum({ depth: 1 }),
             );
@@ -412,15 +413,15 @@ describe("Text", () => {
     describe("slot lookups", () => {
         it("returns the slot at the given index", () => {
             const text = new Text(svgStub, createConfiguration());
-            const slots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+            const slots = [TEXT_SLOT.FIRST_NAMES, TEXT_SLOT.LAST_NAMES];
 
-            expect(text.getSlot(slots, 1)).toBe(Text.TEXT_SLOT.LAST_NAMES);
+            expect(text.getSlot(slots, 1)).toBe(TEXT_SLOT.LAST_NAMES);
         });
 
         it("throws when the slot list has no entry at the index", () => {
             const text = new Text(svgStub, createConfiguration());
 
-            expect(() => text.getSlot([Text.TEXT_SLOT.FIRST_NAMES], 3)).toThrow(
+            expect(() => text.getSlot([TEXT_SLOT.FIRST_NAMES], 3)).toThrow(
                 "No text slot at index 3",
             );
         });
@@ -428,16 +429,16 @@ describe("Text", () => {
         it("returns the position assigned to a slot", () => {
             const text = new Text(svgStub, createConfiguration());
             const position = { normal: 40, flipped: 60 };
-            const positions = new Map([[Text.TEXT_SLOT.DATE_LINE_1, position]]);
+            const positions = new Map([[TEXT_SLOT.DATE_LINE_1, position]]);
 
-            expect(text.getSlotPosition(positions, Text.TEXT_SLOT.DATE_LINE_1)).toBe(position);
+            expect(text.getSlotPosition(positions, TEXT_SLOT.DATE_LINE_1)).toBe(position);
         });
 
         it("throws when no position was calculated for a slot", () => {
             const text = new Text(svgStub, createConfiguration());
 
-            expect(() => text.getSlotPosition(new Map(), Text.TEXT_SLOT.DATE_LINE_2)).toThrow(
-                `No text position calculated for slot ${Text.TEXT_SLOT.DATE_LINE_2.index}`,
+            expect(() => text.getSlotPosition(new Map(), TEXT_SLOT.DATE_LINE_2)).toThrow(
+                `No text position calculated for slot ${TEXT_SLOT.DATE_LINE_2.index}`,
             );
         });
     });

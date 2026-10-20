@@ -338,6 +338,79 @@ describe("ArcLabelLayout", () => {
         expect(availableWidth).toBe(150 - 20 - 5);
     });
 
+    describe("getAvailableWidth", () => {
+        // A half turn sector so that a datum fraction of 0.5 spans 90 degrees.
+        const createWidthLayout = () => {
+            const arcLength = jest.fn(() => 200);
+            const geometry = {
+                startAngle: () => 0,
+                endAngle: () => Math.PI,
+                innerRadius: () => 150,
+                outerRadius: () => 200,
+                isPositionFlipped: () => true,
+                arcLength,
+            };
+
+            return { layout: new ArcLabelLayout(createConfiguration(), geometry), arcLength };
+        };
+
+        const position = { normal: 40, flipped: 60 };
+
+        it("uses the height of a narrow descendant arc, which gets rotated text", () => {
+            const { layout } = createWidthLayout();
+
+            // 9 degrees is too narrow for arc text, so the line runs across the ring
+            expect(
+                layout.getAvailableWidth(createDatum({ depth: -2, x0: 0, x1: 0.05 }), position),
+            ).toBe(200 - 150 - 20);
+        });
+
+        it("uses the chord of a wide descendant arc at the flipped position", () => {
+            const { layout, arcLength } = createWidthLayout();
+            const datum = createDatum({ depth: -1, x0: 0, x1: 0.5 });
+
+            expect(layout.getAvailableWidth(datum, position)).toBe(200 - 20 - 3);
+            expect(arcLength).toHaveBeenCalledWith(datum, 60);
+        });
+
+        it("uses the diameter of the center circle, a little narrower", () => {
+            const { layout } = createWidthLayout();
+
+            expect(layout.getAvailableWidth(createDatum({ depth: 0 }), position)).toBe(
+                40 * 2 - 40 * 0.15 - 20 - 3,
+            );
+        });
+
+        it.each([
+            ["the center circle", 0, 40 * 2 - 40 * 0.15 - 20 - 3 - 40],
+            ["an inner ancestor ring", 1, 200 - 20 - 3 - 40],
+        ])("leaves room for the image on %s", (_label, depth, expected) => {
+            const { layout } = createWidthLayout();
+            const datum = createDatum({ depth });
+
+            datum.data.data.imageSize = 30;
+
+            expect(layout.getAvailableWidth(datum, position)).toBe(expected);
+        });
+
+        it("still uses the chord on the last inner ancestor ring", () => {
+            const { layout } = createWidthLayout();
+
+            expect(layout.getAvailableWidth(createDatum({ depth: 2 }), position)).toBe(
+                200 - 20 - 3,
+            );
+        });
+
+        it("ignores the image on an outer ancestor ring", () => {
+            const { layout } = createWidthLayout();
+            const datum = createDatum({ depth: 4 });
+
+            datum.data.data.imageSize = 30;
+
+            expect(layout.getAvailableWidth(datum, position)).toBe(150 - 20 - 5);
+        });
+    });
+
     describe("isInnerLabel", () => {
         // A descendant sector that spans a half turn, so a datum fraction of
         // 0.1 is 18 degrees wide.

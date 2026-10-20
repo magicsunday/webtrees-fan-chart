@@ -24,7 +24,7 @@ import { MATH_RAD2DEG } from "./geometry.js";
  */
 
 /**
- * One of the TEXT_SLOT identifiers; its index names the slot's path.
+ * One of the TEXT_SLOT identifiers. Its index names the slot's path.
  *
  * @typedef {object} TextSlot
  * @property {number} index The slot index used in the path ID
