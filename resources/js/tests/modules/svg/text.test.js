@@ -73,6 +73,7 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
 // own jest tests cover the abbreviation algorithm. Here we mock both so the
 // fan-chart unit tests can assert that text.js wires them through correctly
 // (right argument shape, right strategy from configuration).
+const truncateToFitMock = jest.fn((tspan) => tspan.text());
 const truncateNamesMock = jest.fn((names, _availableWidth, measureFn) => {
     // Call measureFn so the existing measureText call-count assertions
     // continue to reflect the integration contract.
@@ -85,7 +86,7 @@ const truncateNamesMock = jest.fn((names, _availableWidth, measureFn) => {
 await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/infra", () => ({
     measureText: measureTextMock,
     truncateNames: truncateNamesMock,
-    truncateToFit: jest.fn((tspan) => tspan.text()),
+    truncateToFit: truncateToFitMock,
 }));
 
 const { default: Text } = await import("resources/js/modules/svg/text");
@@ -332,6 +333,85 @@ describe("Text", () => {
         });
     });
 
+    describe("line widths of the labels", () => {
+        // Every slot has its own position, and the stubbed layout turns a
+        // position into a width, so a width that reaches the truncation proves
+        // that the label asked for the width of the right slot.
+        const positions = new Map([
+            [TEXT_SLOT.FIRST_NAMES, { normal: 1, flipped: 0 }],
+            [TEXT_SLOT.LAST_NAMES, { normal: 3, flipped: 0 }],
+            [TEXT_SLOT.ALTERNATIVE_NAME, { normal: 5, flipped: 0 }],
+            [TEXT_SLOT.DATE_LINE_1, { normal: 7, flipped: 0 }],
+            [TEXT_SLOT.DATE_LINE_2, { normal: 9, flipped: 0 }],
+        ]);
+
+        const createLabelText = () => {
+            const text = new Text(svgStub, createConfiguration(), {});
+
+            text._layout.getAvailableWidth = jest.fn((_datum, position) => position.normal * 100);
+            text.truncateNamesData = jest.fn((_parent, group) => group);
+            text.addNameElements = jest.fn();
+            text.createPathDefinition = jest.fn(() => "path-id");
+            text.transformOuterText = jest.fn();
+
+            return text;
+        };
+
+        const createParent = () => {
+            const element = {
+                append: () => element,
+                attr: () => element,
+                classed: () => element,
+                text: () => element,
+                selectAll: () => element,
+                node: () => ({ parentNode: {} }),
+            };
+
+            return element;
+        };
+
+        const createLabelDatum = (depth) => {
+            const datum = createDatum({ depth });
+
+            datum.data.data.alternativeName = "Jana";
+            datum.data.data.timespan = "a\nb";
+
+            return datum;
+        };
+
+        const widthsOf = (text) => text.truncateNamesData.mock.calls.map(([, , width]) => width);
+
+        beforeEach(() => {
+            truncateToFitMock.mockClear();
+        });
+
+        it("gives the inner labels the width of their own slot", () => {
+            const text = createLabelText();
+
+            text.createInnerLabels(createParent(), createLabelDatum(1), positions);
+
+            expect(widthsOf(text)).toEqual([100, 300, 500]);
+            expect(truncateToFitMock.mock.calls.map(([, width]) => width)).toEqual([700, 900]);
+        });
+
+        it("gives the outer labels the width of their own slot", () => {
+            const text = createLabelText();
+
+            text.createOuterLabels(createParent(), createLabelDatum(3), positions);
+
+            expect(widthsOf(text)).toEqual([100, 300, 500]);
+            expect(truncateToFitMock.mock.calls.map(([, width]) => width)).toEqual([700, 900]);
+        });
+
+        it("gives the narrowest outer labels one line with the width of the first slot", () => {
+            const text = createLabelText();
+
+            text.createOuterLabels(createParent(), createLabelDatum(7), positions);
+
+            expect(widthsOf(text)).toEqual([100]);
+        });
+    });
+
     describe("createPathDefinition", () => {
         const createPathText = (positionFlipped) => {
             const relativeRadius = jest.fn(() => 50);
@@ -475,6 +555,38 @@ describe("Text", () => {
 
             // Middle of the arc at half a turn, flipped: 180 - (90 - baseline angle)
             expect(transform).toMatch(/^rotate\(90\.57\d*\) translate\(90\)$/);
+        });
+
+        it("shifts every line of an ancestor label by the angular offset of the layout", () => {
+            const nodes = [{ classes: [] }, { classes: ["date"] }];
+            const parent = {
+                selectAll: () => ({
+                    size: () => nodes.length,
+                    each(callback) {
+                        nodes.forEach((node, index) => callback.call(node, node, index));
+                    },
+                }),
+            };
+            const text = new Text(svgStub, createConfiguration(), {
+                scale: () => Math.PI / 2,
+                centerRadius: () => 100,
+                getFontSize: () => 10,
+                angularWidthDeg: () => 100,
+            });
+
+            text.transformOuterText(parent, { depth: 3, x0: 0.4, x1: 0.6 });
+
+            const radiansToDegrees = 180 / Math.PI;
+            const baselineAngle = ((10 * 0.1) / 100) * radiansToDegrees;
+            const lineGap = (10 / 100) * radiansToDegrees;
+            const rotations = nodes.map((node) =>
+                Number(/^rotate\((-?[\d.e-]+)\) translate\(90\)$/.exec(node.attrs.transform)?.[1]),
+            );
+
+            // A label on the right half is flipped, so its lines turn by the
+            // offset of the layout on top of the baseline correction.
+            expect(rotations[0]).toBeCloseTo(baselineAngle - lineGap / 2, 6);
+            expect(rotations[1]).toBeCloseTo(baselineAngle + lineGap / 2, 6);
         });
 
         it("falls back to the top when the descendant sector has no scale", () => {
