@@ -101,6 +101,41 @@ describe("Geometry", () => {
         expect(length).toBeCloseTo(span * relative);
     });
 
+    it("derives the angular width of an ancestor datum in radians and degrees", () => {
+        const geometry = new Geometry(createConfiguration({ fanDegree: 120 }));
+        const datum = { depth: 1, x0: 0.25, x1: 0.75 };
+
+        expect(geometry.angularWidth(datum)).toBeCloseTo(60 * MATH_DEG2RAD);
+        expect(geometry.angularWidthDeg(datum)).toBeCloseTo(60);
+    });
+
+    it("derives the angular width of a descendant datum from the child scale", () => {
+        const geometry = new Geometry(
+            createConfiguration({ childScale: (value) => value * Math.PI }),
+        );
+        const datum = { depth: -2, x0: 0.25, x1: 0.75 };
+
+        expect(geometry.angularWidth(datum)).toBeCloseTo(Math.PI / 2);
+        expect(geometry.angularWidthDeg(datum)).toBeCloseTo(90);
+    });
+
+    it("reports the angular width in degrees as an absolute value", () => {
+        const geometry = new Geometry(
+            createConfiguration({ childScale: (value) => -value * Math.PI }),
+        );
+        const datum = { depth: -2, x0: 0, x1: 0.5 };
+
+        expect(geometry.angularWidth(datum)).toBeCloseTo(-Math.PI / 2);
+        expect(geometry.angularWidthDeg(datum)).toBeCloseTo(90);
+    });
+
+    it("derives the arc width at the centre radius of the datum", () => {
+        const geometry = new Geometry(createConfiguration({ fanDegree: 120 }));
+        const datum = { depth: 1, x0: 0, x1: 1 };
+
+        expect(geometry.arcWidth(datum)).toBeCloseTo(120 * MATH_DEG2RAD * 65);
+    });
+
     it("returns true from isPositionFlipped for negative depths in the lower half", () => {
         // childScale maps [0,1] to a sector centered around 180° (PI)
         const descendantChildScale = (value) => Math.PI * 0.6 + value * (Math.PI * 0.8);

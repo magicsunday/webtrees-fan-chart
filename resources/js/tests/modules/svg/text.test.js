@@ -36,6 +36,9 @@ const selectMock = (node) => ({
         node.textContent = value;
         return this;
     },
+    classed(name) {
+        return (node.classes ?? []).includes(name);
+    },
 });
 
 await jest.unstable_mockModule("resources/js/modules/d3", () => ({
@@ -299,6 +302,56 @@ describe("Text", () => {
             expect(() => text.getSlotPosition(new Map(), Text.TEXT_SLOT.DATE_LINE_2)).toThrow(
                 `No text position calculated for slot ${Text.TEXT_SLOT.DATE_LINE_2.index}`,
             );
+        });
+    });
+
+    describe("calculateOuterSlotPositions", () => {
+        const MATH_RAD2DEG = 180 / Math.PI;
+
+        // Two name lines and one date line, at a font size of 10 px on a
+        // centre radius of 100 px.
+        const createTextElements = () => {
+            const nodes = [{ classes: [] }, { classes: [] }, { classes: ["date"] }];
+
+            return {
+                each(callback) {
+                    nodes.forEach((node) => callback.call(node));
+                },
+            };
+        };
+
+        const createText = (angularWidthDeg) =>
+            new Text(svgStub, createConfiguration(), {
+                getFontSize: () => 10,
+                centerRadius: () => 100,
+                angularWidthDeg: () => angularWidthDeg,
+            });
+
+        it("spaces the lines by the font size when the arc is wide enough", () => {
+            const positions = createText(100).calculateOuterSlotPositions(
+                createDatum({ depth: 4 }),
+                createTextElements(),
+            );
+
+            const degPerPixel = MATH_RAD2DEG / 100;
+            const nameGap = 11 * degPerPixel;
+            const groupGap = 10 * degPerPixel;
+            const total = nameGap + groupGap;
+
+            expect(positions).toHaveLength(3);
+            expect(positions[0]).toBeCloseTo(-total / 2);
+            expect(positions[1]).toBeCloseTo(-total / 2 + nameGap);
+            expect(positions[2]).toBeCloseTo(total / 2);
+        });
+
+        it("compresses the lines into 85 percent of a narrow arc", () => {
+            const positions = createText(10).calculateOuterSlotPositions(
+                createDatum({ depth: 4 }),
+                createTextElements(),
+            );
+
+            expect(positions[0]).toBeCloseTo(-4.25);
+            expect(positions[2]).toBeCloseTo(4.25);
         });
     });
 

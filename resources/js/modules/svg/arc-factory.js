@@ -8,6 +8,7 @@
 import * as d3 from "../d3.js";
 
 /**
+ * @import { Arc } from "d3-shape"
  * @import Configuration from "../configuration.js"
  * @import { HierarchyNode } from "../hierarchy.js"
  * @import Geometry from "./geometry.js"
@@ -35,6 +36,29 @@ export function createPersonArcGenerator(geometry, config, datum, padAngle) {
         .padAngle(padAngle)
         .padRadius(config.padRadius)
         .cornerRadius(config.cornerRadius);
+}
+
+/**
+ * Creates a d3.arc() generator for the thin colour strip along the outer edge
+ * of a person arc. The strip reaches the colour arc width inwards from the
+ * outer radius and one pixel beyond it, and keeps square corners.
+ *
+ * @param {Geometry}      geometry  Geometry instance for radius/angle calculations
+ * @param {Configuration} config    Configuration with colorArcWidth, padRadius
+ * @param {HierarchyNode} datum     D3 partition datum (depth, x0, x1)
+ * @param {number}        padAngle  Gap angle between adjacent arcs in radians
+ *
+ * @return {Arc<any, any>} Configured d3.arc() generator
+ */
+export function createColorStripArcGenerator(geometry, config, datum, padAngle) {
+    return d3
+        .arc()
+        .startAngle(geometry.startAngle(datum.depth, datum.x0))
+        .endAngle(geometry.endAngle(datum.depth, datum.x1))
+        .innerRadius(geometry.outerRadius(datum.depth) - config.colorArcWidth)
+        .outerRadius(geometry.outerRadius(datum.depth) + 1)
+        .padAngle(padAngle)
+        .padRadius(config.padRadius);
 }
 
 /**
