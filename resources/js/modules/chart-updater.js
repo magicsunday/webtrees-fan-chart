@@ -10,6 +10,7 @@ import Geometry from "./svg/geometry.js";
 import Person from "./svg/person.js";
 import Marriage from "./svg/marriage.js";
 import FamilyColor from "./svg/family-color.js";
+import { applyFamilyColorMode, isDrawnPerson, isMarriageParent } from "./draw-rules.js";
 
 /**
  * @import { Transition } from "d3-transition"
@@ -112,14 +113,7 @@ export default class ChartUpdater {
 
                 // Compute family colors upfront — marriage arcs reference their
                 // children's familyColor, so colors must be set before either loop.
-                const familyColor = new FamilyColor(this._configuration);
-                familyColor.setPartnerMidpoints(this._hierarchy.nodes);
-
-                if (this._configuration.showFamilyColors) {
-                    this._hierarchy.applyFamilyColors(familyColor);
-                }
-
-                this._svg.visual.classed("family-colors", this._configuration.showFamilyColors);
+                applyFamilyColorMode(this._hierarchy, this._svg.visual, this._configuration);
 
                 // Note: descendant marriage arcs are handled in drawDescendantMarriageArcs()
                 // via redrawOverlayLayers(), using the same enter/exit/update pattern.
@@ -253,12 +247,7 @@ export default class ChartUpdater {
         // hideEmptySegments filtered them out on the previous center person).
         personJoin
             .enter()
-            .filter(
-                (datum) =>
-                    datum.data.data.xref !== "" ||
-                    !configuration.hideEmptySegments ||
-                    datum.depth < 0,
-            )
+            .filter((datum) => isDrawnPerson(datum, configuration))
             .append("g")
             .attr("class", "person new")
             .attr("id", (datum) => `person-${datum.id}`)
@@ -285,8 +274,8 @@ export default class ChartUpdater {
         const configuration = this._configuration;
         const geometry = new Geometry(configuration, this._hierarchy.descendantLayout);
 
-        const marriageNodes = this._hierarchy.nodes.filter(
-            (datum) => datum.children && datum.depth < configuration.generations - 1,
+        const marriageNodes = this._hierarchy.nodes.filter((datum) =>
+            isMarriageParent(datum, configuration),
         );
 
         // Flag existing marriage elements that are subject to change.
