@@ -50,12 +50,30 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
     scaleLinear: scaleLinearMock,
     select: jest.fn((node) => selectMock(node)),
+    arc: jest.fn(() => {
+        const generator = () => "M0,0";
+
+        for (const setter of [
+            "startAngle",
+            "endAngle",
+            "innerRadius",
+            "outerRadius",
+            "padAngle",
+            "padRadius",
+            "cornerRadius",
+        ]) {
+            generator[setter] = () => generator;
+        }
+
+        return generator;
+    }),
 }));
 
 // truncateNames and truncateToFit live in chart-lib since v1.2.0; chart-lib's
 // own jest tests cover the abbreviation algorithm. Here we mock both so the
 // fan-chart unit tests can assert that text.js wires them through correctly
 // (right argument shape, right strategy from configuration).
+const truncateToFitMock = jest.fn((tspan) => tspan.text());
 const truncateNamesMock = jest.fn((names, _availableWidth, measureFn) => {
     // Call measureFn so the existing measureText call-count assertions
     // continue to reflect the integration contract.
@@ -68,10 +86,11 @@ const truncateNamesMock = jest.fn((names, _availableWidth, measureFn) => {
 await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/infra", () => ({
     measureText: measureTextMock,
     truncateNames: truncateNamesMock,
-    truncateToFit: jest.fn((tspan) => tspan.text()),
+    truncateToFit: truncateToFitMock,
 }));
 
 const { default: Text } = await import("resources/js/modules/svg/text");
+const { TEXT_SLOT } = await import("resources/js/modules/svg/arc-label-layout");
 
 const createConfiguration = (overrides = {}) => ({
     numberOfInnerCircles: 2,
@@ -120,21 +139,6 @@ describe("Text", () => {
     beforeEach(() => {
         measureTextMock.mockClear();
         scaleLinearMock.mockClear();
-    });
-
-    it("splits full names into ordered label groups", () => {
-        const text = new Text(svgStub, createConfiguration());
-        const datum = createDatum();
-
-        const [firstNames, lastNames] = text.createNamesData(datum);
-
-        expect(firstNames).toEqual([
-            { label: "Jane", isPreferred: false, isLastName: false, isNameRtl: false },
-            { label: "Marie", isPreferred: true, isLastName: false, isNameRtl: false },
-        ]);
-        expect(lastNames).toEqual([
-            { label: "Doe", isPreferred: false, isLastName: true, isNameRtl: false },
-        ]);
     });
 
     it("truncates names based on available width and preference", () => {
@@ -188,26 +192,11 @@ describe("Text", () => {
         );
     });
 
-    it("calculates available width using arc geometry for inner labels", () => {
-        const text = new Text(svgStub, createConfiguration());
-        const datum = createDatum();
-        const position = { normal: 73, flipped: 23 };
-
-        const availableWidth = text.getAvailableWidth(datum, position);
-
-        const positionFlipped = text.isPositionFlipped(datum.depth, datum.x0, datum.x1);
-        const offset = positionFlipped ? position.flipped : position.normal;
-
-        expect(availableWidth).toBeCloseTo(
-            Math.PI * text._geometry.relativeRadius(datum.depth, offset) - 23,
-        );
-    });
-
     describe("renderTimespanLines", () => {
         const createPositions = () =>
             new Map([
-                [Text.TEXT_SLOT.DATE_LINE_1, { normal: 40, flipped: 60 }],
-                [Text.TEXT_SLOT.DATE_LINE_2, { normal: 50, flipped: 50 }],
+                [TEXT_SLOT.DATE_LINE_1, { normal: 40, flipped: 60 }],
+                [TEXT_SLOT.DATE_LINE_2, { normal: 50, flipped: 50 }],
             ]);
 
         const createLineContainer = () => {
@@ -249,11 +238,11 @@ describe("Text", () => {
             text.renderTimespanLines(datum, positions, createElement);
 
             expect(createElement).toHaveBeenCalledTimes(2);
-            expect(createElement).toHaveBeenNthCalledWith(1, Text.TEXT_SLOT.DATE_LINE_1, {
+            expect(createElement).toHaveBeenNthCalledWith(1, TEXT_SLOT.DATE_LINE_1, {
                 normal: 40,
                 flipped: 60,
             });
-            expect(createElement).toHaveBeenNthCalledWith(2, Text.TEXT_SLOT.DATE_LINE_2, {
+            expect(createElement).toHaveBeenNthCalledWith(2, TEXT_SLOT.DATE_LINE_2, {
                 normal: 50,
                 flipped: 50,
             });
@@ -275,52 +264,22 @@ describe("Text", () => {
 
             expect(createElement).not.toHaveBeenCalled();
         });
-    });
 
-    describe("getTimespan", () => {
-        const createCompactGeometry = (compactChildren) => ({ compactChildren });
-
-        const createChildDatum = (depth) => {
-            const datum = createDatum({ depth });
+        const createCompactChildDatum = () => {
+            const datum = createDatum({ depth: -2 });
             datum.data.data.timespan = "\u2605 1900 Rome";
             datum.data.data.compactTimespan = "\u2605 1900";
 
             return datum;
         };
 
-        it("uses the compact range for a child while the child arcs are narrow", () => {
-            const text = new Text(svgStub, createConfiguration(), createCompactGeometry(true));
-
-            expect(text.getTimespan(createChildDatum(-2))).toBe("\u2605 1900");
-        });
-
-        it("keeps the regular timespan for a child while the child arcs are wide", () => {
-            const text = new Text(svgStub, createConfiguration(), createCompactGeometry(false));
-
-            expect(text.getTimespan(createChildDatum(-2))).toBe("\u2605 1900 Rome");
-        });
-
-        it.each([[-1], [1], [3]])("keeps the regular timespan at depth %i", (depth) => {
-            const text = new Text(svgStub, createConfiguration(), createCompactGeometry(true));
-
-            expect(text.getTimespan(createChildDatum(depth))).toBe("\u2605 1900 Rome");
-        });
-
-        it("keeps the regular timespan when the payload has no compact range", () => {
-            const text = new Text(svgStub, createConfiguration(), createCompactGeometry(true));
-            const datum = createChildDatum(-2);
-            delete datum.data.data.compactTimespan;
-
-            expect(text.getTimespan(datum)).toBe("\u2605 1900 Rome");
-        });
-
         it("renders the compact range of a narrow child", () => {
-            const text = new Text(svgStub, createConfiguration(), createCompactGeometry(true));
+            const text = new Text(svgStub, createConfiguration(), { compactChildren: true });
             const titles = [];
             const tspans = [];
 
             // The arc width is irrelevant here, the test only reads the rendered line.
-            text.getAvailableWidth = jest.fn(() => 1000);
+            text._layout.getAvailableWidth = jest.fn(() => 1000);
             const createElement = jest.fn(() => {
                 const container = {
                     append: jest.fn((name) => {
@@ -340,82 +299,209 @@ describe("Text", () => {
                 return container;
             });
             const positions = new Map([
-                [Text.TEXT_SLOT.DATE_LINE_1, { normal: 40, flipped: 60 }],
-                [Text.TEXT_SLOT.DATE_LINE_2, { normal: 50, flipped: 50 }],
+                [TEXT_SLOT.DATE_LINE_1, { normal: 40, flipped: 60 }],
+                [TEXT_SLOT.DATE_LINE_2, { normal: 50, flipped: 50 }],
             ]);
 
-            text.renderTimespanLines(createChildDatum(-2), positions, createElement);
+            text.renderTimespanLines(createCompactChildDatum(), positions, createElement);
 
             expect(titles[0].text).toHaveBeenCalledWith("\u2605 1900");
             expect(tspans[0].text).toHaveBeenCalledWith("\u2605 1900");
         });
     });
 
-    describe("calculateSlotPositions", () => {
-        const createSlotGeometry = (compactChildren) => ({
-            compactChildren,
-            getFontSize: () => 10,
-            innerRadius: () => 100,
-            outerRadius: () => 200,
-        });
+    describe("createLabels", () => {
+        it.each([
+            ["inner arc text for an inner label", true, "createInnerLabels", "createOuterLabels"],
+            ["rotated text for an outer label", false, "createOuterLabels", "createInnerLabels"],
+        ])("hands the slot positions to %s", (_label, isInner, expectedCall, otherCall) => {
+            const text = new Text(svgStub, createConfiguration(), {});
+            const positions = new Map();
+            const parent = {};
+            const datum = createDatum();
 
-        const createSlotDatum = (timespan, compactTimespan) => {
-            const datum = createDatum({ depth: -2 });
-            datum.data.data.timespan = timespan;
-            datum.data.data.compactTimespan = compactTimespan;
+            text._layout.isInnerLabel = jest.fn(() => isInner);
+            text._layout.calculateSlotPositions = jest.fn(() => positions);
+            text.createInnerLabels = jest.fn();
+            text.createOuterLabels = jest.fn();
+
+            text.createLabels(parent, datum);
+
+            expect(text._layout.calculateSlotPositions).toHaveBeenCalledWith(datum);
+            expect(text[expectedCall]).toHaveBeenCalledWith(parent, datum, positions);
+            expect(text[otherCall]).not.toHaveBeenCalled();
+        });
+    });
+
+    describe("line widths of the labels", () => {
+        // Every slot has its own position, and the stubbed layout turns a
+        // position into a width, so a width that reaches the truncation proves
+        // that the label asked for the width of the right slot.
+        const positions = new Map([
+            [TEXT_SLOT.FIRST_NAMES, { normal: 1, flipped: 0 }],
+            [TEXT_SLOT.LAST_NAMES, { normal: 3, flipped: 0 }],
+            [TEXT_SLOT.ALTERNATIVE_NAME, { normal: 5, flipped: 0 }],
+            [TEXT_SLOT.DATE_LINE_1, { normal: 7, flipped: 0 }],
+            [TEXT_SLOT.DATE_LINE_2, { normal: 9, flipped: 0 }],
+        ]);
+
+        const createLabelText = () => {
+            const text = new Text(svgStub, createConfiguration(), {});
+
+            text._layout.getAvailableWidth = jest.fn((_datum, position) => position.normal * 100);
+            text.truncateNamesData = jest.fn((_parent, group) => group);
+            text.addNameElements = jest.fn();
+            text.createPathDefinition = jest.fn(() => "path-id");
+            text.transformOuterText = jest.fn();
+
+            return text;
+        };
+
+        const createParent = () => {
+            const element = {
+                append: () => element,
+                attr: () => element,
+                classed: () => element,
+                text: () => element,
+                selectAll: () => element,
+                node: () => ({ parentNode: {} }),
+            };
+
+            return element;
+        };
+
+        const createLabelDatum = (depth) => {
+            const datum = createDatum({ depth });
+
+            datum.data.data.alternativeName = "Jana";
+            datum.data.data.timespan = "a\nb";
 
             return datum;
         };
 
-        const calculate = (compactChildren, timespan, compactTimespan) =>
-            new Text(
-                svgStub,
-                createConfiguration({ colorArcWidth: 10 }),
-                createSlotGeometry(compactChildren),
-            ).calculateSlotPositions(createSlotDatum(timespan, compactTimespan));
+        const widthsOf = (text) => text.truncateNamesData.mock.calls.map(([, , width]) => width);
 
-        it("reserves the date slots of the compact range while the child arcs are narrow", () => {
-            const positions = calculate(true, "", "\u2605 1900");
-
-            expect(positions.has(Text.TEXT_SLOT.DATE_LINE_1)).toBe(true);
-            expect(positions.has(Text.TEXT_SLOT.DATE_LINE_2)).toBe(false);
+        beforeEach(() => {
+            truncateToFitMock.mockClear();
         });
 
-        it("reserves no date slot when only the regular range exists and the arcs are narrow", () => {
-            const positions = calculate(true, "\u2605 1900 Rome", "");
+        it("gives the inner labels the width of their own slot", () => {
+            const text = createLabelText();
 
-            expect(positions.has(Text.TEXT_SLOT.DATE_LINE_1)).toBe(false);
+            text.createInnerLabels(createParent(), createLabelDatum(1), positions);
+
+            expect(widthsOf(text)).toEqual([100, 300, 500]);
+            expect(truncateToFitMock.mock.calls.map(([, width]) => width)).toEqual([700, 900]);
         });
 
-        it("counts the lines of the compact range while the child arcs are narrow", () => {
-            const positions = calculate(true, "\u2605 1900 Rome\n\u2020 1980 Paris", "\u2605 1900");
+        it("gives the outer labels the width of their own slot", () => {
+            const text = createLabelText();
 
-            expect(positions.has(Text.TEXT_SLOT.DATE_LINE_2)).toBe(false);
+            text.createOuterLabels(createParent(), createLabelDatum(3), positions);
+
+            expect(widthsOf(text)).toEqual([100, 300, 500]);
+            expect(truncateToFitMock.mock.calls.map(([, width]) => width)).toEqual([700, 900]);
         });
 
-        it("counts the lines of the regular range while the child arcs are wide", () => {
-            const positions = calculate(
-                false,
-                "\u2605 1900 Rome\n\u2020 1980 Paris",
-                "\u2605 1900",
+        it("gives the narrowest outer labels one line with the width of the first slot", () => {
+            const text = createLabelText();
+
+            text.createOuterLabels(createParent(), createLabelDatum(7), positions);
+
+            expect(widthsOf(text)).toEqual([100]);
+        });
+    });
+
+    describe("createPathDefinition", () => {
+        const createPathText = (positionFlipped) => {
+            const relativeRadius = jest.fn(() => 50);
+            const path = { attr: () => path };
+            const defs = {
+                select: () => ({ node: () => null }),
+                append: () => path,
+            };
+            const text = new Text({ style: jest.fn(() => "Arial"), defs }, createConfiguration(), {
+                isPositionFlipped: () => positionFlipped,
+                startAngle: () => 0,
+                endAngle: () => 1,
+                relativeRadius,
+            });
+
+            return { text, relativeRadius };
+        };
+
+        it.each([
+            ["the flipped position on a flipped label", true, 60],
+            ["the normal position on a label read in reading direction", false, 40],
+        ])("places the path at %s", (_label, positionFlipped, expectedOffset) => {
+            const { text, relativeRadius } = createPathText(positionFlipped);
+
+            text.createPathDefinition(
+                "person-1",
+                TEXT_SLOT.FIRST_NAMES,
+                { normal: 40, flipped: 60 },
+                createDatum({ depth: 1 }),
             );
 
-            expect(positions.has(Text.TEXT_SLOT.DATE_LINE_2)).toBe(true);
+            expect(relativeRadius).toHaveBeenCalledWith(1, expectedOffset);
+        });
+    });
+
+    describe("vertical stack of the center label", () => {
+        const dyOf = (imageSize, classesList) => {
+            const nodes = classesList.map((classes) => ({ classes }));
+            const parent = {
+                selectAll: () => ({
+                    size: () => nodes.length,
+                    each(callback) {
+                        nodes.forEach((node, index) => callback.call(node, node, index));
+                    },
+                }),
+            };
+            const datum = createDatum({ depth: 0 });
+
+            datum.data.data.imageSize = imageSize;
+
+            new Text(svgStub, createConfiguration(), { getFontSize: () => 10 }).transformOuterText(
+                parent,
+                datum,
+            );
+
+            return nodes.map((node) => node.attrs.dy);
+        };
+
+        it("centers a name, alternative name and date stack without an image", () => {
+            expect(dyOf(0, [[], [], ["wt-chart-box-name-alt"], ["date"], ["date"]])).toEqual([
+                "-22px",
+                "-12.5px",
+                "2px",
+                "16.5px",
+                "26px",
+            ]);
+        });
+
+        it("places the stack below the image when there is one", () => {
+            expect(dyOf(40, [[], [], ["date"], ["date"]])).toEqual([
+                "6.5px",
+                "16px",
+                "30px",
+                "39.5px",
+            ]);
         });
     });
 
     describe("slot lookups", () => {
         it("returns the slot at the given index", () => {
             const text = new Text(svgStub, createConfiguration());
-            const slots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
+            const slots = [TEXT_SLOT.FIRST_NAMES, TEXT_SLOT.LAST_NAMES];
 
-            expect(text.getSlot(slots, 1)).toBe(Text.TEXT_SLOT.LAST_NAMES);
+            expect(text.getSlot(slots, 1)).toBe(TEXT_SLOT.LAST_NAMES);
         });
 
         it("throws when the slot list has no entry at the index", () => {
             const text = new Text(svgStub, createConfiguration());
 
-            expect(() => text.getSlot([Text.TEXT_SLOT.FIRST_NAMES], 3)).toThrow(
+            expect(() => text.getSlot([TEXT_SLOT.FIRST_NAMES], 3)).toThrow(
                 "No text slot at index 3",
             );
         });
@@ -423,16 +509,16 @@ describe("Text", () => {
         it("returns the position assigned to a slot", () => {
             const text = new Text(svgStub, createConfiguration());
             const position = { normal: 40, flipped: 60 };
-            const positions = new Map([[Text.TEXT_SLOT.DATE_LINE_1, position]]);
+            const positions = new Map([[TEXT_SLOT.DATE_LINE_1, position]]);
 
-            expect(text.getSlotPosition(positions, Text.TEXT_SLOT.DATE_LINE_1)).toBe(position);
+            expect(text.getSlotPosition(positions, TEXT_SLOT.DATE_LINE_1)).toBe(position);
         });
 
         it("throws when no position was calculated for a slot", () => {
             const text = new Text(svgStub, createConfiguration());
 
-            expect(() => text.getSlotPosition(new Map(), Text.TEXT_SLOT.DATE_LINE_2)).toThrow(
-                `No text position calculated for slot ${Text.TEXT_SLOT.DATE_LINE_2.index}`,
+            expect(() => text.getSlotPosition(new Map(), TEXT_SLOT.DATE_LINE_2)).toThrow(
+                `No text position calculated for slot ${TEXT_SLOT.DATE_LINE_2.index}`,
             );
         });
     });
@@ -471,70 +557,42 @@ describe("Text", () => {
             expect(transform).toMatch(/^rotate\(90\.57\d*\) translate\(90\)$/);
         });
 
+        it("shifts every line of an ancestor label by the angular offset of the layout", () => {
+            const nodes = [{ classes: [] }, { classes: ["date"] }];
+            const parent = {
+                selectAll: () => ({
+                    size: () => nodes.length,
+                    each(callback) {
+                        nodes.forEach((node, index) => callback.call(node, node, index));
+                    },
+                }),
+            };
+            const text = new Text(svgStub, createConfiguration(), {
+                scale: () => Math.PI / 2,
+                centerRadius: () => 100,
+                getFontSize: () => 10,
+                angularWidthDeg: () => 100,
+            });
+
+            text.transformOuterText(parent, { depth: 3, x0: 0.4, x1: 0.6 });
+
+            const radiansToDegrees = 180 / Math.PI;
+            const baselineAngle = ((10 * 0.1) / 100) * radiansToDegrees;
+            const lineGap = (10 / 100) * radiansToDegrees;
+            const rotations = nodes.map((node) =>
+                Number(/^rotate\((-?[\d.e-]+)\) translate\(90\)$/.exec(node.attrs.transform)?.[1]),
+            );
+
+            // A label on the right half is flipped, so its lines turn by the
+            // offset of the layout on top of the baseline correction.
+            expect(rotations[0]).toBeCloseTo(baselineAngle - lineGap / 2, 6);
+            expect(rotations[1]).toBeCloseTo(baselineAngle + lineGap / 2, 6);
+        });
+
         it("falls back to the top when the descendant sector has no scale", () => {
             const transform = transformOf(createDescendantText(null));
 
             expect(transform).toMatch(/^rotate\(-89\.42\d*\) translate\(90\)$/);
         });
-    });
-
-    describe("calculateOuterSlotPositions", () => {
-        const MATH_RAD2DEG = 180 / Math.PI;
-
-        // Two name lines and one date line, at a font size of 10 px on a
-        // centre radius of 100 px.
-        const createTextElements = () => {
-            const nodes = [{ classes: [] }, { classes: [] }, { classes: ["date"] }];
-
-            return {
-                each(callback) {
-                    nodes.forEach((node) => callback.call(node));
-                },
-            };
-        };
-
-        const createText = (angularWidthDeg) =>
-            new Text(svgStub, createConfiguration(), {
-                getFontSize: () => 10,
-                centerRadius: () => 100,
-                angularWidthDeg: () => angularWidthDeg,
-            });
-
-        it("spaces the lines by the font size when the arc is wide enough", () => {
-            const positions = createText(100).calculateOuterSlotPositions(
-                createDatum({ depth: 4 }),
-                createTextElements(),
-            );
-
-            const degPerPixel = MATH_RAD2DEG / 100;
-            const nameGap = 11 * degPerPixel;
-            const groupGap = 10 * degPerPixel;
-            const total = nameGap + groupGap;
-
-            expect(positions).toHaveLength(3);
-            expect(positions[0]).toBeCloseTo(-total / 2);
-            expect(positions[1]).toBeCloseTo(-total / 2 + nameGap);
-            expect(positions[2]).toBeCloseTo(total / 2);
-        });
-
-        it("compresses the lines into 85 percent of a narrow arc", () => {
-            const positions = createText(10).calculateOuterSlotPositions(
-                createDatum({ depth: 4 }),
-                createTextElements(),
-            );
-
-            expect(positions[0]).toBeCloseTo(-4.25);
-            expect(positions[2]).toBeCloseTo(4.25);
-        });
-    });
-
-    it("calculates available width for outer arcs without geometry", () => {
-        const text = new Text(svgStub, createConfiguration());
-        const datum = createDatum({ depth: 4 });
-        const position = { normal: 73, flipped: 23 };
-
-        const availableWidth = text.getAvailableWidth(datum, position);
-
-        expect(availableWidth).toBe(150 - 20 - 5);
     });
 });

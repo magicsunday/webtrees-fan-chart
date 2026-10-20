@@ -68,7 +68,7 @@ Flat layout — every file is fan-chart-specific glue. Reusable base classes (St
 - **`index.js`** — Exports `FanChart` class (ES module entry point for Rollup).
 - **`page-entry.js` / `page-init.js`** — UMD bundle (`fan-chart-page.min.js`) loaded by `page.phtml`. Owns localStorage form-state wiring; `initPage()` resolves user options and publishes them under `WebtreesFanChart.chartOptions` for `chart.phtml` getters.
 - **`chart.js`** (D3 partition layout, click handling), **`chart-updater.js`** (AJAX update, transitions), **`draw-rules.js`** (which records are drawn and the family color setup, shared by the render and the update), **`hierarchy.js`** (D3 hierarchy, symbol constants), **`descendant-layout.js`** (angle scale, narrowest child fraction and compact-children flag of the descendant sector, owned by the hierarchy and read by `Geometry`), **`configuration.js`**, **`svg.js`**.
-- **`svg/`** — person/text/marriage/tooltip rendering, `arc.js` (shared arc DOM helper), `arc-factory.js`, `geometry.js`, `lifecycle.js`, `family-color.js`, `filter.js`, `label-renderer.js`, `tooltip-renderer.js`.
+- **`svg/`** — person/text/marriage/tooltip rendering, `name-parts.js` (pure splitting of a name into label parts), `arc-label-layout.js` (label style, slot positions and line widths of an arc, no drawing), `arc.js` (shared arc DOM helper), `arc-factory.js`, `geometry.js`, `lifecycle.js`, `family-color.js`, `filter.js`, `label-renderer.js`, `tooltip-renderer.js`.
 - **`d3.js`** — D3 facade re-exporting only the d3 sub-packages used by the chart (selection, transition, zoom, hierarchy, scale, etc.).
 
 ### Views (`resources/views/`)
