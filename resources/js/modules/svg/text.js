@@ -8,19 +8,14 @@
 import * as d3 from "../d3.js";
 import Geometry, { MATH_RAD2DEG } from "./geometry.js";
 import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees-chart-lib/infra";
+import { createAlternativeNamesData, createNamesData } from "./name-parts.js";
 
 /**
  * @import { Selection } from "d3-selection"
  * @import Svg from "../svg.js"
  * @import Configuration from "../configuration.js"
  * @import { HierarchyNode } from "../hierarchy.js"
- *
- * @typedef {object} LabelElementData
- * @property {string}  label
- * @property {boolean} [isPreferred]
- * @property {boolean} [isLastName]
- * @property {boolean} [isNickname]
- * @property {boolean|undefined} [isNameRtl] Undefined when the payload does not carry the flag
+ * @import { LabelElementData } from "./name-parts.js"
  */
 
 /**
@@ -103,7 +98,7 @@ export default class Text {
      */
     createInnerLabels(parent, datum, positions) {
         const parentId = d3.select(parent.node().parentNode).attr("id");
-        const nameGroups = this.createNamesData(datum);
+        const nameGroups = createNamesData(datum);
         const textStartOffset = "25%";
         const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
 
@@ -133,7 +128,7 @@ export default class Text {
             const position = this.getSlotPosition(positions, slot);
             const pathId = this.createPathDefinition(parentId, slot, position, datum);
             const availableWidth = this.getAvailableWidth(datum, position);
-            const nameGroup = this.createAlternativeNamesData(datum);
+            const nameGroup = createAlternativeNamesData(datum);
 
             const textPath = parent
                 .append("text")
@@ -172,7 +167,7 @@ export default class Text {
      */
     createOuterLabels(parent, datum, positions) {
         if (datum.depth >= 7) {
-            const nameGroups = this.createNamesData(datum);
+            const nameGroups = createNamesData(datum);
             const availableWidth = this.getAvailableWidth(
                 datum,
                 this.getSlotPosition(positions, Text.TEXT_SLOT.FIRST_NAMES),
@@ -183,7 +178,7 @@ export default class Text {
 
             this.addNameElements(text, this.truncateNamesData(text, combined, availableWidth));
         } else {
-            const nameGroups = this.createNamesData(datum);
+            const nameGroups = createNamesData(datum);
             const nameSlots = [Text.TEXT_SLOT.FIRST_NAMES, Text.TEXT_SLOT.LAST_NAMES];
             // Center node only: lift the inline nickname out of the
             // given-names group and render it on its own line. The
@@ -249,7 +244,7 @@ export default class Text {
                     datum,
                     this.getSlotPosition(positions, Text.TEXT_SLOT.ALTERNATIVE_NAME),
                 );
-                const nameGroup = this.createAlternativeNamesData(datum);
+                const nameGroup = createAlternativeNamesData(datum);
 
                 const text = parent
                     .append("text")
@@ -338,136 +333,6 @@ export default class Text {
 
             truncateToFit(tspan, availableWidth);
         });
-    }
-
-    /**
-     * Splits the individual's name into two arrays: first names and last names,
-     * preserving the order they appear in the full name string. Each entry
-     * carries flags for preferred-name underline and last-name bold styling.
-     * Returns [firstNamesArray, lastNamesArray].
-     *
-     * @param {HierarchyNode} datum The D3 partition datum
-     *
-     * @return {LabelElementData[][]}
-     *
-     * @private
-     */
-    createNamesData(datum) {
-        /**
-         * Name groups keyed by the position of their first part in the full
-         * name, so Object.values() returns them in name order.
-         *
-         * @type {Object<number, LabelElementData[]>}
-         */
-        const names = {};
-        let minPosFirstnames = Number.MAX_SAFE_INTEGER;
-        let minPosLastnames = Number.MAX_SAFE_INTEGER;
-
-        let firstnameOffset = 0;
-        /** @type {Map<number, LabelElementData>} */
-        const firstnameMap = new Map();
-
-        // Iterate over the individual name components and determine their position in the overall
-        // name and insert the component at the corresponding position in the result object.
-        for (const firstName of datum.data.data.firstNames) {
-            const pos = datum.data.data.name.indexOf(firstName, firstnameOffset);
-
-            if (pos !== -1) {
-                firstnameOffset = pos + firstName.length;
-
-                if (pos < minPosFirstnames) {
-                    minPosFirstnames = pos;
-                }
-
-                firstnameMap.set(pos, {
-                    label: firstName,
-                    isPreferred: firstName === datum.data.data.preferredName,
-                    isLastName: false,
-                    isNameRtl: datum.data.data.isNameRtl,
-                });
-            }
-        }
-
-        // Insert the optional nickname (e.g. "Chalky") into the first-names
-        // group when getShowNicknames is enabled and the GEDCOM has a NICK.
-        // Adding it to the firstname map keeps it inside the same slot as the
-        // given names (text rendering iterates only [FIRST_NAMES, LAST_NAMES]
-        // slots), and position-keyed iteration places it after the given names
-        // before the surname slot starts.
-        const nickname = datum.data.data.nickname;
-
-        if (nickname && nickname !== "") {
-            const nickQuoted = `"${nickname}"`;
-            const nickPos = datum.data.data.name.indexOf(nickQuoted);
-
-            if (nickPos !== -1) {
-                firstnameMap.set(nickPos, {
-                    label: nickQuoted,
-                    isPreferred: false,
-                    isLastName: false,
-                    isNickname: true,
-                    isNameRtl: datum.data.data.isNameRtl,
-                });
-            }
-        }
-
-        names[minPosFirstnames] = [...firstnameMap].map(([, value]) => value);
-
-        let lastnameOffset = 0;
-        /** @type {Map<number, LabelElementData>} */
-        const lastnameMap = new Map();
-
-        for (const lastName of datum.data.data.lastNames) {
-            let pos;
-
-            // Check if last name already exists in first names list, in case first name equals last name
-            do {
-                pos = datum.data.data.name.indexOf(lastName, lastnameOffset);
-
-                if (pos !== -1 && firstnameMap.has(pos)) {
-                    lastnameOffset = pos + lastName.length;
-                }
-            } while (pos !== -1 && firstnameMap.has(pos));
-
-            if (pos !== -1) {
-                lastnameOffset = pos;
-
-                if (pos < minPosLastnames) {
-                    minPosLastnames = pos;
-                }
-
-                lastnameMap.set(pos, {
-                    label: lastName,
-                    isPreferred: false,
-                    isLastName: true,
-                    isNameRtl: datum.data.data.isNameRtl,
-                });
-            }
-        }
-
-        names[minPosLastnames] = [...lastnameMap].map(([, value]) => value);
-
-        // Extract the values (keys don't matter anymore)
-        return Object.values(names);
-    }
-
-    /**
-     * Splits the alternative name into per-word LabelElementData entries, each
-     * marked with the isAltRtl flag for correct bidirectional spacing.
-     *
-     * @param {HierarchyNode} datum The D3 partition datum
-     *
-     * @return {LabelElementData[]}
-     *
-     * @private
-     */
-    createAlternativeNamesData(datum) {
-        return datum.data.data.alternativeName.split(/\s+/).map((word) => ({
-            label: word,
-            isPreferred: false,
-            isLastName: false,
-            isNameRtl: datum.data.data.isAltRtl,
-        }));
     }
 
     /**

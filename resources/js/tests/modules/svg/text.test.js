@@ -122,21 +122,6 @@ describe("Text", () => {
         scaleLinearMock.mockClear();
     });
 
-    it("splits full names into ordered label groups", () => {
-        const text = new Text(svgStub, createConfiguration());
-        const datum = createDatum();
-
-        const [firstNames, lastNames] = text.createNamesData(datum);
-
-        expect(firstNames).toEqual([
-            { label: "Jane", isPreferred: false, isLastName: false, isNameRtl: false },
-            { label: "Marie", isPreferred: true, isLastName: false, isNameRtl: false },
-        ]);
-        expect(lastNames).toEqual([
-            { label: "Doe", isPreferred: false, isLastName: true, isNameRtl: false },
-        ]);
-    });
-
     it("truncates names based on available width and preference", () => {
         truncateNamesMock.mockClear();
         const text = new Text(svgStub, createConfiguration());
