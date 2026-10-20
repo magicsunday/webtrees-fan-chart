@@ -18,7 +18,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:135
+#: src/Module.php:143
 msgid "A fan chart of an individual’s ancestors."
 msgstr "किसी व्यक्ती के पूर्वजों का एक फैन चार्ट।"
 
@@ -116,11 +116,11 @@ msgstr "PNG निकालें"
 msgid "Export as SVG"
 msgstr "SVG निकालें"
 
-#: src/Module.php:123 src/Module.php:236
+#: src/Module.php:131 src/Module.php:244
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:233 src/Module/ChartTrait.php:46
+#: src/Module.php:241 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -214,7 +214,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "चार्ट को स्थानांतरित करें"
 
-#: src/Module.php:260
+#: src/Module.php:268
 msgid "Move the view with two fingers"
 msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
 
@@ -343,7 +343,7 @@ msgstr "पूर्ण स्क्रीन और सामान्य द�
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:259
+#: src/Module.php:267
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Ctrl + Scroll से ज़ूम इन करें"
 
