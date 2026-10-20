@@ -629,6 +629,76 @@ describe("Update", () => {
         }
     });
 
+    test("enters only the records that the draw rules keep", () => {
+        const nodes = [
+            { id: "1", depth: 1, data: { data: { xref: "I1" } } },
+            { id: "2", depth: 1, data: { data: { xref: "" } } },
+            { id: "3", depth: -1, data: { data: { xref: "" } } },
+        ];
+        const entered = [];
+        const created = {
+            attr: () => created,
+            each: () => created,
+        };
+        const exiting = {
+            classed: () => exiting,
+            selectAll: () => exiting,
+        };
+        const join = {
+            each: () => join,
+            exit: () => exiting,
+            enter: () => ({
+                filter: (predicate) => {
+                    entered.push(...nodes.filter(predicate));
+
+                    return { append: () => created };
+                },
+            }),
+        };
+        const svg = { select: () => ({ selectAll: () => ({ data: () => join }) }) };
+        const hierarchy = new HierarchyStub();
+        const update = new Update(
+            svg,
+            defaultConfiguration({ hideEmptySegments: true }),
+            hierarchy,
+        );
+
+        hierarchy.nodes = nodes;
+
+        update._classifyPersonElements();
+
+        expect(entered.map((node) => node.id)).toEqual(["1", "3"]);
+    });
+
+    test("classifies marriage arcs only for nodes with children inside the displayed generations", () => {
+        const received = [];
+        const svg = {
+            selectAll: () => ({
+                data: (nodes) => {
+                    received.push(...nodes);
+
+                    return { each: () => ({}) };
+                },
+            }),
+        };
+        const hierarchy = new HierarchyStub();
+        const update = new Update(
+            svg,
+            defaultConfiguration({ showParentMarriageDates: true, generations: 6 }),
+            hierarchy,
+        );
+
+        hierarchy.nodes = [
+            { id: "a", depth: 0, children: [{}] },
+            { id: "b", depth: 5, children: [{}] },
+            { id: "c", depth: 1 },
+        ];
+
+        update._classifyMarriageElements();
+
+        expect(received.map((node) => node.id)).toEqual(["a"]);
+    });
+
     test("classifies the marriage arcs with the descendant layout of the hierarchy", () => {
         const marriageSelection = {
             classed: (_name, value) => (value === undefined ? false : marriageSelection),

@@ -454,6 +454,43 @@ describe("Chart", () => {
         expect(filteredNodes.every((node) => node.data.data.xref !== "")).toBe(true);
     });
 
+    test("draws marriage arcs only for nodes with children inside the displayed generations", () => {
+        const chart = new Chart(createParentSelection(), createConfiguration({ generations: 3 }));
+        const drawnNodes = [];
+        const marriageGroup = {
+            empty: () => false,
+            selectAll: () => marriageGroup,
+            each: () => marriageGroup,
+            data: (nodes) => {
+                drawnNodes.push(...nodes);
+
+                return {
+                    enter: () => ({
+                        append: () => ({
+                            attr: function () {
+                                return this;
+                            },
+                        }),
+                    }),
+                };
+            },
+        };
+
+        chart._svg = { visual: { select: () => marriageGroup } };
+        chart._hierarchy = {
+            descendantLayout: {},
+            nodes: [
+                { id: 1, depth: 0, children: [{}] },
+                { id: 2, depth: 2, children: [{}] },
+                { id: 3, depth: 1 },
+            ],
+        };
+
+        chart.drawMarriageArcs();
+
+        expect(drawnNodes.map((node) => node.id)).toEqual([1]);
+    });
+
     test("render sets viewBox using container size and padding", () => {
         const data = createHierarchyDatum();
         const parentSelection = createParentSelection({ width: 500, height: 400 });

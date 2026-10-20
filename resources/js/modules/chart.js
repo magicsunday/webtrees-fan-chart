@@ -12,7 +12,7 @@ import Svg from "./svg.js";
 import Person from "./svg/person.js";
 import Marriage from "./svg/marriage.js";
 import Geometry from "./svg/geometry.js";
-import FamilyColor from "./svg/family-color.js";
+import { applyFamilyColorMode, isDrawnPerson, isMarriageParent } from "./draw-rules.js";
 import ChartUpdater from "./chart-updater.js";
 
 /**
@@ -219,33 +219,16 @@ export default class Chart {
 
         const personGroup = this.svg.select("g.personGroup");
         const geometry = new Geometry(this._configuration, this._hierarchy.descendantLayout);
-        const familyColor = new FamilyColor(this._configuration);
-        familyColor.setPartnerMidpoints(this._hierarchy.nodes);
 
-        if (this._configuration.showFamilyColors) {
-            this._hierarchy.applyFamilyColors(familyColor);
-        }
-
-        // Mark family-colors mode so svg.css can keep text dark on the
-        // theme-constant pastel arc backgrounds (otherwise dark-theme
-        // body-color renders white text on the pastel fills).
-        this.svg.visual.classed("family-colors", this._configuration.showFamilyColors);
+        // Family colors are computed before the arcs are drawn, because the
+        // marriage arcs reference the colors of their children.
+        applyFamilyColorMode(this._hierarchy, this.svg.visual, this._configuration);
 
         personGroup
             .selectAll("g.person")
             .data(this._hierarchy.nodes, (datum) => datum.id)
             .enter()
-            .filter((datum) => {
-                // Filter out all empty records, but only if we hide empty segments
-                // otherwise the arcs won't be drawn correctly.
-                // Descendant nodes (depth < 0) are always included because
-                // empty partner arcs are structural placeholders.
-                return (
-                    datum.data.data.xref !== "" ||
-                    !this._configuration.hideEmptySegments ||
-                    datum.depth < 0
-                );
-            })
+            .filter((datum) => isDrawnPerson(datum, this._configuration))
             .append("g")
             .attr("class", "person")
             .attr("id", (datum) => `person-${datum.id}`);
@@ -413,8 +396,8 @@ export default class Chart {
         }
 
         // All nodes that have children and are within display range
-        const nodes = this._hierarchy.nodes.filter(
-            (datum) => datum.children && datum.depth < this._configuration.generations - 1,
+        const nodes = this._hierarchy.nodes.filter((datum) =>
+            isMarriageParent(datum, this._configuration),
         );
 
         // D3 data join: same pattern as person elements
