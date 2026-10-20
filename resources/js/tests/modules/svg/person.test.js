@@ -66,11 +66,13 @@ await jest.unstable_mockModule("resources/js/modules/svg/geometry", () => ({
     },
 }));
 
+const addLabelMock = jest.fn(() => ({}));
+
 await jest.unstable_mockModule("resources/js/modules/svg/label-renderer", () => ({
     __esModule: true,
     default: class {
-        addLabel() {
-            return {};
+        addLabel(...args) {
+            return addLabelMock(...args);
         }
     },
 }));
@@ -78,6 +80,9 @@ await jest.unstable_mockModule("resources/js/modules/svg/label-renderer", () => 
 const { default: Person } = await import("resources/js/modules/svg/person");
 
 afterEach(() => {
+    // Restore the spies too, otherwise a stubbed method stays stubbed for the
+    // tests of the next describe block
+    jest.restoreAllMocks();
     jest.clearAllMocks();
     hoverClassCalls.length = 0;
 });
@@ -315,14 +320,44 @@ describe("Person image size", () => {
 
         new Person({ div }, configuration, geometry, personSelection, datum);
 
-        return datum.data.data.imageSize;
+        return computeImageSize.mock.results.at(-1)?.value;
     };
+
+    let computeImageSize;
 
     beforeEach(() => {
         jest.spyOn(Person.prototype, "addArcToPerson").mockImplementation(() => {});
         jest.spyOn(Person.prototype, "addTitleToPerson").mockImplementation(() => {});
         jest.spyOn(Person.prototype, "addColorGroup").mockImplementation(() => {});
         jest.spyOn(Person.prototype, "addImageToPerson").mockImplementation(() => {});
+        computeImageSize = jest.spyOn(Person.prototype, "_computeImageSize");
+    });
+
+    it("hands the image size to the label and to the image instead of storing it on the datum", () => {
+        const { personSelection } = createPersonSelection();
+        const { div } = createDivSelection();
+        const datum = {
+            ...baseDatum,
+            depth: 1,
+            data: { data: { ...baseDatum.data.data, thumbnail: "thumb.jpg" } },
+        };
+
+        new Person(
+            { div },
+            { ...imageConfiguration, showNames: true },
+            arc(),
+            personSelection,
+            datum,
+        );
+
+        expect(addLabelMock).toHaveBeenCalledWith(expect.anything(), datum, 40);
+        expect(Person.prototype.addImageToPerson).toHaveBeenCalledWith(
+            expect.anything(),
+            datum,
+            true,
+            40,
+        );
+        expect(datum.data.data).not.toHaveProperty("imageSize");
     });
 
     it("sizes the image from the arc height when names are shown", () => {
@@ -356,18 +391,18 @@ describe("Person image size", () => {
 });
 
 describe("Person.addImageToPerson", () => {
-    const personWithImageSize = (thumbnail, imageSize) => ({
+    const personWithThumbnail = (thumbnail) => ({
         ...baseDatum,
-        data: { data: { ...baseDatum.data.data, thumbnail, imageSize } },
+        data: { data: { ...baseDatum.data.data, thumbnail } },
     });
 
     it.each([
-        ["no thumbnail", personWithImageSize("", 40)],
-        ["no computed image size", personWithImageSize("thumb.png", undefined)],
-    ])("draws nothing for a person with %s", (_label, datum) => {
+        ["no thumbnail", personWithThumbnail(""), 40],
+        ["no computed image size", personWithThumbnail("thumb.png"), 0],
+    ])("draws nothing for a person with %s", (_label, datum, imageSize) => {
         const person = { select: jest.fn(), append: jest.fn() };
 
-        Person.prototype.addImageToPerson.call({}, person, datum);
+        Person.prototype.addImageToPerson.call({}, person, datum, true, imageSize);
 
         expect(person.select).not.toHaveBeenCalled();
         expect(person.append).not.toHaveBeenCalled();

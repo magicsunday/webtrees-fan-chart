@@ -72,10 +72,12 @@ export default class ArcLabelLayout {
     /**
      * @param {Configuration} configuration The application configuration
      * @param {Geometry}      geometry      The geometry of the chart
+     * @param {number}        [imageSize]   The size of the person's image in px that a line makes room for, 0 for no image
      */
-    constructor(configuration, geometry) {
+    constructor(configuration, geometry, imageSize = 0) {
         this._configuration = configuration;
         this._geometry = geometry;
+        this._imageSize = imageSize;
     }
 
     /**
@@ -370,12 +372,9 @@ export default class ArcLabelLayout {
             this._configuration.textPadding * 2 -
             this._configuration.padDistance / 2;
 
-        // Reduce available width when an image is present.
-        // imageSize is pre-computed and set on the datum by Person.init() before labels are rendered.
-        const imageSize = data.data.data.imageSize || 0;
-
-        if (imageSize > 0) {
-            availableWidth -= imageSize + 10;
+        // Reduce available width when an image is present
+        if (this._imageSize > 0) {
+            availableWidth -= this._imageSize + 10;
         }
 
         return availableWidth;

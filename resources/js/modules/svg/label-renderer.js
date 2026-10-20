@@ -45,16 +45,17 @@ export default class LabelRenderer {
      *
      * @param {Selection<any, any, any, any>} parent The person <g> element to append the label group to
      * @param {HierarchyNode}                 datum  The D3 partition datum
+     * @param {number}                        imageSize The size of the person's image in px that the text makes room for, 0 for no image
      *
      * @return {Selection<any, any, any, any>}
      */
-    addLabel(parent, datum) {
+    addLabel(parent, datum, imageSize = 0) {
         const label = parent
             .append("g")
             .attr("class", "wt-chart-box-name name")
             .style("font-size", `${this._geometry.getFontSize(datum)}px`);
 
-        const text = new Text(this._svg, this._configuration, this._geometry);
+        const text = new Text(this._svg, this._configuration, this._geometry, imageSize);
         text.createLabels(label, datum);
 
         return label;

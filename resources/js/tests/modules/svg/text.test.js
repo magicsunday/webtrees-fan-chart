@@ -447,6 +447,23 @@ describe("Text", () => {
         });
     });
 
+    describe("room for the image", () => {
+        it("hands the image size on to the layout of the line widths", () => {
+            const position = { normal: 40, flipped: 60 };
+            const withImage = new Text(svgStub, createConfiguration(), {}, 30);
+            const withoutImage = new Text(svgStub, createConfiguration(), {});
+            const center = createDatum({ depth: 0 });
+
+            // The center circle gives up the width of the image and a gap
+            expect(withoutImage._layout.getAvailableWidth(center, position)).toBe(
+                40 * 2 - 40 * 0.15 - 20 - 3,
+            );
+            expect(withImage._layout.getAvailableWidth(center, position)).toBe(
+                40 * 2 - 40 * 0.15 - 20 - 3 - 40,
+            );
+        });
+    });
+
     describe("vertical stack of the center label", () => {
         const dyOf = (imageSize, classesList) => {
             const nodes = classesList.map((classes) => ({ classes }));
@@ -458,14 +475,12 @@ describe("Text", () => {
                     },
                 }),
             };
-            const datum = createDatum({ depth: 0 });
-
-            datum.data.data.imageSize = imageSize;
-
-            new Text(svgStub, createConfiguration(), { getFontSize: () => 10 }).transformOuterText(
-                parent,
-                datum,
-            );
+            new Text(
+                svgStub,
+                createConfiguration(),
+                { getFontSize: () => 10 },
+                imageSize,
+            ).transformOuterText(parent, createDatum({ depth: 0 }));
 
             return nodes.map((node) => node.attrs.dy);
         };

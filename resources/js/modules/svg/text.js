@@ -39,12 +39,14 @@ export default class Text {
      * @param {Svg}           svg
      * @param {Configuration} configuration The application configuration
      * @param {Geometry}      [geometry]    Optional geometry instance (created from config if omitted)
+     * @param {number}        [imageSize]   The size of the person's image in px that the text makes room for, 0 for no image
      */
-    constructor(svg, configuration, geometry) {
+    constructor(svg, configuration, geometry, imageSize = 0) {
         this._svg = svg;
         this._configuration = configuration;
         this._geometry = geometry || new Geometry(this._configuration);
-        this._layout = new ArcLabelLayout(this._configuration, this._geometry);
+        this._layout = new ArcLabelLayout(this._configuration, this._geometry, imageSize);
+        this._imageSize = imageSize;
     }
 
     /**
@@ -497,10 +499,9 @@ export default class Text {
         const countElements = textElements.size();
 
         // Center person: vertical stacking via dy.
-        // imageSize is pre-computed and set on the datum by Person.init() before labels are rendered.
         if (datum.depth === 0) {
             const fontSize = that._geometry.getFontSize(datum);
-            const imageSize = datum.data.data.imageSize || 0;
+            const imageSize = that._imageSize;
 
             if (imageSize > 0) {
                 // Image present: use absolute positioning to center image + text block.

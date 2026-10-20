@@ -340,7 +340,7 @@ describe("ArcLabelLayout", () => {
 
     describe("getAvailableWidth", () => {
         // A half turn sector so that a datum fraction of 0.5 spans 90 degrees.
-        const createWidthLayout = () => {
+        const createWidthLayout = (imageSize = 0) => {
             const arcLength = jest.fn(() => 200);
             const geometry = {
                 startAngle: () => 0,
@@ -351,7 +351,10 @@ describe("ArcLabelLayout", () => {
                 arcLength,
             };
 
-            return { layout: new ArcLabelLayout(createConfiguration(), geometry), arcLength };
+            return {
+                layout: new ArcLabelLayout(createConfiguration(), geometry, imageSize),
+                arcLength,
+            };
         };
 
         const position = { normal: 40, flipped: 60 };
@@ -385,12 +388,9 @@ describe("ArcLabelLayout", () => {
             ["the center circle", 0, 40 * 2 - 40 * 0.15 - 20 - 3 - 40],
             ["an inner ancestor ring", 1, 200 - 20 - 3 - 40],
         ])("leaves room for the image on %s", (_label, depth, expected) => {
-            const { layout } = createWidthLayout();
-            const datum = createDatum({ depth });
+            const { layout } = createWidthLayout(30);
 
-            datum.data.data.imageSize = 30;
-
-            expect(layout.getAvailableWidth(datum, position)).toBe(expected);
+            expect(layout.getAvailableWidth(createDatum({ depth }), position)).toBe(expected);
         });
 
         it("still uses the chord on the last inner ancestor ring", () => {
@@ -402,12 +402,11 @@ describe("ArcLabelLayout", () => {
         });
 
         it("ignores the image on an outer ancestor ring", () => {
-            const { layout } = createWidthLayout();
-            const datum = createDatum({ depth: 4 });
+            const { layout } = createWidthLayout(30);
 
-            datum.data.data.imageSize = 30;
-
-            expect(layout.getAvailableWidth(datum, position)).toBe(150 - 20 - 5);
+            expect(layout.getAvailableWidth(createDatum({ depth: 4 }), position)).toBe(
+                150 - 20 - 5,
+            );
         });
     });
 
