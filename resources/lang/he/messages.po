@@ -22,15 +22,15 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "תרשים מעריצים של אבותיו של אדם."
 
-#: src/Configuration.php:805
+#: src/Configuration.php:803
 msgid "Abbreviate given names first"
 msgstr "קצר תחילה את השמות הפרטיים"
 
-#: src/Configuration.php:806
+#: src/Configuration.php:804
 msgid "Abbreviate surnames first"
 msgstr "קצר תחילה את שמות המשפחה"
 
-#: src/Configuration.php:804
+#: src/Configuration.php:802
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "אוטומטי (על פי מסורת שם המשפחה של העץ)"
 

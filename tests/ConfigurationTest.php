@@ -64,6 +64,62 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
+     * The request shapes of the display mode: the method, the query parameters,
+     * the body and the expected visibility of images and names.
+     *
+     * @return array<string, array{string, array<string, string>, array<string, string>, bool, bool}>
+     */
+    public static function displayModeRequestProvider(): array
+    {
+        return [
+            'query images only'                        => ['GET', ['displayMode' => 'images'], [], true, false],
+            'query names only'                         => ['GET', ['displayMode' => 'names'], [], false, true],
+            'query both'                               => ['GET', ['displayMode' => 'both'], [], true, true],
+            'both wins over the toggles switched off'  => ['GET', ['displayMode' => 'both', 'showImages' => '0', 'showNames' => '0'], [], true, true],
+            'query wins over the single toggles'       => ['GET', ['displayMode' => 'images', 'showImages' => '0', 'showNames' => '1'], [], true, false],
+            'invalid query value uses the toggles'     => ['GET', ['displayMode' => 'everything', 'showImages' => '0', 'showNames' => '1'], [], false, true],
+            'body images only'                         => ['POST', [], ['displayMode' => 'images'], true, false],
+            'body wins over the query'                 => ['POST', ['displayMode' => 'names'], ['displayMode' => 'images'], true, false],
+            'a post reads the body only'               => ['POST', ['displayMode' => 'images'], [], true, true],
+            'invalid body value uses the body toggles' => ['POST', ['displayMode' => 'images'], ['displayMode' => 'everything', 'showImages' => '0', 'showNames' => '1'], false, true],
+        ];
+    }
+
+    /**
+     * The display mode decides about images and names before the single
+     * toggles and the module defaults do, and the body of a form post takes
+     * precedence over the query of the same request.
+     *
+     * @param array<string, string> $query
+     * @param array<string, string> $body
+     */
+    #[Test]
+    #[DataProvider('displayModeRequestProvider')]
+    public function theDisplayModeDecidesAboutImagesAndNames(
+        string $method,
+        array $query,
+        array $body,
+        bool $expectedImages,
+        bool $expectedNames,
+    ): void {
+        $request = (new ServerRequest($method, '/'))->withQueryParams($query);
+
+        if ($method === RequestMethodInterface::METHOD_POST) {
+            $request = $request->withParsedBody($body);
+        }
+
+        $module = $this->createModuleWithPreferences([
+            'default_showImages' => '1',
+            'default_showNames'  => '1',
+        ]);
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame($expectedImages, $configuration->getShowImages());
+        self::assertSame($expectedNames, $configuration->getShowNames());
+    }
+
+    /**
      * Ensures GET requests fall back to configured defaults when parameters are
      * absent.
      */

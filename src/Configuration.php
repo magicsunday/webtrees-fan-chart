@@ -673,22 +673,20 @@ class Configuration
     }
 
     /**
-     * Resolves the displayMode parameter from the request. Returns null if not
-     * present, allowing fallback to the individual showNames/showImages
-     * parameters.
+     * Resolves the displayMode parameter from the request, like every other
+     * option: from the body of a post and from the query of every other
+     * request. Returns null if not present or not one of the known modes,
+     * allowing fallback to the individual showNames/showImages parameters.
      *
      * @return string|null 'both', 'names', 'images', or null
      */
     private function resolveDisplayMode(): ?string
     {
-        $params = (array) $this->request->getParsedBody() + $this->request->getQueryParams();
-        $mode   = $params['displayMode'] ?? null;
+        $mode = $this->validator()
+            ->isInArray(['both', 'names', 'images'])
+            ->string('displayMode', '');
 
-        if (is_string($mode) && in_array($mode, ['both', 'names', 'images'], true)) {
-            return $mode;
-        }
-
-        return null;
+        return ($mode === '') ? null : $mode;
     }
 
     /**
