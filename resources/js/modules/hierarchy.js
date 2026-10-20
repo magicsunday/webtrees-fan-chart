@@ -270,10 +270,11 @@ export default class Hierarchy {
         const endPi = fanDeg === 90 ? fanDeg * MATH_DEG2RAD : (fanDeg / 2) * MATH_DEG2RAD;
 
         // startChildPi < endChildPi always holds here: the descendant sector is
-        // the complement of the ancestor fan, and Configuration clamps fanDegree
-        // to [180, 270] whenever showDescendants is set (a full turn would leave
-        // no room). The gap only closes at fanDegree >= 340, which the clamp
-        // rules out, so no room-check is needed.
+        // the complement of the ancestor fan, and the server clamps fanDegree
+        // (Configuration::MIN_FAN_DEGREE to MAX_FAN_DEGREE_WITH_DESCENDANTS)
+        // whenever showDescendants is set, because a full turn would leave no
+        // room. The gap only closes at fanDegree >= 340, which the clamp rules
+        // out, so no room-check is needed.
         const startChildPi = endPi + gap;
         const endChildPi = Math.PI * 2 + startPi - gap;
 

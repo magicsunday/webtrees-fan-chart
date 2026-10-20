@@ -7,7 +7,7 @@
 
 import * as d3 from "../d3.js";
 import { appendArc } from "./arc.js";
-import { createPersonArcGenerator } from "./arc-factory.js";
+import { createColorStripArcGenerator, createPersonArcGenerator } from "./arc-factory.js";
 import TooltipRenderer from "./tooltip-renderer.js";
 import LabelRenderer from "./label-renderer.js";
 import { SEX_FEMALE, SEX_MALE } from "../hierarchy.js";
@@ -163,16 +163,12 @@ export default class Person {
      * @private
      */
     addColorGroup(person, datum) {
-        const arcGenerator = d3
-            .arc()
-            .startAngle(this._geometry.startAngle(datum.depth, datum.x0))
-            .endAngle(this._geometry.endAngle(datum.depth, datum.x1))
-            .innerRadius(
-                this._geometry.outerRadius(datum.depth) - this._configuration.colorArcWidth,
-            )
-            .outerRadius(this._geometry.outerRadius(datum.depth) + 1)
-            .padAngle(this.getArcPadAngle(datum))
-            .padRadius(this._configuration.padRadius);
+        const arcGenerator = createColorStripArcGenerator(
+            this._geometry,
+            this._configuration,
+            datum,
+            this.getArcPadAngle(datum),
+        );
 
         const color = person.append("g").attr("class", "color");
 
@@ -216,24 +212,12 @@ export default class Person {
         if (this._configuration.showNames) {
             imageSize = Math.min(arcHeight * 0.4, IMAGE_HEIGHT_MAX);
         } else {
-            const arcWidth =
-                datum.depth === 0
-                    ? arcHeight
-                    : (this._geometry.endAngle(datum.depth, datum.x1) -
-                          this._geometry.startAngle(datum.depth, datum.x0)) *
-                      this._geometry.centerRadius(datum.depth);
+            const arcWidth = datum.depth === 0 ? arcHeight : this._geometry.arcWidth(datum);
 
             imageSize = Math.min(arcHeight, arcWidth) * 0.8;
         }
 
-        const angularWidth =
-            datum.depth === 0
-                ? 360
-                : Math.abs(
-                      this._geometry.endAngle(datum.depth, datum.x1) -
-                          this._geometry.startAngle(datum.depth, datum.x0),
-                  ) *
-                  (180 / Math.PI);
+        const angularWidth = datum.depth === 0 ? 360 : this._geometry.angularWidthDeg(datum);
 
         const minAngularWidth =
             datum.depth < 0 ? IMAGE_ANGULAR_MIN_DEG_DESCENDANT : IMAGE_ANGULAR_MIN_DEG;

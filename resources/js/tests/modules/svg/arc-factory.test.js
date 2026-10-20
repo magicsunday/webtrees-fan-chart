@@ -14,9 +14,8 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     arc: jest.fn(() => arcInstance),
 }));
 
-const { createPersonArcGenerator, createMarriageArcGenerator } = await import(
-    "resources/js/modules/svg/arc-factory"
-);
+const { createPersonArcGenerator, createColorStripArcGenerator, createMarriageArcGenerator } =
+    await import("resources/js/modules/svg/arc-factory");
 
 const mockGeometry = {
     startAngle: jest.fn((depth, x0) => x0 * Math.PI),
@@ -59,6 +58,44 @@ describe("createPersonArcGenerator", () => {
         expect(arcInstance.padAngle).toHaveBeenCalledWith(0.03);
         expect(arcInstance.padRadius).toHaveBeenCalledWith(300);
         expect(arcInstance.cornerRadius).toHaveBeenCalledWith(5);
+    });
+});
+
+describe("createColorStripArcGenerator", () => {
+    it("spans the colour arc width inwards from the outer edge of the arc", () => {
+        const datum = { depth: 2, x0: 0.1, x1: 0.3 };
+        const expectedStartAngle = mockGeometry.startAngle(2, 0.1);
+        const expectedEndAngle = mockGeometry.endAngle(2, 0.3);
+        const outerRadius = mockGeometry.outerRadius(2);
+
+        for (const method of Object.values(arcInstance)) {
+            method.mockClear();
+        }
+
+        createColorStripArcGenerator(
+            mockGeometry,
+            { ...mockConfig, colorArcWidth: 20 },
+            datum,
+            0.03,
+        );
+
+        expect(arcInstance.startAngle).toHaveBeenCalledWith(expectedStartAngle);
+        expect(arcInstance.endAngle).toHaveBeenCalledWith(expectedEndAngle);
+        expect(arcInstance.innerRadius).toHaveBeenCalledWith(outerRadius - 20);
+        expect(arcInstance.outerRadius).toHaveBeenCalledWith(outerRadius + 1);
+        expect(arcInstance.padAngle).toHaveBeenCalledWith(0.03);
+        expect(arcInstance.padRadius).toHaveBeenCalledWith(300);
+    });
+
+    it("leaves the corners of the strip square", () => {
+        createColorStripArcGenerator(
+            mockGeometry,
+            { ...mockConfig, colorArcWidth: 20 },
+            { depth: 1, x0: 0, x1: 1 },
+            0,
+        );
+
+        expect(arcInstance.cornerRadius).not.toHaveBeenCalled();
     });
 });
 

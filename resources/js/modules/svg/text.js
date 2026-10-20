@@ -1172,11 +1172,7 @@ export default class Text {
         });
 
         // Cap to 85% of angular span, compress proportionally if needed
-        const angularSpanDeg =
-            Math.abs(
-                this._geometry.endAngle(datum.depth, datum.x1) -
-                    this._geometry.startAngle(datum.depth, datum.x0),
-            ) * MATH_RAD2DEG;
+        const angularSpanDeg = this._geometry.angularWidthDeg(datum);
         const maxDeg = angularSpanDeg * 0.85;
 
         if (totalDeg > maxDeg && totalDeg > 0) {

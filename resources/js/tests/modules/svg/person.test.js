@@ -288,6 +288,73 @@ describe("Person tooltips", () => {
     });
 });
 
+describe("Person image size", () => {
+    const imageConfiguration = {
+        hideEmptySegments: false,
+        showImages: true,
+        showNames: false,
+        numberOfInnerCircles: 3,
+        centerCircleRadius: 40,
+    };
+
+    const arc = ({ inner = 100, outer = 200, width = 400, degrees = 30 } = {}) => ({
+        innerRadius: () => inner,
+        outerRadius: () => outer,
+        arcWidth: () => width,
+        angularWidthDeg: () => degrees,
+    });
+
+    const renderPerson = (depth, geometry, configuration = imageConfiguration) => {
+        const { personSelection } = createPersonSelection();
+        const { div } = createDivSelection();
+        const datum = {
+            ...baseDatum,
+            depth,
+            data: { data: { ...baseDatum.data.data, thumbnail: "thumb.jpg" } },
+        };
+
+        new Person({ div }, configuration, geometry, personSelection, datum);
+
+        return datum.data.data.imageSize;
+    };
+
+    beforeEach(() => {
+        jest.spyOn(Person.prototype, "addArcToPerson").mockImplementation(() => {});
+        jest.spyOn(Person.prototype, "addTitleToPerson").mockImplementation(() => {});
+        jest.spyOn(Person.prototype, "addColorGroup").mockImplementation(() => {});
+        jest.spyOn(Person.prototype, "addImageToPerson").mockImplementation(() => {});
+    });
+
+    it("sizes the image from the arc height when names are shown", () => {
+        expect(renderPerson(1, arc(), { ...imageConfiguration, showNames: true })).toBe(40);
+    });
+
+    it("sizes the image from the narrower of arc height and arc width without names", () => {
+        expect(renderPerson(1, arc({ outer: 180, width: 50 }))).toBe(40);
+    });
+
+    it("limits the image to the arc height when the arc is wider than tall", () => {
+        expect(renderPerson(1, arc({ outer: 150, width: 400 }))).toBe(40);
+    });
+
+    it("skips the image when the arc is too narrow for the minimum size", () => {
+        expect(renderPerson(1, arc({ width: 20 }))).toBeNull();
+    });
+
+    it("skips the image when the arc spans too few degrees", () => {
+        expect(renderPerson(1, arc({ degrees: 5 }))).toBeNull();
+    });
+
+    it("asks a descendant arc for a wider angle than an ancestor arc", () => {
+        expect(renderPerson(1, arc({ degrees: 20 }))).toBe(80);
+        expect(renderPerson(-2, arc({ degrees: 20 }))).toBeNull();
+    });
+
+    it("sizes the centre image from the centre circle regardless of the arc angle", () => {
+        expect(renderPerson(0, arc({ width: 5, degrees: 1 }))).toBe(64);
+    });
+});
+
 describe("Person.addImageToPerson", () => {
     const personWithImageSize = (thumbnail, imageSize) => ({
         ...baseDatum,

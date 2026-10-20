@@ -239,10 +239,42 @@ export default class Geometry {
      * @return {number}
      */
     arcLength(datum, position) {
-        return (
-            (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0)) *
-            this.relativeRadius(datum.depth, position)
-        );
+        return this.angularWidth(datum) * this.relativeRadius(datum.depth, position);
+    }
+
+    /**
+     * Angular width of the datum's arc in radians (end angle minus start angle).
+     * The sign follows the direction in which the arc is drawn.
+     *
+     * @param {HierarchyNode} datum D3 partition datum (needs depth, x0, x1)
+     *
+     * @return {number}
+     */
+    angularWidth(datum) {
+        return this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0);
+    }
+
+    /**
+     * Angular width of the datum's arc in degrees, always positive.
+     *
+     * @param {HierarchyNode} datum D3 partition datum (needs depth, x0, x1)
+     *
+     * @return {number}
+     */
+    angularWidthDeg(datum) {
+        return Math.abs(this.angularWidth(datum)) * MATH_RAD2DEG;
+    }
+
+    /**
+     * Width of the datum's arc in pixels, measured along the centre radius of
+     * its generation.
+     *
+     * @param {HierarchyNode} datum D3 partition datum (needs depth, x0, x1)
+     *
+     * @return {number}
+     */
+    arcWidth(datum) {
+        return this.angularWidth(datum) * this.centerRadius(datum.depth);
     }
 
     /**
@@ -272,14 +304,10 @@ export default class Geometry {
         const isChild = datum.depth <= -2;
 
         if (isOuterAncestor || isPartner) {
-            const angularWidth =
-                (this.endAngle(datum.depth, datum.x1) - this.startAngle(datum.depth, datum.x0)) *
-                this.centerRadius(datum.depth);
-
             // Depth >= 7 merges first + last name into 1 line; others use 2
             const lines = absDepth >= 7 ? 1 : 2;
             const factor = isPartner ? 0.35 : 0.55;
-            const maxFont = (angularWidth * factor) / lines;
+            const maxFont = (this.arcWidth(datum) * factor) / lines;
 
             scaled = Math.min(scaled, maxFont);
         }
