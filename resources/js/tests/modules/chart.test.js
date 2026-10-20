@@ -325,6 +325,19 @@ describe("Chart", () => {
         personConstructor.mockClear();
     });
 
+    test("svg throws before render() has been called and is available afterwards", () => {
+        const chart = new Chart(createParentSelection(), createConfiguration());
+
+        expect(() => chart.svg).toThrow(
+            "Chart.svg is not available before render() has been called",
+        );
+
+        chart.data = createHierarchyDatum();
+        chart.render();
+
+        expect(() => chart.svg).not.toThrow();
+    });
+
     test("convertRemToPixels uses the document root font size", () => {
         const chart = new Chart(createParentSelection(), createConfiguration());
         const getComputedStyleSpy = jest

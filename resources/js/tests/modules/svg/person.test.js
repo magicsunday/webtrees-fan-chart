@@ -288,6 +288,25 @@ describe("Person tooltips", () => {
     });
 });
 
+describe("Person.addImageToPerson", () => {
+    const personWithImageSize = (thumbnail, imageSize) => ({
+        ...baseDatum,
+        data: { data: { ...baseDatum.data.data, thumbnail, imageSize } },
+    });
+
+    it.each([
+        ["no thumbnail", personWithImageSize("", 40)],
+        ["no computed image size", personWithImageSize("thumb.png", undefined)],
+    ])("draws nothing for a person with %s", (_label, datum) => {
+        const person = { select: jest.fn(), append: jest.fn() };
+
+        Person.prototype.addImageToPerson.call({}, person, datum);
+
+        expect(person.select).not.toHaveBeenCalled();
+        expect(person.append).not.toHaveBeenCalled();
+    });
+});
+
 describe("Person interactions", () => {
     let personSelection;
     let handlers;
