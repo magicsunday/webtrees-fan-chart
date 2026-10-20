@@ -250,7 +250,7 @@ describe("Hierarchy.initDescendants", () => {
     test("does nothing when showDescendants is false", () => {
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         rootDatum.partners = [createPartner()];
-        const config = { generations: 2, showDescendants: false, fanDegree: 210, childScale: null };
+        const config = { generations: 2, showDescendants: false, fanDegree: 210 };
         const hierarchy = new Hierarchy(config);
 
         hierarchy.init(rootDatum);
@@ -258,7 +258,7 @@ describe("Hierarchy.initDescendants", () => {
         const descNodes = hierarchy.nodes.filter((n) => n.depth < 0);
 
         expect(descNodes).toHaveLength(0);
-        expect(config.childScale).toBeNull();
+        expect(hierarchy.descendantLayout.childScale).toBeNull();
     });
 
     test("creates partner and children nodes when showDescendants is true", () => {
@@ -267,7 +267,7 @@ describe("Hierarchy.initDescendants", () => {
         const partner = createPartner({ xref: "I2", children: [child1, child2] });
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         rootDatum.partners = [partner];
-        const config = { generations: 2, showDescendants: true, fanDegree: 210, childScale: null };
+        const config = { generations: 2, showDescendants: true, fanDegree: 210 };
         const hierarchy = new Hierarchy(config);
 
         hierarchy.init(rootDatum);
@@ -277,7 +277,7 @@ describe("Hierarchy.initDescendants", () => {
         expect(descNodes).toHaveLength(3);
         expect(descNodes.filter((n) => n.depth === -1)).toHaveLength(1);
         expect(descNodes.filter((n) => n.depth === -2)).toHaveLength(2);
-        expect(config.childScale).not.toBeNull();
+        expect(hierarchy.descendantLayout.childScale).not.toBeNull();
     });
 
     test("descendant nodes use sequential integer IDs continuing from ancestors", () => {
@@ -285,7 +285,7 @@ describe("Hierarchy.initDescendants", () => {
         const partner = createPartner({ xref: "I2", children: [child] });
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         rootDatum.partners = [partner];
-        const config = { generations: 2, showDescendants: true, fanDegree: 210, childScale: null };
+        const config = { generations: 2, showDescendants: true, fanDegree: 210 };
         const hierarchy = new Hierarchy(config);
 
         hierarchy.init(rootDatum);
@@ -307,7 +307,7 @@ describe("Hierarchy.initDescendants", () => {
         const partner = createPartner({ xref: "I2", children });
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         rootDatum.partners = [partner];
-        const config = { generations: 2, showDescendants: true, fanDegree: 210, childScale: null };
+        const config = { generations: 2, showDescendants: true, fanDegree: 210 };
         const hierarchy = new Hierarchy(config);
 
         hierarchy.init(rootDatum);
@@ -332,7 +332,7 @@ describe("Hierarchy.initDescendants", () => {
         const partner2 = createPartner({ xref: "I3", sex: SEX_FEMALE });
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         rootDatum.partners = [partner1, partner2];
-        const config = { generations: 2, showDescendants: true, fanDegree: 210, childScale: null };
+        const config = { generations: 2, showDescendants: true, fanDegree: 210 };
         const hierarchy = new Hierarchy(config);
 
         hierarchy.init(rootDatum);
@@ -349,7 +349,7 @@ describe("Hierarchy.initDescendants", () => {
     test("unassigned children get their own angle block", () => {
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         rootDatum.unassignedChildren = [createChild({ xref: "I20" }), createChild({ xref: "I21" })];
-        const config = { generations: 2, showDescendants: true, fanDegree: 210, childScale: null };
+        const config = { generations: 2, showDescendants: true, fanDegree: 210 };
         const hierarchy = new Hierarchy(config);
 
         hierarchy.init(rootDatum);
@@ -364,21 +364,31 @@ describe("Hierarchy.initDescendants", () => {
 
     test("clears childScale and smallestChildFraction when no descendants exist", () => {
         const rootDatum = createIndividual({ id: 1, generation: 1 });
-        const config = {
-            generations: 2,
-            showDescendants: true,
-            fanDegree: 210,
-            childScale: "stale",
-            smallestChildFraction: 0.05,
-        };
+        const config = { generations: 2, showDescendants: true, fanDegree: 210 };
         const hierarchy = new Hierarchy(config);
+
+        hierarchy.descendantLayout.childScale = "stale";
+        hierarchy.descendantLayout.smallestChildFraction = 0.05;
 
         hierarchy.init(rootDatum);
 
         // Both descendant layout results must be cleared together: a stale
         // fraction surviving an update would cap the font of a later chart
         // against a sector that is no longer rendered.
-        expect(config.childScale).toBeNull();
-        expect(config.smallestChildFraction).toBe(0);
+        expect(hierarchy.descendantLayout.childScale).toBeNull();
+        expect(hierarchy.descendantLayout.smallestChildFraction).toBe(0);
+    });
+
+    test("keeps the configuration free of descendant layout results", () => {
+        const child = createChild({ xref: "I10" });
+        const rootDatum = createIndividual({ id: 1, generation: 1 });
+        rootDatum.partners = [createPartner({ xref: "I2", children: [child] })];
+        const config = { generations: 2, showDescendants: true, fanDegree: 210 };
+        const hierarchy = new Hierarchy(config);
+
+        hierarchy.init(rootDatum);
+
+        expect(config).toEqual({ generations: 2, showDescendants: true, fanDegree: 210 });
+        expect(hierarchy.descendantLayout.smallestChildFraction).toBeGreaterThan(0);
     });
 });

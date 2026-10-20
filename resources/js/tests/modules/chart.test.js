@@ -3,6 +3,15 @@ import { jest } from "@jest/globals";
 const mockSvgInstances = [];
 let svgBoundingBox = { x: 0, y: 0, width: 0, height: 0 };
 
+// A selection stand-in for the layers the render tests do not inspect: every
+// method call answers with the same kind of object, so the chain of a D3
+// selection runs through without drawing anything.
+const createChainableSelection = () =>
+    new Proxy(() => undefined, {
+        get: () => () => createChainableSelection(),
+        apply: () => createChainableSelection(),
+    });
+
 class PersonGroupSelection {
     constructor() {
         this.dataItems = [];
@@ -81,23 +90,7 @@ class MockSvg {
                     classed: () => ({}),
                 }),
             }),
-            append: () => ({
-                attr: function () {
-                    return this;
-                },
-                selectAll: () => ({
-                    data: () => ({
-                        enter: () => ({
-                            append: () => ({
-                                attr: function () {
-                                    return this;
-                                },
-                            }),
-                        }),
-                    }),
-                    each: () => ({}),
-                }),
-            }),
+            append: () => createChainableSelection(),
         };
         this.attrCalls = [];
 
@@ -192,11 +185,21 @@ await jest.unstable_mockModule("resources/js/modules/svg/marriage", () => ({
     default: jest.fn(() => ({})),
 }));
 
+// Every Geometry the chart creates, with the descendant layout it was handed.
+const geometryInstances = [];
+
 await jest.unstable_mockModule("resources/js/modules/svg/geometry", () => ({
     __esModule: true,
     MATH_DEG2RAD: Math.PI / 180,
     MATH_RAD2DEG: 180 / Math.PI,
     default: class {
+        constructor(configuration, descendantLayout) {
+            this.descendantLayout = descendantLayout;
+            geometryInstances.push(this);
+        }
+        get childScale() {
+            return this.descendantLayout ? this.descendantLayout.childScale : null;
+        }
         startAngle() {
             return 0;
         }
@@ -321,8 +324,71 @@ describe("Chart", () => {
     beforeEach(() => {
         window.getComputedStyle = jest.fn(() => ({ fontSize: "16px" }));
         mockSvgInstances.length = 0;
+        geometryInstances.length = 0;
         setSvgBoundingBox({ x: 0, y: 0, width: 400, height: 300 });
         personConstructor.mockClear();
+    });
+
+    test("render hands the descendant layout of the hierarchy to every geometry", () => {
+        const chart = new Chart(
+            createParentSelection(),
+            createConfiguration({ showParentMarriageDates: true }),
+        );
+
+        chart.data = createHierarchyDatum();
+        chart.render();
+
+        // Person arcs, marriage arcs, descendant marriage arcs and separators
+        expect(geometryInstances.length).toBeGreaterThanOrEqual(4);
+
+        for (const geometry of geometryInstances) {
+            expect(geometry.descendantLayout).toBe(chart._hierarchy.descendantLayout);
+        }
+    });
+
+    describe("descendant sector", () => {
+        const partnerNode = (id, x0, x1) => ({ id, depth: -1, x0, x1, data: { data: {} } });
+
+        const createRenderedChart = (nodes) => {
+            const chart = new Chart(
+                createParentSelection(),
+                createConfiguration({ showDescendants: true, showParentMarriageDates: true }),
+            );
+
+            chart.data = createHierarchyDatum();
+            chart.render();
+            jest.spyOn(chart._hierarchy, "nodes", "get").mockReturnValue(nodes);
+
+            return chart;
+        };
+
+        test("draws no descendant separators while the sector has no scale", () => {
+            const chart = createRenderedChart([partnerNode(1, 0, 0.5), partnerNode(2, 0.5, 1)]);
+            const separatorGroup = { append: jest.fn(() => createChainableSelection()) };
+
+            expect(() =>
+                chart.drawDescendantSeparators({ childScale: null }, separatorGroup),
+            ).not.toThrow();
+            expect(separatorGroup.append).not.toHaveBeenCalled();
+        });
+
+        test.each([
+            ["a scale", (fraction) => fraction * Math.PI, 2],
+            ["no scale", null, 0],
+        ])("draws descendant marriage arcs for the partners with %s", (_label, scale, count) => {
+            const chart = createRenderedChart([partnerNode(1, 0, 0.5), partnerNode(2, 0.5, 1)]);
+            const data = jest.fn(() => createChainableSelection());
+
+            chart._hierarchy.descendantLayout.childScale = scale;
+            chart.svg.visual.select = () => ({
+                empty: () => false,
+                selectAll: () => ({ data }),
+            });
+
+            chart.drawDescendantMarriageArcs();
+
+            expect(data.mock.calls[0][0]).toHaveLength(count);
+        });
     });
 
     test("svg throws before render() has been called and is available afterwards", () => {

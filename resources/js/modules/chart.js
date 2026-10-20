@@ -218,7 +218,7 @@ export default class Chart {
         this.svg.initEvents(this._overlay);
 
         const personGroup = this.svg.select("g.personGroup");
-        const geometry = new Geometry(this._configuration);
+        const geometry = new Geometry(this._configuration, this._hierarchy.descendantLayout);
         const familyColor = new FamilyColor(this._configuration);
         familyColor.setPartnerMidpoints(this._hierarchy.nodes);
 
@@ -281,7 +281,7 @@ export default class Chart {
      * @private
      */
     drawFamilySeparators() {
-        const geometry = new Geometry(this._configuration);
+        const geometry = new Geometry(this._configuration, this._hierarchy.descendantLayout);
         /** @type {Selection<SVGGElement, unknown, HTMLElement, unknown>} */
         let separatorGroup = this.svg.visual.select("g.separatorGroup");
 
@@ -350,7 +350,9 @@ export default class Chart {
      * @private
      */
     drawDescendantSeparators(geometry, separatorGroup) {
-        if (!this._configuration.showDescendants || !this._configuration.childScale) {
+        const childScale = geometry.childScale;
+
+        if (!this._configuration.showDescendants || !childScale) {
             return;
         }
 
@@ -368,7 +370,7 @@ export default class Chart {
                 continue;
             }
 
-            const angle = this._configuration.childScale(current.x1);
+            const angle = childScale(current.x1);
 
             // Check whether the adjacent partners have children
             const currentHasChildren = childNodes.some((c) => c.syntheticParentId === current.id);
@@ -426,7 +428,7 @@ export default class Chart {
 
         const svg = this.svg;
         const configuration = this._configuration;
-        const geometry = new Geometry(configuration);
+        const geometry = new Geometry(configuration, this._hierarchy.descendantLayout);
 
         // Create a new selection in order to leave the previous enter() selection
         marriageGroup.selectAll("g.marriage").each((datum, i, nodes) => {
@@ -454,7 +456,7 @@ export default class Chart {
         // Empty array when descendants are disabled or no partners exist,
         // so the data-join still handles exit for old elements.
         const partnerNodes =
-            this._configuration.showDescendants && this._configuration.childScale
+            this._configuration.showDescendants && this._hierarchy.descendantLayout.childScale
                 ? this._hierarchy.nodes.filter((datum) => datum.depth === -1)
                 : [];
 
@@ -464,7 +466,7 @@ export default class Chart {
 
         const svg = this.svg;
         const configuration = this._configuration;
-        const geometry = new Geometry(configuration);
+        const geometry = new Geometry(configuration, this._hierarchy.descendantLayout);
 
         // Matched (update): mark old content for fade-out, create new content
         // (geometry changes on re-center so arcs must be rebuilt)

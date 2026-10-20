@@ -31,6 +31,16 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
 }));
 
 const { default: Geometry, MATH_DEG2RAD } = await import("resources/js/modules/svg/geometry");
+const { default: DescendantLayout } = await import("resources/js/modules/descendant-layout");
+
+const createLayout = ({ childScale = null, smallestChildFraction = 0 } = {}) => {
+    const layout = new DescendantLayout();
+
+    layout.childScale = childScale;
+    layout.smallestChildFraction = smallestChildFraction;
+
+    return layout;
+};
 
 describe("Geometry", () => {
     const createConfiguration = (overrides = {}) => ({
@@ -111,7 +121,8 @@ describe("Geometry", () => {
 
     it("derives the angular width of a descendant datum from the child scale", () => {
         const geometry = new Geometry(
-            createConfiguration({ childScale: (value) => value * Math.PI }),
+            createConfiguration(),
+            createLayout({ childScale: (value) => value * Math.PI }),
         );
         const datum = { depth: -2, x0: 0.25, x1: 0.75 };
 
@@ -121,7 +132,8 @@ describe("Geometry", () => {
 
     it("reports the angular width in degrees as an absolute value", () => {
         const geometry = new Geometry(
-            createConfiguration({ childScale: (value) => -value * Math.PI }),
+            createConfiguration(),
+            createLayout({ childScale: (value) => -value * Math.PI }),
         );
         const datum = { depth: -2, x0: 0, x1: 0.5 };
 
@@ -139,7 +151,10 @@ describe("Geometry", () => {
     it("returns true from isPositionFlipped for negative depths in the lower half", () => {
         // childScale maps [0,1] to a sector centered around 180° (PI)
         const descendantChildScale = (value) => Math.PI * 0.6 + value * (Math.PI * 0.8);
-        const geometry = new Geometry(createConfiguration({ childScale: descendantChildScale }));
+        const geometry = new Geometry(
+            createConfiguration(),
+            createLayout({ childScale: descendantChildScale }),
+        );
 
         // Midpoint at ~180° → in lower half → flipped
         expect(geometry.isPositionFlipped(-1, 0.2, 0.8)).toBe(true);
@@ -176,7 +191,7 @@ describe("Geometry", () => {
 
     it("uses childScale for startAngle and endAngle at negative depths", () => {
         const childScale = (value) => value * Math.PI;
-        const geometry = new Geometry(createConfiguration({ childScale }));
+        const geometry = new Geometry(createConfiguration(), createLayout({ childScale }));
 
         expect(geometry.startAngle(-1, 0.5)).toBeCloseTo(0.5 * Math.PI);
         expect(geometry.endAngle(-1, 0.8)).toBeCloseTo(0.8 * Math.PI);
@@ -185,7 +200,7 @@ describe("Geometry", () => {
     });
 
     it("returns 0 for startAngle/endAngle at negative depths when childScale is null", () => {
-        const geometry = new Geometry(createConfiguration({ childScale: null }));
+        const geometry = new Geometry(createConfiguration(), createLayout({ childScale: null }));
 
         expect(geometry.startAngle(-1, 0.5)).toBe(0);
         expect(geometry.endAngle(-1, 0.8)).toBe(0);
@@ -196,9 +211,8 @@ describe("Geometry", () => {
             fontSize: 22,
             fontScale: 100,
             numberOfInnerCircles: 2,
-            childScale: (v) => v * Math.PI,
         });
-        const geometry = new Geometry(config);
+        const geometry = new Geometry(config, createLayout({ childScale: (v) => v * Math.PI }));
 
         // depth -1 => absDepth 1: (22 - 1) * 100 / 100 = 21
         const fontAtMinus1 = geometry.getFontSize({ depth: -1, x0: 0, x1: 1 });
@@ -217,45 +231,43 @@ describe("Geometry", () => {
     //   maxFont(fraction) = (fraction · π · 80 · 0.55) / 2
     //
     // Uncapped, a depth -2 node scales to (22 - 2) · 100 / 100 = 20.
-    const createChildCapConfiguration = (smallestChildFraction) =>
-        createConfiguration({
-            fontSize: 22,
-            fontScale: 100,
-            childScale: (v) => v * Math.PI,
-            smallestChildFraction,
-        });
+    const createChildCapGeometry = (smallestChildFraction) =>
+        new Geometry(
+            createConfiguration({ fontSize: 22, fontScale: 100 }),
+            createLayout({ childScale: (v) => v * Math.PI, smallestChildFraction }),
+        );
 
     const CHILD_DATUM = { depth: -2, x0: 0, x1: 1 };
     const UNCAPPED_FONT_SIZE = 20;
 
     it("caps a child font size to the width of the narrowest child arc", () => {
-        const geometry = new Geometry(createChildCapConfiguration(0.02));
+        const geometry = createChildCapGeometry(0.02);
 
         // (0.02 · π · 80 · 0.55) / 2
         expect(geometry.getFontSize(CHILD_DATUM)).toBeCloseTo(1.3823, 4);
     });
 
     it("leaves the child font size uncapped when no narrowest arc is known", () => {
-        const geometry = new Geometry(createChildCapConfiguration(0));
+        const geometry = createChildCapGeometry(0);
 
         expect(geometry.getFontSize(CHILD_DATUM)).toBe(UNCAPPED_FONT_SIZE);
     });
 
     it("caps a wider narrowest arc to a proportionally larger font", () => {
-        const geometry = new Geometry(createChildCapConfiguration(0.2));
+        const geometry = createChildCapGeometry(0.2);
 
         // (0.2 · π · 80 · 0.55) / 2 — still below the uncapped 20
         expect(geometry.getFontSize(CHILD_DATUM)).toBeCloseTo(13.823, 3);
     });
 
     it("leaves ancestor font sizes untouched by the child cap", () => {
-        const geometry = new Geometry(createChildCapConfiguration(0.02));
+        const geometry = createChildCapGeometry(0.02);
 
         expect(geometry.getFontSize({ depth: 2, x0: 0, x1: 1 })).toBe(UNCAPPED_FONT_SIZE);
     });
 
     it("caps every child to the same size regardless of its own arc width", () => {
-        const geometry = new Geometry(createChildCapConfiguration(0.02));
+        const geometry = createChildCapGeometry(0.02);
 
         // The cap is measured against the FULL descendant sector, never the
         // node's own arc, so a node spanning a fifth of the sector lands on the

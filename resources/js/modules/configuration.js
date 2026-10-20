@@ -132,16 +132,6 @@ export default class Configuration {
 
         this._showDescendants = showDescendants;
 
-        // D3 linear scale mapping descendant full-circle fractions to radians.
-        // Set by hierarchy.js::initDescendants() once the descendant angle
-        // range is known. All Geometry instances read this via the getter.
-        this._childScale = null;
-
-        // Narrowest child arc as a fraction of the descendant sector. Set by
-        // hierarchy.js::initDescendants() alongside _childScale; Geometry uses
-        // it to cap all child font sizes uniformly.
-        this._smallestChildFraction = 0;
-
         this.rtl = rtl;
         this.labels = labels;
 
@@ -262,38 +252,6 @@ export default class Configuration {
      */
     get showDescendants() {
         return this._showDescendants;
-    }
-
-    /**
-     * D3 linear scale mapping descendant full-circle fractions [0,1] to radian
-     * angles in the descendant sector. Set by hierarchy.js after computing the
-     * descendant angle range. Null when no descendants are active.
-     *
-     * @return {Function|null}
-     */
-    get childScale() {
-        return this._childScale;
-    }
-
-    set childScale(value) {
-        this._childScale = value;
-    }
-
-    /**
-     * The narrowest child arc across all partner groups, as a fraction of the
-     * full descendant sector. Set by hierarchy.js together with childScale;
-     * Geometry caps every child font size against it so descendant labels stay
-     * uniform instead of varying with their own arc width. Zero when no
-     * descendants are active, which disables the cap.
-     *
-     * @return {number}
-     */
-    get smallestChildFraction() {
-        return this._smallestChildFraction;
-    }
-
-    set smallestChildFraction(value) {
-        this._smallestChildFraction = value;
     }
 
     /**
