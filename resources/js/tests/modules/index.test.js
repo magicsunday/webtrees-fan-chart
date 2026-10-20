@@ -141,19 +141,6 @@ describe("FanChart", () => {
         expect(chart.svg.svgToImageMock).toHaveBeenCalledWith(chart.svg, "fan-chart.svg");
     });
 
-    it("delegates update requests to the chart", () => {
-        document.body.innerHTML =
-            '<div id="chart"></div><button id="centerButton"></button>' +
-            '<button id="exportPNG"></button><button id="exportSVG"></button>';
-
-        const fanChart = new FanChart("#chart", createOptions());
-        const chart = chartInstances[0];
-
-        fanChart.update("/update/url");
-
-        expect(chart.update).toHaveBeenCalledWith("/update/url");
-    });
-
     it("keeps the viewBox in sync when fullscreen mode changes", () => {
         document.body.innerHTML =
             '<div id="chart"></div><button id="centerButton"></button>' +

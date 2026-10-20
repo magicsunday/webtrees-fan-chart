@@ -41,13 +41,4 @@ export default class Filter {
             .attr("flood-opacity", "0.3")
             .attr("flood-color", "rgb(0,0,0)");
     }
-
-    /**
-     * Returns the <defs> D3 selection passed to the constructor.
-     *
-     * @return {Selection<any, any, any, any>}
-     */
-    get() {
-        return this._element;
-    }
 }

@@ -60,14 +60,10 @@ export class FanChart {
         this._chart = new Chart(this._parent, this._configuration);
 
         this.init();
-        this.render(options.data);
-    }
 
-    /**
-     * @return {Configuration}
-     */
-    get configuration() {
-        return this._configuration;
+        // Pass the data to the chart and trigger the initial render
+        this._chart.data = options.data;
+        this._chart.render();
     }
 
     /**
@@ -110,25 +106,6 @@ export class FanChart {
         screen.orientation.addEventListener("change", () => {
             this._chart.updateViewBox();
         });
-    }
-
-    /**
-     * Re-centers the chart on the person at the given URL.
-     *
-     * @param {string} url The update URL returned by webtrees for the selected individual
-     */
-    update(url) {
-        this._chart.update(url);
-    }
-
-    /**
-     * Passes data to the chart and triggers the initial render.
-     *
-     * @param {NodeDatum} data The JSON-encoded chart data from the server
-     */
-    render(data) {
-        this._chart.data = data;
-        this._chart.render();
     }
 
     /**

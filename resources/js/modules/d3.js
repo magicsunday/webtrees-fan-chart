@@ -17,15 +17,11 @@ https://github.com/d3/d3-transition
 https://github.com/d3/d3-zoom
 */
 
-export {
-    json,
-    text,
-} from "d3-fetch";
+export { json } from "d3-fetch";
 
 export {
     hierarchy,
     partition,
-    tree,
 } from "d3-hierarchy";
 
 export { path } from "d3-path";
@@ -37,10 +33,7 @@ export {
     selectAll,
 } from "d3-selection";
 
-export {
-    timeout,
-    timer,
-} from "d3-timer";
+export { timeout } from "d3-timer";
 
 export { arc } from "d3-shape";
 

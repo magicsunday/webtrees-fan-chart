@@ -137,9 +137,7 @@ export default class FamilyColor {
      * @private
      */
     _findPartnerMidpoint(partnerId) {
-        // Search through the hierarchy nodes for the partner
-        // This is called from getColor which is invoked per-node during draw/update
-        // where all nodes are available in the hierarchy
+        // The midpoints are pre-computed per hierarchy, so this is a plain map lookup
         return this._partnerMidpoints?.get(partnerId) ?? 0.5;
     }
 
