@@ -134,8 +134,9 @@ export default class Hierarchy {
         this._configuration = configuration;
 
         /**
-         * The result of laying out the descendant sector, rewritten by every
-         * init() and read by the Geometry instances of the chart.
+         * The result of laying out the descendant sector, rewritten in place
+         * by init() whenever descendants are shown and read by the Geometry
+         * instances of the chart.
          */
         this._descendantLayout = new DescendantLayout();
 
@@ -216,8 +217,8 @@ export default class Hierarchy {
     }
 
     /**
-     * The layout of the descendant sector, laid out by the latest init() and
-     * empty while no descendants are shown. The same object is kept for the
+     * The layout of the descendant sector, laid out by the latest init() that
+     * showed descendants and empty until then. The same object is kept for the
      * lifetime of the hierarchy, so a Geometry handed this object always sees
      * the latest layout.
      *
