@@ -195,6 +195,80 @@ describe("Text", () => {
         );
     });
 
+    describe("renderTimespanLines", () => {
+        const createPositions = () =>
+            new Map([
+                [Text.TEXT_SLOT.DATE_LINE_1, { normal: 40, flipped: 60 }],
+                [Text.TEXT_SLOT.DATE_LINE_2, { normal: 50, flipped: 50 }],
+            ]);
+
+        const createLineContainer = () => {
+            const container = {
+                children: [],
+                append: jest.fn((name) => {
+                    const child = { name, textContent: "" };
+                    child.text = jest.fn((value) => {
+                        if (value === undefined) {
+                            return child.textContent;
+                        }
+
+                        child.textContent = value;
+
+                        return child;
+                    });
+                    container.children.push(child);
+
+                    return child;
+                }),
+            };
+
+            return container;
+        };
+
+        it("creates a titled text line for each of the first two timespan lines", () => {
+            const text = new Text(svgStub, createConfiguration());
+            const datum = createDatum();
+            datum.data.data.timespan = "\u2605 1900 Rome\n\u2020 1980 Paris\nignored";
+            const positions = createPositions();
+            const containers = [];
+            const createElement = jest.fn(() => {
+                const container = createLineContainer();
+                containers.push(container);
+
+                return container;
+            });
+
+            text.renderTimespanLines(datum, positions, createElement);
+
+            expect(createElement).toHaveBeenCalledTimes(2);
+            expect(createElement).toHaveBeenNthCalledWith(1, Text.TEXT_SLOT.DATE_LINE_1, {
+                normal: 40,
+                flipped: 60,
+            });
+            expect(createElement).toHaveBeenNthCalledWith(2, Text.TEXT_SLOT.DATE_LINE_2, {
+                normal: 50,
+                flipped: 50,
+            });
+            expect(containers[0].children.map((child) => [child.name, child.textContent])).toEqual([
+                ["title", "\u2605 1900 Rome"],
+                ["tspan", "\u2605 1900 Rome"],
+            ]);
+            expect(containers[1].children.map((child) => [child.name, child.textContent])).toEqual([
+                ["title", "\u2020 1980 Paris"],
+                ["tspan", "\u2020 1980 Paris"],
+            ]);
+        });
+
+        it("creates nothing for an empty timespan", () => {
+            const text = new Text(svgStub, createConfiguration());
+            const createElement = jest.fn();
+
+            text.renderTimespanLines(createDatum(), createPositions(), createElement);
+
+            expect(createElement).not.toHaveBeenCalled();
+        });
+    });
+
     it("calculates available width for outer arcs without geometry", () => {
         const text = new Text(svgStub, createConfiguration());
         const datum = createDatum({ depth: 4 });

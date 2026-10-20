@@ -11,14 +11,12 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Model;
 
-use Fisharebest\Webtrees\Individual;
 use JsonSerializable;
 
 /**
  * Data transfer object carrying all per-individual fields needed by the
  * JavaScript chart renderer. Implements JsonSerializable so it can be directly
- * embedded in the Node tree that is serialised to the page. The Individual
- * instance is kept for internal PHP use only and is excluded from JSON output.
+ * embedded in the Node tree that is serialised to the page.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -169,11 +167,6 @@ class NodeData implements JsonSerializable
      */
     private string $marriagePlace = '';
 
-    /**
-     * The underlying individual instance. Only used internally.
-     */
-    private ?Individual $individual = null;
-
     public function getId(): int
     {
         return $this->id;
@@ -212,11 +205,6 @@ class NodeData implements JsonSerializable
         $this->generation = $generation;
 
         return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function setName(string $name): NodeData
@@ -397,27 +385,7 @@ class NodeData implements JsonSerializable
     }
 
     /**
-     * Returns the underlying Individual instance. Not included in JSON output.
-     */
-    public function getIndividual(): ?Individual
-    {
-        return $this->individual;
-    }
-
-    /**
-     * Stores the Individual reference for PHP-side use; excluded from JSON
-     * serialisation.
-     */
-    public function setIndividual(?Individual $individual): NodeData
-    {
-        $this->individual = $individual;
-
-        return $this;
-    }
-
-    /**
-     * Serialises all chart-relevant fields to an array. The Individual instance
-     * is intentionally omitted to keep the JSON payload lean.
+     * Serialises all chart-relevant fields to an array.
      *
      * @return array<string, int|bool|string|string[]>
      */

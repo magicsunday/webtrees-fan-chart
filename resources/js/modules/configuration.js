@@ -14,7 +14,7 @@
  *
  * @return {number}
  */
-export function toFiniteNumber(value, fallback = 0) {
+function toFiniteNumber(value, fallback = 0) {
     const numericValue = Number(value);
 
     return Number.isFinite(numericValue) ? numericValue : fallback;

@@ -99,16 +99,6 @@ class Node implements JsonSerializable
     }
 
     /**
-     * Returns the list of partner nodes.
-     *
-     * @return Node[]
-     */
-    public function getPartners(): array
-    {
-        return $this->partners;
-    }
-
-    /**
      * Sets the child nodes for this node.
      *
      * @param Node[] $children
@@ -123,16 +113,6 @@ class Node implements JsonSerializable
     }
 
     /**
-     * Returns the list of child nodes.
-     *
-     * @return Node[]
-     */
-    public function getChildren(): array
-    {
-        return $this->children;
-    }
-
-    /**
      * Appends an unassigned child (visible child of a privacy-hidden spouse).
      *
      * @param Node $child
@@ -144,16 +124,6 @@ class Node implements JsonSerializable
         $this->unassignedChildren[] = $child;
 
         return $this;
-    }
-
-    /**
-     * Returns the list of unassigned children.
-     *
-     * @return Node[]
-     */
-    public function getUnassignedChildren(): array
-    {
-        return $this->unassignedChildren;
     }
 
     /**

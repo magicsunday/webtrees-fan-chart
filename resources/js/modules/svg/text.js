@@ -149,7 +149,7 @@ export default class Text {
             );
         }
 
-        this.renderTimespanLines(parent, datum, positions, (slot, position) => {
+        this.renderTimespanLines(datum, positions, (slot, position) => {
             const pathId = this.createPathDefinition(parentId, slot, position, datum);
 
             return parent
@@ -264,7 +264,7 @@ export default class Text {
             if (datum.depth < 6) {
                 // Outer labels use plain text elements — slot/position unused
                 // since positioning is handled by transformOuterText
-                this.renderTimespanLines(parent, datum, positions, (_slot) =>
+                this.renderTimespanLines(datum, positions, (_slot) =>
                     parent.append("text").attr("class", "date").attr("dominant-baseline", "middle"),
                 );
             }
@@ -284,15 +284,14 @@ export default class Text {
      * inner labels pass a textPath creator, outer labels pass a plain text
      * creator.
      *
-     * @param {Selection<any, any, any, any>} _parent       Unused; kept for symmetry with sibling renderers
-     * @param {HierarchyNode}                 datum         The D3 partition datum
-     * @param {SlotPositions}                 positions     Slot-to-position map from calculateSlotPositions()
+     * @param {HierarchyNode} datum     The D3 partition datum
+     * @param {SlotPositions} positions Slot-to-position map from calculateSlotPositions()
      * @param {(slot: TextSlot, position: SlotPosition) => Selection<any, any, any, any>} createElement
-     *                                                    Creates the container element of one line
+     *                                  Creates the container element of one line
      *
      * @private
      */
-    renderTimespanLines(_parent, datum, positions, createElement) {
+    renderTimespanLines(datum, positions, createElement) {
         if (datum.data.data.timespan === "") {
             return;
         }
