@@ -362,8 +362,7 @@ class DataFacade
             ->setMarriageDateFull($dateProcessor->getMarriageDateFull())
             ->setBirthPlace($suppressPlaces ? '' : $placeProcessor->getBirthPlace())
             ->setDeathPlace($suppressPlaces ? '' : $placeProcessor->getDeathPlace())
-            ->setMarriagePlace($suppressPlaces ? '' : $placeProcessor->getMarriagePlace())
-            ->setIndividual($individual);
+            ->setMarriagePlace($suppressPlaces ? '' : $placeProcessor->getMarriagePlace());
 
         return $treeData;
     }
