@@ -84,8 +84,16 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     private Configuration $configuration;
 
     /**
-     * @param ChartService $chartService
-     * @param DataFacade   $dataFacade
+     * The module extends the core fan chart module on purpose, although it
+     * renders the chart in the browser and never uses the GD renderer of the
+     * parent. The core redirects the legacy fanchart.php URLs to the first
+     * enabled module that is an instance of the core fan chart module, so the
+     * inheritance is what makes those links reach this chart. The parent
+     * constructor requires the chart service, therefore it is passed on, and
+     * the module itself does not use it.
+     *
+     * @param ChartService $chartService The chart service required by the parent constructor
+     * @param DataFacade   $dataFacade   Builds the chart data
      */
     public function __construct(
         ChartService $chartService,

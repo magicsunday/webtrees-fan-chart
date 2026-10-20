@@ -18,7 +18,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:135
+#: src/Module.php:143
 msgid "A fan chart of an individual’s ancestors."
 msgstr "תרשים מעריצים של אבותיו של אדם."
 
@@ -116,11 +116,11 @@ msgstr "ייצא כ-PNG"
 msgid "Export as SVG"
 msgstr "ייצא כ-SVG"
 
-#: src/Module.php:123 src/Module.php:236
+#: src/Module.php:131 src/Module.php:244
 msgid "Fan chart"
 msgstr "תרשים מניפה של אבות"
 
-#: src/Module.php:233 src/Module/ChartTrait.php:46
+#: src/Module.php:241 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr "תרשים מניפה של אבות של %s"
@@ -213,7 +213,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "הזזת התרשים"
 
-#: src/Module.php:260
+#: src/Module.php:268
 msgid "Move the view with two fingers"
 msgstr "הזז את התצוגה בשתי אצבעות"
 
@@ -342,7 +342,7 @@ msgstr "החלף בין מסך מלא לתצוגה רגילה"
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:259
+#: src/Module.php:267
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "השתמש ב- Ctrl + גלילה כדי להגדיל את התצוגה"
 
