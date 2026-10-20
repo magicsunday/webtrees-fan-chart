@@ -18,11 +18,13 @@ use Fisharebest\Localization\Translator;
 use Fisharebest\Webtrees\Contracts\ContainerInterface;
 use Fisharebest\Webtrees\Contracts\RouteFactoryInterface;
 use Fisharebest\Webtrees\Date;
+use Fisharebest\Webtrees\Fact;
 use Fisharebest\Webtrees\Factories\CalendarDateFactory;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Fisharebest\Webtrees\Place;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Validator;
@@ -35,7 +37,9 @@ use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatSpec;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceStyle;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -334,6 +338,185 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
+     * Narrow descendant arcs show a place-less year timespan. Years below one
+     * thousand have fewer than four digits and years before the common era have
+     * a suffix, and the timespan must still carry them instead of silently
+     * dropping the dates.
+     *
+     * @return array<string, array{string, string, string}>
+     */
+    public static function narrowArcTimespanProvider(): array
+    {
+        return [
+            'both years below one thousand'           => ['1 JAN 923', '1 JAN 987', '923–987'],
+            'birth year below one thousand'           => ['1 JAN 923', '', "\u{2605} 923"],
+            'both years before the common era'        => ['1 JAN 44 B.C.', '1 JAN 10 B.C.', "44\u{a0}BCE–10\u{a0}BCE"],
+            'four digit years'                        => ['1 JAN 1853', '1 JAN 1933', '1853–1933'],
+            'death year only'                         => ['', '1 JAN 987', "\u{2020} 987"],
+            'no dates'                                => ['', '', ''],
+            'julian calendar year without era suffix' => ['@#DJULIAN@ 1 JAN 1700', '', "\u{2605} 1700"],
+        ];
+    }
+
+    /**
+     * Narrow descendant arcs build their timespan from the structured years and
+     * leave out the places.
+     */
+    #[Test]
+    #[DataProvider('narrowArcTimespanProvider')]
+    public function narrowDescendantArcsKeepEveryYear(
+        string $birth,
+        string $death,
+        string $expected,
+    ): void {
+        $childData = $this->buildDescendantChildData($birth, $death, 340);
+
+        self::assertSame($expected, $childData['timespan']);
+        self::assertSame('', $childData['birthPlace']);
+        self::assertSame('', $childData['deathPlace']);
+    }
+
+    /**
+     * Wide descendant arcs keep the places of the child.
+     */
+    #[Test]
+    public function wideDescendantArcsKeepThePlaces(): void
+    {
+        $childData = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 0);
+
+        self::assertSame('Rome, Italy', $childData['birthPlace']);
+        self::assertSame('Paris, France', $childData['deathPlace']);
+    }
+
+    /**
+     * A descendant child never shows a marriage date of its own or of its
+     * parents, whatever the arc width.
+     */
+    #[Test]
+    public function descendantChildrenCarryNoMarriageDates(): void
+    {
+        $childData = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 0);
+
+        self::assertSame(-2, $childData['generation']);
+        self::assertSame('', $childData['marriageDate']);
+        self::assertSame('', $childData['marriageDateOfParents']);
+    }
+
+    /**
+     * The children of a partner hidden by privacy are attached to the root and
+     * are built like the children of a visible partner.
+     */
+    #[Test]
+    public function childrenOfAHiddenPartnerAreBuiltLikeOtherDescendantChildren(): void
+    {
+        $childData = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 340, true);
+
+        self::assertSame(-2, $childData['generation']);
+        self::assertSame('', $childData['marriageDate']);
+        self::assertSame('', $childData['marriageDateOfParents']);
+        self::assertSame('923–987', $childData['timespan']);
+        self::assertSame('', $childData['birthPlace']);
+    }
+
+    /**
+     * Builds a root with one spouse family and one child and returns the
+     * serialised data of the child node. The child has a parent family and a
+     * spouse family of its own, both with a marriage date.
+     *
+     * @param string $birth         The GEDCOM birth date of the child
+     * @param string $death         The GEDCOM death date of the child
+     * @param int    $fanDegree     The fan degree of the configuration, a large value leaves a narrow descendant sector
+     * @param bool   $hiddenPartner True when the partner of the root is hidden by privacy
+     *
+     * @return array<string, array<int|string, mixed>|bool|int|string|null>
+     */
+    private function buildDescendantChildData(
+        string $birth,
+        string $death,
+        int $fanDegree,
+        bool $hiddenPartner = false,
+    ): array {
+        $this->setUpRouting();
+
+        $configuration = self::createStub(Configuration::class);
+        $configuration->method('getGenerations')->willReturn(2);
+        $configuration->method('getPlaceFormat')->willReturn(new PlaceFormatSpec(PlaceStyle::Full));
+        $configuration->method('getShowDescendants')->willReturn(true);
+        $configuration->method('getFanDegree')->willReturn($fanDegree);
+
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
+        $module->method('name')->willReturn('webtrees-fan-chart');
+
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('main');
+        $tree->method('getPreference')->willReturn('1');
+
+        $spouse = $this->createPerson($tree, 'I2', 'F', '1 JAN 900', '1 JAN 960');
+
+        // The family of the root is also the parent family of the child
+        $family = self::createStub(Family::class);
+
+        $childFamily = self::createStub(Family::class);
+        $childFamily->method('xref')->willReturn('F2');
+        $childFamily->method('getMarriageDate')->willReturn($this->createDate('1 JAN 950'));
+        $childFamily->method('facts')->willReturn(new Collection());
+
+        $child = $this->createPerson(
+            $tree,
+            'I3',
+            'M',
+            $birth,
+            $death,
+            $childFamily,
+            'Rome, Italy',
+            'Paris, France',
+            $family,
+        );
+
+        $hiddenPartnerFact = self::createStub(Fact::class);
+        $hiddenPartnerFact->method('value')->willReturn('@I9@');
+
+        $family->method('xref')->willReturn('F1');
+        $family->method('husband')->willReturn(null);
+        $family->method('wife')->willReturn(null);
+        $family->method('spouse')->willReturn($hiddenPartner ? null : $spouse);
+        $family->method('children')->willReturn(new Collection([$child]));
+        $family->method('getMarriageDate')->willReturn($this->createDate('1 JAN 920'));
+        $family->method('facts')->willReturn($hiddenPartner ? new Collection([$hiddenPartnerFact]) : new Collection());
+
+        $root = $this->createPerson($tree, 'I1', 'M', '1 JAN 890', '1 JAN 950', $family);
+
+        $facade   = new DataFacade();
+        $rootNode = $facade->createTreeStructure($module, $configuration, $root);
+
+        self::assertInstanceOf(Node::class, $rootNode);
+
+        $rootData = $rootNode->jsonSerialize();
+
+        if ($hiddenPartner) {
+            $unassignedChildren = $rootData['unassignedChildren'];
+            self::assertIsArray($unassignedChildren);
+
+            $childNode = $unassignedChildren[0];
+        } else {
+            $partners = $rootData['partners'];
+            self::assertIsArray($partners);
+
+            $partnerNode = $partners[0];
+            self::assertInstanceOf(Node::class, $partnerNode);
+
+            $children = $partnerNode->jsonSerialize()['children'];
+            self::assertIsArray($children);
+
+            $childNode = $children[0];
+        }
+
+        self::assertInstanceOf(Node::class, $childNode);
+
+        return $childNode->getData()->jsonSerialize();
+    }
+
+    /**
      * Sets up the route factory and container required by DataFacade.
      */
     private function setUpRouting(): void
@@ -409,6 +592,56 @@ final class DataFacadeTest extends TestCase
                 'fullNNalternativeRender' => $firstName . ' <span class="SURN">' . $lastName . '</span>',
             ],
         ];
+    }
+
+    /**
+     * Creates an individual stub with a visible name, the given dates and no
+     * parents. The optional family is the individual's only spouse family.
+     *
+     * @return Individual&Stub
+     */
+    private function createPerson(
+        Tree $tree,
+        string $xref,
+        string $sex,
+        string $birth,
+        string $death,
+        ?Family $spouseFamily = null,
+        string $birthPlace = '',
+        string $deathPlace = '',
+        ?Family $parentFamily = null,
+    ): Individual {
+        $person = self::createStub(Individual::class);
+        $person->method('xref')->willReturn($xref);
+        $person->method('url')->willReturn('/individual/' . $xref);
+        $person->method('sex')->willReturn($sex);
+        $person->method('fullName')->willReturn('Person ' . $xref);
+        $person->method('canShow')->willReturn(true);
+        $person->method('canShowName')->willReturn(true);
+        $person->method('getAllNames')->willReturn($this->buildNameSet('Person', $xref));
+        $person->method('getPrimaryName')->willReturn(0);
+        $person->method('getSecondaryName')->willReturn(0);
+        $person->method('getBirthDate')->willReturn($this->createDate($birth));
+        $person->method('getDeathDate')->willReturn($this->createDate($death));
+        $person->method('tree')->willReturn($tree);
+
+        if ($birthPlace !== '') {
+            $person->method('getBirthPlace')->willReturn(new Place($birthPlace, $tree));
+        }
+
+        if ($deathPlace !== '') {
+            $person->method('getDeathPlace')->willReturn(new Place($deathPlace, $tree));
+        }
+
+        $person->method('spouseFamilies')->willReturn(
+            ($spouseFamily instanceof Family) ? new Collection([$spouseFamily]) : new Collection()
+        );
+        $person->method('childFamilies')->willReturn(
+            ($parentFamily instanceof Family) ? new Collection([$parentFamily]) : new Collection()
+        );
+        $person->method('findHighlightedMediaFile')->willReturn(null);
+
+        return $person;
     }
 
     /**
