@@ -21,6 +21,8 @@ use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatSpec;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function preg_match;
+
 /**
  * Holds all user-configurable chart settings, reading values from the HTTP
  * request (POST body or query params) and falling back to module-level
@@ -108,6 +110,12 @@ final class Configuration
      * The default color for the maternal lineage (pink).
      */
     public const string MATERNAL_COLOR_DEFAULT = '#d06f94';
+
+    /**
+     * The pattern of an accepted lineage colour, a hash and six hex digits and
+     * nothing else, a trailing line break included.
+     */
+    private const string HEX_COLOR_PATTERN = '/^#[0-9a-fA-F]{6}$/D';
 
     /**
      * Name of the request parameter and admin form field carrying the place
@@ -755,18 +763,7 @@ final class Configuration
      */
     public function getPaternalColor(): string
     {
-        if ($this->paternalColor !== null) {
-            return $this->paternalColor;
-        }
-
-        return $this->paternalColor = $this->validator()
-            ->string(
-                'paternalColor',
-                $this->module->getPreference(
-                    'default_paternalColor',
-                    self::PATERNAL_COLOR_DEFAULT
-                )
-            );
+        return $this->paternalColor ??= $this->resolveColor('paternalColor', self::PATERNAL_COLOR_DEFAULT);
     }
 
     /**
@@ -776,18 +773,33 @@ final class Configuration
      */
     public function getMaternalColor(): string
     {
-        if ($this->maternalColor !== null) {
-            return $this->maternalColor;
+        return $this->maternalColor ??= $this->resolveColor('maternalColor', self::MATERNAL_COLOR_DEFAULT);
+    }
+
+    /**
+     * Resolves a lineage colour from the request and the module preference.
+     *
+     * Only a six digit hex colour is accepted, because the value is written into
+     * an inline script and into the links of the chart. A request value that is
+     * no hex colour falls back to the module preference, and a module
+     * preference that is no hex colour falls back to the built-in default.
+     *
+     * @param string $name    The name of the request parameter
+     * @param string $default The built-in default colour
+     *
+     * @return string
+     */
+    private function resolveColor(string $name, string $default): string
+    {
+        $stored = $this->module->getPreference('default_' . $name, $default);
+
+        if (preg_match(self::HEX_COLOR_PATTERN, $stored) !== 1) {
+            $stored = $default;
         }
 
-        return $this->maternalColor = $this->validator()
-            ->string(
-                'maternalColor',
-                $this->module->getPreference(
-                    'default_maternalColor',
-                    self::MATERNAL_COLOR_DEFAULT
-                )
-            );
+        $requested = $this->validator()->string($name, $stored);
+
+        return preg_match(self::HEX_COLOR_PATTERN, $requested) === 1 ? $requested : $stored;
     }
 
     /**

@@ -22,19 +22,19 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
-#: src/Configuration.php:803
+#: src/Configuration.php:815
 msgid "Abbreviate given names first"
 msgstr "Forkort fornavn først"
 
-#: src/Configuration.php:804
+#: src/Configuration.php:816
 msgid "Abbreviate surnames first"
 msgstr "Forkort etternavn først"
 
-#: src/Configuration.php:802
+#: src/Configuration.php:814
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automatisk (basert på treets etternavnstradisjon)"
 
-#: src/Configuration.php:562
+#: src/Configuration.php:570
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
@@ -134,7 +134,7 @@ msgstr "Viftestørrelse"
 msgid "Font size"
 msgstr "Fontstørrelse"
 
-#: src/Configuration.php:563
+#: src/Configuration.php:571
 msgid "Full place name"
 msgstr "Fullt stedsnavn"
 
@@ -191,15 +191,15 @@ msgstr ""
 "(f.eks. Martin \"Chalky\" White). Gjenskaper den tidligere webtrees-"
 "oppførselen for trær som lagrer kallenavn i det separate GEDCOM NICK-feltet."
 
-#: src/Configuration.php:564
+#: src/Configuration.php:572
 msgid "Lowest level (e.g. parish)"
 msgstr "Laveste nivå (f.eks. sokn)"
 
-#: src/Configuration.php:566
+#: src/Configuration.php:574
 msgid "Lowest three levels"
 msgstr "Tre laveste nivåer"
 
-#: src/Configuration.php:565
+#: src/Configuration.php:573
 msgid "Lowest two levels"
 msgstr "To laveste nivåer"
 
@@ -239,15 +239,15 @@ msgstr ""
 msgid "Paternal"
 msgstr "Farslinje"
 
-#: src/Configuration.php:567
+#: src/Configuration.php:575
 msgid "Place and country"
 msgstr ""
 
-#: src/Configuration.php:568
+#: src/Configuration.php:576
 msgid "Place and country code (2 letters)"
 msgstr ""
 
-#: src/Configuration.php:569
+#: src/Configuration.php:577
 msgid "Place and country code (3 letters)"
 msgstr ""
 
@@ -290,7 +290,7 @@ msgstr ""
 "generasjon 9. Etterkommere med smale buer bruker automatisk et kompakt kun-"
 "årstall-format."
 
-#: src/Configuration.php:318
+#: src/Configuration.php:326
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Vis fullstendige datoer til generasjon %s"
@@ -350,7 +350,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Bruk Ctrl + scroll for zoom"
 
-#: src/Configuration.php:313
+#: src/Configuration.php:321
 msgid "Years only"
 msgstr "Kun årstall"
 
