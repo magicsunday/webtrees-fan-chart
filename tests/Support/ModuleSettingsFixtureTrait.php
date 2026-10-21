@@ -33,7 +33,9 @@ trait ModuleSettingsFixtureTrait
 {
     /**
      * Boots an in-memory SQLite + minimal `module_setting` schema once per
-     * process. Subsequent calls just truncate the table and re-seed.
+     * test class that uses this trait, because the static flag is kept per
+     * using class. Subsequent calls in the same class just truncate the table
+     * and re-seed.
      *
      * @param array<string, string> $preferences The preferences to seed, keyed by setting name
      *

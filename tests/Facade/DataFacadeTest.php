@@ -378,7 +378,7 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function descendantChildrenKeepThePlacesWhateverTheFanDegree(): void
     {
-        $narrow = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 340)->jsonSerialize();
+        $narrow = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', Configuration::MAX_FAN_DEGREE_WITH_DESCENDANTS)->jsonSerialize();
         $wide   = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 0)->jsonSerialize();
 
         self::assertSame('Rome, Italy', $narrow['birthPlace']);
@@ -411,7 +411,7 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function childrenOfAHiddenPartnerAreBuiltLikeOtherDescendantChildren(): void
     {
-        $childData = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 340, true)->jsonSerialize();
+        $childData = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', Configuration::MAX_FAN_DEGREE_WITH_DESCENDANTS, true)->jsonSerialize();
 
         self::assertSame(-2, $childData['generation']);
         self::assertSame('', $childData['marriageDate']);
@@ -448,7 +448,7 @@ final class DataFacadeTest extends TestCase
      *
      * @param string $birth         The GEDCOM birth date of the child
      * @param string $death         The GEDCOM death date of the child
-     * @param int    $fanDegree     The fan degree of the configuration, a large value leaves a narrow descendant sector
+     * @param int    $fanDegree     The fan degree of the configuration, the clamp maximum for a chart with descendants leaves a narrow descendant sector
      * @param bool   $hiddenPartner True when the partner of the root is hidden by privacy
      *
      * @return NodeData

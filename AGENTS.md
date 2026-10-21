@@ -79,9 +79,10 @@ Flat layout — every file is fan-chart-specific glue. Reusable base classes (St
 - **`charts/chart.phtml`** — Block template override (home page widget), uses `data-wt-ajax-url` pattern.
 
 ### Data-relevant config parameters
-These must be passed in both `getUrl()` (initial AJAX) and `getUpdateRoute()` (person click):
-- `generations`, `detailedDateGenerations`, `showPlaces`, `placeFormat`
-- Other options (`showImages`, `showNames`, `hideEmptySegments`, etc.) are JS-only.
+The server builds the base of the initial AJAX route (`Module::getAjaxRoute()`), the update route of a node (`DataFacade::getUpdateRoute()`) and the redirect after a form post. All three spread `Configuration::getRouteToggleParams()`, so a setting that these routes carry is added to that list. The page script (`page-init.js`) overrides some query keys of the AJAX URL on the client. `generations`, `showPlaces`, `showDescendants` and `showNicknames` come from the form and the storage, `detailedDateGenerations` and `placeFormat` from the server defaults. A setting that the page changes after load is added there as well.
+- `generations`, `showPlaces` and `placeFormat` are among the settings in that list.
+- `detailedDateGenerations` is an admin preference without a chart form field and is not in the list. It resolves again from the module preferences on the re-centered page.
+- Options that only the client consumes (`showImages`, `showNames`, `hideEmptySegments` and similar) are in the list as well, so the re-centered page keeps them.
 - Boolean parameters must be sent as `"1"`/`"0"` — webtrees `Validator::boolean()` only accepts `'1'`, `'on'`, `true`, not the string `"true"`.
 - Places are displayed only for generations within the `innerArcs` boundary (not `detailedDateGenerations`).
 
