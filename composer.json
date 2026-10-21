@@ -77,8 +77,11 @@
         "magicsunday/webtrees-module-installer-plugin": "^2.0"
     },
     "require-dev": {
-        "magicsunday/coding-standard": "^3.0",
-        "phpat/phpat": "^0.12.4"
+        "magicsunday/coding-standard": "^3.8",
+        "phpat/phpat": "^0.12.4",
+        "shipmonk/phpstan-rules": "^4.4",
+        "spaze/phpstan-disallowed-calls": "^4.13",
+        "symplify/phpstan-rules": "^14.19"
     },
     "autoload": {
         "psr-4": {

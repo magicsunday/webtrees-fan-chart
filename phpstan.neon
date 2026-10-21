@@ -1,5 +1,5 @@
 includes:
-    - %currentWorkingDirectory%/.build/vendor/magicsunday/coding-standard/phpstan/base.neon
+    - %currentWorkingDirectory%/.build/vendor/magicsunday/coding-standard/phpstan/strict.neon
     # Opt-in phpat preset: only the structural rule in tests/Architecture/ArchitectureTest.php,
     # which Deptrac cannot express. Layer dependencies are enforced by Deptrac (deptrac.yaml).
     - %currentWorkingDirectory%/.build/vendor/magicsunday/coding-standard/phpstan/phpat.neon
@@ -17,6 +17,34 @@ parameters:
 
     excludePaths:
         - %currentWorkingDirectory%/.build/
+
+    ignoreErrors:
+        # symplify forbiddenTrait bans traits wholesale. ChartTrait and
+        # ConfigTrait are the module's own composition of the module-base
+        # sharing traits, a deliberate house idiom.
+        -
+            identifier: symplify.forbiddenTrait
+            paths:
+                - src/Module/ChartTrait.php
+                - src/Module/ConfigTrait.php
+
+        # Node and NodeData are fluent builders, DataFacade assembles each node
+        # in chained calls. The setters return the instance by design.
+        -
+            identifier: symplify.noReturnSetterMethod
+            paths:
+                - src/Model/Node.php
+                - src/Model/NodeData.php
+
+        # The per-request configuration cannot be built in the constructor.
+        # It needs the request, which only exists once a route is handled. The
+        # module and the facade receive it before any code path reads it.
+        -
+            identifier: property.uninitialized
+            message: '#\$configuration\b#'
+            paths:
+                - src/Facade/DataFacade.php
+                - src/Module.php
 
 services:
     -
