@@ -21,12 +21,15 @@ parameters:
     ignoreErrors:
         # symplify forbiddenTrait bans traits wholesale. ChartTrait and
         # ConfigTrait are the module's own composition of the module-base
-        # sharing traits, a deliberate house idiom.
+        # sharing traits, and ModuleSettingsFixtureTrait is the preference
+        # fixture that several test classes share. All of them are a
+        # deliberate house idiom.
         -
             identifier: symplify.forbiddenTrait
             paths:
                 - src/Module/ChartTrait.php
                 - src/Module/ConfigTrait.php
+                - tests/Support/ModuleSettingsFixtureTrait.php
 
         # Node and NodeData are fluent builders, DataFacade assembles each node
         # in chained calls. The setters return the instance by design.

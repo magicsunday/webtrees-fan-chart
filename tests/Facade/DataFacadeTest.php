@@ -34,9 +34,9 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
+use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
-use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatSpec;
-use MagicSunday\Webtrees\ModuleBase\Model\PlaceStyle;
+use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -52,6 +52,8 @@ use function array_map;
 #[CoversClass(DataFacade::class)]
 final class DataFacadeTest extends TestCase
 {
+    use ModuleSettingsFixtureTrait;
+
     /**
      * Prepares router and translation context required by the facade.
      */
@@ -115,9 +117,7 @@ final class DataFacadeTest extends TestCase
         Registry::routeFactory($routeFactory);
         Registry::container($container);
 
-        $configuration = self::createStub(Configuration::class);
-        $configuration->method('getGenerations')->willReturn(2);
-        $configuration->method('getPlaceFormat')->willReturn(new PlaceFormatSpec(PlaceStyle::Full));
+        $configuration = $this->createConfiguration([]);
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
@@ -196,10 +196,15 @@ final class DataFacadeTest extends TestCase
         $data           = $rootNode->getData();
         $serializedData = $data->jsonSerialize();
         self::assertSame('I1', $serializedData['xref']);
-        // The stub Configuration returns [] for getRouteToggleParams(), so the
-        // update URL only carries module/action/xref/tree here. The toggle-
-        // forwarding contract is verified separately via the helper itself.
-        self::assertSame('/route/module?module=webtrees-fan-chart&action=update&xref=I1&tree=main', $serializedData['updateUrl']);
+        // The real configuration forwards the settings of the chart, so the
+        // update URL carries them next to module, action, xref and tree.
+        self::assertSame(
+            '/route/module?module=webtrees-fan-chart&action=update&xref=I1&tree=main'
+            . '&generations=2&fanDegree=210&fontScale=100&hideEmptySegments=1&showFamilyColors=1'
+            . '&showPlaces=0&placeFormat=full&showParentMarriageDates=0&showImages=0&showNames=1'
+            . '&showNicknames=0&innerArcs=3&paternalColor=%2370a9cf&maternalColor=%23d06f94&showDescendants=0',
+            $serializedData['updateUrl']
+        );
 
         $serialized = $rootNode->jsonSerialize();
 
@@ -220,10 +225,7 @@ final class DataFacadeTest extends TestCase
     {
         $this->registerRouting();
 
-        $configuration = self::createStub(Configuration::class);
-        $configuration->method('getGenerations')->willReturn(2);
-        $configuration->method('getPlaceFormat')->willReturn(new PlaceFormatSpec(PlaceStyle::Full));
-        $configuration->method('getShowDescendants')->willReturn(true);
+        $configuration = $this->createConfiguration(['showDescendants' => '1']);
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
@@ -322,10 +324,7 @@ final class DataFacadeTest extends TestCase
         self::assertSame(-2, $childData['generation']);
 
         // No partners when showDescendants is false
-        $configNoDesc = self::createStub(Configuration::class);
-        $configNoDesc->method('getGenerations')->willReturn(2);
-        $configNoDesc->method('getPlaceFormat')->willReturn(new PlaceFormatSpec(PlaceStyle::Full));
-        $configNoDesc->method('getShowDescendants')->willReturn(false);
+        $configNoDesc = $this->createConfiguration(['showDescendants' => '0']);
 
         $facade2   = new DataFacade();
         $rootNode2 = $facade2->createTreeStructure($module, $configNoDesc, $root);
@@ -422,6 +421,27 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
+     * Builds a real configuration for a chart of two generations with the full
+     * place names, from the query parameters of a chart request. The module
+     * preferences stay at their defaults.
+     *
+     * @param array<string, string> $query The request parameters that differ from that chart
+     *
+     * @return Configuration
+     */
+    private function createConfiguration(array $query): Configuration
+    {
+        $request = (new ServerRequest('GET', '/'))->withQueryParams(
+            $query + [
+                'generations'                     => '2',
+                Configuration::PLACE_FORMAT_PARAM => PlaceFormatChoice::Full->value,
+            ]
+        );
+
+        return new Configuration($request, $this->createModuleWithPreferences([]));
+    }
+
+    /**
      * Builds a root with one spouse family and one child and returns the
      * serialised data of the child node. The child has a parent family and a
      * spouse family of its own, both with a marriage date.
@@ -441,13 +461,18 @@ final class DataFacadeTest extends TestCase
     ): NodeData {
         $this->registerRouting();
 
-        $configuration = self::createStub(Configuration::class);
-        $configuration->method('getGenerations')->willReturn(2);
-        $configuration->method('getPlaceFormat')->willReturn(new PlaceFormatSpec(PlaceStyle::Full));
-        $configuration->method('getShowDescendants')->willReturn(true);
-        $configuration->method('getShowPlaces')->willReturn(true);
-        $configuration->method('getInnerArcs')->willReturn(1);
-        $configuration->method('getFanDegree')->willReturn($fanDegree);
+        $query = [
+            'showDescendants' => '1',
+            'showPlaces'      => '1',
+            'innerArcs'       => '1',
+        ];
+
+        // A fan degree of zero stands for the module default.
+        if ($fanDegree > 0) {
+            $query['fanDegree'] = (string) $fanDegree;
+        }
+
+        $configuration = $this->createConfiguration($query);
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');

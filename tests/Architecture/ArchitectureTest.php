@@ -58,9 +58,6 @@ final class ArchitectureTest
      * the webtrees core instantiates the module class by name, so nothing
      * downstream subclasses it either.
      *
-     * `Configuration` is the one exception. The facade tests stub it, and a
-     * final class cannot be stubbed.
-     *
      * Why phpat: a structural invariant (a class modifier) Deptrac cannot inspect.
      *
      * The rule does not cover the module traits. The test namespace is excluded
@@ -75,7 +72,6 @@ final class ArchitectureTest
             ->classes(Selector::inNamespace(self::NAMESPACE_ROOT))
             ->excluding(
                 Selector::inNamespace(self::NAMESPACE_ROOT . '\\Test'),
-                Selector::classname(self::NAMESPACE_ROOT . '\\Configuration'),
                 Selector::isInterface(),
                 Selector::isEnum(),
                 Selector::isAbstract(),
