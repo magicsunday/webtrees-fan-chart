@@ -1,0 +1,23 @@
+{
+    "$schema": "./.build/vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "logs": {
+        "text": "php://stdout"
+    },
+    "tmpDir": ".build/cache/infection",
+    // Count a timed-out mutant as escaped, so a mutation that made the suite hang
+    // does not inflate the score.
+    "timeoutsAsEscaped": true,
+    // The floor sits a little below the measured score so that machine load, which
+    // feeds the timeout count and with it the score, cannot fail the build. Raise it as
+    // the score improves, never lower it to admit a regression.
+    "minMsi": 68,
+    "minCoveredMsi": 68,
+    "mutators": {
+        "@default": true
+    }
+}

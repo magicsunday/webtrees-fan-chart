@@ -15,12 +15,14 @@ use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Tests node serialization logic and parent handling.
  */
 #[CoversClass(Node::class)]
+#[UsesClass(NodeData::class)]
 final class NodeTest extends TestCase
 {
     /**

@@ -34,12 +34,14 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
+use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -50,6 +52,10 @@ use function array_map;
  * Validates tree construction and data extraction performed by the facade.
  */
 #[CoversClass(DataFacade::class)]
+#[UsesClass(Configuration::class)]
+#[UsesClass(Module::class)]
+#[UsesClass(Node::class)]
+#[UsesClass(NodeData::class)]
 final class DataFacadeTest extends TestCase
 {
     use ModuleSettingsFixtureTrait;

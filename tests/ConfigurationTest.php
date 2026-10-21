@@ -19,6 +19,7 @@ use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Tree;
 use GuzzleHttp\Psr7\ServerRequest;
 use MagicSunday\Webtrees\FanChart\Configuration;
+use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\ModuleBase\Model\NameAbbreviation;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
@@ -26,6 +27,7 @@ use MagicSunday\Webtrees\ModuleBase\Model\PlaceStyle;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -40,6 +42,7 @@ use function str_contains;
  * selectable ranges.
  */
 #[CoversClass(Configuration::class)]
+#[UsesClass(Module::class)]
 final class ConfigurationTest extends TestCase
 {
     use ModuleSettingsFixtureTrait;
