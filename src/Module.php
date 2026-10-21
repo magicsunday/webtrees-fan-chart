@@ -49,7 +49,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCustomInterface, ModuleConfigInterface
+final class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCustomInterface, ModuleConfigInterface
 {
     use ModuleCustomTrait;
     use ChartTrait;

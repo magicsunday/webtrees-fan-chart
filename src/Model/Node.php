@@ -22,40 +22,40 @@ use JsonSerializable;
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-class Node implements JsonSerializable
+final class Node implements JsonSerializable
 {
     /**
      * The list of parents.
      *
      * @var list<Node>
      */
-    protected array $parents = [];
+    private array $parents = [];
 
     /**
      * The list of partner nodes (depth -1 in the descendant section).
      *
      * @var list<Node>
      */
-    protected array $partners = [];
+    private array $partners = [];
 
     /**
      * The list of child nodes (depth -2 in the descendant section).
      *
      * @var list<Node>
      */
-    protected array $children = [];
+    private array $children = [];
 
     /**
      * Children without a visible partner (privacy-hidden spouse).
      *
      * @var list<Node>
      */
-    protected array $unassignedChildren = [];
+    private array $unassignedChildren = [];
 
     /**
      * @param NodeData $data
      */
-    public function __construct(protected NodeData $data)
+    public function __construct(private readonly NodeData $data)
     {
     }
 
