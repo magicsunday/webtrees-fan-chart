@@ -36,7 +36,6 @@ use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Traits\ModuleCustomTrait;
 use Override;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -361,7 +360,7 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
     /**
      * Returns the asset URLs of the module's own stylesheets.
      *
-     * @return array<string>
+     * @return array{string, string}
      */
     private function getStylesheets(): array
     {
@@ -378,7 +377,6 @@ class Module extends FanChartModule implements ModuleAssetUrlInterface, ModuleCu
      * @return array<string>
      *
      * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     private function getExportStylesheets(): array
     {

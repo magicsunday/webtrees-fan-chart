@@ -27,28 +27,28 @@ class Node implements JsonSerializable
     /**
      * The list of parents.
      *
-     * @var Node[]
+     * @var list<Node>
      */
     protected array $parents = [];
 
     /**
      * The list of partner nodes (depth -1 in the descendant section).
      *
-     * @var Node[]
+     * @var list<Node>
      */
     protected array $partners = [];
 
     /**
      * The list of child nodes (depth -2 in the descendant section).
      *
-     * @var Node[]
+     * @var list<Node>
      */
     protected array $children = [];
 
     /**
      * Children without a visible partner (privacy-hidden spouse).
      *
-     * @var Node[]
+     * @var list<Node>
      */
     protected array $unassignedChildren = [];
 
@@ -101,7 +101,7 @@ class Node implements JsonSerializable
     /**
      * Sets the child nodes for this node.
      *
-     * @param Node[] $children
+     * @param list<Node> $children
      *
      * @return Node
      */
@@ -130,7 +130,13 @@ class Node implements JsonSerializable
      * Serialises the node to an array for JSON output. The "parents" key is
      * omitted when the node has no ancestors, keeping the payload compact.
      *
-     * @return array<string, int|int[]|NodeData|Node[]>
+     * @return array{
+     *     data: NodeData,
+     *     parents?: non-empty-list<Node>,
+     *     partners?: non-empty-list<Node>,
+     *     children?: non-empty-list<Node>,
+     *     unassignedChildren?: non-empty-list<Node>,
+     * }
      */
     public function jsonSerialize(): array
     {
