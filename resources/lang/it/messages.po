@@ -22,19 +22,19 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Un grafico a ventaglio degli antenati di una persona."
 
-#: src/Configuration.php:803
+#: src/Configuration.php:815
 msgid "Abbreviate given names first"
 msgstr "Abbrevia prima i nomi propri"
 
-#: src/Configuration.php:804
+#: src/Configuration.php:816
 msgid "Abbreviate surnames first"
 msgstr "Abbrevia prima i cognomi"
 
-#: src/Configuration.php:802
+#: src/Configuration.php:814
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automatico (in base alla tradizione dei cognomi dell'albero)"
 
-#: src/Configuration.php:562
+#: src/Configuration.php:570
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
@@ -136,7 +136,7 @@ msgstr "Impostare i gradi di apertura del grafico"
 msgid "Font size"
 msgstr "Dimensione dei caratteri"
 
-#: src/Configuration.php:563
+#: src/Configuration.php:571
 msgid "Full place name"
 msgstr "Nome completo del luogo"
 
@@ -193,15 +193,15 @@ msgstr ""
 "Martin \"Chalky\" White). Riproduce il comportamento storico di webtrees per "
 "alberi che memorizzano i soprannomi nel campo GEDCOM NICK separato."
 
-#: src/Configuration.php:564
+#: src/Configuration.php:572
 msgid "Lowest level (e.g. parish)"
 msgstr "Livello più basso (es. parrocchia)"
 
-#: src/Configuration.php:566
+#: src/Configuration.php:574
 msgid "Lowest three levels"
 msgstr "Tre livelli più bassi"
 
-#: src/Configuration.php:565
+#: src/Configuration.php:573
 msgid "Lowest two levels"
 msgstr "Due livelli più bassi"
 
@@ -242,15 +242,15 @@ msgstr ""
 msgid "Paternal"
 msgstr "Paterno"
 
-#: src/Configuration.php:567
+#: src/Configuration.php:575
 msgid "Place and country"
 msgstr ""
 
-#: src/Configuration.php:568
+#: src/Configuration.php:576
 msgid "Place and country code (2 letters)"
 msgstr ""
 
-#: src/Configuration.php:569
+#: src/Configuration.php:577
 msgid "Place and country code (3 letters)"
 msgstr ""
 
@@ -293,7 +293,7 @@ msgstr ""
 "matrimonio sono nascoste dalla generazione 9. I discendenti con archi "
 "stretti utilizzano automaticamente un formato compatto con solo l'anno."
 
-#: src/Configuration.php:318
+#: src/Configuration.php:326
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Mostra date complete fino alla generazione %s"
@@ -353,7 +353,7 @@ msgstr "Le preferenze per il modulo \"%s\" sono state aggiornate."
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Usare Ctrl + scorrimento per ingrandire la vista"
 
-#: src/Configuration.php:313
+#: src/Configuration.php:321
 msgid "Years only"
 msgstr "Solo anni"
 
