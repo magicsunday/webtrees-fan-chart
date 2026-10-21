@@ -70,7 +70,6 @@ export const DESCENDANT_GAP_DEG = 10;
  * @property {string}      [deathPlace]            Death place for the tooltip
  * @property {string}      [marriagePlace]         Marriage place for the tooltip
  * @property {string|null} [familyColor]           Pre-computed HSL color string (set by applyFamilyColors)
- * @property {number|null} [imageSize]             Pre-computed thumbnail size in px (set by Person)
  */
 
 /**

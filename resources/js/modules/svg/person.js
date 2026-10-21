@@ -80,9 +80,9 @@ export default class Person {
 
     /**
      * Builds all child elements of the person <g>. Skips outer generations when
-     * names are disabled. For nodes with data, pre-computes imageSize on the
-     * datum before calling LabelRenderer so text layout can account for the
-     * image width.
+     * names are disabled. For nodes with data, computes the image size first and
+     * hands it to the label renderer and to the image placement, so the text
+     * layout can account for the image width.
      *
      * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
      * @param {HierarchyNode}                 datum  The D3 partition datum
@@ -124,22 +124,22 @@ export default class Person {
         if (datum.data.data.xref !== "") {
             this.addTitleToPerson(content, datum.data.data.name);
 
-            // Pre-compute image size so text layout can account for it
-            datum.data.data.imageSize = this._computeImageSize(datum);
+            // The image size is computed first because the text layout makes
+            // room for the image
+            const imageSize = this._computeImageSize(datum);
 
-            // Render labels (text layout uses imageSize if set above)
             if (this._configuration.showNames) {
                 const labelRenderer = new LabelRenderer(
                     this._svg,
                     this._configuration,
                     this._geometry,
                 );
-                labelRenderer.addLabel(content, datum);
+                labelRenderer.addLabel(content, datum, imageSize ?? 0);
             }
 
             // Place image after text is rendered
-            if (datum.data.data.imageSize) {
-                this.addImageToPerson(content, datum, this._configuration.showNames);
+            if (imageSize) {
+                this.addImageToPerson(content, datum, this._configuration.showNames, imageSize);
             }
 
             this.addColorGroup(content, datum);
@@ -239,11 +239,11 @@ export default class Person {
      * @param {Selection<any, any, any, any>} person    The parent element
      * @param {HierarchyNode}                 datum     The D3 data object
      * @param {boolean}                       showNames Whether name labels are rendered
+     * @param {number}                        imageSize The image size in px, 0 for no image
      *
      * @private
      */
-    addImageToPerson(person, datum, showNames = true) {
-        const imageSize = datum.data.data.imageSize;
+    addImageToPerson(person, datum, showNames = true, imageSize = 0) {
         const thumbnail = datum.data.data.thumbnail;
 
         // _computeImageSize() only sets an image size for a person with a
