@@ -16,14 +16,10 @@ use Fisharebest\Localization\Locale;
 use Fisharebest\Localization\Translator;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\I18N;
-use Fisharebest\Webtrees\Module\AbstractModule;
-use Fisharebest\Webtrees\Services\ChartService;
 use Fisharebest\Webtrees\Tree;
 use GuzzleHttp\Psr7\ServerRequest;
-use Illuminate\Database\Schema\Blueprint;
 use MagicSunday\Webtrees\FanChart\Configuration;
-use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
-use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\ModuleBase\Model\NameAbbreviation;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceStyle;
@@ -46,6 +42,8 @@ use function str_contains;
 #[CoversClass(Configuration::class)]
 final class ConfigurationTest extends TestCase
 {
+    use ModuleSettingsFixtureTrait;
+
     /**
      * Ensures locale and translator are initialised before each test.
      */
@@ -940,53 +938,5 @@ final class ConfigurationTest extends TestCase
     private function isPreferenceQuery(array $entry): bool
     {
         return str_contains($entry['query'], 'module_setting');
-    }
-
-    /**
-     * Creates a module instance prepopulated with the provided preferences.
-     *
-     * @param array<string, string> $preferences
-     */
-    private function createModuleWithPreferences(array $preferences): Module
-    {
-        static $initialised = false;
-
-        if ($initialised === false) {
-            $database = new DB();
-            $database->addConnection([
-                'driver'   => 'sqlite',
-                'database' => ':memory:',
-            ]);
-            $database->setAsGlobal();
-            $database->bootEloquent();
-            DB::connection()->getSchemaBuilder()->create('module_setting', static function (Blueprint $table): void {
-                $table->string('module_name');
-                $table->string('setting_name');
-                $table->string('setting_value');
-            });
-
-            $initialised = true;
-        }
-
-        DB::table('module_setting')->delete();
-        DB::table('module_setting')->insert(
-            array_map(
-                static fn (string $name, string $value): array => [
-                    'module_name'   => 'webtrees-fan-chart',
-                    'setting_name'  => $name,
-                    'setting_value' => $value,
-                ],
-                array_keys($preferences),
-                $preferences
-            )
-        );
-
-        $chartService = self::createStub(ChartService::class);
-        $module       = new Module($chartService, new DataFacade());
-
-        $reflection = new ReflectionProperty(AbstractModule::class, 'name');
-        $reflection->setValue($module, 'webtrees-fan-chart');
-
-        return $module;
     }
 }
