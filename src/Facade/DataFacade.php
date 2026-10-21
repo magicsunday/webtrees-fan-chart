@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Facade;
 
 use Fisharebest\Webtrees\Date;
+use Fisharebest\Webtrees\Fact;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
@@ -189,7 +190,7 @@ class DataFacade
                 // spouse() returned null -- distinguish: no pointer vs. privacy-hidden
                 $hasSpousePointer = $family->facts(['HUSB', 'WIFE'])
                     ->filter(
-                        static fn ($fact): bool => $fact->value() !== '@' . $individual->xref() . '@'
+                        static fn (Fact $fact): bool => $fact->value() !== '@' . $individual->xref() . '@'
                     )
                     ->isNotEmpty();
 

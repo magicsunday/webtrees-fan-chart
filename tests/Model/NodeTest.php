@@ -127,8 +127,7 @@ final class NodeTest extends TestCase
         self::assertIsArray($result['partners']);
         self::assertCount(1, $result['partners']);
 
-        $partnerNode = $result['partners'][0];
-        self::assertInstanceOf(Node::class, $partnerNode);
+        $partnerNode   = $result['partners'][0];
         $partnerResult = $partnerNode->jsonSerialize();
         self::assertArrayHasKey('children', $partnerResult);
         self::assertSame([$child], $partnerResult['children']);

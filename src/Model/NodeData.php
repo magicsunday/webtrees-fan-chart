@@ -407,7 +407,36 @@ class NodeData implements JsonSerializable
     /**
      * Serialises all chart-relevant fields to an array.
      *
-     * @return array<string, int|bool|string|string[]>
+     * @return array{
+     *     id: int,
+     *     xref: string,
+     *     url: string,
+     *     updateUrl: string,
+     *     generation: int,
+     *     name: string,
+     *     isNameRtl: bool,
+     *     firstNames: string[],
+     *     lastNames: string[],
+     *     preferredName: string,
+     *     nickname: string,
+     *     alternativeName: string,
+     *     isAltRtl: bool,
+     *     thumbnail: string,
+     *     silhouette: string,
+     *     sex: string,
+     *     birth: string,
+     *     death: string,
+     *     marriageDate: string,
+     *     marriageDateOfParents: string,
+     *     timespan: string,
+     *     compactTimespan: string,
+     *     birthDateFull: string,
+     *     deathDateFull: string,
+     *     marriageDateFull: string,
+     *     birthPlace: string,
+     *     deathPlace: string,
+     *     marriagePlace: string,
+     * }
      */
     public function jsonSerialize(): array
     {

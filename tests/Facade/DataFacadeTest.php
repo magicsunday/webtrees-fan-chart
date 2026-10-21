@@ -33,6 +33,7 @@ use Illuminate\Support\Collection;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
+use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatSpec;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceStyle;
@@ -203,7 +204,6 @@ final class DataFacadeTest extends TestCase
         $serialized = $rootNode->jsonSerialize();
 
         self::assertArrayHasKey('parents', $serialized);
-        /** @var array<int, Node> $parents */
         $parents = $serialized['parents'];
 
         self::assertCount(2, $parents);
@@ -218,7 +218,7 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function treeStructureIncludesDescendantsWhenEnabled(): void
     {
-        $this->setUpRouting();
+        $this->registerRouting();
 
         $configuration = self::createStub(Configuration::class);
         $configuration->method('getGenerations')->willReturn(2);
@@ -306,7 +306,6 @@ final class DataFacadeTest extends TestCase
 
         // Partner node must have children
         $partnerNode = $serialized['partners'][0];
-        self::assertInstanceOf(Node::class, $partnerNode);
 
         $partnerSerialized = $partnerNode->jsonSerialize();
         self::assertArrayHasKey('children', $partnerSerialized);
@@ -319,7 +318,6 @@ final class DataFacadeTest extends TestCase
 
         // Child generation must be -2
         $childNode = $partnerSerialized['children'][0];
-        self::assertInstanceOf(Node::class, $childNode);
         $childData = $childNode->getData()->jsonSerialize();
         self::assertSame(-2, $childData['generation']);
 
@@ -369,7 +367,7 @@ final class DataFacadeTest extends TestCase
         string $death,
         string $expected,
     ): void {
-        $childData = $this->buildDescendantChildData($birth, $death);
+        $childData = $this->buildDescendantChildData($birth, $death)->jsonSerialize();
 
         self::assertSame($expected, $childData['compactTimespan']);
     }
@@ -381,13 +379,11 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function descendantChildrenKeepThePlacesWhateverTheFanDegree(): void
     {
-        $narrow = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 340);
-        $wide   = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 0);
+        $narrow = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 340)->jsonSerialize();
+        $wide   = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 0)->jsonSerialize();
 
         self::assertSame('Rome, Italy', $narrow['birthPlace']);
         self::assertSame('Paris, France', $narrow['deathPlace']);
-        self::assertIsString($narrow['timespan']);
-        self::assertIsString($wide['timespan']);
         self::assertStringContainsString('Rome, Italy', $narrow['timespan']);
         self::assertStringContainsString('Paris, France', $narrow['timespan']);
         self::assertStringContainsString('Rome, Italy', $wide['timespan']);
@@ -402,7 +398,7 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function descendantChildrenCarryNoMarriageDates(): void
     {
-        $childData = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 0);
+        $childData = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 0)->jsonSerialize();
 
         self::assertSame(-2, $childData['generation']);
         self::assertSame('', $childData['marriageDate']);
@@ -416,7 +412,7 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function childrenOfAHiddenPartnerAreBuiltLikeOtherDescendantChildren(): void
     {
-        $childData = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 340, true);
+        $childData = $this->buildDescendantChildData('1 JAN 923', '1 JAN 987', 340, true)->jsonSerialize();
 
         self::assertSame(-2, $childData['generation']);
         self::assertSame('', $childData['marriageDate']);
@@ -435,15 +431,15 @@ final class DataFacadeTest extends TestCase
      * @param int    $fanDegree     The fan degree of the configuration, a large value leaves a narrow descendant sector
      * @param bool   $hiddenPartner True when the partner of the root is hidden by privacy
      *
-     * @return array<string, array<int|string, mixed>|bool|int|string|null>
+     * @return NodeData
      */
     private function buildDescendantChildData(
         string $birth,
         string $death,
         int $fanDegree = 0,
         bool $hiddenPartner = false,
-    ): array {
-        $this->setUpRouting();
+    ): NodeData {
+        $this->registerRouting();
 
         $configuration = self::createStub(Configuration::class);
         $configuration->method('getGenerations')->willReturn(2);
@@ -503,32 +499,27 @@ final class DataFacadeTest extends TestCase
         $rootData = $rootNode->jsonSerialize();
 
         if ($hiddenPartner) {
-            $unassignedChildren = $rootData['unassignedChildren'];
-            self::assertIsArray($unassignedChildren);
+            self::assertArrayHasKey('unassignedChildren', $rootData);
 
-            $childNode = $unassignedChildren[0];
+            $childNode = $rootData['unassignedChildren'][0];
         } else {
-            $partners = $rootData['partners'];
-            self::assertIsArray($partners);
+            self::assertArrayHasKey('partners', $rootData);
 
-            $partnerNode = $partners[0];
-            self::assertInstanceOf(Node::class, $partnerNode);
+            $partnerSerialized = $rootData['partners'][0]->jsonSerialize();
+            self::assertArrayHasKey('children', $partnerSerialized);
 
-            $children = $partnerNode->jsonSerialize()['children'];
-            self::assertIsArray($children);
-
-            $childNode = $children[0];
+            $childNode = $partnerSerialized['children'][0];
         }
 
         self::assertInstanceOf(Node::class, $childNode);
 
-        return $childNode->getData()->jsonSerialize();
+        return $childNode->getData();
     }
 
     /**
      * Sets up the route factory and container required by DataFacade.
      */
-    private function setUpRouting(): void
+    private function registerRouting(): void
     {
         $routeFactory = new class implements RouteFactoryInterface {
             public function route(string $route_name, array $parameters = []): string
@@ -570,7 +561,7 @@ final class DataFacadeTest extends TestCase
     /**
      * Builds a fake name set matching webtrees output structure.
      *
-     * @return array<int, array<string, string|bool|array<string>>>
+     * @return list<array<string, string|bool|array<string>>>
      */
     private function buildNameSet(string $firstName, string $lastName): array
     {

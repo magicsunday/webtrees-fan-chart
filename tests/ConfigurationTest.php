@@ -217,8 +217,11 @@ final class ConfigurationTest extends TestCase
             'default_placeFormat' => 'city-iso2',
         ]);
 
-        $emitted = (new Configuration($request, $module))
-            ->getRouteToggleParams()[Configuration::PLACE_FORMAT_PARAM];
+        $routeParams = (new Configuration($request, $module))->getRouteToggleParams();
+
+        self::assertArrayHasKey(Configuration::PLACE_FORMAT_PARAM, $routeParams);
+
+        $emitted = $routeParams[Configuration::PLACE_FORMAT_PARAM];
 
         // The backing value, not the case name: emitting "CityIso2" would be
         // rejected by tryFrom() on the way back in and silently fall back to the

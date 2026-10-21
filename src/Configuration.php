@@ -305,7 +305,7 @@ class Configuration
      * Returns a localised label map for the detailed-date threshold selector.
      * Key 0 maps to "Years only"; higher keys indicate the cutoff generation.
      *
-     * @return string[]
+     * @return list<string>
      */
     public function getDetailedDateGenerationsList(): array
     {
