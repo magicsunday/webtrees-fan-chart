@@ -166,6 +166,127 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
+     * Values that are not a six digit hex colour, among them the opener of an
+     * HTML comment followed by a script opener that an inline script would
+     * keep intact after JSON encoding.
+     *
+     * @return array<string, array{string}>
+     */
+    public static function invalidColourProvider(): array
+    {
+        return [
+            'comment and script opener' => ['<!--<script>'],
+            'missing hash'              => ['112233'],
+            'short form'                => ['#123'],
+            'non-hex digit'             => ['#11223g'],
+            'trailing declaration'      => ['#112233;color:red'],
+            'trailing line break'       => ["#112233\n"],
+            'leading text'              => ['x#112233'],
+            'surrounding space'         => [' #112233 '],
+            'empty'                     => [''],
+        ];
+    }
+
+    /**
+     * A request value that is no hex colour never reaches the page. Both
+     * lineage colours resolve to their defaults instead.
+     */
+    #[Test]
+    #[DataProvider('invalidColourProvider')]
+    public function aColourFromTheRequestThatIsNoHexColourFallsBackToTheDefault(string $value): void
+    {
+        $request = (new ServerRequest(RequestMethodInterface::METHOD_GET, '/'))
+            ->withQueryParams(
+                [
+                    'paternalColor' => $value,
+                    'maternalColor' => $value,
+                ]
+            );
+
+        $configuration = new Configuration($request, $this->createModuleWithPreferences([]));
+
+        self::assertSame(Configuration::PATERNAL_COLOR_DEFAULT, $configuration->getPaternalColor());
+        self::assertSame(Configuration::MATERNAL_COLOR_DEFAULT, $configuration->getMaternalColor());
+    }
+
+    /**
+     * A module preference that is no hex colour is ignored the same way, so
+     * the stored value cannot reach the page either.
+     */
+    #[Test]
+    #[DataProvider('invalidColourProvider')]
+    public function aColourFromTheModulePreferenceThatIsNoHexColourFallsBackToTheDefault(string $value): void
+    {
+        $module = $this->createModuleWithPreferences(
+            [
+                'default_paternalColor' => $value,
+                'default_maternalColor' => $value,
+            ]
+        );
+
+        $configuration = new Configuration(new ServerRequest(RequestMethodInterface::METHOD_GET, '/'), $module);
+
+        self::assertSame(Configuration::PATERNAL_COLOR_DEFAULT, $configuration->getPaternalColor());
+        self::assertSame(Configuration::MATERNAL_COLOR_DEFAULT, $configuration->getMaternalColor());
+    }
+
+    /**
+     * A valid colour of the request wins over the module preference, and the
+     * letters of the digits keep their case.
+     */
+    #[Test]
+    public function aHexColourFromTheRequestWinsOverTheModulePreference(): void
+    {
+        $request = (new ServerRequest(RequestMethodInterface::METHOD_GET, '/'))
+            ->withQueryParams(
+                [
+                    'paternalColor' => '#AbCdEf',
+                    'maternalColor' => '#fEdCbA',
+                ]
+            );
+
+        $module = $this->createModuleWithPreferences(
+            [
+                'default_paternalColor' => '#010203',
+                'default_maternalColor' => '#040506',
+            ]
+        );
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame('#AbCdEf', $configuration->getPaternalColor());
+        self::assertSame('#fEdCbA', $configuration->getMaternalColor());
+    }
+
+    /**
+     * A request value that is no hex colour falls back to the stored module
+     * preference when that one is valid, not to the built-in default.
+     */
+    #[Test]
+    public function aColourFromTheRequestThatIsNoHexColourFallsBackToTheValidModulePreference(): void
+    {
+        $request = (new ServerRequest(RequestMethodInterface::METHOD_GET, '/'))
+            ->withQueryParams(
+                [
+                    'paternalColor' => '<!--<script>',
+                    'maternalColor' => '#11223g',
+                ]
+            );
+
+        $module = $this->createModuleWithPreferences(
+            [
+                'default_paternalColor' => '#010203',
+                'default_maternalColor' => '#040506',
+            ]
+        );
+
+        $configuration = new Configuration($request, $module);
+
+        self::assertSame('#010203', $configuration->getPaternalColor());
+        self::assertSame('#040506', $configuration->getMaternalColor());
+    }
+
+    /**
      * Locks the route-toggle parameter list. Forgetting to add a new toggle
      * here is the regression that lets a freshly added form option silently
      * fall back to module-preference defaults on click-to-recenter.
