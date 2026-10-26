@@ -142,17 +142,29 @@ Click **Show more options** to access additional settings:
 | **Hide empty segments** | Hides chart segments for missing ancestors. |
 | **Show places** | Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail (full name or lowest 1-3 hierarchy levels). |
 | **Show parent marriage dates** | Displays marriage dates in a narrow arc between each pair of parent arcs. When descendants are enabled, also shows the marriage date between the central person and their partners. |
+| **Show details panel** | Shows the facts of a person in a side panel when you select a person, instead of the tooltip. Off by default. |
 | **Show family colors** | Colors arcs by family branch. Paternal and maternal base colors are configurable via color pickers. |
 | **Birth and death date precision** | Show full birth and death dates (DD.MM.YYYY) for early generations. Outer generations use a compact year-only format. Marriage dates switch to year-only from generation 7 and are hidden from generation 9. Descendants with narrow arcs automatically use a compact format. |
 | **Number of inner levels** | Controls how many generations use the wider inner-arc layout with text along the arc path. |
 | **Font size** | Scales the text size (50-150%). |
 
+With **Show details panel** switched on, a click on a person selects the person and a panel slides in over the chart
+from the right (from the left in right-to-left languages). It replaces the tooltip. It shows the birth and the death with
+their places and further facts such as the occupation, and it has buttons to open the individual page and to center the
+chart on the person. The chart stays usable while the panel is open, and the panel closes with its close
+button or with Escape. Places show with their full name, whatever level of detail the chart arcs use. The facts come
+from the tree setting ``Other facts to show in charts``. Add the tags ``MARR`` and ``DIV`` there to show the marriages and divorces as well, one entry per marriage with
+the name of the spouse. The birth stays first and the death last, the facts between them are ordered by time. Above
+the facts the panel shows the highlight image of the person, or the silhouette of its sex, and no image when the
+tree setting for highlight images is switched off.
+
 **Interacting with the chart:**
 
 | Action | Effect |
 |--------|--------|
-| Click on a person | Re-centers the chart on that person |
-| Right-click on a person | Opens a detailed tooltip with dates, places, and image |
+| Click on a person | Re-centers the chart on that person, with **Show details panel** it selects the person and opens the panel |
+| Right-click on a person | Opens a detailed tooltip with dates, places, and image, not with **Show details panel** |
+| Tab, then Enter or Space | With **Show details panel** a person is reached with the keyboard and selected |
 | Ctrl + scroll | Zoom in/out |
 | Click and drag | Move the chart |
 | Click center button | Reset view to center |
