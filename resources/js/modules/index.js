@@ -16,6 +16,16 @@ import { DetailPanel } from "@magicsunday/webtrees-chart-lib/chart-core";
  */
 
 /**
+ * The panels of the page and the chart that each one acts on. A chart that is loaded again, for
+ * example by the descendants switch, builds a new FanChart against the same panel element. The
+ * element has one panel with its listeners, so the panel is created once and its actions follow
+ * the chart that was built last.
+ *
+ * @type {WeakMap<Element, { target: { chart: Chart }, panel: DetailPanel }>}
+ */
+const detailPanels = new WeakMap();
+
+/**
  * Top-level entry point for the fan chart. Wires together the Configuration,
  * Chart, and DOM event listeners, then performs the initial draw.
  *
@@ -85,14 +95,25 @@ export class FanChart {
             return;
         }
 
+        const bound = detailPanels.get(element);
+
+        if (bound !== undefined) {
+            bound.target.chart = this._chart;
+            this._chart.detailPanel = bound.panel;
+
+            return;
+        }
+
+        const target = { chart: this._chart };
         const panel = new DetailPanel(element, {
-            onIndividual: (url) => this._chart.redirectToIndividual(url),
-            onCenter: (url) => this._chart.update(url),
-            onClose: () => this._chart.restoreFocus(),
-            onHidden: () => this._chart.clearSelection(),
+            onIndividual: (url) => target.chart.redirectToIndividual(url),
+            onCenter: (url) => target.chart.update(url),
+            onClose: () => target.chart.restoreFocus(),
+            onHidden: () => target.chart.clearSelection(),
         });
 
         panel.enable();
+        detailPanels.set(element, { target, panel });
         this._chart.detailPanel = panel;
     }
 

@@ -267,6 +267,45 @@ describe("FanChart detail panel", () => {
         expect(chartInstances[0].renderedWithPanel).toBe(true);
     });
 
+    it("keeps one panel for a chart that is built again against the same page", () => {
+        document.body.innerHTML =
+            '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+
+        expect(panels).toHaveLength(1);
+        expect(chartInstances).toHaveLength(2);
+        expect(chartInstances[1].detailPanel).toBe(panels[0]);
+    });
+
+    it("lets the panel act on the chart that was built last", () => {
+        document.body.innerHTML =
+            '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+
+        panels[0].callbacks.onIndividual("/individual/I1");
+        panels[0].callbacks.onCenter("/chart/I1");
+        panels[0].callbacks.onClose();
+        panels[0].callbacks.onHidden();
+
+        for (const callback of [
+            "redirectToIndividual",
+            "update",
+            "restoreFocus",
+            "clearSelection",
+        ]) {
+            expect(chartInstances[0][callback]).not.toHaveBeenCalled();
+            expect(chartInstances[1][callback]).toHaveBeenCalledTimes(1);
+        }
+    });
+
     it("connects the actions of the panel with the chart", () => {
         buildWith({ showDetailPanel: true });
 
