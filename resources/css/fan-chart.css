@@ -39,7 +39,7 @@
     position: relative;
 }
 
-.webtrees-fan-fullscreen-container .btn-primary:hover {
+.webtrees-fan-fullscreen-container .btn-chart.btn-primary:hover {
     background: var(--bs-secondary-bg, rgb(245, 245, 245));
 }
 
