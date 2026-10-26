@@ -22,20 +22,24 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "'n Waaierdiagram van 'n persoon se voorouers."
 
-#: src/Configuration.php:815
+#: src/Configuration.php:842
 msgid "Abbreviate given names first"
 msgstr "Verkort eers voorname"
 
-#: src/Configuration.php:816
+#: src/Configuration.php:843
 msgid "Abbreviate surnames first"
 msgstr "Verkort eers vanne"
 
-#: src/Configuration.php:814
+#: src/Configuration.php:841
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Outomaties (gebaseer op die boom se vannaam-tradisie)"
 
-#: src/Configuration.php:570
+#: src/Configuration.php:575
 msgid "Automatic (from the tree configuration)"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:120
+msgid "Center chart on this person"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
@@ -100,7 +104,7 @@ msgstr ""
 "van besonderheid en die datumakkuraatheid word werfwyd in die "
 "moduleinstellings opgestel."
 
-#: resources/views/modules/fan-chart/form/details.phtml:59
+#: resources/views/modules/fan-chart/form/details.phtml:72
 msgid ""
 "Displays the marriage date of each couple in a narrow arc between "
 "generations. When descendants are enabled, also shows the marriage date "
@@ -135,7 +139,7 @@ msgstr "Waaiergrootte"
 msgid "Font size"
 msgstr "Skrifgrootte"
 
-#: src/Configuration.php:571
+#: src/Configuration.php:576
 msgid "Full place name"
 msgstr "Volledige pleknaam"
 
@@ -192,15 +196,15 @@ msgstr ""
 "die van in (bv. Martin \"Chalky\" White). Boots die ouer webtrees-gedrag na "
 "vir bome wat bynaame in die afsonderlike GEDCOM NICK-veld stoor."
 
-#: src/Configuration.php:572
+#: src/Configuration.php:577
 msgid "Lowest level (e.g. parish)"
 msgstr "Laagste vlak (bv. gemeente)"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:579
 msgid "Lowest three levels"
 msgstr "Laagste drie vlakke"
 
-#: src/Configuration.php:573
+#: src/Configuration.php:578
 msgid "Lowest two levels"
 msgstr "Laagste twee vlakke"
 
@@ -224,9 +228,17 @@ msgstr "Beweeg die aansig met twee vingers"
 msgid "Name abbreviation when space is tight"
 msgstr "Naamafkorting wanneer ruimte beperk is"
 
+#: resources/views/modules/fan-chart/page.phtml:117
+msgid "No details are available for this person."
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:23
 msgid "Number of inner levels"
 msgstr "Aantal binnevlakke"
+
+#: resources/views/modules/fan-chart/page.phtml:119
+msgid "Open individual page"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
 msgid ""
@@ -240,15 +252,15 @@ msgstr ""
 msgid "Paternal"
 msgstr "Vaderlik"
 
-#: src/Configuration.php:575
+#: src/Configuration.php:580
 msgid "Place and country"
 msgstr ""
 
-#: src/Configuration.php:576
+#: src/Configuration.php:581
 msgid "Place and country code (2 letters)"
 msgstr ""
 
-#: src/Configuration.php:577
+#: src/Configuration.php:582
 msgid "Place and country code (3 letters)"
 msgstr ""
 
@@ -268,6 +280,10 @@ msgstr "Herlaai diagram vir daardie persoon"
 msgid "Right-click"
 msgstr "Regskliek"
 
+#: resources/views/modules/fan-chart/page.phtml:115
+msgid "Select a person in the chart to see the details here."
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/display.phtml:65
 msgid "Show descendants"
 msgstr "Wys afstammelinge"
@@ -275,6 +291,10 @@ msgstr "Wys afstammelinge"
 #: resources/views/modules/components/buttonbar/help-button.phtml:30
 msgid "Show details of a person"
 msgstr "Wys besonderhede van 'n persoon"
+
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show details panel"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:28
 msgid "Show family colors"
@@ -291,7 +311,7 @@ msgstr ""
 "verberg. Afstammelinge met smal boogies gebruik outomaties 'n kompakte slegs-"
 "jaar-formaat."
 
-#: src/Configuration.php:326
+#: src/Configuration.php:331
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Wys volledige datums tot generasie %s"
@@ -320,13 +340,20 @@ msgstr "Wys slegs name"
 msgid "Show nicknames in display names"
 msgstr "Wys bynaam in vertoonname"
 
-#: resources/views/modules/fan-chart/form/details.phtml:53
+#: resources/views/modules/fan-chart/form/details.phtml:66
 msgid "Show parent marriage dates"
 msgstr "Wys troudatums van ouers"
 
 #: resources/views/modules/fan-chart/form/details.phtml:40
 msgid "Show places"
 msgstr "Wys plekke"
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Shows the facts of a person in a side panel when you select a person, "
+"instead of the tooltip on the mouse pointer. The panel can be used with the "
+"keyboard as well."
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:27
 msgid ""
@@ -342,7 +369,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Wissel tussen volskerm en normale aansig"
 
-#: src/Module/ConfigTrait.php:147
+#: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
@@ -351,7 +378,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Gebruik Ctrl + rol om te vergroot"
 
-#: src/Configuration.php:321
+#: src/Configuration.php:326
 msgid "Years only"
 msgstr "Slegs jare"
 
@@ -361,6 +388,10 @@ msgstr "Zoom in/uit"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:111
+msgid "close"
 msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
