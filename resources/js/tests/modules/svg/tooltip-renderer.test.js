@@ -274,6 +274,41 @@ describe("TooltipRenderer", () => {
         ]);
     });
 
+    it("binds the hover handlers only while the detail panel replaces the tooltip", () => {
+        const handlers = [];
+        const person = {
+            on(name) {
+                handlers.push(name);
+
+                return this;
+            },
+        };
+
+        build({ showDetailPanel: true }).bindEvents(person, createDatum());
+
+        expect(handlers).toEqual(["mouseover", "mouseout"]);
+    });
+
+    it("marks the hovered person while the detail panel replaces the tooltip", () => {
+        const listeners = {};
+        const person = {
+            on(name, listener) {
+                listeners[name] = listener;
+
+                return this;
+            },
+        };
+        const element = document.createElement("div");
+
+        build({ showDetailPanel: true }).bindEvents(person, createDatum());
+
+        listeners.mouseover({ currentTarget: element });
+        expect(element.classList.contains("hover")).toBe(true);
+
+        listeners.mouseout({ currentTarget: element });
+        expect(element.classList.contains("hover")).toBe(false);
+    });
+
     it("pins the tooltip on a context menu click and releases it on the next one", () => {
         const listeners = {};
         const person = {

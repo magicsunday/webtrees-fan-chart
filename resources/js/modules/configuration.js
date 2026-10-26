@@ -58,6 +58,7 @@ export default class Configuration {
      * @param {boolean}  [options.showNames=true]
      * @param {boolean}  [options.showSilhouettes=false]
      * @param {boolean}  [options.showDescendants=false]
+     * @param {boolean}  [options.showDetailPanel=false] Whether a click selects a person for the detail panel
      * @param {boolean}  [options.rtl=false]
      * @param {number}   [options.innerArcs=4]
      * @param {string}   [options.paternalColor]
@@ -77,6 +78,7 @@ export default class Configuration {
         showNames = true,
         showSilhouettes = false,
         showDescendants = false,
+        showDetailPanel = false,
         rtl = false,
         innerArcs = 4,
         paternalColor = Configuration.PATERNAL_COLOR_DEFAULT,
@@ -131,6 +133,7 @@ export default class Configuration {
         this._fanDegree = toFiniteNumber(fanDegree, 210);
 
         this._showDescendants = showDescendants;
+        this._showDetailPanel = showDetailPanel;
 
         this.rtl = rtl;
         this.labels = labels;
@@ -252,6 +255,17 @@ export default class Configuration {
      */
     get showDescendants() {
         return this._showDescendants;
+    }
+
+    /**
+     * Returns TRUE if a click selects a person for the detail panel instead of
+     * opening the chart or the individual page, and the panel replaces the
+     * tooltip.
+     *
+     * @return {boolean}
+     */
+    get showDetailPanel() {
+        return this._showDetailPanel;
     }
 
     /**

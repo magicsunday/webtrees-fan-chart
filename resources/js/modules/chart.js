@@ -7,6 +7,7 @@
 
 import * as d3 from "./d3.js";
 import Hierarchy from "./hierarchy.js";
+import { PanelSelection } from "@magicsunday/webtrees-chart-lib/chart-core";
 import { ChartOverlay } from "@magicsunday/webtrees-chart-lib/infra";
 import Svg from "./svg.js";
 import Person from "./svg/person.js";
@@ -19,6 +20,7 @@ import ChartUpdater from "./chart-updater.js";
  * @import { Selection } from "d3-selection"
  * @import Configuration from "./configuration.js"
  * @import { HierarchyNode, NodeDatum } from "./hierarchy.js"
+ * @import { DetailPanel, PanelPerson } from "@magicsunday/webtrees-chart-lib/chart-core"
  */
 
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
@@ -47,6 +49,19 @@ export default class Chart {
         this._svg = null;
         /** @type {ChartOverlay|null} */
         this._overlay = null;
+        /** @type {DetailPanel|null} */
+        this._detailPanel = null;
+        /** @type {PanelSelection<any>} */
+        this._selection = new PanelSelection(() => this._svg?.visual);
+    }
+
+    /**
+     * Sets the detail panel that shows the selected person.
+     *
+     * @param {DetailPanel|null} panel The detail panel
+     */
+    set detailPanel(panel) {
+        this._detailPanel = panel;
     }
 
     /**
@@ -495,6 +510,18 @@ export default class Chart {
         // Trigger method on click/touch
         persons.on("click", this.personClick.bind(this));
 
+        // With the detail panel a person is also reached with the Tab key and
+        // selected with Enter or Space, the arcs are no focus targets otherwise
+        if (this._configuration.showDetailPanel) {
+            const that = this;
+
+            persons.each(function (/** @type {HierarchyNode} */ datum) {
+                that._selection.makeOperable(d3.select(this), datum, (_data, byKeyboard) =>
+                    that.personClick(null, datum, byKeyboard),
+                );
+            });
+        }
+
         // Set available on marriage arcs that have content
         this.svg
             .select("g.marriageGroup")
@@ -518,20 +545,50 @@ export default class Chart {
 
                 d3.select(this).classed("empty", !hasChildren);
             });
+
+        // The person elements are created anew by every draw
+        this._selection.apply();
     }
 
     /**
-     * Handles a click on a person arc. Redirects to the individual page for the
-     * center node (depth 0); triggers a chart update for all other nodes.
+     * Removes the selection, so no person stays marked once the panel has closed.
+     */
+    clearSelection() {
+        this._selection.clear();
+    }
+
+    /**
+     * Gives the focus back to the selected person, if it is still in the chart.
+     */
+    restoreFocus() {
+        this._selection.restoreFocus();
+    }
+
+    /**
+     * Handles a click on a person arc. With the detail panel the person is
+     * selected and the panel offers both actions. Without it the center node
+     * (depth 0) redirects to the individual page and every other node triggers
+     * a chart update.
      *
-     * @param {Event}         _event The current event
-     * @param {HierarchyNode} datum  The D3 data object
+     * @param {Event|null}    _event     The current event, null for a key
+     * @param {HierarchyNode} datum      The D3 data object
+     * @param {boolean}       byKeyboard Whether a key triggered the activation
      *
      * @private
      */
-    personClick(_event, datum) {
+    personClick(_event, datum, byKeyboard = false) {
         // Empty partner nodes have no updateUrl -- ignore clicks on them
         if (datum.data.data.updateUrl === "") {
+            return;
+        }
+
+        if (this._configuration.showDetailPanel && this._detailPanel !== null) {
+            this._selection.select(datum.data);
+            this._detailPanel.select(
+                /** @type {PanelPerson} */ (/** @type {unknown} */ (datum.data.data)),
+                byKeyboard,
+            );
+
             return;
         }
 
@@ -545,8 +602,6 @@ export default class Chart {
      * Opens the webtrees individual page in a new tab.
      *
      * @param {string} url The individual page URL
-     *
-     * @private
      */
     redirectToIndividual(url) {
         window.open(url, "_blank");

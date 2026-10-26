@@ -336,3 +336,53 @@ div.tooltip .place td {
     min-height: 100dvh;
     max-height: 100dvh;
 }
+
+/* Detail panel */
+/*
+ * A round image of fixed size with a ring around it. The whole photo stays visible, so a portrait
+ * photo keeps the chin, and the neutral ground fills what the photo does not cover.
+ */
+.webtrees-fan-detail-panel .detail-image {
+    display: block;
+    width: 9rem;
+    height: 9rem;
+    margin: 0 auto 1rem;
+    border: 3px solid var(--bs-border-color, #dee2e6);
+    border-radius: 50%;
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    object-fit: contain;
+}
+
+.webtrees-fan-detail-panel .detail-image[hidden] {
+    display: none;
+}
+
+.webtrees-fan-detail-panel .detail-facts dt {
+    font-weight: 600;
+    margin-top: 0.75rem;
+}
+
+.webtrees-fan-detail-panel .detail-facts dd {
+    margin-bottom: 0;
+}
+
+.webtrees-fan-detail-panel .detail-place {
+    font-style: italic;
+}
+
+.webtrees-fan-detail-panel .offcanvas-title:focus {
+    outline: none;
+}
+
+/*
+ * The panel is an offcanvas that opens on a click on a person. It has no backdrop, so the chart
+ * stays usable, and the shadow to the chart makes it look as if it lies above the page.
+ */
+.webtrees-fan-detail-panel.offcanvas-end {
+    box-shadow: -0.75rem 0 1.5rem rgba(0, 0, 0, 0.25);
+}
+
+/* In a right-to-left page the panel sits at the left edge, so the shadow falls to the right */
+[dir="rtl"] .webtrees-fan-detail-panel.offcanvas-end {
+    box-shadow: 0.75rem 0 1.5rem rgba(0, 0, 0, 0.25);
+}

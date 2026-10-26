@@ -73,6 +73,26 @@
     filter: saturate(1.5) brightness(0.92);
 }
 
+/*
+ * The selected person of the detail panel, and the person with the keyboard focus. Both use the
+ * stroke as well as the colour, so the mark does not rely on colour alone. The focus is dashed and
+ * thicker, so a focused arc differs from the selected one without a colour change.
+ */
+.webtrees-fan-chart-container svg g.person.selected g.arc path {
+    stroke: var(--bs-body-color, rgb(50, 50, 50));
+    stroke-width: 3px;
+}
+
+.webtrees-fan-chart-container svg g.person:focus-visible {
+    outline: none;
+}
+
+.webtrees-fan-chart-container svg g.person:focus-visible g.arc path {
+    stroke: var(--bs-body-color, rgb(50, 50, 50));
+    stroke-dasharray: 8 4;
+    stroke-width: 4px;
+}
+
 .webtrees-fan-chart-container svg g.name .wt-chart-box-name-alt {
     fill: var(--chart-text-muted);
     font-weight: normal;

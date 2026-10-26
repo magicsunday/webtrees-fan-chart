@@ -8,6 +8,7 @@
 import * as d3 from "./d3.js";
 import Configuration from "./configuration.js";
 import Chart from "./chart.js";
+import { DetailPanel } from "@magicsunday/webtrees-chart-lib/chart-core";
 
 /**
  * @import { Selection } from "d3-selection"
@@ -39,6 +40,7 @@ export class FanChart {
      * @param {boolean}   options.showPlaces
      * @param {boolean}   options.showNames
      * @param {boolean}   options.showDescendants
+     * @param {boolean}   options.showDetailPanel
      * @param {string}    options.paternalColor
      * @param {string}    options.maternalColor
      * @param {string}    options.nameAbbreviation
@@ -59,11 +61,39 @@ export class FanChart {
         // Set up chart instance
         this._chart = new Chart(this._parent, this._configuration);
 
+        // The panel is set up before the first draw, so a chart that is drawn while the panel
+        // switch is on already finds the panel connected.
+        this.initDetailPanel();
+
         this.init();
 
         // Pass the data to the chart and trigger the initial render
         this._chart.data = options.data;
         this._chart.render();
+    }
+
+    /**
+     * Connects the detail panel of the page with the chart. A chart without the detail panel
+     * leaves the panel element of the page hidden.
+     *
+     * @private
+     */
+    initDetailPanel() {
+        const element = document.getElementById("webtrees-fan-detail-panel");
+
+        if (!this._configuration.showDetailPanel || element === null) {
+            return;
+        }
+
+        const panel = new DetailPanel(element, {
+            onIndividual: (url) => this._chart.redirectToIndividual(url),
+            onCenter: (url) => this._chart.update(url),
+            onClose: () => this._chart.restoreFocus(),
+            onHidden: () => this._chart.clearSelection(),
+        });
+
+        panel.enable();
+        this._chart.detailPanel = panel;
     }
 
     /**

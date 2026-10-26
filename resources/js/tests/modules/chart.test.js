@@ -91,6 +91,8 @@ class MockSvg {
                 }),
             }),
             append: () => createChainableSelection(),
+            // The marks of the selected person are applied after every draw
+            selectAll: () => createChainableSelection(),
         };
         this.attrCalls = [];
 

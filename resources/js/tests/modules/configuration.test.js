@@ -61,4 +61,9 @@ describe("Configuration", () => {
         expect(config.labels).toBe(rtlLabels);
         expect(config.labels).toEqual(["Self", "Parents", "Grandparents"]);
     });
+
+    it("shows no detail panel unless the server switches it on", () => {
+        expect(new Configuration({ labels }).showDetailPanel).toBe(false);
+        expect(new Configuration({ labels, showDetailPanel: true }).showDetailPanel).toBe(true);
+    });
 });
