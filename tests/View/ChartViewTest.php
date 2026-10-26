@@ -93,22 +93,42 @@ final class ChartViewTest extends TestCase
     }
 
     /**
+     * The panel switch reaches the chart as the server value, which the browser storage cannot
+     * override because the server reads the facts only while it is on.
+     */
+    #[Test]
+    public function handsTheDetailPanelSwitchToTheChart(): void
+    {
+        $output = $this->render(null);
+
+        self::assertStringContainsString('showDetailPanel: false,', $output);
+        self::assertStringNotContainsString('opts.showDetailPanel', $output);
+
+        // The value is the one of the configuration, not a constant of the view
+        $enabled = $this->render(null, [], [], ['default_showDetailPanel' => '1']);
+
+        self::assertStringContainsString('showDetailPanel: true,', $enabled);
+    }
+
+    /**
      * Renders the view with the variables of the chart action and returns the page together with
      * the script that the view pushes onto the javascript stack.
      *
-     * @param Node|null            $chartData         The chart data tree
-     * @param array<string, mixed> $chartParamsChange Values that replace the chart parameters
-     * @param list<string>         $stylesheets       The style sheets of the SVG export
+     * @param Node|null             $chartData         The chart data tree
+     * @param array<string, mixed>  $chartParamsChange Values that replace the chart parameters
+     * @param list<string>          $stylesheets       The style sheets of the SVG export
+     * @param array<string, string> $preferences       The module preferences of the test
      */
     private function render(
         ?Node $chartData,
         array $chartParamsChange = [],
         array $stylesheets = [],
+        array $preferences = [],
     ): string {
         $javascript    = 'https://example.test/fan-chart.js?asset=1&hash=2';
         $configuration = new Configuration(
             new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
-            $this->createModuleWithPreferences([])
+            $this->createModuleWithPreferences($preferences)
         );
         $id          = 'abc';
         $chartParams = [

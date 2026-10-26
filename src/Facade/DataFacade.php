@@ -17,13 +17,17 @@ use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Fisharebest\Webtrees\Tree;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Facade\ModuleAwareDataFacadeTrait;
+use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatSpec;
+use MagicSunday\Webtrees\ModuleBase\Model\PlaceStyle;
 use MagicSunday\Webtrees\ModuleBase\Model\Symbols;
 use MagicSunday\Webtrees\ModuleBase\Processor\DateProcessor;
+use MagicSunday\Webtrees\ModuleBase\Processor\FactResolver;
 use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
@@ -71,6 +75,13 @@ final class DataFacade
     private string $compactDateFormat = CompactDateFormat::FALLBACK;
 
     /**
+     * The resolver of the facts of the detail panel, built on first use and shared
+     * by every node of the request. It belongs to the tree of one request, so
+     * createTreeStructure() drops it.
+     */
+    private ?FactResolver $factResolver = null;
+
+    /**
      * Builds the complete Node tree rooted at the given individual and returns
      * it ready for JSON serialisation. Resets the node counter on each call so
      * IDs are always consecutive starting at 1.
@@ -88,6 +99,7 @@ final class DataFacade
         $this->configuration     = $configuration;
         $this->nodeId            = 0;
         $this->compactDateFormat = CompactDateFormat::forLocale(I18N::languageTag());
+        $this->factResolver      = null;
 
         $rootNode = $this->buildTreeStructure($individual);
 
@@ -329,7 +341,31 @@ final class DataFacade
             ->setDeathPlace($placeProcessor->getDeathPlace())
             ->setMarriagePlace($placeProcessor->getMarriagePlace());
 
+        // The facts are only read for the detail panel, so a chart without the panel
+        // pays neither their payload nor their database work.
+        if ($this->configuration->getShowDetailPanel()) {
+            $treeData->setFacts($this->getFactResolver($individual->tree())->factsFor($individual, true));
+        }
+
         return $treeData;
+    }
+
+    /**
+     * Returns the resolver of the facts of the detail panel. The panel shows the
+     * full place name, whatever place format the chart arcs use.
+     *
+     * @param Tree $tree
+     *
+     * @return FactResolver
+     */
+    private function getFactResolver(Tree $tree): FactResolver
+    {
+        return $this->factResolver ??= new FactResolver(
+            $tree,
+            new PlaceFormatSpec(PlaceStyle::Full),
+            new IsoCountryMap(),
+            $this->compactDateFormat
+        );
     }
 
     /**

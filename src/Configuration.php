@@ -202,6 +202,11 @@ final class Configuration
     private ?PlaceFormatChoice $placeFormatChoice = null;
 
     /**
+     * Whether the detail panel is shown, or null until first resolved.
+     */
+    private ?bool $showDetailPanel = null;
+
+    /**
      * Whether parent marriage dates are shown, or null until first resolved.
      */
     private ?bool $showParentMarriageDates = null;
@@ -601,6 +606,28 @@ final class Configuration
     }
 
     /**
+     * Returns whether the detail panel with the facts of the selected person is
+     * shown. It is off unless the request or the module preference turns it on.
+     *
+     * @return bool
+     */
+    public function getShowDetailPanel(): bool
+    {
+        if ($this->showDetailPanel !== null) {
+            return $this->showDetailPanel;
+        }
+
+        return $this->showDetailPanel = $this->validator()
+            ->boolean(
+                'showDetailPanel',
+                (bool) $this->module->getPreference(
+                    'default_showDetailPanel',
+                    '0'
+                )
+            );
+    }
+
+    /**
      * Returns true when highlight images (or silhouettes) should be rendered
      * inside arcs.
      *
@@ -867,6 +894,7 @@ final class Configuration
             'paternalColor'           => $this->getPaternalColor(),
             'maternalColor'           => $this->getMaternalColor(),
             'showDescendants'         => $this->getShowDescendants() ? '1' : '0',
+            'showDetailPanel'         => $this->getShowDetailPanel() ? '1' : '0',
         ];
     }
 }

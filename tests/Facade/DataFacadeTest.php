@@ -47,6 +47,11 @@ use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 use function array_map;
+use function is_string;
+use function json_decode;
+use function json_encode;
+
+use const JSON_THROW_ON_ERROR;
 
 /**
  * Validates tree construction and data extraction performed by the facade.
@@ -208,7 +213,8 @@ final class DataFacadeTest extends TestCase
             '/route/module?module=webtrees-fan-chart&action=update&xref=I1&tree=main'
             . '&generations=2&fanDegree=210&fontScale=100&hideEmptySegments=1&showFamilyColors=1'
             . '&showPlaces=0&placeFormat=full&showParentMarriageDates=0&showImages=0&showNames=1'
-            . '&showNicknames=0&innerArcs=3&paternalColor=%2370a9cf&maternalColor=%23d06f94&showDescendants=0',
+            . '&showNicknames=0&innerArcs=3&paternalColor=%2370a9cf&maternalColor=%23d06f94&showDescendants=0'
+            . '&showDetailPanel=0',
             $serializedData['updateUrl']
         );
 
@@ -427,6 +433,152 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
+     * Without the detail panel the payload carries no facts, so the default chart
+     * pays neither their size nor their database work.
+     */
+    #[Test]
+    public function leavesTheFactsOutWhileTheDetailPanelIsOff(): void
+    {
+        $root = $this->createPersonWithFacts('OCCU', ['OCCU' => $this->createFact('Occupation', '', '', 'Smith')]);
+
+        $data = $this->buildRootData($root, ['generations' => '1']);
+
+        self::assertArrayNotHasKey('facts', $data->jsonSerialize());
+    }
+
+    /**
+     * With the detail panel on, the payload of a person carries the birth, the
+     * death and one slot for every tag the tree names for the chart box. A slot
+     * the person has no fact for is null.
+     */
+    #[Test]
+    public function handsOverOneFactSlotPerRowWhileTheDetailPanelIsOn(): void
+    {
+        $root = $this->createPersonWithFacts(
+            'OCCU',
+            [
+                'BIRT' => $this->createFact('Birth', 'Berlin, Germany', 'Berlin', ''),
+                'OCCU' => $this->createFact('Occupation', '', '', 'Smith'),
+            ]
+        );
+
+        $data = $this->buildRootData($root, ['generations' => '1', 'showDetailPanel' => '1']);
+
+        self::assertSame(
+            [
+                [
+                    'tag'       => 'BIRT',
+                    'label'     => 'Birth',
+                    'date'      => '',
+                    'place'     => 'Berlin, Germany',
+                    'placeFull' => 'Berlin, Germany',
+                    'value'     => '',
+                    'partner'   => '',
+                    'sortDay'   => 0,
+                ],
+                null,
+                [
+                    'tag'       => 'OCCU',
+                    'label'     => 'Occupation',
+                    'date'      => '',
+                    'place'     => '',
+                    'placeFull' => '',
+                    'value'     => 'Smith',
+                    'partner'   => '',
+                    'sortDay'   => 0,
+                ],
+            ],
+            $this->serialisedFacts($data)
+        );
+    }
+
+    /**
+     * The panel opens for every arc of the chart, so the persons of the ancestor
+     * generations and the descendants carry their facts as well.
+     */
+    #[Test]
+    public function handsOverTheFactsToAncestorsAndDescendants(): void
+    {
+        $this->registerRouting();
+
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
+        $module->method('name')->willReturn('webtrees-fan-chart');
+
+        $tree = $this->createTreeWithChartBoxTags('');
+
+        $father  = $this->createPerson($tree, 'I2', 'M', '1 JAN 1870', '1 JAN 1940', factsByTag: []);
+        $child   = $this->createPerson($tree, 'I4', 'M', '1 JAN 1930', '', factsByTag: []);
+        $partner = $this->createPerson($tree, 'I5', 'M', '1 JAN 1898', '', factsByTag: []);
+
+        $parentFamily = self::createStub(Family::class);
+        $parentFamily->method('husband')->willReturn($father);
+        $parentFamily->method('wife')->willReturn(null);
+        $parentFamily->method('getMarriageDate')->willReturn($this->createDate(''));
+
+        $ownFamily = self::createStub(Family::class);
+        $ownFamily->method('xref')->willReturn('F1');
+        $ownFamily->method('husband')->willReturn(null);
+        $ownFamily->method('wife')->willReturn(null);
+        $ownFamily->method('spouse')->willReturn($partner);
+        $ownFamily->method('children')->willReturn(new Collection([$child]));
+        $ownFamily->method('getMarriageDate')->willReturn($this->createDate(''));
+        $ownFamily->method('facts')->willReturn(new Collection());
+
+        $root = $this->createPerson($tree, 'I1', 'F', '1 JAN 1900', '', $ownFamily, parentFamily: $parentFamily, factsByTag: []);
+
+        $rootNode = (new DataFacade())->createTreeStructure(
+            $module,
+            $this->createConfiguration(['showDetailPanel' => '1', 'showDescendants' => '1']),
+            $root
+        );
+
+        self::assertInstanceOf(Node::class, $rootNode);
+
+        $serialized = $rootNode->jsonSerialize();
+
+        self::assertArrayHasKey('parents', $serialized);
+        self::assertSame([null, null], $this->serialisedFacts($rootNode->getData()));
+        self::assertSame([null, null], $this->serialisedFacts($serialized['parents'][0]->getData()));
+
+        $partnerNode = $serialized['partners'][0] ?? null;
+
+        self::assertInstanceOf(Node::class, $partnerNode);
+        self::assertSame([null, null], $this->serialisedFacts($partnerNode->getData()));
+
+        $childNode = $partnerNode->jsonSerialize()['children'][0] ?? null;
+
+        self::assertInstanceOf(Node::class, $childNode);
+        self::assertSame([null, null], $this->serialisedFacts($childNode->getData()));
+    }
+
+    /**
+     * The resolver belongs to the tree of one request. A facade that serves a second
+     * request must not keep the tree and the chart box tags of the first one.
+     */
+    #[Test]
+    public function resolvesTheFactsAgainstTheTreeOfTheCurrentRequest(): void
+    {
+        $this->registerRouting();
+
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
+        $module->method('name')->willReturn('webtrees-fan-chart');
+
+        $facade        = new DataFacade();
+        $configuration = $this->createConfiguration(['generations' => '1', 'showDetailPanel' => '1']);
+
+        $withTag = $this->createPersonWithFacts('OCCU', ['OCCU' => $this->createFact('Occupation', '', '', 'Smith')]);
+        $without = $this->createPersonWithFacts('', []);
+
+        $first  = $facade->createTreeStructure($module, $configuration, $withTag);
+        $second = $facade->createTreeStructure($module, $configuration, $without);
+
+        self::assertInstanceOf(Node::class, $first);
+        self::assertInstanceOf(Node::class, $second);
+        self::assertCount(3, $this->serialisedFacts($first->getData()) ?? []);
+        self::assertCount(2, $this->serialisedFacts($second->getData()) ?? []);
+    }
+
+    /**
      * Builds a real configuration for a chart of two generations with the full
      * place names, from the query parameters of a chart request. The module
      * preferences stay at their defaults.
@@ -548,6 +700,88 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
+     * Builds the chart for one root person and returns the data of its node.
+     *
+     * @param array<string, string> $query The request parameters that differ from the default chart
+     */
+    private function buildRootData(Individual $root, array $query): NodeData
+    {
+        $this->registerRouting();
+
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
+        $module->method('name')->willReturn('webtrees-fan-chart');
+
+        $rootNode = (new DataFacade())->createTreeStructure($module, $this->createConfiguration($query), $root);
+
+        self::assertInstanceOf(Node::class, $rootNode);
+
+        return $rootNode->getData();
+    }
+
+    /**
+     * Creates a tree stub that names the given tags for the chart box.
+     */
+    private function createTreeWithChartBoxTags(string $chartBoxTags): Tree
+    {
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('main');
+        $tree->method('getPreference')->willReturnCallback(
+            static fn (string $name): string => ($name === 'CHART_BOX_TAGS') ? $chartBoxTags : '1'
+        );
+
+        return $tree;
+    }
+
+    /**
+     * Creates a root person of a tree with the given chart box tags and facts.
+     *
+     * @param array<string, Fact> $factsByTag The fact of each tag
+     */
+    private function createPersonWithFacts(string $chartBoxTags, array $factsByTag): Individual
+    {
+        return $this->createPerson(
+            $this->createTreeWithChartBoxTags($chartBoxTags),
+            'I1',
+            'M',
+            '1 JAN 1900',
+            '',
+            factsByTag: $factsByTag,
+        );
+    }
+
+    /**
+     * Builds a fact with the given label, place and value, and no date.
+     */
+    private function createFact(string $label, string $placeFull, string $placeShort, string $value): Fact
+    {
+        $place = self::createStub(Place::class);
+        $place->method('gedcomName')->willReturn($placeFull);
+        $place->method('firstParts')->willReturn(new Collection($placeShort === '' ? [] : [$placeShort]));
+
+        $fact = self::createStub(Fact::class);
+        $fact->method('label')->willReturn($label);
+        $fact->method('date')->willReturn(new Date(''));
+        $fact->method('place')->willReturn($place);
+        $fact->method('value')->willReturn($value);
+
+        return $fact;
+    }
+
+    /**
+     * Returns the facts that the browser receives for a node, or null when the
+     * payload carries none.
+     *
+     * @return list<array<string, int|string>|null>|null
+     */
+    private function serialisedFacts(NodeData $data): ?array
+    {
+        /** @var array{facts?: list<array<string, int|string>|null>} $serialised */
+        $serialised = json_decode(json_encode($data, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
+
+        return $serialised['facts'] ?? null;
+    }
+
+    /**
      * Sets up the route factory and container required by DataFacade.
      */
     private function registerRouting(): void
@@ -629,6 +863,8 @@ final class DataFacadeTest extends TestCase
      * Creates an individual stub with a visible name, the given dates and no
      * parents. The optional family is the individual's only spouse family.
      *
+     * @param array<string, Fact>|null $factsByTag The fact of each tag, or null for a person without a facts stub
+     *
      * @return Individual&Stub
      */
     private function createPerson(
@@ -641,6 +877,7 @@ final class DataFacadeTest extends TestCase
         string $birthPlace = '',
         string $deathPlace = '',
         ?Family $parentFamily = null,
+        ?array $factsByTag = null,
     ): Individual {
         $person = self::createStub(Individual::class);
         $person->method('xref')->willReturn($xref);
@@ -671,6 +908,17 @@ final class DataFacadeTest extends TestCase
             ($parentFamily instanceof Family) ? new Collection([$parentFamily]) : new Collection()
         );
         $person->method('findHighlightedMediaFile')->willReturn(null);
+
+        if ($factsByTag !== null) {
+            $person->method('facts')->willReturnCallback(
+                static function (array $filter = []) use ($factsByTag): Collection {
+                    $first = $filter[0] ?? '';
+                    $tag   = is_string($first) ? $first : '';
+
+                    return new Collection(isset($factsByTag[$tag]) ? [$factsByTag[$tag]] : []);
+                }
+            );
+        }
 
         return $person;
     }

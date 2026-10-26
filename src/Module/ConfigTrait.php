@@ -134,6 +134,10 @@ trait ConfigTrait
             (string) $configuration->getShowDescendants()
         );
         $this->setPreference(
+            'default_showDetailPanel',
+            (string) $configuration->getShowDetailPanel()
+        );
+        $this->setPreference(
             'default_detailedDateGenerations',
             (string) $configuration->getDetailedDateGenerations()
         );

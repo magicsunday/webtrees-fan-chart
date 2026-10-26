@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Model;
 
 use JsonSerializable;
+use MagicSunday\Webtrees\ModuleBase\Model\FactView;
 
 /**
  * Data transfer object carrying all per-individual fields needed by the
@@ -172,6 +173,16 @@ final class NodeData implements JsonSerializable
      * The formatted marriage place.
      */
     private string $marriagePlace = '';
+
+    /**
+     * The facts of the detail panel as the fact resolver returns them. Slot 0 is
+     * the birth row and slot 1 the death row, the optional facts follow. An entry
+     * is null when the individual has no visible fact for it. The list stays empty
+     * while the chart shows no detail panel.
+     *
+     * @var list<FactView|null>
+     */
+    private array $facts = [];
 
     public function getId(): int
     {
@@ -405,7 +416,23 @@ final class NodeData implements JsonSerializable
     }
 
     /**
-     * Serialises all chart-relevant fields to an array.
+     * Sets the facts of the detail panel as the fact resolver returns them.
+     *
+     * @param list<FactView|null> $facts The facts in the order the fact resolver returns them
+     *
+     * @return NodeData
+     */
+    public function setFacts(array $facts): NodeData
+    {
+        $this->facts = $facts;
+
+        return $this;
+    }
+
+    /**
+     * Serialises all chart-relevant fields to an array. The facts are appended as
+     * the last key and only when the list is not empty, so a chart without the
+     * detail panel keeps its payload unchanged.
      *
      * @return array{
      *     id: int,
@@ -436,11 +463,12 @@ final class NodeData implements JsonSerializable
      *     birthPlace: string,
      *     deathPlace: string,
      *     marriagePlace: string,
+     *     facts?: list<FactView|null>,
      * }
      */
     public function jsonSerialize(): array
     {
-        return [
+        $data = [
             'id'                    => $this->id,
             'xref'                  => $this->xref,
             'url'                   => $this->url,
@@ -470,5 +498,11 @@ final class NodeData implements JsonSerializable
             'deathPlace'            => $this->deathPlace,
             'marriagePlace'         => $this->marriagePlace,
         ];
+
+        if ($this->facts !== []) {
+            $data['facts'] = $this->facts;
+        }
+
+        return $data;
     }
 }
