@@ -151,8 +151,8 @@ Click **Show more options** to access additional settings:
 With **Show details panel** switched on, a click on a person selects the person and a panel slides in over the chart
 from the right (from the left in right-to-left languages). It replaces the tooltip. It shows the birth and the death with
 their places and further facts such as the occupation, and it has buttons to open the individual page and to center the
-chart on the person. The chart stays usable while the panel is open, and the panel closes with its close
-button or with Escape. Places show with their full name, whatever level of detail the chart arcs use. The facts come
+chart on the person. The chart stays usable while the panel is open. The panel closes with its close button,
+with Escape or with a click beside it, a click on another person selects that person. Places show with their full name, whatever level of detail the chart arcs use. The facts come
 from the tree setting ``Other facts to show in charts``. Add the tags ``MARR`` and ``DIV`` there to show the marriages and divorces as well, one entry per marriage with
 the name of the spouse. The birth stays first and the death last, the facts between them are ordered by time. Above
 the facts the panel shows the highlight image of the person, or the silhouette of its sex, and no image when the
