@@ -1,6 +1,8 @@
 import { jest } from "@jest/globals";
 
 const { default: Chart } = await import("resources/js/modules/chart");
+const { default: Configuration } = await import("resources/js/modules/configuration");
+const d3 = await import("resources/js/modules/d3");
 
 /**
  * Builds a stand-in for a chart that has the pieces the click routing uses.
@@ -230,5 +232,120 @@ describe("Chart selection helpers", () => {
         Chart.prototype.restoreFocus.call(context);
 
         expect(context._selection.restoreFocus).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe("A real chart with the detail panel", () => {
+    // The d3 datum is the hierarchy node, its data is the node of the payload, and that holds the person
+    const node = (xref, depth = 2) => ({
+        depth,
+        data: {
+            data: {
+                xref,
+                url: `/individual/${xref}`,
+                updateUrl: `/chart/${xref}`,
+                generation: depth + 1,
+            },
+        },
+    });
+
+    /**
+     * Builds a real chart whose persons are real SVG groups that carry d3 data.
+     *
+     * @param {object[]} nodes          The d3 data of the person groups
+     * @param {boolean}  showDetailPanel Whether the panel switch is on
+     */
+    function buildRealChart(nodes, showDetailPanel = true) {
+        document.body.innerHTML =
+            '<div id="parent"></div><svg><g class="visual">' +
+            '<g class="personGroup"></g><g class="marriageGroup"></g></g></svg>';
+
+        const visual = d3.select(document.querySelector("g.visual"));
+        const elements = visual
+            .select("g.personGroup")
+            .selectAll("g.person")
+            .data(nodes)
+            .enter()
+            .append("g")
+            .attr("class", "person")
+            .nodes();
+        const chart = new Chart(d3.select("#parent"), new Configuration({ showDetailPanel }));
+
+        chart._svg = { visual, select: (selector) => visual.select(selector) };
+
+        return { chart, elements };
+    }
+
+    test("hands the clicked person to the panel that was set on the chart", () => {
+        const first = node("I1");
+        const { chart } = buildRealChart([first]);
+        const panel = { select: jest.fn() };
+
+        chart.detailPanel = panel;
+        chart.personClick(null, first);
+
+        expect(panel.select).toHaveBeenCalledTimes(1);
+        expect(panel.select.mock.calls[0][0].xref).toBe("I1");
+    });
+
+    test("marks the selected person in the drawn chart and no other one", () => {
+        const first = node("I1");
+        const second = node("I2");
+        const { chart, elements } = buildRealChart([first, second]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.personClick(null, second);
+
+        expect(elements[0].classList.contains("selected")).toBe(false);
+        expect(elements[1].classList.contains("selected")).toBe(true);
+        expect(elements[1].getAttribute("aria-current")).toBe("true");
+    });
+
+    test("selects a person by a click on its drawn element", () => {
+        const first = node("I1");
+        const { chart, elements } = buildRealChart([first]);
+        const panel = { select: jest.fn() };
+
+        chart.detailPanel = panel;
+        chart.bindClickEventListener();
+        elements[0].dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+        expect(panel.select).toHaveBeenCalledWith(first.data.data, false);
+        expect(elements[0].classList.contains("selected")).toBe(true);
+    });
+
+    test("selects a person by Enter on its drawn element and reaches it with the Tab key", () => {
+        const first = node("I1");
+        const { chart, elements } = buildRealChart([first]);
+        const panel = { select: jest.fn() };
+
+        chart.detailPanel = panel;
+        chart.bindClickEventListener();
+
+        expect(elements[0].getAttribute("tabindex")).toBe("0");
+
+        elements[0].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        expect(panel.select).toHaveBeenCalledWith(first.data.data, true);
+    });
+
+    test("leaves the drawn elements out of the tab order with the panel off", () => {
+        const { chart, elements } = buildRealChart([node("I1")], false);
+
+        chart.bindClickEventListener();
+
+        expect(elements[0].hasAttribute("tabindex")).toBe(false);
+    });
+
+    test("keeps the mark on the person while the chart is bound again after an update", () => {
+        const first = node("I1");
+        const { chart, elements } = buildRealChart([first]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.personClick(null, first);
+        elements[0].classList.remove("selected");
+        chart.bindClickEventListener();
+
+        expect(elements[0].classList.contains("selected")).toBe(true);
     });
 });
