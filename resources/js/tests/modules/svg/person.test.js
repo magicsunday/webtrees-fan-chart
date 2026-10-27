@@ -588,3 +588,44 @@ describe("Person interactions", () => {
         ]);
     });
 });
+
+describe("Person draw rule", () => {
+    beforeEach(() => {
+        jest.spyOn(Person.prototype, "addArcToPerson").mockImplementation(() => {});
+        jest.spyOn(Person.prototype, "addTitleToPerson").mockImplementation(() => {});
+        jest.spyOn(Person.prototype, "addColorGroup").mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    it("builds no content for a person the configuration does not draw", () => {
+        const { personSelection } = createPersonSelection();
+        const { div } = createDivSelection();
+        const isDrawn = jest.fn(() => false);
+
+        new Person({ div }, { hideEmptySegments: false, isDrawn }, {}, personSelection, {
+            ...baseDatum,
+            depth: 6,
+        });
+
+        expect(isDrawn).toHaveBeenCalledWith(6);
+        expect(personSelection.append).not.toHaveBeenCalled();
+    });
+
+    it("builds the content for a person the configuration draws", () => {
+        const { personSelection } = createPersonSelection();
+        const { div } = createDivSelection();
+
+        new Person(
+            { div },
+            { hideEmptySegments: false, isDrawn: () => true },
+            {},
+            personSelection,
+            { ...baseDatum, depth: 6 },
+        );
+
+        expect(personSelection.append).toHaveBeenCalledWith("g");
+    });
+});
