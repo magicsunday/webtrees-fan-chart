@@ -639,6 +639,11 @@ export default class Chart {
      * @param {string} url The update URL for the new center individual
      */
     update(url) {
+        // The updater takes the mouse handlers of the old persons away. The key handlers of the
+        // detail panel hold the old person as well, and the arcs show other persons while the
+        // animation runs, so they go too and are bound again with the new drawing.
+        this.svg.select("g.personGroup").selectAll("g.person").on("keydown", null);
+
         const updater = new ChartUpdater(this.svg, this._configuration, this._hierarchy);
 
         updater.update(
