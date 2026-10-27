@@ -121,8 +121,10 @@ final class ModuleTest extends TestCase
 
     /**
      * Pins that saving the administration form stores every default of the chart
-     * with its value, also when the form submits nothing, so a default can neither be
-     * dropped from the saved set nor stored with the value of another setting.
+     * with its default value, also when the form submits nothing, so a default can
+     * neither be dropped from the saved set nor stored with a value that differs
+     * from its default. Settings that share the same default value are not told
+     * apart from each other by this test.
      */
     #[Test]
     public function adminFormStoresEveryDefaultOfTheChart(): void
