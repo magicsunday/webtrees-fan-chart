@@ -153,7 +153,7 @@ from the right (from the left in right-to-left languages). It replaces the toolt
 their places and further facts such as the occupation, and it has buttons to open the individual page and to center the
 chart on the person. The chart stays usable while the panel is open. The panel closes with its close button,
 with Escape or with a click beside it, a click on another person selects that person. Places show with their full name, whatever level of detail the chart arcs use. The facts come
-from the tree setting ``Other facts to show in charts``. Add the tags ``MARR`` and ``DIV`` there to show the marriages and divorces as well, one entry per marriage with
+from the tree setting ``Other facts to show in charts``. The marriages and divorces of the person show as well without a tag in the setting, one entry per marriage with
 the name of the spouse. The birth stays first and the death last, the facts between them are ordered by time. Above
 the facts the panel shows the highlight image of the person, or the silhouette of its sex, and no image when the
 tree setting for highlight images is switched off.
