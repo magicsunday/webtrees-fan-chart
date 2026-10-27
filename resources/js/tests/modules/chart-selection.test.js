@@ -368,6 +368,23 @@ describe("A real chart with the detail panel", () => {
         expect(panel.select).not.toHaveBeenCalled();
     });
 
+    test("reports a selection from the click until the panel has closed", () => {
+        const first = node("I1");
+        const { chart } = buildRealChart([first]);
+
+        chart.detailPanel = { select: jest.fn() };
+
+        expect(chart.hasSelection).toBe(false);
+
+        chart.personClick(null, first);
+
+        expect(chart.hasSelection).toBe(true);
+
+        chart.clearSelection();
+
+        expect(chart.hasSelection).toBe(false);
+    });
+
     test("keeps the mark on the person while the chart is bound again after an update", () => {
         const first = node("I1");
         const { chart, elements } = buildRealChart([first]);

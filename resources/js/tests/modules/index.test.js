@@ -31,6 +31,7 @@ class StubChart {
         this.dataValue = null;
 
         this.detailPanel = null;
+        this.hasSelection = false;
         this.render = jest.fn(() => {
             this.renderedWithPanel = panels.length > 0 && panels[0].enabled;
         });
@@ -78,6 +79,8 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/chart-core", () 
         enable() {
             this.enabled = true;
         }
+
+        dismiss = jest.fn();
     },
 }));
 
@@ -279,6 +282,31 @@ describe("FanChart detail panel", () => {
         expect(panels).toHaveLength(1);
         expect(chartInstances).toHaveLength(2);
         expect(chartInstances[1].detailPanel).toBe(panels[0]);
+    });
+
+    it("dismisses the open panel when a chart replaces the one that holds its person", () => {
+        document.body.innerHTML =
+            '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+        chartInstances[0].hasSelection = true;
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+
+        expect(panels[0].dismiss).toHaveBeenCalledTimes(1);
+    });
+
+    it("leaves the panel alone when the replaced chart has no selected person", () => {
+        document.body.innerHTML =
+            '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+
+        expect(panels[0].dismiss).not.toHaveBeenCalled();
     });
 
     it("lets the panel act on the chart that was built last", () => {

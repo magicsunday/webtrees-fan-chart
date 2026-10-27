@@ -98,6 +98,12 @@ export class FanChart {
         const bound = detailPanels.get(element);
 
         if (bound !== undefined) {
+            // The new chart knows nothing of the person the panel shows, and the actions of the
+            // panel belong to the request of the old chart, so the panel closes with it
+            if (bound.target.chart.hasSelection) {
+                bound.panel.dismiss();
+            }
+
             bound.target.chart = this._chart;
             this._chart.detailPanel = bound.panel;
 

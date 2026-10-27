@@ -599,6 +599,15 @@ export default class Chart {
     }
 
     /**
+     * Tells whether a person is selected, which means the panel shows it.
+     *
+     * @return {boolean}
+     */
+    get hasSelection() {
+        return this._selectedXref !== null;
+    }
+
+    /**
      * Removes the selection, so no person stays marked once the panel has closed.
      */
     clearSelection() {
