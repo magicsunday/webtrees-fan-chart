@@ -38,7 +38,7 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use ReflectionProperty;
 
 use function in_array;
-use function sort;
+use function ksort;
 
 /**
  * Validates module metadata exposure and chart helpers.
@@ -120,9 +120,9 @@ final class ModuleTest extends TestCase
     }
 
     /**
-     * Pins that saving the administration form stores every default of the chart,
-     * also when the form submits nothing, so a default can never be dropped from
-     * the saved set unnoticed.
+     * Pins that saving the administration form stores every default of the chart
+     * with its value, also when the form submits nothing, so a default can neither be
+     * dropped from the saved set nor stored with the value of another setting.
      */
     #[Test]
     public function adminFormStoresEveryDefaultOfTheChart(): void
@@ -136,36 +136,36 @@ final class ModuleTest extends TestCase
 
         $stored = DB::table('module_setting')
             ->where('module_name', '=', 'webtrees-fan-chart')
-            ->pluck('setting_name')
+            ->pluck('setting_value', 'setting_name')
             ->all();
 
-        $expected = [
-            'default_detailedDateGenerations',
-            'default_fanDegree',
-            'default_fontScale',
-            'default_generations',
-            'default_hidePngExport',
-            'default_hideEmptySegments',
-            'default_hideSvgExport',
-            'default_innerArcs',
-            'default_maternalColor',
-            'default_nameAbbreviation',
-            'default_paternalColor',
-            'default_placeFormat',
-            'default_showDescendants',
-            'default_showDetailPanel',
-            'default_showFamilyColors',
-            'default_showImages',
-            'default_showNames',
-            'default_showNicknames',
-            'default_showParentMarriageDates',
-            'default_showPlaces',
-        ];
+        ksort($stored);
 
-        sort($stored);
-        sort($expected);
-
-        self::assertSame($expected, $stored);
+        self::assertSame(
+            [
+                'default_detailedDateGenerations' => '0',
+                'default_fanDegree'               => '210',
+                'default_fontScale'               => '100',
+                'default_generations'             => '6',
+                'default_hideEmptySegments'       => '1',
+                'default_hidePngExport'           => '',
+                'default_hideSvgExport'           => '',
+                'default_innerArcs'               => '3',
+                'default_maternalColor'           => '#d06f94',
+                'default_nameAbbreviation'        => 'AUTO',
+                'default_paternalColor'           => '#70a9cf',
+                'default_placeFormat'             => 'auto',
+                'default_showDescendants'         => '',
+                'default_showDetailPanel'         => '',
+                'default_showFamilyColors'        => '1',
+                'default_showImages'              => '',
+                'default_showNames'               => '1',
+                'default_showNicknames'           => '',
+                'default_showParentMarriageDates' => '',
+                'default_showPlaces'              => '',
+            ],
+            $stored
+        );
     }
 
     /**
