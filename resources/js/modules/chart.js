@@ -55,6 +55,12 @@ export default class Chart {
         this._selection = new PanelSelection(() => this._svg?.visual);
         /** @type {string|null} */
         this._selectedXref = null;
+
+        // The panel can be closed while an update animates. The arcs hold no stable person then,
+        // so what the closing asks for waits until the chart is bound again.
+        this._runningUpdates = 0;
+        this._focusPending = false;
+        this._clearPending = false;
     }
 
     /**
@@ -574,12 +580,34 @@ export default class Chart {
         } else {
             this._selection.select(selected.data);
         }
+
+        this._runningUpdates = Math.max(0, this._runningUpdates - 1);
+
+        if (this._runningUpdates > 0) {
+            return;
+        }
+
+        if (this._focusPending) {
+            this._focusPending = false;
+            this._selection.restoreFocus();
+        }
+
+        if (this._clearPending) {
+            this._clearPending = false;
+            this.clearSelection();
+        }
     }
 
     /**
      * Removes the selection, so no person stays marked once the panel has closed.
      */
     clearSelection() {
+        if (this._runningUpdates > 0) {
+            this._clearPending = true;
+
+            return;
+        }
+
         this._selectedXref = null;
         this._selection.clear();
     }
@@ -588,6 +616,12 @@ export default class Chart {
      * Gives the focus back to the selected person, if it is still in the chart.
      */
     restoreFocus() {
+        if (this._runningUpdates > 0) {
+            this._focusPending = true;
+
+            return;
+        }
+
         this._selection.restoreFocus();
     }
 
@@ -646,6 +680,15 @@ export default class Chart {
         // detail panel hold the old person as well, and the arcs show other persons while the
         // animation runs, so they go too and are bound again with the new drawing.
         this.svg.select("g.personGroup").selectAll("g.person").on("keydown", null);
+
+        // The mark would stay on the arc while it shows another person. It is set again when
+        // the chart is bound to the new drawing.
+        this.svg
+            .select("g.personGroup")
+            .selectAll("g.person")
+            .classed("selected", false)
+            .attr("aria-current", null);
+        this._runningUpdates += 1;
 
         const updater = new ChartUpdater(this.svg, this._configuration, this._hierarchy);
 

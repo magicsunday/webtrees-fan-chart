@@ -104,4 +104,76 @@ describe("Chart update with the detail panel", () => {
         expect(panel.select).toHaveBeenCalledTimes(1);
         expect(panel.select.mock.calls[0][0].xref).toBe("I2");
     });
+
+    test("gives the focus back after the animation when the panel was closed during it", () => {
+        const first = node("I1");
+        const { chart, elements } = buildRealChart([first]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, first);
+        chart.update("/chart/I1");
+
+        // The updater binds new hierarchy objects to the arcs before it animates
+        d3.select(elements[0]).datum(node("I1"));
+        chart.restoreFocus();
+        chart.clearSelection();
+
+        expect(document.activeElement).not.toBe(elements[0]);
+
+        updates[0].callback();
+
+        expect(document.activeElement).toBe(elements[0]);
+        expect(elements[0].classList.contains("selected")).toBe(false);
+    });
+
+    test("does not mark the selected person on its old arc while the animation runs", () => {
+        const first = node("I1");
+        const { chart, elements } = buildRealChart([first]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, first);
+        chart.update("/chart/I2");
+
+        expect(elements[0].classList.contains("selected")).toBe(false);
+        expect(elements[0].hasAttribute("aria-current")).toBe(false);
+
+        updates[0].callback();
+
+        expect(elements[0].classList.contains("selected")).toBe(true);
+    });
+
+    test("clears and restores at once when no update is running", () => {
+        const first = node("I1");
+        const { chart, elements } = buildRealChart([first]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, first);
+        chart.restoreFocus();
+        chart.clearSelection();
+
+        expect(document.activeElement).toBe(elements[0]);
+        expect(elements[0].classList.contains("selected")).toBe(false);
+    });
+
+    test("waits for the last of two overlapping updates before it gives the focus back", () => {
+        const first = node("I1");
+        const { chart, elements } = buildRealChart([first]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, first);
+        chart.update("/chart/I2");
+        chart.update("/chart/I3");
+        chart.restoreFocus();
+        updates[0].callback();
+
+        expect(document.activeElement).not.toBe(elements[0]);
+
+        updates[1].callback();
+
+        expect(document.activeElement).toBe(elements[0]);
+    });
 });
