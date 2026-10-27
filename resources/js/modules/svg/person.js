@@ -89,10 +89,7 @@ export default class Person {
      */
     init(person, datum) {
         // Hide outer generations when only images are shown (no names)
-        if (
-            !this._configuration.showNames &&
-            datum.depth > this._configuration.numberOfInnerCircles
-        ) {
+        if (!this._configuration.isDrawn(datum.depth)) {
             return;
         }
 

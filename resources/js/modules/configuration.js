@@ -280,6 +280,18 @@ export default class Configuration {
     }
 
     /**
+     * Tells whether a person at the given depth is drawn. With names off only the inner
+     * generations are, the outer ones stay empty.
+     *
+     * @param {number} depth The depth of the person, negative for descendants
+     *
+     * @return {boolean}
+     */
+    isDrawn(depth) {
+        return this._showNames || depth <= this._numberOfInnerCircles;
+    }
+
+    /**
      * Base font size in pixels before depth scaling and fontScale are applied.
      *
      * @return {number}

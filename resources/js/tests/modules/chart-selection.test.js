@@ -11,7 +11,7 @@ const d3 = await import("resources/js/modules/d3");
  */
 function buildChart({ showDetailPanel = true, panel = { select: jest.fn() } } = {}) {
     const context = {
-        _configuration: { showDetailPanel },
+        _configuration: { showDetailPanel, isDrawn: () => true },
         _detailPanel: panel,
         _selection: {
             select: jest.fn(),
@@ -159,7 +159,7 @@ describe("Chart click binding", () => {
             each: () => empty,
         };
         const context = {
-            _configuration: { showDetailPanel },
+            _configuration: { showDetailPanel, isDrawn: () => true },
             svg: {
                 select: (selector) =>
                     selector === "g.personGroup" ? { selectAll: () => persons } : empty,
@@ -263,8 +263,9 @@ describe("A real chart with the detail panel", () => {
      *
      * @param {object[]} nodes          The d3 data of the person groups
      * @param {boolean}  showDetailPanel Whether the panel switch is on
+     * @param {object}   options         Further options of the chart configuration
      */
-    function buildRealChart(nodes, showDetailPanel = true) {
+    function buildRealChart(nodes, showDetailPanel = true, options = {}) {
         document.body.innerHTML =
             '<div id="parent"></div><svg><g class="visual">' +
             '<g class="personGroup"></g><g class="marriageGroup"></g></g></svg>';
@@ -278,7 +279,10 @@ describe("A real chart with the detail panel", () => {
             .append("g")
             .attr("class", "person")
             .nodes();
-        const chart = new Chart(d3.select("#parent"), new Configuration({ showDetailPanel }));
+        const chart = new Chart(
+            d3.select("#parent"),
+            new Configuration({ showDetailPanel, ...options }),
+        );
 
         chart._svg = { visual, select: (selector) => visual.select(selector) };
 
@@ -344,6 +348,24 @@ describe("A real chart with the detail panel", () => {
         chart.bindClickEventListener();
 
         expect(elements[0].hasAttribute("tabindex")).toBe(false);
+    });
+
+    test("leaves the persons out of the tab order that are not drawn with names off", () => {
+        // With names off only the inner generations are drawn, the outer groups stay empty
+        const { chart, elements } = buildRealChart([node("I1", 2), node("I2", 5)], true, {
+            showNames: false,
+            innerArcs: 4,
+        });
+        const panel = { select: jest.fn() };
+
+        chart.detailPanel = panel;
+        chart.bindClickEventListener();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        expect(elements[0].getAttribute("tabindex")).toBe("0");
+        expect(elements[1].hasAttribute("tabindex")).toBe(false);
+        expect(elements[1].hasAttribute("role")).toBe(false);
+        expect(panel.select).not.toHaveBeenCalled();
     });
 
     test("keeps the mark on the person while the chart is bound again after an update", () => {

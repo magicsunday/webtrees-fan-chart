@@ -519,6 +519,9 @@ export default class Chart {
             .filter((datum) => datum?.data?.data?.xref !== "")
             .classed("available", true);
 
+        // Persons that are not drawn have nothing to focus or to activate
+        const drawn = persons.filter((datum) => this._configuration.isDrawn(datum.depth));
+
         // Trigger method on click/touch
         persons.on("click", this.personClick.bind(this));
 
@@ -527,7 +530,7 @@ export default class Chart {
         if (this._configuration.showDetailPanel) {
             const that = this;
 
-            persons.each(function (/** @type {HierarchyNode} */ datum) {
+            drawn.each(function (/** @type {HierarchyNode} */ datum) {
                 that._selection.makeOperable(d3.select(this), datum, (_data, byKeyboard) =>
                     that.personClick(null, datum, byKeyboard),
                 );
