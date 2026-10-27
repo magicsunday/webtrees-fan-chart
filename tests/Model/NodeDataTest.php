@@ -15,7 +15,6 @@ use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\ModuleBase\Model\FactView;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function array_key_last;
@@ -28,7 +27,6 @@ use function array_key_last;
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 #[CoversClass(NodeData::class)]
-#[UsesClass(FactView::class)]
 final class NodeDataTest extends TestCase
 {
     /**
