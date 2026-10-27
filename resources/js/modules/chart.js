@@ -501,6 +501,16 @@ export default class Chart {
      * @private
      */
     bindClickEventListener() {
+        // An update reuses the arcs, and an arc can turn into an empty placeholder, so the
+        // keyboard bindings of the person it showed before are taken away from every arc first
+        this.svg
+            .select("g.personGroup")
+            .selectAll("g.person")
+            .attr("tabindex", null)
+            .attr("role", null)
+            .attr("aria-label", null)
+            .on("keydown", null);
+
         const persons = this.svg
             .select("g.personGroup")
             .selectAll("g.person")

@@ -132,8 +132,14 @@ describe("Chart click binding", () => {
             classed() {
                 return this;
             },
+            attr() {
+                return this;
+            },
             on(event, handler) {
-                clicks.push([event, handler]);
+                // Taking a handler away binds nothing
+                if (handler !== null) {
+                    clicks.push([event, handler]);
+                }
 
                 return this;
             },
@@ -347,5 +353,45 @@ describe("A real chart with the detail panel", () => {
         chart.bindClickEventListener();
 
         expect(elements[0].classList.contains("selected")).toBe(true);
+    });
+
+    test("takes the keyboard bindings of the previous person from an arc that becomes empty", () => {
+        const first = node("I1");
+        const { chart, elements } = buildRealChart([first]);
+        const panel = { select: jest.fn() };
+
+        chart.detailPanel = panel;
+        chart.bindClickEventListener();
+
+        expect(elements[0].getAttribute("tabindex")).toBe("0");
+        expect(elements[0].getAttribute("aria-label")).not.toBeNull();
+
+        // An update reuses the element for an empty placeholder
+        d3.select(elements[0]).datum(node(""));
+        chart.bindClickEventListener();
+
+        expect(elements[0].hasAttribute("tabindex")).toBe(false);
+        expect(elements[0].hasAttribute("aria-label")).toBe(false);
+        expect(elements[0].hasAttribute("role")).toBe(false);
+
+        elements[0].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        expect(panel.select).not.toHaveBeenCalled();
+    });
+
+    test("keeps the person of a reused arc operable with the keyboard after binding again", () => {
+        const first = node("I1");
+        const second = node("I2");
+        const { chart, elements } = buildRealChart([first]);
+        const panel = { select: jest.fn() };
+
+        chart.detailPanel = panel;
+        chart.bindClickEventListener();
+        d3.select(elements[0]).datum(second);
+        chart.bindClickEventListener();
+        elements[0].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        expect(panel.select).toHaveBeenCalledTimes(1);
+        expect(panel.select).toHaveBeenCalledWith(second.data.data, true);
     });
 });

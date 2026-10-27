@@ -65,6 +65,7 @@ class PersonGroupSelection {
                 return selection;
             },
             classed: () => selection,
+            attr: () => selection,
             on: () => selection,
         };
 
