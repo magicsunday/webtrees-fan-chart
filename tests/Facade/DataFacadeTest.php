@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test\Facade;
 
+use ArrayObject;
 use Aura\Router\Map;
 use Aura\Router\Route;
 use Fisharebest\Localization\Locale;
@@ -439,11 +440,28 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function leavesTheFactsOutWhileTheDetailPanelIsOff(): void
     {
-        $root = $this->createPersonWithFacts('OCCU', ['OCCU' => $this->createFact('Occupation', '', '', 'Smith')]);
+        $factReads = new ArrayObject();
+        $root      = $this->createPersonWithFacts('OCCU', ['OCCU' => $this->createFact('Occupation', '', '', 'Smith')], $factReads);
 
         $data = $this->buildRootData($root, ['generations' => '1']);
 
         self::assertArrayNotHasKey('facts', $data->jsonSerialize());
+        self::assertSame([], $factReads->getArrayCopy(), 'the facts of the person are not read at all');
+    }
+
+    /**
+     * The read of the facts that the test above rules out is the one that the panel needs, so the
+     * log of reads discriminates and is not empty by construction.
+     */
+    #[Test]
+    public function readsTheFactsOfThePersonWhileTheDetailPanelIsOn(): void
+    {
+        $factReads = new ArrayObject();
+        $root      = $this->createPersonWithFacts('OCCU', ['OCCU' => $this->createFact('Occupation', '', '', 'Smith')], $factReads);
+
+        $this->buildRootData($root, ['generations' => '1', 'showDetailPanel' => '1']);
+
+        self::assertContains('OCCU', $factReads->getArrayCopy());
     }
 
     /**
@@ -735,9 +753,10 @@ final class DataFacadeTest extends TestCase
     /**
      * Creates a root person of a tree with the given chart box tags and facts.
      *
-     * @param array<string, Fact> $factsByTag The fact of each tag
+     * @param array<string, Fact>           $factsByTag The fact of each tag
+     * @param ArrayObject<int, string>|null $factReads  Receives the tag of every read of the facts of the person
      */
-    private function createPersonWithFacts(string $chartBoxTags, array $factsByTag): Individual
+    private function createPersonWithFacts(string $chartBoxTags, array $factsByTag, ?ArrayObject $factReads = null): Individual
     {
         return $this->createPerson(
             $this->createTreeWithChartBoxTags($chartBoxTags),
@@ -746,6 +765,7 @@ final class DataFacadeTest extends TestCase
             '1 JAN 1900',
             '',
             factsByTag: $factsByTag,
+            factReads: $factReads,
         );
     }
 
@@ -863,7 +883,8 @@ final class DataFacadeTest extends TestCase
      * Creates an individual stub with a visible name, the given dates and no
      * parents. The optional family is the individual's only spouse family.
      *
-     * @param array<string, Fact>|null $factsByTag The fact of each tag, or null for a person without a facts stub
+     * @param array<string, Fact>|null      $factsByTag The fact of each tag, or null for a person without a facts stub
+     * @param ArrayObject<int, string>|null $factReads  Receives the tag of every read of the facts of the person
      *
      * @return Individual&Stub
      */
@@ -878,6 +899,7 @@ final class DataFacadeTest extends TestCase
         string $deathPlace = '',
         ?Family $parentFamily = null,
         ?array $factsByTag = null,
+        ?ArrayObject $factReads = null,
     ): Individual {
         $person = self::createStub(Individual::class);
         $person->method('xref')->willReturn($xref);
@@ -911,9 +933,11 @@ final class DataFacadeTest extends TestCase
 
         if ($factsByTag !== null) {
             $person->method('facts')->willReturnCallback(
-                static function (array $filter = []) use ($factsByTag): Collection {
+                static function (array $filter = []) use ($factsByTag, $factReads): Collection {
                     $first = $filter[0] ?? '';
                     $tag   = is_string($first) ? $first : '';
+
+                    $factReads?->append($tag);
 
                     return new Collection(isset($factsByTag[$tag]) ? [$factsByTag[$tag]] : []);
                 }
