@@ -135,6 +135,9 @@ describe("Chart click binding", () => {
             attr() {
                 return this;
             },
+            data() {
+                return this.nodes;
+            },
             on(event, handler) {
                 // Taking a handler away binds nothing
                 if (handler !== null) {
@@ -393,5 +396,50 @@ describe("A real chart with the detail panel", () => {
 
         expect(panel.select).toHaveBeenCalledTimes(1);
         expect(panel.select).toHaveBeenCalledWith(second.data.data, true);
+    });
+
+    test("gives the focus back to the selected person after an update replaced the hierarchy objects", () => {
+        const before = node("I1");
+        const { chart, elements } = buildRealChart([before]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, before);
+
+        // An update binds new hierarchy objects to the reused arcs
+        d3.select(elements[0]).datum(node("I1"));
+        chart.bindClickEventListener();
+        chart.restoreFocus();
+
+        expect(document.activeElement).toBe(elements[0]);
+    });
+
+    test("leaves the focus alone when the selected person is not in the chart any more", () => {
+        const before = node("I1");
+        const { chart, elements } = buildRealChart([before]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, before);
+
+        d3.select(elements[0]).datum(node("I9"));
+        chart.bindClickEventListener();
+        chart.restoreFocus();
+
+        expect(document.activeElement).not.toBe(elements[0]);
+        expect(elements[0].classList.contains("selected")).toBe(false);
+    });
+
+    test("forgets the selected person once the panel has closed", () => {
+        const before = node("I1");
+        const { chart, elements } = buildRealChart([before]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, before);
+        chart.clearSelection();
+        chart.bindClickEventListener();
+
+        expect(elements[0].classList.contains("selected")).toBe(false);
     });
 });

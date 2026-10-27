@@ -53,6 +53,8 @@ export default class Chart {
         this._detailPanel = null;
         /** @type {PanelSelection<any>} */
         this._selection = new PanelSelection(() => this._svg?.visual);
+        /** @type {string|null} */
+        this._selectedXref = null;
     }
 
     /**
@@ -556,14 +558,26 @@ export default class Chart {
                 d3.select(this).classed("empty", !hasChildren);
             });
 
-        // The person elements are created anew by every draw
-        this._selection.apply();
+        // The person elements are created anew by every draw, and an update binds new hierarchy
+        // objects to them. The selection keeps the person it was made with, so the new object
+        // of that person is handed to it, which keeps the mark and the focus return working.
+        const selected =
+            this._selectedXref === null
+                ? undefined
+                : persons.filter((datum) => datum.data.data.xref === this._selectedXref).data()[0];
+
+        if (selected === undefined) {
+            this._selection.apply();
+        } else {
+            this._selection.select(selected.data);
+        }
     }
 
     /**
      * Removes the selection, so no person stays marked once the panel has closed.
      */
     clearSelection() {
+        this._selectedXref = null;
         this._selection.clear();
     }
 
@@ -593,6 +607,7 @@ export default class Chart {
         }
 
         if (this._configuration.showDetailPanel && this._detailPanel !== null) {
+            this._selectedXref = datum.data.data.xref;
             this._selection.select(datum.data);
             this._detailPanel.select(
                 /** @type {PanelPerson} */ (/** @type {unknown} */ (datum.data.data)),
