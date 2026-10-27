@@ -18,6 +18,7 @@ use Fisharebest\Localization\Locale;
 use Fisharebest\Localization\Translator;
 use Fisharebest\Webtrees\Contracts\ContainerInterface;
 use Fisharebest\Webtrees\Contracts\RouteFactoryInterface;
+use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Registry;
@@ -37,6 +38,7 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use ReflectionProperty;
 
 use function in_array;
+use function sort;
 
 /**
  * Validates module metadata exposure and chart helpers.
@@ -115,6 +117,55 @@ final class ModuleTest extends TestCase
         $stored = new Configuration(new ServerRequest(RequestMethodInterface::METHOD_GET, '/'), $module);
 
         self::assertFalse($stored->getShowDetailPanel());
+    }
+
+    /**
+     * Pins that saving the administration form stores every default of the chart,
+     * also when the form submits nothing, so a default can never be dropped from
+     * the saved set unnoticed.
+     */
+    #[Test]
+    public function adminFormStoresEveryDefaultOfTheChart(): void
+    {
+        $this->registerRouteFactory();
+        $this->initialiseTranslator();
+
+        $module = $this->createModuleWithPreferences([]);
+
+        $module->postAdminAction(new ServerRequest(RequestMethodInterface::METHOD_POST, '/'));
+
+        $stored = DB::table('module_setting')
+            ->where('module_name', '=', 'webtrees-fan-chart')
+            ->pluck('setting_name')
+            ->all();
+
+        $expected = [
+            'default_detailedDateGenerations',
+            'default_fanDegree',
+            'default_fontScale',
+            'default_generations',
+            'default_hidePngExport',
+            'default_hideEmptySegments',
+            'default_hideSvgExport',
+            'default_innerArcs',
+            'default_maternalColor',
+            'default_nameAbbreviation',
+            'default_paternalColor',
+            'default_placeFormat',
+            'default_showDescendants',
+            'default_showDetailPanel',
+            'default_showFamilyColors',
+            'default_showImages',
+            'default_showNames',
+            'default_showNicknames',
+            'default_showParentMarriageDates',
+            'default_showPlaces',
+        ];
+
+        sort($stored);
+        sort($expected);
+
+        self::assertSame($expected, $stored);
     }
 
     /**
