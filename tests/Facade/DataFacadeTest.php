@@ -36,7 +36,6 @@ use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
-use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -203,7 +202,7 @@ final class DataFacadeTest extends TestCase
         self::assertSame(
             '/route/module?module=webtrees-fan-chart&action=update&xref=I1&tree=main'
             . '&generations=2&fanDegree=210&fontScale=100&hideEmptySegments=1&showFamilyColors=1'
-            . '&showPlaces=0&placeFormat=full&showParentMarriageDates=0&showImages=0&showNames=1'
+            . '&showPlaces=0&showParentMarriageDates=0&showImages=0&showNames=1'
             . '&showNicknames=0&innerArcs=3&paternalColor=%2370a9cf&maternalColor=%23d06f94&showDescendants=0'
             . '&showDetailPanel=0',
             $serializedData['updateUrl']
@@ -589,7 +588,8 @@ final class DataFacadeTest extends TestCase
     /**
      * Builds a real configuration for a chart of two generations with the full
      * place names, from the query parameters of a chart request. The module
-     * preferences stay at their defaults.
+     * preferences stay at their defaults, except the place format, which only the
+     * module preference can set.
      *
      * @param array<string, string> $query The request parameters that differ from that chart
      *
@@ -599,12 +599,14 @@ final class DataFacadeTest extends TestCase
     {
         $request = (new ServerRequest('GET', '/'))->withQueryParams(
             $query + [
-                'generations'                     => '2',
-                Configuration::PLACE_FORMAT_PARAM => PlaceFormatChoice::Full->value,
+                'generations' => '2',
             ]
         );
 
-        return new Configuration($request, $this->createModuleWithPreferences([]));
+        return new Configuration(
+            $request,
+            $this->createModuleWithPreferences(['default_placeFormat' => 'full'])
+        );
     }
 
     /**

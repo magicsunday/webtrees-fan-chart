@@ -300,7 +300,6 @@ final class ConfigurationTest extends TestCase
                 'hideEmptySegments',
                 'showFamilyColors',
                 'showPlaces',
-                'placeFormat',
                 'showParentMarriageDates',
                 'showImages',
                 'showNames',
@@ -374,45 +373,36 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * The place format is the only toggle whose emitted value is not a plain
-     * int/bool, so it is the one that can silently stop round-tripping: the list
-     * test above pins the key only, and an emitted value outside the enum's
-     * backing set is never rejected — getPlaceFormatChoice() just falls back to
-     * the stored preference. Assert the value a recentre link actually carries.
+     * The place format is an administrator setting, so no navigation URL carries
+     * it and a visitor cannot override it through the address bar.
      */
     #[Test]
-    public function theRouteTogglePlaceFormatValueRoundTripsThroughTheChoice(): void
+    public function theRouteToggleParamsDoNotCarryThePlaceFormat(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
         $module  = $this->createModuleWithPreferences([
             'default_placeFormat' => 'city-iso2',
         ]);
 
-        $routeParams = (new Configuration($request, $module))->getRouteToggleParams();
-
-        self::assertArrayHasKey(Configuration::PLACE_FORMAT_PARAM, $routeParams);
-
-        $emitted = $routeParams[Configuration::PLACE_FORMAT_PARAM];
-
-        // The backing value, not the case name: emitting "CityIso2" would be
-        // rejected by tryFrom() on the way back in and silently fall back to the
-        // stored preference, which is precisely the regression this pins.
-        self::assertSame(PlaceFormatChoice::CityIso2->value, $emitted);
+        self::assertArrayNotHasKey(
+            'placeFormat',
+            (new Configuration($request, $module))->getRouteToggleParams()
+        );
     }
 
     /**
      * The admin form's field name and the request key Configuration reads back
-     * are two independent strings that must match. A mismatch does not error —
+     * on a save are two independent strings that must match. A mismatch does not error —
      * every save would persist the stored choice and discard the admin's
      * selection — so the view builds its field from this constant and this test
      * pins the constant to the key the reader actually consumes.
      */
     #[Test]
-    public function thePlaceFormatParameterNameIsTheOneTheReaderConsumes(): void
+    public function thePlaceFormatFieldNameIsTheOneTheSubmittedReaderConsumes(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_POST, '/');
         $request = $request->withParsedBody([
-            Configuration::PLACE_FORMAT_PARAM => 'city-iso3',
+            Configuration::PLACE_FORMAT_FIELD => 'city-iso3',
         ]);
 
         $module = $this->createModuleWithPreferences([
@@ -421,7 +411,7 @@ final class ConfigurationTest extends TestCase
 
         self::assertSame(
             PlaceFormatChoice::CityIso3,
-            (new Configuration($request, $module))->getPlaceFormatChoice()
+            (new Configuration($request, $module))->getSubmittedPlaceFormatChoice()
         );
     }
 
@@ -620,7 +610,8 @@ final class ConfigurationTest extends TestCase
         self::assertTrue($configuration->getHideEmptySegments());
         self::assertTrue($configuration->getShowFamilyColors());
         self::assertTrue($configuration->getShowPlaces());
-        self::assertSame(PlaceFormatChoice::Levels2, $configuration->getPlaceFormatChoice());
+        self::assertSame(PlaceFormatChoice::Levels2, $configuration->getSubmittedPlaceFormatChoice());
+        self::assertSame(PlaceFormatChoice::Levels1, $configuration->getPlaceFormatChoice());
         self::assertTrue($configuration->getShowParentMarriageDates());
         self::assertTrue($configuration->getShowImages());
         self::assertFalse($configuration->getShowNames());
@@ -753,13 +744,13 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * The query parameter overrides the stored preference — this is how the
-     * chart's navigation URLs carry the setting.
+     * The place format is an administrator setting. A query parameter of that
+     * name has no effect on the chart.
      *
      * @return void
      */
     #[Test]
-    public function placeFormatQueryParameterOverridesThePreference(): void
+    public function placeFormatQueryParameterDoesNotOverrideThePreference(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
         $request = $request->withQueryParams(['placeFormat' => 'city-country']);
@@ -768,17 +759,17 @@ final class ConfigurationTest extends TestCase
             'default_placeFormat' => 'full',
         ]);
 
-        self::assertSame(PlaceFormatChoice::CityCountry, (new Configuration($request, $module))->getPlaceFormatChoice());
+        self::assertSame(PlaceFormatChoice::Full, (new Configuration($request, $module))->getPlaceFormatChoice());
     }
 
     /**
-     * The admin form posts its value; the POST path is the one that actually
-     * configures the module.
+     * A posted value does not change the chart either. Only the submitted-value
+     * reader of the administration form looks at the body.
      *
      * @return void
      */
     #[Test]
-    public function placeFormatIsReadFromThePostBody(): void
+    public function placeFormatPostBodyDoesNotOverrideThePreference(): void
     {
         $request = new ServerRequest(RequestMethodInterface::METHOD_POST, '/');
         $request = $request->withParsedBody(['placeFormat' => 'city-iso3']);
@@ -787,7 +778,49 @@ final class ConfigurationTest extends TestCase
             'default_placeFormat' => 'full',
         ]);
 
-        self::assertSame(PlaceFormatChoice::CityIso3, (new Configuration($request, $module))->getPlaceFormatChoice());
+        self::assertSame(PlaceFormatChoice::Full, (new Configuration($request, $module))->getPlaceFormatChoice());
+    }
+
+    /**
+     * The admin form posts its value, and the submitted-value reader returns it.
+     *
+     * @return void
+     */
+    #[Test]
+    public function submittedPlaceFormatIsReadFromThePostBody(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_POST, '/');
+        $request = $request->withParsedBody(['placeFormat' => 'city-iso3']);
+
+        $module = $this->createModuleWithPreferences([
+            'default_placeFormat' => 'full',
+        ]);
+
+        self::assertSame(
+            PlaceFormatChoice::CityIso3,
+            (new Configuration($request, $module))->getSubmittedPlaceFormatChoice()
+        );
+    }
+
+    /**
+     * An unusable posted value keeps the stored choice instead of resetting it.
+     *
+     * @return void
+     */
+    #[Test]
+    public function anUnusableSubmittedPlaceFormatKeepsTheStoredChoice(): void
+    {
+        $request = new ServerRequest(RequestMethodInterface::METHOD_POST, '/');
+        $request = $request->withParsedBody(['placeFormat' => 'nonsense']);
+
+        $module = $this->createModuleWithPreferences([
+            'default_placeFormat' => 'city-iso2',
+        ]);
+
+        self::assertSame(
+            PlaceFormatChoice::CityIso2,
+            (new Configuration($request, $module))->getSubmittedPlaceFormatChoice()
+        );
     }
 
     /**

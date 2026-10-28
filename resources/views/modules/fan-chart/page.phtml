@@ -140,8 +140,7 @@ WebtreesFanChart.initPage({
     defaultFanDegreeRaw:            <?php echo json_encode($configuration->getFanDegreeUnclamped()); ?>,
     fanDegreeMin:                   <?php echo json_encode(Configuration::MIN_FAN_DEGREE); ?>,
     fanDegreeMaxWithDescendants:    <?php echo json_encode(Configuration::MAX_FAN_DEGREE_WITH_DESCENDANTS); ?>,
-    defaultDetailedDateGenerations: <?php echo json_encode($configuration->getDetailedDateGenerations()); ?>,
-    defaultPlaceFormat:             <?php echo json_encode($configuration->getPlaceFormatChoice()->value); ?>
+    defaultDetailedDateGenerations: <?php echo json_encode($configuration->getDetailedDateGenerations()); ?>
 });
 </script>
 <?php View::endpush(); ?>

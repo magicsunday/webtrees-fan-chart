@@ -95,7 +95,7 @@ trait ConfigTrait
         );
         $this->setPreference(
             'default_placeFormat',
-            $configuration->getPlaceFormatChoice()->value
+            $configuration->getSubmittedPlaceFormatChoice()->value
         );
         $this->setPreference(
             'default_showParentMarriageDates',

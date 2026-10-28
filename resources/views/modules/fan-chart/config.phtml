@@ -87,12 +87,12 @@ use MagicSunday\Webtrees\FanChart\Configuration;
                 </div>
 
                 <div class="mt-3">
-                    <label for="<?php echo e(Configuration::PLACE_FORMAT_PARAM); ?>" class="form-label">
+                    <label for="<?php echo e(Configuration::PLACE_FORMAT_FIELD); ?>" class="form-label">
                         <?php echo I18N::translate('Place detail'); ?>
                     </label>
                     <?php echo view('components/select', [
-                        'name'     => Configuration::PLACE_FORMAT_PARAM,
-                        'id'       => Configuration::PLACE_FORMAT_PARAM,
+                        'name'     => Configuration::PLACE_FORMAT_FIELD,
+                        'id'       => Configuration::PLACE_FORMAT_FIELD,
                         'selected' => $configuration->getPlaceFormatChoice()->value,
                         'options'  => $configuration->getPlaceFormatList(),
                         'class'    => 'form-control-sm',
