@@ -463,6 +463,28 @@ describe("A real chart with the detail panel", () => {
         expect(document.activeElement).not.toBe(elements[1]);
     });
 
+    test("leaves the focus where the user moved it while the update was running", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2")], false);
+        const button = document.createElement("button");
+
+        document.body.append(button);
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        // The user moves on to another control before the chart is drawn again
+        button.focus();
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(button);
+
+        // The request is gone, so a later draw does not take the focus
+        button.blur();
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(document.body);
+    });
+
     test("keeps the focus request of a key press while another update is still running", () => {
         const { chart, elements } = buildRealChart([node("I1"), node("I2")], false);
 

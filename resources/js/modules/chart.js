@@ -633,11 +633,18 @@ export default class Chart {
 
             this._keyboardFocusXref = null;
 
-            drawn
-                .filter((datum) => datum.data.data.xref === xref)
-                .each(function () {
-                    /** @type {HTMLElement} */ (this).focus();
-                });
+            // The update removed the focused arc, which leaves the focus on the page. A control
+            // that the user moved on to while the update was running keeps the focus.
+            const focusLost =
+                document.activeElement === null || document.activeElement === document.body;
+
+            if (focusLost) {
+                drawn
+                    .filter((datum) => datum.data.data.xref === xref)
+                    .each(function () {
+                        /** @type {HTMLElement} */ (this).focus();
+                    });
+            }
         }
 
         if (this._clearPending) {

@@ -84,6 +84,21 @@ final class HelpButtonViewTest extends TestCase
     }
 
     /**
+     * The row for the Tab key applies to both modes, because the persons are reached with the keyboard
+     * with the detail panel as well as without it.
+     */
+    #[Test]
+    public function sharesTheTabKeyRowBetweenBothModes(): void
+    {
+        $xpath = ViewFixture::xpathOf($this->render());
+
+        $row = ViewFixture::first($xpath, '//tr[td/strong[normalize-space() = "Tab key"]]');
+
+        self::assertFalse($row->hasAttribute('data-help-mode'));
+        self::assertStringNotContainsString('d-none', $row->getAttribute('class'));
+    }
+
+    /**
      * The toggle lives in the page script, which also closes the popover on Escape, so the markup
      * carries no inline click handler that would toggle it a second time.
      */
