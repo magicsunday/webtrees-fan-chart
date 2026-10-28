@@ -52,6 +52,38 @@ final class HelpButtonViewTest extends TestCase
     }
 
     /**
+     * The popover lists the interactions of both modes of the chart. The entries of the mode with
+     * the tooltip start visible, the entries of the mode with the detail panel start hidden, and the
+     * page script switches them with the checkbox. The entries for zooming and moving apply to both
+     * modes and carry no mode.
+     */
+    #[Test]
+    public function marksTheEntriesOfEachMode(): void
+    {
+        $xpath = ViewFixture::xpathOf($this->render());
+
+        $tooltip = ViewFixture::elements($xpath, '//tr[@data-help-mode="tooltip"]');
+        $panel   = ViewFixture::elements($xpath, '//tr[@data-help-mode="panel"]');
+        $both    = ViewFixture::elements($xpath, '//tr[not(@data-help-mode)]');
+
+        self::assertNotSame([], $tooltip);
+        self::assertNotSame([], $panel);
+        self::assertCount(2, $both, 'zooming and moving apply to both modes');
+
+        foreach ($tooltip as $row) {
+            self::assertStringNotContainsString('d-none', $row->getAttribute('class'));
+        }
+
+        foreach ($panel as $row) {
+            self::assertStringContainsString('d-none', $row->getAttribute('class'));
+        }
+
+        foreach ($both as $row) {
+            self::assertStringNotContainsString('d-none', $row->getAttribute('class'));
+        }
+    }
+
+    /**
      * The toggle lives in the page script, which also closes the popover on Escape, so the markup
      * carries no inline click handler that would toggle it a second time.
      */

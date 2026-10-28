@@ -6,6 +6,28 @@
  */
 
 /**
+ * Shows the help entries of the mode that the checkbox of the detail panel selects and
+ * hides the entries of the other mode. The chart takes its mode when its data is loaded,
+ * so the page calls this where it loads the chart, and the entries keep describing the
+ * chart in between. Without the checkbox or without help entries the markup stays as rendered.
+ */
+export function syncHelpMode() {
+    const panelCheckbox = /** @type {HTMLInputElement|null} */ (
+        document.querySelector('input[type="checkbox"][name="showDetailPanel"]')
+    );
+
+    if (!panelCheckbox) {
+        return;
+    }
+
+    const mode = panelCheckbox.checked ? "panel" : "tooltip";
+
+    document.querySelectorAll(".help-popover [data-help-mode]").forEach((entry) => {
+        entry.classList.toggle("d-none", entry.getAttribute("data-help-mode") !== mode);
+    });
+}
+
+/**
  * Wires the help button of the toolbar to its popover: a click toggles the
  * popover, the state is exposed through aria-expanded on the button, and Escape
  * closes an open popover. The button points to the popover with aria-controls.

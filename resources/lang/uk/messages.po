@@ -44,13 +44,17 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Click and drag"
 msgstr "Натисніть і перетягніть"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click on a person"
 msgstr "Натисніть на особу"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Click or Enter on a person"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:23
 msgid "Colors"
@@ -78,7 +82,7 @@ msgstr ""
 "повного імені. «Автоматично» використовує традицію прізвищ дерева "
 "(ісландська скорочує прізвища; усі інші скорочують імена)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Ctrl + scroll"
 msgstr "Ctrl + прокрутка"
 
@@ -88,6 +92,10 @@ msgstr "Точність дат"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Details panel"
 msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
@@ -218,6 +226,10 @@ msgid "Modules"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Move between the persons"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Move the chart"
 msgstr "Перемістити діаграму"
 
@@ -239,6 +251,10 @@ msgstr "Кількість внутрішніх рівнів"
 
 #: resources/views/modules/fan-chart/page.phtml:119
 msgid "Open individual page"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
@@ -273,7 +289,7 @@ msgstr "Деталі місця"
 msgid "Re center"
 msgstr "Відцентрувати"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Reload chart for that person"
 msgstr "Перезавантажити діаграму для цієї особи"
 
@@ -350,6 +366,10 @@ msgstr "Показати дати шлюбів"
 msgid "Show places"
 msgstr "Показати місця"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Show the details of the person in the panel"
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/details.phtml:59
 msgid ""
 "Shows the facts of a person in a side panel when you select a person, "
@@ -371,6 +391,10 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Перемикання між повноекранним і звичайним режимом"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Tab key"
+msgstr ""
+
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -384,7 +408,7 @@ msgstr "Використовуйте Ctrl + коліщатко миші для �
 msgid "Years only"
 msgstr "Лише роки"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Zoom in/out"
 msgstr "Збільшити/Зменшити"
 

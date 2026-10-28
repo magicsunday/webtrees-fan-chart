@@ -1,16 +1,28 @@
 import { describe, it, expect, beforeEach } from "@jest/globals";
-import { initHelpPopover } from "resources/js/modules/help-popover.js";
+import { initHelpPopover, syncHelpMode } from "resources/js/modules/help-popover.js";
 
-function setupDom() {
+function setupDom({ panel = false } = {}) {
     document.body.innerHTML = `
+        <input type="hidden" name="showDetailPanel" value="0">
+        <input type="checkbox" name="showDetailPanel" value="1"${panel ? " checked" : ""}>
         <div class="position-relative d-inline-block">
             <button class="btn-help" aria-expanded="false" aria-controls="fan-chart-help-popover">
                 Help
             </button>
-            <div id="fan-chart-help-popover" class="help-popover d-none" role="region"></div>
+            <div id="fan-chart-help-popover" class="help-popover d-none" role="region">
+                <table>
+                    <tr data-help-mode="tooltip"><td>Right-click</td></tr>
+                    <tr data-help-mode="panel" class="d-none"><td>Click or Enter</td></tr>
+                    <tr id="always"><td>Ctrl + scroll</td></tr>
+                </table>
+            </div>
         </div>
     `;
 }
+
+const checkbox = () => document.querySelector('input[type="checkbox"][name="showDetailPanel"]');
+const rowHidden = (mode) =>
+    document.querySelector(`[data-help-mode="${mode}"]`).classList.contains("d-none");
 
 const button = () => document.querySelector(".btn-help");
 const popover = () => document.getElementById("fan-chart-help-popover");
@@ -68,5 +80,78 @@ describe("initHelpPopover", () => {
 
         expect(() => initHelpPopover()).not.toThrow();
         expect(() => pressKey("Escape")).not.toThrow();
+    });
+});
+
+describe("syncHelpMode", () => {
+    it("shows the tooltip entries while the detail panel is off", () => {
+        setupDom();
+        syncHelpMode();
+
+        expect(rowHidden("tooltip")).toBe(false);
+        expect(rowHidden("panel")).toBe(true);
+    });
+
+    it("shows the panel entries while the detail panel is on", () => {
+        setupDom({ panel: true });
+        syncHelpMode();
+
+        expect(rowHidden("tooltip")).toBe(true);
+        expect(rowHidden("panel")).toBe(false);
+    });
+
+    it("follows the checkbox of the detail panel on every call", () => {
+        setupDom();
+        syncHelpMode();
+
+        checkbox().checked = true;
+        syncHelpMode();
+
+        expect(rowHidden("tooltip")).toBe(true);
+        expect(rowHidden("panel")).toBe(false);
+
+        checkbox().checked = false;
+        syncHelpMode();
+
+        expect(rowHidden("tooltip")).toBe(false);
+        expect(rowHidden("panel")).toBe(true);
+    });
+
+    it("keeps the entries of the chart mode while the checkbox changes without a reload", () => {
+        // The chart takes the mode when its data is loaded, so a tick that is not yet
+        // submitted must not change the help.
+        setupDom();
+        initHelpPopover();
+        syncHelpMode();
+
+        checkbox().checked = true;
+        checkbox().dispatchEvent(new Event("change", { bubbles: true }));
+        document.querySelector(".btn-help").click();
+
+        expect(rowHidden("tooltip")).toBe(false);
+        expect(rowHidden("panel")).toBe(true);
+    });
+
+    it("leaves the entries that apply to both modes alone", () => {
+        setupDom({ panel: true });
+        syncHelpMode();
+
+        expect(document.getElementById("always").classList.contains("d-none")).toBe(false);
+    });
+
+    it("keeps the markup as rendered when the page has no detail panel checkbox", () => {
+        setupDom();
+        checkbox().remove();
+
+        expect(() => syncHelpMode()).not.toThrow();
+        expect(rowHidden("tooltip")).toBe(false);
+        expect(rowHidden("panel")).toBe(true);
+    });
+
+    it("does nothing on a page without a help popover", () => {
+        document.body.innerHTML =
+            '<input type="checkbox" name="showDetailPanel" value="1" checked>';
+
+        expect(() => syncHelpMode()).not.toThrow();
     });
 });
