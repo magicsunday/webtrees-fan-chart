@@ -350,6 +350,70 @@ describe("Chart", () => {
         }
     });
 
+    describe("motion", () => {
+        /**
+         * Builds a chart stand-in whose svg records the duration of every transition.
+         *
+         * @param {number[]} durations Receives the durations in call order
+         */
+        const buildMotionChart = (durations) => {
+            const transition = {
+                duration(value) {
+                    durations.push(value);
+
+                    return this;
+                },
+                attr() {
+                    return this;
+                },
+                call() {
+                    return this;
+                },
+            };
+
+            return {
+                _configuration: { updateDuration: 1250 },
+                parent: { node: () => ({ getBoundingClientRect: () => ({}) }) },
+                convertRemToPixels: () => 16,
+                _computeViewBox: () => ({ left: 0, top: 0, width: 1, height: 1 }),
+                svg: {
+                    transition: () => transition,
+                    zoom: { get: () => ({ transform: () => {} }) },
+                    visual: {
+                        selectAll: () => ({ style: () => {} }),
+                        node: () => ({ getBBox: () => ({}) }),
+                    },
+                },
+            };
+        };
+
+        afterEach(() => {
+            delete window.matchMedia;
+        });
+
+        test("animates the re-centering and the zoom reset without that preference", () => {
+            const durations = [];
+            const context = buildMotionChart(durations);
+
+            Chart.prototype.transitionViewBox.call(context);
+            Chart.prototype.center.call(context);
+
+            expect(durations).toEqual([1250, 750]);
+        });
+
+        test("skips the animation of both when the user prefers reduced motion", () => {
+            window.matchMedia = jest.fn(() => ({ matches: true }));
+
+            const durations = [];
+            const context = buildMotionChart(durations);
+
+            Chart.prototype.transitionViewBox.call(context);
+            Chart.prototype.center.call(context);
+
+            expect(durations).toEqual([0, 0]);
+        });
+    });
+
     describe("descendant sector", () => {
         const partnerNode = (id, x0, x1) => ({ id, depth: -1, x0, x1, data: { data: {} } });
 
