@@ -439,6 +439,45 @@ describe("A real chart with the detail panel", () => {
         expect(document.activeElement).toBe(elements[1]);
     });
 
+    test("moves the focus to the centered person when the focused arc stays and shows another person", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2")], false);
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[1].focus();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        // The updater keeps the arcs and hands them the persons of the new chart
+        d3.select(elements[0]).datum(node("I2"));
+        d3.select(elements[1]).datum(node("I3"));
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(elements[0]);
+    });
+
+    test("moves the focus to the centered person when the update removed the focused arc", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2")], false);
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[1].focus();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        // The updater removes the focused arc and draws a new one for the centered person
+        const fresh = elements[1].cloneNode(false);
+        const parent = elements[1].parentNode;
+
+        elements[1].remove();
+        parent.append(fresh);
+        d3.select(fresh).datum(node("I2"));
+
+        expect(document.activeElement).toBe(document.body);
+
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(fresh);
+    });
+
     test("does not move the focus after a click of the mouse", () => {
         const { chart, elements } = buildRealChart([node("I1")], false);
 
@@ -461,6 +500,28 @@ describe("A real chart with the detail panel", () => {
 
         expect(document.activeElement).not.toBe(elements[0]);
         expect(document.activeElement).not.toBe(elements[1]);
+    });
+
+    test("leaves the focus where the user moved it while the update was running", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2")], false);
+        const button = document.createElement("button");
+
+        document.body.append(button);
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        // The user moves on to another control before the chart is drawn again
+        button.focus();
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(button);
+
+        // The request is gone, so a later draw does not take the focus
+        button.blur();
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(document.body);
     });
 
     test("keeps the focus request of a key press while another update is still running", () => {
