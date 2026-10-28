@@ -98,9 +98,27 @@ final class PageViewTest extends TestCase
     }
 
     /**
-     * Renders the page view with the variables of the page action.
+     * The URL is written into an inline script. Like every value of the chart view, it is encoded
+     * with the tag, ampersand, apostrophe and quote flags, so text that opens or closes an element
+     * or a string cannot leave the script, whatever a route builder hands over.
      */
-    private function render(): string
+    #[Test]
+    public function encodesTheAjaxUrlWithTheHexFlags(): void
+    {
+        $output = $this->render('https://example.test/ajax?a=<!--<script>&\'"');
+
+        self::assertStringNotContainsString('<!--<script>', $output, 'the text of the URL does not open an element');
+        self::assertStringContainsString(
+            'ajaxUrl:                        "https:\\/\\/example.test\\/ajax?a=\\u003C!--\\u003Cscript\\u003E\\u0026\\u0027\\u0022"',
+            $output
+        );
+    }
+
+    /**
+     * Renders the page view with the variables of the page action, followed by the scripts that the
+     * view pushed onto the javascript stack.
+     */
+    private function render(string $url = 'https://example.test/ajax'): string
     {
         ViewFixture::register();
         EnglishLocaleFixture::install();
@@ -118,7 +136,7 @@ final class PageViewTest extends TestCase
         $exportStylesheets = [];
         $javascript        = 'https://example.test/fan-chart-page.js';
         $stylesheets       = [];
-        $ajaxUrl           = 'https://example.test/ajax';
+        $ajaxUrl           = $url;
 
         View::stack('styles');
         View::stack('javascript');
@@ -131,6 +149,6 @@ final class PageViewTest extends TestCase
 
         self::assertIsString($markup);
 
-        return $markup;
+        return $markup . View::stack('javascript');
     }
 }

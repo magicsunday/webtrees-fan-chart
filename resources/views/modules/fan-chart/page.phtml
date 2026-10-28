@@ -134,7 +134,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 <script src="<?php echo e($javascript); ?>"></script>
 <script>
 WebtreesFanChart.initPage({
-    ajaxUrl:                        <?php echo json_encode($ajaxUrl); ?>,
+    ajaxUrl:                        <?php echo json_encode($ajaxUrl, \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT); ?>,
     defaultShowDescendants:         <?php echo json_encode($configuration->getShowDescendants()); ?>,
     defaultShowNicknames:           <?php echo json_encode($configuration->getShowNicknames()); ?>,
     defaultFanDegreeRaw:            <?php echo json_encode($configuration->getFanDegreeUnclamped()); ?>,
