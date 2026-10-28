@@ -605,8 +605,8 @@ export default class Chart {
                 d3.select(this).classed("empty", !hasChildren);
             });
 
-        // The person elements are created anew by every draw, and an update binds new hierarchy
-        // objects to them. The selection keeps the person it was made with, so the new object
+        // An update binds new hierarchy objects to the person elements, whether it draws them anew
+        // or keeps them. The selection keeps the person it was made with, so the new object
         // of that person is handed to it, which keeps the mark and the focus return working.
         const selected =
             this._selectedXref === null
