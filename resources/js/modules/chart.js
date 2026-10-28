@@ -26,6 +26,30 @@ import ChartUpdater from "./chart-updater.js";
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
 
 /**
+ * Returns the text that a person arc shows, one line per text element. The tspans carry the
+ * visible text, a title next to them is only the tooltip of the same text.
+ *
+ * @param {unknown} node The person element
+ *
+ * @return {string} The visible lines joined by a space, empty if the arc shows no text
+ */
+function visibleText(node) {
+    if (!(node instanceof Element)) {
+        return "";
+    }
+
+    return Array.from(node.querySelectorAll("text"))
+        .map((text) =>
+            Array.from(text.querySelectorAll("tspan"))
+                .map((tspan) => tspan.textContent ?? "")
+                .join(" ")
+                .trim(),
+        )
+        .filter((line) => line !== "")
+        .join(" ");
+}
+
+/**
  * Orchestrates the full fan chart lifecycle: builds the SVG, populates person
  * and marriage arc groups from hierarchical data, draws separator lines between
  * family branches, and delegates AJAX-driven updates with animated transitions.
@@ -540,6 +564,14 @@ export default class Chart {
                 that._selection.makeOperable(d3.select(this), datum, (_data, byKeyboard) =>
                     that.personClick(null, datum, byKeyboard),
                 );
+
+                // The library names the arc with the bare name, but the accessible name has to
+                // contain the text that the arc shows (WCAG 2.5.3)
+                const label = visibleText(this);
+
+                if (label !== "") {
+                    d3.select(this).attr("aria-label", label);
+                }
             });
         }
 

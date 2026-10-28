@@ -342,6 +342,73 @@ describe("A real chart with the detail panel", () => {
         expect(panel.select).toHaveBeenCalledWith(first.data.data, true);
     });
 
+    /**
+     * Draws the text of a person arc like the chart does: a text with a textPath whose tspans
+     * carry the visible parts, and a title that only repeats them as a tooltip.
+     *
+     * @param {Element}                 element The person group
+     * @param {(string|string[])[]}     lines   The visible lines, a line with several tspans is an array
+     */
+    function drawLines(element, lines) {
+        const ns = "http://www.w3.org/2000/svg";
+
+        lines.forEach((line) => {
+            const text = document.createElementNS(ns, "text");
+            const textPath = document.createElementNS(ns, "textPath");
+            const title = document.createElementNS(ns, "title");
+
+            [line].flat().forEach((part) => {
+                const tspan = document.createElementNS(ns, "tspan");
+
+                tspan.textContent = part;
+                textPath.append(tspan);
+            });
+
+            title.textContent = [line].flat().join(" ");
+            text.append(textPath, title);
+            element.append(text);
+        });
+    }
+
+    test("labels an operable person with the text that the arc shows", () => {
+        const { chart, elements } = buildRealChart([node("I1")]);
+
+        drawLines(elements[0], ["Jane", "Doe", "Born: 1850"]);
+        chart.bindClickEventListener();
+
+        expect(elements[0].getAttribute("aria-label")).toBe("Jane Doe Born: 1850");
+    });
+
+    test("separates the tspans of one line in the label", () => {
+        const { chart, elements } = buildRealChart([node("I1")]);
+
+        drawLines(elements[0], [["Jane", "Doe"], "Born: 1850"]);
+        chart.bindClickEventListener();
+
+        expect(elements[0].getAttribute("aria-label")).toBe("Jane Doe Born: 1850");
+    });
+
+    test("keeps the label of the chart library for an arc without visible text", () => {
+        const named = node("I1");
+
+        named.data.data.name = "Jane Doe";
+
+        const { chart, elements } = buildRealChart([named]);
+
+        chart.bindClickEventListener();
+
+        expect(elements[0].getAttribute("aria-label")).toBe("Jane Doe");
+    });
+
+    test("sets no label with the panel off", () => {
+        const { chart, elements } = buildRealChart([node("I1")], false);
+
+        drawLines(elements[0], ["Jane", "Doe"]);
+        chart.bindClickEventListener();
+
+        expect(elements[0].hasAttribute("aria-label")).toBe(false);
+    });
+
     test("leaves the drawn elements out of the tab order with the panel off", () => {
         const { chart, elements } = buildRealChart([node("I1")], false);
 
