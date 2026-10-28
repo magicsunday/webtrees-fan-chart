@@ -43,11 +43,11 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr "Clicca e trascina"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr "Clicca su una persona"
 
@@ -78,7 +78,7 @@ msgstr ""
 "cognomi dell'albero (islandese abbrevia i cognomi; tutto il resto abbrevia i "
 "nomi propri)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr "Ctrl + scorrimento"
 
@@ -218,7 +218,7 @@ msgstr "Materno"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr "Sposta il diagramma"
 
@@ -275,11 +275,11 @@ msgstr "Dettaglio del luogo"
 msgid "Re center"
 msgstr "Riposiziona"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr "Ricarica il diagramma per quella persona"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr "Clic destro"
 
@@ -291,7 +291,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Mostra discendenti"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr "Mostra i dettagli di una persona"
 
@@ -320,6 +320,7 @@ msgid "Show full dates up to generation %s"
 msgstr "Mostra date complete fino alla generazione %s"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr "Mostra aiuto"
 
@@ -385,7 +386,7 @@ msgstr "Usare Ctrl + scorrimento per ingrandire la vista"
 msgid "Years only"
 msgstr "Solo anni"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr "Ingrandisci/Riduci"
 

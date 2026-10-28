@@ -43,11 +43,11 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr "Klikk og dra"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr "Klikk på en person"
 
@@ -77,7 +77,7 @@ msgstr ""
 "navnet. «Automatisk» bruker treets etternavnstradisjon (islandsk forkorter "
 "etternavn; alt annet forkorter fornavn)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr "Ctrl + rull"
 
@@ -216,7 +216,7 @@ msgstr "Morslinje"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr "Flytt diagrammet"
 
@@ -272,11 +272,11 @@ msgstr "Stedsdetaljer"
 msgid "Re center"
 msgstr "Tilbakestill"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr "Last diagrammet på nytt for den personen"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr "Høyreklikk"
 
@@ -288,7 +288,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Vis etterkommere"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr "Vis detaljer om en person"
 
@@ -317,6 +317,7 @@ msgid "Show full dates up to generation %s"
 msgstr "Vis fullstendige datoer til generasjon %s"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr "Vis hjelp"
 
@@ -382,7 +383,7 @@ msgstr "Bruk Ctrl + scroll for zoom"
 msgid "Years only"
 msgstr "Kun årstall"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
 

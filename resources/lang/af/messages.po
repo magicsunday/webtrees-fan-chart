@@ -43,11 +43,11 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr "Klik en sleep"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr "Klik op 'n persoon"
 
@@ -77,7 +77,7 @@ msgstr ""
 "die volle naam. \"Outomaties\" gebruik die boom se vannaam-tradisie (Yslands "
 "verkort vanne; alles anders verkort voorname)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr "Ctrl + blaai"
 
@@ -217,7 +217,7 @@ msgstr "Moederlik"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr "Skuif die diagram"
 
@@ -273,11 +273,11 @@ msgstr "Plekbesonderhede"
 msgid "Re center"
 msgstr "Her sentreer"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr "Herlaai diagram vir daardie persoon"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr "Regskliek"
 
@@ -289,7 +289,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Wys afstammelinge"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr "Wys besonderhede van 'n persoon"
 
@@ -318,6 +318,7 @@ msgid "Show full dates up to generation %s"
 msgstr "Wys volledige datums tot generasie %s"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr "Wys hulp"
 
@@ -383,7 +384,7 @@ msgstr "Gebruik Ctrl + rol om te vergroot"
 msgid "Years only"
 msgstr "Slegs jare"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr "Zoom in/uit"
 

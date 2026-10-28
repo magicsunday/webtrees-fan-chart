@@ -43,11 +43,11 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr "Nhấp và kéo"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr "Nhấp vào một người"
 
@@ -77,7 +77,7 @@ msgstr ""
 "tên đầy đủ. \"Tự động\" sử dụng truyền thống họ của cây phả hệ (Iceland viết "
 "tắt họ; còn lại viết tắt tên gọi)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr "Ctrl + cuộn chuột"
 
@@ -216,7 +216,7 @@ msgstr "Bên ngoại"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr "Di chuyển biểu đồ"
 
@@ -272,11 +272,11 @@ msgstr "Chi tiết địa điểm"
 msgid "Re center"
 msgstr "Chỉnh biểu đồ về giữa màn hình"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr "Tải lại biểu đồ cho người đó"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr "Nhấp chuột phải"
 
@@ -288,7 +288,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Hiển thị con cháu"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr "Hiển thị thông tin chi tiết của một người"
 
@@ -316,6 +316,7 @@ msgid "Show full dates up to generation %s"
 msgstr "Hiển thị đầy đủ ngày tháng đến thế hệ %s"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr "Hiển thị trợ giúp"
 
@@ -381,7 +382,7 @@ msgstr "Kết hợp Ctrl + scroll để thu phóng biểu đồ"
 msgid "Years only"
 msgstr "Chỉ năm"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr "Phóng to/Thu nhỏ"
 

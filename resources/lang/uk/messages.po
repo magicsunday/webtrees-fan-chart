@@ -44,11 +44,11 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr "Натисніть і перетягніть"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr "Натисніть на особу"
 
@@ -78,7 +78,7 @@ msgstr ""
 "повного імені. «Автоматично» використовує традицію прізвищ дерева "
 "(ісландська скорочує прізвища; усі інші скорочують імена)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr "Ctrl + прокрутка"
 
@@ -217,7 +217,7 @@ msgstr "По материнській лінії"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr "Перемістити діаграму"
 
@@ -273,11 +273,11 @@ msgstr "Деталі місця"
 msgid "Re center"
 msgstr "Відцентрувати"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr "Перезавантажити діаграму для цієї особи"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr "Клік правою кнопкою"
 
@@ -289,7 +289,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Показати нащадків"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr "Показати деталі про особу"
 
@@ -318,6 +318,7 @@ msgid "Show full dates up to generation %s"
 msgstr "Показати повні дати до покоління %s"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr "Показати довідку"
 
@@ -383,7 +384,7 @@ msgstr "Використовуйте Ctrl + коліщатко миші для �
 msgid "Years only"
 msgstr "Лише роки"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr "Збільшити/Зменшити"
 
