@@ -12,18 +12,11 @@ declare(strict_types=1);
 use Fisharebest\Webtrees\View;
 
 /**
- * @var string   $content     The content to output
- * @var string[] $stylesheets The list of stylesheets
+ * @var string $content The content to output
  */
 ?>
 
 <?php echo $content; ?>
-
-<?php View::push('styles'); ?>
-<?php foreach ($stylesheets as $stylesheet) { ?>
-    <link rel="stylesheet" href="<?php echo e($stylesheet); ?>">
-<?php } ?>
-<?php View::endpush(); ?>
 
 <?php echo View::stack('styles'); ?>
 <?php echo View::stack('javascript'); ?>
