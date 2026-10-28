@@ -15,6 +15,7 @@ import Marriage from "./svg/marriage.js";
 import Geometry from "./svg/geometry.js";
 import { applyFamilyColorMode, isDrawnPerson, isMarriageParent } from "./draw-rules.js";
 import ChartUpdater from "./chart-updater.js";
+import { motionDuration } from "./motion.js";
 
 /**
  * @import { Selection } from "d3-selection"
@@ -234,7 +235,7 @@ export default class Chart {
 
         /** @type {any} */ (this.svg)
             .transition("viewBox")
-            .duration(this._configuration.updateDuration)
+            .duration(motionDuration(this._configuration.updateDuration))
             .attr("viewBox", newViewBox);
     }
 
@@ -243,7 +244,10 @@ export default class Chart {
      * (identity transform).
      */
     center() {
-        this.svg.transition().duration(750).call(this.svg.zoom.get().transform, d3.zoomIdentity);
+        this.svg
+            .transition()
+            .duration(motionDuration(750))
+            .call(this.svg.zoom.get().transform, d3.zoomIdentity);
     }
 
     /**

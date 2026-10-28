@@ -11,6 +11,7 @@ import Person from "./svg/person.js";
 import Marriage from "./svg/marriage.js";
 import FamilyColor from "./svg/family-color.js";
 import { applyFamilyColorMode, isDrawnPerson, isMarriageParent } from "./draw-rules.js";
+import { motionDuration } from "./motion.js";
 
 /**
  * @import { Transition } from "d3-transition"
@@ -127,7 +128,7 @@ export default class ChartUpdater {
 
                 const transition = d3
                     .transition()
-                    .duration(this._configuration.updateDuration)
+                    .duration(motionDuration(this._configuration.updateDuration))
                     .call(this.endAll, onceCallback);
 
                 this._runUpdateAnimations(transition);

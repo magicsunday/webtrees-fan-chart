@@ -603,6 +603,39 @@ describe("Update", () => {
         expect(hierarchy.initCalls[0]).toEqual(createNodes());
     });
 
+    test("runs the update without a transition when the user prefers reduced motion", async () => {
+        window.matchMedia = jest.fn(() => ({ matches: true }));
+
+        try {
+            const svg = createSvgWithPersons(["1"]);
+            const update = new Update(svg, defaultConfiguration(), new HierarchyStub());
+
+            jsonMock.mockResolvedValueOnce({ data: createNodes() });
+
+            update.update("/update", jest.fn(), jest.fn());
+            await flushPromises();
+            await flushPromises();
+
+            expect(transitionInstances.length).toBeGreaterThan(0);
+            expect(transitionInstances[0].durationValue).toBe(0);
+        } finally {
+            delete window.matchMedia;
+        }
+    });
+
+    test("runs the update with the configured duration without that preference", async () => {
+        const svg = createSvgWithPersons(["1"]);
+        const update = new Update(svg, defaultConfiguration(), new HierarchyStub());
+
+        jsonMock.mockResolvedValueOnce({ data: createNodes() });
+
+        update.update("/update", jest.fn(), jest.fn());
+        await flushPromises();
+        await flushPromises();
+
+        expect(transitionInstances[0].durationValue).toBe(100);
+    });
+
     test("builds the arcs with the descendant layout of the hierarchy", async () => {
         const svg = createSvgWithPersons(["1"]);
         const hierarchy = new HierarchyStub();
