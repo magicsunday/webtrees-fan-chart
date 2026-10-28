@@ -455,6 +455,29 @@ describe("A real chart with the detail panel", () => {
         expect(document.activeElement).toBe(elements[0]);
     });
 
+    test("moves the focus to the centered person when the update removed the focused arc", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2")], false);
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[1].focus();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        // The updater removes the focused arc and draws a new one for the centered person
+        const fresh = elements[1].cloneNode(false);
+        const parent = elements[1].parentNode;
+
+        elements[1].remove();
+        parent.append(fresh);
+        d3.select(fresh).datum(node("I2"));
+
+        expect(document.activeElement).toBe(document.body);
+
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(fresh);
+    });
+
     test("does not move the focus after a click of the mouse", () => {
         const { chart, elements } = buildRealChart([node("I1")], false);
 
