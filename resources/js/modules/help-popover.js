@@ -6,12 +6,32 @@
  */
 
 /**
+ * Shows the help entries of the mode that the checkbox of the detail panel selects and
+ * hides the entries of the other mode. The chart takes its mode when its data is loaded,
+ * so the page calls this where it loads the chart, and the entries keep describing the
+ * chart in between. Without the checkbox or without help entries the markup stays as rendered.
+ */
+export function syncHelpMode() {
+    const panelCheckbox = /** @type {HTMLInputElement|null} */ (
+        document.querySelector('input[type="checkbox"][name="showDetailPanel"]')
+    );
+
+    if (!panelCheckbox) {
+        return;
+    }
+
+    const mode = panelCheckbox.checked ? "panel" : "tooltip";
+
+    document.querySelectorAll(".help-popover [data-help-mode]").forEach((entry) => {
+        entry.classList.toggle("d-none", entry.getAttribute("data-help-mode") !== mode);
+    });
+}
+
+/**
  * Wires the help button of the toolbar to its popover: a click toggles the
  * popover, the state is exposed through aria-expanded on the button, and Escape
  * closes an open popover. The button points to the popover with aria-controls.
- * The entries marked with data-help-mode follow the checkbox of the detail
- * panel, so the popover describes the mode that the chart is in. A page without
- * a help button is left alone.
+ * A page without a help button is left alone.
  */
 export function initHelpPopover() {
     const button = document.querySelector(".btn-help");
@@ -32,29 +52,7 @@ export function initHelpPopover() {
         button.setAttribute("aria-expanded", String(open));
     };
 
-    const panelCheckbox = document.querySelector('input[type="checkbox"][name="showDetailPanel"]');
-
-    /**
-     * Shows the entries of the mode that the checkbox of the detail panel selects and
-     * hides the entries of the other mode. Without the checkbox the markup stays as rendered.
-     */
-    const syncMode = () => {
-        if (!panelCheckbox) {
-            return;
-        }
-
-        const mode = /** @type {HTMLInputElement} */ (panelCheckbox).checked ? "panel" : "tooltip";
-
-        popover.querySelectorAll("[data-help-mode]").forEach((entry) => {
-            entry.classList.toggle("d-none", entry.getAttribute("data-help-mode") !== mode);
-        });
-    };
-
-    syncMode();
-    panelCheckbox?.addEventListener("change", syncMode);
-
     button.addEventListener("click", () => {
-        syncMode();
         setOpen(popover.classList.contains("d-none"));
     });
 

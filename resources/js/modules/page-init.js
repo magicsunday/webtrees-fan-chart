@@ -12,7 +12,7 @@ import {
     Storage,
     syncCollapseToggle,
 } from "@magicsunday/webtrees-chart-lib/chart-core";
-import { initHelpPopover } from "./help-popover.js";
+import { initHelpPopover, syncHelpMode } from "./help-popover.js";
 
 /**
  * Restores a range slider and its output display from localStorage.
@@ -241,6 +241,7 @@ export function initPage(config) {
         ],
     });
     setChartAjaxUrl("fan-chart-url", ajaxUrl);
+    syncHelpMode();
 
     // showDescendants checkbox: persist to storage, restore raw fan degree, AJAX reload.
     // The slider max/value clamping is handled by the shared script in display.phtml
@@ -315,6 +316,7 @@ export function initPage(config) {
             });
 
             setChartAjaxUrl("fan-chart-url", newUrl);
+            syncHelpMode();
             // window.webtrees is injected by the host page (webtrees core), not
             // declared in our types. Reach for it via an opaque widening cast.
             /** @type {{webtrees: {load: (el: HTMLElement|null, url: string) => void}}} */ (

@@ -132,8 +132,12 @@ function setupDom(overrides = {}) {
         <input type="hidden" name="showDescendants" value="0">
         <input type="checkbox" id="showDescendants-1" name="showDescendants" value="1">
         <div id="fan-chart-url"></div>
+        <input type="checkbox" name="showDetailPanel" value="1"${overrides.panel ? " checked" : ""}>
         <button class="btn-help" aria-expanded="false" aria-controls="fan-chart-help-popover">Help</button>
-        <div id="fan-chart-help-popover" class="help-popover d-none" role="region"></div>
+        <div id="fan-chart-help-popover" class="help-popover d-none" role="region">
+            <div data-help-mode="tooltip" id="help-tooltip"></div>
+            <div data-help-mode="panel" id="help-panel" class="d-none"></div>
+        </div>
     `;
 
     window.WebtreesFanChart = {};
@@ -184,6 +188,43 @@ describe("getUrl (via initPage AJAX URL)", () => {
             false,
         );
         expect(document.querySelector(".btn-help").getAttribute("aria-expanded")).toBe("true");
+    });
+
+    it("shows the help entries of the detail panel mode that the chart loads with", () => {
+        setupDom({ panel: true });
+
+        initPage(defaultConfig);
+
+        expect(document.getElementById("help-panel").classList.contains("d-none")).toBe(false);
+        expect(document.getElementById("help-tooltip").classList.contains("d-none")).toBe(true);
+    });
+
+    it("keeps the help entries until the chart is loaded again", () => {
+        initPage(defaultConfig);
+
+        const panelBox = document.querySelector('input[name="showDetailPanel"][type="checkbox"]');
+
+        panelBox.checked = true;
+        panelBox.dispatchEvent(new Event("change", { bubbles: true }));
+
+        expect(document.getElementById("help-panel").classList.contains("d-none")).toBe(true);
+        expect(document.getElementById("help-tooltip").classList.contains("d-none")).toBe(false);
+    });
+
+    it("switches the help entries when the descendants switch loads the chart again", () => {
+        initPage(defaultConfig);
+
+        const panelBox = document.querySelector('input[name="showDetailPanel"][type="checkbox"]');
+
+        panelBox.checked = true;
+
+        const cb = document.getElementById("showDescendants-1");
+
+        cb.checked = true;
+        cb.dispatchEvent(new Event("change"));
+
+        expect(document.getElementById("help-panel").classList.contains("d-none")).toBe(false);
+        expect(document.getElementById("help-tooltip").classList.contains("d-none")).toBe(true);
     });
 
     it("includes showPlaces=0 when storage has showPlaces=false", () => {

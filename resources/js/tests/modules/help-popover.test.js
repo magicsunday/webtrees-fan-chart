@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "@jest/globals";
-import { initHelpPopover } from "resources/js/modules/help-popover.js";
+import { initHelpPopover, syncHelpMode } from "resources/js/modules/help-popover.js";
 
 function setupDom({ panel = false } = {}) {
     document.body.innerHTML = `
@@ -83,10 +83,10 @@ describe("initHelpPopover", () => {
     });
 });
 
-describe("initHelpPopover modes", () => {
+describe("syncHelpMode", () => {
     it("shows the tooltip entries while the detail panel is off", () => {
         setupDom();
-        initHelpPopover();
+        syncHelpMode();
 
         expect(rowHidden("tooltip")).toBe(false);
         expect(rowHidden("panel")).toBe(true);
@@ -94,43 +94,47 @@ describe("initHelpPopover modes", () => {
 
     it("shows the panel entries while the detail panel is on", () => {
         setupDom({ panel: true });
-        initHelpPopover();
+        syncHelpMode();
 
         expect(rowHidden("tooltip")).toBe(true);
         expect(rowHidden("panel")).toBe(false);
     });
 
-    it("follows the checkbox of the detail panel", () => {
+    it("follows the checkbox of the detail panel on every call", () => {
         setupDom();
-        initHelpPopover();
+        syncHelpMode();
 
         checkbox().checked = true;
-        checkbox().dispatchEvent(new Event("change", { bubbles: true }));
+        syncHelpMode();
 
         expect(rowHidden("tooltip")).toBe(true);
         expect(rowHidden("panel")).toBe(false);
 
         checkbox().checked = false;
-        checkbox().dispatchEvent(new Event("change", { bubbles: true }));
+        syncHelpMode();
 
         expect(rowHidden("tooltip")).toBe(false);
         expect(rowHidden("panel")).toBe(true);
     });
 
-    it("reads the checkbox again when the popover opens", () => {
+    it("keeps the entries of the chart mode while the checkbox changes without a reload", () => {
+        // The chart takes the mode when its data is loaded, so a tick that is not yet
+        // submitted must not change the help.
         setupDom();
         initHelpPopover();
+        syncHelpMode();
 
         checkbox().checked = true;
+        checkbox().dispatchEvent(new Event("change", { bubbles: true }));
         document.querySelector(".btn-help").click();
 
-        expect(rowHidden("tooltip")).toBe(true);
-        expect(rowHidden("panel")).toBe(false);
+        expect(rowHidden("tooltip")).toBe(false);
+        expect(rowHidden("panel")).toBe(true);
     });
 
     it("leaves the entries that apply to both modes alone", () => {
         setupDom({ panel: true });
-        initHelpPopover();
+        syncHelpMode();
 
         expect(document.getElementById("always").classList.contains("d-none")).toBe(false);
     });
@@ -138,9 +142,16 @@ describe("initHelpPopover modes", () => {
     it("keeps the markup as rendered when the page has no detail panel checkbox", () => {
         setupDom();
         checkbox().remove();
-        initHelpPopover();
 
+        expect(() => syncHelpMode()).not.toThrow();
         expect(rowHidden("tooltip")).toBe(false);
         expect(rowHidden("panel")).toBe(true);
+    });
+
+    it("does nothing on a page without a help popover", () => {
+        document.body.innerHTML =
+            '<input type="checkbox" name="showDetailPanel" value="1" checked>';
+
+        expect(() => syncHelpMode()).not.toThrow();
     });
 });
