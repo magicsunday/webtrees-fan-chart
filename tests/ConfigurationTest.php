@@ -12,14 +12,12 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Test;
 
 use Fig\Http\Message\RequestMethodInterface;
-use Fisharebest\Localization\Locale;
-use Fisharebest\Localization\Translator;
 use Fisharebest\Webtrees\DB;
-use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Tree;
 use GuzzleHttp\Psr7\ServerRequest;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\ModuleBase\Model\NameAbbreviation;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
@@ -29,7 +27,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 use function array_filter;
 use function array_keys;
@@ -54,14 +51,7 @@ final class ConfigurationTest extends TestCase
     {
         parent::setUp();
 
-        $locale     = Locale::create('en');
-        $translator = new Translator([], $locale->pluralRule());
-
-        $localeProperty = new ReflectionProperty(I18N::class, 'locale');
-        $localeProperty->setValue(null, $locale);
-
-        $translatorProperty = new ReflectionProperty(I18N::class, 'translator');
-        $translatorProperty->setValue(null, $translator);
+        EnglishLocaleFixture::install();
     }
 
     /**

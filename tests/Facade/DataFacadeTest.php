@@ -14,15 +14,12 @@ namespace MagicSunday\Webtrees\FanChart\Test\Facade;
 use ArrayObject;
 use Aura\Router\Map;
 use Aura\Router\Route;
-use Fisharebest\Localization\Locale;
-use Fisharebest\Localization\Translator;
 use Fisharebest\Webtrees\Contracts\ContainerInterface;
 use Fisharebest\Webtrees\Contracts\RouteFactoryInterface;
 use Fisharebest\Webtrees\Date;
 use Fisharebest\Webtrees\Fact;
 use Fisharebest\Webtrees\Factories\CalendarDateFactory;
 use Fisharebest\Webtrees\Family;
-use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Place;
@@ -36,6 +33,7 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatChoice;
@@ -45,7 +43,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 use function array_map;
 use function is_string;
@@ -76,14 +73,7 @@ final class DataFacadeTest extends TestCase
         Validator::serverParams(new ServerRequest('GET', '/'));
         Registry::calendarDateFactory(new CalendarDateFactory());
 
-        $locale     = Locale::create('en');
-        $translator = new Translator([], $locale->pluralRule());
-
-        $localeProperty = new ReflectionProperty(I18N::class, 'locale');
-        $localeProperty->setValue(null, $locale);
-
-        $translatorProperty = new ReflectionProperty(I18N::class, 'translator');
-        $translatorProperty->setValue(null, $translator);
+        EnglishLocaleFixture::install();
     }
 
     /**
