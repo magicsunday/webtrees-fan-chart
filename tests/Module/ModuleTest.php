@@ -14,12 +14,9 @@ namespace MagicSunday\Webtrees\FanChart\Test\Module;
 use Aura\Router\Map;
 use Aura\Router\Route;
 use Fig\Http\Message\RequestMethodInterface;
-use Fisharebest\Localization\Locale;
-use Fisharebest\Localization\Translator;
 use Fisharebest\Webtrees\Contracts\ContainerInterface;
 use Fisharebest\Webtrees\Contracts\RouteFactoryInterface;
 use Fisharebest\Webtrees\DB;
-use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\ChartService;
@@ -29,13 +26,13 @@ use GuzzleHttp\Psr7\ServerRequest;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
-use ReflectionProperty;
 
 use function in_array;
 use function ksort;
@@ -62,7 +59,7 @@ final class ModuleTest extends TestCase
         $individual   = self::createStub(Individual::class);
         $tree         = self::createStub(Tree::class);
 
-        $this->initialiseTranslator();
+        EnglishLocaleFixture::install();
 
         $individual->method('fullName')->willReturn('Example Person');
         $individual->method('xref')->willReturn('I1');
@@ -82,7 +79,7 @@ final class ModuleTest extends TestCase
     public function adminFormStoresThePanelDefault(): void
     {
         $this->registerRouteFactory();
-        $this->initialiseTranslator();
+        EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences([]);
 
@@ -105,7 +102,7 @@ final class ModuleTest extends TestCase
     public function adminFormTakesThePanelDefaultBackWhenTheSwitchIsOff(): void
     {
         $this->registerRouteFactory();
-        $this->initialiseTranslator();
+        EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences(['default_showDetailPanel' => '1']);
 
@@ -130,7 +127,7 @@ final class ModuleTest extends TestCase
     public function adminFormStoresEveryDefaultOfTheChart(): void
     {
         $this->registerRouteFactory();
-        $this->initialiseTranslator();
+        EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences([]);
 
@@ -212,20 +209,5 @@ final class ModuleTest extends TestCase
 
         Registry::routeFactory($routeFactory);
         Registry::container($container);
-    }
-
-    /**
-     * Sets the English locale and an empty translator.
-     */
-    private function initialiseTranslator(): void
-    {
-        $locale     = Locale::create('en');
-        $translator = new Translator([], $locale->pluralRule());
-
-        $localeProperty = new ReflectionProperty(I18N::class, 'locale');
-        $localeProperty->setValue(null, $locale);
-
-        $translatorProperty = new ReflectionProperty(I18N::class, 'translator');
-        $translatorProperty->setValue(null, $translator);
     }
 }
