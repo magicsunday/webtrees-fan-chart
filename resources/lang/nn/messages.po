@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -128,7 +129,7 @@ msgstr ""
 #: src/Module.php:240 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Viftediagram til %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"

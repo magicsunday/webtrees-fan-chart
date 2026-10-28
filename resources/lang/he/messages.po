@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -20,7 +21,7 @@ msgstr ""
 
 #: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
-msgstr "תרשים מעריצים של אבותיו של אדם."
+msgstr ""
 
 #: src/Configuration.php:842
 msgid "Abbreviate given names first"
@@ -86,7 +87,7 @@ msgstr "דיוק תאריכים"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "פרטים"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -122,12 +123,12 @@ msgstr "ייצא כ-SVG"
 
 #: src/Module.php:130 src/Module.php:243
 msgid "Fan chart"
-msgstr "תרשים מניפה של אבות"
+msgstr ""
 
 #: src/Module.php:240 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "תרשים מניפה של אבות של %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"

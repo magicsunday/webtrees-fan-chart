@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -21,7 +22,7 @@ msgstr ""
 
 #: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
-msgstr "Віялова діаграма предків особи."
+msgstr ""
 
 #: src/Configuration.php:842
 msgid "Abbreviate given names first"
@@ -400,4 +401,4 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr "Перегляд"
+msgstr ""

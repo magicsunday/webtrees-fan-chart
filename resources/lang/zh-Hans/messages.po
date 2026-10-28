@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -84,7 +85,7 @@ msgstr "日期精度"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
-msgstr "详情"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -124,7 +125,7 @@ msgstr ""
 #: src/Module.php:240 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "%s的扇形图"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -144,7 +145,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "代"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -177,7 +178,7 @@ msgstr "仅当弧段足够宽时才显示图片。后代的图片尚不可用。
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "个人"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""

@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -13,17 +14,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
 "n%100==4 ? 3 : 0);\n"
-"X-Loco-Source-Locale: sl_SI\n"
 "X-Generator: Poedit 3.5\n"
+"X-Loco-Parser: loco_parse_po\n"
+"X-Loco-Source-Locale: sl_SI\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
-"X-Loco-Parser: loco_parse_po\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
 #: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
-msgstr "Pahljačasti diagram posameznikovih prednikov."
+msgstr ""
 
 #: src/Configuration.php:842
 msgid "Abbreviate given names first"
@@ -67,7 +68,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Control panel"
-msgstr "Nadzorna plošča"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:85
 msgid ""
@@ -126,12 +127,12 @@ msgstr "Izvozi kot SVG"
 
 #: src/Module.php:130 src/Module.php:243
 msgid "Fan chart"
-msgstr "Pahljačasti diagram"
+msgstr ""
 
 #: src/Module.php:240 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Pahljačasti diagram osebe %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -151,7 +152,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Generacije"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -186,7 +187,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Posameznik"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -216,7 +217,7 @@ msgstr "Materin"
 
 #: resources/views/modules/fan-chart/config.phtml:25
 msgid "Modules"
-msgstr "Moduli"
+msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Move the chart"
@@ -373,7 +374,7 @@ msgstr "Preklopi med celozaslonskim in običajnim načinom"
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
-msgstr "Nastavitve modula “%s” so posodobljene."
+msgstr ""
 
 #: src/Module.php:266
 msgid "Use Ctrl + scroll to zoom in the view"
@@ -389,7 +390,7 @@ msgstr "Povečaj/pomanjšaj"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
-msgstr "Prekliči"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:111
 msgid "close"
@@ -397,8 +398,8 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"
-msgstr "Shrani"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr "Prikaži"
+msgstr ""

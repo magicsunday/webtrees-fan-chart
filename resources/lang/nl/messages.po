@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -377,7 +378,7 @@ msgstr "Schakelen tussen volledig scherm en normale weergave"
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
-msgstr "De voorkeuren voor de module \"%s\" zijn bijgewerkt."
+msgstr ""
 
 #: src/Module.php:266
 msgid "Use Ctrl + scroll to zoom in the view"
@@ -405,4 +406,4 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr "weergeven"
+msgstr ""

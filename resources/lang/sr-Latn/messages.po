@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -21,7 +22,7 @@ msgstr ""
 
 #: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
-msgstr "Lepeza grafikon predaka pojedinca."
+msgstr ""
 
 #: src/Configuration.php:842
 msgid "Abbreviate given names first"
@@ -124,12 +125,12 @@ msgstr "Izvezi kao SVG"
 
 #: src/Module.php:130 src/Module.php:243
 msgid "Fan chart"
-msgstr "Lepeza grafikon"
+msgstr ""
 
 #: src/Module.php:240 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Lepeza grafikon %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -184,7 +185,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Pojedinac"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
@@ -400,4 +401,4 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr "Prikaz"
+msgstr ""

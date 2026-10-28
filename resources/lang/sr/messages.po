@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -184,7 +185,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Појединац"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
