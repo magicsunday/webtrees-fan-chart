@@ -47,6 +47,15 @@
     color: var(--link-color-hover);
 }
 
+/*
+ * The core theme removes the outline on every focused element, so the keyboard focus needs its own
+ * ring. The offset keeps the ring clear of the button, so it contrasts with the button and the page.
+ */
+.webtrees-fan-fullscreen-container .btn-chart:focus-visible {
+    outline: 2px solid var(--bs-emphasis-color, rgb(33, 37, 41));
+    outline-offset: 2px;
+}
+
 .webtrees-fan-fullscreen-container .btn-chart .icon {
     position: absolute;
     top: 50%;
