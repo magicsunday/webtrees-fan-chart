@@ -185,10 +185,16 @@ describe("Person tooltips", () => {
         const { personSelection } = createPersonSelection();
         const { div, htmlCalls } = createDivSelection();
 
-        new Person({ div }, { hideEmptySegments: false }, {}, personSelection, {
-            ...baseDatum,
-            data: { data: { xref: "" } },
-        });
+        new Person(
+            { div },
+            { hideEmptySegments: false, isDrawn: () => true },
+            {},
+            personSelection,
+            {
+                ...baseDatum,
+                data: { data: { xref: "" } },
+            },
+        );
 
         // No event handlers should be bound for empty xref
         expect(personSelection.on).not.toHaveBeenCalled();
@@ -210,7 +216,12 @@ describe("Person tooltips", () => {
 
         new Person(
             { div },
-            { hideEmptySegments: false, showImages: true, showSilhouettes: true },
+            {
+                hideEmptySegments: false,
+                isDrawn: () => true,
+                showImages: true,
+                showSilhouettes: true,
+            },
             {},
             personSelection,
             datum,
@@ -249,7 +260,12 @@ describe("Person tooltips", () => {
 
         new Person(
             { div },
-            { hideEmptySegments: false, showImages: true, showSilhouettes: true },
+            {
+                hideEmptySegments: false,
+                isDrawn: () => true,
+                showImages: true,
+                showSilhouettes: true,
+            },
             {},
             personSelection,
             datum,
@@ -279,7 +295,12 @@ describe("Person tooltips", () => {
 
         new Person(
             { div },
-            { hideEmptySegments: false, showImages: true, showSilhouettes: false },
+            {
+                hideEmptySegments: false,
+                isDrawn: () => true,
+                showImages: true,
+                showSilhouettes: false,
+            },
             {},
             personSelection,
             datum,
@@ -300,6 +321,9 @@ describe("Person image size", () => {
         showNames: false,
         numberOfInnerCircles: 3,
         centerCircleRadius: 40,
+        isDrawn(depth) {
+            return this.showNames || depth <= this.numberOfInnerCircles;
+        },
     };
 
     const arc = ({ inner = 100, outer = 200, width = 400, degrees = 30 } = {}) => ({
@@ -511,7 +535,12 @@ describe("Person interactions", () => {
 
         new Person(
             { div: divSelection },
-            { hideEmptySegments: false, showImages: true, showSilhouettes: true },
+            {
+                hideEmptySegments: false,
+                isDrawn: () => true,
+                showImages: true,
+                showSilhouettes: true,
+            },
             {},
             personSelection,
             datum,
@@ -557,5 +586,46 @@ describe("Person interactions", () => {
             { name: "hover", value: true },
             { name: "hover", value: false },
         ]);
+    });
+});
+
+describe("Person draw rule", () => {
+    beforeEach(() => {
+        jest.spyOn(Person.prototype, "addArcToPerson").mockImplementation(() => {});
+        jest.spyOn(Person.prototype, "addTitleToPerson").mockImplementation(() => {});
+        jest.spyOn(Person.prototype, "addColorGroup").mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    it("builds no content for a person the configuration does not draw", () => {
+        const { personSelection } = createPersonSelection();
+        const { div } = createDivSelection();
+        const isDrawn = jest.fn(() => false);
+
+        new Person({ div }, { hideEmptySegments: false, isDrawn }, {}, personSelection, {
+            ...baseDatum,
+            depth: 6,
+        });
+
+        expect(isDrawn).toHaveBeenCalledWith(6);
+        expect(personSelection.append).not.toHaveBeenCalled();
+    });
+
+    it("builds the content for a person the configuration draws", () => {
+        const { personSelection } = createPersonSelection();
+        const { div } = createDivSelection();
+
+        new Person(
+            { div },
+            { hideEmptySegments: false, isDrawn: () => true },
+            {},
+            personSelection,
+            { ...baseDatum, depth: 6 },
+        );
+
+        expect(personSelection.append).toHaveBeenCalledWith("g");
     });
 });

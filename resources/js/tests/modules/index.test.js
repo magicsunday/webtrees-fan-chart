@@ -15,6 +15,7 @@ const selectMock = jest.fn((selector) => {
 });
 
 const chartInstances = [];
+const panels = [];
 
 class StubSvg {
     constructor() {
@@ -29,10 +30,17 @@ class StubChart {
         this.configuration = configuration;
         this.dataValue = null;
 
-        this.render = jest.fn();
+        this.detailPanel = null;
+        this.hasSelection = false;
+        this.render = jest.fn(() => {
+            this.renderedWithPanel = panels.length > 0 && panels[0].enabled;
+        });
         this.center = jest.fn();
         this.update = jest.fn();
         this.updateViewBox = jest.fn();
+        this.restoreFocus = jest.fn();
+        this.clearSelection = jest.fn();
+        this.redirectToIndividual = jest.fn();
         this.svg = new StubSvg();
 
         chartInstances.push(this);
@@ -56,6 +64,24 @@ await jest.unstable_mockModule("resources/js/modules/chart", () => ({
     __esModule: true,
     default: StubChart,
     chartInstances,
+}));
+
+// The panel is covered elsewhere. A stand-in records how the application connects it.
+await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/chart-core", () => ({
+    DetailPanel: class {
+        constructor(element, callbacks) {
+            this.element = element;
+            this.callbacks = callbacks;
+            this.enabled = false;
+            panels.push(this);
+        }
+
+        enable() {
+            this.enabled = true;
+        }
+
+        dismiss = jest.fn();
+    },
 }));
 
 const { FanChart } = await import("resources/js/modules/index");
@@ -89,6 +115,7 @@ describe("FanChart", () => {
         eventHandlers.clear();
         selectMock.mockClear();
         chartInstances.length = 0;
+        panels.length = 0;
         ensureOrientationListeners();
 
         if (screen.orientation?.addEventListener?.mockClear) {
@@ -196,5 +223,148 @@ describe("FanChart", () => {
         expect(chart.updateViewBox).toHaveBeenCalledTimes(1);
 
         orientationListenerSpy.mockRestore();
+    });
+});
+
+describe("FanChart detail panel", () => {
+    beforeEach(() => {
+        document.body.innerHTML = "";
+        chartInstances.length = 0;
+        panels.length = 0;
+        ensureOrientationListeners();
+    });
+
+    const buildWith = (overrides = {}, withPanel = true) => {
+        document.body.innerHTML =
+            '<div id="chart"></div>' +
+            (withPanel ? '<aside id="webtrees-fan-detail-panel"></aside>' : "");
+
+        return new FanChart("#chart", createOptions(overrides));
+    };
+
+    it("hands the option to the configuration", () => {
+        const application = buildWith({ showDetailPanel: true });
+
+        expect(application._configuration.showDetailPanel).toBe(true);
+    });
+
+    it("creates no panel while the option is off", () => {
+        buildWith({ showDetailPanel: false });
+
+        expect(panels).toHaveLength(0);
+        expect(chartInstances[0].detailPanel).toBeNull();
+    });
+
+    it("creates no panel when the page has no panel element", () => {
+        buildWith({ showDetailPanel: true }, false);
+
+        expect(panels).toHaveLength(0);
+    });
+
+    it("enables the panel and hands it to the chart before the first draw", () => {
+        buildWith({ showDetailPanel: true });
+
+        expect(panels).toHaveLength(1);
+        expect(panels[0].enabled).toBe(true);
+        expect(chartInstances[0].detailPanel).toBe(panels[0]);
+        expect(chartInstances[0].renderedWithPanel).toBe(true);
+    });
+
+    it("keeps one panel for a chart that is built again against the same page", () => {
+        document.body.innerHTML =
+            '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+
+        expect(panels).toHaveLength(1);
+        expect(chartInstances).toHaveLength(2);
+        expect(chartInstances[1].detailPanel).toBe(panels[0]);
+    });
+
+    it("dismisses the open panel when a chart replaces the one that holds its person", () => {
+        document.body.innerHTML =
+            '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+        chartInstances[0].hasSelection = true;
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+
+        expect(panels[0].dismiss).toHaveBeenCalledTimes(1);
+    });
+
+    it("dismisses the open panel when the chart that replaces it has the option off", () => {
+        document.body.innerHTML =
+            '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+        chartInstances[0].hasSelection = true;
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: false }));
+
+        expect(panels).toHaveLength(1);
+        expect(panels[0].dismiss).toHaveBeenCalledTimes(1);
+        expect(chartInstances[1].detailPanel).toBeNull();
+
+        panels[0].callbacks.onHidden();
+
+        expect(chartInstances[0].clearSelection).not.toHaveBeenCalled();
+        expect(chartInstances[1].clearSelection).toHaveBeenCalledTimes(1);
+    });
+
+    it("leaves the panel alone when the replaced chart has no selected person", () => {
+        document.body.innerHTML =
+            '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+
+        expect(panels[0].dismiss).not.toHaveBeenCalled();
+    });
+
+    it("lets the panel act on the chart that was built last", () => {
+        document.body.innerHTML =
+            '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+
+        panels[0].callbacks.onIndividual("/individual/I1");
+        panels[0].callbacks.onCenter("/chart/I1");
+        panels[0].callbacks.onClose();
+        panels[0].callbacks.onHidden();
+
+        for (const callback of [
+            "redirectToIndividual",
+            "update",
+            "restoreFocus",
+            "clearSelection",
+        ]) {
+            expect(chartInstances[0][callback]).not.toHaveBeenCalled();
+            expect(chartInstances[1][callback]).toHaveBeenCalledTimes(1);
+        }
+    });
+
+    it("connects the actions of the panel with the chart", () => {
+        buildWith({ showDetailPanel: true });
+
+        panels[0].callbacks.onIndividual("/individual/I1");
+        panels[0].callbacks.onCenter("/chart/I1");
+        panels[0].callbacks.onClose();
+        panels[0].callbacks.onHidden();
+
+        expect(chartInstances[0].redirectToIndividual).toHaveBeenCalledWith("/individual/I1");
+        expect(chartInstances[0].update).toHaveBeenCalledWith("/chart/I1");
+        expect(chartInstances[0].restoreFocus).toHaveBeenCalledTimes(1);
+        expect(chartInstances[0].clearSelection).toHaveBeenCalledTimes(1);
     });
 });

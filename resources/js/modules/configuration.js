@@ -58,6 +58,7 @@ export default class Configuration {
      * @param {boolean}  [options.showNames=true]
      * @param {boolean}  [options.showSilhouettes=false]
      * @param {boolean}  [options.showDescendants=false]
+     * @param {boolean}  [options.showDetailPanel=false] Whether a click selects a person for the detail panel
      * @param {boolean}  [options.rtl=false]
      * @param {number}   [options.innerArcs=4]
      * @param {string}   [options.paternalColor]
@@ -77,6 +78,7 @@ export default class Configuration {
         showNames = true,
         showSilhouettes = false,
         showDescendants = false,
+        showDetailPanel = false,
         rtl = false,
         innerArcs = 4,
         paternalColor = Configuration.PATERNAL_COLOR_DEFAULT,
@@ -131,6 +133,7 @@ export default class Configuration {
         this._fanDegree = toFiniteNumber(fanDegree, 210);
 
         this._showDescendants = showDescendants;
+        this._showDetailPanel = showDetailPanel;
 
         this.rtl = rtl;
         this.labels = labels;
@@ -255,6 +258,17 @@ export default class Configuration {
     }
 
     /**
+     * Returns TRUE if a click selects a person for the detail panel instead of
+     * opening the chart or the individual page, and the panel replaces the
+     * tooltip.
+     *
+     * @return {boolean}
+     */
+    get showDetailPanel() {
+        return this._showDetailPanel;
+    }
+
+    /**
      * Number of generations rendered as wide inner arcs (tall enough for text
      * along the arc path). Generations beyond this threshold use the narrower
      * outer-arc height.
@@ -263,6 +277,18 @@ export default class Configuration {
      */
     get numberOfInnerCircles() {
         return this._numberOfInnerCircles;
+    }
+
+    /**
+     * Tells whether a person at the given depth is drawn. With names off only the inner
+     * generations are, the outer ones stay empty.
+     *
+     * @param {number} depth The depth of the person, negative for descendants
+     *
+     * @return {boolean}
+     */
+    isDrawn(depth) {
+        return this._showNames || depth <= this._numberOfInnerCircles;
     }
 
     /**

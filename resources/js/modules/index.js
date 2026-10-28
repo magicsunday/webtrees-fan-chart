@@ -8,11 +8,22 @@
 import * as d3 from "./d3.js";
 import Configuration from "./configuration.js";
 import Chart from "./chart.js";
+import { DetailPanel } from "@magicsunday/webtrees-chart-lib/chart-core";
 
 /**
  * @import { Selection } from "d3-selection"
  * @import { NodeDatum } from "./hierarchy.js"
  */
+
+/**
+ * The panels of the page and the chart that each one acts on. A chart that is loaded again, for
+ * example by the descendants switch, builds a new FanChart against the same panel element. The
+ * element has one panel with its listeners, so the panel is created once and its actions follow
+ * the chart that was built last.
+ *
+ * @type {WeakMap<Element, { target: { chart: Chart }, panel: DetailPanel }>}
+ */
+const detailPanels = new WeakMap();
 
 /**
  * Top-level entry point for the fan chart. Wires together the Configuration,
@@ -39,6 +50,7 @@ export class FanChart {
      * @param {boolean}   options.showPlaces
      * @param {boolean}   options.showNames
      * @param {boolean}   options.showDescendants
+     * @param {boolean}   options.showDetailPanel
      * @param {string}    options.paternalColor
      * @param {string}    options.maternalColor
      * @param {string}    options.nameAbbreviation
@@ -59,11 +71,60 @@ export class FanChart {
         // Set up chart instance
         this._chart = new Chart(this._parent, this._configuration);
 
+        // The panel is set up before the first draw, so a chart that is drawn while the panel
+        // switch is on already finds the panel connected.
+        this.initDetailPanel();
+
         this.init();
 
         // Pass the data to the chart and trigger the initial render
         this._chart.data = options.data;
         this._chart.render();
+    }
+
+    /**
+     * Connects the detail panel of the page with the chart. A chart without the detail panel
+     * leaves the panel element of the page hidden.
+     *
+     * @private
+     */
+    initDetailPanel() {
+        const element = document.getElementById("webtrees-fan-detail-panel");
+
+        const bound = element === null ? undefined : detailPanels.get(element);
+
+        if (bound !== undefined) {
+            // The new chart knows nothing of the person the panel shows, and the actions of the
+            // panel belong to the request of the old chart, so the panel closes with it. This
+            // holds for a chart without the option too, which replaces the chart of an open panel
+            if (bound.target.chart.hasSelection) {
+                bound.panel.dismiss();
+            }
+
+            bound.target.chart = this._chart;
+        }
+
+        if (!this._configuration.showDetailPanel || element === null) {
+            return;
+        }
+
+        if (bound !== undefined) {
+            this._chart.detailPanel = bound.panel;
+
+            return;
+        }
+
+        const target = { chart: this._chart };
+        const panel = new DetailPanel(element, {
+            onIndividual: (url) => target.chart.redirectToIndividual(url),
+            onCenter: (url) => target.chart.update(url),
+            onClose: () => target.chart.restoreFocus(),
+            onHidden: () => target.chart.clearSelection(),
+        });
+
+        panel.enable();
+        detailPanels.set(element, { target, panel });
+        this._chart.detailPanel = panel;
     }
 
     /**

@@ -61,4 +61,19 @@ describe("Configuration", () => {
         expect(config.labels).toBe(rtlLabels);
         expect(config.labels).toEqual(["Self", "Parents", "Grandparents"]);
     });
+
+    it("shows no detail panel unless the server switches it on", () => {
+        expect(new Configuration({ labels }).showDetailPanel).toBe(false);
+        expect(new Configuration({ labels, showDetailPanel: true }).showDetailPanel).toBe(true);
+    });
+
+    test("draws every generation with names on and only the inner ones with names off", () => {
+        const withNames = new Configuration({ showNames: true, innerArcs: 4 });
+        const withoutNames = new Configuration({ showNames: false, innerArcs: 4 });
+
+        expect(withNames.isDrawn(9)).toBe(true);
+        expect(withoutNames.isDrawn(4)).toBe(true);
+        expect(withoutNames.isDrawn(5)).toBe(false);
+        expect(withoutNames.isDrawn(-7)).toBe(true);
+    });
 });

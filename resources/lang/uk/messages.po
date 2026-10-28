@@ -23,20 +23,24 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Віялова діаграма предків особи."
 
-#: src/Configuration.php:815
+#: src/Configuration.php:842
 msgid "Abbreviate given names first"
 msgstr "Спершу скорочувати імена"
 
-#: src/Configuration.php:816
+#: src/Configuration.php:843
 msgid "Abbreviate surnames first"
 msgstr "Спершу скорочувати прізвища"
 
-#: src/Configuration.php:814
+#: src/Configuration.php:841
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Автоматично (за традицією прізвищ дерева)"
 
-#: src/Configuration.php:570
+#: src/Configuration.php:575
 msgid "Automatic (from the tree configuration)"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:120
+msgid "Center chart on this person"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
@@ -100,7 +104,7 @@ msgstr ""
 "з багатьма дітьми місця автоматично приховуються. Рівень деталізації та "
 "точність дат налаштовуються для всього сайту в параметрах модуля."
 
-#: resources/views/modules/fan-chart/form/details.phtml:59
+#: resources/views/modules/fan-chart/form/details.phtml:72
 msgid ""
 "Displays the marriage date of each couple in a narrow arc between "
 "generations. When descendants are enabled, also shows the marriage date "
@@ -135,7 +139,7 @@ msgstr "Розмір віяла"
 msgid "Font size"
 msgstr "Розмір шрифту"
 
-#: src/Configuration.php:571
+#: src/Configuration.php:576
 msgid "Full place name"
 msgstr "Повна назва місця"
 
@@ -192,15 +196,15 @@ msgstr ""
 "Martin \"Chalky\" White). Повторює попередню поведінку webtrees для дерев, "
 "які зберігають прізвиська в окремому полі GEDCOM NICK."
 
-#: src/Configuration.php:572
+#: src/Configuration.php:577
 msgid "Lowest level (e.g. parish)"
 msgstr "Найнижчий рівень (напр. парафія)"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:579
 msgid "Lowest three levels"
 msgstr "Три найнижчих рівні"
 
-#: src/Configuration.php:573
+#: src/Configuration.php:578
 msgid "Lowest two levels"
 msgstr "Два найнижчих рівні"
 
@@ -224,9 +228,17 @@ msgstr "Переміщуйте зображення двома пальцями"
 msgid "Name abbreviation when space is tight"
 msgstr "Скорочення імені при браку місця"
 
+#: resources/views/modules/fan-chart/page.phtml:117
+msgid "No details are available for this person."
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:23
 msgid "Number of inner levels"
 msgstr "Кількість внутрішніх рівнів"
+
+#: resources/views/modules/fan-chart/page.phtml:119
+msgid "Open individual page"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
 msgid ""
@@ -240,15 +252,15 @@ msgstr ""
 msgid "Paternal"
 msgstr "По батьківській лінії"
 
-#: src/Configuration.php:575
+#: src/Configuration.php:580
 msgid "Place and country"
 msgstr ""
 
-#: src/Configuration.php:576
+#: src/Configuration.php:581
 msgid "Place and country code (2 letters)"
 msgstr ""
 
-#: src/Configuration.php:577
+#: src/Configuration.php:582
 msgid "Place and country code (3 letters)"
 msgstr ""
 
@@ -268,6 +280,10 @@ msgstr "Перезавантажити діаграму для цієї особ
 msgid "Right-click"
 msgstr "Клік правою кнопкою"
 
+#: resources/views/modules/fan-chart/page.phtml:115
+msgid "Select a person in the chart to see the details here."
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/display.phtml:65
 msgid "Show descendants"
 msgstr "Показати нащадків"
@@ -275,6 +291,10 @@ msgstr "Показати нащадків"
 #: resources/views/modules/components/buttonbar/help-button.phtml:30
 msgid "Show details of a person"
 msgstr "Показати деталі про особу"
+
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show details panel"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:28
 msgid "Show family colors"
@@ -291,7 +311,7 @@ msgstr ""
 "Нащадки з вузькими дугами автоматично використовують компактний формат лише "
 "з роком."
 
-#: src/Configuration.php:326
+#: src/Configuration.php:331
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Показати повні дати до покоління %s"
@@ -320,13 +340,20 @@ msgstr "Показати лише імена"
 msgid "Show nicknames in display names"
 msgstr "Показувати прізвиська у відображуваних іменах"
 
-#: resources/views/modules/fan-chart/form/details.phtml:53
+#: resources/views/modules/fan-chart/form/details.phtml:66
 msgid "Show parent marriage dates"
 msgstr "Показати дати шлюбів"
 
 #: resources/views/modules/fan-chart/form/details.phtml:40
 msgid "Show places"
 msgstr "Показати місця"
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Shows the facts of a person in a side panel when you select a person, "
+"instead of the tooltip on the mouse pointer. The panel can be used with the "
+"keyboard as well."
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:27
 msgid ""
@@ -342,7 +369,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Перемикання між повноекранним і звичайним режимом"
 
-#: src/Module/ConfigTrait.php:147
+#: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
@@ -351,7 +378,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Використовуйте Ctrl + коліщатко миші для збільшення зображення"
 
-#: src/Configuration.php:321
+#: src/Configuration.php:326
 msgid "Years only"
 msgstr "Лише роки"
 
@@ -361,6 +388,10 @@ msgstr "Збільшити/Зменшити"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:111
+msgid "close"
 msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129

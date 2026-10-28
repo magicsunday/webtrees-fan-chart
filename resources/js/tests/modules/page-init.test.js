@@ -217,6 +217,57 @@ describe("getUrl (via initPage AJAX URL)", () => {
     });
 });
 
+describe("detail panel switch (via initPage AJAX URL)", () => {
+    it("omits showDetailPanel while the checkbox has no stored state", () => {
+        initPage(defaultConfig);
+
+        expect(getAjaxUrl().searchParams.has("showDetailPanel")).toBe(false);
+    });
+
+    it("sends showDetailPanel=1 for the stored state of the checkbox", () => {
+        storageData.showDetailPanel = true;
+
+        initPage(defaultConfig);
+
+        expect(getAjaxUrl().searchParams.get("showDetailPanel")).toBe("1");
+    });
+
+    it("sends showDetailPanel=0 when the stored state switches the panel off", () => {
+        storageData.showDetailPanel = false;
+
+        initPage(defaultConfig);
+
+        expect(getAjaxUrl().searchParams.get("showDetailPanel")).toBe("0");
+    });
+
+    it("registers the checkbox for the persistence in the browser storage", () => {
+        initPage(defaultConfig);
+
+        expect(storageInstances[0].register).toHaveBeenCalledWith("showDetailPanel");
+    });
+
+    it("does not publish the switch in the chartOptions of the page", () => {
+        storageData.showDetailPanel = true;
+
+        initPage(defaultConfig);
+
+        expect(window.WebtreesFanChart.chartOptions).not.toHaveProperty("showDetailPanel");
+    });
+
+    it("keeps the stored state of the switch when the descendants are toggled", () => {
+        storageData.showDetailPanel = true;
+
+        initPage(defaultConfig);
+
+        document.getElementById("showDescendants-1").checked = true;
+        document.getElementById("showDescendants-1").dispatchEvent(new Event("change"));
+
+        const reloaded = new URL(window.webtrees.load.mock.calls[0][1]);
+
+        expect(reloaded.searchParams.get("showDetailPanel")).toBe("1");
+    });
+});
+
 describe("showDescendants change handler", () => {
     it("reads showPlaces live from storage on each toggle (not stale capture)", () => {
         initPage(defaultConfig);

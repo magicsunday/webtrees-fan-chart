@@ -71,6 +71,7 @@ export function initPage(config) {
     storage.register("innerArcs");
     storage.register("fontScale");
     storage.register("showDescendants");
+    storage.register("showDetailPanel");
 
     // Restore collapse state and range sliders
     syncCollapseToggle(storage);
@@ -236,6 +237,14 @@ export function initPage(config) {
                 mode: "boolean-1-or-delete",
             },
             { key: "showNicknames", value: chartOptions.showNicknames, mode: "boolean-1-0" },
+            {
+                // The server reads the facts of the panel only while its switch is on, so the
+                // stored state of the checkbox, which the form shows, has to reach the server
+                // with the request. It is not published in the chartOptions global.
+                key: "showDetailPanel",
+                value: storage.readBool("showDetailPanel"),
+                mode: "boolean-1-0",
+            },
         ],
     });
     setChartAjaxUrl("fan-chart-url", ajaxUrl);
@@ -305,6 +314,11 @@ export function initPage(config) {
                     {
                         key: "showNicknames",
                         value: storage.read("showNicknames") ?? config.defaultShowNicknames,
+                        mode: "boolean-1-0",
+                    },
+                    {
+                        key: "showDetailPanel",
+                        value: storage.readBool("showDetailPanel"),
                         mode: "boolean-1-0",
                     },
                 ],

@@ -7,6 +7,7 @@
 
 import * as d3 from "./d3.js";
 import Hierarchy from "./hierarchy.js";
+import { PanelSelection } from "@magicsunday/webtrees-chart-lib/chart-core";
 import { ChartOverlay } from "@magicsunday/webtrees-chart-lib/infra";
 import Svg from "./svg.js";
 import Person from "./svg/person.js";
@@ -19,6 +20,7 @@ import ChartUpdater from "./chart-updater.js";
  * @import { Selection } from "d3-selection"
  * @import Configuration from "./configuration.js"
  * @import { HierarchyNode, NodeDatum } from "./hierarchy.js"
+ * @import { DetailPanel, PanelPerson } from "@magicsunday/webtrees-chart-lib/chart-core"
  */
 
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
@@ -47,6 +49,27 @@ export default class Chart {
         this._svg = null;
         /** @type {ChartOverlay|null} */
         this._overlay = null;
+        /** @type {DetailPanel|null} */
+        this._detailPanel = null;
+        /** @type {PanelSelection<any>} */
+        this._selection = new PanelSelection(() => this._svg?.visual);
+        /** @type {string|null} */
+        this._selectedXref = null;
+
+        // The panel can be closed while an update animates. The arcs hold no stable person then,
+        // so what the closing asks for waits until the chart is bound again.
+        this._runningUpdates = 0;
+        this._focusPending = false;
+        this._clearPending = false;
+    }
+
+    /**
+     * Sets the detail panel that shows the selected person.
+     *
+     * @param {DetailPanel|null} panel The detail panel
+     */
+    set detailPanel(panel) {
+        this._detailPanel = panel;
     }
 
     /**
@@ -486,14 +509,39 @@ export default class Chart {
      * @private
      */
     bindClickEventListener() {
+        // An update reuses the arcs, and an arc can turn into an empty placeholder, so the
+        // keyboard bindings of the person it showed before are taken away from every arc first
+        this.svg
+            .select("g.personGroup")
+            .selectAll("g.person")
+            .attr("tabindex", null)
+            .attr("role", null)
+            .attr("aria-label", null)
+            .on("keydown", null);
+
         const persons = this.svg
             .select("g.personGroup")
             .selectAll("g.person")
             .filter((datum) => datum?.data?.data?.xref !== "")
             .classed("available", true);
 
+        // Persons that are not drawn have nothing to focus or to activate
+        const drawn = persons.filter((datum) => this._configuration.isDrawn(datum.depth));
+
         // Trigger method on click/touch
         persons.on("click", this.personClick.bind(this));
+
+        // With the detail panel a person is also reached with the Tab key and
+        // selected with Enter or Space, the arcs are no focus targets otherwise
+        if (this._configuration.showDetailPanel) {
+            const that = this;
+
+            drawn.each(function (/** @type {HierarchyNode} */ datum) {
+                that._selection.makeOperable(d3.select(this), datum, (_data, byKeyboard) =>
+                    that.personClick(null, datum, byKeyboard),
+                );
+            });
+        }
 
         // Set available on marriage arcs that have content
         this.svg
@@ -518,20 +566,100 @@ export default class Chart {
 
                 d3.select(this).classed("empty", !hasChildren);
             });
+
+        // The person elements are created anew by every draw, and an update binds new hierarchy
+        // objects to them. The selection keeps the person it was made with, so the new object
+        // of that person is handed to it, which keeps the mark and the focus return working.
+        const selected =
+            this._selectedXref === null
+                ? undefined
+                : persons.filter((datum) => datum.data.data.xref === this._selectedXref).data()[0];
+
+        if (selected === undefined) {
+            this._selection.apply();
+        } else {
+            this._selection.select(selected.data);
+        }
+
+        this._runningUpdates = Math.max(0, this._runningUpdates - 1);
+
+        if (this._runningUpdates > 0) {
+            return;
+        }
+
+        if (this._focusPending) {
+            this._focusPending = false;
+            this._selection.restoreFocus();
+        }
+
+        if (this._clearPending) {
+            this._clearPending = false;
+            this.clearSelection();
+        }
     }
 
     /**
-     * Handles a click on a person arc. Redirects to the individual page for the
-     * center node (depth 0); triggers a chart update for all other nodes.
+     * Tells whether a person is selected, which means the panel shows it.
      *
-     * @param {Event}         _event The current event
-     * @param {HierarchyNode} datum  The D3 data object
+     * @return {boolean}
+     */
+    get hasSelection() {
+        return this._selectedXref !== null;
+    }
+
+    /**
+     * Removes the selection, so no person stays marked once the panel has closed.
+     */
+    clearSelection() {
+        if (this._runningUpdates > 0) {
+            this._clearPending = true;
+
+            return;
+        }
+
+        this._selectedXref = null;
+        this._selection.clear();
+    }
+
+    /**
+     * Gives the focus back to the selected person, if it is still in the chart.
+     */
+    restoreFocus() {
+        if (this._runningUpdates > 0) {
+            this._focusPending = true;
+
+            return;
+        }
+
+        this._selection.restoreFocus();
+    }
+
+    /**
+     * Handles a click on a person arc. With the detail panel the person is
+     * selected and the panel offers both actions. Without it the center node
+     * (depth 0) redirects to the individual page and every other node triggers
+     * a chart update.
+     *
+     * @param {Event|null}    _event     The current event, null for a key
+     * @param {HierarchyNode} datum      The D3 data object
+     * @param {boolean}       byKeyboard Whether a key triggered the activation
      *
      * @private
      */
-    personClick(_event, datum) {
+    personClick(_event, datum, byKeyboard = false) {
         // Empty partner nodes have no updateUrl -- ignore clicks on them
         if (datum.data.data.updateUrl === "") {
+            return;
+        }
+
+        if (this._configuration.showDetailPanel && this._detailPanel !== null) {
+            this._selectedXref = datum.data.data.xref;
+            this._selection.select(datum.data);
+            this._detailPanel.select(
+                /** @type {PanelPerson} */ (/** @type {unknown} */ (datum.data.data)),
+                byKeyboard,
+            );
+
             return;
         }
 
@@ -545,8 +673,6 @@ export default class Chart {
      * Opens the webtrees individual page in a new tab.
      *
      * @param {string} url The individual page URL
-     *
-     * @private
      */
     redirectToIndividual(url) {
         window.open(url, "_blank");
@@ -559,6 +685,20 @@ export default class Chart {
      * @param {string} url The update URL for the new center individual
      */
     update(url) {
+        // The updater takes the mouse handlers of the old persons away. The key handlers of the
+        // detail panel hold the old person as well, and the arcs show other persons while the
+        // animation runs, so they go too and are bound again with the new drawing.
+        this.svg.select("g.personGroup").selectAll("g.person").on("keydown", null);
+
+        // The mark would stay on the arc while it shows another person. It is set again when
+        // the chart is bound to the new drawing.
+        this.svg
+            .select("g.personGroup")
+            .selectAll("g.person")
+            .classed("selected", false)
+            .attr("aria-current", null);
+        this._runningUpdates += 1;
+
         const updater = new ChartUpdater(this.svg, this._configuration, this._hierarchy);
 
         updater.update(

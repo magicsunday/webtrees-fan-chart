@@ -22,20 +22,24 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
-#: src/Configuration.php:815
+#: src/Configuration.php:842
 msgid "Abbreviate given names first"
 msgstr "優先縮寫名字"
 
-#: src/Configuration.php:816
+#: src/Configuration.php:843
 msgid "Abbreviate surnames first"
 msgstr "優先縮寫姓氏"
 
-#: src/Configuration.php:814
+#: src/Configuration.php:841
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "自動（根據族譜的姓氏傳統）"
 
-#: src/Configuration.php:570
+#: src/Configuration.php:575
 msgid "Automatic (from the tree configuration)"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:120
+msgid "Center chart on this person"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
@@ -96,7 +100,7 @@ msgstr ""
 "在空間允許的弧線段中顯示出生和死亡地點。對於子女眾多的後代，地點會自動隱藏。"
 "詳細程度與日期精度由模組設定於站台級別設定。"
 
-#: resources/views/modules/fan-chart/form/details.phtml:59
+#: resources/views/modules/fan-chart/form/details.phtml:72
 msgid ""
 "Displays the marriage date of each couple in a narrow arc between "
 "generations. When descendants are enabled, also shows the marriage date "
@@ -130,7 +134,7 @@ msgstr "扇形大小"
 msgid "Font size"
 msgstr "字體大小"
 
-#: src/Configuration.php:571
+#: src/Configuration.php:576
 msgid "Full place name"
 msgstr "完整地名"
 
@@ -185,15 +189,15 @@ msgstr ""
 "White）。模擬舊版 webtrees 的行為，適用於在獨立的 GEDCOM NICK 欄位中儲存暱稱"
 "的家譜。"
 
-#: src/Configuration.php:572
+#: src/Configuration.php:577
 msgid "Lowest level (e.g. parish)"
 msgstr "最低層級（如教區）"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:579
 msgid "Lowest three levels"
 msgstr "最低三個層級"
 
-#: src/Configuration.php:573
+#: src/Configuration.php:578
 msgid "Lowest two levels"
 msgstr "最低兩個層級"
 
@@ -217,9 +221,17 @@ msgstr "用兩個手指移動視圖"
 msgid "Name abbreviation when space is tight"
 msgstr "空間不足時的姓名縮寫方式"
 
+#: resources/views/modules/fan-chart/page.phtml:117
+msgid "No details are available for this person."
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:23
 msgid "Number of inner levels"
 msgstr "內圈層數"
+
+#: resources/views/modules/fan-chart/page.phtml:119
+msgid "Open individual page"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
 msgid ""
@@ -231,15 +243,15 @@ msgstr "配偶和子女顯示為祖先部分下方的弧形。啟用時扇形大
 msgid "Paternal"
 msgstr "父系"
 
-#: src/Configuration.php:575
+#: src/Configuration.php:580
 msgid "Place and country"
 msgstr ""
 
-#: src/Configuration.php:576
+#: src/Configuration.php:581
 msgid "Place and country code (2 letters)"
 msgstr ""
 
-#: src/Configuration.php:577
+#: src/Configuration.php:582
 msgid "Place and country code (3 letters)"
 msgstr ""
 
@@ -259,6 +271,10 @@ msgstr "為該人重新載入圖表"
 msgid "Right-click"
 msgstr "右鍵點擊"
 
+#: resources/views/modules/fan-chart/page.phtml:115
+msgid "Select a person in the chart to see the details here."
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/display.phtml:65
 msgid "Show descendants"
 msgstr "顯示後代"
@@ -266,6 +282,10 @@ msgstr "顯示後代"
 #: resources/views/modules/components/buttonbar/help-button.phtml:30
 msgid "Show details of a person"
 msgstr "顯示某人的詳細資訊"
+
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show details panel"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:28
 msgid "Show family colors"
@@ -280,7 +300,7 @@ msgstr ""
 "為早期世代顯示完整日期（出生、婚姻、死亡）。後期世代僅顯示年份。婚姻日期從第9"
 "代起隱藏。窄弧的後代自動使用緊湊的僅年份格式。"
 
-#: src/Configuration.php:326
+#: src/Configuration.php:331
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "顯示完整日期至第 %s 代"
@@ -309,13 +329,20 @@ msgstr "僅顯示姓名"
 msgid "Show nicknames in display names"
 msgstr "在顯示名中顯示暱稱"
 
-#: resources/views/modules/fan-chart/form/details.phtml:53
+#: resources/views/modules/fan-chart/form/details.phtml:66
 msgid "Show parent marriage dates"
 msgstr "顯示父母結婚日期"
 
 #: resources/views/modules/fan-chart/form/details.phtml:40
 msgid "Show places"
 msgstr "顯示地點"
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Shows the facts of a person in a side panel when you select a person, "
+"instead of the tooltip on the mouse pointer. The panel can be used with the "
+"keyboard as well."
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:27
 msgid ""
@@ -330,7 +357,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "切換全螢幕與一般檢視"
 
-#: src/Module/ConfigTrait.php:147
+#: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
@@ -339,7 +366,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "按住Ctrl鍵滾動鼠標滾輪放大縮小"
 
-#: src/Configuration.php:321
+#: src/Configuration.php:326
 msgid "Years only"
 msgstr "僅顯示年份"
 
@@ -349,6 +376,10 @@ msgstr "放大/縮小"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:111
+msgid "close"
 msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129

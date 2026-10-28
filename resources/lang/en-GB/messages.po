@@ -22,21 +22,25 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
-#: src/Configuration.php:815
+#: src/Configuration.php:842
 msgid "Abbreviate given names first"
 msgstr "Abbreviate given names first"
 
-#: src/Configuration.php:816
+#: src/Configuration.php:843
 msgid "Abbreviate surnames first"
 msgstr "Abbreviate surnames first"
 
-#: src/Configuration.php:814
+#: src/Configuration.php:841
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automatic (based on tree's surname tradition)"
 
-#: src/Configuration.php:570
+#: src/Configuration.php:575
 msgid "Automatic (from the tree configuration)"
 msgstr "Automatic (from the tree configuration)"
+
+#: resources/views/modules/fan-chart/page.phtml:120
+msgid "Center chart on this person"
+msgstr "Centre chart on this person"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
@@ -100,7 +104,7 @@ msgstr ""
 "level of detail and the date precision are configured site-wide in the "
 "module settings."
 
-#: resources/views/modules/fan-chart/form/details.phtml:59
+#: resources/views/modules/fan-chart/form/details.phtml:72
 msgid ""
 "Displays the marriage date of each couple in a narrow arc between "
 "generations. When descendants are enabled, also shows the marriage date "
@@ -135,7 +139,7 @@ msgstr "Fan size"
 msgid "Font size"
 msgstr "Font size"
 
-#: src/Configuration.php:571
+#: src/Configuration.php:576
 msgid "Full place name"
 msgstr "Full place name"
 
@@ -195,15 +199,15 @@ msgstr ""
 "surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees "
 "behaviour for trees that store nicknames in the separate GEDCOM NICK field."
 
-#: src/Configuration.php:572
+#: src/Configuration.php:577
 msgid "Lowest level (e.g. parish)"
 msgstr "Lowest level (e.g. parish)"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:579
 msgid "Lowest three levels"
 msgstr "Lowest three levels"
 
-#: src/Configuration.php:573
+#: src/Configuration.php:578
 msgid "Lowest two levels"
 msgstr "Lowest two levels"
 
@@ -227,9 +231,17 @@ msgstr "Move the view with two fingers"
 msgid "Name abbreviation when space is tight"
 msgstr "Name abbreviation when space is tight"
 
+#: resources/views/modules/fan-chart/page.phtml:117
+msgid "No details are available for this person."
+msgstr "No details are available for this person."
+
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:23
 msgid "Number of inner levels"
 msgstr "Number of inner levels"
+
+#: resources/views/modules/fan-chart/page.phtml:119
+msgid "Open individual page"
+msgstr "Open individual page"
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
 msgid ""
@@ -243,15 +255,15 @@ msgstr ""
 msgid "Paternal"
 msgstr "Paternal"
 
-#: src/Configuration.php:575
+#: src/Configuration.php:580
 msgid "Place and country"
 msgstr "Place and country"
 
-#: src/Configuration.php:576
+#: src/Configuration.php:581
 msgid "Place and country code (2 letters)"
 msgstr "Place and country code (2 letters)"
 
-#: src/Configuration.php:577
+#: src/Configuration.php:582
 msgid "Place and country code (3 letters)"
 msgstr "Place and country code (3 letters)"
 
@@ -271,6 +283,10 @@ msgstr "Reload chart for that person"
 msgid "Right-click"
 msgstr "Right-click"
 
+#: resources/views/modules/fan-chart/page.phtml:115
+msgid "Select a person in the chart to see the details here."
+msgstr "Select a person in the chart to see the details here."
+
 #: resources/views/modules/fan-chart/form/display.phtml:65
 msgid "Show descendants"
 msgstr "Show descendants"
@@ -278,6 +294,10 @@ msgstr "Show descendants"
 #: resources/views/modules/components/buttonbar/help-button.phtml:30
 msgid "Show details of a person"
 msgstr "Show details of a person"
+
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show details panel"
+msgstr "Show details panel"
 
 #: resources/views/modules/fan-chart/form/colors.phtml:28
 msgid "Show family colors"
@@ -293,7 +313,7 @@ msgstr ""
 "generations show year only. Marriage dates are hidden from generation 9. "
 "Descendants with narrow arcs automatically use a compact year-only format."
 
-#: src/Configuration.php:326
+#: src/Configuration.php:331
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Show full dates up to generation %s"
@@ -322,13 +342,23 @@ msgstr "Show names only"
 msgid "Show nicknames in display names"
 msgstr "Show nicknames in display names"
 
-#: resources/views/modules/fan-chart/form/details.phtml:53
+#: resources/views/modules/fan-chart/form/details.phtml:66
 msgid "Show parent marriage dates"
 msgstr "Show parent marriage dates"
 
 #: resources/views/modules/fan-chart/form/details.phtml:40
 msgid "Show places"
 msgstr "Show places"
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Shows the facts of a person in a side panel when you select a person, "
+"instead of the tooltip on the mouse pointer. The panel can be used with the "
+"keyboard as well."
+msgstr ""
+"Shows the facts of a person in a side panel when you select a person, "
+"instead of the tooltip on the mouse pointer. The panel can be used with the "
+"keyboard as well."
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:27
 msgid ""
@@ -344,7 +374,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Switch between full screen mode and normal view"
 
-#: src/Module/ConfigTrait.php:147
+#: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr "The preferences for the module “%s” have been updated."
@@ -353,7 +383,7 @@ msgstr "The preferences for the module “%s” have been updated."
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Use Ctrl+Scroll wheel to zoom the chart"
 
-#: src/Configuration.php:321
+#: src/Configuration.php:326
 msgid "Years only"
 msgstr "Years only"
 
@@ -363,6 +393,10 @@ msgstr "Zoom in/out"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:111
+msgid "close"
 msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129

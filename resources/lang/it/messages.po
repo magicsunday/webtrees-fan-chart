@@ -22,20 +22,24 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr "Un grafico a ventaglio degli antenati di una persona."
 
-#: src/Configuration.php:815
+#: src/Configuration.php:842
 msgid "Abbreviate given names first"
 msgstr "Abbrevia prima i nomi propri"
 
-#: src/Configuration.php:816
+#: src/Configuration.php:843
 msgid "Abbreviate surnames first"
 msgstr "Abbrevia prima i cognomi"
 
-#: src/Configuration.php:814
+#: src/Configuration.php:841
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automatico (in base alla tradizione dei cognomi dell'albero)"
 
-#: src/Configuration.php:570
+#: src/Configuration.php:575
 msgid "Automatic (from the tree configuration)"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:120
+msgid "Center chart on this person"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
@@ -101,7 +105,7 @@ msgstr ""
 "automaticamente. Il livello di dettaglio e la precisione della data sono "
 "configurati a livello di sito nelle impostazioni del modulo."
 
-#: resources/views/modules/fan-chart/form/details.phtml:59
+#: resources/views/modules/fan-chart/form/details.phtml:72
 msgid ""
 "Displays the marriage date of each couple in a narrow arc between "
 "generations. When descendants are enabled, also shows the marriage date "
@@ -136,7 +140,7 @@ msgstr "Impostare i gradi di apertura del grafico"
 msgid "Font size"
 msgstr "Dimensione dei caratteri"
 
-#: src/Configuration.php:571
+#: src/Configuration.php:576
 msgid "Full place name"
 msgstr "Nome completo del luogo"
 
@@ -193,15 +197,15 @@ msgstr ""
 "Martin \"Chalky\" White). Riproduce il comportamento storico di webtrees per "
 "alberi che memorizzano i soprannomi nel campo GEDCOM NICK separato."
 
-#: src/Configuration.php:572
+#: src/Configuration.php:577
 msgid "Lowest level (e.g. parish)"
 msgstr "Livello più basso (es. parrocchia)"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:579
 msgid "Lowest three levels"
 msgstr "Tre livelli più bassi"
 
-#: src/Configuration.php:573
+#: src/Configuration.php:578
 msgid "Lowest two levels"
 msgstr "Due livelli più bassi"
 
@@ -225,9 +229,17 @@ msgstr "Spostare la vista"
 msgid "Name abbreviation when space is tight"
 msgstr "Abbreviazione del nome quando lo spazio è ridotto"
 
+#: resources/views/modules/fan-chart/page.phtml:117
+msgid "No details are available for this person."
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:23
 msgid "Number of inner levels"
 msgstr "Numero di livelli interni"
+
+#: resources/views/modules/fan-chart/page.phtml:119
+msgid "Open individual page"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
 msgid ""
@@ -242,15 +254,15 @@ msgstr ""
 msgid "Paternal"
 msgstr "Paterno"
 
-#: src/Configuration.php:575
+#: src/Configuration.php:580
 msgid "Place and country"
 msgstr ""
 
-#: src/Configuration.php:576
+#: src/Configuration.php:581
 msgid "Place and country code (2 letters)"
 msgstr ""
 
-#: src/Configuration.php:577
+#: src/Configuration.php:582
 msgid "Place and country code (3 letters)"
 msgstr ""
 
@@ -270,6 +282,10 @@ msgstr "Ricarica il diagramma per quella persona"
 msgid "Right-click"
 msgstr "Clic destro"
 
+#: resources/views/modules/fan-chart/page.phtml:115
+msgid "Select a person in the chart to see the details here."
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/display.phtml:65
 msgid "Show descendants"
 msgstr "Mostra discendenti"
@@ -277,6 +293,10 @@ msgstr "Mostra discendenti"
 #: resources/views/modules/components/buttonbar/help-button.phtml:30
 msgid "Show details of a person"
 msgstr "Mostra i dettagli di una persona"
+
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show details panel"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:28
 msgid "Show family colors"
@@ -293,7 +313,7 @@ msgstr ""
 "matrimonio sono nascoste dalla generazione 9. I discendenti con archi "
 "stretti utilizzano automaticamente un formato compatto con solo l'anno."
 
-#: src/Configuration.php:326
+#: src/Configuration.php:331
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Mostra date complete fino alla generazione %s"
@@ -322,13 +342,20 @@ msgstr "Mostra solo nomi"
 msgid "Show nicknames in display names"
 msgstr "Mostra soprannomi nei nomi visualizzati"
 
-#: resources/views/modules/fan-chart/form/details.phtml:53
+#: resources/views/modules/fan-chart/form/details.phtml:66
 msgid "Show parent marriage dates"
 msgstr "Mostra la data del matrimonio dei genitori"
 
 #: resources/views/modules/fan-chart/form/details.phtml:40
 msgid "Show places"
 msgstr "Mostra luoghi"
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Shows the facts of a person in a side panel when you select a person, "
+"instead of the tooltip on the mouse pointer. The panel can be used with the "
+"keyboard as well."
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:27
 msgid ""
@@ -344,7 +371,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Passa dalla modalità a schermo intero alla visualizzazione normale"
 
-#: src/Module/ConfigTrait.php:147
+#: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr "Le preferenze per il modulo \"%s\" sono state aggiornate."
@@ -353,7 +380,7 @@ msgstr "Le preferenze per il modulo \"%s\" sono state aggiornate."
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Usare Ctrl + scorrimento per ingrandire la vista"
 
-#: src/Configuration.php:321
+#: src/Configuration.php:326
 msgid "Years only"
 msgstr "Solo anni"
 
@@ -364,6 +391,10 @@ msgstr "Ingrandisci/Riduci"
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
 msgstr "cancella"
+
+#: resources/views/modules/fan-chart/page.phtml:111
+msgid "close"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
 msgid "save"

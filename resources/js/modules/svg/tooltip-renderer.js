@@ -107,7 +107,8 @@ export default class TooltipRenderer {
     /**
      * Attaches contextmenu, mouseenter, mouseleave, mousemove, mouseover, and
      * mouseout handlers to the person element. No-ops for empty persons (no
-     * xref).
+     * xref). With the detail panel the panel replaces the tooltip, so only the
+     * hover marking is bound.
      *
      * @param {Selection<any, any, any, any>} person The <g class="person"> D3 selection
      * @param {HierarchyNode}                 datum  The D3 partition datum
@@ -117,33 +118,37 @@ export default class TooltipRenderer {
             return;
         }
 
-        person
-            .on("contextmenu", (event) => {
-                if (this._svg.div.property("active")) {
-                    this._svg.div.transition().duration(200).style("opacity", 0);
+        if (!this._configuration.showDetailPanel) {
+            person
+                .on("contextmenu", (event) => {
+                    if (this._svg.div.property("active")) {
+                        this._svg.div.transition().duration(200).style("opacity", 0);
 
-                    this._svg.div.property("active", false);
-                    event.preventDefault();
-                } else {
-                    this._svg.div.property("active", true);
+                        this._svg.div.property("active", false);
+                        event.preventDefault();
+                    } else {
+                        this._svg.div.property("active", true);
+                        this.setTooltipHtml(event, datum);
+
+                        event.preventDefault();
+                    }
+                })
+                .on("mouseenter", (event) => {
                     this.setTooltipHtml(event, datum);
+                })
+                .on("mouseleave", () => {
+                    if (!this._svg.div.property("active")) {
+                        this._svg.div.transition().duration(200).style("opacity", 0);
+                    }
+                })
+                .on("mousemove", (event) => {
+                    this._svg.div
+                        .style("left", `${event.pageX}px`)
+                        .style("top", `${event.pageY - 30}px`);
+                });
+        }
 
-                    event.preventDefault();
-                }
-            })
-            .on("mouseenter", (event) => {
-                this.setTooltipHtml(event, datum);
-            })
-            .on("mouseleave", () => {
-                if (!this._svg.div.property("active")) {
-                    this._svg.div.transition().duration(200).style("opacity", 0);
-                }
-            })
-            .on("mousemove", (event) => {
-                this._svg.div
-                    .style("left", `${event.pageX}px`)
-                    .style("top", `${event.pageY - 30}px`);
-            })
+        person
             .on("mouseover", (event) => {
                 d3.select(/** @type {Element} */ (event.currentTarget))
                     .classed("hover", true)

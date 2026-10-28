@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * This file is part of the package magicsunday/webtrees-fan-chart.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Stand-in for the checkbox component of the webtrees core. It keeps the name, the value and the
+ * checked state, which are what the module hands to the component.
+ *
+ * @var bool|null $checked
+ * @var string    $name
+ * @var string    $value
+ */
+?>
+<input type="checkbox" name="<?php echo e($name); ?>" value="<?php echo e($value); ?>"<?php echo ($checked ?? false) ? ' checked' : ''; ?>>

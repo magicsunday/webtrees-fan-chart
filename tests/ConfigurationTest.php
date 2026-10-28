@@ -319,9 +319,68 @@ final class ConfigurationTest extends TestCase
                 'paternalColor',
                 'maternalColor',
                 'showDescendants',
+                'showDetailPanel',
             ],
             array_keys($configuration->getRouteToggleParams())
         );
+    }
+
+    /**
+     * The detail panel is off until the request or the administrator turns it on,
+     * and the request wins over the module preference in both directions.
+     *
+     * @param array<string, string> $queryParams
+     * @param array<string, string> $preferences
+     */
+    #[Test]
+    #[DataProvider('showDetailPanelProvider')]
+    public function showDetailPanelResolvesFromTheRequestThenThePreference(
+        array $queryParams,
+        array $preferences,
+        bool $expected,
+    ): void {
+        $request       = (new ServerRequest(RequestMethodInterface::METHOD_GET, '/'))->withQueryParams($queryParams);
+        $configuration = new Configuration($request, $this->createModuleWithPreferences($preferences));
+
+        self::assertSame($expected, $configuration->getShowDetailPanel());
+    }
+
+    /**
+     * @return array<string, array{array<string, string>, array<string, string>, bool}>
+     */
+    public static function showDetailPanelProvider(): array
+    {
+        return [
+            'off without request or preference' => [[], [], false],
+            'on by the administrator'           => [[], ['default_showDetailPanel' => '1'], true],
+            'request switches it on'            => [['showDetailPanel' => '1'], [], true],
+            'request switches it off'           => [['showDetailPanel' => '0'], ['default_showDetailPanel' => '1'], false],
+        ];
+    }
+
+    /**
+     * The switch travels with every URL the chart navigates to, so recentring the
+     * chart keeps the panel in the state the visitor chose.
+     */
+    #[Test]
+    public function theRouteToggleParamsCarryThePanelSwitch(): void
+    {
+        $off = new Configuration(
+            new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            $this->createModuleWithPreferences([])
+        );
+        $on = new Configuration(
+            (new ServerRequest(RequestMethodInterface::METHOD_GET, '/'))->withQueryParams(['showDetailPanel' => '1']),
+            $this->createModuleWithPreferences([])
+        );
+
+        $offParams = $off->getRouteToggleParams();
+        $onParams  = $on->getRouteToggleParams();
+
+        self::assertArrayHasKey('showDetailPanel', $offParams);
+        self::assertArrayHasKey('showDetailPanel', $onParams);
+        self::assertSame('0', $offParams['showDetailPanel']);
+        self::assertSame('1', $onParams['showDetailPanel']);
     }
 
     /**
@@ -1036,6 +1095,7 @@ final class ConfigurationTest extends TestCase
                 $configuration->getInnerArcs();
                 $configuration->getPaternalColor();
                 $configuration->getMaternalColor();
+                $configuration->getShowDetailPanel();
             }
 
             // Counts only the preference reads the assertion talks about, so an

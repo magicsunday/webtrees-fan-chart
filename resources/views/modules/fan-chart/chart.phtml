@@ -94,6 +94,7 @@ import(<?php echo json_encode($javascript, $jsonFlags); ?>).then(({ FanChart }) 
                 return opts.showDescendants ?? <?php echo json_encode($configuration->getShowDescendants(), $jsonFlags); ?>;
             },
 
+            showDetailPanel: <?php echo json_encode($configuration->getShowDetailPanel(), $jsonFlags); ?>,
             showSilhouettes: <?php echo json_encode($chartParams['showSilhouettes'], $jsonFlags); ?>,
             nameAbbreviation: <?php echo json_encode($chartParams['nameAbbreviation'], $jsonFlags); ?>,
             data: <?php echo json_encode($data, $jsonFlags); ?>

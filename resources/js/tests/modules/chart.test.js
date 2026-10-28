@@ -65,6 +65,7 @@ class PersonGroupSelection {
                 return selection;
             },
             classed: () => selection,
+            attr: () => selection,
             on: () => selection,
         };
 
@@ -91,6 +92,8 @@ class MockSvg {
                 }),
             }),
             append: () => createChainableSelection(),
+            // The marks of the selected person are applied after every draw
+            selectAll: () => createChainableSelection(),
         };
         this.attrCalls = [];
 
@@ -233,6 +236,7 @@ await jest.unstable_mockModule("resources/js/modules/svg/geometry", () => ({
 const { default: Chart } = await import("resources/js/modules/chart");
 
 const createConfiguration = (overrides = {}) => ({
+    isDrawn: () => true,
     hideEmptySegments: false,
     showFamilyColors: false,
     showParentMarriageDates: false,

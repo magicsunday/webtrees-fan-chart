@@ -22,20 +22,24 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
-#: src/Configuration.php:815
+#: src/Configuration.php:842
 msgid "Abbreviate given names first"
 msgstr "Forkort førenamn først"
 
-#: src/Configuration.php:816
+#: src/Configuration.php:843
 msgid "Abbreviate surnames first"
 msgstr "Forkort etternamn først"
 
-#: src/Configuration.php:814
+#: src/Configuration.php:841
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Automatisk (basert på etternamnstradisjonen til treet)"
 
-#: src/Configuration.php:570
+#: src/Configuration.php:575
 msgid "Automatic (from the tree configuration)"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:120
+msgid "Center chart on this person"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
@@ -99,7 +103,7 @@ msgstr ""
 "etterkomarar med mange born blir stadene skjulte automatisk. Detaljnivå og "
 "datopresisjon blir konfigurerte for heile nettstaden i modulinnstillingane."
 
-#: resources/views/modules/fan-chart/form/details.phtml:59
+#: resources/views/modules/fan-chart/form/details.phtml:72
 msgid ""
 "Displays the marriage date of each couple in a narrow arc between "
 "generations. When descendants are enabled, also shows the marriage date "
@@ -134,7 +138,7 @@ msgstr "Viftestorleik"
 msgid "Font size"
 msgstr "Fontstorleik"
 
-#: src/Configuration.php:571
+#: src/Configuration.php:576
 msgid "Full place name"
 msgstr "Fullt stadnamn"
 
@@ -191,15 +195,15 @@ msgstr ""
 "Martin \"Chalky\" White). Tek att den gamle webtrees-åtferda for tre som "
 "lagrar kallenamn i det separate GEDCOM NICK-feltet."
 
-#: src/Configuration.php:572
+#: src/Configuration.php:577
 msgid "Lowest level (e.g. parish)"
 msgstr "Lågaste nivå (t.d. sokn)"
 
-#: src/Configuration.php:574
+#: src/Configuration.php:579
 msgid "Lowest three levels"
 msgstr "Tre lågaste nivå"
 
-#: src/Configuration.php:573
+#: src/Configuration.php:578
 msgid "Lowest two levels"
 msgstr "To lågaste nivå"
 
@@ -223,9 +227,17 @@ msgstr "Bruk to fingrar for å flytte utsnitt"
 msgid "Name abbreviation when space is tight"
 msgstr "Namneforkorting når plassen er trong"
 
+#: resources/views/modules/fan-chart/page.phtml:117
+msgid "No details are available for this person."
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:23
 msgid "Number of inner levels"
 msgstr "Tal på indre nivå"
+
+#: resources/views/modules/fan-chart/page.phtml:119
+msgid "Open individual page"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
 msgid ""
@@ -239,15 +251,15 @@ msgstr ""
 msgid "Paternal"
 msgstr "Farslinje"
 
-#: src/Configuration.php:575
+#: src/Configuration.php:580
 msgid "Place and country"
 msgstr ""
 
-#: src/Configuration.php:576
+#: src/Configuration.php:581
 msgid "Place and country code (2 letters)"
 msgstr ""
 
-#: src/Configuration.php:577
+#: src/Configuration.php:582
 msgid "Place and country code (3 letters)"
 msgstr ""
 
@@ -267,6 +279,10 @@ msgstr "Last diagrammet på nytt for den personen"
 msgid "Right-click"
 msgstr "Høgreklikk"
 
+#: resources/views/modules/fan-chart/page.phtml:115
+msgid "Select a person in the chart to see the details here."
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/display.phtml:65
 msgid "Show descendants"
 msgstr "Vis etterkomarar"
@@ -274,6 +290,10 @@ msgstr "Vis etterkomarar"
 #: resources/views/modules/components/buttonbar/help-button.phtml:30
 msgid "Show details of a person"
 msgstr "Vis detaljar om ein person"
+
+#: resources/views/modules/fan-chart/form/details.phtml:53
+msgid "Show details panel"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:28
 msgid "Show family colors"
@@ -290,7 +310,7 @@ msgstr ""
 "generasjon 9. Etterkomarar med smale bogar brukar automatisk eit kompakt "
 "berre-årstal-format."
 
-#: src/Configuration.php:326
+#: src/Configuration.php:331
 #, php-format
 msgid "Show full dates up to generation %s"
 msgstr "Vis fullstendige datoar til generasjon %s"
@@ -319,13 +339,20 @@ msgstr "Vis berre namn"
 msgid "Show nicknames in display names"
 msgstr "Vis kallenamn i visningsnamn"
 
-#: resources/views/modules/fan-chart/form/details.phtml:53
+#: resources/views/modules/fan-chart/form/details.phtml:66
 msgid "Show parent marriage dates"
 msgstr "Syn dato for vigsle av foreldre"
 
 #: resources/views/modules/fan-chart/form/details.phtml:40
 msgid "Show places"
 msgstr "Vis stader"
+
+#: resources/views/modules/fan-chart/form/details.phtml:59
+msgid ""
+"Shows the facts of a person in a side panel when you select a person, "
+"instead of the tooltip on the mouse pointer. The panel can be used with the "
+"keyboard as well."
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:27
 msgid ""
@@ -340,7 +367,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Byt mellom fullskjerm og normal visning"
 
-#: src/Module/ConfigTrait.php:147
+#: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
@@ -349,7 +376,7 @@ msgstr ""
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Bruk Ctrl + scroll for zoom"
 
-#: src/Configuration.php:321
+#: src/Configuration.php:326
 msgid "Years only"
 msgstr "Berre årstal"
 
@@ -359,6 +386,10 @@ msgstr "Zoom inn/ut"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
+msgstr ""
+
+#: resources/views/modules/fan-chart/page.phtml:111
+msgid "close"
 msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:129
