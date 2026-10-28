@@ -28,10 +28,13 @@ use Fisharebest\Webtrees\I18N;
     </button>
     <div id="fan-chart-help-popover" role="region" aria-label="<?php echo e(I18N::translate('Show help')); ?>" class="help-popover d-none position-absolute top-100 end-0 mt-2 p-3 bg-white border rounded shadow-sm" style="min-width: 350px; z-index: 1000;">
         <table class="table table-sm table-borderless mb-0">
-            <tr><td><strong><?php echo I18N::translate('Right-click'); ?></strong></td><td><?php echo I18N::translate('Show details of a person'); ?></td></tr>
+            <tr data-help-mode="tooltip"><td><strong><?php echo I18N::translate('Right-click'); ?></strong></td><td><?php echo I18N::translate('Show details of a person'); ?></td></tr>
+            <tr data-help-mode="tooltip"><td><strong><?php echo I18N::translate('Click on a person'); ?></strong></td><td><?php echo I18N::translate('Reload chart for that person'); ?></td></tr>
+            <tr data-help-mode="panel" class="d-none"><td><strong><?php echo I18N::translate('Tab key'); ?></strong></td><td><?php echo I18N::translate('Move between the persons'); ?></td></tr>
+            <tr data-help-mode="panel" class="d-none"><td><strong><?php echo I18N::translate('Click or Enter on a person'); ?></strong></td><td><?php echo I18N::translate('Show the details of the person in the panel'); ?></td></tr>
+            <tr data-help-mode="panel" class="d-none"><td><strong><?php echo I18N::translate('Details panel'); ?></strong></td><td><?php echo I18N::translate('Open the individual page or center the chart on the person'); ?></td></tr>
             <tr><td><strong><?php echo I18N::translate('Ctrl + scroll'); ?></strong></td><td><?php echo I18N::translate('Zoom in/out'); ?></td></tr>
             <tr><td><strong><?php echo I18N::translate('Click and drag'); ?></strong></td><td><?php echo I18N::translate('Move the chart'); ?></td></tr>
-            <tr><td><strong><?php echo I18N::translate('Click on a person'); ?></strong></td><td><?php echo I18N::translate('Reload chart for that person'); ?></td></tr>
         </table>
     </div>
 </div>
