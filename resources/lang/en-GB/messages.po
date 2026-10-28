@@ -40,7 +40,7 @@ msgstr "Automatic (from the tree configuration)"
 
 #: resources/views/modules/fan-chart/page.phtml:120
 msgid "Center chart on this person"
-msgstr "Center chart on this person"
+msgstr "Centre chart on this person"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click and drag"
