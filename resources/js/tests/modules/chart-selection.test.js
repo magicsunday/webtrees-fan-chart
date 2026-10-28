@@ -198,12 +198,14 @@ describe("Chart click binding", () => {
         expect(context.personClick).toHaveBeenCalledWith(null, first, true);
     });
 
-    test("leaves the persons as they were with the panel off", () => {
-        const { context } = bind(false, [node("I1", "/i/1")]);
+    test("makes the selectable persons keyboard operable with the panel off too", () => {
+        const first = node("I1", "/i/1");
+        const { context, bound } = bind(false, [first, node("", "")]);
 
         Chart.prototype.bindClickEventListener.call(context);
 
-        expect(context._selection.makeOperable).not.toHaveBeenCalled();
+        expect(context._selection.makeOperable).toHaveBeenCalledTimes(1);
+        expect(bound[0][1]).toBe(first);
     });
 
     test("binds the click on the persons in both modes", () => {
@@ -400,21 +402,120 @@ describe("A real chart with the detail panel", () => {
         expect(elements[0].getAttribute("aria-label")).toBe("Jane Doe");
     });
 
-    test("sets no label with the panel off", () => {
+    test("labels an operable person with the text that the arc shows with the panel off too", () => {
         const { chart, elements } = buildRealChart([node("I1")], false);
 
         drawLines(elements[0], ["Jane", "Doe"]);
         chart.bindClickEventListener();
 
-        expect(elements[0].hasAttribute("aria-label")).toBe(false);
+        expect(elements[0].getAttribute("aria-label")).toBe("Jane Doe");
     });
 
-    test("leaves the drawn elements out of the tab order with the panel off", () => {
+    test("reaches a drawn element with the Tab key and updates the chart by Enter with the panel off", () => {
+        const first = node("I1");
+        const { chart, elements } = buildRealChart([first], false);
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+
+        expect(elements[0].getAttribute("tabindex")).toBe("0");
+        expect(elements[0].getAttribute("role")).toBe("button");
+
+        elements[0].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        expect(chart.update).toHaveBeenCalledWith(first.data.data.updateUrl);
+    });
+
+    test("gives the focus back to the person that a key press centered once the chart is drawn again", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2")], false);
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        // The updater draws the arcs again and binds the chart to them
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(elements[1]);
+    });
+
+    test("does not move the focus after a click of the mouse", () => {
         const { chart, elements } = buildRealChart([node("I1")], false);
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[0].dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).not.toBe(elements[0]);
+    });
+
+    test("withdraws the focus request of a key press by a click of the mouse", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2")], false);
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[0].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+        elements[1].dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).not.toBe(elements[0]);
+        expect(document.activeElement).not.toBe(elements[1]);
+    });
+
+    test("keeps the focus request of a key press while another update is still running", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2")], false);
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        // Two updates run, the bind of the first one must leave the focus to the last one
+        chart._runningUpdates = 2;
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).not.toBe(elements[1]);
 
         chart.bindClickEventListener();
 
-        expect(elements[0].hasAttribute("tabindex")).toBe(false);
+        expect(document.activeElement).toBe(elements[1]);
+    });
+
+    test("leaves the focus to the detail panel after a key press with the panel on", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2")], true);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+        elements[0].blur();
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).not.toBe(elements[1]);
+    });
+
+    test("asks for no focus after a key press on the center person", () => {
+        const { chart, elements } = buildRealChart([node("I1", 0), node("I2")], false);
+
+        chart.redirectToIndividual = jest.fn();
+        chart.bindClickEventListener();
+        elements[0].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+        chart.bindClickEventListener();
+
+        expect(chart.redirectToIndividual).toHaveBeenCalledTimes(1);
+        expect(document.activeElement).not.toBe(elements[0]);
+    });
+
+    test("moves the focus only once after a key press", () => {
+        const { chart, elements } = buildRealChart([node("I1")], false);
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[0].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+        chart.bindClickEventListener();
+        elements[0].blur();
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).not.toBe(elements[0]);
     });
 
     test("leaves the persons out of the tab order that are not drawn with names off", () => {

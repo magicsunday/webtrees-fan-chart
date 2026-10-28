@@ -86,6 +86,8 @@ export default class Chart {
         this._runningUpdates = 0;
         this._focusPending = false;
         this._clearPending = false;
+        /** @type {string|null} */
+        this._keyboardFocusXref = null;
     }
 
     /**
@@ -559,25 +561,23 @@ export default class Chart {
         // Trigger method on click/touch
         persons.on("click", this.personClick.bind(this));
 
-        // With the detail panel a person is also reached with the Tab key and
-        // selected with Enter or Space, the arcs are no focus targets otherwise
-        if (this._configuration.showDetailPanel) {
-            const that = this;
+        // A person is reached with the Tab key and activated with Enter or Space like a click,
+        // with the detail panel as well as without it
+        const that = this;
 
-            drawn.each(function (/** @type {HierarchyNode} */ datum) {
-                that._selection.makeOperable(d3.select(this), datum, (_data, byKeyboard) =>
-                    that.personClick(null, datum, byKeyboard),
-                );
+        drawn.each(function (/** @type {HierarchyNode} */ datum) {
+            that._selection.makeOperable(d3.select(this), datum, (_data, byKeyboard) =>
+                that.personClick(null, datum, byKeyboard),
+            );
 
-                // The library names the arc with the bare name, but the accessible name has to
-                // contain the text that the arc shows (WCAG 2.5.3)
-                const label = visibleText(this);
+            // The library names the arc with the bare name, but the accessible name has to
+            // contain the text that the arc shows (WCAG 2.5.3)
+            const label = visibleText(this);
 
-                if (label !== "") {
-                    d3.select(this).attr("aria-label", label);
-                }
-            });
-        }
+            if (label !== "") {
+                d3.select(this).attr("aria-label", label);
+            }
+        });
 
         // Set available on marriage arcs that have content
         this.svg
@@ -626,6 +626,18 @@ export default class Chart {
         if (this._focusPending) {
             this._focusPending = false;
             this._selection.restoreFocus();
+        }
+
+        if (this._keyboardFocusXref !== null) {
+            const xref = this._keyboardFocusXref;
+
+            this._keyboardFocusXref = null;
+
+            drawn
+                .filter((datum) => datum.data.data.xref === xref)
+                .each(function () {
+                    /** @type {HTMLElement} */ (this).focus();
+                });
         }
 
         if (this._clearPending) {
@@ -698,6 +710,12 @@ export default class Chart {
 
             return;
         }
+
+        // The arcs are drawn again by an update, so the focus of a key press would be lost with the
+        // old arc. It is given to the arc of the same person once the chart is bound again. The
+        // center person opens its page and draws nothing, and a click of the mouse withdraws the
+        // request of an earlier key press.
+        this._keyboardFocusXref = byKeyboard && datum.depth !== 0 ? datum.data.data.xref : null;
 
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
         datum.depth === 0
