@@ -118,14 +118,14 @@ final class Configuration
     private const string HEX_COLOR_PATTERN = '/^#[0-9a-fA-F]{6}$/D';
 
     /**
-     * Name of the request parameter and admin form field carrying the place
-     * format. The admin form's field name and the key read back here have to be
-     * the same string, and nothing else enforces that: a mismatch does not
-     * error, it makes every save persist the previously stored choice and
-     * silently discard the admin's selection. Both sides reference this
-     * constant so they cannot drift apart.
+     * Name of the admin form field carrying the place format. The field name and
+     * the key read back by getSubmittedPlaceFormatChoice() have to be the same
+     * string, and nothing else enforces that: a mismatch does not error, it makes
+     * every save persist the previously stored choice and silently discard the
+     * admin's selection. Both sides reference this constant so they cannot drift
+     * apart.
      */
-    public const string PLACE_FORMAT_PARAM = 'placeFormat';
+    public const string PLACE_FORMAT_FIELD = 'placeFormat';
 
     /**
      * Hierarchy levels shown when no tree is available to inherit from. Matches
@@ -490,14 +490,12 @@ final class Configuration
     }
 
     /**
-     * The place-detail option as selected, before the tree preferences are
-     * applied. This is the value the configuration select shows and the value
-     * forwarded on navigation.
+     * The place-detail option as stored by the administrator, before the tree
+     * preferences are applied. The request never changes it, so a visitor cannot
+     * override the choice through the address bar.
      *
-     * An unusable value — a tampered query parameter, or a preference written by
-     * a newer version before a downgrade — never silently resets the admin's
-     * choice: the query parameter falls back to the stored preference, and an
-     * unusable stored preference falls through to the legacy key.
+     * An unusable stored preference, for example one written by a newer version
+     * before a downgrade, falls through to the legacy key.
      *
      * @return PlaceFormatChoice
      */
@@ -507,11 +505,24 @@ final class Configuration
             return $this->placeFormatChoice;
         }
 
-        $stored = PlaceFormatChoice::tryFrom($this->module->getPreference('default_placeFormat', ''))
-            ?? $this->legacyPlaceFormat();
-
         return $this->placeFormatChoice = PlaceFormatChoice::tryFrom(
-            $this->validator()->string(self::PLACE_FORMAT_PARAM, $stored->value)
+            $this->module->getPreference('default_placeFormat', '')
+        ) ?? $this->legacyPlaceFormat();
+    }
+
+    /**
+     * The place-detail option as submitted by the administration form. Only the
+     * save of that form reads it. An unusable value never resets the stored
+     * choice, it keeps the stored one.
+     *
+     * @return PlaceFormatChoice
+     */
+    public function getSubmittedPlaceFormatChoice(): PlaceFormatChoice
+    {
+        $stored = $this->getPlaceFormatChoice();
+
+        return PlaceFormatChoice::tryFrom(
+            $this->validator()->string(self::PLACE_FORMAT_FIELD, $stored->value)
         ) ?? $stored;
     }
 
@@ -885,7 +896,6 @@ final class Configuration
             'hideEmptySegments'       => $this->getHideEmptySegments() ? '1' : '0',
             'showFamilyColors'        => $this->getShowFamilyColors() ? '1' : '0',
             'showPlaces'              => $this->getShowPlaces() ? '1' : '0',
-            self::PLACE_FORMAT_PARAM  => $this->getPlaceFormatChoice()->value,
             'showParentMarriageDates' => $this->getShowParentMarriageDates() ? '1' : '0',
             'showImages'              => $this->getShowImages() ? '1' : '0',
             'showNames'               => $this->getShowNames() ? '1' : '0',

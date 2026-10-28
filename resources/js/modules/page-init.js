@@ -51,7 +51,6 @@ function initRangeSlider(storage, id, suffix = "") {
  * @param {number}  config.fanDegreeMin                   Lowest fan degree the server accepts
  * @param {number}  config.fanDegreeMaxWithDescendants    Highest fan degree while descendants are shown
  * @param {number}  config.defaultDetailedDateGenerations Server-side default for detailed date generations
- * @param {string}  config.defaultPlaceFormat             Server-side place-detail setting (enum backing value)
  */
 export function initPage(config) {
     const storage = new Storage("webtrees-fan-chart");
@@ -224,14 +223,6 @@ export function initPage(config) {
             },
             { key: "showPlaces", value: chartOptions.showPlaces, mode: "boolean-1-0" },
             {
-                // Admin-only preference (the chart-page select was moved to admin
-                // config); like detailedDateGenerations above, always use the server
-                // default so the "Automatic" setting is not defeated by a stale
-                // localStorage value left by an older module version that had a slider.
-                key: "placeFormat",
-                value: config.defaultPlaceFormat,
-            },
-            {
                 key: "showDescendants",
                 value: Boolean(chartOptions.showDescendants),
                 mode: "boolean-1-or-delete",
@@ -307,9 +298,6 @@ export function initPage(config) {
                         value: config.defaultDetailedDateGenerations,
                     },
                     { key: "showPlaces", value: storage.read("showPlaces"), mode: "boolean-1-0" },
-                    // Admin-only preference — always the server default, never a
-                    // stale localStorage value (see the initial URL build above).
-                    { key: "placeFormat", value: config.defaultPlaceFormat },
                     { key: "showDescendants", value: checked, mode: "boolean-1-or-delete" },
                     {
                         key: "showNicknames",

@@ -145,7 +145,6 @@ const defaultConfig = {
     fanDegreeMin: 180,
     fanDegreeMaxWithDescendants: 270,
     defaultDetailedDateGenerations: 0,
-    defaultPlaceFormat: "auto",
 };
 
 function getAjaxUrl() {
@@ -182,16 +181,17 @@ describe("getUrl (via initPage AJAX URL)", () => {
         expect(getAjaxUrl().searchParams.get("showPlaces")).toBe("0");
     });
 
-    it("uses defaultPlaceFormat for the initial URL, ignoring a stale storage value", () => {
-        // placeFormat is admin-only (the chart-page slider was removed); a value left
-        // in localStorage by an older module version must not override the server
-        // setting (here Automatic) on the initial render.
-        storageData.placeParts = "2";
+    it("does not put a place format into the initial URL", () => {
+        // The place format is an administrator setting that the server reads from
+        // the module preference, so the page never sends one, whatever an older
+        // module version left in localStorage.
         storageData.placeFormat = "levels-2";
 
-        initPage({ ...defaultConfig, defaultPlaceFormat: "auto" });
+        // defaultPlaceFormat is an option of an older page script. An entry that read
+        // it would write the value, so a set value makes this test discriminate.
+        initPage({ ...defaultConfig, defaultPlaceFormat: "city-iso2" });
 
-        expect(getAjaxUrl().searchParams.get("placeFormat")).toBe("auto");
+        expect(getAjaxUrl().searchParams.has("placeFormat")).toBe(false);
     });
 
     it("uses defaultDetailedDateGenerations for the initial URL, ignoring a stale storage value", () => {
@@ -310,14 +310,13 @@ describe("showDescendants change handler", () => {
         expect(getAjaxUrl().searchParams.get("detailedDateGenerations")).toBe("2");
     });
 
-    it("keeps the admin default placeFormat on toggle, ignoring a stale storage value", () => {
+    it("does not put a place format into the URL on toggle", () => {
         initPage({ ...defaultConfig, defaultPlaceFormat: "city-iso2" });
 
         const storage = storageInstances[0];
 
         storage.read.mockImplementation((key) => {
-            if (key === "placeFormat") return "levels-3"; // stale — must be ignored
-            if (key === "placeParts") return "3"; // stale — must be ignored
+            if (key === "placeFormat") return "levels-3"; // stale, must be ignored
             if (key === "generations") return "6";
 
             return null;
@@ -328,7 +327,7 @@ describe("showDescendants change handler", () => {
         cb.checked = true;
         cb.dispatchEvent(new Event("change"));
 
-        expect(getAjaxUrl().searchParams.get("placeFormat")).toBe("city-iso2");
+        expect(getAjaxUrl().searchParams.has("placeFormat")).toBe(false);
     });
 
     it("restores fanDegreeRaw when unchecking descendants", () => {

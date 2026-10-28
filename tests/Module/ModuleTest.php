@@ -72,6 +72,26 @@ final class ModuleTest extends TestCase
     }
 
     /**
+     * Pins that saving the administration form stores the posted place format
+     * as the default of the chart.
+     */
+    #[Test]
+    public function adminFormStoresThePostedPlaceFormat(): void
+    {
+        $this->registerRouteFactory();
+        EnglishLocaleFixture::install();
+
+        $module = $this->createModuleWithPreferences(['default_placeFormat' => 'full']);
+
+        $module->postAdminAction(
+            (new ServerRequest(RequestMethodInterface::METHOD_POST, '/'))
+                ->withParsedBody(['placeFormat' => 'city-iso3'])
+        );
+
+        self::assertSame('city-iso3', $module->getPreference('default_placeFormat'));
+    }
+
+    /**
      * Pins that saving the administration form stores the detail panel option
      * as the default of the chart.
      */
