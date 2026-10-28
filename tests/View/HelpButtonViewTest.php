@@ -54,8 +54,8 @@ final class HelpButtonViewTest extends TestCase
     /**
      * The popover lists the interactions of both modes of the chart. The entries of the mode with
      * the tooltip start visible, the entries of the mode with the detail panel start hidden, and the
-     * page script switches them with the checkbox. The entries for zooming and moving apply to both
-     * modes and carry no mode.
+     * page script switches them with the checkbox. The entries for the Tab key, zooming and moving
+     * apply to both modes and carry no mode.
      */
     #[Test]
     public function marksTheEntriesOfEachMode(): void
@@ -68,7 +68,7 @@ final class HelpButtonViewTest extends TestCase
 
         self::assertNotSame([], $tooltip);
         self::assertNotSame([], $panel);
-        self::assertCount(2, $both, 'zooming and moving apply to both modes');
+        self::assertCount(3, $both, 'moving between the persons, zooming and moving apply to both modes');
 
         foreach ($tooltip as $row) {
             self::assertStringNotContainsString('d-none', $row->getAttribute('class'));

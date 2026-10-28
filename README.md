@@ -164,7 +164,7 @@ tree setting for highlight images is switched off.
 |--------|--------|
 | Click on a person | Re-centers the chart on that person, with **Show details panel** it selects the person and opens the panel |
 | Right-click on a person | Opens a detailed tooltip with dates, places, and image, not with **Show details panel** |
-| Tab, then Enter or Space | With **Show details panel** a person is reached with the keyboard and selected |
+| Tab, then Enter or Space | A person is reached with the keyboard and activated like a click, with **Show details panel** it is selected |
 | Ctrl + scroll | Zoom in/out |
 | Click and drag | Move the chart |
 | Click center button | Reset view to center |
