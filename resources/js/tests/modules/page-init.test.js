@@ -187,7 +187,9 @@ describe("getUrl (via initPage AJAX URL)", () => {
         // module version left in localStorage.
         storageData.placeFormat = "levels-2";
 
-        initPage(defaultConfig);
+        // defaultPlaceFormat is an option of an older page script. An entry that read
+        // it would write the value, so a set value makes this test discriminate.
+        initPage({ ...defaultConfig, defaultPlaceFormat: "city-iso2" });
 
         expect(getAjaxUrl().searchParams.has("placeFormat")).toBe(false);
     });
@@ -309,7 +311,7 @@ describe("showDescendants change handler", () => {
     });
 
     it("does not put a place format into the URL on toggle", () => {
-        initPage(defaultConfig);
+        initPage({ ...defaultConfig, defaultPlaceFormat: "city-iso2" });
 
         const storage = storageInstances[0];
 

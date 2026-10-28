@@ -392,9 +392,9 @@ final class ConfigurationTest extends TestCase
 
     /**
      * The admin form's field name and the request key Configuration reads back
-     * on a save are two independent strings that must match. A mismatch does not error —
-     * every save would persist the stored choice and discard the admin's
-     * selection — so the view builds its field from this constant and this test
+     * on a save are two independent strings that must match. A mismatch does not
+     * error, every save would persist the stored choice and discard the admin's
+     * selection, so the view builds its field from this constant and this test
      * pins the constant to the key the reader actually consumes.
      */
     #[Test]
