@@ -43,13 +43,17 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Click and drag"
 msgstr "Hacer clic y arrastrar"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click on a person"
 msgstr "Hacer clic en una persona"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Click or Enter on a person"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:23
 msgid "Colors"
@@ -78,7 +82,7 @@ msgstr ""
 "apellidos del árbol (islandés abrevia apellidos; el resto abrevia nombres de "
 "pila)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Ctrl + scroll"
 msgstr "Ctrl + scroll"
 
@@ -88,6 +92,10 @@ msgstr "Precisión de fechas"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Details panel"
 msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
@@ -220,6 +228,10 @@ msgid "Modules"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Move between the persons"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Move the chart"
 msgstr "Mover el diagrama"
 
@@ -241,6 +253,10 @@ msgstr "Número de niveles internos"
 
 #: resources/views/modules/fan-chart/page.phtml:119
 msgid "Open individual page"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
@@ -276,7 +292,7 @@ msgstr "Detalle del lugar"
 msgid "Re center"
 msgstr "Volver a centrar"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Reload chart for that person"
 msgstr "Recargar el diagrama para esa persona"
 
@@ -354,6 +370,10 @@ msgstr "Mostrar fechas de matrimonio de los padres"
 msgid "Show places"
 msgstr "Mostrar lugares"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Show the details of the person in the panel"
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/details.phtml:59
 msgid ""
 "Shows the facts of a person in a side panel when you select a person, "
@@ -375,6 +395,10 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Cambiar entre pantalla completa y vista normal"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Tab key"
+msgstr ""
+
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -388,7 +412,7 @@ msgstr "Use Ctrl + scroll para acercar la vista"
 msgid "Years only"
 msgstr "Solo años"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Zoom in/out"
 msgstr "Acercar/Alejar"
 

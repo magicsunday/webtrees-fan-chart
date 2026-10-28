@@ -45,13 +45,17 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Click and drag"
 msgstr "Klicka och dra"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click on a person"
 msgstr "Klicka på en person"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Click or Enter on a person"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:23
 msgid "Colors"
@@ -79,7 +83,7 @@ msgstr ""
 "fullständiga namnet. \"Automatiskt\" använder trädets efternamnstradition "
 "(isländska förkortar efternamn; allt annat förkortar förnamn)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Ctrl + scroll"
 msgstr "Ctrl + scrolla"
 
@@ -89,6 +93,10 @@ msgstr "Datumprecision"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Details panel"
 msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
@@ -219,6 +227,10 @@ msgid "Modules"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Move between the persons"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Move the chart"
 msgstr "Flytta diagrammet"
 
@@ -240,6 +252,10 @@ msgstr "Antal inre nivåer"
 
 #: resources/views/modules/fan-chart/page.phtml:119
 msgid "Open individual page"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
@@ -274,7 +290,7 @@ msgstr "Platsdetaljer"
 msgid "Re center"
 msgstr "Återcentrera"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Reload chart for that person"
 msgstr "Ladda om diagrammet för den personen"
 
@@ -351,6 +367,10 @@ msgstr "Visa föräldrars giftermålsdatum"
 msgid "Show places"
 msgstr "Visa platser"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Show the details of the person in the panel"
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/details.phtml:59
 msgid ""
 "Shows the facts of a person in a side panel when you select a person, "
@@ -372,6 +392,10 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Växla mellan helskärm och normal vy"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Tab key"
+msgstr ""
+
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -385,7 +409,7 @@ msgstr "Använd Ctrl + rullen för att zooma in vyn"
 msgid "Years only"
 msgstr "Endast år"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
 

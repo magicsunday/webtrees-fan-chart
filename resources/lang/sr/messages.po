@@ -44,13 +44,17 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Click and drag"
 msgstr "Кликни и превуци"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click on a person"
 msgstr "Кликни на особу"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Click or Enter on a person"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:23
 msgid "Colors"
@@ -78,7 +82,7 @@ msgstr ""
 "„Аутоматски“ користи традицију презимена стабла (исландска традиција "
 "скраћује презимена; све остале скраћују лична имена)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Ctrl + scroll"
 msgstr "Ctrl + скроловање"
 
@@ -89,6 +93,10 @@ msgstr "Прецизност датума"
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
 msgstr "Детаљи"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Details panel"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -218,6 +226,10 @@ msgid "Modules"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Move between the persons"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Move the chart"
 msgstr "Помери дијаграм"
 
@@ -239,6 +251,10 @@ msgstr "Број унутрашњих нивоа"
 
 #: resources/views/modules/fan-chart/page.phtml:119
 msgid "Open individual page"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
@@ -273,7 +289,7 @@ msgstr "Детаљи места"
 msgid "Re center"
 msgstr "Ре центар"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Reload chart for that person"
 msgstr "Поново учитај дијаграм за ту особу"
 
@@ -350,6 +366,10 @@ msgstr "Прикажи датуме склапања брака родитеља
 msgid "Show places"
 msgstr "Прикажи места"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Show the details of the person in the panel"
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/details.phtml:59
 msgid ""
 "Shows the facts of a person in a side panel when you select a person, "
@@ -371,6 +391,10 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Пребацивање између целог екрана и обичног приказа"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Tab key"
+msgstr ""
+
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -384,7 +408,7 @@ msgstr "Користите CTRL + скрол да бисте зумирали п
 msgid "Years only"
 msgstr "Само године"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Zoom in/out"
 msgstr "Увећај/Умањи"
 

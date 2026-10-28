@@ -43,13 +43,17 @@ msgstr "Automatisch (aus der Baumkonfiguration)"
 msgid "Center chart on this person"
 msgstr "Diagramm auf diese Person zentrieren"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Click and drag"
 msgstr "Klicken und Ziehen"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click on a person"
 msgstr "Auf eine Person klicken"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Click or Enter on a person"
+msgstr "Klick oder Eingabetaste auf eine Person"
 
 #: resources/views/modules/fan-chart/form/colors.phtml:23
 msgid "Colors"
@@ -77,7 +81,7 @@ msgstr ""
 "für den vollen Namen ist. „Automatisch“ verwendet die Nachnamen-Tradition "
 "des Stammbaums (Isländisch kürzt Nachnamen; alles andere kürzt Vornamen)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Ctrl + scroll"
 msgstr "Strg + Scrollen"
 
@@ -88,6 +92,10 @@ msgstr "Datumsgenauigkeit"
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
 msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Details panel"
+msgstr "Detailbereich"
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -223,6 +231,10 @@ msgid "Modules"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Move between the persons"
+msgstr "Zwischen den Personen wechseln"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Move the chart"
 msgstr "Diagramm verschieben"
 
@@ -245,6 +257,10 @@ msgstr "Anzahl der inneren Ebenen"
 #: resources/views/modules/fan-chart/page.phtml:119
 msgid "Open individual page"
 msgstr "Personenseite öffnen"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Open the individual page or center the chart on the person"
+msgstr "Personenseite öffnen oder das Diagramm auf die Person zentrieren"
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
 msgid ""
@@ -278,7 +294,7 @@ msgstr "Ortsdetail"
 msgid "Re center"
 msgstr "Neu zentrieren"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Reload chart for that person"
 msgstr "Diagramm für diese Person neu laden"
 
@@ -355,6 +371,10 @@ msgstr "Zeige die Heiratsdaten der Eltern an"
 msgid "Show places"
 msgstr "Orte anzeigen"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Show the details of the person in the panel"
+msgstr "Die Details der Person im Detailbereich anzeigen"
+
 #: resources/views/modules/fan-chart/form/details.phtml:59
 msgid ""
 "Shows the facts of a person in a side panel when you select a person, "
@@ -379,6 +399,10 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Zwischen Vollbildmodus und normaler Ansicht umschalten"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Tab key"
+msgstr "Tabulatortaste"
+
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -392,7 +416,7 @@ msgstr "Verwende Strg+Scrollen zum Zoomen der Ansicht"
 msgid "Years only"
 msgstr "Nur Jahreszahlen"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Zoom in/out"
 msgstr "Vergrößern/Verkleinern"
 

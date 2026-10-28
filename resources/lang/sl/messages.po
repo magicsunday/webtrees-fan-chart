@@ -46,13 +46,17 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Click and drag"
 msgstr "Kliknite in povlecite"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Click on a person"
 msgstr "Kliknite na osebo"
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Click or Enter on a person"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:23
 msgid "Colors"
@@ -80,7 +84,7 @@ msgstr ""
 "»Samodejno« uporablja drevesno tradicijo priimkov (islandska tradicija "
 "krajša priimke; vse ostale krajšajo osebna imena)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Ctrl + scroll"
 msgstr "Ctrl + drsenje"
 
@@ -90,6 +94,10 @@ msgstr "Natančnost datumov"
 
 #: resources/views/modules/fan-chart/form/details.phtml:23
 msgid "Details"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Details panel"
 msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
@@ -220,6 +228,10 @@ msgid "Modules"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Move between the persons"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Move the chart"
 msgstr "Premakni diagram"
 
@@ -241,6 +253,10 @@ msgstr "Število notranjih ravni"
 
 #: resources/views/modules/fan-chart/page.phtml:119
 msgid "Open individual page"
+msgstr ""
+
+#: resources/views/modules/components/buttonbar/help-button.phtml:35
+msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
@@ -275,7 +291,7 @@ msgstr "Podrobnost kraja"
 msgid "Re center"
 msgstr "Znova na sredino"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Reload chart for that person"
 msgstr "Ponovno naloži diagram za to osebo"
 
@@ -351,6 +367,10 @@ msgstr "Prikaži datum poroke staršev"
 msgid "Show places"
 msgstr "Prikaži kraje"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
+msgid "Show the details of the person in the panel"
+msgstr ""
+
 #: resources/views/modules/fan-chart/form/details.phtml:59
 msgid ""
 "Shows the facts of a person in a side panel when you select a person, "
@@ -372,6 +392,10 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Preklopi med celozaslonskim in običajnim načinom"
 
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
+msgid "Tab key"
+msgstr ""
+
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
@@ -385,7 +409,7 @@ msgstr "Uporabi Ctrl+Scroll kolesce za povečavo diagrama"
 msgid "Years only"
 msgstr "Samo leta"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Zoom in/out"
 msgstr "Povečaj/pomanjšaj"
 
