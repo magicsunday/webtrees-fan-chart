@@ -297,6 +297,26 @@ describe("FanChart detail panel", () => {
         expect(panels[0].dismiss).toHaveBeenCalledTimes(1);
     });
 
+    it("dismisses the open panel when the chart that replaces it has the option off", () => {
+        document.body.innerHTML =
+            '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: true }));
+        chartInstances[0].hasSelection = true;
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions({ showDetailPanel: false }));
+
+        expect(panels).toHaveLength(1);
+        expect(panels[0].dismiss).toHaveBeenCalledTimes(1);
+        expect(chartInstances[1].detailPanel).toBeNull();
+
+        panels[0].callbacks.onHidden();
+
+        expect(chartInstances[0].clearSelection).not.toHaveBeenCalled();
+        expect(chartInstances[1].clearSelection).toHaveBeenCalledTimes(1);
+    });
+
     it("leaves the panel alone when the replaced chart has no selected person", () => {
         document.body.innerHTML =
             '<div id="chart"></div><aside id="webtrees-fan-detail-panel"></aside>';

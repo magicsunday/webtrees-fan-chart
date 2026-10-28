@@ -91,20 +91,24 @@ export class FanChart {
     initDetailPanel() {
         const element = document.getElementById("webtrees-fan-detail-panel");
 
-        if (!this._configuration.showDetailPanel || element === null) {
-            return;
-        }
-
-        const bound = detailPanels.get(element);
+        const bound = element === null ? undefined : detailPanels.get(element);
 
         if (bound !== undefined) {
             // The new chart knows nothing of the person the panel shows, and the actions of the
-            // panel belong to the request of the old chart, so the panel closes with it
+            // panel belong to the request of the old chart, so the panel closes with it. This
+            // holds for a chart without the option too, which replaces the chart of an open panel
             if (bound.target.chart.hasSelection) {
                 bound.panel.dismiss();
             }
 
             bound.target.chart = this._chart;
+        }
+
+        if (!this._configuration.showDetailPanel || element === null) {
+            return;
+        }
+
+        if (bound !== undefined) {
             this._chart.detailPanel = bound.panel;
 
             return;
