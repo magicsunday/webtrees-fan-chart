@@ -125,11 +125,11 @@ msgstr "Exporter au format PNG"
 msgid "Export as SVG"
 msgstr "Exporter au format SVG"
 
-#: src/Module.php:130 src/Module.php:243
+#: src/Module.php:130 src/Module.php:242
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:240 src/Module/ChartTrait.php:46
+#: src/Module.php:239 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -224,7 +224,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Déplacer le diagramme"
 
-#: src/Module.php:267
+#: src/Module.php:266
 msgid "Move the view with two fingers"
 msgstr "Déplacer la vue avec deux doigts"
 
@@ -380,7 +380,7 @@ msgstr "Basculer entre le plein écran et la vue normale"
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:266
+#: src/Module.php:265
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Utiliser Ctrl + molette pour zoomer dans la vue"
 

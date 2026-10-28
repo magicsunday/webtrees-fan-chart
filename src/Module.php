@@ -205,7 +205,6 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
                     'configuration'     => $this->configuration,
                     'chartParams'       => $this->getChartParameters($individual),
                     'exportStylesheets' => $this->getExportStylesheets(),
-                    'stylesheets'       => $this->getStylesheets(),
                     'javascript'        => $this->assetUrl('js/fan-chart-' . self::CUSTOM_VERSION . '.min.js'),
                 ]
             );

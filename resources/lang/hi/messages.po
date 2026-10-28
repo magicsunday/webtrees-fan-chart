@@ -121,11 +121,11 @@ msgstr "PNG निकालें"
 msgid "Export as SVG"
 msgstr "SVG निकालें"
 
-#: src/Module.php:130 src/Module.php:243
+#: src/Module.php:130 src/Module.php:242
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:240 src/Module/ChartTrait.php:46
+#: src/Module.php:239 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -219,7 +219,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "चार्ट को स्थानांतरित करें"
 
-#: src/Module.php:267
+#: src/Module.php:266
 msgid "Move the view with two fingers"
 msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
 
@@ -371,7 +371,7 @@ msgstr "पूर्ण स्क्रीन और सामान्य द�
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:266
+#: src/Module.php:265
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Ctrl + Scroll से ज़ूम इन करें"
 
