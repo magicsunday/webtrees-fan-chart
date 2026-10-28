@@ -44,11 +44,11 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr "Кликни и превуци"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr "Кликни на особу"
 
@@ -78,7 +78,7 @@ msgstr ""
 "„Аутоматски“ користи традицију презимена стабла (исландска традиција "
 "скраћује презимена; све остале скраћују лична имена)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr "Ctrl + скроловање"
 
@@ -217,7 +217,7 @@ msgstr "Мајчин"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr "Помери дијаграм"
 
@@ -273,11 +273,11 @@ msgstr "Детаљи места"
 msgid "Re center"
 msgstr "Ре центар"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr "Поново учитај дијаграм за ту особу"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr "Десни клик"
 
@@ -289,7 +289,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Прикажи потомке"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr "Прикажи детаље о особи"
 
@@ -318,6 +318,7 @@ msgid "Show full dates up to generation %s"
 msgstr "Прикажи пуне датуме до генерације %s"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr "Прикажи помоћ"
 
@@ -383,7 +384,7 @@ msgstr "Користите CTRL + скрол да бисте зумирали п
 msgid "Years only"
 msgstr "Само године"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr "Увећај/Умањи"
 

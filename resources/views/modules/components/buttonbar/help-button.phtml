@@ -16,7 +16,8 @@ use Fisharebest\Webtrees\I18N;
 <div class="position-relative d-inline-block">
     <button class="btn-primary btn-chart btn-help"
             title="<?php echo I18N::translate('Show help'); ?>"
-            onclick="this.parentElement.querySelector('.help-popover').classList.toggle('d-none')"
+            aria-expanded="false"
+            aria-controls="fan-chart-help-popover"
     >
         <span class="icon">
             <svg class="svg-inline--fa fa-fw" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
@@ -25,7 +26,7 @@ use Fisharebest\Webtrees\I18N;
             </svg>
         </span>
     </button>
-    <div class="help-popover d-none position-absolute top-100 end-0 mt-2 p-3 bg-white border rounded shadow-sm" style="min-width: 350px; z-index: 1000;">
+    <div id="fan-chart-help-popover" role="region" aria-label="<?php echo e(I18N::translate('Show help')); ?>" class="help-popover d-none position-absolute top-100 end-0 mt-2 p-3 bg-white border rounded shadow-sm" style="min-width: 350px; z-index: 1000;">
         <table class="table table-sm table-borderless mb-0">
             <tr><td><strong><?php echo I18N::translate('Right-click'); ?></strong></td><td><?php echo I18N::translate('Show details of a person'); ?></td></tr>
             <tr><td><strong><?php echo I18N::translate('Ctrl + scroll'); ?></strong></td><td><?php echo I18N::translate('Zoom in/out'); ?></td></tr>

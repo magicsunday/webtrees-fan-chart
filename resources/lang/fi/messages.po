@@ -43,11 +43,11 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr "Napsauta ja vedä"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr "Napsauta henkilöä"
 
@@ -77,7 +77,7 @@ msgstr ""
 "nimelle. \"Automaattinen\" käyttää sukupuun sukunimitradition (islantilainen "
 "lyhentää sukunimet; muut lyhentävät etunimet)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr "Ctrl + vieritys"
 
@@ -218,7 +218,7 @@ msgstr "Äidinpuoleinen"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr "Siirrä kaaviota"
 
@@ -274,11 +274,11 @@ msgstr "Paikan tarkkuus"
 msgid "Re center"
 msgstr "Keskitä uudelleen"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr "Lataa kaavio uudelleen tälle henkilölle"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr "Napsauta hiiren oikealla painikkeella"
 
@@ -290,7 +290,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Näytä jälkeläiset"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr "Näytä henkilön tiedot"
 
@@ -319,6 +319,7 @@ msgid "Show full dates up to generation %s"
 msgstr "Näytä tarkat päivämäärät sukupolveen %s asti"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr "Näytä ohje"
 
@@ -384,7 +385,7 @@ msgstr "Zoomaa näkymää käyttämällä ohjausnäppäintä (Ctrl) + rullauslai
 msgid "Years only"
 msgstr "Vain vuodet"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
 

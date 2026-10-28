@@ -45,11 +45,11 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr "Klicka och dra"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr "Klicka på en person"
 
@@ -79,7 +79,7 @@ msgstr ""
 "fullständiga namnet. \"Automatiskt\" använder trädets efternamnstradition "
 "(isländska förkortar efternamn; allt annat förkortar förnamn)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr "Ctrl + scrolla"
 
@@ -218,7 +218,7 @@ msgstr "Moderlig"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr "Flytta diagrammet"
 
@@ -274,11 +274,11 @@ msgstr "Platsdetaljer"
 msgid "Re center"
 msgstr "Återcentrera"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr "Ladda om diagrammet för den personen"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr "Högerklicka"
 
@@ -290,7 +290,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Visa ättlingar"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr "Visa detaljer om en person"
 
@@ -319,6 +319,7 @@ msgid "Show full dates up to generation %s"
 msgstr "Visa fullständiga datum till generation %s"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr "Visa hjälp"
 
@@ -384,7 +385,7 @@ msgstr "Använd Ctrl + rullen för att zooma in vyn"
 msgid "Years only"
 msgstr "Endast år"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
 

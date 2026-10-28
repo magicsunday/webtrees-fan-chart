@@ -43,11 +43,11 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr "Centre chart on this person"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr ""
 
@@ -74,7 +74,7 @@ msgid ""
 "abbreviates surnames; everything else abbreviates given names)."
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr ""
 
@@ -202,7 +202,7 @@ msgstr ""
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr ""
 
@@ -256,11 +256,11 @@ msgstr ""
 msgid "Re center"
 msgstr "Re-centre"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr ""
 
@@ -272,7 +272,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr ""
 
@@ -297,6 +297,7 @@ msgid "Show full dates up to generation %s"
 msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr ""
 
@@ -359,7 +360,7 @@ msgstr "Use Ctrl+Scroll wheel to zoom the chart"
 msgid "Years only"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr ""
 

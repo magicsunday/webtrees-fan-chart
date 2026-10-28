@@ -43,11 +43,11 @@ msgstr ""
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr "Smella og draga"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr "Smella á einstakling"
 
@@ -77,7 +77,7 @@ msgstr ""
 "fyrir fullt nafn. „Sjálfvirkt“ notar eftirnafnshefð trésins (íslensk hefð "
 "styttir eftirnöfn; aðrar stytta eiginnöfn)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr "Ctrl + skruna"
 
@@ -217,7 +217,7 @@ msgstr "Móðurleg"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr "Færa línuritið"
 
@@ -273,11 +273,11 @@ msgstr "Smáatriði staðar"
 msgid "Re center"
 msgstr "Endurmiðja"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr "Endurhlaða línurit fyrir þann einstakling"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr "Hægri-smella"
 
@@ -289,7 +289,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Sýna afkomendur"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr "Sýna upplýsingar um einstakling"
 
@@ -318,6 +318,7 @@ msgid "Show full dates up to generation %s"
 msgstr "Sýna fulla dagsetningar til kynslóðar %s"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr "Sýna hjálp"
 
@@ -383,7 +384,7 @@ msgstr "Notaðu Ctrl + skruna til að þysja í ættartrénu"
 msgid "Years only"
 msgstr "Aðeins ár"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr "Þysja inn/út"
 

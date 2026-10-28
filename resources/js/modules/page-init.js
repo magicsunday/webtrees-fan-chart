@@ -12,6 +12,7 @@ import {
     Storage,
     syncCollapseToggle,
 } from "@magicsunday/webtrees-chart-lib/chart-core";
+import { initHelpPopover } from "./help-popover.js";
 
 /**
  * Restores a range slider and its output display from localStorage.
@@ -74,6 +75,7 @@ export function initPage(config) {
 
     // Restore collapse state and range sliders
     syncCollapseToggle(storage);
+    initHelpPopover();
 
     initRangeSlider(storage, "fanDegree", "°");
     initRangeSlider(storage, "generations");

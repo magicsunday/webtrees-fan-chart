@@ -43,11 +43,11 @@ msgstr "Automatique (d'après la configuration de l'arbre)"
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Click and drag"
 msgstr "Cliquer et glisser"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Click on a person"
 msgstr "Cliquer sur une personne"
 
@@ -78,7 +78,7 @@ msgstr ""
 "noms de famille de l'arbre (islandais abrège les noms de famille ; le reste "
 "abrège les prénoms)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Ctrl + scroll"
 msgstr "Ctrl + molette"
 
@@ -220,7 +220,7 @@ msgstr "Maternel"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:33
 msgid "Move the chart"
 msgstr "Déplacer le diagramme"
 
@@ -277,11 +277,11 @@ msgstr "Détail du lieu"
 msgid "Re center"
 msgstr "Re centrer"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:34
 msgid "Reload chart for that person"
 msgstr "Recharger le diagramme pour cette personne"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Right-click"
 msgstr "Clic droit"
 
@@ -293,7 +293,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Afficher les descendants"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:30
+#: resources/views/modules/components/buttonbar/help-button.phtml:31
 msgid "Show details of a person"
 msgstr "Afficher les détails d'une personne"
 
@@ -323,6 +323,7 @@ msgid "Show full dates up to generation %s"
 msgstr "Afficher les dates complètes jusqu'à la génération %s"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:18
+#: resources/views/modules/components/buttonbar/help-button.phtml:29
 msgid "Show help"
 msgstr "Afficher l’aide"
 
@@ -388,7 +389,7 @@ msgstr "Utiliser Ctrl + molette pour zoomer dans la vue"
 msgid "Years only"
 msgstr "Années uniquement"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:32
 msgid "Zoom in/out"
 msgstr "Zoom avant/arrière"
 

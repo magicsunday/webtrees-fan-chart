@@ -132,6 +132,8 @@ function setupDom(overrides = {}) {
         <input type="hidden" name="showDescendants" value="0">
         <input type="checkbox" id="showDescendants-1" name="showDescendants" value="1">
         <div id="fan-chart-url"></div>
+        <button class="btn-help" aria-expanded="false" aria-controls="fan-chart-help-popover">Help</button>
+        <div id="fan-chart-help-popover" class="help-popover d-none" role="region"></div>
     `;
 
     window.WebtreesFanChart = {};
@@ -171,6 +173,17 @@ describe("getUrl (via initPage AJAX URL)", () => {
         initPage(defaultConfig);
 
         expect(getAjaxUrl().searchParams.has("showPlaces")).toBe(false);
+    });
+
+    it("wires the help button to its popover", () => {
+        initPage(defaultConfig);
+
+        document.querySelector(".btn-help").click();
+
+        expect(document.getElementById("fan-chart-help-popover").classList.contains("d-none")).toBe(
+            false,
+        );
+        expect(document.querySelector(".btn-help").getAttribute("aria-expanded")).toBe("true");
     });
 
     it("includes showPlaces=0 when storage has showPlaces=false", () => {
