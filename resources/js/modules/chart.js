@@ -88,6 +88,8 @@ export default class Chart {
         this._clearPending = false;
         /** @type {string|null} */
         this._keyboardFocusXref = null;
+        /** @type {Element|null} */
+        this._keyboardFocusSource = null;
     }
 
     /**
@@ -630,13 +632,18 @@ export default class Chart {
 
         if (this._keyboardFocusXref !== null) {
             const xref = this._keyboardFocusXref;
+            const source = this._keyboardFocusSource;
 
             this._keyboardFocusXref = null;
+            this._keyboardFocusSource = null;
 
-            // The update removed the focused arc, which leaves the focus on the page. A control
-            // that the user moved on to while the update was running keeps the focus.
+            // The focus is lost when the update removed the focused arc, and it is stale when the
+            // arc stayed and now shows another person. A control that the user moved on to while
+            // the update was running keeps the focus.
             const focusLost =
-                document.activeElement === null || document.activeElement === document.body;
+                document.activeElement === null ||
+                document.activeElement === document.body ||
+                document.activeElement === source;
 
             if (focusLost) {
                 drawn
@@ -723,6 +730,8 @@ export default class Chart {
         // center person opens its page and draws nothing, and a click of the mouse withdraws the
         // request of an earlier key press.
         this._keyboardFocusXref = byKeyboard && datum.depth !== 0 ? datum.data.data.xref : null;
+        this._keyboardFocusSource =
+            this._keyboardFocusXref === null ? null : document.activeElement;
 
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
         datum.depth === 0
