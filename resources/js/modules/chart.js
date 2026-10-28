@@ -608,6 +608,8 @@ export default class Chart {
         // An update binds new hierarchy objects to the person elements, whether it draws them anew
         // or keeps them. The selection keeps the person it was made with, so the new object
         // of that person is handed to it, which keeps the mark and the focus return working.
+        // The selection is the person and not one arc. A person who is drawn in several arcs is
+        // marked in all of them, and the first of these arcs stands for the person afterwards.
         const selected =
             this._selectedXref === null
                 ? undefined

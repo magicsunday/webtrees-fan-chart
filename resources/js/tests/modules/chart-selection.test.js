@@ -682,6 +682,38 @@ describe("A real chart with the detail panel", () => {
         expect(document.activeElement).toBe(elements[0]);
     });
 
+    test("marks every arc of a person who is drawn twice and returns the focus to the first one after an update", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2"), node("I2", 3)]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+
+        // The later of the two arcs of the person is the one that was clicked
+        chart.personClick(null, d3.select(elements[2]).datum());
+
+        // An update binds new hierarchy objects to the reused arcs
+        d3.select(elements[1]).datum(node("I2"));
+        d3.select(elements[2]).datum(node("I2", 3));
+        chart.bindClickEventListener();
+        chart.restoreFocus();
+
+        expect(elements[0].classList.contains("selected")).toBe(false);
+        expect(elements[1].classList.contains("selected")).toBe(true);
+        expect(elements[2].classList.contains("selected")).toBe(true);
+        expect(document.activeElement).toBe(elements[1]);
+    });
+
+    test("returns the focus to the clicked arc of a person who is drawn twice when no update ran in between", () => {
+        const { chart, elements } = buildRealChart([node("I1"), node("I2"), node("I2", 3)]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, d3.select(elements[2]).datum());
+        chart.restoreFocus();
+
+        expect(document.activeElement).toBe(elements[2]);
+    });
+
     test("leaves the focus alone when the selected person is not in the chart any more", () => {
         const before = node("I1");
         const { chart, elements } = buildRealChart([before]);
