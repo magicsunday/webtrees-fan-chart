@@ -124,11 +124,11 @@ msgstr "Exportera som PNG"
 msgid "Export as SVG"
 msgstr "Exportera som SVG"
 
-#: src/Module.php:130 src/Module.php:243
+#: src/Module.php:130 src/Module.php:242
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:240 src/Module/ChartTrait.php:46
+#: src/Module.php:239 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -222,7 +222,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Flytta diagrammet"
 
-#: src/Module.php:267
+#: src/Module.php:266
 msgid "Move the view with two fingers"
 msgstr "Flytta vyn med två fingrar"
 
@@ -376,7 +376,7 @@ msgstr "Växla mellan helskärm och normal vy"
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:266
+#: src/Module.php:265
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Använd Ctrl + rullen för att zooma in vyn"
 
