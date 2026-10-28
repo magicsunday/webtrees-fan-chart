@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -20,7 +21,7 @@ msgstr ""
 
 #: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
-msgstr "Un grafico a ventaglio degli antenati di una persona."
+msgstr ""
 
 #: src/Configuration.php:842
 msgid "Abbreviate given names first"
@@ -125,12 +126,12 @@ msgstr "Esporta come SVG"
 
 #: src/Module.php:130 src/Module.php:243
 msgid "Fan chart"
-msgstr "Grafico a ventaglio"
+msgstr ""
 
 #: src/Module.php:240 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Grafico a ventaglio di %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"
@@ -150,7 +151,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/form/generations.phtml:23
 msgid "Generations"
-msgstr "Generazioni da visualizzare"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
@@ -374,7 +375,7 @@ msgstr "Passa dalla modalità a schermo intero alla visualizzazione normale"
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
-msgstr "Le preferenze per il modulo \"%s\" sono state aggiornate."
+msgstr ""
 
 #: src/Module.php:266
 msgid "Use Ctrl + scroll to zoom in the view"
@@ -390,7 +391,7 @@ msgstr "Ingrandisci/Riduci"
 
 #: resources/views/modules/fan-chart/config.phtml:134
 msgid "cancel"
-msgstr "cancella"
+msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:111
 msgid "close"
@@ -402,4 +403,4 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
-msgstr "Aggiorna la vista"
+msgstr ""

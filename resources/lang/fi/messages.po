@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -124,12 +125,12 @@ msgstr "Vie SVG-muodossa"
 
 #: src/Module.php:130 src/Module.php:243
 msgid "Fan chart"
-msgstr "Esipolvi-viuhkakaavio"
+msgstr ""
 
 #: src/Module.php:240 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
-msgstr "Esipolvi-viuhkakaavio - %s"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/fan-size.phtml:23
 msgid "Fan size"

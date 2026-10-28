@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -12,17 +13,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Loco-Source-Locale: sv_SE\n"
 "X-Generator: Poedit 3.5\n"
+"X-Loco-Parser: loco_parse_po\n"
+"X-Loco-Source-Locale: sv_SE\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
-"X-Loco-Parser: loco_parse_po\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
 #: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
-msgstr "Ett solfjäderdiagram med en persons förfäder."
+msgstr ""
 
 #: src/Configuration.php:842
 msgid "Abbreviate given names first"
@@ -185,7 +186,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:41
 msgid "Individual"
-msgstr "Individ"
+msgstr ""
 
 #: resources/views/modules/fan-chart/form/details.phtml:34
 msgid ""
