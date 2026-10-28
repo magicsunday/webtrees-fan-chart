@@ -53,7 +53,7 @@ msgstr ""
 
 #: resources/views/modules/fan-chart/form/colors.phtml:23
 msgid "Colors"
-msgstr ""
+msgstr "Colours"
 
 #: resources/views/modules/fan-chart/form/colors.phtml:34
 msgid ""
