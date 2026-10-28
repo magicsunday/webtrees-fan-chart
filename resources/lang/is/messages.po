@@ -23,19 +23,19 @@ msgstr ""
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
-#: src/Configuration.php:842
+#: src/Configuration.php:853
 msgid "Abbreviate given names first"
 msgstr "Stytta eiginnöfn fyrst"
 
-#: src/Configuration.php:843
+#: src/Configuration.php:854
 msgid "Abbreviate surnames first"
 msgstr "Stytta eftirnöfn fyrst"
 
-#: src/Configuration.php:841
+#: src/Configuration.php:852
 msgid "Automatic (based on tree's surname tradition)"
 msgstr "Sjálfvirkt (byggt á eftirnafnshefð trésins)"
 
-#: src/Configuration.php:575
+#: src/Configuration.php:586
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
@@ -140,7 +140,7 @@ msgstr "Skífustærð"
 msgid "Font size"
 msgstr "Leturstærð"
 
-#: src/Configuration.php:576
+#: src/Configuration.php:587
 msgid "Full place name"
 msgstr "Fullt heiti staðar"
 
@@ -197,15 +197,15 @@ msgstr ""
 "(t.d. Martin \"Chalky\" White). Líkir eftir gamla webtrees-hegðuninni fyrir "
 "tré sem geyma gælunöfn í sérstaka GEDCOM NICK-reitinn."
 
-#: src/Configuration.php:577
+#: src/Configuration.php:588
 msgid "Lowest level (e.g. parish)"
 msgstr "Lægsta stig (t.d. sókn)"
 
-#: src/Configuration.php:579
+#: src/Configuration.php:590
 msgid "Lowest three levels"
 msgstr "Þrjú lægstu stig"
 
-#: src/Configuration.php:578
+#: src/Configuration.php:589
 msgid "Lowest two levels"
 msgstr "Tvö lægstu stig"
 
@@ -253,15 +253,15 @@ msgstr ""
 msgid "Paternal"
 msgstr "Föðurleg"
 
-#: src/Configuration.php:580
+#: src/Configuration.php:591
 msgid "Place and country"
 msgstr ""
 
-#: src/Configuration.php:581
+#: src/Configuration.php:592
 msgid "Place and country code (2 letters)"
 msgstr ""
 
-#: src/Configuration.php:582
+#: src/Configuration.php:593
 msgid "Place and country code (3 letters)"
 msgstr ""
 
