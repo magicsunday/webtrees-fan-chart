@@ -410,3 +410,6 @@ msgstr ""
 #: resources/views/modules/fan-chart/page.phtml:68
 msgid "view"
 msgstr ""
+
+msgid "Age"
+msgstr "Alter (probe)"
