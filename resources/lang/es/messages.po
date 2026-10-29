@@ -84,7 +84,7 @@ msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:36
 msgid "Ctrl + scroll"
-msgstr "Ctrl + scroll"
+msgstr ""
 
 #: resources/views/modules/fan-chart/config.phtml:108
 msgid "Date precision"
