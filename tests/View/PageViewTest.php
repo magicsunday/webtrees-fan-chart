@@ -121,10 +121,26 @@ final class PageViewTest extends TestCase
     #[Test]
     public function keepsATranslatedLabelOfTheSubmitButtonInsideItsAttribute(): void
     {
-        $text  = 'Say "more" & <b>less</b>';
+        $text  = 'Say "more" &amp; <b>less</b>';
         $xpath = ViewFixture::xpathOf($this->render('https://example.test/ajax', ['view' => $text]));
 
         self::assertSame($text, ViewFixture::first($xpath, '//input[@type="submit"]')->getAttribute('value'));
+    }
+
+    /**
+     * The label of the close button of the offcanvas is an attribute value too, so it is escaped and
+     * keeps the translated text as one value.
+     */
+    #[Test]
+    public function keepsATranslatedLabelOfTheCloseButtonInsideItsAttribute(): void
+    {
+        $text  = 'Say "close" &amp; <b>now</b>';
+        $xpath = ViewFixture::xpathOf($this->render('https://example.test/ajax', ['close' => $text]));
+
+        self::assertSame(
+            $text,
+            ViewFixture::first($xpath, '//button[contains(concat(" ", @class, " "), " btn-close ")]')->getAttribute('aria-label')
+        );
     }
 
     /**

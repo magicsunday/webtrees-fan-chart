@@ -61,7 +61,7 @@ final class HelpButtonViewTest extends TestCase
     #[Test]
     public function keepsATranslatedTitleAndLabelInsideTheirAttributes(): void
     {
-        $text  = 'Say "help" & <b>more</b>';
+        $text  = 'Say "help" &amp; <b>more</b>';
         $xpath = ViewFixture::xpathOf($this->render(['Show help' => $text]));
 
         $button  = ViewFixture::first($xpath, '//button[contains(concat(" ", @class, " "), " btn-help ")]');

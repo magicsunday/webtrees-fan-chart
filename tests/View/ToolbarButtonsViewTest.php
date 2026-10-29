@@ -54,7 +54,7 @@ final class ToolbarButtonsViewTest extends TestCase
     #[DataProvider('buttonTitles')]
     public function keepsATranslatedTitleInsideItsAttribute(string $view, string $source): void
     {
-        $text  = 'Say "more" & <b>less</b>';
+        $text  = 'Say "more" &amp; <b>less</b>';
         $xpath = ViewFixture::xpathOf($this->render($view, [$source => $text]));
 
         self::assertSame($text, ViewFixture::first($xpath, '//button')->getAttribute('title'));
