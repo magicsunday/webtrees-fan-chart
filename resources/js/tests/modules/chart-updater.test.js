@@ -603,6 +603,35 @@ describe("Update", () => {
         expect(hierarchy.initCalls[0]).toEqual(createNodes());
     });
 
+    test("leaves the tab title empty when the title of the response has no text", async () => {
+        const svg = createSvgWithPersons(["1"]);
+        const update = new Update(svg, defaultConfiguration(), new HierarchyStub());
+
+        document.body.innerHTML = '<h1 class="wt-page-title">Original</h1>';
+        document.title = "Before";
+
+        // A browser lays the detached element out as nothing and gives an empty text, jsdom has no
+        // innerText at all. The stand-in returns a text, so the title may only come from textContent.
+        Object.defineProperty(HTMLElement.prototype, "innerText", {
+            configurable: true,
+            get: () => "from innerText",
+        });
+
+        try {
+            jsonMock.mockResolvedValueOnce({
+                data: createNodes(),
+                title: '<img src="x.png" alt="">',
+            });
+
+            update.update("/update", jest.fn(), jest.fn());
+            await flushPromises();
+
+            expect(document.title).toBe("");
+        } finally {
+            delete HTMLElement.prototype.innerText;
+        }
+    });
+
     test("runs the update without a transition when the user prefers reduced motion", async () => {
         window.matchMedia = jest.fn(() => ({ matches: true }));
 

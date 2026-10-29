@@ -185,7 +185,7 @@ export default class ChartUpdater {
         // Strip HTML tags for the browser tab title
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = data.title;
-        document.title = tempDiv.textContent || tempDiv.innerText || "";
+        document.title = tempDiv.textContent || "";
     }
 
     /**
@@ -436,8 +436,8 @@ export default class ChartUpdater {
         this._svg.defs
             .get()
             .selectAll("path[id^='path-person-'], path[id^='path-marriage-']")
-            .each(function () {
-                const el = /** @type {SVGElement} */ (this);
+            .each((_datum, index, nodes) => {
+                const el = /** @type {SVGElement} */ (nodes[index]);
                 if (!document.querySelector(`textPath[href='#${el.id}']`)) {
                     el.remove();
                 }
@@ -448,8 +448,8 @@ export default class ChartUpdater {
         // clipPath not in the set. Avoids O(n*m) document.querySelector per clipPath.
         const activeClipIds = new Set();
 
-        this._svg.selectAll("image[clip-path]").each(function () {
-            const el = /** @type {SVGElement} */ (this);
+        this._svg.selectAll("image[clip-path]").each((_datum, index, nodes) => {
+            const el = /** @type {SVGElement} */ (nodes[index]);
             const match = el.getAttribute("clip-path")?.match(/url\(#(.+)\)/);
 
             if (match) {
@@ -460,8 +460,8 @@ export default class ChartUpdater {
         this._svg.defs
             .get()
             .selectAll("clipPath[id^='clip-image-']")
-            .each(function () {
-                const el = /** @type {SVGElement} */ (this);
+            .each((_datum, index, nodes) => {
+                const el = /** @type {SVGElement} */ (nodes[index]);
                 if (!activeClipIds.has(el.id)) {
                     el.remove();
                 }
