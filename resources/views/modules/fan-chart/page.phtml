@@ -14,6 +14,7 @@ use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
 use MagicSunday\Webtrees\FanChart\Configuration;
+use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
 
 /**
  * @var array         $id               The unique chart ID
@@ -101,26 +102,15 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 ?>
         </div>
 
-        <aside id="webtrees-fan-detail-panel"
-               class="offcanvas offcanvas-end webtrees-fan-detail-panel d-print-none"
-               tabindex="-1"
-               aria-labelledby="webtrees-fan-detail-panel-title"
-               hidden>
-            <div class="offcanvas-header">
-                <h2 class="offcanvas-title h5" id="webtrees-fan-detail-panel-title" data-panel="title" tabindex="-1"></h2>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="<?php echo e(I18N::translate('close')); ?>"></button>
-            </div>
-            <div class="offcanvas-body">
-                <img class="detail-image" data-panel="image" alt="" hidden>
-                <p class="text-muted" data-panel="hint"><?php echo I18N::translate('Select a person in the chart to see the details here.'); ?></p>
-                <dl class="detail-facts mb-0" data-panel="facts"></dl>
-                <p class="text-muted" data-panel="empty" hidden><?php echo I18N::translate('No details are available for this person.'); ?></p>
-                <div class="d-grid gap-2 mt-3" data-panel="actions" hidden>
-                    <button type="button" class="btn btn-primary btn-sm" data-panel="individual"><?php echo I18N::translate('Open individual page'); ?></button>
-                    <button type="button" class="btn btn-outline-primary btn-sm" data-panel="center"><?php echo I18N::translate('Center chart on this person'); ?></button>
-                </div>
-            </div>
-        </aside>
+        <?php echo view(SharedViews::NAMESPACE . '::detail-panel', [
+            'id'              => 'webtrees-fan-detail-panel',
+            'moduleClass'     => 'webtrees-fan-detail-panel',
+            'closeLabel'      => I18N::translate('close'),
+            'hint'            => I18N::translate('Select a person in the chart to see the details here.'),
+            'emptyText'       => I18N::translate('No details are available for this person.'),
+            'individualLabel' => I18N::translate('Open individual page'),
+            'centerLabel'     => I18N::translate('Center chart on this person'),
+        ]); ?>
     </div>
 </div>
 

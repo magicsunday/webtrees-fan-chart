@@ -46,6 +46,7 @@ final class HelpButtonViewTest extends TestCase
         $button  = ViewFixture::first($xpath, '//button[contains(concat(" ", @class, " "), " btn-help ")]');
         $popover = ViewFixture::first($xpath, '//div[contains(concat(" ", @class, " "), " help-popover ")]');
 
+        self::assertSame('button', $button->getAttribute('type'));
         self::assertSame('false', $button->getAttribute('aria-expanded'));
         self::assertNotSame('', $popover->getAttribute('id'));
         self::assertSame($popover->getAttribute('id'), $button->getAttribute('aria-controls'));
@@ -145,6 +146,7 @@ final class HelpButtonViewTest extends TestCase
     private function render(array $messages = []): string
     {
         EnglishLocaleFixture::install($messages);
+        ViewFixture::register();
 
         ob_start();
 
