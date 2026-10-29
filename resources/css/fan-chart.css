@@ -48,12 +48,14 @@
 }
 
 /*
- * The core theme removes the outline on every focused element, so the keyboard focus needs its own
- * ring. The offset keeps the ring clear of the button, so it contrasts with the button and the page.
+ * The core theme removes the outline on every focused element, and the toolbar buttons do not carry the
+ * btn class that brings the focus ring of the buttons in the forms. The keyboard focus gets the same ring,
+ * a shadow in the focus colour of the button at half opacity. The transparent outline stays invisible in
+ * normal rendering and gives forced colors mode, which paints no shadows, a visible indicator.
  */
 .webtrees-fan-fullscreen-container .btn-chart:focus-visible {
-    outline: 2px solid var(--bs-emphasis-color, rgb(33, 37, 41));
-    outline-offset: 2px;
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-btn-focus-shadow-rgb, 49, 132, 253), 0.5);
 }
 
 .webtrees-fan-fullscreen-container .btn-chart .icon {
