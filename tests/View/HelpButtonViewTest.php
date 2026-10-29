@@ -52,6 +52,23 @@ final class HelpButtonViewTest extends TestCase
     }
 
     /**
+     * A translation can contain a quote, an ampersand or a tag. The title and the label are
+     * attribute values, so both are escaped and keep the translated text as one value.
+     */
+    #[Test]
+    public function keepsATranslatedTitleAndLabelInsideTheirAttributes(): void
+    {
+        $text  = 'Say "help" & <b>more</b>';
+        $xpath = ViewFixture::xpathOf($this->render(['Show help' => $text]));
+
+        $button  = ViewFixture::first($xpath, '//button[contains(concat(" ", @class, " "), " btn-help ")]');
+        $popover = ViewFixture::first($xpath, '//div[contains(concat(" ", @class, " "), " help-popover ")]');
+
+        self::assertSame($text, $button->getAttribute('title'));
+        self::assertSame($text, $popover->getAttribute('aria-label'));
+    }
+
+    /**
      * The popover lists the interactions of both modes of the chart. The entries of the mode with
      * the tooltip start visible, the entries of the mode with the detail panel start hidden, and the
      * page script switches them with the checkbox. The entries for the Tab key, zooming and moving
@@ -112,10 +129,12 @@ final class HelpButtonViewTest extends TestCase
 
     /**
      * Renders the help button.
+     *
+     * @param array<string, string> $messages The translations by source text
      */
-    private function render(): string
+    private function render(array $messages = []): string
     {
-        EnglishLocaleFixture::install();
+        EnglishLocaleFixture::install($messages);
 
         ob_start();
 
