@@ -12,7 +12,12 @@ import {
     Storage,
     syncCollapseToggle,
 } from "@magicsunday/webtrees-chart-lib/chart-core";
-import { initHelpPopover, syncHelpMode } from "./help-popover.js";
+import { initHelpPopover, syncHelpMode } from "@magicsunday/webtrees-chart-lib/infra";
+
+/**
+ * Name of the help mode that is active while the detail panel is off.
+ */
+const HELP_MODE_WITHOUT_PANEL = "tooltip";
 
 /**
  * Restores a range slider and its output display from localStorage.
@@ -241,7 +246,7 @@ export function initPage(config) {
         ],
     });
     setChartAjaxUrl("fan-chart-url", ajaxUrl);
-    syncHelpMode();
+    syncHelpMode(HELP_MODE_WITHOUT_PANEL);
 
     // showDescendants checkbox: persist to storage, restore raw fan degree, AJAX reload.
     // The slider max/value clamping is handled by the shared script in display.phtml
@@ -316,7 +321,7 @@ export function initPage(config) {
             });
 
             setChartAjaxUrl("fan-chart-url", newUrl);
-            syncHelpMode();
+            syncHelpMode(HELP_MODE_WITHOUT_PANEL);
             // window.webtrees is injected by the host page (webtrees core), not
             // declared in our types. Reach for it via an opaque widening cast.
             /** @type {{webtrees: {load: (el: HTMLElement|null, url: string) => void}}} */ (

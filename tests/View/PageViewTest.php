@@ -144,6 +144,46 @@ final class PageViewTest extends TestCase
     }
 
     /**
+     * The panel carries the shared class that the shared CSS is scoped to next to the class of the
+     * module, and every translated text of the page is the text of its own part, so a text that is
+     * swapped, dropped or left unescaped is caught.
+     */
+    #[Test]
+    public function rendersThePanelWithBothClassesAndEveryTranslatedTextAsText(): void
+    {
+        $messages = [
+            'Select a person in the chart to see the details here.' => 'Hint <i>one</i> &amp; "x"',
+            'No details are available for this person.'             => 'Empty <i>two</i> &amp; "y"',
+            'Open individual page'                                  => 'Individual <i>three</i> &amp; "z"',
+            'Center chart on this person'                           => 'Center <i>four</i> &amp; "w"',
+        ];
+
+        $xpath = ViewFixture::xpathOf($this->render('https://example.test/ajax', $messages));
+        $panel = ViewFixture::first($xpath, '//aside[@id="webtrees-fan-detail-panel"]');
+
+        foreach (['webtrees-detail-panel', 'webtrees-fan-detail-panel'] as $class) {
+            self::assertContains($class, explode(' ', $panel->getAttribute('class')), 'the panel carries the class ' . $class);
+        }
+
+        $parts = [
+            'hint'       => 'Select a person in the chart to see the details here.',
+            'empty'      => 'No details are available for this person.',
+            'individual' => 'Open individual page',
+            'center'     => 'Center chart on this person',
+        ];
+
+        foreach ($parts as $part => $source) {
+            self::assertSame(
+                $messages[$source],
+                trim(ViewFixture::first($xpath, '//aside[@id="webtrees-fan-detail-panel"]//*[@data-panel="' . $part . '"]')->textContent),
+                'the part ' . $part . ' shows its translated text as text'
+            );
+        }
+
+        self::assertCount(0, ViewFixture::elements($xpath, '//aside[@id="webtrees-fan-detail-panel"]//i'), 'no translated text is read as markup');
+    }
+
+    /**
      * Renders the page view with the variables of the page action, followed by the scripts that the
      * view pushed onto the javascript stack.
      *

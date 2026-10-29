@@ -29,6 +29,8 @@ use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -36,6 +38,7 @@ use Psr\Http\Message\ResponseFactoryInterface;
 
 use function in_array;
 use function ksort;
+use function view;
 
 /**
  * Validates module metadata exposure and chart helpers.
@@ -69,6 +72,33 @@ final class ModuleTest extends TestCase
         self::assertSame('menu-chart-fanchart', $module->chartMenuClass());
         self::assertStringContainsString('Example Person', $module->chartTitle($individual));
         self::assertStringContainsString('/route/webtrees-fan-chart?', $module->chartUrl($individual));
+    }
+
+    /**
+     * Pins that booting the module makes the shared views of module-base renderable under their
+     * own namespace. The registration is static state, so the test runs in a process of its own,
+     * where nothing else has registered the namespace.
+     */
+    #[Test]
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
+    public function bootRegistersTheSharedViewsOfTheModuleBase(): void
+    {
+        $this->registerRouteFactory();
+        EnglishLocaleFixture::install();
+
+        $module = new Module(self::createStub(ChartService::class), new DataFacade());
+        $module->setName('webtrees-fan-chart');
+        $module->boot();
+
+        $markup = view('webtrees-module-base::help-popover', [
+            'id'         => 'booted-help-popover',
+            'label'      => 'Show help',
+            'rows'       => [['key' => 'Tab key', 'text' => 'Move between the persons']],
+            'activeMode' => null,
+        ]);
+
+        self::assertStringContainsString('id="booted-help-popover"', $markup);
     }
 
     /**

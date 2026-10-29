@@ -34,6 +34,7 @@ use MagicSunday\Webtrees\FanChart\Module\ChartTrait;
 use MagicSunday\Webtrees\FanChart\Module\ConfigTrait;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Traits\ModuleCustomTrait;
+use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
 use Override;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -103,7 +104,7 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
 
     /**
      * Registers the chart route, allows POST on it, and registers the Blade
-     * namespace and the custom chart view override.
+     * namespace, the custom chart view override and the shared views of module-base.
      *
      * @throws ImmutableProperty
      * @throws RouteAlreadyExists
@@ -117,6 +118,7 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
             ->allows(RequestMethodInterface::METHOD_POST);
 
         View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
+        SharedViews::register();
     }
 
     /**

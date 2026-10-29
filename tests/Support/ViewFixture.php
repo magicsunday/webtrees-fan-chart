@@ -15,6 +15,7 @@ use DOMDocument;
 use DOMElement;
 use DOMXPath;
 use Fisharebest\Webtrees\View;
+use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
 use PHPUnit\Framework\AssertionFailedError;
 
 use function libxml_clear_errors;
@@ -41,14 +42,15 @@ final class ViewFixture
     private const string STUB_NAMESPACE = 'fan-test';
 
     /**
-     * Registers the views of the module and redirects the core components that they use to stand-ins.
-     * The stand-ins keep the parts that the tests look at: the name, the value and the checked state of
-     * a checkbox.
+     * Registers the views of the module and of the module base and redirects the core components that
+     * they use to stand-ins. The stand-ins keep the parts that the tests look at: the name, the value and
+     * the checked state of a checkbox.
      */
     public static function register(): void
     {
         View::registerNamespace(self::MODULE_NAME, __DIR__ . '/../../resources/views/');
         View::registerNamespace(self::STUB_NAMESPACE, __DIR__ . '/views/');
+        SharedViews::register();
 
         View::registerCustomView('::components/checkbox', self::STUB_NAMESPACE . '::checkbox');
         View::registerCustomView('::components/select-individual', self::STUB_NAMESPACE . '::select-individual');

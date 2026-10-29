@@ -83,10 +83,12 @@ of two ways:
 
 **Way A — drop-in (no code change).** Download
 [`webtrees-module-base`](https://github.com/magicsunday/webtrees-module-base) and
-copy its `src/` to the location this module's `module.php` already expects:
+copy its `src/` and `resources/views/` to the location this module's `module.php`
+already expects:
 
 ```text
 modules_v4/webtrees-fan-chart/vendor/magicsunday/webtrees-module-base/src/…
+modules_v4/webtrees-fan-chart/vendor/magicsunday/webtrees-module-base/resources/views/…
 ```
 
 **Way B — shared copy (one edit).** Place `webtrees-module-base` next to this
