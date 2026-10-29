@@ -11,14 +11,17 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test\View;
 
+use DOMElement;
 use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\ViewFixture;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function array_map;
 use function ob_get_clean;
 use function ob_start;
+use function trim;
 
 /**
  * Renders the help button of the toolbar with its popover.
@@ -85,7 +88,14 @@ final class HelpButtonViewTest extends TestCase
 
         self::assertNotSame([], $tooltip);
         self::assertNotSame([], $panel);
-        self::assertCount(3, $both, 'moving between the persons, zooming and moving apply to both modes');
+        self::assertSame(
+            ['Tab key', 'Ctrl + scroll', 'Click and drag'],
+            array_map(
+                static fn (DOMElement $label): string => trim($label->textContent),
+                ViewFixture::elements($xpath, '//tr[not(@data-help-mode)]/td[1]/strong'),
+            ),
+            'moving between the persons, zooming and moving apply to both modes',
+        );
 
         foreach ($tooltip as $row) {
             self::assertStringNotContainsString('d-none', $row->getAttribute('class'));
