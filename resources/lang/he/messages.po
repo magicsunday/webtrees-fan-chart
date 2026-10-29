@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:142
+#: src/Module.php:144
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -39,19 +39,19 @@ msgstr "אוטומטי (על פי מסורת שם המשפחה של העץ)"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:120
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:37
+#: resources/views/modules/components/buttonbar/help-button.phtml:28
 msgid "Click and drag"
 msgstr "לחיצה וגרירה"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:23
 msgid "Click on a person"
 msgstr "לחיצה על אדם"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Click or Enter on a person"
 msgstr ""
 
@@ -81,7 +81,7 @@ msgstr ""
 "\"אוטומטי\" משתמש במסורת שם המשפחה של העץ (איסלנדית מקצרת שמות משפחה; כל "
 "השאר מקצרים שמות פרטיים)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:36
+#: resources/views/modules/components/buttonbar/help-button.phtml:27
 msgid "Ctrl + scroll"
 msgstr "Ctrl + גלילה"
 
@@ -93,7 +93,7 @@ msgstr "דיוק תאריכים"
 msgid "Details"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:35
+#: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Details panel"
 msgstr ""
 
@@ -129,11 +129,11 @@ msgstr "ייצא כ-PNG"
 msgid "Export as SVG"
 msgstr "ייצא כ-SVG"
 
-#: src/Module.php:130 src/Module.php:242
+#: src/Module.php:132 src/Module.php:244
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:239 src/Module/ChartTrait.php:46
+#: src/Module.php:241 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -162,7 +162,7 @@ msgstr ""
 msgid "Hide empty segments"
 msgstr "הסתר פלחים ריקים"
 
-#: resources/views/modules/fan-chart/page.phtml:80
+#: resources/views/modules/fan-chart/page.phtml:81
 msgid "Hide more options"
 msgstr "הסתר אפשרויות נוספות"
 
@@ -188,7 +188,7 @@ msgid ""
 msgstr ""
 "תמונות מוצגות רק אם קטע הקשת רחב מספיק. תמונות עבור צאצאים עדיין לא זמינות."
 
-#: resources/views/modules/fan-chart/page.phtml:41
+#: resources/views/modules/fan-chart/page.phtml:42
 msgid "Individual"
 msgstr ""
 
@@ -222,15 +222,15 @@ msgstr "אימהי"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Move between the persons"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:37
+#: resources/views/modules/components/buttonbar/help-button.phtml:28
 msgid "Move the chart"
 msgstr "הזזת התרשים"
 
-#: src/Module.php:266
+#: src/Module.php:268
 msgid "Move the view with two fingers"
 msgstr "הזז את התצוגה בשתי אצבעות"
 
@@ -238,7 +238,7 @@ msgstr "הזז את התצוגה בשתי אצבעות"
 msgid "Name abbreviation when space is tight"
 msgstr "קיצור שם כאשר המקום מצומצם"
 
-#: resources/views/modules/fan-chart/page.phtml:117
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "No details are available for this person."
 msgstr ""
 
@@ -246,11 +246,11 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "מספר הרמות הפנימיות"
 
-#: resources/views/modules/fan-chart/page.phtml:119
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Open individual page"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:35
+#: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
@@ -286,15 +286,15 @@ msgstr "פירוט מקום"
 msgid "Re center"
 msgstr "מרכז מחדש"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:23
 msgid "Reload chart for that person"
 msgstr "טעינת התרשים מחדש עבור אותו אדם"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:22
 msgid "Right-click"
 msgstr "לחיצה ימנית"
 
-#: resources/views/modules/fan-chart/page.phtml:115
+#: resources/views/modules/fan-chart/page.phtml:109
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -302,7 +302,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "הצג צאצאים"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:22
 msgid "Show details of a person"
 msgstr "הצגת פרטי אדם"
 
@@ -329,8 +329,7 @@ msgstr ""
 msgid "Show full dates up to generation %s"
 msgstr "הצג תאריכים מלאים עד דור %s"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:18
-#: resources/views/modules/components/buttonbar/help-button.phtml:29
+#: resources/views/modules/components/buttonbar/help-button.phtml:19
 msgid "Show help"
 msgstr "הצג עזרה"
 
@@ -338,7 +337,7 @@ msgstr "הצג עזרה"
 msgid "Show images only"
 msgstr "הצג תמונות בלבד"
 
-#: resources/views/modules/fan-chart/page.phtml:79
+#: resources/views/modules/fan-chart/page.phtml:80
 msgid "Show more options"
 msgstr "הצג אפשרויות נוספות"
 
@@ -362,7 +361,7 @@ msgstr "הצג תאריכי נישואי הורים"
 msgid "Show places"
 msgstr "הצג מקומות"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Show the details of the person in the panel"
 msgstr ""
 
@@ -386,7 +385,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "החלף בין מסך מלא לתצוגה רגילה"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Tab key"
 msgstr ""
 
@@ -395,7 +394,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:265
+#: src/Module.php:267
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "השתמש ב- Ctrl + גלילה כדי להגדיל את התצוגה"
 
@@ -403,7 +402,7 @@ msgstr "השתמש ב- Ctrl + גלילה כדי להגדיל את התצוגה"
 msgid "Years only"
 msgstr "שנים בלבד"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:36
+#: resources/views/modules/components/buttonbar/help-button.phtml:27
 msgid "Zoom in/out"
 msgstr "הגדלה/הקטנה"
 
@@ -411,7 +410,7 @@ msgstr "הגדלה/הקטנה"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:108
 msgid "close"
 msgstr ""
 
@@ -419,6 +418,6 @@ msgstr ""
 msgid "save"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:68
+#: resources/views/modules/fan-chart/page.phtml:69
 msgid "view"
 msgstr ""

@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:142
+#: src/Module.php:144
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -39,19 +39,19 @@ msgstr "स्वचालित (वृक्ष की उपनाम पर�
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:120
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:37
+#: resources/views/modules/components/buttonbar/help-button.phtml:28
 msgid "Click and drag"
 msgstr "क्लिक करें और खींचें"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:23
 msgid "Click on a person"
 msgstr "किसी व्यक्ति पर क्लिक करें"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Click or Enter on a person"
 msgstr ""
 
@@ -81,7 +81,7 @@ msgstr ""
 "होगा। \"स्वचालित\" वृक्ष की उपनाम परंपरा का उपयोग करता है (आइसलैंडिक उपनामों को "
 "संक्षिप्त करता है; बाकी सभी प्रदत्त नामों को संक्षिप्त करते हैं)।"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:36
+#: resources/views/modules/components/buttonbar/help-button.phtml:27
 msgid "Ctrl + scroll"
 msgstr "Ctrl + स्क्रॉल"
 
@@ -93,7 +93,7 @@ msgstr "तारीख सटीकता"
 msgid "Details"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:35
+#: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Details panel"
 msgstr ""
 
@@ -129,11 +129,11 @@ msgstr "PNG निकालें"
 msgid "Export as SVG"
 msgstr "SVG निकालें"
 
-#: src/Module.php:130 src/Module.php:242
+#: src/Module.php:132 src/Module.php:244
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:239 src/Module/ChartTrait.php:46
+#: src/Module.php:241 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -162,7 +162,7 @@ msgstr ""
 msgid "Hide empty segments"
 msgstr "खाली खंड छिपाएं"
 
-#: resources/views/modules/fan-chart/page.phtml:80
+#: resources/views/modules/fan-chart/page.phtml:81
 msgid "Hide more options"
 msgstr "अधिक विकल्प छिपाएँ"
 
@@ -189,7 +189,7 @@ msgstr ""
 "छवियाँ केवल तभी दिखाई जाती हैं जब चाप खंड पर्याप्त चौड़ा हो। वंशजों के लिए छवियाँ अभी तक "
 "उपलब्ध नहीं हैं।"
 
-#: resources/views/modules/fan-chart/page.phtml:41
+#: resources/views/modules/fan-chart/page.phtml:42
 msgid "Individual"
 msgstr ""
 
@@ -223,15 +223,15 @@ msgstr "मातृक"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Move between the persons"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:37
+#: resources/views/modules/components/buttonbar/help-button.phtml:28
 msgid "Move the chart"
 msgstr "चार्ट को स्थानांतरित करें"
 
-#: src/Module.php:266
+#: src/Module.php:268
 msgid "Move the view with two fingers"
 msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
 
@@ -239,7 +239,7 @@ msgstr "दो उंगलियों से दृश्य को स्थ�
 msgid "Name abbreviation when space is tight"
 msgstr "जब स्थान सीमित हो तो नाम का संक्षिप्तीकरण"
 
-#: resources/views/modules/fan-chart/page.phtml:117
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "No details are available for this person."
 msgstr ""
 
@@ -247,11 +247,11 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "आंतरिक स्तरों की संख्या"
 
-#: resources/views/modules/fan-chart/page.phtml:119
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Open individual page"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:35
+#: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
@@ -287,15 +287,15 @@ msgstr "स्थान विवरण"
 msgid "Re center"
 msgstr "पुनः केंद्रित करें"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:23
 msgid "Reload chart for that person"
 msgstr "उस व्यक्ति के लिए चार्ट पुनः लोड करें"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:22
 msgid "Right-click"
 msgstr "राइट-क्लिक"
 
-#: resources/views/modules/fan-chart/page.phtml:115
+#: resources/views/modules/fan-chart/page.phtml:109
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -303,7 +303,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "वंशज दिखाएँ"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:22
 msgid "Show details of a person"
 msgstr "किसी व्यक्ति का विवरण दिखाएँ"
 
@@ -330,8 +330,7 @@ msgstr ""
 msgid "Show full dates up to generation %s"
 msgstr "पीढ़ी %s तक पूर्ण तिथियाँ दिखाएँ"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:18
-#: resources/views/modules/components/buttonbar/help-button.phtml:29
+#: resources/views/modules/components/buttonbar/help-button.phtml:19
 msgid "Show help"
 msgstr "मदद दिखाएँ"
 
@@ -339,7 +338,7 @@ msgstr "मदद दिखाएँ"
 msgid "Show images only"
 msgstr "केवल छवियाँ दिखाएँ"
 
-#: resources/views/modules/fan-chart/page.phtml:79
+#: resources/views/modules/fan-chart/page.phtml:80
 msgid "Show more options"
 msgstr "अधिक विकल्प दिखाएँ"
 
@@ -363,7 +362,7 @@ msgstr "माता-पिता की विवाह तिथियाँ �
 msgid "Show places"
 msgstr "स्थान दिखाएँ"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Show the details of the person in the panel"
 msgstr ""
 
@@ -387,7 +386,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "पूर्ण स्क्रीन और सामान्य दृश्य के बीच स्विच करें"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Tab key"
 msgstr ""
 
@@ -396,7 +395,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:265
+#: src/Module.php:267
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Ctrl + Scroll से ज़ूम इन करें"
 
@@ -404,7 +403,7 @@ msgstr "Ctrl + Scroll से ज़ूम इन करें"
 msgid "Years only"
 msgstr "केवल वर्ष"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:36
+#: resources/views/modules/components/buttonbar/help-button.phtml:27
 msgid "Zoom in/out"
 msgstr "ज़ूम इन/आउट"
 
@@ -412,7 +411,7 @@ msgstr "ज़ूम इन/आउट"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:108
 msgid "close"
 msgstr ""
 
@@ -420,6 +419,6 @@ msgstr ""
 msgid "save"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:68
+#: resources/views/modules/fan-chart/page.phtml:69
 msgid "view"
 msgstr ""

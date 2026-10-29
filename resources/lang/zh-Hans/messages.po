@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:142
+#: src/Module.php:144
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -39,19 +39,19 @@ msgstr "自动（根据族谱的姓氏传统）"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:120
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:37
+#: resources/views/modules/components/buttonbar/help-button.phtml:28
 msgid "Click and drag"
 msgstr "点击并拖动"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:23
 msgid "Click on a person"
 msgstr "点击某人"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Click or Enter on a person"
 msgstr ""
 
@@ -79,7 +79,7 @@ msgstr ""
 "控制当弧形对完整姓名而言过窄时，先缩写哪个名字部分。“自动”使用族谱的姓氏传统"
 "（冰岛语缩写姓氏；其他所有传统缩写名字）。"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:36
+#: resources/views/modules/components/buttonbar/help-button.phtml:27
 msgid "Ctrl + scroll"
 msgstr "Ctrl + 滚动"
 
@@ -91,7 +91,7 @@ msgstr "日期精度"
 msgid "Details"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:35
+#: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Details panel"
 msgstr ""
 
@@ -126,11 +126,11 @@ msgstr "导出为 PNG"
 msgid "Export as SVG"
 msgstr "导出为 SVG"
 
-#: src/Module.php:130 src/Module.php:242
+#: src/Module.php:132 src/Module.php:244
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:239 src/Module/ChartTrait.php:46
+#: src/Module.php:241 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -159,7 +159,7 @@ msgstr ""
 msgid "Hide empty segments"
 msgstr "隐藏空白扇段"
 
-#: resources/views/modules/fan-chart/page.phtml:80
+#: resources/views/modules/fan-chart/page.phtml:81
 msgid "Hide more options"
 msgstr "隐藏更多选项"
 
@@ -184,7 +184,7 @@ msgid ""
 "descendants are not yet available."
 msgstr "仅当弧段足够宽时才显示图片。后代的图片尚不可用。"
 
-#: resources/views/modules/fan-chart/page.phtml:41
+#: resources/views/modules/fan-chart/page.phtml:42
 msgid "Individual"
 msgstr ""
 
@@ -218,15 +218,15 @@ msgstr "母系"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Move between the persons"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:37
+#: resources/views/modules/components/buttonbar/help-button.phtml:28
 msgid "Move the chart"
 msgstr "移动图表"
 
-#: src/Module.php:266
+#: src/Module.php:268
 msgid "Move the view with two fingers"
 msgstr "用两个手指移动视图"
 
@@ -234,7 +234,7 @@ msgstr "用两个手指移动视图"
 msgid "Name abbreviation when space is tight"
 msgstr "空间不足时的姓名缩写方式"
 
-#: resources/views/modules/fan-chart/page.phtml:117
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "No details are available for this person."
 msgstr ""
 
@@ -242,11 +242,11 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "内圈级数"
 
-#: resources/views/modules/fan-chart/page.phtml:119
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Open individual page"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:35
+#: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
@@ -280,15 +280,15 @@ msgstr "地点详情"
 msgid "Re center"
 msgstr "重新居中"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:23
 msgid "Reload chart for that person"
 msgstr "为该人重新加载图表"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:22
 msgid "Right-click"
 msgstr "右键点击"
 
-#: resources/views/modules/fan-chart/page.phtml:115
+#: resources/views/modules/fan-chart/page.phtml:109
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -296,7 +296,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "显示后代"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:22
 msgid "Show details of a person"
 msgstr "显示某人的详细信息"
 
@@ -322,8 +322,7 @@ msgstr ""
 msgid "Show full dates up to generation %s"
 msgstr "显示完整日期至第 %s 代"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:18
-#: resources/views/modules/components/buttonbar/help-button.phtml:29
+#: resources/views/modules/components/buttonbar/help-button.phtml:19
 msgid "Show help"
 msgstr "显示帮助"
 
@@ -331,7 +330,7 @@ msgstr "显示帮助"
 msgid "Show images only"
 msgstr "仅显示图片"
 
-#: resources/views/modules/fan-chart/page.phtml:79
+#: resources/views/modules/fan-chart/page.phtml:80
 msgid "Show more options"
 msgstr "显示更多选项"
 
@@ -355,7 +354,7 @@ msgstr "显示父母结婚日期"
 msgid "Show places"
 msgstr "显示地点"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Show the details of the person in the panel"
 msgstr ""
 
@@ -379,7 +378,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "切换全屏与普通视图"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Tab key"
 msgstr ""
 
@@ -388,7 +387,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:265
+#: src/Module.php:267
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "按住Ctrl键滚动鼠标滚轮放大缩小"
 
@@ -396,7 +395,7 @@ msgstr "按住Ctrl键滚动鼠标滚轮放大缩小"
 msgid "Years only"
 msgstr "仅显示年份"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:36
+#: resources/views/modules/components/buttonbar/help-button.phtml:27
 msgid "Zoom in/out"
 msgstr "放大/缩小"
 
@@ -404,7 +403,7 @@ msgstr "放大/缩小"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:108
 msgid "close"
 msgstr ""
 
@@ -412,6 +411,6 @@ msgstr ""
 msgid "save"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:68
+#: resources/views/modules/fan-chart/page.phtml:69
 msgid "view"
 msgstr ""

@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:142
+#: src/Module.php:144
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -39,19 +39,19 @@ msgstr "Automático (com base na tradição de sobrenomes da árvore)"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:120
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "Center chart on this person"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:37
+#: resources/views/modules/components/buttonbar/help-button.phtml:28
 msgid "Click and drag"
 msgstr "Clicar e arrastar"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:23
 msgid "Click on a person"
 msgstr "Clicar num indivíduo"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Click or Enter on a person"
 msgstr ""
 
@@ -81,7 +81,7 @@ msgstr ""
 "estreito para o nome completo. \"Automático\" usa a tradição de sobrenomes "
 "da árvore (islandês abrevia sobrenomes; todo o resto abrevia nomes próprios)."
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:36
+#: resources/views/modules/components/buttonbar/help-button.phtml:27
 msgid "Ctrl + scroll"
 msgstr "Ctrl + roda do rato"
 
@@ -93,7 +93,7 @@ msgstr "Precisão das datas"
 msgid "Details"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:35
+#: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Details panel"
 msgstr ""
 
@@ -131,11 +131,11 @@ msgstr "Exportar como PNG"
 msgid "Export as SVG"
 msgstr "Exportar como SVG"
 
-#: src/Module.php:130 src/Module.php:242
+#: src/Module.php:132 src/Module.php:244
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:239 src/Module/ChartTrait.php:46
+#: src/Module.php:241 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -164,7 +164,7 @@ msgstr ""
 msgid "Hide empty segments"
 msgstr "Esconder os segmentos vazios"
 
-#: resources/views/modules/fan-chart/page.phtml:80
+#: resources/views/modules/fan-chart/page.phtml:81
 msgid "Hide more options"
 msgstr "Esconder as opções adicionais"
 
@@ -191,7 +191,7 @@ msgstr ""
 "As imagens apenas são mostradas se o segmento do arco tiver espaço "
 "suficiente. As imagens para descendentes ainda não estão disponíveis."
 
-#: resources/views/modules/fan-chart/page.phtml:41
+#: resources/views/modules/fan-chart/page.phtml:42
 msgid "Individual"
 msgstr ""
 
@@ -225,15 +225,15 @@ msgstr "Materno"
 msgid "Modules"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Move between the persons"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:37
+#: resources/views/modules/components/buttonbar/help-button.phtml:28
 msgid "Move the chart"
 msgstr "Mover o diagrama"
 
-#: src/Module.php:266
+#: src/Module.php:268
 msgid "Move the view with two fingers"
 msgstr "Mover a vista com dois dedos"
 
@@ -241,7 +241,7 @@ msgstr "Mover a vista com dois dedos"
 msgid "Name abbreviation when space is tight"
 msgstr "Abreviatura do nome quando o espaço é limitado"
 
-#: resources/views/modules/fan-chart/page.phtml:117
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "No details are available for this person."
 msgstr ""
 
@@ -249,11 +249,11 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "Número de níveis interiores"
 
-#: resources/views/modules/fan-chart/page.phtml:119
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Open individual page"
 msgstr ""
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:35
+#: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
@@ -289,15 +289,15 @@ msgstr "Detalhe do local"
 msgid "Re center"
 msgstr "Recentrar"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:32
+#: resources/views/modules/components/buttonbar/help-button.phtml:23
 msgid "Reload chart for that person"
 msgstr "Recarregar o diagrama para esse indivíduo"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:22
 msgid "Right-click"
 msgstr "Clique com o botão direito do rato"
 
-#: resources/views/modules/fan-chart/page.phtml:115
+#: resources/views/modules/fan-chart/page.phtml:109
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -305,7 +305,7 @@ msgstr ""
 msgid "Show descendants"
 msgstr "Mostrar descendentes"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:31
+#: resources/views/modules/components/buttonbar/help-button.phtml:22
 msgid "Show details of a person"
 msgstr "Mostrar os detalhes de um indivíduo"
 
@@ -333,8 +333,7 @@ msgstr ""
 msgid "Show full dates up to generation %s"
 msgstr "Mostrar as datas completas até à geração %s"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:18
-#: resources/views/modules/components/buttonbar/help-button.phtml:29
+#: resources/views/modules/components/buttonbar/help-button.phtml:19
 msgid "Show help"
 msgstr "Mostrar ajuda"
 
@@ -342,7 +341,7 @@ msgstr "Mostrar ajuda"
 msgid "Show images only"
 msgstr "Mostrar apenas imagens"
 
-#: resources/views/modules/fan-chart/page.phtml:79
+#: resources/views/modules/fan-chart/page.phtml:80
 msgid "Show more options"
 msgstr "Mostrar as opções adicionais"
 
@@ -366,7 +365,7 @@ msgstr "Mostrar as datas de casamento dos pais"
 msgid "Show places"
 msgstr "Mostrar os locais"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:34
+#: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Show the details of the person in the panel"
 msgstr ""
 
@@ -391,7 +390,7 @@ msgstr ""
 msgid "Switch between full screen mode and normal view"
 msgstr "Alternar entre vista em ecrã completo e vista normal"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:33
+#: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Tab key"
 msgstr ""
 
@@ -400,7 +399,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:265
+#: src/Module.php:267
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Usar Ctrl + roda do rato para aproximar ou afastar"
 
@@ -408,7 +407,7 @@ msgstr "Usar Ctrl + roda do rato para aproximar ou afastar"
 msgid "Years only"
 msgstr "Apenas anos"
 
-#: resources/views/modules/components/buttonbar/help-button.phtml:36
+#: resources/views/modules/components/buttonbar/help-button.phtml:27
 msgid "Zoom in/out"
 msgstr "Aproximar/afastar"
 
@@ -416,7 +415,7 @@ msgstr "Aproximar/afastar"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:108
 msgid "close"
 msgstr ""
 
@@ -424,6 +423,6 @@ msgstr ""
 msgid "save"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:68
+#: resources/views/modules/fan-chart/page.phtml:69
 msgid "view"
 msgstr ""
