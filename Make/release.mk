@@ -186,8 +186,10 @@ dist:
 	fi
 	@mkdir -p $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base
 	@cp -rL $(MODULE_BASE_PATH)/src $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/src
+	@mkdir -p $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/resources
+	@cp -rL $(MODULE_BASE_PATH)/resources/views $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/resources/views
 	@cp -L $(MODULE_BASE_PATH)/LICENSE $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/LICENSE
-	@echo "  Bundled $(MODULE_BASE_PKG) (src + LICENSE only) into vendor/"
+	@echo "  Bundled $(MODULE_BASE_PKG) (src, shared views and LICENSE only) into vendor/"
 	@find $(MODULE_NAME)/vendor -name composer.json -delete
 	@rm -f $(MODULE_NAME)/composer.json
 	@echo "  Scoping module-base namespace with prefix $(SCOPE_NS)..."
@@ -226,6 +228,7 @@ dist-smoke:
 		vendor/magicsunday/webtrees-module-base/src/Model/ \
 		vendor/magicsunday/webtrees-module-base/src/Module/ \
 		vendor/magicsunday/webtrees-module-base/src/Processor/ \
+		vendor/magicsunday/webtrees-module-base/resources/views/ \
 	; do \
 		grep -qE "^$$prefix" <<<"$$paths" || { echo "Error: required prefix has no entries in zip: $$prefix"; exit 1; }; \
 	done; \
