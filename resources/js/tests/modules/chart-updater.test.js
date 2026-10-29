@@ -610,15 +610,26 @@ describe("Update", () => {
         document.body.innerHTML = '<h1 class="wt-page-title">Original</h1>';
         document.title = "Before";
 
-        jsonMock.mockResolvedValueOnce({
-            data: createNodes(),
-            title: '<img src="x.png" alt="">',
+        // A browser lays the detached element out as nothing and gives an empty text, jsdom has no
+        // innerText at all. The stand-in returns a text, so the title may only come from textContent.
+        Object.defineProperty(HTMLElement.prototype, "innerText", {
+            configurable: true,
+            get: () => "from innerText",
         });
 
-        update.update("/update", jest.fn(), jest.fn());
-        await flushPromises();
+        try {
+            jsonMock.mockResolvedValueOnce({
+                data: createNodes(),
+                title: '<img src="x.png" alt="">',
+            });
 
-        expect(document.title).toBe("");
+            update.update("/update", jest.fn(), jest.fn());
+            await flushPromises();
+
+            expect(document.title).toBe("");
+        } finally {
+            delete HTMLElement.prototype.innerText;
+        }
     });
 
     test("runs the update without a transition when the user prefers reduced motion", async () => {

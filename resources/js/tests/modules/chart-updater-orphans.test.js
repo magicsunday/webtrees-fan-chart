@@ -44,17 +44,20 @@ function idsLeftAfterUpdateDone(markup) {
 
 describe("Update cleanup of orphaned definitions", () => {
     test("removes a path definition that no text path refers to any more", () => {
+        // path-person-10 starts with the id of the orphan path-person-1, and other-path is no
+        // definition of the chart, so the match has to be exact and the selector has to stay narrow
         const ids = idsLeftAfterUpdateDone(`
             <defs>
                 <path id="path-person-1"></path>
-                <path id="path-person-2"></path>
+                <path id="path-person-10"></path>
                 <path id="path-marriage-3"></path>
+                <path id="other-path"></path>
             </defs>
             <g class="personGroup">
-                <g class="person"><g class="content"><text><textPath href="#path-person-2"></textPath></text></g></g>
+                <g class="person"><g class="content"><text><textPath href="#path-person-10"></textPath></text></g></g>
             </g>`);
 
-        expect(ids).toEqual(["path-person-2"]);
+        expect(ids).toEqual(["path-person-10", "other-path"]);
     });
 
     test("removes a clip path that no image uses any more and keeps the used one", () => {
