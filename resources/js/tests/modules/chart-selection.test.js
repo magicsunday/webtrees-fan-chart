@@ -509,6 +509,7 @@ describe("A real chart with the detail panel", () => {
         document.body.append(button);
         chart.update = jest.fn();
         chart.bindClickEventListener();
+        elements[1].focus();
         elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
 
         // The user moves on to another control before the chart is drawn again

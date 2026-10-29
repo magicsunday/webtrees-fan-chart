@@ -727,13 +727,13 @@ export default class Chart {
             return;
         }
 
-        // The arcs are drawn again by an update, so the focus of a key press would be lost with the
-        // old arc. It is given to the arc of the same person once the chart is bound again. The
-        // center person opens its page and draws nothing, and a click of the mouse withdraws the
-        // request of an earlier key press.
+        // An update either removes the focused arc, and the focus is lost with it, or keeps the arc
+        // and hands it another person, and the focus then sits on the wrong person. In both cases
+        // it is given to the arc of the requested person once the chart is bound again. The center
+        // person opens its page and draws nothing, and a click of the mouse withdraws the request
+        // of an earlier key press.
         this._keyboardFocusXref = byKeyboard && datum.depth !== 0 ? datum.data.data.xref : null;
-        this._keyboardFocusSource =
-            this._keyboardFocusXref === null ? null : document.activeElement;
+        this._keyboardFocusSource = document.activeElement;
 
         // Trigger either "update" or "redirectToIndividual" method on click depending on person in chart
         datum.depth === 0
