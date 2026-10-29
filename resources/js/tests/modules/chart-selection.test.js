@@ -138,6 +138,9 @@ describe("Chart click binding", () => {
             data() {
                 return this.nodes;
             },
+            node() {
+                return null;
+            },
             on(event, handler) {
                 // Taking a handler away binds nothing
                 if (handler !== null) {
@@ -742,5 +745,108 @@ describe("A real chart with the detail panel", () => {
         chart.bindClickEventListener();
 
         expect(elements[0].classList.contains("selected")).toBe(false);
+    });
+
+    test("gives the focus back to a drawn arc of the selected person when an undrawn one comes first", () => {
+        // With names off only the inner generations are drawn, and an update can leave an undrawn
+        // arc of the person ahead of its drawn arc in the document
+        const undrawn = node("I9", 5);
+        const drawn = node("I9", 2);
+        const { chart, elements } = buildRealChart([undrawn, drawn], true, {
+            showNames: false,
+            innerArcs: 4,
+        });
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, drawn);
+        chart.bindClickEventListener();
+        chart.restoreFocus();
+
+        expect(document.activeElement).toBe(elements[1]);
+    });
+
+    test("gives the focus after a key press to the first drawn arc of the person only", () => {
+        const { chart, elements } = buildRealChart(
+            [node("I1"), node("I2", 3), node("I2", 4)],
+            false,
+        );
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[2].focus();
+        elements[2].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        // The updater removes the focused arc, and the person is drawn in two arcs afterwards
+        elements[2].blur();
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(elements[1]);
+    });
+
+    test("gives the focus after a key press to a drawn arc when an undrawn one of the person comes first", () => {
+        const { chart, elements } = buildRealChart([node("I2", 5), node("I2", 2)], false, {
+            showNames: false,
+            innerArcs: 4,
+        });
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[1].focus();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+        elements[1].blur();
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(elements[1]);
+    });
+
+    test("gives the focus after a key press to the arc of the whole xref and not of a prefix", () => {
+        const { chart, elements } = buildRealChart([node("I20"), node("I2")], false);
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[1].focus();
+        elements[1].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+        elements[1].blur();
+        chart.bindClickEventListener();
+
+        expect(document.activeElement).toBe(elements[1]);
+    });
+
+    test("makes no focus call after a key press when the person has no drawn arc any more", () => {
+        const { chart, elements } = buildRealChart([node("I1", 2), node("I2", 5)], false, {
+            showNames: false,
+            innerArcs: 4,
+        });
+        const focus = jest.spyOn(window.SVGElement.prototype, "focus");
+
+        chart.update = jest.fn();
+        chart.bindClickEventListener();
+        elements[0].dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+        focus.mockClear();
+
+        // The updater hands the arc to another person that is not drawn, so I1 has no drawn arc
+        d3.select(elements[0]).datum(node("I9", 5));
+        chart.bindClickEventListener();
+
+        expect(focus).not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(document.body);
+
+        focus.mockRestore();
+    });
+
+    test("finds the selected person by its whole xref and not by a prefix", () => {
+        const { chart, elements } = buildRealChart([node("I100"), node("I10"), node("I1")]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, d3.select(elements[1]).datum());
+        chart.bindClickEventListener();
+        chart.restoreFocus();
+
+        expect(elements[1].classList.contains("selected")).toBe(true);
+        expect(elements[0].classList.contains("selected")).toBe(false);
+        expect(elements[2].classList.contains("selected")).toBe(false);
+        expect(document.activeElement).toBe(elements[1]);
     });
 });
