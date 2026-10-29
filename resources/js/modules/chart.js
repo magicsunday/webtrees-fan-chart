@@ -609,11 +609,12 @@ export default class Chart {
         // or keeps them. The selection keeps the person it was made with, so the new object
         // of that person is handed to it, which keeps the mark and the focus return working.
         // The selection is the person and not one arc. A person who is drawn in several arcs is
-        // marked in all of them, and the first of these arcs stands for the person afterwards.
+        // marked in all of them, and the first drawn one of these arcs stands for the person
+        // afterwards, because an arc that is not drawn cannot take the focus.
         const selected =
             this._selectedXref === null
                 ? undefined
-                : persons.filter((datum) => datum.data.data.xref === this._selectedXref).data()[0];
+                : drawn.filter((datum) => datum.data.data.xref === this._selectedXref).data()[0];
 
         if (selected === undefined) {
             this._selection.apply();
@@ -648,11 +649,11 @@ export default class Chart {
                 document.activeElement === source;
 
             if (focusLost) {
-                drawn
-                    .filter((datum) => datum.data.data.xref === xref)
-                    .each(function () {
-                        /** @type {HTMLElement} */ (this).focus();
-                    });
+                const arc = drawn.filter((datum) => datum.data.data.xref === xref).node();
+
+                if (arc !== null) {
+                    /** @type {HTMLElement} */ (arc).focus();
+                }
             }
         }
 
