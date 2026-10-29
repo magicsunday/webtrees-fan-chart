@@ -104,7 +104,7 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
 
     /**
      * Registers the chart route, allows POST on it, and registers the Blade
-     * namespace and the custom chart view override.
+     * namespace, the custom chart view override and the shared views of module-base.
      *
      * @throws ImmutableProperty
      * @throws RouteAlreadyExists
