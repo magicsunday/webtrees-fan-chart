@@ -364,7 +364,7 @@ describe("Text", () => {
                 classed: () => element,
                 text: () => element,
                 selectAll: () => element,
-                node: () => ({ parentNode: {} }),
+                node: () => ({ closest: () => ({ id: "person-1" }) }),
             };
 
             return element;

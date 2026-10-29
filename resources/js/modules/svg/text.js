@@ -78,7 +78,10 @@ export default class Text {
      * @private
      */
     createInnerLabels(parent, datum, positions) {
-        const parentId = d3.select(parent.node().parentNode).attr("id");
+        // The label group sits inside the content group of the person, which carries no id, so the
+        // id comes from the person group. It names the paths and lets the cleanup after an update
+        // find the ones that nothing refers to any more.
+        const parentId = /** @type {Element} */ (parent.node().closest("g.person")).id;
         const nameGroups = createNamesData(datum);
         const textStartOffset = "25%";
         const nameSlots = [TEXT_SLOT.FIRST_NAMES, TEXT_SLOT.LAST_NAMES];
