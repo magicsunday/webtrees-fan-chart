@@ -66,7 +66,7 @@ Module.php (entry point, registers routes)
   - `Processor/NameProcessor`, `Processor/ImageProcessor`, `Processor/PlaceProcessor` — name/image/place extraction.
   - `Model/Symbols` — backed enum for genealogical symbols (Birth ★, Death †, MarriageDateUnknown sentinel).
   - `Module/VersionInformation` — GitHub release-checking with file cache.
-  - `View/SharedViews` — registers the view namespace of the package (`SharedViews::NAMESPACE`), `Module::boot()` calls `SharedViews::register()`. `page.phtml` renders the shared `detail-panel` view and `help-button.phtml` renders the shared `help-popover` view. The module passes its own translated strings, because xgettext reads only the `I18N::translate` literals of this module.
+  - `View/SharedViews`: registers the view namespace of the package (`SharedViews::NAMESPACE`), `Module::boot()` calls `SharedViews::register()`. `page.phtml` renders the shared `detail-panel` view and `help-button.phtml` renders the shared `help-popover` view. The module passes its own translated strings, because xgettext reads only the `I18N::translate` literals of this module.
   - For local edits to module-base while developing fan-chart, run `make link-base` (symlinks `.build/vendor/.../webtrees-module-base` → the sibling clone). Reverse with `make unlink-base` or any `composer install/update`.
 
 ### JS (`resources/js/modules/`)
@@ -112,8 +112,8 @@ make release VERSION=3.1.2 NOTES="Bug fix release"
 Pipeline (`make release X.Y.Z`):
 - `release-check` — tools, semver, clean tree, no detached HEAD, no active `make link-base` symlink, gh auth (or `GH_TOKEN`).
 - `release-prepare` — `sed_edit` macro updates `CUSTOM_VERSION` in `src/Module.php` with a post-write assertion; `jq_edit` macro (with `--indent 4` and post-write assertion) updates `package.json` version + `composer.json` webtrees pin → clean+rebuild JS bundles via `build-js-fresh` → commit → `dist` → tag (only after dist succeeds, so a dist failure does not leave a dangling tag).
-- `dist` — symlink guard fires before composer touches anything, `composer install --no-dev --no-interaction`, `git archive HEAD` (respects `.gitattributes` export-ignore), bundles `magicsunday/webtrees-module-base` (`src/` and the shared `resources/views/`) into the zip's `vendor/` so manual ZIP installs work without composer, strips all `composer.json` files (`find vendor -name composer.json -delete`), atomic write via `.tmp` + rename + `zip -T` integrity check.
-- `dist-smoke` — separate target, asserts required entries (module.php, LICENSE, the versioned JS bundle, module-base `src/` and its `resources/views/`) are present and forbidden ones (composer.json, assets/) are absent. CI runs this on every push.
+- `dist`: symlink guard fires before composer touches anything, `composer install --no-dev --no-interaction`, `git archive HEAD` (respects `.gitattributes` export-ignore), bundles `magicsunday/webtrees-module-base` (`src/` and the shared `resources/views/`) into the zip's `vendor/` so manual ZIP installs work without composer, strips all `composer.json` files (`find vendor -name composer.json -delete`), atomic write via `.tmp` + rename + `zip -T` integrity check.
+- `dist-smoke`: separate target, asserts required entries (module.php, LICENSE, the versioned JS bundle, module-base `src/` and its `resources/views/`) are present and forbidden ones (composer.json, assets/) are absent. CI runs this on every push.
 - `release-publish` — `git push --tags`, `gh release create` with the zip + notes, emits `RELEASE_PUBLISHED version=X` marker for agent observers.
 - `release-bump` — bump to `VERSION+1-dev`, keep the `~2.2.0` (stable) webtrees constraint, push. The dev tree tracks stable webtrees, not `dev-main`, because the `dev-main` i18n refactor removed APIs the module still uses and stable is what end users install; re-add `|| dev-main` here (and adapt the code) when webtrees' next stable nears.
 
