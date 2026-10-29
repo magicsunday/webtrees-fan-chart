@@ -27,12 +27,14 @@ use ReflectionProperty;
 final class EnglishLocaleFixture
 {
     /**
-     * Installs the English locale and an empty translator.
+     * Installs the English locale and a translator that knows the given messages.
+     *
+     * @param array<string, string> $messages The translations by source text
      */
-    public static function install(): void
+    public static function install(array $messages = []): void
     {
         $locale     = Locale::create('en');
-        $translator = new Translator([], $locale->pluralRule());
+        $translator = new Translator($messages, $locale->pluralRule());
 
         $localeProperty = new ReflectionProperty(I18N::class, 'locale');
         $localeProperty->setValue(null, $locale);
