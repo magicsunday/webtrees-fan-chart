@@ -5,7 +5,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
 "POT-Creation-Date: 1970-01-01 00:00+0000\n"
-"PO-Revision-Date: 2026-07-21 19:21+0200\n"
+"PO-Revision-Date: 2026-10-29 06:19+0100\n"
 "Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.9\n"
+"X-Generator: Poedit 3.10\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-KeywordsList: translate\n"
 "X-Poedit-SearchPath-0: src\n"
@@ -41,7 +41,7 @@ msgstr "Automatisch (op basis van de stamboomconfiguratie)"
 
 #: resources/views/modules/fan-chart/page.phtml:120
 msgid "Center chart on this person"
-msgstr ""
+msgstr "Diagram centreren op deze persoon"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:37
 msgid "Click and drag"
@@ -248,7 +248,7 @@ msgstr "Afkorting van naam bij beperkte ruimte"
 
 #: resources/views/modules/fan-chart/page.phtml:117
 msgid "No details are available for this person."
-msgstr ""
+msgstr "Er zijn geen gegevens beschikbaar voor deze persoon."
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:23
 msgid "Number of inner levels"
@@ -256,7 +256,7 @@ msgstr "Aantal binnenste niveaus"
 
 #: resources/views/modules/fan-chart/page.phtml:119
 msgid "Open individual page"
-msgstr ""
+msgstr "Persoonspagina openen"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:35
 msgid "Open the individual page or center the chart on the person"
@@ -304,7 +304,7 @@ msgstr "Rechtsklik"
 
 #: resources/views/modules/fan-chart/page.phtml:115
 msgid "Select a person in the chart to see the details here."
-msgstr ""
+msgstr "Selecteer een persoon in de grafiek om hier de gegevens te bekijken."
 
 #: resources/views/modules/fan-chart/form/display.phtml:65
 msgid "Show descendants"
@@ -316,7 +316,7 @@ msgstr "Toon details van een persoon"
 
 #: resources/views/modules/fan-chart/form/details.phtml:53
 msgid "Show details panel"
-msgstr ""
+msgstr "Toon detailspaneel"
 
 #: resources/views/modules/fan-chart/form/colors.phtml:28
 msgid "Show family colors"
@@ -381,6 +381,9 @@ msgid ""
 "instead of the tooltip on the mouse pointer. The panel can be used with the "
 "keyboard as well."
 msgstr ""
+"Toont de gegevens van een persoon in een zijpaneel wanneer u een persoon "
+"selecteert, in plaats van de tooltip bij de muisaanwijzer. Het paneel is ook "
+"met het toetsenbord te bedienen."
 
 #: resources/views/modules/fan-chart/form/inner-levels.phtml:27
 msgid ""
