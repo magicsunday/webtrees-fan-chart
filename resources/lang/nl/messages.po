@@ -5,7 +5,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
 "POT-Creation-Date: 1970-01-01 00:00+0000\n"
-"PO-Revision-Date: 2026-10-29 06:19+0100\n"
+"PO-Revision-Date: 2026-10-30 08:20+0100\n"
 "Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -53,7 +53,7 @@ msgstr "Klik op een persoon"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Click or Enter on a person"
-msgstr ""
+msgstr "Klik of druk op Enter op een persoon"
 
 #: resources/views/modules/fan-chart/form/colors.phtml:23
 msgid "Colors"
@@ -95,7 +95,7 @@ msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Details panel"
-msgstr ""
+msgstr "Detailspaneel"
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -232,7 +232,7 @@ msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Move between the persons"
-msgstr ""
+msgstr "Tussen de personen wisselen"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:28
 msgid "Move the chart"
@@ -260,7 +260,7 @@ msgstr "Persoonspagina openen"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Open the individual page or center the chart on the person"
-msgstr ""
+msgstr "Open de persoonspagina of centreer het diagram op de persoon"
 
 #: resources/views/modules/fan-chart/form/display.phtml:71
 msgid ""
@@ -372,7 +372,7 @@ msgstr "Toon plaatsen"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Show the details of the person in the panel"
-msgstr ""
+msgstr "Toon de details van de persoon in het paneel"
 
 #: resources/views/modules/fan-chart/form/details.phtml:59
 msgid ""
@@ -400,7 +400,7 @@ msgstr "Schakelen tussen volledig scherm en normale weergave"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Tab key"
-msgstr ""
+msgstr "Tab-toets"
 
 #: src/Module/ConfigTrait.php:151
 #, php-format
