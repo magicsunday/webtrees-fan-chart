@@ -42,6 +42,12 @@ MODULE_BASE_PATH := $(VENDOR_DIR)/$(MODULE_BASE_PKG)
 # (see GitHub issues #194, #196). Must be unique per module.
 SCOPE_NS         := FanChartVendor
 
+# Per-module name of the view namespace that the bundled module-base registers.
+# webtrees keeps one registration per name and the last module to boot wins, so
+# a shared name lets a module with an older bundle remove the shared views of
+# another one. Must be unique per module.
+SCOPE_VIEW_NS    := webtrees-module-base-fan-chart
+
 # Accept both 'make release 3.1.0' (goal form) and 'make release VERSION=3.1.0'.
 VERSION ?= $(filter-out release release-% dist,$(MAKECMDGOALS))
 
@@ -197,6 +203,11 @@ dist:
 		-e 's|MagicSunday\\\\Webtrees\\\\ModuleBase|MagicSunday\\\\$(SCOPE_NS)\\\\Webtrees\\\\ModuleBase|g' \
 		-e 's|MagicSunday\\Webtrees\\ModuleBase|MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase|g' \
 		{} +
+	@echo "  Scoping module-base view namespace to $(SCOPE_VIEW_NS)..."
+	@sed -i -e "s|'webtrees-module-base'|'$(SCOPE_VIEW_NS)'|" \
+		$(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php
+	@grep -qF "'$(SCOPE_VIEW_NS)'" $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php \
+		|| { echo "Error: view namespace of the bundled SharedViews.php was not scoped"; exit 1; }
 	@hits=$$(find $(MODULE_NAME) -type f \( -name '*.php' -o -name '*.phtml' \) -print0 \
 	    | xargs -0 grep -lE 'MagicSunday\\Webtrees\\ModuleBase' 2>/dev/null); \
 	if [ -n "$$hits" ]; then \
@@ -271,7 +282,14 @@ dist-smoke:
 		files=$$(find "$$tmp/vendor/magicsunday/webtrees-module-base/src/$$d" -name '*.php' -print 2>/dev/null); \
 		[ -n "$$files" ] \
 			|| { echo "Error: bundled module-base src/$$d has no PHP files in extracted zip"; exit 1; }; \
-	done
+	done; \
+	shared_views="$$tmp/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php"; \
+	grep -qF "'$(SCOPE_VIEW_NS)'" "$$shared_views" \
+		|| { echo "Error: bundled SharedViews.php does not register the scoped view namespace ($(SCOPE_VIEW_NS))"; exit 1; }; \
+	if grep -qF "'webtrees-module-base'" "$$shared_views"; then \
+		echo "Error: bundled SharedViews.php still registers the unscoped view namespace"; \
+		exit 1; \
+	fi
 	@echo -e "${FGREEN} ✔${FRESET} dist-smoke passed: $(MODULE_NAME).zip extracts to a well-formed module"
 
 # Atomic JSON edit with cleanup on failure + post-write assertion. Usage:
