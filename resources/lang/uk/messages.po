@@ -40,7 +40,7 @@ msgstr "Автоматично (за традицією прізвищ дере�
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Center chart on this person"
 msgstr ""
 
@@ -241,7 +241,7 @@ msgstr "Переміщуйте зображення двома пальцями"
 msgid "Name abbreviation when space is tight"
 msgstr "Скорочення імені при браку місця"
 
-#: resources/views/modules/fan-chart/page.phtml:110
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "No details are available for this person."
 msgstr ""
 
@@ -249,7 +249,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "Кількість внутрішніх рівнів"
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "Open individual page"
 msgstr ""
 
@@ -297,7 +297,7 @@ msgstr "Перезавантажити діаграму для цієї особ
 msgid "Right-click"
 msgstr "Клік правою кнопкою"
 
-#: resources/views/modules/fan-chart/page.phtml:109
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -415,7 +415,7 @@ msgstr "Збільшити/Зменшити"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:108
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "close"
 msgstr ""
 

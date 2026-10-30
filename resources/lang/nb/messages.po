@@ -39,7 +39,7 @@ msgstr "Automatisk (basert på treets etternavnstradisjon)"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Center chart on this person"
 msgstr ""
 
@@ -240,7 +240,7 @@ msgstr "Bruk to fingre for å flytte utsnitt"
 msgid "Name abbreviation when space is tight"
 msgstr "Navneforkortelse når plassen er trang"
 
-#: resources/views/modules/fan-chart/page.phtml:110
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "No details are available for this person."
 msgstr ""
 
@@ -248,7 +248,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "Antall indre nivå"
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "Open individual page"
 msgstr ""
 
@@ -296,7 +296,7 @@ msgstr "Last diagrammet på nytt for den personen"
 msgid "Right-click"
 msgstr "Høyreklikk"
 
-#: resources/views/modules/fan-chart/page.phtml:109
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -414,7 +414,7 @@ msgstr "Zoom inn/ut"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:108
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "close"
 msgstr ""
 
