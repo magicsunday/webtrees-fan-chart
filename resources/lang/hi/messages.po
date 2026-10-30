@@ -39,7 +39,7 @@ msgstr "स्वचालित (वृक्ष की उपनाम पर�
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Center chart on this person"
 msgstr ""
 
@@ -239,7 +239,7 @@ msgstr "दो उंगलियों से दृश्य को स्थ�
 msgid "Name abbreviation when space is tight"
 msgstr "जब स्थान सीमित हो तो नाम का संक्षिप्तीकरण"
 
-#: resources/views/modules/fan-chart/page.phtml:110
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "No details are available for this person."
 msgstr ""
 
@@ -247,7 +247,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "आंतरिक स्तरों की संख्या"
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "Open individual page"
 msgstr ""
 
@@ -295,7 +295,7 @@ msgstr "उस व्यक्ति के लिए चार्ट पुन�
 msgid "Right-click"
 msgstr "राइट-क्लिक"
 
-#: resources/views/modules/fan-chart/page.phtml:109
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -411,7 +411,7 @@ msgstr "ज़ूम इन/आउट"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:108
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "close"
 msgstr ""
 

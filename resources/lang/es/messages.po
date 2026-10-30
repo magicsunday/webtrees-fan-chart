@@ -39,7 +39,7 @@ msgstr "Automático (según la tradición de apellidos del árbol)"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Center chart on this person"
 msgstr ""
 
@@ -243,7 +243,7 @@ msgstr "Mueve la vista con dos dedos"
 msgid "Name abbreviation when space is tight"
 msgstr "Abreviatura del nombre cuando el espacio es limitado"
 
-#: resources/views/modules/fan-chart/page.phtml:110
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "No details are available for this person."
 msgstr ""
 
@@ -251,7 +251,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "Número de niveles internos"
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "Open individual page"
 msgstr ""
 
@@ -300,7 +300,7 @@ msgstr "Recargar el diagrama para esa persona"
 msgid "Right-click"
 msgstr "Clic derecho"
 
-#: resources/views/modules/fan-chart/page.phtml:109
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -419,7 +419,7 @@ msgstr "Acercar/Alejar"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:108
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "close"
 msgstr ""
 

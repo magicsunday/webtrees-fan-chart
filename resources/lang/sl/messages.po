@@ -42,7 +42,7 @@ msgstr "Samodejno (glede na drevesno tradicijo priimkov)"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Center chart on this person"
 msgstr ""
 
@@ -243,7 +243,7 @@ msgstr "Premakni pogled z dvema prstoma"
 msgid "Name abbreviation when space is tight"
 msgstr "Krajšanje imena, ko je prostor omejen"
 
-#: resources/views/modules/fan-chart/page.phtml:110
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "No details are available for this person."
 msgstr ""
 
@@ -251,7 +251,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "Število notranjih ravni"
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "Open individual page"
 msgstr ""
 
@@ -299,7 +299,7 @@ msgstr "Ponovno naloži diagram za to osebo"
 msgid "Right-click"
 msgstr "Desni klik"
 
-#: resources/views/modules/fan-chart/page.phtml:109
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -416,7 +416,7 @@ msgstr "Povečaj/pomanjšaj"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:108
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "close"
 msgstr ""
 
