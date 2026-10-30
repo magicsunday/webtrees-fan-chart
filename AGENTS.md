@@ -82,7 +82,6 @@ Flat layout — every file is fan-chart-specific glue. Reusable base classes (St
 ### Views (`resources/views/`)
 - **`fan-chart/page.phtml`** — Form + AJAX container, and the shared toolbar style. Loads `fan-chart-page.min.js` and calls `WebtreesFanChart.initPage({ ajaxUrl, defaults… })`.
 - **`fan-chart/chart.phtml`** — AJAX response: `<script type="module">` with `import()` to load ES module bundle. Reads user overrides from `WebtreesFanChart.chartOptions ?? PHP defaults`.
-- **`charts/chart.phtml`** — Block template override (home page widget), uses `data-wt-ajax-url` pattern.
 
 ### Data-relevant config parameters
 The server builds the base of the initial AJAX route (`Module::getAjaxRoute()`), the update route of a node (`DataFacade::getUpdateRoute()`) and the redirect after a form post. All three spread `Configuration::getRouteToggleParams()`, so a setting that these routes carry is added to that list. The page script (`page-init.js`) overrides some query keys of the AJAX URL on the client. `generations`, `showPlaces`, `showDescendants` and `showNicknames` come from the form and the storage, `detailedDateGenerations` from the server default. A setting that the page changes after load is added there as well.
@@ -98,7 +97,6 @@ The server builds the base of the initial AJAX route (`Module::getAjaxRoute()`),
 - **Storage flow**: `page-init.js` reads localStorage → publishes resolved options under `WebtreesFanChart.chartOptions` → `chart.phtml` getter reads `opts.x ?? PHP default`.
 - **Unique clipPath IDs**: monotonic `clipIdCounter` (in `svg/person.js`) prevents collisions during D3 transitions; `Date.now()` is too coarse when transitions overlap.
 - **Overlay independence**: Overlay popup always shows images/places regardless of form toggle states.
-- **Block template**: Overrides core `modules/charts/chart.phtml` — must stay in sync with webtrees core changes (e.g. VanillaJS conversion).
 - **Once-guard callback**: `endAll` + `.catch()` share a `callbackFired` flag to prevent double-invocation of `updateDone`.
 - **D3 interrupt handling**: `endAll` listens to both `"end"` and `"interrupt"` events so the callback fires even when transitions are cancelled.
 
