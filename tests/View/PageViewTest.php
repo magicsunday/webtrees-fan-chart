@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
 
 use function ob_get_clean;
 use function ob_start;
+use function substr_count;
 
 /**
  * Renders the page view of the fan chart and looks at the detail panel that it carries.
@@ -181,6 +182,31 @@ final class PageViewTest extends TestCase
         }
 
         self::assertCount(0, ViewFixture::elements($xpath, '//aside[@id="webtrees-fan-detail-panel"]//i'), 'no translated text is read as markup');
+    }
+
+    /**
+     * The toolbar buttons get their rules from the shared view, written once as a style element that
+     * is scoped to the container of the chart, so the buttons are styled from the first paint and the
+     * stylesheet of the module carries no copy of them.
+     */
+    #[Test]
+    public function rendersTheToolbarStyleOnceForTheFullscreenContainer(): void
+    {
+        $output = $this->render();
+
+        self::assertSame(
+            1,
+            substr_count($output, '.webtrees-fan-fullscreen-container .btn-chart {'),
+            'the toolbar rules are written once'
+        );
+
+        $xpath = ViewFixture::xpathOf($output);
+
+        self::assertCount(
+            1,
+            ViewFixture::elements($xpath, '//div[contains(concat(" ", @class, " "), " webtrees-fan-fullscreen-container ")]'),
+            'the container that the rules name exists once'
+        );
     }
 
     /**

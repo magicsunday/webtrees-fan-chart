@@ -86,6 +86,8 @@ use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
         </div>
     </form>
 
+    <?php echo view(SharedViews::NAMESPACE . '::toolbar-style', ['container' => 'webtrees-fan-fullscreen-container']); ?>
+
     <div class="row webtrees-fan-fullscreen-container">
         <?php echo view($moduleName . '::modules/components/buttonbar', ['moduleName' => $moduleName, 'configuration' => $configuration]); ?>
 

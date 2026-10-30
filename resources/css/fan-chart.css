@@ -23,53 +23,6 @@
     margin-bottom: 1rem;
 }
 
-.webtrees-fan-fullscreen-container .btn-chart {
-    color: var(--bs-btn-bg);
-    background: var(--bs-secondary-bg, rgb(245, 245, 245));
-    border: 1px solid var(--bs-border-color, rgb(210, 210, 210));
-    width: 40px;
-    height: 32px;
-    border-radius: 30%;
-    box-sizing: border-box;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    position: relative;
-}
-
-.webtrees-fan-fullscreen-container .btn-chart.btn-primary:hover {
-    background: var(--bs-secondary-bg, rgb(245, 245, 245));
-}
-
-.webtrees-fan-fullscreen-container .btn-chart:hover {
-    color: var(--link-color-hover);
-}
-
-/*
- * The core theme removes the outline on every focused element, and the toolbar buttons do not carry the
- * btn class that brings the focus ring of the buttons in the forms. The keyboard focus gets the same ring,
- * a shadow in the focus colour of the button at half opacity. The transparent outline stays invisible in
- * normal rendering and gives forced colors mode, which paints no shadows, a visible indicator.
- */
-.webtrees-fan-fullscreen-container .btn-chart:focus-visible {
-    outline: 2px solid transparent;
-    box-shadow: 0 0 0 0.25rem rgba(var(--bs-btn-focus-shadow-rgb, 49, 132, 253), 0.5);
-}
-
-.webtrees-fan-fullscreen-container .btn-chart .icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.webtrees-fan-fullscreen-container .btn-chart .icon .svg-inline--fa {
-    height: 1.5em;
-    vertical-align: -0.375em;
-}
-
 .webtrees-fan-fullscreen-container .btn-fullscreen span:nth-child(2) {
     display: none;
 }
