@@ -79,8 +79,8 @@ export default class ChartUpdater {
      */
     update(url, redrawOverlays, callback, onSuperseded = () => {}) {
         // Abort any in-flight request from a previous update call so only
-        // the latest navigation is processed. The aborted request's catch
-        // block checks for AbortError and silently discards it.
+        // the latest navigation is processed. The catch block of the aborted
+        // request reports it through onSuperseded and does not call the callback.
         if (this._fetchController) {
             this._fetchController.abort();
         }
@@ -135,7 +135,7 @@ export default class ChartUpdater {
                 this._runUpdateAnimations(transition);
             })
             .catch((error) => {
-                // A superseded request was intentionally aborted — discard silently
+                // A superseded request was intentionally aborted. Report it, draw nothing
                 // and leave the DOM in whatever state the newer update is building.
                 if (error?.name === "AbortError") {
                     onSuperseded();
