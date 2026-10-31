@@ -617,7 +617,7 @@ final class DataFacadeTest extends TestCase
      * @param string $birth         The GEDCOM birth date of the child
      * @param string $death         The GEDCOM death date of the child
      * @param int    $fanDegree     The fan degree of the configuration, the clamp maximum for a chart with descendants leaves a narrow descendant sector
-     * @param bool   $hiddenPartner True when the partner of the root is hidden by privacy
+     * @param bool   $hiddenPartner True when the partner of the root is hidden by privacy, the root then has no partner arc and carries the child as an unassigned child
      *
      * @return NodeData
      */
@@ -692,6 +692,8 @@ final class DataFacadeTest extends TestCase
         $rootData = $rootNode->jsonSerialize();
 
         if ($hiddenPartner) {
+            // A partner arc would reveal that a hidden partner exists.
+            self::assertArrayNotHasKey('partners', $rootData);
             self::assertArrayHasKey('unassignedChildren', $rootData);
 
             $childNode = $rootData['unassignedChildren'][0];
