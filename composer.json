@@ -136,7 +136,7 @@
             "npm run typecheck"
         ],
         "ci:test:js:unit": [
-            "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests"
+            "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js"
         ],
         "ci:test": [
             "@ci:test:php:lint",
