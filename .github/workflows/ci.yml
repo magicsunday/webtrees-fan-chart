@@ -14,7 +14,7 @@ jobs:
     # matrix, outside the ci:test aggregate. Copy-paste detection runs in the shared
     # Node-only lane below, since jscpd is a Node tool.
     php:
-        uses: magicsunday/.github/.github/workflows/php-quality.yml@main
+        uses: magicsunday/.github/.github/workflows/php-quality.yml@GH-246
         with:
             run-infection: true
         permissions:
