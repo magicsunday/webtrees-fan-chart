@@ -845,10 +845,11 @@ describe("Update", () => {
         const hierarchy = new HierarchyStub();
         const update = new Update(svg, defaultConfiguration(), hierarchy);
         const callback = jest.fn();
+        const onSuperseded = jest.fn();
 
         jsonMock.mockResolvedValueOnce({ data: createNodes() });
 
-        update.update("/update", jest.fn(), callback);
+        update.update("/update", jest.fn(), callback, onSuperseded);
         await flushPromises();
 
         // Drain the fallback of endAll while the transition is still active, so it sees activity
@@ -863,6 +864,7 @@ describe("Update", () => {
         await flushPromises();
 
         expect(callback).toHaveBeenCalledTimes(1);
+        expect(onSuperseded).not.toHaveBeenCalled();
         expect(timeoutMock).toHaveBeenCalledTimes(1);
         expect(svg.div.property).toHaveBeenCalledWith("active", false);
     });
@@ -887,6 +889,27 @@ describe("Update", () => {
         expect(onSuperseded).toHaveBeenCalledTimes(1);
         expect(callback).not.toHaveBeenCalled();
         expect(errorSpy).not.toHaveBeenCalled();
+
+        errorSpy.mockRestore();
+    });
+
+    test("does not report a superseded request when the request fails for another reason", async () => {
+        const update = new Update(
+            createSvgWithPersons(["1"]),
+            defaultConfiguration(),
+            new HierarchyStub(),
+        );
+        const callback = jest.fn();
+        const onSuperseded = jest.fn();
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+        jsonMock.mockRejectedValueOnce(new Error("network error"));
+
+        update.update("/update", jest.fn(), callback, onSuperseded);
+        await flushPromises();
+
+        expect(callback).toHaveBeenCalledTimes(1);
+        expect(onSuperseded).not.toHaveBeenCalled();
 
         errorSpy.mockRestore();
     });
