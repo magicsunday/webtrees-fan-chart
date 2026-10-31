@@ -39,9 +39,56 @@ Before adding an entry, check the following. Is the package a direct dependency 
     - A plural entry is either left empty entirely or has every form filled in, and the number of forms (the `msgstr[N]` slots of an empty entry included) is the number the webtrees plural rule of the locale selects from (`Locale::create($tag)->pluralRule()->plurals()` in `fisharebest/localization`). webtrees ignores the `Plural-Forms` header of the PO, so the header only has to agree with that rule. `tests/CatalogueStructureTest.php` extends the shared catalogue structure case of `webtrees-module-base` and names the catalogue directory. The shared case enforces the form count, the empty forms and the placeholders of the compiled catalogue, the slot count of the source catalogue and the form count in its header, and renders every plural entry for a range of numbers.
 - **Every class under `src/` is final**, and a phpat rule in `tests/Architecture/ArchitectureTest.php` enforces it (the rule does not cover traits). The facade tests build a real `Configuration` from a request instead of stubbing it. A class that a test needs to stub is not made final. It is excluded from the rule with a reason.
 - **PHPStan runs the shared strict tier** (`phpstan.neon` includes `phpstan/strict.neon` of `magicsunday/coding-standard`, which needs `shipmonk/phpstan-rules`, `symplify/phpstan-rules` and `spaze/phpstan-disallowed-calls` as devDependencies). Fix a finding in code. An irreducible idiom conflict gets an `ignoreErrors` entry scoped by identifier and path with a comment, never a baseline.
-- Keep PHPStan, PHPCS, and CPD clean on affected code; add PHPUnit attribute-based coverage (positive and negative cases) for every class/method introduced or modified.
+- Keep PHPStan, PHPCS, and CPD clean on affected code. Add the PHPUnit tests that the testing policy below calls for, each with its attribute-based coverage target.
 - If `node_modules` has permission issues (from node container), clean via: `docker compose run --rm buildbox-root bash -c "rm -rf app/vendor/magicsunday/webtrees-fan-chart/node_modules"`.
 - **Typecheck scope is intentionally limited to production sources** (`tsconfig.json` includes only `resources/js/modules/**/*.js`). Tests under `resources/js/tests/**` are validated by jest at runtime but skipped by `tsc --noEmit` because the partial mock objects required to isolate units would otherwise produce dozens of structural-incompatibility errors against the real `Configuration` / `Selection` shapes. The typecheck gate applies to shipped code; test scaffolding stays loose.
+
+<!-- testing-policy:begin v1 -->
+## Testing policy
+
+Tests protect behavior whose regression would be materially incorrect, unsafe,
+destructive or hard to notice before release. They are not a coverage target and
+they are not a mutation-score target.
+
+Protect these with durable tests:
+- security and privacy boundaries, including untrusted data reaching a path,
+  archive member, URL, header, query, command or DOM sink
+- confidentiality outside access checks (secrets or personal data in logs,
+  exceptions, temporary files, caches, exports, URLs)
+- data integrity across import, export, update and migration
+- lifecycle and failure semantics: atomic writes, rollback, cleanup, idempotency,
+  retries, partial failure, and ordering where the order is the protocol
+- calculation and decision rules, including their boundaries
+- compatibility boundaries: public API, serialized formats, extension interfaces,
+  persisted configuration keys, producer and consumer contracts
+- every fixed behavioral bug (some test must fail on the old behavior). A bug
+  that is only a wrong label, CSS class or default is not behavioral unless a
+  named consumer breaks on it.
+
+For side effects assert the postcondition and the identity of the affected
+resource, not only that a collaborator was called.
+
+Do not add tests whose only content is:
+- a getter, setter, constructor that only stores values, DTO, enum or constant,
+  unless it carries a persisted key or a serialized format from the list above
+- a CSS class list, a label or message text, or a default value, unless the exact
+  value is a documented interface that a named consumer breaks on. Prefer testing
+  the consuming behavior over the producer literal and pin only the minimum literal.
+- transparent delegation that adds no argument selection, ordering, error
+  translation or security context
+- the text of source files instead of the behavior they produce
+
+Order and default assertions are fine when they encode a safety property, for
+example authorize before the side effect, write before rename, private unless
+made public.
+
+A test that a reviewer, human or agent, questions must show the observable
+behavior or invariant it protects, a plausible faulty change it rejects, and for
+a pinned literal the consumer that would break. Mutating the code or reverting
+the fix and watching the test fail is the way to show it.
+<!-- testing-policy:end -->
+
+Where the testing policy and the changed-lines mutation gate point to different answers, the policy wins. A surviving mutant that only a test of a kind the policy excludes could kill, such as a getter, a literal or a default, is answered with an `ignore` entry of its mutator in `infection.json5` with a comment that names the reason. It is never answered with a test that pins the value.
 
 ## Architecture
 
@@ -151,7 +198,7 @@ Pipeline (`make release X.Y.Z`):
 - The pull-request body closes the issue with `Closes #<N>` — the `GH-<N>: ` subject prefix is not a GitHub link and closes nothing.
 - Never add a `Co-Authored-By:` trailer or any other AI attribution.
 - Keep PRs small and focused (~≤300 net LOC) with atomic commits.
-- Ensure coverage ≥90% on touched PHP paths.
+- Cover the behavior that the testing policy lists with tests. Coverage is a diagnostic here, not a target.
 - After PR receives review comments: assess, fix, commit, reply with commit hash, resolve threads via GraphQL.
 - Never comment on GitHub issues/PRs without explicit user approval.
 
