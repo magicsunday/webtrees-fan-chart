@@ -46,6 +46,7 @@ use PHPUnit\Framework\TestCase;
 use function array_map;
 use function json_decode;
 use function json_encode;
+use function sort;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -216,6 +217,72 @@ final class DataFacadeTest extends TestCase
         self::assertCount(2, $parents);
         $parentIds = array_map(static fn (Node $node): int => $node->getData()->getId(), $parents);
         self::assertSame([2, 3], $parentIds);
+    }
+
+    /**
+     * The people of a chart that goes back further than the configured number of generations, by
+     * the number of generations: the root of the chain is generation one, so each step adds the
+     * parents of the generation before.
+     *
+     * @return array<string, array{string, list<string>}>
+     */
+    public static function generationCeilingProvider(): array
+    {
+        return [
+            'two generations'   => ['2', ['I1', 'I2', 'I3']],
+            'three generations' => ['3', ['I1', 'I2', 'I3', 'I4', 'I5']],
+            'four generations'  => ['4', ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7']],
+        ];
+    }
+
+    /**
+     * The chart stops at the configured number of generations although the tree goes further back,
+     * and it does not stop one generation early.
+     *
+     * @param list<string> $expectedXrefs
+     */
+    #[Test]
+    #[DataProvider('generationCeilingProvider')]
+    public function theChartStopsAtTheConfiguredNumberOfGenerations(string $generations, array $expectedXrefs): void
+    {
+        $this->registerRouting();
+
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
+        $module->method('name')->willReturn('webtrees-fan-chart');
+
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('main');
+        $tree->method('getPreference')->willReturn('1');
+
+        // A chain of four generations. Every person but the last two has a parent family.
+        $oldestFamily = $this->createParentFamily(
+            $this->createPerson($tree, 'I6', 'M', '1 JAN 1800', '1 JAN 1860'),
+            $this->createPerson($tree, 'I7', 'F', '1 JAN 1801', '1 JAN 1861')
+        );
+        $middleFamily = $this->createParentFamily(
+            $this->createPerson($tree, 'I4', 'M', '1 JAN 1830', '1 JAN 1890', null, '', '', $oldestFamily),
+            $this->createPerson($tree, 'I5', 'F', '1 JAN 1831', '1 JAN 1891')
+        );
+        $rootFamily = $this->createParentFamily(
+            $this->createPerson($tree, 'I2', 'M', '1 JAN 1860', '1 JAN 1920', null, '', '', $middleFamily),
+            $this->createPerson($tree, 'I3', 'F', '1 JAN 1861', '1 JAN 1921')
+        );
+
+        $root = $this->createPerson($tree, 'I1', 'M', '1 JAN 1890', '1 JAN 1950', null, '', '', $rootFamily);
+
+        $rootNode = (new DataFacade())->createTreeStructure(
+            $module,
+            $this->createConfiguration(['generations' => $generations]),
+            $root
+        );
+
+        self::assertInstanceOf(Node::class, $rootNode);
+
+        $xrefs = $this->collectXrefs($rootNode);
+
+        sort($xrefs);
+
+        self::assertSame($expectedXrefs, $xrefs);
     }
 
     /**
@@ -793,6 +860,35 @@ final class DataFacadeTest extends TestCase
         $serialised = json_decode(json_encode($data, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
 
         return $serialised['facts'] ?? null;
+    }
+
+    /**
+     * Creates the family of two parents.
+     */
+    private function createParentFamily(Individual $father, Individual $mother): Family
+    {
+        $family = self::createStub(Family::class);
+        $family->method('husband')->willReturn($father);
+        $family->method('wife')->willReturn($mother);
+
+        return $family;
+    }
+
+    /**
+     * Returns the xrefs of a node and of all its ancestors.
+     *
+     * @return list<string>
+     */
+    private function collectXrefs(Node $node): array
+    {
+        $serialized = $node->jsonSerialize();
+        $xrefs      = [$node->getData()->jsonSerialize()['xref']];
+
+        foreach ($serialized['parents'] ?? [] as $parent) {
+            $xrefs = [...$xrefs, ...$this->collectXrefs($parent)];
+        }
+
+        return $xrefs;
     }
 
     /**
