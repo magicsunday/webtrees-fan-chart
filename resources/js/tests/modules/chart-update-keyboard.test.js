@@ -11,8 +11,8 @@ await jest.unstable_mockModule("resources/js/modules/chart-updater", () => ({
             this.hierarchy = hierarchy;
         }
 
-        update(url, redrawOverlays, callback) {
-            updates.push({ url, redrawOverlays, callback });
+        update(url, redrawOverlays, callback, onSuperseded) {
+            updates.push({ url, redrawOverlays, callback, onSuperseded, updater: this });
         }
     },
 }));
@@ -168,12 +168,25 @@ describe("Chart update with the detail panel", () => {
         chart.update("/chart/I2");
         chart.update("/chart/I3");
         chart.restoreFocus();
-        updates[0].callback();
+
+        // The newer update cancels the request of the older one. That one draws nothing and never
+        // calls its callback, it only reports that it was superseded.
+        updates[0].onSuperseded();
 
         expect(document.activeElement).not.toBe(elements[0]);
 
         updates[1].callback();
 
         expect(document.activeElement).toBe(elements[0]);
+    });
+
+    test("runs overlapping updates through one updater, so that the newer one can cancel the older", () => {
+        const { chart } = buildRealChart([node("I1")]);
+
+        chart.update("/chart/I2");
+        chart.update("/chart/I3");
+
+        expect(updates).toHaveLength(2);
+        expect(updates[1].updater).toBe(updates[0].updater);
     });
 });

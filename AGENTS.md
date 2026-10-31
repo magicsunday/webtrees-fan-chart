@@ -97,6 +97,7 @@ The server builds the base of the initial AJAX route (`Module::getAjaxRoute()`),
 - **Storage flow**: `page-init.js` reads localStorage → publishes resolved options under `WebtreesFanChart.chartOptions` → `chart.phtml` getter reads `opts.x ?? PHP default`.
 - **Unique clipPath IDs**: monotonic `clipIdCounter` (in `svg/person.js`) prevents collisions during D3 transitions; `Date.now()` is too coarse when transitions overlap.
 - **Overlay independence**: Overlay popup always shows images/places regardless of form toggle states.
+- **One updater per chart**: `Chart` keeps a single `ChartUpdater`, so a newer update aborts the pending request of the older one through the `AbortController` of the updater. A superseded update calls `onSuperseded` instead of its callback, and the chart releases the count in `_runningUpdates` there, because only a callback that rebinds the chart does that otherwise.
 - **Once-guard callback**: `endAll` + `.catch()` share a `callbackFired` flag to prevent double-invocation of `updateDone`.
 - **D3 interrupt handling**: `endAll` listens to both `"end"` and `"interrupt"` events so the callback fires even when transitions are cancelled.
 

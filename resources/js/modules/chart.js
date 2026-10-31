@@ -90,6 +90,11 @@ export default class Chart {
         this._keyboardFocusXref = null;
         /** @type {Element|null} */
         this._keyboardFocusSource = null;
+
+        // One updater serves every update of the chart, so a newer update can cancel the request of
+        // the one that it supersedes.
+        /** @type {ChartUpdater|null} */
+        this._updater = null;
     }
 
     /**
@@ -772,12 +777,16 @@ export default class Chart {
             .attr("aria-current", null);
         this._runningUpdates += 1;
 
-        const updater = new ChartUpdater(this.svg, this._configuration, this._hierarchy);
+        this._updater ??= new ChartUpdater(this.svg, this._configuration, this._hierarchy);
 
-        updater.update(
+        this._updater.update(
             url,
             () => this.redrawOverlayLayers(),
             () => this.bindClickEventListener(),
+            // A superseded update never draws, so it no longer counts as running.
+            () => {
+                this._runningUpdates = Math.max(0, this._runningUpdates - 1);
+            },
         );
     }
 

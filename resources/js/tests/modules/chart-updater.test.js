@@ -867,6 +867,50 @@ describe("Update", () => {
         expect(svg.div.property).toHaveBeenCalledWith("active", false);
     });
 
+    test("reports a request that a newer update cancelled instead of calling back", async () => {
+        const update = new Update(
+            createSvgWithPersons(["1"]),
+            defaultConfiguration(),
+            new HierarchyStub(),
+        );
+        const callback = jest.fn();
+        const onSuperseded = jest.fn();
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+        jsonMock.mockRejectedValueOnce(
+            new DOMException("The operation was aborted.", "AbortError"),
+        );
+
+        update.update("/update", jest.fn(), callback, onSuperseded);
+        await flushPromises();
+
+        expect(onSuperseded).toHaveBeenCalledTimes(1);
+        expect(callback).not.toHaveBeenCalled();
+        expect(errorSpy).not.toHaveBeenCalled();
+
+        errorSpy.mockRestore();
+    });
+
+    test("cancels its own pending request when it starts the next update", () => {
+        const update = new Update(
+            createSvgWithPersons(["1"]),
+            defaultConfiguration(),
+            new HierarchyStub(),
+        );
+        const signals = [];
+
+        jsonMock.mockImplementation((_url, init) => {
+            signals.push(init.signal);
+
+            return new Promise(() => {});
+        });
+
+        update.update("/first", jest.fn(), jest.fn());
+        update.update("/second", jest.fn(), jest.fn());
+
+        expect(signals.map((signal) => signal.aborted)).toEqual([true, false]);
+    });
+
     test("restores interactivity and cleans CSS classes on fetch error", async () => {
         const svg = createSvgWithPersons(["1"]);
         const hierarchy = new HierarchyStub();
