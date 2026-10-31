@@ -254,9 +254,14 @@ final class DataFacadeTest extends TestCase
         $tree->method('name')->willReturn('main');
         $tree->method('getPreference')->willReturn('1');
 
-        // A chain of four generations. Every person but the last two has a parent family.
+        // A chain of five generations, so that the highest ceiling of the provider still cuts
+        // something off. The people of the fifth generation have no parent family.
+        $ancientFamily = $this->createParentFamily(
+            $this->createPerson($tree, 'I8', 'M', '1 JAN 1770', '1 JAN 1830'),
+            $this->createPerson($tree, 'I9', 'F', '1 JAN 1771', '1 JAN 1831')
+        );
         $oldestFamily = $this->createParentFamily(
-            $this->createPerson($tree, 'I6', 'M', '1 JAN 1800', '1 JAN 1860'),
+            $this->createPerson($tree, 'I6', 'M', '1 JAN 1800', '1 JAN 1860', null, '', '', $ancientFamily),
             $this->createPerson($tree, 'I7', 'F', '1 JAN 1801', '1 JAN 1861')
         );
         $middleFamily = $this->createParentFamily(
