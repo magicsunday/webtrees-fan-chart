@@ -126,6 +126,9 @@
         "ci:test:php:infection": [
             "XDEBUG_MODE=coverage infection --threads=max --no-progress --no-interaction"
         ],
+        "ci:test:php:infection:changed": [
+            "XDEBUG_MODE=coverage GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=diff.renames GIT_CONFIG_VALUE_0=false infection --threads=max --no-progress --no-interaction --git-diff-lines --min-covered-msi=80 --ignore-msi-with-no-mutations"
+        ],
         "ci:test:js:lint": [
             "npm run lint"
         ],
