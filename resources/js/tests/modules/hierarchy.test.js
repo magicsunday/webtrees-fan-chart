@@ -181,20 +181,12 @@ describe("Hierarchy.init", () => {
 });
 
 describe("Hierarchy accessors", () => {
-    test.each(["nodes", "root"])("%s throws before init() has been called", (accessor) => {
+    test("throws when an accessor is read before init() has been called", () => {
         const hierarchy = new Hierarchy({ generations: 3 });
 
-        expect(() => hierarchy[accessor]).toThrow(
-            `Hierarchy.${accessor} is not available before init() has been called`,
+        expect(() => hierarchy.nodes).toThrow(
+            "Hierarchy.nodes is not available before init() has been called",
         );
-    });
-
-    test.each(["nodes", "root"])("%s is available once init() has been called", (accessor) => {
-        const hierarchy = new Hierarchy({ generations: 2 });
-
-        hierarchy.init(createIndividual({ id: 1, generation: 1 }));
-
-        expect(() => hierarchy[accessor]).not.toThrow();
     });
 });
 

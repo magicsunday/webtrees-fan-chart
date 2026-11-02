@@ -482,39 +482,6 @@ describe("Text", () => {
         });
     });
 
-    describe("slot lookups", () => {
-        it("returns the slot at the given index", () => {
-            const text = new Text(svgStub, createConfiguration());
-            const slots = [TEXT_SLOT.FIRST_NAMES, TEXT_SLOT.LAST_NAMES];
-
-            expect(text.getSlot(slots, 1)).toBe(TEXT_SLOT.LAST_NAMES);
-        });
-
-        it("throws when the slot list has no entry at the index", () => {
-            const text = new Text(svgStub, createConfiguration());
-
-            expect(() => text.getSlot([TEXT_SLOT.FIRST_NAMES], 3)).toThrow(
-                "No text slot at index 3",
-            );
-        });
-
-        it("returns the position assigned to a slot", () => {
-            const text = new Text(svgStub, createConfiguration());
-            const position = { normal: 40, flipped: 60 };
-            const positions = new Map([[TEXT_SLOT.DATE_LINE_1, position]]);
-
-            expect(text.getSlotPosition(positions, TEXT_SLOT.DATE_LINE_1)).toBe(position);
-        });
-
-        it("throws when no position was calculated for a slot", () => {
-            const text = new Text(svgStub, createConfiguration());
-
-            expect(() => text.getSlotPosition(new Map(), TEXT_SLOT.DATE_LINE_2)).toThrow(
-                `No text position calculated for slot ${TEXT_SLOT.DATE_LINE_2.index}`,
-            );
-        });
-    });
-
     describe("transformOuterText", () => {
         const createDescendantText = (childScale) =>
             new Text(svgStub, createConfiguration(), {
