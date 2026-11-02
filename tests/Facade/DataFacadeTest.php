@@ -72,6 +72,7 @@ final class DataFacadeTest extends TestCase
         Registry::calendarDateFactory(new CalendarDateFactory());
 
         EnglishLocaleFixture::install();
+        RoutingFixture::register();
     }
 
     /**
@@ -81,8 +82,6 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function treeStructureIncludesParentsUntilConfiguredLimit(): void
     {
-        RoutingFixture::register();
-
         $configuration = $this->createConfiguration([]);
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
@@ -209,8 +208,6 @@ final class DataFacadeTest extends TestCase
     #[DataProvider('generationCeilingProvider')]
     public function theChartStopsAtTheConfiguredNumberOfGenerations(string $generations, array $expectedXrefs): void
     {
-        RoutingFixture::register();
-
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
 
@@ -261,8 +258,6 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function treeStructureIncludesDescendantsWhenEnabled(): void
     {
-        RoutingFixture::register();
-
         $configuration = $this->createConfiguration(['showDescendants' => '1']);
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
@@ -397,8 +392,6 @@ final class DataFacadeTest extends TestCase
         bool $visible,
         string $expected,
     ): void {
-        RoutingFixture::register();
-
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
 
@@ -584,8 +577,6 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function handsOverTheFactsToAncestorsAndDescendants(): void
     {
-        RoutingFixture::register();
-
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
 
@@ -643,8 +634,6 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function resolvesTheFactsAgainstTheTreeOfTheCurrentRequest(): void
     {
-        RoutingFixture::register();
-
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
 
@@ -705,8 +694,6 @@ final class DataFacadeTest extends TestCase
         int $fanDegree = 0,
         bool $hiddenPartner = false,
     ): NodeData {
-        RoutingFixture::register();
-
         $query = [
             'showDescendants' => '1',
             'showPlaces'      => '1',
@@ -796,8 +783,6 @@ final class DataFacadeTest extends TestCase
      */
     private function buildRootData(Individual $root, array $query): NodeData
     {
-        RoutingFixture::register();
-
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
 
