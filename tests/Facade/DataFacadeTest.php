@@ -34,6 +34,7 @@ use MagicSunday\Webtrees\FanChart\Test\Support\IndividualFixtureTrait;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\FanChart\Test\Support\RoutingFixture;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
+use MagicSunday\Webtrees\ModuleBase\Model\Symbols;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -369,6 +370,48 @@ final class DataFacadeTest extends TestCase
         $ser2 = $rootNode2->jsonSerialize();
 
         self::assertArrayNotHasKey('partners', $ser2);
+    }
+
+    /**
+     * A deceased person without any date or place shows the death symbol only to
+     * a viewer who may see the person. A hidden person is drawn as private, so
+     * the symbol would tell that the person is dead.
+     *
+     * @return array<string, array{bool, string}>
+     */
+    public static function deceasedWithoutDatesCases(): array
+    {
+        return [
+            'a visible person' => [true, Symbols::Death->value],
+            'a hidden person'  => [false, ''],
+        ];
+    }
+
+    /**
+     * The timespan of a deceased person without any date follows the visibility
+     * of the person.
+     */
+    #[Test]
+    #[DataProvider('deceasedWithoutDatesCases')]
+    public function showsTheDeathSymbolOfADeceasedPersonOnlyWhenTheViewerMaySeeThePerson(
+        bool $visible,
+        string $expected,
+    ): void {
+        RoutingFixture::register();
+
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
+        $module->method('name')->willReturn('webtrees-fan-chart');
+
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('main');
+        $tree->method('getPreference')->willReturn('1');
+
+        $person = $this->createPerson($tree, 'I1', 'M', '', '', isDead: true, visible: $visible);
+
+        $rootNode = (new DataFacade())->createTreeStructure($module, $this->createConfiguration([]), $person);
+
+        self::assertInstanceOf(Node::class, $rootNode);
+        self::assertSame($expected, $rootNode->getData()->jsonSerialize()['timespan']);
     }
 
     /**

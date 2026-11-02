@@ -74,6 +74,8 @@ trait IndividualFixtureTrait
      *
      * @param array<string, Fact>|null      $factsByTag The fact of each tag, or null for a person without a facts stub
      * @param ArrayObject<int, string>|null $factReads  Receives the tag of every read of the facts of the person
+     * @param bool                          $isDead     Whether the person is marked as dead
+     * @param bool                          $visible    Whether the viewer may see the person
      *
      * @return Individual&Stub
      */
@@ -89,19 +91,22 @@ trait IndividualFixtureTrait
         ?Family $parentFamily = null,
         ?array $factsByTag = null,
         ?ArrayObject $factReads = null,
+        bool $isDead = false,
+        bool $visible = true,
     ): Individual {
         $person = self::createStub(Individual::class);
         $person->method('xref')->willReturn($xref);
         $person->method('url')->willReturn('/individual/' . $xref);
         $person->method('sex')->willReturn($sex);
         $person->method('fullName')->willReturn('Person ' . $xref);
-        $person->method('canShow')->willReturn(true);
-        $person->method('canShowName')->willReturn(true);
+        $person->method('canShow')->willReturn($visible);
+        $person->method('canShowName')->willReturn($visible);
         $person->method('getAllNames')->willReturn($this->buildNameSet('Person', $xref));
         $person->method('getPrimaryName')->willReturn(0);
         $person->method('getSecondaryName')->willReturn(0);
         $person->method('getBirthDate')->willReturn($this->createDate($birth));
         $person->method('getDeathDate')->willReturn($this->createDate($death));
+        $person->method('isDead')->willReturn($isDead);
         $person->method('tree')->willReturn($tree);
 
         if ($birthPlace !== '') {
