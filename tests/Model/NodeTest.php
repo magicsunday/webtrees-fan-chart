@@ -15,141 +15,63 @@ use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests node serialization logic and parent handling.
+ * Validates the serialised payload of a node of the chart.
+ *
+ * @author  Rico Sonntag <mail@ricosonntag.de>
+ * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
+ * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
 #[CoversClass(Node::class)]
-#[UsesClass(NodeData::class)]
+#[CoversClass(NodeData::class)]
 final class NodeTest extends TestCase
 {
     /**
-     * Ensures parent references are included during serialization when they
-     * exist.
+     * A node without relatives and without facts carries its data and nothing else. Every
+     * key that only appears for a non-empty list is absent, so a chart without the detail
+     * panel keeps the payload it always had.
      */
     #[Test]
-    public function jsonSerializeAddsParentsWhenPresent(): void
-    {
-        $childData  = (new NodeData())->setId(1);
-        $fatherData = (new NodeData())->setId(2);
-
-        $child  = new Node($childData);
-        $father = new Node($fatherData);
-
-        $child->addParent($father);
-
-        $result = $child->jsonSerialize();
-
-        self::assertSame($childData, $result['data']);
-        self::assertArrayHasKey('parents', $result);
-        self::assertSame([$father], $result['parents']);
-    }
-
-    /**
-     * Ensures serialization omits parent data when no parents are attached.
-     */
-    #[Test]
-    public function jsonSerializeOmitsParentsWhenEmpty(): void
-    {
-        $child = new Node(new NodeData());
-
-        $result = $child->jsonSerialize();
-
-        self::assertSame(['data' => $child->getData()], $result);
-    }
-
-    /**
-     * Partners and children keys must be absent from JSON when empty.
-     */
-    #[Test]
-    public function jsonSerializeOmitsPartnersAndChildrenWhenEmpty(): void
+    public function anEmptyNodeSerialisesToItsDataOnly(): void
     {
         $node = new Node(new NodeData());
 
-        $result = $node->jsonSerialize();
-
-        self::assertArrayNotHasKey('partners', $result);
-        self::assertArrayNotHasKey('children', $result);
-        self::assertArrayNotHasKey('unassignedChildren', $result);
+        self::assertSame(['data' => $node->getData()], $node->jsonSerialize());
+        self::assertArrayNotHasKey('facts', $node->getData()->jsonSerialize());
+        self::assertArrayNotHasKey('facts', (new NodeData())->setFacts([])->jsonSerialize());
     }
 
     /**
-     * Partners key must appear in JSON when at least one partner is added.
+     * Every relative list of a node appears under its own key with the nodes that were
+     * added to it. Each list holds a different node, so a key that carries the nodes of
+     * another list is found.
      */
     #[Test]
-    public function jsonSerializeIncludesPartnersWhenPresent(): void
+    public function aNodeWithRelativesCarriesEachListUnderItsOwnKey(): void
     {
-        $root    = new Node((new NodeData())->setId(1));
-        $partner = new Node((new NodeData())->setId(2)->setSex('F'));
+        $node     = new Node((new NodeData())->setId(1));
+        $parent   = new Node((new NodeData())->setId(2));
+        $partner  = new Node((new NodeData())->setId(3)->setSex('F'));
+        $child    = new Node((new NodeData())->setId(4));
+        $unplaced = new Node((new NodeData())->setId(5));
 
-        $root->addPartner($partner);
+        $node
+            ->addParent($parent)
+            ->addPartner($partner)
+            ->setChildren([$child])
+            ->addUnassignedChild($unplaced);
 
-        $result = $root->jsonSerialize();
-
-        self::assertArrayHasKey('partners', $result);
-        self::assertSame([$partner], $result['partners']);
-    }
-
-    /**
-     * Children key must appear in JSON when set on a partner node.
-     */
-    #[Test]
-    public function jsonSerializeIncludesChildrenWhenSet(): void
-    {
-        $partner = new Node((new NodeData())->setId(1));
-        $child1  = new Node((new NodeData())->setId(2));
-        $child2  = new Node((new NodeData())->setId(3));
-
-        $partner->setChildren([$child1, $child2]);
-
-        $result = $partner->jsonSerialize();
-
-        self::assertArrayHasKey('children', $result);
-        self::assertSame([$child1, $child2], $result['children']);
-    }
-
-    /**
-     * Nested partner + children structure serialises correctly.
-     */
-    #[Test]
-    public function jsonSerializeNestedPartnerWithChildren(): void
-    {
-        $root    = new Node((new NodeData())->setId(1));
-        $partner = new Node((new NodeData())->setId(2)->setSex('F'));
-        $child   = new Node((new NodeData())->setId(3));
-
-        $partner->setChildren([$child]);
-        $root->addPartner($partner);
-
-        $result = $root->jsonSerialize();
-
-        self::assertArrayHasKey('partners', $result);
-        self::assertIsArray($result['partners']);
-        self::assertCount(1, $result['partners']);
-
-        $partnerNode   = $result['partners'][0];
-        $partnerResult = $partnerNode->jsonSerialize();
-        self::assertArrayHasKey('children', $partnerResult);
-        self::assertSame([$child], $partnerResult['children']);
-    }
-
-    /**
-     * UnassignedChildren key must appear when privacy-hidden spouse has visible
-     * children.
-     */
-    #[Test]
-    public function jsonSerializeIncludesUnassignedChildrenWhenPresent(): void
-    {
-        $root  = new Node((new NodeData())->setId(1));
-        $child = new Node((new NodeData())->setId(2));
-
-        $root->addUnassignedChild($child);
-
-        $result = $root->jsonSerialize();
-
-        self::assertArrayHasKey('unassignedChildren', $result);
-        self::assertSame([$child], $result['unassignedChildren']);
+        self::assertSame(
+            [
+                'data'               => $node->getData(),
+                'parents'            => [$parent],
+                'partners'           => [$partner],
+                'children'           => [$child],
+                'unassignedChildren' => [$unplaced],
+            ],
+            $node->jsonSerialize()
+        );
     }
 }
