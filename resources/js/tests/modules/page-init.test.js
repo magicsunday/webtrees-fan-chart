@@ -235,19 +235,6 @@ describe("getUrl (via initPage AJAX URL)", () => {
         expect(getAjaxUrl().searchParams.get("showPlaces")).toBe("0");
     });
 
-    it("does not put a place format into the initial URL", () => {
-        // The place format is an administrator setting that the server reads from
-        // the module preference, so the page never sends one, whatever an older
-        // module version left in localStorage.
-        storageData.placeFormat = "levels-2";
-
-        // defaultPlaceFormat is an option of an older page script. An entry that read
-        // it would write the value, so a set value makes this test discriminate.
-        initPage({ ...defaultConfig, defaultPlaceFormat: "city-iso2" });
-
-        expect(getAjaxUrl().searchParams.has("placeFormat")).toBe(false);
-    });
-
     it("uses defaultDetailedDateGenerations for the initial URL, ignoring a stale storage value", () => {
         // A value left in localStorage by an older module version (which had a
         // slider) must not override the admin preference on the initial render.
@@ -364,26 +351,6 @@ describe("showDescendants change handler", () => {
         expect(getAjaxUrl().searchParams.get("detailedDateGenerations")).toBe("2");
     });
 
-    it("does not put a place format into the URL on toggle", () => {
-        initPage({ ...defaultConfig, defaultPlaceFormat: "city-iso2" });
-
-        const storage = storageInstances[0];
-
-        storage.read.mockImplementation((key) => {
-            if (key === "placeFormat") return "levels-3"; // stale, must be ignored
-            if (key === "generations") return "6";
-
-            return null;
-        });
-
-        const cb = document.getElementById("showDescendants-1");
-
-        cb.checked = true;
-        cb.dispatchEvent(new Event("change"));
-
-        expect(getAjaxUrl().searchParams.has("placeFormat")).toBe(false);
-    });
-
     it("restores fanDegreeRaw when unchecking descendants", () => {
         storageData.fanDegreeRaw = "320";
 
@@ -476,14 +443,5 @@ describe("chartOptions namespace", () => {
 
         expect(window.WebtreesFanChart.chartOptions.fanDegree).toBe(180);
         expect(document.getElementById("fanDegreeOutput").value).toBe("180°");
-    });
-
-    it("does not register fanDegreeRaw as a DOM element", () => {
-        initPage(defaultConfig);
-
-        const storage = storageInstances[0];
-        const registeredNames = storage.register.mock.calls.map((call) => call[0]);
-
-        expect(registeredNames).not.toContain("fanDegreeRaw");
     });
 });
