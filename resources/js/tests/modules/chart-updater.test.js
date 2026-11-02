@@ -385,4 +385,25 @@ describe("Update", () => {
         expect(errorSpy).toHaveBeenCalledWith("Fan chart update failed:", expect.any(Error));
         expect(lifecycleClasses()).toEqual([]);
     });
+
+    test("keeps the previous content of an arc that a failed update had already marked", async () => {
+        const { update } = createChart();
+        const arc = document.querySelector("g.person");
+        const content = arc.querySelector("g.content");
+
+        // The update marked the arc as updated and its content as the old one before it failed
+        arc.classList.add("update");
+        content.classList.add("old");
+        jest.spyOn(console, "error").mockImplementation(() => {});
+        jsonMock.mockRejectedValueOnce(new Error("network error"));
+
+        await new Promise((resolve) => {
+            update.update("/update", jest.fn(), resolve);
+        });
+
+        // The marks are gone before the cleanup of a finished update runs, so that cleanup does
+        // not take the previous content away from the arc
+        expect(arc.classList.contains("update")).toBe(false);
+        expect(arc.contains(content)).toBe(true);
+    });
 });

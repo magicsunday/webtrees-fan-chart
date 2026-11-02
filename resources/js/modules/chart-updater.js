@@ -147,7 +147,10 @@ export default class ChartUpdater {
 
                 console.error("Fan chart update failed:", error);
 
-                // Clean up stale CSS classes left by a partial update
+                // Clean up stale CSS classes left by a partial update. This has to happen
+                // before the callback runs the cleanup of a finished update, which removes the
+                // old content of every arc that still carries a lifecycle class. Without it a
+                // failed update would take the previous content away from the arcs.
                 this._svg
                     .selectAll("g.person, g.marriage")
                     .classed("new", false)
