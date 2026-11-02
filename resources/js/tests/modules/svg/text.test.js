@@ -1,31 +1,7 @@
 import { jest } from "@jest/globals";
+import { scaleLinear } from "d3-scale";
 
 const measureTextMock = jest.fn((text) => text.length * 10);
-
-const scaleLinearMock = jest.fn(() => {
-    let domain = [0, 1];
-    let range = [0, 1];
-
-    const scale = (value) => {
-        const [domainStart, domainEnd] = domain;
-        const [rangeStart, rangeEnd] = range;
-        const t = (value - domainStart) / (domainEnd - domainStart);
-
-        return rangeStart + (rangeEnd - rangeStart) * t;
-    };
-
-    scale.range = (values) => {
-        range = values;
-        return scale;
-    };
-
-    scale.domain = (values) => {
-        domain = values;
-        return scale;
-    };
-
-    return scale;
-});
 
 const selectMock = (node) => ({
     text(value) {
@@ -48,7 +24,7 @@ const selectMock = (node) => ({
 
 await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
-    scaleLinear: scaleLinearMock,
+    scaleLinear,
     select: jest.fn((node) => selectMock(node)),
     arc: jest.fn(() => {
         const generator = () => "M0,0";
@@ -138,7 +114,6 @@ describe("Text", () => {
 
     beforeEach(() => {
         measureTextMock.mockClear();
-        scaleLinearMock.mockClear();
     });
 
     // The strategy of the configuration is handed to the shared truncation, the strategies

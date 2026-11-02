@@ -1,35 +1,3 @@
-import { jest } from "@jest/globals";
-
-const scaleLinearMock = jest.fn(() => {
-    let domain = [0, 1];
-    let range = [0, 1];
-
-    const scale = (value) => {
-        const [domainStart, domainEnd] = domain;
-        const [rangeStart, rangeEnd] = range;
-        const t = (value - domainStart) / (domainEnd - domainStart);
-
-        return rangeStart + (rangeEnd - rangeStart) * t;
-    };
-
-    scale.range = (values) => {
-        range = values;
-        return scale;
-    };
-
-    scale.domain = (values) => {
-        domain = values;
-        return scale;
-    };
-
-    return scale;
-});
-
-await jest.unstable_mockModule("resources/js/modules/d3", () => ({
-    __esModule: true,
-    scaleLinear: scaleLinearMock,
-}));
-
 const { default: Geometry, MATH_DEG2RAD } = await import("resources/js/modules/svg/geometry");
 const { default: DescendantLayout } = await import("resources/js/modules/descendant-layout");
 
@@ -60,10 +28,6 @@ describe("Geometry", () => {
         padDistance: 0,
         colorArcWidth: 20,
         ...overrides,
-    });
-
-    beforeEach(() => {
-        scaleLinearMock.mockClear();
     });
 
     it("reads the compact children flag from the descendant layout", () => {
