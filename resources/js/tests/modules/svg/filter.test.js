@@ -14,34 +14,7 @@ const createDefs = () => {
 };
 
 describe("Filter", () => {
-    it("registers the drop-shadow filter in the given defs element", () => {
-        const defs = createDefs();
-
-        new Filter(d3.select(defs));
-
-        const filters = defs.querySelectorAll("filter");
-
-        expect(filters).toHaveLength(1);
-        expect(filters[0].getAttribute("id")).toBe("drop-shadow");
-        expect(filters[0].namespaceURI).toBe(SVG_NAMESPACE);
-    });
-
-    it("emits a centred, translucent black drop shadow primitive", () => {
-        const defs = createDefs();
-
-        new Filter(d3.select(defs));
-
-        const shadow = defs.querySelector("filter#drop-shadow > feDropShadow");
-
-        expect(shadow).not.toBeNull();
-        expect(shadow.getAttribute("stdDeviation")).toBe("7 7");
-        expect(shadow.getAttribute("dx")).toBe("0");
-        expect(shadow.getAttribute("dy")).toBe("0");
-        expect(shadow.getAttribute("flood-opacity")).toBe("0.3");
-        expect(shadow.getAttribute("flood-color")).toBe("rgb(0,0,0)");
-    });
-
-    it("does not touch other definitions in the defs element", () => {
+    it("registers a centred, translucent black drop shadow and keeps the other definitions", () => {
         const defs = createDefs();
         const existing = document.createElementNS(SVG_NAMESPACE, "clipPath");
 
@@ -49,6 +22,17 @@ describe("Filter", () => {
 
         new Filter(d3.select(defs));
 
+        const filters = defs.querySelectorAll("filter");
+        const shadow = defs.querySelector("filter#drop-shadow > feDropShadow");
+
+        expect(filters).toHaveLength(1);
+        expect(filters[0].namespaceURI).toBe(SVG_NAMESPACE);
+        expect(shadow).not.toBeNull();
+        expect(shadow.getAttribute("stdDeviation")).toBe("7 7");
+        expect(shadow.getAttribute("dx")).toBe("0");
+        expect(shadow.getAttribute("dy")).toBe("0");
+        expect(shadow.getAttribute("flood-opacity")).toBe("0.3");
+        expect(shadow.getAttribute("flood-color")).toBe("rgb(0,0,0)");
         expect(defs.firstChild).toBe(existing);
         expect(defs.children).toHaveLength(2);
     });
