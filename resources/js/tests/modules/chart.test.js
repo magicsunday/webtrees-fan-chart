@@ -122,8 +122,8 @@ describe("Chart", () => {
         });
 
         // The view box is the content box centered in the container, with one rem of padding
-        // on every side. The container is 500 by 400, the content 420 by 260 at (-210, -130):
-        // the offsets are 40 and 70, the left is -210 - 40 - 16, the top is -130 - 70 - 16 and
+        // on every side. The offset of each axis is half of what the container has more than
+        // the content, the origin is the content origin minus the offset and the padding, and
         // the size is the container plus twice the padding.
         test("sets the view box from the content, the container and the padding", () => {
             const chart = createChart();
