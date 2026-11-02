@@ -317,10 +317,26 @@ describe("Chart", () => {
                 },
                 each: () => entering,
             };
-            const exiting = { classed: () => exiting, selectAll: () => exiting };
+            const exitCalls = [];
+            const exiting = {
+                classed: (...args) => {
+                    exitCalls.push(["classed", ...args]);
+
+                    return exiting;
+                },
+                selectAll: (...args) => {
+                    exitCalls.push(["selectAll", ...args]);
+
+                    return exiting;
+                },
+            };
             const join = {
                 each: () => join,
-                exit: () => exiting,
+                exit: () => {
+                    exitCalls.push(["exit"]);
+
+                    return exiting;
+                },
                 enter: () => ({
                     append: (tag) => {
                         appended.push(tag);
@@ -342,6 +358,13 @@ describe("Chart", () => {
             expect(data.mock.calls[0][0]).toHaveLength(count);
             // The entering elements are created as descendant marriage groups
             expect(appended).toEqual(["g"]);
+            // The elements that leave are marked for removal and their content for the fade-out
+            expect(exitCalls).toEqual([
+                ["exit"],
+                ["classed", "remove", true],
+                ["selectAll", "g.content"],
+                ["classed", "old", true],
+            ]);
             expect(attributes).toContainEqual(["class", "marriage descendant"]);
         });
     });
