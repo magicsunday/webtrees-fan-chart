@@ -13,6 +13,7 @@ namespace MagicSunday\Webtrees\FanChart\Test\Model;
 
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
+use MagicSunday\Webtrees\ModuleBase\Model\FactView;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -46,12 +47,13 @@ final class NodeTest extends TestCase
     /**
      * Every relative list of a node appears under its own key with the nodes that were
      * added to it. Each list holds a different node, so a key that carries the nodes of
-     * another list is found.
+     * another list is found. The facts of the data of the node reach the payload as well.
      */
     #[Test]
     public function aNodeWithRelativesCarriesEachListUnderItsOwnKey(): void
     {
-        $node     = new Node((new NodeData())->setId(1));
+        $facts    = [new FactView('BIRT', 'Birth', '1900', 'Berlin', 'Berlin, Germany', ''), null];
+        $node     = new Node((new NodeData())->setId(1)->setFacts($facts));
         $parent   = new Node((new NodeData())->setId(2));
         $partner  = new Node((new NodeData())->setId(3)->setSex('F'));
         $child    = new Node((new NodeData())->setId(4));
@@ -73,5 +75,10 @@ final class NodeTest extends TestCase
             ],
             $node->jsonSerialize()
         );
+
+        $payload = $node->getData()->jsonSerialize();
+
+        self::assertArrayHasKey('facts', $payload);
+        self::assertSame($facts, $payload['facts']);
     }
 }
