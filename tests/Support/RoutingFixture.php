@@ -45,11 +45,24 @@ final class RoutingFixture
     public static function register(array $services = []): void
     {
         $routeFactory = new class implements RouteFactoryInterface {
+            /**
+             * Renders a route as its name followed by its query.
+             *
+             * @param string                                    $route_name The name of the route
+             * @param array<bool|int|string|array<string>|null> $parameters The parameters of the route
+             *
+             * @return string
+             */
             public function route(string $route_name, array $parameters = []): string
             {
                 return '/route/' . $route_name . '?' . http_build_query($parameters);
             }
 
+            /**
+             * Returns a route map without any route.
+             *
+             * @return Map&iterable<Route>
+             */
             public function routeMap(): Map
             {
                 return new Map(new Route());
@@ -64,16 +77,38 @@ final class RoutingFixture
             {
             }
 
+            /**
+             * Returns the service that is registered under the id.
+             *
+             * @param string $id The id of the service
+             *
+             * @return object
+             */
             public function get(string $id): object
             {
                 return $this->services[$id] ?? throw new OutOfBoundsException('The container has no service ' . $id);
             }
 
+            /**
+             * Tells whether a service is registered under the id.
+             *
+             * @param string $id The id of the service
+             *
+             * @return bool
+             */
             public function has(string $id): bool
             {
                 return isset($this->services[$id]);
             }
 
+            /**
+             * Ignores the service, because the fixture registers its services once.
+             *
+             * @param string $id     The id of the service
+             * @param object $object The service
+             *
+             * @return static
+             */
             public function set(string $id, object $object): static
             {
                 return $this;
