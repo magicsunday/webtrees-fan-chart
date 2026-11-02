@@ -303,69 +303,55 @@ describe("Chart", () => {
         });
 
         test.each([
-            ["a scale", (fraction) => fraction * Math.PI, 2],
-            ["no scale", null, 0],
-        ])("draws descendant marriage arcs for the partners with %s", (_label, scale, count) => {
+            ["a scale", (fraction) => fraction * Math.PI, ["marriage-1", "marriage-2"]],
+            ["no scale", null, []],
+        ])("draws descendant marriage arcs for the partners with %s", (_label, scale, ids) => {
             const chart = createRenderedChart([partnerNode(1, 0, 0.5), partnerNode(2, 0.5, 1)]);
-            const appended = [];
-            const attributes = [];
-            const entering = {
-                attr: (name, value) => {
-                    attributes.push([name, typeof value === "function" ? "computed" : value]);
-
-                    return entering;
-                },
-                each: () => entering,
-            };
-            const exitCalls = [];
-            const exiting = {
-                classed: (...args) => {
-                    exitCalls.push(["classed", ...args]);
-
-                    return exiting;
-                },
-                selectAll: (...args) => {
-                    exitCalls.push(["selectAll", ...args]);
-
-                    return exiting;
-                },
-            };
-            const join = {
-                each: () => join,
-                exit: () => {
-                    exitCalls.push(["exit"]);
-
-                    return exiting;
-                },
-                enter: () => ({
-                    append: (tag) => {
-                        appended.push(tag);
-
-                        return entering;
-                    },
-                }),
-            };
-            const data = jest.fn(() => join);
 
             chart._hierarchy.descendantLayout.childScale = scale;
-            chart.svg.visual.select = () => ({
-                empty: () => false,
-                selectAll: () => ({ data }),
-            });
-
             chart.drawDescendantMarriageArcs();
 
-            expect(data.mock.calls[0][0]).toHaveLength(count);
-            // The entering elements are created as descendant marriage groups
-            expect(appended).toEqual(["g"]);
-            // The elements that leave are marked for removal and their content for the fade-out
-            expect(exitCalls).toEqual([
-                ["exit"],
-                ["classed", "remove", true],
-                ["selectAll", "g.content"],
-                ["classed", "old", true],
-            ]);
-            expect(attributes).toContainEqual(["class", "marriage descendant"]);
+            const groups = [...document.querySelectorAll("g.marriage.descendant")];
+
+            // Each partner gets a descendant marriage group under its own id, built with its content
+            expect(groups.map((group) => group.id)).toEqual(ids);
+            expect(groups.every((group) => group.querySelector("g.content") !== null)).toBe(true);
+        });
+
+        test("rebuilds the marriage arc of a partner that is drawn again and marks the earlier content", () => {
+            const chart = createRenderedChart([partnerNode(1, 0, 0.5)]);
+
+            chart._hierarchy.descendantLayout.childScale = (fraction) => fraction * Math.PI;
+            chart.drawDescendantMarriageArcs();
+
+            const group = document.querySelector("g.marriage.descendant");
+            const first = group.querySelector("g.content");
+
+            group.classList.add("update");
+            chart.drawDescendantMarriageArcs();
+
+            // The same group stays, the content of the first draw is marked and a new one is added
+            expect(document.querySelectorAll("g.marriage.descendant")).toHaveLength(1);
+            expect(first.classList.contains("old")).toBe(true);
+            expect(group.querySelectorAll("g.content")).toHaveLength(2);
+            expect(group.classList.contains("update")).toBe(false);
+            expect(group.classList.contains("new")).toBe(true);
+        });
+
+        test("marks a partner that is no longer drawn for removal together with its content", () => {
+            const nodes = [partnerNode(1, 0, 0.5)];
+            const chart = createRenderedChart(nodes);
+
+            chart._hierarchy.descendantLayout.childScale = (fraction) => fraction * Math.PI;
+            chart.drawDescendantMarriageArcs();
+
+            nodes.length = 0;
+            chart.drawDescendantMarriageArcs();
+
+            const group = document.querySelector("g.marriage.descendant");
+
+            expect(group.classList.contains("remove")).toBe(true);
+            expect(group.querySelector("g.content").classList.contains("old")).toBe(true);
         });
     });
 
