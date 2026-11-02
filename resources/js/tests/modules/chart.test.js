@@ -307,7 +307,29 @@ describe("Chart", () => {
             ["no scale", null, 0],
         ])("draws descendant marriage arcs for the partners with %s", (_label, scale, count) => {
             const chart = createRenderedChart([partnerNode(1, 0, 0.5), partnerNode(2, 0.5, 1)]);
-            const data = jest.fn(() => ({ each: jest.fn() }));
+            const appended = [];
+            const attributes = [];
+            const entering = {
+                attr: (name, value) => {
+                    attributes.push([name, typeof value === "function" ? "computed" : value]);
+
+                    return entering;
+                },
+                each: () => entering,
+            };
+            const exiting = { classed: () => exiting, selectAll: () => exiting };
+            const join = {
+                each: () => join,
+                exit: () => exiting,
+                enter: () => ({
+                    append: (tag) => {
+                        appended.push(tag);
+
+                        return entering;
+                    },
+                }),
+            };
+            const data = jest.fn(() => join);
 
             chart._hierarchy.descendantLayout.childScale = scale;
             chart.svg.visual.select = () => ({
@@ -315,13 +337,12 @@ describe("Chart", () => {
                 selectAll: () => ({ data }),
             });
 
-            try {
-                chart.drawDescendantMarriageArcs();
-            } catch {
-                // Only the partners handed to the join matter here
-            }
+            chart.drawDescendantMarriageArcs();
 
             expect(data.mock.calls[0][0]).toHaveLength(count);
+            // The entering elements are created as descendant marriage groups
+            expect(appended).toEqual(["g"]);
+            expect(attributes).toContainEqual(["class", "marriage descendant"]);
         });
     });
 
