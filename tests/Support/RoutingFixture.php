@@ -31,7 +31,7 @@ use function http_build_query;
 final class RoutingFixture
 {
     /**
-     * Prevents instances, the fixture only registers services.
+     * Prevents instances of the fixture, because it only registers services and holds no state.
      */
     private function __construct()
     {
@@ -44,6 +44,7 @@ final class RoutingFixture
      */
     public static function register(array $services = []): void
     {
+        // Route factory of the tests that renders a route as its name followed by its query.
         $routeFactory = new class implements RouteFactoryInterface {
             /**
              * Renders a route as its name followed by its query.
@@ -51,7 +52,7 @@ final class RoutingFixture
              * @param string                                    $route_name The name of the route
              * @param array<bool|int|string|array<string>|null> $parameters The parameters of the route
              *
-             * @return string
+             * @return string The route as a path with a query
              */
             public function route(string $route_name, array $parameters = []): string
             {
@@ -61,7 +62,7 @@ final class RoutingFixture
             /**
              * Returns a route map without any route.
              *
-             * @return Map&iterable<Route>
+             * @return Map&iterable<Route> The empty route map
              */
             public function routeMap(): Map
             {
@@ -69,6 +70,7 @@ final class RoutingFixture
             }
         };
 
+        // Container of the tests that serves the registered services by their id.
         $container = new readonly class([RouteFactoryInterface::class => $routeFactory, ...$services]) implements ContainerInterface {
             /**
              * @param array<string, object> $services The services by id
@@ -82,7 +84,7 @@ final class RoutingFixture
              *
              * @param string $id The id of the service
              *
-             * @return object
+             * @return object The registered service
              */
             public function get(string $id): object
             {
@@ -94,7 +96,7 @@ final class RoutingFixture
              *
              * @param string $id The id of the service
              *
-             * @return bool
+             * @return bool True when a service is registered under the id
              */
             public function has(string $id): bool
             {
@@ -107,7 +109,7 @@ final class RoutingFixture
              * @param string $id     The id of the service
              * @param object $object The service
              *
-             * @return static
+             * @return static The container itself
              */
             public function set(string $id, object $object): static
             {

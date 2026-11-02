@@ -664,8 +664,9 @@ final class ConfigurationTest extends TestCase
      * posted value of that name has an effect on the chart, because only the
      * submitted-value reader of the administration form looks at the body.
      *
-     * @param array<string, string> $query
-     * @param array<string, string> $body
+     * @param string                $method The method of the request
+     * @param array<string, string> $query  The query parameters of the request
+     * @param array<string, string> $body   The parsed body of a post request
      */
     #[Test]
     #[DataProvider('placeFormatRequestProvider')]
