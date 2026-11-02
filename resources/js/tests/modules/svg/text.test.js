@@ -141,9 +141,14 @@ describe("Text", () => {
         scaleLinearMock.mockClear();
     });
 
-    it("truncates names based on available width and preference", () => {
+    // The strategy of the configuration is handed to the shared truncation, the strategies
+    // GIVEN and SURNAME stand for the abbreviation choices of the administration
+    it.each([
+        ["GIVEN", "the given names"],
+        ["SURNAME", "the surname"],
+    ])("hands the strategy %s to truncateNames for %s", (strategy) => {
         truncateNamesMock.mockClear();
-        const text = new Text(svgStub, createConfiguration());
+        const text = new Text(svgStub, createConfiguration({ nameAbbreviation: strategy }));
         const nameGroup = [
             { label: "Anna", isPreferred: false, isLastName: false, isNameRtl: false },
             { label: "Beatrice", isPreferred: true, isLastName: false, isNameRtl: false },
@@ -151,11 +156,14 @@ describe("Text", () => {
         const parent = {
             style: jest.fn((property) => (property === "font-size" ? "12px" : "700")),
         };
+        const shortened = [{ label: "kept" }];
+
+        truncateNamesMock.mockReturnValueOnce(shortened);
 
         const truncated = text.truncateNamesData(parent, nameGroup, 100);
 
-        expect(measureTextMock).toHaveBeenCalled();
-        expect(truncated.map((name) => name.label)).toEqual(["A.", "B."]);
+        // The result of the shared truncation is what the label uses
+        expect(truncated).toBe(shortened);
         expect(parent.style).toHaveBeenCalledWith("font-size");
         expect(parent.style).toHaveBeenCalledWith("font-weight");
 
@@ -164,32 +172,13 @@ describe("Text", () => {
             nameGroup,
             100,
             expect.any(Function),
-            expect.objectContaining({ strategy: "GIVEN" }),
-        );
-    });
-
-    it("passes the SURNAME strategy to truncateNames when configured", () => {
-        truncateNamesMock.mockClear();
-        const text = new Text(svgStub, createConfiguration({ nameAbbreviation: "SURNAME" }));
-        const parent = {
-            style: jest.fn((property) => (property === "font-size" ? "12px" : "700")),
-        };
-
-        text.truncateNamesData(
-            parent,
-            [
-                { label: "Jón", isPreferred: true, isLastName: false, isNameRtl: false },
-                { label: "Sigurðsson", isPreferred: false, isLastName: true, isNameRtl: false },
-            ],
-            60,
+            expect.objectContaining({ strategy }),
         );
 
-        expect(truncateNamesMock).toHaveBeenCalledWith(
-            expect.any(Array),
-            expect.any(Number),
-            expect.any(Function),
-            expect.objectContaining({ strategy: "SURNAME" }),
-        );
+        // The measure function handed over measures with the font of the parent
+        truncateNamesMock.mock.calls[0][2]("Anna");
+
+        expect(measureTextMock).toHaveBeenCalledTimes(1);
     });
 
     describe("renderTimespanLines", () => {
