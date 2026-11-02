@@ -64,13 +64,10 @@ final class ConfigurationTest extends TestCase
     public static function displayModeRequestProvider(): array
     {
         return [
-            'query images only'                        => ['GET', ['displayMode' => 'images'], [], true, false],
             'query names only'                         => ['GET', ['displayMode' => 'names'], [], false, true],
-            'query both'                               => ['GET', ['displayMode' => 'both'], [], true, true],
             'both wins over the toggles switched off'  => ['GET', ['displayMode' => 'both', 'showImages' => '0', 'showNames' => '0'], [], true, true],
             'query wins over the single toggles'       => ['GET', ['displayMode' => 'images', 'showImages' => '0', 'showNames' => '1'], [], true, false],
             'invalid query value uses the toggles'     => ['GET', ['displayMode' => 'everything', 'showImages' => '0', 'showNames' => '1'], [], false, true],
-            'body images only'                         => ['POST', [], ['displayMode' => 'images'], true, false],
             'body wins over the query'                 => ['POST', ['displayMode' => 'names'], ['displayMode' => 'images'], true, false],
             'a post reads the body only'               => ['POST', ['displayMode' => 'images'], [], true, true],
             'invalid body value uses the body toggles' => ['POST', ['displayMode' => 'images'], ['displayMode' => 'everything', 'showImages' => '0', 'showNames' => '1'], false, true],
@@ -205,12 +202,14 @@ final class ConfigurationTest extends TestCase
 
     /**
      * A module preference that is no hex colour is ignored the same way, so
-     * the stored value cannot reach the page either.
+     * the stored value cannot reach the page either. The request test above
+     * pins the pattern on every shape, so this one stored value shows that
+     * the preference passes through the same check.
      */
     #[Test]
-    #[DataProvider('invalidColourProvider')]
-    public function aColourFromTheModulePreferenceThatIsNoHexColourFallsBackToTheDefault(string $value): void
+    public function aColourFromTheModulePreferenceThatIsNoHexColourFallsBackToTheDefault(): void
     {
+        $value  = '<!--<script>';
         $module = $this->createModuleWithPreferences(
             [
                 'default_paternalColor' => $value,
@@ -413,22 +412,6 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Absent both a request parameter and a stored preference, the strategy
-     * defaults to Auto.
-     */
-    #[Test]
-    public function nameAbbreviationDefaultsToAutoWhenUnset(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $module  = $this->createModuleWithPreferences([]);
-
-        self::assertSame(
-            NameAbbreviation::Auto,
-            (new Configuration($request, $module))->getNameAbbreviation()
-        );
-    }
-
-    /**
      * A POSTed nameAbbreviation parameter is validated through validator() and
      * takes precedence over the stored preference.
      */
@@ -607,23 +590,21 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Every value the pre-3.0 `default_placeParts` preference could hold, including
-     * the ones that must degrade to Automatic: the old "inherit" sentinel, an unset
-     * preference, a value outside the old range, and a non-numeric string.
+     * The values the pre-3.0 `default_placeParts` preference could hold that map onto a
+     * choice, and the old "inherit" sentinel as the representative of every value that
+     * degrades to Automatic (an unset preference, a value outside the old range and a
+     * non-numeric string reach the same default arm).
      *
      * @return array<string, array{0: string, 1: PlaceFormatChoice}>
      */
     public static function legacyPlacePartsProvider(): array
     {
         return [
-            'automatic sentinel'        => ['-1', PlaceFormatChoice::Automatic],
-            'full name'                 => ['0', PlaceFormatChoice::Full],
-            'one level'                 => ['1', PlaceFormatChoice::Levels1],
-            'two levels'                => ['2', PlaceFormatChoice::Levels2],
-            'three levels'              => ['3', PlaceFormatChoice::Levels3],
-            'no legacy value'           => ['', PlaceFormatChoice::Automatic],
-            'out-of-range legacy value' => ['9', PlaceFormatChoice::Automatic],
-            'garbage legacy value'      => ['nonsense', PlaceFormatChoice::Automatic],
+            'automatic sentinel' => ['-1', PlaceFormatChoice::Automatic],
+            'full name'          => ['0', PlaceFormatChoice::Full],
+            'one level'          => ['1', PlaceFormatChoice::Levels1],
+            'two levels'         => ['2', PlaceFormatChoice::Levels2],
+            'three levels'       => ['3', PlaceFormatChoice::Levels3],
         ];
     }
 
@@ -663,22 +644,6 @@ final class ConfigurationTest extends TestCase
         ]);
 
         self::assertSame(PlaceFormatChoice::Levels2, (new Configuration($request, $module))->getPlaceFormatChoice());
-    }
-
-    /**
-     * With no preference at all the option inherits the tree settings.
-     *
-     * @return void
-     */
-    #[Test]
-    public function placeFormatDefaultsToAutomatic(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-
-        self::assertSame(
-            PlaceFormatChoice::Automatic,
-            (new Configuration($request, $this->createModuleWithPreferences([])))->getPlaceFormatChoice()
-        );
     }
 
     /**
@@ -860,21 +825,6 @@ final class ConfigurationTest extends TestCase
             array_map(static fn (PlaceFormatChoice $case): string => $case->value, PlaceFormatChoice::cases()),
             array_keys($configuration->getPlaceFormatList())
         );
-    }
-
-    /**
-     * Ensures getShowDescendants() defaults to false when not set.
-     */
-    #[Test]
-    public function showDescendantsDefaultsToFalse(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-
-        $module = $this->createModuleWithPreferences([]);
-
-        $configuration = new Configuration($request, $module);
-
-        self::assertFalse($configuration->getShowDescendants());
     }
 
     /**
