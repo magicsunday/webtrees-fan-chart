@@ -3,10 +3,10 @@ import Configuration from "resources/js/modules/configuration";
 describe("Configuration", () => {
     const labels = { zoom: "Zoom hint", move: "Move hint", 0: "Self", 1: "Parents" };
 
-    // Both branches of the room that the marriage dates need between the generations. The
-    // padding is 30 with the dates, the pad radius is ten times it, the pad distance is the
-    // pad angle (0.03) times the pad radius and the arcs are the padding plus 125 high.
-    // Without the dates there is no padding and the arcs keep their own heights.
+    // Both branches of the room that the marriage dates need between the generations. With the
+    // dates the pad radius is a multiple of the padding, the pad distance is the pad angle times
+    // the pad radius and both arcs are the padding plus a fixed height. Without the dates there
+    // is no padding and each arc has its own fixed height.
     it.each([
         [
             "with the parent marriage dates shown",

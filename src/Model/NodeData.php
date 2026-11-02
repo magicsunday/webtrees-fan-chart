@@ -430,9 +430,9 @@ final class NodeData implements JsonSerializable
     }
 
     /**
-     * Serialises all chart-relevant fields to an array. The facts are appended as
-     * the last key and only when the list is not empty, so a chart without the
-     * detail panel keeps its payload unchanged.
+     * Serialises all chart-relevant fields to an array. The facts are included
+     * only when the list is not empty, so a chart without the detail panel keeps
+     * its payload unchanged.
      *
      * @return array{
      *     id: int,

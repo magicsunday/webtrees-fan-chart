@@ -46,7 +46,7 @@ describe("createColorStripArcGenerator", () => {
             0.03,
         );
 
-        // The outer radius of the generation is 250
+        // The radii and angles follow the generation and the sector of the node
         expect(read(generator.innerRadius())).toBe(230);
         expect(read(generator.outerRadius())).toBe(251);
         expect(read(generator.startAngle())).toBeCloseTo(3);

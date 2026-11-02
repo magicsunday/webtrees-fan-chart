@@ -81,4 +81,17 @@ final class NodeTest extends TestCase
         self::assertArrayHasKey('facts', $payload);
         self::assertSame($facts, $payload['facts']);
     }
+
+    /**
+     * A list that holds only empty slots is still a list with entries, so the payload
+     * carries it, and the client sees which slots exist.
+     */
+    #[Test]
+    public function aFactListOfEmptySlotsOnlyIsStillSent(): void
+    {
+        $payload = (new NodeData())->setFacts([null, null])->jsonSerialize();
+
+        self::assertArrayHasKey('facts', $payload);
+        self::assertSame([null, null], $payload['facts']);
+    }
 }
