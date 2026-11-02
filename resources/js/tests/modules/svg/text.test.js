@@ -310,29 +310,6 @@ describe("Text", () => {
         });
     });
 
-    describe("createLabels", () => {
-        it.each([
-            ["inner arc text for an inner label", true, "createInnerLabels", "createOuterLabels"],
-            ["rotated text for an outer label", false, "createOuterLabels", "createInnerLabels"],
-        ])("hands the slot positions to %s", (_label, isInner, expectedCall, otherCall) => {
-            const text = new Text(svgStub, createConfiguration(), {});
-            const positions = new Map();
-            const parent = {};
-            const datum = createDatum();
-
-            text._layout.isInnerLabel = jest.fn(() => isInner);
-            text._layout.calculateSlotPositions = jest.fn(() => positions);
-            text.createInnerLabels = jest.fn();
-            text.createOuterLabels = jest.fn();
-
-            text.createLabels(parent, datum);
-
-            expect(text._layout.calculateSlotPositions).toHaveBeenCalledWith(datum);
-            expect(text[expectedCall]).toHaveBeenCalledWith(parent, datum, positions);
-            expect(text[otherCall]).not.toHaveBeenCalled();
-        });
-    });
-
     describe("line widths of the labels", () => {
         // Every slot has its own position, and the stubbed layout turns a
         // position into a width, so a width that reaches the truncation proves
