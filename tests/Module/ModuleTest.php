@@ -45,13 +45,22 @@ final class ModuleTest extends TestCase
     use ModuleSettingsFixtureTrait;
 
     /**
+     * Registers the routing that every test of the module needs, also in the process of a test
+     * that runs separately.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        RoutingFixture::register([ResponseFactoryInterface::class => new HttpFactory()]);
+    }
+
+    /**
      * Ensures trait-provided helpers return expected metadata and URLs.
      */
     #[Test]
     public function traitHelpersExposeExpectedValues(): void
     {
-        RoutingFixture::register([ResponseFactoryInterface::class => new HttpFactory()]);
-
         $chartService = self::createStub(ChartService::class);
         $module       = new Module($chartService, new DataFacade());
         $individual   = self::createStub(Individual::class);
@@ -79,7 +88,6 @@ final class ModuleTest extends TestCase
     #[PreserveGlobalState(false)]
     public function bootRegistersTheSharedViewsOfTheModuleBase(): void
     {
-        RoutingFixture::register([ResponseFactoryInterface::class => new HttpFactory()]);
         EnglishLocaleFixture::install();
 
         $module = new Module(self::createStub(ChartService::class), new DataFacade());
@@ -103,7 +111,6 @@ final class ModuleTest extends TestCase
     #[Test]
     public function adminFormStoresThePostedPlaceFormat(): void
     {
-        RoutingFixture::register([ResponseFactoryInterface::class => new HttpFactory()]);
         EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences(['default_placeFormat' => 'full']);
@@ -123,7 +130,6 @@ final class ModuleTest extends TestCase
     #[Test]
     public function adminFormStoresThePanelDefault(): void
     {
-        RoutingFixture::register([ResponseFactoryInterface::class => new HttpFactory()]);
         EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences([]);
@@ -146,7 +152,6 @@ final class ModuleTest extends TestCase
     #[Test]
     public function adminFormTakesThePanelDefaultBackWhenTheSwitchIsOff(): void
     {
-        RoutingFixture::register([ResponseFactoryInterface::class => new HttpFactory()]);
         EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences(['default_showDetailPanel' => '1']);
@@ -171,7 +176,6 @@ final class ModuleTest extends TestCase
     #[Test]
     public function adminFormStoresEveryDefaultOfTheChart(): void
     {
-        RoutingFixture::register([ResponseFactoryInterface::class => new HttpFactory()]);
         EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences([]);
