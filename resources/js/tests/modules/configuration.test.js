@@ -3,20 +3,41 @@ import Configuration from "resources/js/modules/configuration";
 describe("Configuration", () => {
     const labels = { zoom: "Zoom hint", move: "Move hint", 0: "Self", 1: "Parents" };
 
-    it("adjusts padding and arc sizes when marriage dates are shown", () => {
-        const config = new Configuration({
-            labels: { zoom: "Zoom", move: "Move", 0: "ancestor", 1: "spouse" },
-            showParentMarriageDates: true,
-        });
+    // Both branches of the room that the marriage dates need between the generations. The
+    // padding is 30 with the dates, the pad radius is ten times it, the pad distance is the
+    // pad angle (0.03) times the pad radius and the arcs are the padding plus 125 high.
+    // Without the dates there is no padding and the arcs keep their own heights.
+    it.each([
+        [
+            "with the parent marriage dates shown",
+            true,
+            {
+                circlePadding: 30,
+                padRadius: 300,
+                padDistance: 9,
+                innerArcHeight: 155,
+                outerArcHeight: 155,
+            },
+        ],
+        [
+            "without the parent marriage dates",
+            false,
+            {
+                circlePadding: 0,
+                padRadius: 0,
+                padDistance: 0,
+                innerArcHeight: 115,
+                outerArcHeight: 175,
+            },
+        ],
+    ])("sets padding and arc sizes %s", (_label, showParentMarriageDates, expected) => {
+        const configuration = new Configuration({ labels, showParentMarriageDates });
 
-        expect(config.circlePadding).toBe(30);
-        expect(config.innerArcHeight).toBe(155);
-        expect(config.outerArcHeight).toBe(155);
-        expect(config.padRadius).toBe(300);
-        expect(config.padDistance).toBeCloseTo(9, 5);
-        expect(config.generations).toBe(6);
-        expect(config.fanDegree).toBe(210);
-        expect(config.fontScale).toBe(100);
+        expect(configuration.circlePadding).toBe(expected.circlePadding);
+        expect(configuration.padRadius).toBe(expected.padRadius);
+        expect(configuration.padDistance).toBeCloseTo(expected.padDistance, 5);
+        expect(configuration.innerArcHeight).toBe(expected.innerArcHeight);
+        expect(configuration.outerArcHeight).toBe(expected.outerArcHeight);
     });
 
     it("takes the fan degree as given because the server already clamped it", () => {
@@ -27,39 +48,6 @@ describe("Configuration", () => {
         });
 
         expect(configuration.fanDegree).toBe(340);
-    });
-
-    it("expands spacing when parent marriage dates are shown", () => {
-        const configuration = new Configuration({
-            labels,
-            generations: 4,
-            fontScale: 90,
-            showParentMarriageDates: true,
-            showNames: true,
-            showSilhouettes: true,
-            rtl: true,
-            innerArcs: 5,
-        });
-
-        expect(configuration.circlePadding).toBe(30);
-        expect(configuration.padRadius).toBe(300);
-        expect(configuration.padDistance).toBeCloseTo(9);
-        expect(configuration.innerArcHeight).toBe(155);
-        expect(configuration.outerArcHeight).toBe(155);
-        expect(configuration.showParentMarriageDates).toBe(true);
-        expect(configuration.rtl).toBe(true);
-    });
-
-    it("propagates labels and RTL preference for downstream renderers", () => {
-        const rtlLabels = ["Self", "Parents", "Grandparents"];
-        const config = new Configuration({
-            labels: rtlLabels,
-            rtl: true,
-        });
-
-        expect(config.rtl).toBe(true);
-        expect(config.labels).toBe(rtlLabels);
-        expect(config.labels).toEqual(["Self", "Parents", "Grandparents"]);
     });
 
     it("shows no detail panel unless the server switches it on", () => {

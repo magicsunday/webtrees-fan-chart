@@ -1,69 +1,5 @@
 import { jest } from "@jest/globals";
 
-const hierarchyMock = jest.fn((datum, childrenAccessor) => {
-    const buildNode = (value, parent = null) => {
-        const node = {
-            data: value,
-            parent,
-            children: [],
-        };
-        const children =
-            typeof childrenAccessor === "function" ? childrenAccessor(value) || [] : [];
-
-        node.children = children.map((child) => buildNode(child, node));
-
-        return node;
-    };
-
-    const root = buildNode(datum);
-
-    root.count = jest.fn(() => root);
-
-    root.descendants = () => {
-        const nodes = [];
-        const visit = (node) => {
-            nodes.push(node);
-            node.children.forEach(visit);
-        };
-
-        visit(root);
-
-        return nodes;
-    };
-
-    return root;
-});
-
-const partitionMock = jest.fn(() => (root) => root);
-
-const scaleLinearMock = jest.fn(() => {
-    let _domain = [0, 1];
-    let _range = [0, 1];
-
-    const scale = (value) => {
-        const t = (value - _domain[0]) / (_domain[1] - _domain[0]);
-        return _range[0] + t * (_range[1] - _range[0]);
-    };
-
-    scale.domain = (d) => {
-        _domain = d;
-        return scale;
-    };
-    scale.range = (r) => {
-        _range = r;
-        return scale;
-    };
-
-    return scale;
-});
-
-await jest.unstable_mockModule("resources/js/modules/d3", () => ({
-    __esModule: true,
-    hierarchy: hierarchyMock,
-    partition: partitionMock,
-    scaleLinear: scaleLinearMock,
-}));
-
 const { default: Hierarchy, SEX_FEMALE, SEX_MALE } = await import("resources/js/modules/hierarchy");
 
 const createIndividual = ({ id = 1, generation = 1, sex = SEX_MALE, parents } = {}) => ({
@@ -86,11 +22,6 @@ const createIndividual = ({ id = 1, generation = 1, sex = SEX_MALE, parents } = 
 });
 
 describe("Hierarchy.init", () => {
-    beforeEach(() => {
-        hierarchyMock.mockClear();
-        partitionMock.mockClear();
-    });
-
     test("adds missing parents with male and female placeholders until configured generations", () => {
         const rootDatum = createIndividual({ id: 1, generation: 1 });
         const hierarchy = new Hierarchy({ generations: 3 });
@@ -138,7 +69,8 @@ describe("Hierarchy.init", () => {
 
         expect(children).toHaveLength(2);
         expect(children.every((child) => child.data.data.generation === 2)).toBe(true);
-        expect(children.every((child) => child.children.length === 0)).toBe(true);
+        // A leaf of a d3 hierarchy has no children property at all
+        expect(children.every((child) => child.children === undefined)).toBe(true);
         expect(hierarchy.nodes).toHaveLength(3);
     });
 
@@ -162,8 +94,30 @@ describe("Hierarchy.init", () => {
 
         hierarchy.init(rootDatum);
 
-        expect(hierarchy.root.children).toHaveLength(0);
+        // A leaf of a d3 hierarchy has no children property at all
+        expect(hierarchy.root.children).toBeUndefined();
         expect(hierarchy.nodes).toHaveLength(1);
+    });
+
+    test("gives every ancestor slot of a generation the same share of the circle", () => {
+        const hierarchy = new Hierarchy({ generations: 3 });
+
+        hierarchy.init(createIndividual({ id: 1, generation: 1 }));
+
+        const [father, mother] = hierarchy.root.children;
+        const grandparents = [...father.children, ...mother.children];
+
+        // The circle is one unit wide. The root spans all of it, each parent half of it and each
+        // grandparent a quarter of it, in the order father, mother, father's parents, mother's parents.
+        expect([hierarchy.root.x0, hierarchy.root.x1]).toEqual([0, 1]);
+        expect([father.x0, father.x1]).toEqual([0, 0.5]);
+        expect([mother.x0, mother.x1]).toEqual([0.5, 1]);
+        expect(grandparents.map((node) => [node.x0, node.x1])).toEqual([
+            [0, 0.25],
+            [0.25, 0.5],
+            [0.5, 0.75],
+            [0.75, 1],
+        ]);
     });
 
     test("assigns unique numeric identifiers to all nodes", () => {
@@ -181,20 +135,12 @@ describe("Hierarchy.init", () => {
 });
 
 describe("Hierarchy accessors", () => {
-    test.each(["nodes", "root"])("%s throws before init() has been called", (accessor) => {
+    test("throws when an accessor is read before init() has been called", () => {
         const hierarchy = new Hierarchy({ generations: 3 });
 
-        expect(() => hierarchy[accessor]).toThrow(
-            `Hierarchy.${accessor} is not available before init() has been called`,
+        expect(() => hierarchy.nodes).toThrow(
+            "Hierarchy.nodes is not available before init() has been called",
         );
-    });
-
-    test.each(["nodes", "root"])("%s is available once init() has been called", (accessor) => {
-        const hierarchy = new Hierarchy({ generations: 2 });
-
-        hierarchy.init(createIndividual({ id: 1, generation: 1 }));
-
-        expect(() => hierarchy[accessor]).not.toThrow();
     });
 });
 
@@ -239,12 +185,6 @@ describe("Hierarchy.initDescendants", () => {
             sex,
             timespan: "",
         },
-    });
-
-    beforeEach(() => {
-        hierarchyMock.mockClear();
-        partitionMock.mockClear();
-        scaleLinearMock.mockClear();
     });
 
     test("does nothing when showDescendants is false", () => {

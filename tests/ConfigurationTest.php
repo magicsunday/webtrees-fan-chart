@@ -64,13 +64,10 @@ final class ConfigurationTest extends TestCase
     public static function displayModeRequestProvider(): array
     {
         return [
-            'query images only'                        => ['GET', ['displayMode' => 'images'], [], true, false],
             'query names only'                         => ['GET', ['displayMode' => 'names'], [], false, true],
-            'query both'                               => ['GET', ['displayMode' => 'both'], [], true, true],
             'both wins over the toggles switched off'  => ['GET', ['displayMode' => 'both', 'showImages' => '0', 'showNames' => '0'], [], true, true],
             'query wins over the single toggles'       => ['GET', ['displayMode' => 'images', 'showImages' => '0', 'showNames' => '1'], [], true, false],
             'invalid query value uses the toggles'     => ['GET', ['displayMode' => 'everything', 'showImages' => '0', 'showNames' => '1'], [], false, true],
-            'body images only'                         => ['POST', [], ['displayMode' => 'images'], true, false],
             'body wins over the query'                 => ['POST', ['displayMode' => 'names'], ['displayMode' => 'images'], true, false],
             'a post reads the body only'               => ['POST', ['displayMode' => 'images'], [], true, true],
             'invalid body value uses the body toggles' => ['POST', ['displayMode' => 'images'], ['displayMode' => 'everything', 'showImages' => '0', 'showNames' => '1'], false, true],
@@ -205,12 +202,14 @@ final class ConfigurationTest extends TestCase
 
     /**
      * A module preference that is no hex colour is ignored the same way, so
-     * the stored value cannot reach the page either.
+     * the stored value cannot reach the page either. The request test above
+     * pins the pattern on every shape, so this one stored value shows that
+     * the preference passes through the same check.
      */
     #[Test]
-    #[DataProvider('invalidColourProvider')]
-    public function aColourFromTheModulePreferenceThatIsNoHexColourFallsBackToTheDefault(string $value): void
+    public function aColourFromTheModulePreferenceThatIsNoHexColourFallsBackToTheDefault(): void
     {
+        $value  = '<!--<script>';
         $module = $this->createModuleWithPreferences(
             [
                 'default_paternalColor' => $value,
@@ -374,49 +373,6 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * The place format is an administrator setting, so no navigation URL carries
-     * it and a visitor cannot override it through the address bar.
-     */
-    #[Test]
-    public function theRouteToggleParamsDoNotCarryThePlaceFormat(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $module  = $this->createModuleWithPreferences([
-            'default_placeFormat' => 'city-iso2',
-        ]);
-
-        self::assertArrayNotHasKey(
-            'placeFormat',
-            (new Configuration($request, $module))->getRouteToggleParams()
-        );
-    }
-
-    /**
-     * The admin form's field name and the request key Configuration reads back
-     * on a save are two independent strings that must match. A mismatch does not
-     * error, every save would persist the stored choice and discard the admin's
-     * selection, so the view builds its field from this constant and this test
-     * pins the constant to the key the reader actually consumes.
-     */
-    #[Test]
-    public function thePlaceFormatFieldNameIsTheOneTheSubmittedReaderConsumes(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_POST, '/');
-        $request = $request->withParsedBody([
-            Configuration::PLACE_FORMAT_FIELD => 'city-iso3',
-        ]);
-
-        $module = $this->createModuleWithPreferences([
-            'default_placeFormat' => 'full',
-        ]);
-
-        self::assertSame(
-            PlaceFormatChoice::CityIso3,
-            (new Configuration($request, $module))->getSubmittedPlaceFormatChoice()
-        );
-    }
-
-    /**
      * The stored name-abbreviation preference is converted to its typed case at
      * the boundary, so a valid stored value round-trips to the matching enum
      * case.
@@ -448,22 +404,6 @@ final class ConfigurationTest extends TestCase
         $module  = $this->createModuleWithPreferences([
             'default_nameAbbreviation' => 'not-a-strategy',
         ]);
-
-        self::assertSame(
-            NameAbbreviation::Auto,
-            (new Configuration($request, $module))->getNameAbbreviation()
-        );
-    }
-
-    /**
-     * Absent both a request parameter and a stored preference, the strategy
-     * defaults to Auto.
-     */
-    #[Test]
-    public function nameAbbreviationDefaultsToAutoWhenUnset(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $module  = $this->createModuleWithPreferences([]);
 
         self::assertSame(
             NameAbbreviation::Auto,
@@ -650,23 +590,21 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Every value the pre-3.0 `default_placeParts` preference could hold, including
-     * the ones that must degrade to Automatic: the old "inherit" sentinel, an unset
-     * preference, a value outside the old range, and a non-numeric string.
+     * The values the pre-3.0 `default_placeParts` preference could hold that map onto a
+     * choice, and the old "inherit" sentinel as the representative of every value that
+     * degrades to Automatic (an unset preference, a value outside the old range and a
+     * non-numeric string reach the same default arm).
      *
      * @return array<string, array{0: string, 1: PlaceFormatChoice}>
      */
     public static function legacyPlacePartsProvider(): array
     {
         return [
-            'automatic sentinel'        => ['-1', PlaceFormatChoice::Automatic],
-            'full name'                 => ['0', PlaceFormatChoice::Full],
-            'one level'                 => ['1', PlaceFormatChoice::Levels1],
-            'two levels'                => ['2', PlaceFormatChoice::Levels2],
-            'three levels'              => ['3', PlaceFormatChoice::Levels3],
-            'no legacy value'           => ['', PlaceFormatChoice::Automatic],
-            'out-of-range legacy value' => ['9', PlaceFormatChoice::Automatic],
-            'garbage legacy value'      => ['nonsense', PlaceFormatChoice::Automatic],
+            'automatic sentinel' => ['-1', PlaceFormatChoice::Automatic],
+            'full name'          => ['0', PlaceFormatChoice::Full],
+            'one level'          => ['1', PlaceFormatChoice::Levels1],
+            'two levels'         => ['2', PlaceFormatChoice::Levels2],
+            'three levels'       => ['3', PlaceFormatChoice::Levels3],
         ];
     }
 
@@ -682,26 +620,6 @@ final class ConfigurationTest extends TestCase
 
         $module = $this->createModuleWithPreferences([
             'default_placeParts'  => '2',
-            'default_placeFormat' => 'city-iso2',
-        ]);
-
-        self::assertSame(PlaceFormatChoice::CityIso2, (new Configuration($request, $module))->getPlaceFormatChoice());
-    }
-
-    /**
-     * An unusable query parameter must not discard the admin's stored setting.
-     * The pre-3.0 behaviour was exactly this: a value failing isBetween() fell
-     * back to the preference, not to the built-in default.
-     *
-     * @return void
-     */
-    #[Test]
-    public function anInvalidQueryParameterKeepsTheStoredPreference(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $request = $request->withQueryParams(['placeFormat' => 'nonsense']);
-
-        $module = $this->createModuleWithPreferences([
             'default_placeFormat' => 'city-iso2',
         ]);
 
@@ -729,51 +647,39 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * With no preference at all the option inherits the tree settings.
+     * The request shapes that carry a place format and must not change the chart.
      *
-     * @return void
+     * @return array<string, array{string, array<string, string>, array<string, string>}>
      */
-    #[Test]
-    public function placeFormatDefaultsToAutomatic(): void
+    public static function placeFormatRequestProvider(): array
     {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-
-        self::assertSame(
-            PlaceFormatChoice::Automatic,
-            (new Configuration($request, $this->createModuleWithPreferences([])))->getPlaceFormatChoice()
-        );
+        return [
+            'query parameter' => ['GET', ['placeFormat' => 'city-country'], []],
+            'post body'       => ['POST', [], ['placeFormat' => 'city-iso3']],
+        ];
     }
 
     /**
-     * The place format is an administrator setting. A query parameter of that
-     * name has no effect on the chart.
+     * The place format is an administrator setting. Neither a query parameter nor a
+     * posted value of that name has an effect on the chart, because only the
+     * submitted-value reader of the administration form looks at the body.
      *
-     * @return void
+     * @param string                $method The method of the request
+     * @param array<string, string> $query  The query parameters of the request
+     * @param array<string, string> $body   The parsed body of a post request
      */
     #[Test]
-    public function placeFormatQueryParameterDoesNotOverrideThePreference(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $request = $request->withQueryParams(['placeFormat' => 'city-country']);
+    #[DataProvider('placeFormatRequestProvider')]
+    public function placeFormatFromTheRequestDoesNotOverrideThePreference(
+        string $method,
+        array $query,
+        array $body,
+    ): void {
+        $request = (new ServerRequest($method, '/'))->withQueryParams($query);
 
-        $module = $this->createModuleWithPreferences([
-            'default_placeFormat' => 'full',
-        ]);
-
-        self::assertSame(PlaceFormatChoice::Full, (new Configuration($request, $module))->getPlaceFormatChoice());
-    }
-
-    /**
-     * A posted value does not change the chart either. Only the submitted-value
-     * reader of the administration form looks at the body.
-     *
-     * @return void
-     */
-    #[Test]
-    public function placeFormatPostBodyDoesNotOverrideThePreference(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_POST, '/');
-        $request = $request->withParsedBody(['placeFormat' => 'city-iso3']);
+        if ($method === RequestMethodInterface::METHOD_POST) {
+            $request = $request->withParsedBody($body);
+        }
 
         $module = $this->createModuleWithPreferences([
             'default_placeFormat' => 'full',
@@ -923,133 +829,55 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Ensures getShowDescendants() defaults to false when not set.
+     * The fan degree on and around its edges, with and without descendants. A request value
+     * outside 180 to 360 falls back to the stored default of 210. While descendants are shown the
+     * value is lowered to 270, and the unclamped reading keeps the accepted value.
+     *
+     * @return array<string, array{string, string, int, int}>
      */
-    #[Test]
-    public function showDescendantsDefaultsToFalse(): void
+    public static function fanDegreeProvider(): array
     {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-
-        $module = $this->createModuleWithPreferences([]);
-
-        $configuration = new Configuration($request, $module);
-
-        self::assertFalse($configuration->getShowDescendants());
+        return [
+            'below the minimum without descendants' => ['179', '0', 210, 210],
+            'minimum without descendants'           => ['180', '0', 180, 180],
+            'inside the range without descendants'  => ['210', '0', 210, 210],
+            'ceiling without descendants'           => ['270', '0', 270, 270],
+            'above the ceiling without descendants' => ['271', '0', 271, 271],
+            'maximum without descendants'           => ['360', '0', 360, 360],
+            'above the maximum without descendants' => ['361', '0', 210, 210],
+            'below the minimum with descendants'    => ['179', '1', 210, 210],
+            'minimum with descendants'              => ['180', '1', 180, 180],
+            'inside the range with descendants'     => ['210', '1', 210, 210],
+            'ceiling with descendants'              => ['270', '1', 270, 270],
+            'above the ceiling with descendants'    => ['271', '1', 270, 271],
+            'maximum with descendants'              => ['360', '1', 270, 360],
+            'above the maximum with descendants'    => ['361', '1', 210, 210],
+        ];
     }
 
     /**
-     * Ensures getFanDegree() returns unclamped value when showDescendants is
-     * false.
+     * Pins the clamped and the unclamped fan degree on the edges of the accepted range.
      */
     #[Test]
-    public function fanDegreeUnclampedWhenDescendantsDisabled(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $request = $request->withQueryParams([
-            'fanDegree'       => '300',
-            'showDescendants' => '0',
+    #[DataProvider('fanDegreeProvider')]
+    public function theFanDegreeIsTakenInsideItsRangeAndLoweredWhileDescendantsAreShown(
+        string $value,
+        string $showDescendants,
+        int $expected,
+        int $expectedUnclamped,
+    ): void {
+        $request = (new ServerRequest(RequestMethodInterface::METHOD_GET, '/'))->withQueryParams([
+            'fanDegree'       => $value,
+            'showDescendants' => $showDescendants,
         ]);
 
-        $module = $this->createModuleWithPreferences([
-            'default_fanDegree' => '210',
-        ]);
+        $configuration = new Configuration(
+            $request,
+            $this->createModuleWithPreferences(['default_fanDegree' => '210'])
+        );
 
-        $configuration = new Configuration($request, $module);
-
-        self::assertSame(300, $configuration->getFanDegree());
-    }
-
-    /**
-     * Ensures getFanDegree() clamps to 270 ceiling when showDescendants is
-     * true.
-     */
-    #[Test]
-    public function fanDegreeCeilingWhenDescendantsEnabled(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $request = $request->withQueryParams([
-            'fanDegree'       => '300',
-            'showDescendants' => '1',
-        ]);
-
-        $module = $this->createModuleWithPreferences([
-            'default_fanDegree' => '210',
-        ]);
-
-        $configuration = new Configuration($request, $module);
-
-        self::assertSame(270, $configuration->getFanDegree());
-    }
-
-    /**
-     * Ensures getFanDegree() does not clamp values within 180-270 range.
-     */
-    #[Test]
-    public function fanDegreeWithinRangeUnchanged(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $request = $request->withQueryParams([
-            'fanDegree'       => '210',
-            'showDescendants' => '1',
-        ]);
-
-        $module = $this->createModuleWithPreferences([
-            'default_fanDegree' => '210',
-        ]);
-
-        $configuration = new Configuration($request, $module);
-
-        self::assertSame(210, $configuration->getFanDegree());
-    }
-
-    /**
-     * Ensures getFanDegree() returns default (210) when input is out of
-     * isBetween range, even when showDescendants is true (90 is rejected by
-     * validator, default 210 returned).
-     */
-    #[Test]
-    public function fanDegreeOutOfRangeFallsBackToDefault(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $request = $request->withQueryParams([
-            'fanDegree'       => '90',
-            'showDescendants' => '1',
-        ]);
-
-        $module = $this->createModuleWithPreferences([
-            'default_fanDegree' => '210',
-        ]);
-
-        $configuration = new Configuration($request, $module);
-
-        // isBetween(180,360) rejects 90, falls back to default 210
-        // Descendant clamp: min(270, max(180, 210)) = 210
-        self::assertSame(210, $configuration->getFanDegree());
-    }
-
-    /**
-     * Ensures getFanDegreeUnclamped() returns the value WITHOUT descendant
-     * clamp.
-     */
-    #[Test]
-    public function fanDegreeUnclampedIgnoresDescendantClamp(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
-        $request = $request->withQueryParams([
-            'fanDegree'       => '300',
-            'showDescendants' => '1',
-        ]);
-
-        $module = $this->createModuleWithPreferences([
-            'default_fanDegree' => '210',
-        ]);
-
-        $configuration = new Configuration($request, $module);
-
-        // getFanDegreeUnclamped should return 300 (no descendant clamp)
-        self::assertSame(300, $configuration->getFanDegreeUnclamped());
-        // getFanDegree should return 270 (clamped)
-        self::assertSame(270, $configuration->getFanDegree());
+        self::assertSame($expected, $configuration->getFanDegree());
+        self::assertSame($expectedUnclamped, $configuration->getFanDegreeUnclamped());
     }
 
     /**

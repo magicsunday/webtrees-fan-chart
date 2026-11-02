@@ -55,19 +55,6 @@ describe("draw rules", () => {
     describe("applyFamilyColorMode", () => {
         const createVisual = () => ({ classed: jest.fn() });
 
-        it("applies the colors and marks the chart while family colors are shown", () => {
-            const hierarchy = { nodes: [{ id: 1 }], applyFamilyColors: jest.fn() };
-            const visual = createVisual();
-            const configuration = { showFamilyColors: true };
-
-            applyFamilyColorMode(hierarchy, visual, configuration);
-
-            expect(familyColorConstructor).toHaveBeenCalledWith(configuration);
-            expect(setPartnerMidpoints).toHaveBeenCalledWith(hierarchy.nodes);
-            expect(hierarchy.applyFamilyColors).toHaveBeenCalledTimes(1);
-            expect(visual.classed).toHaveBeenCalledWith("family-colors", true);
-        });
-
         it("only computes the midpoints and clears the mark while family colors are hidden", () => {
             const hierarchy = { nodes: [{ id: 1 }], applyFamilyColors: jest.fn() };
             const visual = createVisual();

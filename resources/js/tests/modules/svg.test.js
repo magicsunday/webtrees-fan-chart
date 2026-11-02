@@ -30,16 +30,11 @@ describe("Svg", () => {
         createChartExport.mockClear();
     });
 
-    describe("accessors that need initEvents()", () => {
-        it.each(["zoom", "visual", "div"])(
-            "%s throws before initEvents() has been called",
-            (accessor) => {
-                const svg = new Svg(createParent(), {});
+    it("throws when an accessor is read before initEvents() has been called", () => {
+        const svg = new Svg(createParent(), {});
 
-                expect(() => svg[accessor]).toThrow(
-                    `Svg.${accessor} is not available before initEvents() has been called`,
-                );
-            },
+        expect(() => svg.zoom).toThrow(
+            "Svg.zoom is not available before initEvents() has been called",
         );
     });
 

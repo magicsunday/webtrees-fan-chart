@@ -12,12 +12,10 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Test\Support;
 
 use Fisharebest\Webtrees\DB;
-use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Services\ChartService;
 use Illuminate\Database\Schema\Blueprint;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Module;
-use ReflectionProperty;
 
 use function array_keys;
 use function array_map;
@@ -78,8 +76,7 @@ trait ModuleSettingsFixtureTrait
         $chartService = self::createStub(ChartService::class);
         $module       = new Module($chartService, new DataFacade());
 
-        $reflection = new ReflectionProperty(AbstractModule::class, 'name');
-        $reflection->setValue($module, 'webtrees-fan-chart');
+        $module->setName('webtrees-fan-chart');
 
         return $module;
     }

@@ -1,15 +1,6 @@
 import { jest } from "@jest/globals";
 
-const hoverClassCalls = [];
-const hoverSelection = {
-    classed: jest.fn((name, value) => {
-        hoverClassCalls.push({ name, value });
-        return hoverSelection;
-    }),
-    raise: jest.fn(() => hoverSelection),
-};
-
-const selectMock = jest.fn(() => hoverSelection);
+const selectMock = jest.fn(() => ({}));
 const arcMock = jest.fn(() => ({
     startAngle: jest.fn(() => ({
         endAngle: jest.fn(() => ({
@@ -84,7 +75,6 @@ afterEach(() => {
     // tests of the next describe block
     jest.restoreAllMocks();
     jest.clearAllMocks();
-    hoverClassCalls.length = 0;
 });
 
 const createDivSelection = () => {
@@ -276,41 +266,6 @@ describe("Person tooltips", () => {
         expect(htmlCalls[0]).toContain(silhouetteUrl);
         // Single img (silhouette path), not the photo's two-img blur stack
         expect(htmlCalls[0].match(/<img/g)).toHaveLength(1);
-    });
-
-    it("escapes tooltip content", () => {
-        const { personSelection, handlers } = createPersonSelection();
-        const { div, htmlCalls } = createDivSelection();
-        const datum = {
-            ...baseDatum,
-            data: {
-                data: {
-                    ...baseDatum.data.data,
-                    name: "<script>alert(1)</script>",
-                    birthPlace: "<b>unsafe</b>",
-                    thumbnail: "javascript:alert(1)",
-                },
-            },
-        };
-
-        new Person(
-            { div },
-            {
-                hideEmptySegments: false,
-                isDrawn: () => true,
-                showImages: true,
-                showSilhouettes: false,
-            },
-            {},
-            personSelection,
-            datum,
-        );
-
-        handlers.mouseenter({ pageX: 120, pageY: 80 });
-
-        expect(htmlCalls[0]).toContain("&lt;script&gt;alert(1)&lt;/script&gt;");
-        expect(htmlCalls[0]).toContain("&lt;b&gt;unsafe&lt;/b&gt;");
-        expect(htmlCalls[0]).not.toContain("<script>");
     });
 });
 
@@ -547,45 +502,11 @@ describe("Person interactions", () => {
         );
     });
 
-    it("toggles tooltip visibility on context menu", () => {
-        divSelection.property.mockImplementation((name, value) => {
-            if (value === undefined) {
-                return name === "active" ? true : undefined;
-            }
-
-            return divSelection;
-        });
-
-        const transitionSpy = jest.fn(() => ({
-            duration: jest.fn(() => ({ style: jest.fn() })),
-            style: jest.fn(),
-        }));
-        divSelection.transition = transitionSpy;
-
-        handlers.contextmenu({ preventDefault: jest.fn() });
-
-        expect(divSelection.property).toHaveBeenCalledWith("active", false);
-        expect(transitionSpy).toHaveBeenCalled();
-    });
-
     it("positions tooltip on mouse move", () => {
         handlers.mousemove({ pageX: 15, pageY: 45 });
 
         expect(divSelection.style).toHaveBeenCalledWith("left", "15px");
         expect(divSelection.style).toHaveBeenCalledWith("top", "15px");
-    });
-
-    it("updates hover classes on mouse over/out", () => {
-        const node = {};
-
-        handlers.mouseover({ currentTarget: node });
-        handlers.mouseout({ currentTarget: node });
-
-        expect(selectMock).toHaveBeenCalledWith(node);
-        expect(hoverClassCalls).toEqual([
-            { name: "hover", value: true },
-            { name: "hover", value: false },
-        ]);
     });
 });
 

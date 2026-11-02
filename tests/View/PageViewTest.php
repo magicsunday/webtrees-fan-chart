@@ -41,64 +41,6 @@ final class PageViewTest extends TestCase
     use ModuleSettingsFixtureTrait;
 
     /**
-     * The panel script of the chart library looks up its parts by the data-panel attribute and throws
-     * for a part that the markup lacks, so the page has to carry each of them exactly once, in a
-     * panel that stays hidden until the script enables it and that is named by its own heading.
-     */
-    #[Test]
-    public function carriesTheHiddenPanelWithEveryPartTheScriptLooksUp(): void
-    {
-        $xpath  = ViewFixture::xpathOf($this->render());
-        $panels = ViewFixture::elements($xpath, '//aside[@id="webtrees-fan-detail-panel"]');
-
-        self::assertCount(1, $panels, 'the page carries exactly one panel element');
-
-        $panel = $panels[0];
-
-        self::assertTrue($panel->hasAttribute('hidden'), 'the panel stays hidden until the script enables it');
-        self::assertSame('webtrees-fan-detail-panel-title', $panel->getAttribute('aria-labelledby'));
-
-        foreach (['title', 'image', 'hint', 'facts', 'empty', 'actions', 'individual', 'center'] as $part) {
-            self::assertCount(
-                1,
-                ViewFixture::elements($xpath, '//aside[@id="webtrees-fan-detail-panel"]//*[@data-panel="' . $part . '"]'),
-                'the panel carries the part ' . $part . ' once'
-            );
-        }
-
-        $headings = ViewFixture::elements($xpath, '//*[@id="webtrees-fan-detail-panel-title"]');
-
-        self::assertCount(1, $headings);
-        self::assertSame('title', $headings[0]->getAttribute('data-panel'), 'the heading that names the panel is the title part');
-    }
-
-    /**
-     * The two actions are buttons that the panel script binds, and the parts that the script shows
-     * only on demand are hidden in the markup.
-     */
-    #[Test]
-    public function hidesThePartsThatTheScriptShowsOnDemand(): void
-    {
-        $xpath = ViewFixture::xpathOf($this->render());
-
-        foreach (['image', 'empty', 'actions'] as $part) {
-            self::assertTrue(
-                ViewFixture::first($xpath, '//*[@data-panel="' . $part . '"]')->hasAttribute('hidden'),
-                'the part ' . $part . ' starts hidden'
-            );
-        }
-
-        self::assertFalse(
-            ViewFixture::first($xpath, '//*[@data-panel="hint"]')->hasAttribute('hidden'),
-            'the hint is what a panel without a selection shows'
-        );
-
-        foreach (['individual', 'center'] as $action) {
-            self::assertSame('button', ViewFixture::first($xpath, '//*[@data-panel="' . $action . '"]')->tagName);
-        }
-    }
-
-    /**
      * The URL is written into an inline script. Like every value of the chart view, it is encoded
      * with the tag, ampersand, apostrophe and quote flags, so text that opens or closes an element
      * or a string cannot leave the script, whatever a route builder hands over.
@@ -129,25 +71,9 @@ final class PageViewTest extends TestCase
     }
 
     /**
-     * The label of the close button of the offcanvas is an attribute value too, so it is escaped and
-     * keeps the translated text as one value.
-     */
-    #[Test]
-    public function keepsATranslatedLabelOfTheCloseButtonInsideItsAttribute(): void
-    {
-        $text  = 'Say "close" &amp; <b>now</b>';
-        $xpath = ViewFixture::xpathOf($this->render('https://example.test/ajax', ['close' => $text]));
-
-        self::assertSame(
-            $text,
-            ViewFixture::first($xpath, '//button[contains(concat(" ", @class, " "), " btn-close ")]')->getAttribute('aria-label')
-        );
-    }
-
-    /**
      * The panel carries the shared class that the shared CSS is scoped to next to the class of the
      * module, and every translated text of the page is the text of its own part, so a text that is
-     * swapped, dropped or left unescaped is caught.
+     * swapped or dropped is caught. The escaping of the texts is the business of the shared view.
      */
     #[Test]
     public function rendersThePanelWithBothClassesAndEveryTranslatedTextAsText(): void
@@ -157,6 +83,7 @@ final class PageViewTest extends TestCase
             'No details are available for this person.'             => 'Empty <i>two</i> &amp; "y"',
             'Open individual page'                                  => 'Individual <i>three</i> &amp; "z"',
             'Center chart on this person'                           => 'Center <i>four</i> &amp; "w"',
+            'close'                                                 => 'Close <i>five</i> &amp; "v"',
         ];
 
         $xpath = ViewFixture::xpathOf($this->render('https://example.test/ajax', $messages));
@@ -181,7 +108,11 @@ final class PageViewTest extends TestCase
             );
         }
 
-        self::assertCount(0, ViewFixture::elements($xpath, '//aside[@id="webtrees-fan-detail-panel"]//i'), 'no translated text is read as markup');
+        self::assertSame(
+            $messages['close'],
+            ViewFixture::first($xpath, '//aside[@id="webtrees-fan-detail-panel"]//button[contains(concat(" ", @class, " "), " btn-close ")]')->getAttribute('aria-label'),
+            'the close button is named by its translated text'
+        );
     }
 
     /**

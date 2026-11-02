@@ -11,14 +11,9 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test\Module;
 
-use Aura\Router\Map;
-use Aura\Router\Route;
 use Fig\Http\Message\RequestMethodInterface;
-use Fisharebest\Webtrees\Contracts\ContainerInterface;
-use Fisharebest\Webtrees\Contracts\RouteFactoryInterface;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Individual;
-use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\ChartService;
 use Fisharebest\Webtrees\Tree;
 use GuzzleHttp\Psr7\HttpFactory;
@@ -28,6 +23,7 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
+use MagicSunday\Webtrees\FanChart\Test\Support\RoutingFixture;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
@@ -36,7 +32,6 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 
-use function in_array;
 use function ksort;
 use function view;
 
@@ -50,13 +45,22 @@ final class ModuleTest extends TestCase
     use ModuleSettingsFixtureTrait;
 
     /**
+     * Registers the routing that every test of the module needs, also in the process of a test
+     * that runs separately.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        RoutingFixture::register([ResponseFactoryInterface::class => new HttpFactory()]);
+    }
+
+    /**
      * Ensures trait-provided helpers return expected metadata and URLs.
      */
     #[Test]
     public function traitHelpersExposeExpectedValues(): void
     {
-        $this->registerRouteFactory();
-
         $chartService = self::createStub(ChartService::class);
         $module       = new Module($chartService, new DataFacade());
         $individual   = self::createStub(Individual::class);
@@ -84,7 +88,6 @@ final class ModuleTest extends TestCase
     #[PreserveGlobalState(false)]
     public function bootRegistersTheSharedViewsOfTheModuleBase(): void
     {
-        $this->registerRouteFactory();
         EnglishLocaleFixture::install();
 
         $module = new Module(self::createStub(ChartService::class), new DataFacade());
@@ -108,7 +111,6 @@ final class ModuleTest extends TestCase
     #[Test]
     public function adminFormStoresThePostedPlaceFormat(): void
     {
-        $this->registerRouteFactory();
         EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences(['default_placeFormat' => 'full']);
@@ -128,7 +130,6 @@ final class ModuleTest extends TestCase
     #[Test]
     public function adminFormStoresThePanelDefault(): void
     {
-        $this->registerRouteFactory();
         EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences([]);
@@ -151,7 +152,6 @@ final class ModuleTest extends TestCase
     #[Test]
     public function adminFormTakesThePanelDefaultBackWhenTheSwitchIsOff(): void
     {
-        $this->registerRouteFactory();
         EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences(['default_showDetailPanel' => '1']);
@@ -176,7 +176,6 @@ final class ModuleTest extends TestCase
     #[Test]
     public function adminFormStoresEveryDefaultOfTheChart(): void
     {
-        $this->registerRouteFactory();
         EnglishLocaleFixture::install();
 
         $module = $this->createModuleWithPreferences([]);
@@ -215,49 +214,5 @@ final class ModuleTest extends TestCase
             ],
             $stored
         );
-    }
-
-    /**
-     * Registers a route factory that renders a route as its name and query.
-     */
-    private function registerRouteFactory(): void
-    {
-        $routeFactory = new class implements RouteFactoryInterface {
-            public function route(string $route_name, array $parameters = []): string
-            {
-                return '/route/' . $route_name . '?' . http_build_query($parameters);
-            }
-
-            public function routeMap(): Map
-            {
-                return new Map(new Route());
-            }
-        };
-
-        $container = new readonly class($routeFactory, new HttpFactory()) implements ContainerInterface {
-            public function __construct(
-                private RouteFactoryInterface $routeFactory,
-                private ResponseFactoryInterface $responseFactory,
-            ) {
-            }
-
-            public function get(string $id): object
-            {
-                return $id === ResponseFactoryInterface::class ? $this->responseFactory : $this->routeFactory;
-            }
-
-            public function has(string $id): bool
-            {
-                return in_array($id, [RouteFactoryInterface::class, ResponseFactoryInterface::class], true);
-            }
-
-            public function set(string $id, object $object): static
-            {
-                return $this;
-            }
-        };
-
-        Registry::routeFactory($routeFactory);
-        Registry::container($container);
     }
 }

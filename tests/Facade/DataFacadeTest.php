@@ -12,10 +12,6 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Test\Facade;
 
 use ArrayObject;
-use Aura\Router\Map;
-use Aura\Router\Route;
-use Fisharebest\Webtrees\Contracts\ContainerInterface;
-use Fisharebest\Webtrees\Contracts\RouteFactoryInterface;
 use Fisharebest\Webtrees\Date;
 use Fisharebest\Webtrees\Fact;
 use Fisharebest\Webtrees\Factories\CalendarDateFactory;
@@ -36,6 +32,7 @@ use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\IndividualFixtureTrait;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
+use MagicSunday\Webtrees\FanChart\Test\Support\RoutingFixture;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -83,41 +80,7 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function treeStructureIncludesParentsUntilConfiguredLimit(): void
     {
-        $routeFactory = new class implements RouteFactoryInterface {
-            public function route(string $route_name, array $parameters = []): string
-            {
-                return '/route/' . $route_name . '?' . http_build_query($parameters);
-            }
-
-            public function routeMap(): Map
-            {
-                return new Map(new Route());
-            }
-        };
-
-        $container = new readonly class($routeFactory) implements ContainerInterface {
-            public function __construct(private RouteFactoryInterface $routeFactory)
-            {
-            }
-
-            public function get(string $id): mixed
-            {
-                return $this->routeFactory;
-            }
-
-            public function has(string $id): bool
-            {
-                return $id === RouteFactoryInterface::class;
-            }
-
-            public function set(string $id, object $object): static
-            {
-                return $this;
-            }
-        };
-
-        Registry::routeFactory($routeFactory);
-        Registry::container($container);
+        RoutingFixture::register();
 
         $configuration = $this->createConfiguration([]);
 
@@ -245,7 +208,7 @@ final class DataFacadeTest extends TestCase
     #[DataProvider('generationCeilingProvider')]
     public function theChartStopsAtTheConfiguredNumberOfGenerations(string $generations, array $expectedXrefs): void
     {
-        $this->registerRouting();
+        RoutingFixture::register();
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
@@ -297,7 +260,7 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function treeStructureIncludesDescendantsWhenEnabled(): void
     {
-        $this->registerRouting();
+        RoutingFixture::register();
 
         $configuration = $this->createConfiguration(['showDescendants' => '1']);
 
@@ -578,7 +541,7 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function handsOverTheFactsToAncestorsAndDescendants(): void
     {
-        $this->registerRouting();
+        RoutingFixture::register();
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
@@ -637,7 +600,7 @@ final class DataFacadeTest extends TestCase
     #[Test]
     public function resolvesTheFactsAgainstTheTreeOfTheCurrentRequest(): void
     {
-        $this->registerRouting();
+        RoutingFixture::register();
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
@@ -699,7 +662,7 @@ final class DataFacadeTest extends TestCase
         int $fanDegree = 0,
         bool $hiddenPartner = false,
     ): NodeData {
-        $this->registerRouting();
+        RoutingFixture::register();
 
         $query = [
             'showDescendants' => '1',
@@ -790,7 +753,7 @@ final class DataFacadeTest extends TestCase
      */
     private function buildRootData(Individual $root, array $query): NodeData
     {
-        $this->registerRouting();
+        RoutingFixture::register();
 
         $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
         $module->method('name')->willReturn('webtrees-fan-chart');
@@ -894,47 +857,5 @@ final class DataFacadeTest extends TestCase
         }
 
         return $xrefs;
-    }
-
-    /**
-     * Sets up the route factory and container required by DataFacade.
-     */
-    private function registerRouting(): void
-    {
-        $routeFactory = new class implements RouteFactoryInterface {
-            public function route(string $route_name, array $parameters = []): string
-            {
-                return '/route/' . $route_name . '?' . http_build_query($parameters);
-            }
-
-            public function routeMap(): Map
-            {
-                return new Map(new Route());
-            }
-        };
-
-        $container = new readonly class($routeFactory) implements ContainerInterface {
-            public function __construct(private RouteFactoryInterface $routeFactory)
-            {
-            }
-
-            public function get(string $id): mixed
-            {
-                return $this->routeFactory;
-            }
-
-            public function has(string $id): bool
-            {
-                return $id === RouteFactoryInterface::class;
-            }
-
-            public function set(string $id, object $object): static
-            {
-                return $this;
-            }
-        };
-
-        Registry::routeFactory($routeFactory);
-        Registry::container($container);
     }
 }

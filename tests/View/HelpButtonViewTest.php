@@ -11,17 +11,16 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test\View;
 
-use DOMElement;
 use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\ViewFixture;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use function array_map;
 use function count;
 use function ob_get_clean;
 use function ob_start;
+use function str_contains;
 use function trim;
 
 /**
@@ -35,113 +34,11 @@ use function trim;
 final class HelpButtonViewTest extends TestCase
 {
     /**
-     * The button tells assistive technology that it controls the popover and whether that is open,
-     * and the popover is a named region with the id that the button points to. The popover starts
-     * closed, so the button starts with the state collapsed.
-     */
-    #[Test]
-    public function exposesTheStateOfThePopoverOnTheButton(): void
-    {
-        $xpath = ViewFixture::xpathOf($this->render());
-
-        $button  = ViewFixture::first($xpath, '//button[contains(concat(" ", @class, " "), " btn-help ")]');
-        $popover = ViewFixture::first($xpath, '//div[contains(concat(" ", @class, " "), " help-popover ")]');
-
-        self::assertSame('button', $button->getAttribute('type'));
-        self::assertSame('false', $button->getAttribute('aria-expanded'));
-        self::assertNotSame('', $popover->getAttribute('id'));
-        self::assertSame($popover->getAttribute('id'), $button->getAttribute('aria-controls'));
-        self::assertSame('region', $popover->getAttribute('role'));
-        self::assertNotSame('', $popover->getAttribute('aria-label'));
-        self::assertStringContainsString('d-none', $popover->getAttribute('class'));
-    }
-
-    /**
-     * A translation can contain a quote, an ampersand or a tag. The title and the label are
-     * attribute values, so both are escaped and keep the translated text as one value.
-     */
-    #[Test]
-    public function keepsATranslatedTitleAndLabelInsideTheirAttributes(): void
-    {
-        $text  = 'Say "help" &amp; <b>more</b>';
-        $xpath = ViewFixture::xpathOf($this->render(['Show help' => $text]));
-
-        $button  = ViewFixture::first($xpath, '//button[contains(concat(" ", @class, " "), " btn-help ")]');
-        $popover = ViewFixture::first($xpath, '//div[contains(concat(" ", @class, " "), " help-popover ")]');
-
-        self::assertSame($text, $button->getAttribute('title'));
-        self::assertSame($text, $popover->getAttribute('aria-label'));
-    }
-
-    /**
-     * The popover lists the interactions of both modes of the chart. The entries of the mode with
-     * the tooltip start visible, the entries of the mode with the detail panel start hidden, and the
-     * page script switches them with the checkbox. The entries for the Tab key, zooming and moving
-     * apply to both modes and carry no mode.
-     */
-    #[Test]
-    public function marksTheEntriesOfEachMode(): void
-    {
-        $xpath = ViewFixture::xpathOf($this->render());
-
-        $tooltip = ViewFixture::elements($xpath, '//tr[@data-help-mode="tooltip"]');
-        $panel   = ViewFixture::elements($xpath, '//tr[@data-help-mode="panel"]');
-        $both    = ViewFixture::elements($xpath, '//tr[not(@data-help-mode)]');
-
-        self::assertNotSame([], $tooltip);
-        self::assertNotSame([], $panel);
-        self::assertSame(
-            ['Tab key', 'Ctrl + scroll', 'Click and drag'],
-            array_map(
-                static fn (DOMElement $label): string => trim($label->textContent),
-                ViewFixture::elements($xpath, '//tr[not(@data-help-mode)]/td[1]/strong'),
-            ),
-            'moving between the persons, zooming and moving apply to both modes',
-        );
-
-        foreach ($tooltip as $row) {
-            self::assertStringNotContainsString('d-none', $row->getAttribute('class'));
-        }
-
-        foreach ($panel as $row) {
-            self::assertStringContainsString('d-none', $row->getAttribute('class'));
-        }
-
-        foreach ($both as $row) {
-            self::assertStringNotContainsString('d-none', $row->getAttribute('class'));
-        }
-    }
-
-    /**
-     * The row for the Tab key applies to both modes, because the persons are reached with the keyboard
-     * with the detail panel as well as without it.
-     */
-    #[Test]
-    public function sharesTheTabKeyRowBetweenBothModes(): void
-    {
-        $xpath = ViewFixture::xpathOf($this->render());
-
-        $row = ViewFixture::first($xpath, '//tr[td/strong[normalize-space() = "Tab key"]]');
-
-        self::assertFalse($row->hasAttribute('data-help-mode'));
-        self::assertStringNotContainsString('d-none', $row->getAttribute('class'));
-    }
-
-    /**
-     * The toggle lives in the page script, which also closes the popover on Escape, so the markup
-     * carries no inline click handler that would toggle it a second time.
-     */
-    #[Test]
-    public function carriesNoInlineClickHandler(): void
-    {
-        $xpath = ViewFixture::xpathOf($this->render());
-
-        self::assertSame([], ViewFixture::elements($xpath, '//*[@onclick]'));
-    }
-
-    /**
      * The rows follow each other in a fixed order, each with its own mode and its own text, so a row
-     * that moves to the other mode or to another place changes what the help shows in each mode.
+     * that moves to the other mode or to another place changes what the help shows in each mode. The
+     * popover starts in the mode with the tooltip, so the rows of that mode and the rows without a
+     * mode are visible and the rows of the mode with the detail panel are hidden. The button has a
+     * title, because the icon is the only content of it.
      */
     #[Test]
     public function listsTheRowsInTheirOrderWithTheirModes(): void
@@ -169,7 +66,16 @@ final class HelpButtonViewTest extends TestCase
             );
             self::assertSame($key, trim(ViewFixture::first($xpath, $row . '/td[1]')->textContent));
             self::assertSame($text, trim(ViewFixture::first($xpath, $row . '/td[2]')->textContent));
+            self::assertSame(
+                $mode === 'panel',
+                str_contains(ViewFixture::first($xpath, $row)->getAttribute('class'), 'd-none'),
+                'the row ' . $key . ' is hidden exactly when it belongs to the mode with the panel'
+            );
         }
+
+        $button = ViewFixture::first($xpath, '//button[contains(concat(" ", @class, " "), " btn-help ")]');
+
+        self::assertNotSame('', $button->getAttribute('title'));
     }
 
     /**

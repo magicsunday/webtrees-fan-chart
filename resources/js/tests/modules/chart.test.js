@@ -1,256 +1,76 @@
 import { jest } from "@jest/globals";
 
-const mockSvgInstances = [];
-let svgBoundingBox = { x: 0, y: 0, width: 0, height: 0 };
-
-// A selection stand-in for the layers the render tests do not inspect: every
-// method call answers with the same kind of object, so the chain of a D3
-// selection runs through without drawing anything.
-const createChainableSelection = () =>
-    new Proxy(() => undefined, {
-        get: () => () => createChainableSelection(),
-        apply: () => createChainableSelection(),
-    });
-
-class PersonGroupSelection {
-    constructor() {
-        this.dataItems = [];
-        this.filteredData = [];
-        this.enterFilteredData = [];
-        this.appendedAttributeValues = [];
-    }
-
-    selectAll() {
-        const selection = {
-            data: (data) => {
-                this.dataItems = data;
-
-                return {
-                    enter: () => ({
-                        filter: (predicate) => {
-                            this.filteredData = this.dataItems.filter(predicate);
-                            this.enterFilteredData = [...this.filteredData];
-
-                            return {
-                                append: () => {
-                                    const attrSelection = {
-                                        attr: (name, valueResolver) => {
-                                            if (typeof valueResolver === "function") {
-                                                this.appendedAttributeValues =
-                                                    this.filteredData.map(valueResolver);
-                                            } else {
-                                                this.appendedAttributeValues =
-                                                    this.filteredData.map(() => valueResolver);
-                                            }
-
-                                            return attrSelection;
-                                        },
-                                        each: () => attrSelection,
-                                    };
-
-                                    return attrSelection;
-                                },
-                            };
-                        },
-                    }),
-                };
-            },
-            each: () => selection,
-            filter: (predicate) => {
-                const source =
-                    this.enterFilteredData.length === 0
-                        ? this.filteredData
-                        : this.enterFilteredData;
-                this.filteredData = source.filter(predicate);
-                return selection;
-            },
-            classed: () => selection,
-            attr: () => selection,
-            on: () => selection,
-        };
-
-        return selection;
-    }
-}
-
-class MockSvg {
-    constructor(parent, configuration) {
-        this.parent = parent;
-        this.configuration = configuration;
-        this.personGroup = new PersonGroupSelection();
-        this.visual = {
-            classed: function () {
-                return this;
-            },
-            node: () => ({
-                getBBox: () => svgBoundingBox,
-            }),
-            select: () => ({
-                empty: () => true,
-                selectAll: () => ({
-                    classed: () => ({}),
-                }),
-            }),
-            append: () => createChainableSelection(),
-            // The marks of the selected person are applied after every draw
-            selectAll: () => createChainableSelection(),
-        };
-        this.attrCalls = [];
-
-        mockSvgInstances.push(this);
-    }
-
-    initEvents() {
-        return this;
-    }
-
-    select(selector) {
-        if (selector === "g.personGroup") {
-            return this.personGroup;
-        }
-
-        if (selector === "g.marriageGroup") {
-            const noopSelection = {
-                selectAll: () => noopSelection,
-                filter: () => noopSelection,
-                classed: () => noopSelection,
-                on: () => noopSelection,
-                data: () => ({
-                    enter: () => ({
-                        append: () => ({
-                            attr: function () {
-                                return this;
-                            },
-                        }),
-                    }),
-                }),
-                each: () => noopSelection,
-            };
-
-            return noopSelection;
-        }
-
-        return null;
-    }
-
-    attr(name, value) {
-        this.attrCalls.push({ name, value });
-        return this;
-    }
-}
-
-const setSvgBoundingBox = (boundingBox) => {
-    svgBoundingBox = boundingBox;
-};
-
-await jest.unstable_mockModule("resources/js/modules/svg", () => ({
-    __esModule: true,
-    default: MockSvg,
-    mockSvgInstances,
-    setSvgBoundingBox,
-}));
-
-await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/infra", () => ({
-    ChartOverlay: jest.fn(() => ({
-        hide: jest.fn(),
-        show: jest.fn(),
-    })),
-    // FamilyColor (pulled in indirectly via hierarchy/chart-updater) imports
-    // these named exports; provide identity stubs so the module graph loads
-    // even though the chart code paths exercised here do not invoke them.
-    BRANCH_HUE_SPREAD: 60,
-    LIGHTNESS_STEP: 3,
-    SATURATION_STEP: 3.5,
-    MAX_GENERATIONS_REF: 10,
-    depthBounds: jest.fn(() => ({ minSaturation: 20, maxLightness: 90 })),
-    depthHsl: jest.fn(() => "hsl(0, 0%, 50%)"),
-    familyBranchHsl: jest.fn(() => "hsl(0, 0%, 50%)"),
-    familyCenterHsl: jest.fn(() => "hsl(0, 0%, 92%)"),
-    hexToHsl: jest.fn(() => [0, 0, 50]),
-}));
-
-const personConstructor = jest.fn(() => ({}));
-
-await jest.unstable_mockModule("resources/js/modules/svg/person", () => ({
-    __esModule: true,
-    default: personConstructor,
-}));
-
-await jest.unstable_mockModule("resources/js/modules/chart-updater", () => ({
-    __esModule: true,
-    default: jest.fn(() => ({
-        update: jest.fn(),
-    })),
-}));
-
-await jest.unstable_mockModule("resources/js/modules/svg/marriage", () => ({
-    __esModule: true,
-    default: jest.fn(() => ({})),
-}));
-
-// Every Geometry the chart creates, with the descendant layout it was handed.
-const geometryInstances = [];
-
-await jest.unstable_mockModule("resources/js/modules/svg/geometry", () => ({
-    __esModule: true,
-    MATH_DEG2RAD: Math.PI / 180,
-    MATH_RAD2DEG: 180 / Math.PI,
-    default: class {
-        constructor(configuration, descendantLayout) {
-            this.descendantLayout = descendantLayout;
-            geometryInstances.push(this);
-        }
-        get childScale() {
-            return this.descendantLayout ? this.descendantLayout.childScale : null;
-        }
-        startAngle() {
-            return 0;
-        }
-        endAngle() {
-            return 0;
-        }
-        innerRadius() {
-            return 0;
-        }
-        outerRadius() {
-            return 0;
-        }
-        calcAngle() {
-            return 0;
-        }
-        centerRadius() {
-            return 0;
-        }
-        arcLength() {
-            return 100;
-        }
-        relativeRadius() {
-            return 50;
-        }
-        scale() {
-            return 0;
-        }
-    },
-}));
-
 const { default: Chart } = await import("resources/js/modules/chart");
+const { default: Configuration } = await import("resources/js/modules/configuration");
+const d3 = await import("resources/js/modules/d3");
 
-const createConfiguration = (overrides = {}) => ({
-    isDrawn: () => true,
-    hideEmptySegments: false,
-    showFamilyColors: false,
-    showParentMarriageDates: false,
-    generations: 2,
-    rtl: false,
-    labels: {
-        zoom: "Zoom",
-        move: "Move",
-    },
-    ...overrides,
+// jsdom lays nothing out. These stand-ins give the chart the measures that a browser would, with
+// values that are all different so that a mixed up measure shows in the view box.
+const SVG_BOX = { x: -210, y: -130, width: 420, height: 260 };
+const CONTAINER = { width: 500, height: 400 };
+
+globalThis.SVGElement.prototype.getBBox = () => ({ ...SVG_BOX });
+globalThis.SVGElement.prototype.getComputedTextLength = () => 0;
+globalThis.HTMLCanvasElement.prototype.getContext = () => ({
+    font: "",
+    measureText: (text) => ({ width: text.length * 6 }),
 });
 
-const createParentSelection = ({ width = 500, height = 400 } = {}) => {
-    const boundingRect = {
+const person = (id, generation, xref, parents) => ({
+    data: {
+        id,
+        xref,
+        url: `url-${id}`,
+        updateUrl: `update-${id}`,
+        generation,
+        name: `Person ${id}`,
+        firstNames: ["Person"],
+        lastNames: [`${id}`],
+        preferredName: `Person ${id}`,
+        alternativeName: "",
+        isAltRtl: false,
+        sex: "M",
+        timespan: "",
+        marriageDateOfParents: "",
+    },
+    ...(parents ? { parents } : {}),
+});
+
+/**
+ * Builds the ancestors of a person with every parent known.
+ *
+ * @param {number} generations The number of generations, the person itself included
+ * @param {number} generation  The generation of the person that is built
+ * @param {string} prefix      The prefix of the ids of this branch
+ */
+const ancestors = (generations, generation = 1, prefix = "I") => {
+    const xref = `${prefix}`;
+
+    if (generation === generations) {
+        return person(xref, generation, xref);
+    }
+
+    return person(xref, generation, xref, [
+        ancestors(generations, generation + 1, `${prefix}1`),
+        ancestors(generations, generation + 1, `${prefix}2`),
+    ]);
+};
+
+/**
+ * Builds a root with a known parent and an empty one.
+ */
+const createHierarchyDatum = () =>
+    person("I1", 1, "I1", [person("I2", 2, "I2"), person("I3", 2, "")]);
+
+/**
+ * Builds a real parent element with the size of the container and hands back a d3 selection of it.
+ */
+const createParent = ({ width, height } = CONTAINER) => {
+    document.body.innerHTML = '<div id="parent"></div>';
+
+    const element = document.querySelector("#parent");
+
+    element.getBoundingClientRect = () => ({
         width,
         height,
         x: 0,
@@ -259,95 +79,142 @@ const createParentSelection = ({ width = 500, height = 400 } = {}) => {
         left: 0,
         right: width,
         bottom: height,
-    };
+    });
 
-    return {
-        html: jest.fn().mockReturnThis(),
-        node: () => ({ getBoundingClientRect: () => boundingRect }),
-    };
+    return d3.select(element);
 };
 
-const createHierarchyDatum = () => ({
-    data: {
-        id: 1,
-        xref: "I1",
-        url: "root-url",
-        updateUrl: "root-update",
-        generation: 1,
-        name: "Root",
-        firstNames: ["Root"],
-        lastNames: ["Person"],
-        preferredName: "Root Person",
-        alternativeName: "",
-        isAltRtl: false,
-        sex: "M",
-        timespan: "",
-        marriageDateOfParents: "",
-    },
-    parents: [
-        {
-            data: {
-                id: 2,
-                xref: "I2",
-                url: "parent-a",
-                updateUrl: "parent-a-update",
-                generation: 2,
-                name: "Parent A",
-                firstNames: ["Parent"],
-                lastNames: ["A"],
-                preferredName: "Parent A",
-                alternativeName: "",
-                isAltRtl: false,
-                sex: "M",
-                timespan: "",
-                marriageDateOfParents: "",
-            },
-        },
-        {
-            data: {
-                id: 3,
-                xref: "",
-                url: "parent-b",
-                updateUrl: "parent-b-update",
-                generation: 2,
-                name: "Parent B",
-                firstNames: ["Parent"],
-                lastNames: ["B"],
-                preferredName: "Parent B",
-                alternativeName: "",
-                isAltRtl: false,
-                sex: "F",
-                timespan: "",
-                marriageDateOfParents: "",
-            },
-        },
-    ],
-});
+const createChart = (options = {}, datum = createHierarchyDatum(), size = CONTAINER) => {
+    const chart = new Chart(createParent(size), new Configuration({ generations: 2, ...options }));
+
+    chart.data = datum;
+    chart.render();
+
+    return chart;
+};
+
+const viewBoxOf = (chart) =>
+    chart.svg.visual.node().ownerSVGElement.getAttribute("viewBox").split(/[ ,]+/).map(Number);
 
 describe("Chart", () => {
     beforeEach(() => {
-        window.getComputedStyle = jest.fn(() => ({ fontSize: "16px" }));
-        mockSvgInstances.length = 0;
-        geometryInstances.length = 0;
-        setSvgBoundingBox({ x: 0, y: 0, width: 400, height: 300 });
-        personConstructor.mockClear();
+        window.getComputedStyle = jest.fn(() => ({ fontSize: "16px", getPropertyValue: () => "" }));
     });
 
-    test("render hands the descendant layout of the hierarchy to every geometry", () => {
-        const chart = new Chart(
-            createParentSelection(),
-            createConfiguration({ showParentMarriageDates: true }),
-        );
+    afterEach(() => {
+        document.fullscreenElement = null;
+    });
 
-        chart.data = createHierarchyDatum();
-        chart.render();
+    describe("render", () => {
+        // The persons of the draw rules: every known person, and an empty ancestor only while
+        // the empty segments are kept
+        test.each([
+            ["keeps the empty segments", false, ["I1", "I2", ""]],
+            ["hides the empty segments", true, ["I1", "I2"]],
+        ])("draws a person element per drawn person and %s", (_label, hideEmptySegments, xrefs) => {
+            const chart = createChart({ hideEmptySegments });
+            const drawn = chart.svg.visual.selectAll("g.person").nodes();
 
-        // Person arcs, marriage arcs, descendant marriage arcs and separators
-        expect(geometryInstances.length).toBeGreaterThanOrEqual(4);
+            expect(
+                drawn.map((element) => d3.select(element).datum().data.data.xref).sort(),
+            ).toEqual([...xrefs].sort());
+            expect(drawn.every((element) => element.id.startsWith("person-"))).toBe(true);
+        });
 
-        for (const geometry of geometryInstances) {
-            expect(geometry.descendantLayout).toBe(chart._hierarchy.descendantLayout);
-        }
+        // The view box is the content box centered in the container, with one rem of padding
+        // on every side. The container is 500 by 400, the content 420 by 260 at (-210, -130):
+        // the offsets are 40 and 70, the left is -210 - 40 - 16, the top is -130 - 70 - 16 and
+        // the size is the container plus twice the padding.
+        test("sets the view box from the content, the container and the padding", () => {
+            const chart = createChart();
+
+            expect(viewBoxOf(chart)).toEqual([-266, -216, 532, 432]);
+        });
+
+        test("takes a content that is larger than the container as the size of the view box", () => {
+            const chart = createChart({}, createHierarchyDatum(), { width: 300, height: 200 });
+
+            // No offset is left, so the view box starts at the content minus the padding
+            expect(viewBoxOf(chart)).toEqual([-226, -146, 452, 292]);
+        });
+
+        test("fills the container in fullscreen mode", () => {
+            const chart = createChart();
+            const svg = chart.svg.visual.node().ownerSVGElement;
+
+            expect(svg.getAttribute("width")).toBe("100%");
+
+            document.fullscreenElement = document.createElement("div");
+            chart.updateViewBox();
+
+            expect(svg.getAttribute("width")).toBe("500");
+            expect(svg.getAttribute("height")).toBe("400");
+            expect(viewBoxOf(chart)).toEqual([-266, -216, 532, 432]);
+        });
+
+        // Every generation draws a separator between two neighbours of different families. A tree
+        // of four generations has families of two at each depth, so depth 1 has none, depth 2
+        // has one boundary and depth 3 has three.
+        test("draws a separator between every two neighbouring families", () => {
+            const chart = createChart({ generations: 4 }, ancestors(4));
+
+            expect(chart.svg.visual.selectAll("g.separatorGroup line").size()).toBe(4);
+        });
+
+        test("draws no separator while the neighbours belong to one family", () => {
+            const chart = createChart({ generations: 2 }, ancestors(2));
+
+            expect(chart.svg.visual.selectAll("g.separatorGroup line").size()).toBe(0);
+        });
+
+        test("draws a marriage arc for every person that has parents when the dates are shown", () => {
+            const chart = createChart(
+                { generations: 3, showParentMarriageDates: true },
+                ancestors(3),
+            );
+
+            // The root and its two parents have parents, the grandparents are the last generation
+            expect(chart.svg.visual.selectAll("g.marriageGroup g.marriage").size()).toBe(3);
+        });
+    });
+
+    describe("descendants", () => {
+        const child = (xref) => person(xref, -2, xref);
+        const partner = (xref, children = []) => ({
+            ...person(xref, -1, xref),
+            ...(children.length > 0 ? { children } : {}),
+        });
+        const withPartners = (partners) => ({ ...ancestors(2), partners });
+
+        // Two partners are two blocks of the sector, so one separator runs between them
+        test("draws a separator between the partners of the descendant sector", () => {
+            const chart = createChart(
+                { generations: 2, showDescendants: true },
+                withPartners([partner("P1", [child("C1")]), partner("P2")]),
+            );
+
+            // The ancestors of two generations have no boundary between families
+            expect(chart.svg.visual.selectAll("g.separatorGroup line").size()).toBe(1);
+        });
+
+        test("draws a marriage arc for every partner when the dates are shown", () => {
+            const chart = createChart(
+                { generations: 2, showDescendants: true, showParentMarriageDates: true },
+                withPartners([partner("P1", [child("C1")]), partner("P2")]),
+            );
+
+            expect(chart.svg.visual.selectAll("g.marriage.descendant").size()).toBe(2);
+        });
+
+        test("draws no descendant elements without partners", () => {
+            const chart = createChart(
+                { generations: 2, showDescendants: true, showParentMarriageDates: true },
+                withPartners([]),
+            );
+
+            expect(chart.svg.visual.selectAll("g.marriage.descendant").size()).toBe(0);
+            expect(chart.svg.visual.selectAll("g.separatorGroup line").size()).toBe(0);
+        });
     });
 
     describe("motion", () => {
@@ -418,13 +285,8 @@ describe("Chart", () => {
         const partnerNode = (id, x0, x1) => ({ id, depth: -1, x0, x1, data: { data: {} } });
 
         const createRenderedChart = (nodes) => {
-            const chart = new Chart(
-                createParentSelection(),
-                createConfiguration({ showDescendants: true, showParentMarriageDates: true }),
-            );
+            const chart = createChart({ showDescendants: true, showParentMarriageDates: true });
 
-            chart.data = createHierarchyDatum();
-            chart.render();
             jest.spyOn(chart._hierarchy, "nodes", "get").mockReturnValue(nodes);
 
             return chart;
@@ -432,7 +294,7 @@ describe("Chart", () => {
 
         test("draws no descendant separators while the sector has no scale", () => {
             const chart = createRenderedChart([partnerNode(1, 0, 0.5), partnerNode(2, 0.5, 1)]);
-            const separatorGroup = { append: jest.fn(() => createChainableSelection()) };
+            const separatorGroup = { append: jest.fn() };
 
             expect(() =>
                 chart.drawDescendantSeparators({ childScale: null }, separatorGroup),
@@ -445,7 +307,45 @@ describe("Chart", () => {
             ["no scale", null, 0],
         ])("draws descendant marriage arcs for the partners with %s", (_label, scale, count) => {
             const chart = createRenderedChart([partnerNode(1, 0, 0.5), partnerNode(2, 0.5, 1)]);
-            const data = jest.fn(() => createChainableSelection());
+            const appended = [];
+            const attributes = [];
+            const entering = {
+                attr: (name, value) => {
+                    attributes.push([name, typeof value === "function" ? "computed" : value]);
+
+                    return entering;
+                },
+                each: () => entering,
+            };
+            const exitCalls = [];
+            const exiting = {
+                classed: (...args) => {
+                    exitCalls.push(["classed", ...args]);
+
+                    return exiting;
+                },
+                selectAll: (...args) => {
+                    exitCalls.push(["selectAll", ...args]);
+
+                    return exiting;
+                },
+            };
+            const join = {
+                each: () => join,
+                exit: () => {
+                    exitCalls.push(["exit"]);
+
+                    return exiting;
+                },
+                enter: () => ({
+                    append: (tag) => {
+                        appended.push(tag);
+
+                        return entering;
+                    },
+                }),
+            };
+            const data = jest.fn(() => join);
 
             chart._hierarchy.descendantLayout.childScale = scale;
             chart.svg.visual.select = () => ({
@@ -456,11 +356,21 @@ describe("Chart", () => {
             chart.drawDescendantMarriageArcs();
 
             expect(data.mock.calls[0][0]).toHaveLength(count);
+            // The entering elements are created as descendant marriage groups
+            expect(appended).toEqual(["g"]);
+            // The elements that leave are marked for removal and their content for the fade-out
+            expect(exitCalls).toEqual([
+                ["exit"],
+                ["classed", "remove", true],
+                ["selectAll", "g.content"],
+                ["classed", "old", true],
+            ]);
+            expect(attributes).toContainEqual(["class", "marriage descendant"]);
         });
     });
 
     test("svg throws before render() has been called and is available afterwards", () => {
-        const chart = new Chart(createParentSelection(), createConfiguration());
+        const chart = new Chart(createParent(), new Configuration());
 
         expect(() => chart.svg).toThrow(
             "Chart.svg is not available before render() has been called",
@@ -473,7 +383,7 @@ describe("Chart", () => {
     });
 
     test("convertRemToPixels uses the document root font size", () => {
-        const chart = new Chart(createParentSelection(), createConfiguration());
+        const chart = new Chart(createParent(), new Configuration());
         const getComputedStyleSpy = jest
             .spyOn(window, "getComputedStyle")
             .mockReturnValue({ fontSize: "18px" });
@@ -486,44 +396,8 @@ describe("Chart", () => {
         getComputedStyleSpy.mockRestore();
     });
 
-    test("personGroup selection filters empty nodes only when empty segments are hidden", () => {
-        const data = createHierarchyDatum();
-
-        const chartWithVisibleEmptySegments = new Chart(
-            createParentSelection(),
-            createConfiguration({
-                hideEmptySegments: false,
-            }),
-        );
-
-        chartWithVisibleEmptySegments.data = data;
-        chartWithVisibleEmptySegments.render();
-
-        const visibleNodes = mockSvgInstances[0].personGroup.enterFilteredData;
-
-        expect(visibleNodes).toHaveLength(3);
-        expect(visibleNodes.map((node) => node.data.data.xref)).toEqual(
-            expect.arrayContaining(["I1", "I2", ""]),
-        );
-
-        const chartWithHiddenEmptySegments = new Chart(
-            createParentSelection(),
-            createConfiguration({
-                hideEmptySegments: true,
-            }),
-        );
-
-        chartWithHiddenEmptySegments.data = data;
-        chartWithHiddenEmptySegments.render();
-
-        const filteredNodes = mockSvgInstances[1].personGroup.enterFilteredData;
-
-        expect(filteredNodes).toHaveLength(2);
-        expect(filteredNodes.every((node) => node.data.data.xref !== "")).toBe(true);
-    });
-
     test("draws marriage arcs only for nodes with children inside the displayed generations", () => {
-        const chart = new Chart(createParentSelection(), createConfiguration({ generations: 3 }));
+        const chart = new Chart(createParent(), new Configuration({ generations: 3 }));
         const drawnNodes = [];
         const marriageGroup = {
             empty: () => false,
@@ -559,60 +433,8 @@ describe("Chart", () => {
         expect(drawnNodes.map((node) => node.id)).toEqual([1]);
     });
 
-    test("render sets viewBox using container size and padding", () => {
-        const data = createHierarchyDatum();
-        const parentSelection = createParentSelection({ width: 500, height: 400 });
-
-        const chart = new Chart(parentSelection, createConfiguration());
-
-        chart.data = data;
-        chart.render();
-
-        const viewBoxCall = mockSvgInstances[0].attrCalls.find((call) => call.name === "viewBox");
-
-        expect(viewBoxCall.value).toEqual([-66, -66, 532, 432]);
-    });
-
-    test("updateViewBox respects fullscreen dimensions", () => {
-        const data = createHierarchyDatum();
-        const parentSelection = createParentSelection({ width: 600, height: 450 });
-        const chart = new Chart(parentSelection, createConfiguration());
-        const getComputedStyleSpy = jest
-            .spyOn(window, "getComputedStyle")
-            .mockReturnValue({ fontSize: "16px" });
-
-        setSvgBoundingBox({ x: 0, y: 0, width: 400, height: 300 });
-        chart.data = data;
-        chart.render();
-
-        document.fullscreenElement = document.createElement("div");
-        chart.updateViewBox();
-
-        const svg = mockSvgInstances[0];
-        const widthCall = svg.attrCalls.filter((call) => call.name === "width").pop();
-        const heightCall = svg.attrCalls.filter((call) => call.name === "height").pop();
-        const viewBoxCall = svg.attrCalls.filter((call) => call.name === "viewBox").pop();
-
-        expect(widthCall?.value).toBe(600);
-        expect(heightCall?.value).toBe(450);
-        expect(viewBoxCall?.value).toEqual([-116, -91, 632, 482]);
-
-        document.fullscreenElement = null;
-        getComputedStyleSpy.mockRestore();
-    });
-
     test("render applies family colors even when parent marriage dates are hidden", () => {
-        const data = createHierarchyDatum();
-        const chart = new Chart(
-            createParentSelection(),
-            createConfiguration({
-                showFamilyColors: true,
-                showParentMarriageDates: false,
-            }),
-        );
-
-        chart.data = data;
-        chart.render();
+        const chart = createChart({ showFamilyColors: true, showParentMarriageDates: false });
 
         const coloredDatums = chart._hierarchy.nodes.filter(
             (datum) => datum?.data?.data?.xref !== "",
