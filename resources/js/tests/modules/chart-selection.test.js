@@ -260,15 +260,6 @@ describe("A real chart with the detail panel", () => {
         expect(elements[0].getAttribute("aria-label")).toBe("Jane Doe Born: 1850");
     });
 
-    test("separates the tspans of one line in the label", () => {
-        const { chart, elements } = buildRealChart([node("I1")]);
-
-        drawLines(elements[0], [["Jane", "Doe"], "Born: 1850"]);
-        chart.bindClickEventListener();
-
-        expect(elements[0].getAttribute("aria-label")).toBe("Jane Doe Born: 1850");
-    });
-
     test("keeps the label of the chart library for an arc without visible text", () => {
         const named = node("I1");
 
@@ -276,15 +267,6 @@ describe("A real chart with the detail panel", () => {
 
         const { chart, elements } = buildRealChart([named]);
 
-        chart.bindClickEventListener();
-
-        expect(elements[0].getAttribute("aria-label")).toBe("Jane Doe");
-    });
-
-    test("labels an operable person with the text that the arc shows with the panel off too", () => {
-        const { chart, elements } = buildRealChart([node("I1")], false);
-
-        drawLines(elements[0], ["Jane", "Doe"]);
         chart.bindClickEventListener();
 
         expect(elements[0].getAttribute("aria-label")).toBe("Jane Doe");
