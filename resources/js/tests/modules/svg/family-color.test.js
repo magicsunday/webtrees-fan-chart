@@ -18,6 +18,30 @@ const createConfiguration = (overrides = {}) => ({
     ...overrides,
 });
 
+// The default colors of the module are far apart in hue, so the side of a color is readable from its
+// hue alone. The paternal base is a blue and the maternal base a pink. A color of a branch stays within
+// a quarter turn of its base hue, so the two bands do not overlap.
+const PATERNAL_HUE = 204;
+const MATERNAL_HUE = 337;
+const BRANCH_SPREAD = 90;
+
+const hueOf = (color) => Number(/^hsl\((\d+(?:\.\d+)?),/.exec(color)?.[1]);
+
+// The distance of two hues on the color wheel, so the pink band across zero degrees is no special case.
+const hueDistance = (first, second) => {
+    const difference = Math.abs(first - second) % 360;
+
+    return Math.min(difference, 360 - difference);
+};
+
+const isPaternal = (color) =>
+    hueDistance(hueOf(color), PATERNAL_HUE) < hueDistance(hueOf(color), MATERNAL_HUE) &&
+    hueDistance(hueOf(color), PATERNAL_HUE) <= BRANCH_SPREAD;
+
+const isMaternal = (color) =>
+    hueDistance(hueOf(color), MATERNAL_HUE) < hueDistance(hueOf(color), PATERNAL_HUE) &&
+    hueDistance(hueOf(color), MATERNAL_HUE) <= BRANCH_SPREAD;
+
 // hexToHsl tests live in @magicsunday/webtrees-chart-lib
 // (tests/color/familyColor.test.js) — the helper moved out of this class.
 
@@ -36,7 +60,7 @@ describe("FamilyColor.getColor", () => {
         expect(fc.getColor(datum)).toBeNull();
     });
 
-    it("returns HSL string for center node with male sex", () => {
+    it("gives a male center the paternal hue", () => {
         const config = createConfiguration();
         const fc = new FamilyColor(config);
         const datum = {
@@ -48,11 +72,11 @@ describe("FamilyColor.getColor", () => {
 
         const color = fc.getColor(datum);
 
-        expect(color).toMatch(/^hsl\(\d+/);
+        expect(hueOf(color)).toBe(PATERNAL_HUE);
         expect(color).toContain("%");
     });
 
-    it("returns HSL string for center node with female sex", () => {
+    it("gives a female center the maternal hue", () => {
         const config = createConfiguration();
         const fc = new FamilyColor(config);
         const datum = {
@@ -62,9 +86,7 @@ describe("FamilyColor.getColor", () => {
             data: { data: { xref: "I1", sex: SEX_FEMALE } },
         };
 
-        const color = fc.getColor(datum);
-
-        expect(color).toMatch(/^hsl\(\d+/);
+        expect(hueOf(fc.getColor(datum))).toBe(MATERNAL_HUE);
     });
 
     it("returns gray HSL for center node with unknown sex", () => {
@@ -80,7 +102,7 @@ describe("FamilyColor.getColor", () => {
         expect(fc.getColor(datum)).toBe("hsl(0, 0%, 92%)");
     });
 
-    it("returns HSL string for ancestor nodes at depth >= 1", () => {
+    it("gives an ancestor of the left half the paternal hue", () => {
         const config = createConfiguration();
         const fc = new FamilyColor(config);
         const datum = {
@@ -91,10 +113,7 @@ describe("FamilyColor.getColor", () => {
             data: { data: { xref: "I2", sex: SEX_MALE } },
         };
 
-        const color = fc.getColor(datum);
-
-        expect(color).toMatch(/^hsl\(/);
-        expect(color).not.toBeNull();
+        expect(isPaternal(fc.getColor(datum))).toBe(true);
     });
 
     it("returns non-null HSL string for depth < 0 nodes (descendants)", () => {
@@ -118,6 +137,92 @@ describe("FamilyColor.getColor", () => {
 
         expect(color).not.toBeNull();
         expect(color).toMatch(/^hsl\(/);
+    });
+});
+
+describe("FamilyColor side of the family", () => {
+    const createAncestor = (depth, x0, x1, parent = null) => ({
+        depth,
+        x0,
+        x1,
+        parent,
+        data: { data: { xref: "I2", sex: SEX_MALE } },
+    });
+
+    it.each([
+        ["at the start of the chart", 0, 0.1],
+        ["in the left half", 0.1, 0.4],
+        ["just before the center line", 0.3, 0.6998],
+    ])(
+        "colors an ancestor of the first generation paternal when its middle lies %s",
+        (_place, x0, x1) => {
+            const fc = new FamilyColor(createConfiguration());
+
+            expect(isPaternal(fc.getColor(createAncestor(1, x0, x1)))).toBe(true);
+        },
+    );
+
+    it.each([
+        ["exactly on the center line", 0.25, 0.75],
+        ["in the right half", 0.6, 0.9],
+        ["at the end of the chart", 0.9, 1],
+    ])(
+        "colors an ancestor of the first generation maternal when its middle lies %s",
+        (_place, x0, x1) => {
+            const fc = new FamilyColor(createConfiguration());
+
+            expect(isMaternal(fc.getColor(createAncestor(1, x0, x1)))).toBe(true);
+        },
+    );
+
+    it("takes the side of an outer ancestor from its child and not from its own position", () => {
+        const fc = new FamilyColor(createConfiguration());
+        const maternalChild = createAncestor(1, 0.5, 0.75);
+        const paternalChild = createAncestor(1, 0.25, 0.5);
+
+        // Both parents sit in the left half of the chart, yet their colors follow the child's side.
+        const motherSide = createAncestor(2, 0.1, 0.2, maternalChild);
+        const fatherSide = createAncestor(2, 0.6, 0.7, paternalChild);
+
+        expect(isMaternal(fc.getColor(motherSide))).toBe(true);
+        expect(isPaternal(fc.getColor(fatherSide))).toBe(true);
+    });
+
+    it("gives both parents of a child the same hue", () => {
+        const fc = new FamilyColor(createConfiguration());
+        const child = createAncestor(1, 0.5, 0.75);
+
+        expect(hueOf(fc.getColor(createAncestor(2, 0.5, 0.6, child)))).toBe(
+            hueOf(fc.getColor(createAncestor(2, 0.6, 0.75, child))),
+        );
+    });
+
+    it("takes the color of a descendant partner from its position between the two bases", () => {
+        const fc = new FamilyColor(createConfiguration());
+
+        fc.setPartnerMidpoints([
+            { depth: -1, id: 10, x0: 0, x1: 0.1 },
+            { depth: -1, id: 11, x0: 0.9, x1: 1 },
+        ]);
+
+        const partner = (id, x0, x1) => ({
+            depth: -1,
+            x0,
+            x1,
+            id,
+            descendantType: "partner",
+            syntheticParentId: null,
+            data: { data: { xref: "I5", sex: SEX_FEMALE } },
+        });
+
+        // A partner at the start of the sector is close to the paternal base, one at the end close to
+        // the maternal base.
+        expect(hueDistance(hueOf(fc.getColor(partner(10, 0, 0.1))), PATERNAL_HUE)).toBeLessThan(
+            hueDistance(hueOf(fc.getColor(partner(10, 0, 0.1))), MATERNAL_HUE),
+        );
+        expect(hueDistance(hueOf(fc.getColor(partner(11, 0.9, 1))), MATERNAL_HUE)).toBeLessThan(
+            hueDistance(hueOf(fc.getColor(partner(11, 0.9, 1))), PATERNAL_HUE),
+        );
     });
 });
 

@@ -34,19 +34,19 @@ use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
+use MagicSunday\Webtrees\FanChart\Test\Support\IndividualFixtureTrait;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
-use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 use function array_map;
-use function is_string;
 use function json_decode;
 use function json_encode;
+use function sort;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -60,6 +60,7 @@ use const JSON_THROW_ON_ERROR;
 #[UsesClass(NodeData::class)]
 final class DataFacadeTest extends TestCase
 {
+    use IndividualFixtureTrait;
     use ModuleSettingsFixtureTrait;
 
     /**
@@ -216,6 +217,77 @@ final class DataFacadeTest extends TestCase
         self::assertCount(2, $parents);
         $parentIds = array_map(static fn (Node $node): int => $node->getData()->getId(), $parents);
         self::assertSame([2, 3], $parentIds);
+    }
+
+    /**
+     * The people of a chart that goes back further than the configured number of generations, by
+     * the number of generations: the root of the chain is generation one, so each step adds the
+     * parents of the generation before.
+     *
+     * @return array<string, array{string, list<string>}>
+     */
+    public static function generationCeilingProvider(): array
+    {
+        return [
+            'two generations'   => ['2', ['I1', 'I2', 'I3']],
+            'three generations' => ['3', ['I1', 'I2', 'I3', 'I4', 'I5']],
+            'four generations'  => ['4', ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7']],
+        ];
+    }
+
+    /**
+     * The chart stops at the configured number of generations although the tree goes further back,
+     * and it does not stop one generation early.
+     *
+     * @param list<string> $expectedXrefs
+     */
+    #[Test]
+    #[DataProvider('generationCeilingProvider')]
+    public function theChartStopsAtTheConfiguredNumberOfGenerations(string $generations, array $expectedXrefs): void
+    {
+        $this->registerRouting();
+
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
+        $module->method('name')->willReturn('webtrees-fan-chart');
+
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('main');
+        $tree->method('getPreference')->willReturn('1');
+
+        // A chain of five generations, so that the highest ceiling of the provider still cuts
+        // something off. The people of the fifth generation have no parent family.
+        $ancientFamily = $this->createParentFamily(
+            $this->createPerson($tree, 'I8', 'M', '1 JAN 1770', '1 JAN 1830'),
+            $this->createPerson($tree, 'I9', 'F', '1 JAN 1771', '1 JAN 1831')
+        );
+        $oldestFamily = $this->createParentFamily(
+            $this->createPerson($tree, 'I6', 'M', '1 JAN 1800', '1 JAN 1860', null, '', '', $ancientFamily),
+            $this->createPerson($tree, 'I7', 'F', '1 JAN 1801', '1 JAN 1861')
+        );
+        $middleFamily = $this->createParentFamily(
+            $this->createPerson($tree, 'I4', 'M', '1 JAN 1830', '1 JAN 1890', null, '', '', $oldestFamily),
+            $this->createPerson($tree, 'I5', 'F', '1 JAN 1831', '1 JAN 1891')
+        );
+        $rootFamily = $this->createParentFamily(
+            $this->createPerson($tree, 'I2', 'M', '1 JAN 1860', '1 JAN 1920', null, '', '', $middleFamily),
+            $this->createPerson($tree, 'I3', 'F', '1 JAN 1861', '1 JAN 1921')
+        );
+
+        $root = $this->createPerson($tree, 'I1', 'M', '1 JAN 1890', '1 JAN 1950', null, '', '', $rootFamily);
+
+        $rootNode = (new DataFacade())->createTreeStructure(
+            $module,
+            $this->createConfiguration(['generations' => $generations]),
+            $root
+        );
+
+        self::assertInstanceOf(Node::class, $rootNode);
+
+        $xrefs = $this->collectXrefs($rootNode);
+
+        sort($xrefs);
+
+        self::assertSame($expectedXrefs, $xrefs);
     }
 
     /**
@@ -617,7 +689,7 @@ final class DataFacadeTest extends TestCase
      * @param string $birth         The GEDCOM birth date of the child
      * @param string $death         The GEDCOM death date of the child
      * @param int    $fanDegree     The fan degree of the configuration, the clamp maximum for a chart with descendants leaves a narrow descendant sector
-     * @param bool   $hiddenPartner True when the partner of the root is hidden by privacy
+     * @param bool   $hiddenPartner True when the partner of the root is hidden by privacy, the root then has no partner arc and carries the child as an unassigned child
      *
      * @return NodeData
      */
@@ -692,6 +764,8 @@ final class DataFacadeTest extends TestCase
         $rootData = $rootNode->jsonSerialize();
 
         if ($hiddenPartner) {
+            // A partner arc would reveal that a hidden partner exists.
+            self::assertArrayNotHasKey('partners', $rootData);
             self::assertArrayHasKey('unassignedChildren', $rootData);
 
             $childNode = $rootData['unassignedChildren'][0];
@@ -794,6 +868,35 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
+     * Creates the family of two parents.
+     */
+    private function createParentFamily(Individual $father, Individual $mother): Family
+    {
+        $family = self::createStub(Family::class);
+        $family->method('husband')->willReturn($father);
+        $family->method('wife')->willReturn($mother);
+
+        return $family;
+    }
+
+    /**
+     * Returns the xrefs of a node and of all its ancestors.
+     *
+     * @return list<string>
+     */
+    private function collectXrefs(Node $node): array
+    {
+        $serialized = $node->jsonSerialize();
+        $xrefs      = [$node->getData()->jsonSerialize()['xref']];
+
+        foreach ($serialized['parents'] ?? [] as $parent) {
+            $xrefs = [...$xrefs, ...$this->collectXrefs($parent)];
+        }
+
+        return $xrefs;
+    }
+
+    /**
      * Sets up the route factory and container required by DataFacade.
      */
     private function registerRouting(): void
@@ -833,117 +936,5 @@ final class DataFacadeTest extends TestCase
 
         Registry::routeFactory($routeFactory);
         Registry::container($container);
-    }
-
-    /**
-     * Builds a fake name set matching webtrees output structure.
-     *
-     * @return list<array<string, string|bool|array<string>>>
-     */
-    private function buildNameSet(string $firstName, string $lastName): array
-    {
-        return [
-            [
-                'type'                    => 'NAME',
-                'fullNN'                  => $firstName . ' <span class="NAME"><span class="SURN">' . $lastName . '</span></span>',
-                'full'                    => $firstName . ' <span class="NAME"><span class="SURN">' . $lastName . '</span></span>',
-                'sort'                    => $lastName . ', ' . $firstName,
-                'list'                    => $firstName . ' ' . $lastName,
-                'surname'                 => $lastName,
-                'addname'                 => '',
-                'prefix'                  => '',
-                'surn'                    => $lastName,
-                'givn'                    => $firstName,
-                'initials'                => $firstName[0] . ' ' . $lastName[0],
-                'spfx'                    => '',
-                'nsfx'                    => '',
-                'nickname'                => '',
-                'display_as'              => 'default',
-                'type_label'              => 'Name',
-                'surname_prefix'          => '',
-                'show'                    => true,
-                'script'                  => 'Latn',
-                'parts'                   => [],
-                'prim'                    => 'Y',
-                'type_id'                 => '0',
-                'fullNNalternativeRender' => $firstName . ' <span class="SURN">' . $lastName . '</span>',
-            ],
-        ];
-    }
-
-    /**
-     * Creates an individual stub with a visible name, the given dates and no
-     * parents. The optional family is the individual's only spouse family.
-     *
-     * @param array<string, Fact>|null      $factsByTag The fact of each tag, or null for a person without a facts stub
-     * @param ArrayObject<int, string>|null $factReads  Receives the tag of every read of the facts of the person
-     *
-     * @return Individual&Stub
-     */
-    private function createPerson(
-        Tree $tree,
-        string $xref,
-        string $sex,
-        string $birth,
-        string $death,
-        ?Family $spouseFamily = null,
-        string $birthPlace = '',
-        string $deathPlace = '',
-        ?Family $parentFamily = null,
-        ?array $factsByTag = null,
-        ?ArrayObject $factReads = null,
-    ): Individual {
-        $person = self::createStub(Individual::class);
-        $person->method('xref')->willReturn($xref);
-        $person->method('url')->willReturn('/individual/' . $xref);
-        $person->method('sex')->willReturn($sex);
-        $person->method('fullName')->willReturn('Person ' . $xref);
-        $person->method('canShow')->willReturn(true);
-        $person->method('canShowName')->willReturn(true);
-        $person->method('getAllNames')->willReturn($this->buildNameSet('Person', $xref));
-        $person->method('getPrimaryName')->willReturn(0);
-        $person->method('getSecondaryName')->willReturn(0);
-        $person->method('getBirthDate')->willReturn($this->createDate($birth));
-        $person->method('getDeathDate')->willReturn($this->createDate($death));
-        $person->method('tree')->willReturn($tree);
-
-        if ($birthPlace !== '') {
-            $person->method('getBirthPlace')->willReturn(new Place($birthPlace, $tree));
-        }
-
-        if ($deathPlace !== '') {
-            $person->method('getDeathPlace')->willReturn(new Place($deathPlace, $tree));
-        }
-
-        $person->method('spouseFamilies')->willReturn(
-            ($spouseFamily instanceof Family) ? new Collection([$spouseFamily]) : new Collection()
-        );
-        $person->method('childFamilies')->willReturn(
-            ($parentFamily instanceof Family) ? new Collection([$parentFamily]) : new Collection()
-        );
-        $person->method('findHighlightedMediaFile')->willReturn(null);
-
-        if ($factsByTag !== null) {
-            $person->method('facts')->willReturnCallback(
-                static function (array $filter = []) use ($factsByTag, $factReads): Collection {
-                    $first = $filter[0] ?? '';
-                    $tag   = is_string($first) ? $first : '';
-
-                    $factReads?->append($tag);
-
-                    return new Collection(isset($factsByTag[$tag]) ? [$factsByTag[$tag]] : []);
-                }
-            );
-        }
-
-        return $person;
-    }
-
-    /**
-     * Creates a date instance with predefined values for testing.
-     */
-    private function createDate(string $display): Date
-    {
-        return new Date($display);
     }
 }

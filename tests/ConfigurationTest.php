@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test;
 
+use Closure;
 use Fig\Http\Message\RequestMethodInterface;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Tree;
@@ -1049,6 +1050,71 @@ final class ConfigurationTest extends TestCase
         self::assertSame(300, $configuration->getFanDegreeUnclamped());
         // getFanDegree should return 270 (clamped)
         self::assertSame(270, $configuration->getFanDegree());
+    }
+
+    /**
+     * The edges of every numeric setting. A value on an edge is taken, a value one step outside is
+     * rejected and the stored default of the module applies. The stored defaults of the test differ from
+     * the built-in ones and from each edge, so a fallback to either shows. The fan degree is clamped
+     * to its ceiling while descendants are shown, so a value just above that ceiling is taken but
+     * lowered, and one below the lower edge falls back to the stored default.
+     *
+     * @return array<string, array{Closure(Configuration): int, array<string, string>, int}>
+     */
+    public static function settingBoundaryProvider(): array
+    {
+        $generations = static fn (Configuration $configuration): int => $configuration->getGenerations();
+        $fontScale   = static fn (Configuration $configuration): int => $configuration->getFontScale();
+        $innerArcs   = static fn (Configuration $configuration): int => $configuration->getInnerArcs();
+        $fanDegree   = static fn (Configuration $configuration): int => $configuration->getFanDegree();
+
+        return [
+            'generations at the minimum'                    => [$generations, ['generations' => '2'], 2],
+            'generations below the minimum'                 => [$generations, ['generations' => '1'], 7],
+            'generations at the maximum'                    => [$generations, ['generations' => '10'], 10],
+            'generations above the maximum'                 => [$generations, ['generations' => '11'], 7],
+            'font scale at the minimum'                     => [$fontScale, ['fontScale' => '75'], 75],
+            'font scale below the minimum'                  => [$fontScale, ['fontScale' => '74'], 90],
+            'font scale at the maximum'                     => [$fontScale, ['fontScale' => '125'], 125],
+            'font scale above the maximum'                  => [$fontScale, ['fontScale' => '126'], 90],
+            'inner arcs at the minimum'                     => [$innerArcs, ['innerArcs' => '0'], 0],
+            'inner arcs below the minimum'                  => [$innerArcs, ['innerArcs' => '-1'], 2],
+            'inner arcs at the maximum'                     => [$innerArcs, ['innerArcs' => '5'], 5],
+            'inner arcs above the maximum'                  => [$innerArcs, ['innerArcs' => '6'], 2],
+            'fan degree at the minimum'                     => [$fanDegree, ['fanDegree' => '180'], 180],
+            'fan degree below the minimum'                  => [$fanDegree, ['fanDegree' => '179'], 200],
+            'fan degree at the maximum'                     => [$fanDegree, ['fanDegree' => '360'], 360],
+            'fan degree above the maximum'                  => [$fanDegree, ['fanDegree' => '361'], 200],
+            'fan degree at the ceiling with descendants'    => [$fanDegree, ['fanDegree' => '270', 'showDescendants' => '1'], 270],
+            'fan degree above the ceiling with descendants' => [$fanDegree, ['fanDegree' => '271', 'showDescendants' => '1'], 270],
+            'fan degree at the minimum with descendants'    => [$fanDegree, ['fanDegree' => '180', 'showDescendants' => '1'], 180],
+            'fan degree below the minimum with descendants' => [$fanDegree, ['fanDegree' => '179', 'showDescendants' => '1'], 200],
+            'fan degree above the maximum with descendants' => [$fanDegree, ['fanDegree' => '361', 'showDescendants' => '1'], 200],
+        ];
+    }
+
+    /**
+     * Pins the edges of the numeric settings of the chart.
+     *
+     * @param Closure(Configuration): int $read     Reads the setting under test
+     * @param array<string, string>       $query    The request parameters
+     * @param int                         $expected The value the chart uses
+     */
+    #[Test]
+    #[DataProvider('settingBoundaryProvider')]
+    public function aNumericSettingIsTakenOnItsEdgesAndRejectedOutsideThem(Closure $read, array $query, int $expected): void
+    {
+        $configuration = new Configuration(
+            (new ServerRequest(RequestMethodInterface::METHOD_GET, '/'))->withQueryParams($query),
+            $this->createModuleWithPreferences([
+                'default_generations' => '7',
+                'default_fontScale'   => '90',
+                'default_innerArcs'   => '2',
+                'default_fanDegree'   => '200',
+            ])
+        );
+
+        self::assertSame($expected, $read($configuration));
     }
 
     /**

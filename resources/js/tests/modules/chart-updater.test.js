@@ -527,12 +527,17 @@ class HierarchyStub {
     constructor() {
         this.nodes = [];
         this.initCalls = [];
+        this.familyColorCalls = [];
         this.descendantLayout = new DescendantLayout();
     }
 
     init(data) {
         this.initCalls.push(data);
         this.nodes = data;
+    }
+
+    applyFamilyColors(familyColor) {
+        this.familyColorCalls.push(familyColor);
     }
 }
 
@@ -797,14 +802,21 @@ describe("Update", () => {
         const configuration = defaultConfiguration({ showFamilyColors: true });
         const update = new Update(svg, configuration, hierarchy);
 
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
         jsonMock.mockResolvedValueOnce({ data: createNodes() });
         update.update("/update", jest.fn(), jest.fn());
         await flushPromises();
 
+        // The mark comes from the successful path, so the failure path did not run
+        expect(errorSpy).not.toHaveBeenCalled();
+        expect(hierarchy.familyColorCalls).toHaveLength(1);
         expect(svg.visualClassedCalls).toContainEqual({
             name: "family-colors",
             value: true,
         });
+
+        errorSpy.mockRestore();
     });
 
     test("re-syncs family-colors class on visual after a fetch failure", async () => {
@@ -828,93 +840,98 @@ describe("Update", () => {
         errorSpy.mockRestore();
     });
 
-    test("assigns classes based on data and applies transition styles", async () => {
+    test("calls back once after the transition has finished and the update is cleaned up", async () => {
         const svg = createSvgWithPersons(["1"]);
         const hierarchy = new HierarchyStub();
-        const configuration = defaultConfiguration();
-        const update = new Update(svg, configuration, hierarchy);
+        const update = new Update(svg, defaultConfiguration(), hierarchy);
         const callback = jest.fn();
+        const onSuperseded = jest.fn();
 
-        jsonMock.mockResolvedValueOnce({
-            data: createNodes(),
-        });
+        jsonMock.mockResolvedValueOnce({ data: createNodes() });
 
-        update.update("/update", jest.fn(), callback);
+        update.update("/update", jest.fn(), callback, onSuperseded);
         await flushPromises();
 
-        // Drain endAll's setTimeout fallback while transitions are still
-        // active so it correctly sees activeCount > 0 and does nothing.
+        // Drain the fallback of endAll while the transition is still active, so it sees activity
+        // and does nothing.
         await flushPromises();
 
-        const [transition] = transitionInstances;
+        expect(transitionInstances).toHaveLength(1);
+        expect(hierarchy.initCalls).toEqual([createNodes()]);
+        expect(callback).not.toHaveBeenCalled();
 
-        // The mock data-join classifies all nodes via each(). Person "1"
-        // (xref="I1") is non-empty, "2" (xref="") is empty → remove,
-        // "3" (xref="I3") is non-empty. Since the mock doesn't track
-        // "available" state, both "1" and "3" are classified as "new".
-        const persons = Array.from(svg.personById.values());
-
-        // Verify nodes were processed by the data-join
-        expect(persons.map((p) => p.id)).toEqual(["1", "2", "3"]);
-
-        // Each node's data was bound by the mock data-join
-        expect(persons[0].data.data.data.xref).toBe("I1");
-        expect(persons[1].data.data.data.xref).toBe("");
-        expect(persons[2].data.data.data.xref).toBe("I3");
-
-        // Note: Class assignment (new/remove/update) is verified visually via
-        // Playwright tests. The D3 data-join mock does not fully replicate the
-        // selectAll().data().each() chain that sets these classes in production.
-
-        if (transition) {
-            transition.complete();
-        }
-
+        transitionInstances[0].complete();
         await flushPromises();
 
         expect(callback).toHaveBeenCalledTimes(1);
+        expect(onSuperseded).not.toHaveBeenCalled();
+        expect(timeoutMock).toHaveBeenCalledTimes(1);
+        expect(svg.div.property).toHaveBeenCalledWith("active", false);
     });
 
-    test("hides empty segments and cleans up after transitions", async () => {
-        const svg = createSvgWithPersons(["1", "2"]);
-        const hierarchy = new HierarchyStub();
-        const configuration = defaultConfiguration({ hideEmptySegments: true });
-        const update = new Update(svg, configuration, hierarchy);
+    test("reports a request that a newer update cancelled instead of calling back", async () => {
+        const update = new Update(
+            createSvgWithPersons(["1"]),
+            defaultConfiguration(),
+            new HierarchyStub(),
+        );
         const callback = jest.fn();
+        const onSuperseded = jest.fn();
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-        jsonMock.mockResolvedValueOnce({
-            data: createNodes(),
-        });
+        jsonMock.mockRejectedValueOnce(
+            new DOMException("The operation was aborted.", "AbortError"),
+        );
 
-        update.update("/update", jest.fn(), callback);
+        update.update("/update", jest.fn(), callback, onSuperseded);
         await flushPromises();
 
-        // Drain endAll's setTimeout fallback while transitions are still
-        // active so it correctly sees activeCount > 0 and does nothing.
+        expect(onSuperseded).toHaveBeenCalledTimes(1);
+        expect(callback).not.toHaveBeenCalled();
+        expect(errorSpy).not.toHaveBeenCalled();
+
+        errorSpy.mockRestore();
+    });
+
+    test("does not report a superseded request when the request fails for another reason", async () => {
+        const update = new Update(
+            createSvgWithPersons(["1"]),
+            defaultConfiguration(),
+            new HierarchyStub(),
+        );
+        const callback = jest.fn();
+        const onSuperseded = jest.fn();
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+        jsonMock.mockRejectedValueOnce(new Error("network error"));
+
+        update.update("/update", jest.fn(), callback, onSuperseded);
         await flushPromises();
-
-        // The transition may or may not be created depending on mock depth.
-        // If created, complete it; otherwise the endAll fallback fires.
-        const [transition] = transitionInstances;
-
-        if (transition) {
-            transition.complete();
-        }
-
-        await flushPromises();
-
-        // Verify the updateDone lifecycle completed (timeout for style cleanup was scheduled)
-        expect(timeoutMock).toHaveBeenCalledTimes(1);
-
-        // Verify the data-join processed the nodes
-        const persons = Array.from(svg.personById.values());
-
-        expect(persons.length).toBeGreaterThan(0);
 
         expect(callback).toHaveBeenCalledTimes(1);
+        expect(onSuperseded).not.toHaveBeenCalled();
 
-        // Verify tooltip active state is reset after update
-        expect(svg.div.property).toHaveBeenCalledWith("active", false);
+        errorSpy.mockRestore();
+    });
+
+    test("cancels its own pending request when it starts the next update", () => {
+        const update = new Update(
+            createSvgWithPersons(["1"]),
+            defaultConfiguration(),
+            new HierarchyStub(),
+        );
+        const signals = [];
+
+        jsonMock.mockImplementation((_url, init) => {
+            signals.push(init.signal);
+
+            return new Promise(() => {});
+        });
+
+        update.update("/first", jest.fn(), jest.fn());
+        update.update("/second", jest.fn(), jest.fn());
+
+        expect(signals.map((signal) => signal.aborted)).toEqual([true, false]);
     });
 
     test("restores interactivity and cleans CSS classes on fetch error", async () => {
