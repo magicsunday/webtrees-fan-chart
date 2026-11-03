@@ -11,15 +11,8 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test\Support;
 
-use DOMDocument;
-use DOMElement;
-use DOMXPath;
 use Fisharebest\Webtrees\View;
 use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
-use PHPUnit\Framework\AssertionFailedError;
-
-use function libxml_clear_errors;
-use function libxml_use_internal_errors;
 
 /**
  * Registers the views of the module and replaces the two components of the webtrees core that the
@@ -54,55 +47,5 @@ final class ViewFixture
 
         View::registerCustomView('::components/checkbox', self::STUB_NAMESPACE . '::checkbox');
         View::registerCustomView('::components/select-individual', self::STUB_NAMESPACE . '::select-individual');
-    }
-
-    /**
-     * Parses rendered markup into a document that can be queried.
-     */
-    public static function xpathOf(string $markup): DOMXPath
-    {
-        $previous = libxml_use_internal_errors(true);
-        $document = new DOMDocument();
-        $document->loadHTML('<?xml encoding="UTF-8">' . $markup);
-
-        libxml_clear_errors();
-        libxml_use_internal_errors($previous);
-
-        return new DOMXPath($document);
-    }
-
-    /**
-     * Returns the elements that the expression finds.
-     *
-     * @return list<DOMElement>
-     */
-    public static function elements(DOMXPath $xpath, string $expression): array
-    {
-        $elements = [];
-        $nodes    = $xpath->query($expression);
-
-        if ($nodes === false) {
-            return $elements;
-        }
-
-        foreach ($nodes as $node) {
-            if ($node instanceof DOMElement) {
-                $elements[] = $node;
-            }
-        }
-
-        return $elements;
-    }
-
-    /**
-     * Returns the first element that the expression finds and fails the test when there is none.
-     */
-    public static function first(DOMXPath $xpath, string $expression): DOMElement
-    {
-        foreach (self::elements($xpath, $expression) as $element) {
-            return $element;
-        }
-
-        throw new AssertionFailedError('The markup has no element for ' . $expression);
     }
 }

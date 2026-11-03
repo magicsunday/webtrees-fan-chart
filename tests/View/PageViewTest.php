@@ -17,9 +17,10 @@ use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
 use GuzzleHttp\Psr7\ServerRequest;
 use MagicSunday\Webtrees\FanChart\Configuration;
-use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\FanChart\Test\Support\ViewFixture;
+use MagicSunday\Webtrees\ModuleBase\Testing\EnglishLocaleFixture;
+use MagicSunday\Webtrees\ModuleBase\Testing\MarkupFixture;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -65,9 +66,9 @@ final class PageViewTest extends TestCase
     public function keepsATranslatedLabelOfTheSubmitButtonInsideItsAttribute(): void
     {
         $text  = 'Say "more" &amp; <b>less</b>';
-        $xpath = ViewFixture::xpathOf($this->render('https://example.test/ajax', ['view' => $text]));
+        $xpath = MarkupFixture::xpathOf($this->render('https://example.test/ajax', ['view' => $text]));
 
-        self::assertSame($text, ViewFixture::first($xpath, '//input[@type="submit"]')->getAttribute('value'));
+        self::assertSame($text, MarkupFixture::first($xpath, '//input[@type="submit"]')->getAttribute('value'));
     }
 
     /**
@@ -86,8 +87,8 @@ final class PageViewTest extends TestCase
             'close'                                                 => 'Close <i>five</i> &amp; "v"',
         ];
 
-        $xpath = ViewFixture::xpathOf($this->render('https://example.test/ajax', $messages));
-        $panel = ViewFixture::first($xpath, '//aside[@id="webtrees-fan-detail-panel"]');
+        $xpath = MarkupFixture::xpathOf($this->render('https://example.test/ajax', $messages));
+        $panel = MarkupFixture::first($xpath, '//aside[@id="webtrees-fan-detail-panel"]');
 
         foreach (['webtrees-detail-panel', 'webtrees-fan-detail-panel'] as $class) {
             self::assertContains($class, explode(' ', $panel->getAttribute('class')), 'the panel carries the class ' . $class);
@@ -103,14 +104,14 @@ final class PageViewTest extends TestCase
         foreach ($parts as $part => $source) {
             self::assertSame(
                 $messages[$source],
-                trim(ViewFixture::first($xpath, '//aside[@id="webtrees-fan-detail-panel"]//*[@data-panel="' . $part . '"]')->textContent),
+                trim(MarkupFixture::first($xpath, '//aside[@id="webtrees-fan-detail-panel"]//*[@data-panel="' . $part . '"]')->textContent),
                 'the part ' . $part . ' shows its translated text as text'
             );
         }
 
         self::assertSame(
             $messages['close'],
-            ViewFixture::first($xpath, '//aside[@id="webtrees-fan-detail-panel"]//button[contains(concat(" ", @class, " "), " btn-close ")]')->getAttribute('aria-label'),
+            MarkupFixture::first($xpath, '//aside[@id="webtrees-fan-detail-panel"]//button[contains(concat(" ", @class, " "), " btn-close ")]')->getAttribute('aria-label'),
             'the close button is named by its translated text'
         );
     }
@@ -131,11 +132,11 @@ final class PageViewTest extends TestCase
             'the toolbar rules are written once'
         );
 
-        $xpath = ViewFixture::xpathOf($output);
+        $xpath = MarkupFixture::xpathOf($output);
 
         self::assertCount(
             1,
-            ViewFixture::elements($xpath, '//div[contains(concat(" ", @class, " "), " webtrees-fan-fullscreen-container ")]'),
+            MarkupFixture::elements($xpath, '//div[contains(concat(" ", @class, " "), " webtrees-fan-fullscreen-container ")]'),
             'the container that the rules name exists once'
         );
     }
