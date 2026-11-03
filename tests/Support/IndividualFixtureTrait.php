@@ -136,6 +136,8 @@ trait IndividualFixtureTrait
                     return new Collection(isset($factsByTag[$tag]) ? [$factsByTag[$tag]] : []);
                 }
             );
+        } else {
+            $person->method('facts')->willReturn(new Collection());
         }
 
         return $person;
