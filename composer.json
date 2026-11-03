@@ -1,6 +1,6 @@
 {
     "name": "magicsunday/webtrees-fan-chart",
-    "description": "SVG ancestor fan chart module for the webtrees genealogy application \u2014 interactive D3.js visualization with zoom, export and up to 10 generations.",
+    "description": "SVG ancestor fan chart module for the webtrees genealogy application — interactive D3.js visualization with zoom, export and up to 10 generations.",
     "license": "GPL-3.0-or-later",
     "type": "webtrees-module",
     "keywords": [
