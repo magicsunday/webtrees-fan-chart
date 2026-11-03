@@ -72,6 +72,23 @@ final class PageViewTest extends TestCase
     }
 
     /**
+     * The module words the submit button differently from the webtrees core. The wording of the
+     * module comes with the name of the module as its context, and a language without an entry for
+     * that context keeps the wording of the core.
+     */
+    #[Test]
+    public function showsTheWordingOfTheModuleOrOtherwiseOfTheCoreOnTheSubmitButton(): void
+    {
+        $context = "webtrees-fan-chart\x04view";
+
+        $withContext = MarkupFixture::xpathOf($this->render('https://example.test/ajax', [$context => 'Anzeigen', 'view' => 'zeige']));
+        $withoutIt   = MarkupFixture::xpathOf($this->render('https://example.test/ajax', ['view' => 'zeige']));
+
+        self::assertSame('Anzeigen', MarkupFixture::first($withContext, '//input[@type="submit"]')->getAttribute('value'));
+        self::assertSame('zeige', MarkupFixture::first($withoutIt, '//input[@type="submit"]')->getAttribute('value'));
+    }
+
+    /**
      * The panel carries the shared class that the shared CSS is scoped to next to the class of the
      * module, and every translated text of the page is the text of its own part, so a text that is
      * swapped or dropped is caught. The escaping of the texts is the business of the shared view.

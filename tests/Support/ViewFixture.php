@@ -47,5 +47,11 @@ final class ViewFixture
 
         View::registerCustomView('::components/checkbox', self::STUB_NAMESPACE . '::checkbox');
         View::registerCustomView('::components/select-individual', self::STUB_NAMESPACE . '::select-individual');
+
+        foreach (['breadcrumbs', 'select'] as $component) {
+            View::registerCustomView('::components/' . $component, self::STUB_NAMESPACE . '::blank');
+        }
+
+        View::registerCustomView('::icons/cancel', self::STUB_NAMESPACE . '::icon');
     }
 }

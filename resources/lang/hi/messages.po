@@ -39,7 +39,7 @@ msgstr "स्वचालित (वृक्ष की उपनाम पर�
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:114
+#: resources/views/modules/fan-chart/page.phtml:115
 msgid "Center chart on this person"
 msgstr ""
 
@@ -67,11 +67,11 @@ msgstr ""
 "पारिवारिक शाखा के अनुसार चापों को रंगता है। प्रत्येक जोड़ा एक ही रंग साझा करता है, जो "
 "चुने गए आधार रंगों से प्राप्त होता है।"
 
-#: resources/views/modules/fan-chart/config.phtml:25
+#: resources/views/modules/fan-chart/config.phtml:26
 msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:85
+#: resources/views/modules/fan-chart/config.phtml:86
 msgid ""
 "Controls which name part shrinks first when an arc is too narrow for the "
 "full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Ctrl + scroll"
 msgstr "Ctrl + स्क्रॉल"
 
-#: resources/views/modules/fan-chart/config.phtml:108
+#: resources/views/modules/fan-chart/config.phtml:109
 msgid "Date precision"
 msgstr "तारीख सटीकता"
 
@@ -150,7 +150,8 @@ msgstr "फ़ॉन्ट आकार"
 msgid "Full place name"
 msgstr "पूरा स्थान नाम"
 
-#: resources/views/modules/fan-chart/config.phtml:51
+#: resources/views/modules/fan-chart/config.phtml:52
+msgctxt "webtrees-fan-chart"
 msgid "General"
 msgstr ""
 
@@ -162,19 +163,19 @@ msgstr ""
 msgid "Hide empty segments"
 msgstr "खाली खंड छिपाएं"
 
-#: resources/views/modules/fan-chart/page.phtml:81
+#: resources/views/modules/fan-chart/page.phtml:82
 msgid "Hide more options"
 msgstr "अधिक विकल्प छिपाएँ"
 
-#: resources/views/modules/fan-chart/config.phtml:65
+#: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
 msgstr "PNG निर्यात बटन छिपाएँ"
 
-#: resources/views/modules/fan-chart/config.phtml:56
+#: resources/views/modules/fan-chart/config.phtml:57
 msgid "Hide the SVG export button"
 msgstr "SVG निर्यात बटन छिपाएँ"
 
-#: resources/views/modules/fan-chart/config.phtml:102
+#: resources/views/modules/fan-chart/config.phtml:103
 msgid ""
 "How much of each place is shown in chart arcs — the full name, only the "
 "lowest levels, or the place combined with its country as a name or country "
@@ -189,7 +190,7 @@ msgstr ""
 "छवियाँ केवल तभी दिखाई जाती हैं जब चाप खंड पर्याप्त चौड़ा हो। वंशजों के लिए छवियाँ अभी तक "
 "उपलब्ध नहीं हैं।"
 
-#: resources/views/modules/fan-chart/page.phtml:42
+#: resources/views/modules/fan-chart/page.phtml:43
 msgid "Individual"
 msgstr ""
 
@@ -219,7 +220,7 @@ msgstr "सबसे निचले दो स्तर"
 msgid "Maternal"
 msgstr "मातृक"
 
-#: resources/views/modules/fan-chart/config.phtml:25
+#: resources/views/modules/fan-chart/config.phtml:26
 msgid "Modules"
 msgstr ""
 
@@ -235,11 +236,11 @@ msgstr "चार्ट को स्थानांतरित करें"
 msgid "Move the view with two fingers"
 msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
 
-#: resources/views/modules/fan-chart/config.phtml:74
+#: resources/views/modules/fan-chart/config.phtml:75
 msgid "Name abbreviation when space is tight"
 msgstr "जब स्थान सीमित हो तो नाम का संक्षिप्तीकरण"
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "No details are available for this person."
 msgstr ""
 
@@ -247,7 +248,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "आंतरिक स्तरों की संख्या"
 
-#: resources/views/modules/fan-chart/page.phtml:113
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Open individual page"
 msgstr ""
 
@@ -279,7 +280,7 @@ msgstr ""
 msgid "Place and country code (3 letters)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:91
+#: resources/views/modules/fan-chart/config.phtml:92
 msgid "Place detail"
 msgstr "स्थान विवरण"
 
@@ -295,7 +296,7 @@ msgstr "उस व्यक्ति के लिए चार्ट पुन�
 msgid "Right-click"
 msgstr "राइट-क्लिक"
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -315,7 +316,7 @@ msgstr ""
 msgid "Show family colors"
 msgstr "पारिवारिक रंग दिखाएं"
 
-#: resources/views/modules/fan-chart/config.phtml:119
+#: resources/views/modules/fan-chart/config.phtml:120
 msgid ""
 "Show full dates (birth, marriage, death) for early generations. Later "
 "generations show year only. Marriage dates are hidden from generation 9. "
@@ -338,7 +339,7 @@ msgstr "मदद दिखाएँ"
 msgid "Show images only"
 msgstr "केवल छवियाँ दिखाएँ"
 
-#: resources/views/modules/fan-chart/page.phtml:80
+#: resources/views/modules/fan-chart/page.phtml:81
 msgid "Show more options"
 msgstr "अधिक विकल्प दिखाएँ"
 
@@ -407,18 +408,19 @@ msgstr "केवल वर्ष"
 msgid "Zoom in/out"
 msgstr "ज़ूम इन/आउट"
 
-#: resources/views/modules/fan-chart/config.phtml:134
+#: resources/views/modules/fan-chart/config.phtml:135
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:110
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "close"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:129
+#: resources/views/modules/fan-chart/config.phtml:130
 msgid "save"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:69
+#: resources/views/modules/fan-chart/page.phtml:70
+msgctxt "webtrees-fan-chart"
 msgid "view"
 msgstr ""
