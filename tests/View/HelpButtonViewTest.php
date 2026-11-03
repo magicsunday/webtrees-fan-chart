@@ -11,8 +11,9 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test\View;
 
-use MagicSunday\Webtrees\FanChart\Test\Support\EnglishLocaleFixture;
 use MagicSunday\Webtrees\FanChart\Test\Support\ViewFixture;
+use MagicSunday\Webtrees\ModuleBase\Testing\EnglishLocaleFixture;
+use MagicSunday\Webtrees\ModuleBase\Testing\MarkupFixture;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -43,7 +44,7 @@ final class HelpButtonViewTest extends TestCase
     #[Test]
     public function listsTheRowsInTheirOrderWithTheirModes(): void
     {
-        $xpath    = ViewFixture::xpathOf($this->render());
+        $xpath    = MarkupFixture::xpathOf($this->render());
         $expected = [
             ['tooltip', 'Right-click', 'Show details of a person'],
             ['tooltip', 'Click on a person', 'Reload chart for that person'],
@@ -54,26 +55,26 @@ final class HelpButtonViewTest extends TestCase
             ['', 'Click and drag', 'Move the chart'],
         ];
 
-        self::assertCount(count($expected), ViewFixture::elements($xpath, '//tr'));
+        self::assertCount(count($expected), MarkupFixture::elements($xpath, '//tr'));
 
         foreach ($expected as $index => [$mode, $key, $text]) {
             $row = '(//tr)[' . ($index + 1) . ']';
 
             self::assertSame(
                 $mode,
-                ViewFixture::first($xpath, $row)->getAttribute('data-help-mode'),
+                MarkupFixture::first($xpath, $row)->getAttribute('data-help-mode'),
                 'the row ' . $key . ' belongs to the mode ' . ($mode === '' ? 'of both' : $mode)
             );
-            self::assertSame($key, trim(ViewFixture::first($xpath, $row . '/td[1]')->textContent));
-            self::assertSame($text, trim(ViewFixture::first($xpath, $row . '/td[2]')->textContent));
+            self::assertSame($key, trim(MarkupFixture::first($xpath, $row . '/td[1]')->textContent));
+            self::assertSame($text, trim(MarkupFixture::first($xpath, $row . '/td[2]')->textContent));
             self::assertSame(
                 $mode === 'panel',
-                str_contains(ViewFixture::first($xpath, $row)->getAttribute('class'), 'd-none'),
+                str_contains(MarkupFixture::first($xpath, $row)->getAttribute('class'), 'd-none'),
                 'the row ' . $key . ' is hidden exactly when it belongs to the mode with the panel'
             );
         }
 
-        $button = ViewFixture::first($xpath, '//button[contains(concat(" ", @class, " "), " btn-help ")]');
+        $button = MarkupFixture::first($xpath, '//button[contains(concat(" ", @class, " "), " btn-help ")]');
 
         self::assertNotSame('', $button->getAttribute('title'));
     }
