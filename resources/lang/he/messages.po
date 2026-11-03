@@ -39,7 +39,7 @@ msgstr "אוטומטי (על פי מסורת שם המשפחה של העץ)"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:114
+#: resources/views/modules/fan-chart/page.phtml:115
 msgid "Center chart on this person"
 msgstr ""
 
@@ -67,11 +67,11 @@ msgstr ""
 "צובע את הקשתות לפי ענף משפחתי. כל זוג חולק את אותו הצבע, הנגזר מצבעי הבסיס "
 "שנבחרו."
 
-#: resources/views/modules/fan-chart/config.phtml:25
+#: resources/views/modules/fan-chart/config.phtml:26
 msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:85
+#: resources/views/modules/fan-chart/config.phtml:86
 msgid ""
 "Controls which name part shrinks first when an arc is too narrow for the "
 "full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Ctrl + scroll"
 msgstr "Ctrl + גלילה"
 
-#: resources/views/modules/fan-chart/config.phtml:108
+#: resources/views/modules/fan-chart/config.phtml:109
 msgid "Date precision"
 msgstr "דיוק תאריכים"
 
@@ -150,7 +150,8 @@ msgstr "גודל גופן"
 msgid "Full place name"
 msgstr "שם מקום מלא"
 
-#: resources/views/modules/fan-chart/config.phtml:51
+#: resources/views/modules/fan-chart/config.phtml:52
+msgctxt "webtrees-fan-chart"
 msgid "General"
 msgstr ""
 
@@ -162,19 +163,19 @@ msgstr ""
 msgid "Hide empty segments"
 msgstr "הסתר פלחים ריקים"
 
-#: resources/views/modules/fan-chart/page.phtml:81
+#: resources/views/modules/fan-chart/page.phtml:82
 msgid "Hide more options"
 msgstr "הסתר אפשרויות נוספות"
 
-#: resources/views/modules/fan-chart/config.phtml:65
+#: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
 msgstr "הסתר את כפתור ייצוא PNG"
 
-#: resources/views/modules/fan-chart/config.phtml:56
+#: resources/views/modules/fan-chart/config.phtml:57
 msgid "Hide the SVG export button"
 msgstr "הסתר את כפתור ייצוא SVG"
 
-#: resources/views/modules/fan-chart/config.phtml:102
+#: resources/views/modules/fan-chart/config.phtml:103
 msgid ""
 "How much of each place is shown in chart arcs — the full name, only the "
 "lowest levels, or the place combined with its country as a name or country "
@@ -188,7 +189,7 @@ msgid ""
 msgstr ""
 "תמונות מוצגות רק אם קטע הקשת רחב מספיק. תמונות עבור צאצאים עדיין לא זמינות."
 
-#: resources/views/modules/fan-chart/page.phtml:42
+#: resources/views/modules/fan-chart/page.phtml:43
 msgid "Individual"
 msgstr ""
 
@@ -218,7 +219,7 @@ msgstr "שתי הרמות הנמוכות ביותר"
 msgid "Maternal"
 msgstr "אימהי"
 
-#: resources/views/modules/fan-chart/config.phtml:25
+#: resources/views/modules/fan-chart/config.phtml:26
 msgid "Modules"
 msgstr ""
 
@@ -234,11 +235,11 @@ msgstr "הזזת התרשים"
 msgid "Move the view with two fingers"
 msgstr "הזז את התצוגה בשתי אצבעות"
 
-#: resources/views/modules/fan-chart/config.phtml:74
+#: resources/views/modules/fan-chart/config.phtml:75
 msgid "Name abbreviation when space is tight"
 msgstr "קיצור שם כאשר המקום מצומצם"
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "No details are available for this person."
 msgstr ""
 
@@ -246,7 +247,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "מספר הרמות הפנימיות"
 
-#: resources/views/modules/fan-chart/page.phtml:113
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Open individual page"
 msgstr ""
 
@@ -278,7 +279,7 @@ msgstr ""
 msgid "Place and country code (3 letters)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:91
+#: resources/views/modules/fan-chart/config.phtml:92
 msgid "Place detail"
 msgstr "פירוט מקום"
 
@@ -294,7 +295,7 @@ msgstr "טעינת התרשים מחדש עבור אותו אדם"
 msgid "Right-click"
 msgstr "לחיצה ימנית"
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -314,7 +315,7 @@ msgstr ""
 msgid "Show family colors"
 msgstr "הצג צבעי משפחה"
 
-#: resources/views/modules/fan-chart/config.phtml:119
+#: resources/views/modules/fan-chart/config.phtml:120
 msgid ""
 "Show full dates (birth, marriage, death) for early generations. Later "
 "generations show year only. Marriage dates are hidden from generation 9. "
@@ -337,7 +338,7 @@ msgstr "הצג עזרה"
 msgid "Show images only"
 msgstr "הצג תמונות בלבד"
 
-#: resources/views/modules/fan-chart/page.phtml:80
+#: resources/views/modules/fan-chart/page.phtml:81
 msgid "Show more options"
 msgstr "הצג אפשרויות נוספות"
 
@@ -406,18 +407,19 @@ msgstr "שנים בלבד"
 msgid "Zoom in/out"
 msgstr "הגדלה/הקטנה"
 
-#: resources/views/modules/fan-chart/config.phtml:134
+#: resources/views/modules/fan-chart/config.phtml:135
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:110
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "close"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:129
+#: resources/views/modules/fan-chart/config.phtml:130
 msgid "save"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:69
+#: resources/views/modules/fan-chart/page.phtml:70
+msgctxt "webtrees-fan-chart"
 msgid "view"
 msgstr ""

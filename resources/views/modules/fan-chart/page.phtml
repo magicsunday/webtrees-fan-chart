@@ -14,6 +14,7 @@ use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
 use MagicSunday\Webtrees\FanChart\Configuration;
+use MagicSunday\Webtrees\FanChart\Support\ContextText;
 use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
 
 /**
@@ -66,7 +67,7 @@ use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
             <div class="col-sm-12 wt-page-options-value text-center">
                 <div class="btn-toolbar justify-content-between">
                     <div class="btn-group btn-group-sm">
-                        <input class="btn btn-primary" type="submit" value="<?php echo e(I18N::translate('view')); ?>">
+                        <input class="btn btn-primary" type="submit" value="<?php echo e(ContextText::resolve(I18N::translateContext('webtrees-fan-chart', 'view'), 'view')); ?>">
                     </div>
 
                     <div class="btn-group btn-group-sm">

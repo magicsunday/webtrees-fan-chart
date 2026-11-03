@@ -36,6 +36,7 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\FanChart\Support\ContextText;
 use MagicSunday\Webtrees\FanChart\Test\Support\IndividualFixtureTrait;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\FanChart\Test\Support\ViewFixture;
@@ -63,6 +64,7 @@ use const JSON_THROW_ON_ERROR;
 #[UsesClass(DataFacade::class)]
 #[UsesClass(Node::class)]
 #[UsesClass(NodeData::class)]
+#[UsesClass(ContextText::class)]
 final class ModuleRequestTest extends TestCase
 {
     use IndividualFixtureTrait;
