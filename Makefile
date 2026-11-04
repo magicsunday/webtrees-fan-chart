@@ -5,6 +5,12 @@ SHELL = /bin/bash
 # Do not print "Entering directory ..."
 MAKEFLAGS += --no-print-directory
 
+# Keep the inline release note out of the exported variables. Make expands an
+# exported variable for every $(shell ...) call and every recipe, which would lose
+# a dollar sign in the note and run a $(shell ...) in it. This line has to stay
+# above the first $(shell ...) call. Make/release.mk hands the note over as NOTES_RAW.
+unexport NOTES
+
 .PHONY: no_targets__ *
 	no_targets__:
 
