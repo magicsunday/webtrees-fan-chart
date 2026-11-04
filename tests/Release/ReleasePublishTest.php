@@ -162,6 +162,23 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
+     * Inline notes with dollar signs given on the command line arrive unchanged and make runs nothing from them.
+     */
+    #[Test]
+    public function passesInlineNotesWithDollarSignsOfTheCommandLineUnchanged(): void
+    {
+        $this->installRecordingStub();
+
+        $notes = 'Cost $HOME-ish and $(id) and $(shell touch executed-by-make)';
+
+        [$status] = $this->publish(['NOTES=' . $notes]);
+
+        self::assertSame(0, $status);
+        self::assertStringEndsWith($notes . "\n", $this->recordedNotes());
+        self::assertFileDoesNotExist($this->workDir . '/module/executed-by-make');
+    }
+
+    /**
      * @return list<string>
      */
     private function leftoverTemporaryFiles(): array
