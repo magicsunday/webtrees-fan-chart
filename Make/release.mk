@@ -366,7 +366,11 @@ release-publish:
 	# and push.followTags would also publish other local tags, and the immutable-tags
 	# ruleset makes a published tag impossible to remove.
 	@git push --no-follow-tags origin main refs/tags/$(VERSION)
-	@notes_tmp=$$(mktemp); \
+	# Stop at the first failing command and remove the notes file on every exit, so a
+	# failed gh call fails the target instead of being masked by the cleanup.
+	@set -e; \
+	notes_tmp=$$(mktemp); \
+	trap 'rm -f "$$notes_tmp"' EXIT; \
 	{ \
 		echo "> [!IMPORTANT]"; \
 		echo "> **Manual / FTP installation:** download the asset **\`$(MODULE_NAME).zip\`** from the **Assets** section below — *not* the GitHub-generated **\"Source code (zip)\"**. The \"Source code\" archives don't include the bundled vendor library and will fail with \`Interface … not found\` when uploaded to \`modules_v4/\`."; \
@@ -390,8 +394,7 @@ release-publish:
 		--title "$(VERSION)" \
 		--notes-file "$$notes_tmp" \
 		--target main \
-		$(MODULE_NAME).zip; \
-	rm -f "$$notes_tmp"
+		$(MODULE_NAME).zip
 	@echo "RELEASE_PUBLISHED version=$(VERSION)"
 	@rm -f $(MODULE_NAME).zip
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) published"
