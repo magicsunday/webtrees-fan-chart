@@ -343,7 +343,9 @@ release-prepare: release-check
 	@$(MAKE) dist
 	@$(MAKE) dist-smoke
 	@echo -e "${FYELLOW}[6/6]${FRESET} Tagging $(VERSION)..."
-	@git tag $(VERSION)
+	# Signed annotated tag with a message. Without -m git opens an editor, which
+	# cannot run in the buildbox, and -s fails the step if the signature fails.
+	@git tag -a -s $(VERSION) -m "$(VERSION)"
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) prepared"
 
 ## Publish: push, create GitHub release with zip.
@@ -360,7 +362,7 @@ release-publish:
 		exit 1; \
 	fi
 	@echo -e "${FYELLOW}[publish]${FRESET} Pushing to GitHub..."
-	# Name the release tag explicitly: --tags would also publish every other local
+	# Name the release tag explicitly. --tags would also publish every other local
 	# tag, and the immutable-tags ruleset makes a published tag impossible to remove.
 	@git push origin main refs/tags/$(VERSION)
 	@notes_tmp=$$(mktemp); \
