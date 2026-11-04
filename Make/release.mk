@@ -255,6 +255,9 @@ dist-smoke:
 	if grep -qE '^\.githooks/' <<<"$$paths"; then \
 		echo "Error: .githooks/ found in zip"; exit 1; \
 	fi; \
+	if grep -qE '^deptrac\.ya?ml$$' <<<"$$paths"; then \
+		echo "Error: deptrac.yaml found in zip"; exit 1; \
+	fi; \
 	if grep -qE '(^|/)tsconfig\.json$$' <<<"$$paths"; then \
 		echo "Error: tsconfig.json found in zip"; exit 1; \
 	fi

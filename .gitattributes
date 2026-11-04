@@ -12,6 +12,7 @@
 /assets/              export-ignore
 /biome.json            export-ignore
 /compose.yaml          export-ignore
+/deptrac.yaml          export-ignore
 /dev/                  export-ignore
 /infection.json5       export-ignore
 /jest.config.mjs       export-ignore
