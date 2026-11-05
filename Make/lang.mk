@@ -69,7 +69,7 @@ lang-merge: $(POT_FILE) ## Update each locale's PO from the latest POT (drops ob
 			[ -f "$$po" ] || continue; \
 			msgmerge --quiet --previous --update --backup=none "$$po" $(POT_FILE) && \
 				msgattrib --no-obsolete --output-file="$$po" "$$po" && \
-				echo "  ↻ Merged $$po"; \
+				echo "  ↻ Merged $$po" || exit 1; \
 		done'
 
 # Resolves the fuzzy entries msgmerge left behind whose source text only
@@ -108,7 +108,7 @@ lang-compile: ## Compile every messages.po to its sibling messages.mo.
 		for po in resources/lang/*/messages.po; do \
 			dir=$$(dirname "$$po"); \
 			msgfmt -o "$$dir/messages.mo" "$$po" && \
-				echo "  ✔ Compiled $$po"; \
+				echo "  ✔ Compiled $$po" || exit 1; \
 		done'
 
 setup-hooks: ## Activate the tracked .githooks/ directory for this clone.

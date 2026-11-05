@@ -53,6 +53,10 @@ VERSION ?= $(filter-out release release-% dist,$(MAKECMDGOALS))
 
 REQUIRED_TOOLS := git node npm composer jq zip unzip gh sed php
 
+# The webtrees constraint of composer.json, written by release-prepare and again by
+# release-bump so the release commit and the development bump cannot differ.
+WEBTREES_CONSTRAINT := ~2.2.0
+
 .PHONY: release release-check release-prepare release-publish release-bump \
         release-recover dist dist-smoke clean-js release-clean build-js-fresh \
         release-bootstrap release-dry-run
@@ -118,6 +122,11 @@ release-check:
 	fi
 	@if ! git symbolic-ref --quiet HEAD >/dev/null 2>&1; then \
 		echo "Error: HEAD is detached. Check out the release branch first (typically 'main')."; \
+		exit 1; \
+	fi
+	@if [ "$$(git symbolic-ref --short HEAD)" != main ]; then \
+		echo "Error: releases are made from 'main' only, because the publish and bump targets push 'main'."; \
+		echo "Check out 'main' first."; \
 		exit 1; \
 	fi
 	@if [ -L $(MODULE_BASE_PATH) ]; then \
@@ -334,7 +343,7 @@ release-prepare: release-check
 	@echo -e "${FYELLOW}[2/6]${FRESET} Updating versions to $(VERSION)..."
 	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(VERSION)'/","CUSTOM_VERSION = '$(VERSION)'")
 	@$(call jq_edit,package.json,.version = $$v,--arg v "$(VERSION)",.version == $$v)
-	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0",.require["fisharebest/webtrees"] == $$v)
+	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "$(WEBTREES_CONSTRAINT)",.require["fisharebest/webtrees"] == $$v)
 	@echo -e "${FYELLOW}[3/6]${FRESET} Cleaning + rebuilding JavaScript bundles..."
 	# --ignore-scripts is required: npm 11 fires the package's "prepare" hook
 	# even on --package-lock-only, but devDeps (rollup) aren't installed yet,
@@ -373,6 +382,10 @@ export NOTES_RAW := $(value NOTES)
 ## A standard "Manual installation" warning banner is always prepended so users
 ## see which asset to download (and not the auto-generated "Source code (zip)").
 release-publish:
+	@if [ ! -f $(MODULE_NAME).zip ]; then \
+		echo "Error: $(MODULE_NAME).zip not found. Run 'make dist' first, nothing was pushed."; \
+		exit 1; \
+	fi
 	@if [ -n "$(NOTES_FILE)" ] && [ ! -f "$(NOTES_FILE)" ]; then \
 		echo "Error: NOTES_FILE=$(NOTES_FILE) does not exist"; \
 		exit 1; \
@@ -438,7 +451,7 @@ release-bump:
 	@echo -e "${FYELLOW}[bump]${FRESET} Bumping to $(NEXT)-dev..."
 	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/","CUSTOM_VERSION = '$(NEXT)-dev'")
 	@$(call jq_edit,package.json,.version = $$v,--arg v "$(NEXT)-dev",.version == $$v)
-	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0",.require["fisharebest/webtrees"] == $$v)
+	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "$(WEBTREES_CONSTRAINT)",.require["fisharebest/webtrees"] == $$v)
 	# --ignore-scripts is required: npm 11 fires the package's "prepare" hook
 	# even on --package-lock-only, but devDeps (rollup) aren't installed yet,
 	# so the prepare script crashes with "rollup: not found". The actual build
