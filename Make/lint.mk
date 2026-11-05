@@ -11,7 +11,7 @@ lint: .logo ## Run Biome lint on JavaScript sources.
 	@echo -e "${FGREEN} ✔${FRESET} Biome lint passed"
 
 lint-fix: .logo ## Run Biome lint with auto-fix on JavaScript sources.
-	@$(COMPOSE_RUN) npm run lint:fix
+	@$(COMPOSE_RUN_USER) npm run lint:fix
 	@echo -e "${FGREEN} ✔${FRESET} Biome auto-fix applied"
 
 #### Testing

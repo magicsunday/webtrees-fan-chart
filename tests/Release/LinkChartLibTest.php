@@ -21,6 +21,8 @@ use function file_get_contents;
 use function file_put_contents;
 use function is_link;
 use function mkdir;
+use function posix_getgid;
+use function posix_getuid;
 use function proc_close;
 use function proc_open;
 use function readlink;
@@ -157,7 +159,10 @@ final class LinkChartLibTest extends TestCase
         self::assertDirectoryExists($this->packagePath());
         self::assertSame("restored\n", file_get_contents($this->packagePath() . '/package.json'));
         self::assertSame('sibling', file_get_contents($this->workDir . '/webtrees-chart-lib/package.json'));
-        self::assertSame("compose run --rm node npm install --quiet\n", file_get_contents($this->workDir . '/docker-calls'));
+        self::assertSame(
+            'compose run --rm --user ' . posix_getuid() . ':' . posix_getgid() . " -e HOME=/tmp node npm install --quiet\n",
+            file_get_contents($this->workDir . '/docker-calls')
+        );
     }
 
     /**
