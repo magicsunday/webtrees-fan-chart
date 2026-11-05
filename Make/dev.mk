@@ -63,5 +63,5 @@ link-chart-lib: .logo ## Symlink node_modules/.../webtrees-chart-lib to the sibl
 
 unlink-chart-lib: .logo ## Restore node_modules/.../webtrees-chart-lib from npm.
 	@rm -rf $(CHART_LIB_NODE)
-	@$(COMPOSE_RUN) npm install --quiet
+	@$(COMPOSE_RUN_USER) npm install --quiet
 	@echo -e "${FGREEN} ✔${FRESET} Restored $(CHART_LIB_NODE) from npm."
