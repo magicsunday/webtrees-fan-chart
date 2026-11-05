@@ -179,6 +179,97 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
+     * Without the archive the target stops before anything is pushed, because a pushed tag cannot be removed.
+     */
+    #[Test]
+    public function failsBeforeThePushWhenTheArchiveIsMissing(): void
+    {
+        $this->installPushRecordingGit('main');
+        $this->installStub('gh', "#!/bin/sh\necho stub\n");
+
+        unlink($this->workDir . '/module/webtrees-fan-chart.zip');
+
+        [$status, $output] = $this->publish();
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('webtrees-fan-chart.zip', $output);
+        self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
+        self::assertFileDoesNotExist($this->workDir . '/pushed');
+    }
+
+    /**
+     * A release started on a branch other than main is refused, because the pushes name main literally.
+     */
+    #[Test]
+    public function refusesAReleaseFromABranchOtherThanMain(): void
+    {
+        $this->installReleaseCheckStubs('GH-1');
+
+        [$status, $output] = $this->check();
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString("'main'", $output);
+        self::assertStringNotContainsString('Release checks passed', $output);
+    }
+
+    /**
+     * A release started on main passes the branch check.
+     */
+    #[Test]
+    public function acceptsAReleaseFromMain(): void
+    {
+        $this->installReleaseCheckStubs('main');
+
+        [, $output] = $this->check();
+
+        self::assertStringContainsString('Release checks passed for 9.9.9', $output);
+    }
+
+    /**
+     * Installs a git stub that records every push and reports the given branch as checked out.
+     */
+    private function installPushRecordingGit(string $branch): void
+    {
+        $this->installStub(
+            'git',
+            "#!/bin/sh\n"
+            . "case \"\$1\" in\n"
+            . "  push) echo \"\$*\" >> \"$this->workDir/pushed\"; exit 0 ;;\n"
+            . "  symbolic-ref) case \"\$*\" in *--short*) echo '$branch' ;; esac; exit 0 ;;\n"
+            . "  *) exit 0 ;;\n"
+            . "esac\n"
+        );
+    }
+
+    /**
+     * Installs stubs for every tool that release-check asks for, with git on the given branch.
+     */
+    private function installReleaseCheckStubs(string $branch): void
+    {
+        $this->installPushRecordingGit($branch);
+
+        foreach (['node', 'npm', 'composer', 'jq', 'zip', 'unzip', 'gh', 'sed', 'php'] as $tool) {
+            $this->installStub($tool, "#!/bin/sh\nexit 0\n");
+        }
+    }
+
+    /**
+     * @return array{int, string}
+     */
+    private function check(): array
+    {
+        return $this->execute(
+            ['make', 'release-check', 'VERSION=9.9.9'],
+            $this->workDir . '/module',
+            [
+                'PATH'   => $this->workDir . '/bin:/usr/local/bin:/usr/bin:/bin',
+                'TMPDIR' => $this->workDir . '/tmp',
+                'HOME'   => $this->workDir,
+            ]
+        );
+    }
+
+    /**
      * @return list<string>
      */
     private function leftoverTemporaryFiles(): array
