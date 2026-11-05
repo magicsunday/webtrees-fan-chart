@@ -266,7 +266,7 @@ dist-smoke:
 	@module=$$(unzip -p $(MODULE_NAME).zip module.php); \
 	grep -qF 'MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase' <<<"$$module" \
 		|| { echo "Error: module.php in zip is missing prefixed namespace ($(SCOPE_NS))"; exit 1; }; \
-	if grep -qF 'MagicSunday\\Webtrees\\ModuleBase' <<<"$$module"; then \
+	if grep -qE 'MagicSunday\\{1,2}Webtrees\\{1,2}ModuleBase' <<<"$$module"; then \
 		echo "Error: module.php in zip still contains unprefixed MagicSunday\\Webtrees\\ModuleBase"; \
 		exit 1; \
 	fi
