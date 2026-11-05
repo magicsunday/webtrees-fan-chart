@@ -169,7 +169,7 @@ final class ReleasePublishTest extends TestCase
     {
         $this->installRecordingStub();
 
-        $notes = 'Cost $HOME-ish and $(id) and $(shell touch executed-by-make)';
+        $notes = 'Cost $HOME-ish, $$ and $(id) and $(shell touch executed-by-make)';
 
         [$status] = $this->publish(['NOTES=' . $notes]);
 
