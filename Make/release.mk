@@ -239,7 +239,9 @@ dist-smoke:
 		vendor/magicsunday/webtrees-module-base/src/Model/ \
 		vendor/magicsunday/webtrees-module-base/src/Module/ \
 		vendor/magicsunday/webtrees-module-base/src/Processor/ \
-		vendor/magicsunday/webtrees-module-base/resources/views/ \
+		vendor/magicsunday/webtrees-module-base/resources/views/detail-panel.phtml \
+		vendor/magicsunday/webtrees-module-base/resources/views/help-popover.phtml \
+		vendor/magicsunday/webtrees-module-base/resources/views/toolbar-style.phtml \
 	; do \
 		grep -qE "^$$prefix" <<<"$$paths" || { echo "Error: required prefix has no entries in zip: $$prefix"; exit 1; }; \
 	done; \
@@ -285,6 +287,10 @@ dist-smoke:
 		files=$$(find "$$tmp/vendor/magicsunday/webtrees-module-base/src/$$d" -name '*.php' -print 2>/dev/null); \
 		[ -n "$$files" ] \
 			|| { echo "Error: bundled module-base src/$$d has no PHP files in extracted zip"; exit 1; }; \
+	done; \
+	for v in detail-panel help-popover toolbar-style; do \
+		[ -s "$$tmp/vendor/magicsunday/webtrees-module-base/resources/views/$$v.phtml" ] \
+			|| { echo "Error: bundled module-base view $$v is missing or empty in extracted zip"; exit 1; }; \
 	done; \
 	shared_views="$$tmp/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php"; \
 	grep -qF "'$(SCOPE_VIEW_NS)'" "$$shared_views" \
@@ -433,6 +439,10 @@ release-bump:
 	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/","CUSTOM_VERSION = '$(NEXT)-dev'")
 	@$(call jq_edit,package.json,.version = $$v,--arg v "$(NEXT)-dev",.version == $$v)
 	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0",.require["fisharebest/webtrees"] == $$v)
+	# --ignore-scripts is required: npm 11 fires the package's "prepare" hook
+	# even on --package-lock-only, but devDeps (rollup) aren't installed yet,
+	# so the prepare script crashes with "rollup: not found". The actual build
+	# happens in build-js-fresh below, which runs npm ci first.
 	@npm install --package-lock-only --no-audit --no-fund --ignore-scripts
 	@$(MAKE) build-js-fresh
 	@git add src/Module.php package.json composer.json package-lock.json resources/js/
