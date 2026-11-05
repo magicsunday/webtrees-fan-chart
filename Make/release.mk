@@ -356,8 +356,11 @@ export NOTES_RAW := $(value NOTES)
 ## Publish: push, create GitHub release with zip.
 ## Pass NOTES_FILE=path for release notes from a file (recommended for multi-line notes).
 ## Pass NOTES="..." for a short inline note, or omit both for auto-generated notes.
-## The inline note arrives in the release as it was written, backticks, quotes and
-## dollar signs included, and neither make nor the shell runs anything from it.
+## Once make has received the inline note, backticks, quotes and dollar signs arrive in
+## the release as written, and neither make nor the shell runs anything from it. Quote
+## the note with single quotes in the calling shell, which evaluates a command
+## substitution inside double quotes before make sees it. Make drops leading whitespace
+## of a note given on the command line, so use NOTES_FILE or the environment for it.
 ## Example: make release 3.1.1 NOTES_FILE=/tmp/release-notes.md
 ## Example: make release 3.1.1 NOTES="Bug fix release"
 ##
