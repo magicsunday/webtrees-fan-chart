@@ -20,9 +20,12 @@ use function array_filter;
 use function array_values;
 use function chmod;
 use function dirname;
+use function explode;
 use function file;
+use function file_get_contents;
 use function file_put_contents;
 use function is_file;
+use function json_decode;
 use function mkdir;
 use function proc_close;
 use function proc_open;
@@ -61,7 +64,10 @@ final class LangLoopTest extends TestCase
 
         $root = dirname(__DIR__, 2);
 
-        $this->execute(['cp', '-R', $root . '/Makefile', $root . '/Make', $this->workDir . '/module/'], $this->workDir);
+        $this->execute(
+            ['cp', '-R', $root . '/Makefile', $root . '/Make', $root . '/composer.json', $this->workDir . '/module/'],
+            $this->workDir
+        );
 
         file_put_contents($this->workDir . '/module/resources/lang/messages.pot', '');
         file_put_contents($this->workDir . '/module/resources/lang/aa/messages.po', '');
@@ -145,6 +151,34 @@ final class LangLoopTest extends TestCase
         self::assertSame(0, $status);
         self::assertCount(1, $this->calls('xgettext'));
         self::assertSame($listExists, str_contains($this->calls('xgettext')[0], '--exclude-file=dev/core-owned.pot'));
+    }
+
+    /**
+     * The POT names the module after the package in composer.json, whichever fragment sets the name, and not
+     * after the checkout directory, which is the same in every CI container.
+     */
+    #[Test]
+    public function namesTheModuleAfterThePackageInComposerJson(): void
+    {
+        $this->installStubs(null);
+
+        $composer = json_decode((string) file_get_contents($this->workDir . '/module/composer.json'), true);
+
+        self::assertIsArray($composer);
+        self::assertIsString($composer['name'] ?? null);
+
+        $parts = explode('/', $composer['name']);
+
+        self::assertCount(2, $parts);
+
+        [$status] = $this->make('lang-extract', ['--always-make']);
+
+        $calls = $this->calls('xgettext');
+
+        self::assertSame(0, $status);
+        self::assertCount(1, $calls);
+        self::assertStringContainsString('--package-name=' . $parts[1], $calls[0]);
+        self::assertStringContainsString('github.com/magicsunday/' . $parts[1] . '/issues', $calls[0]);
     }
 
     /**

@@ -13,10 +13,11 @@
 # without a PO is seeded from the POT by lang-merge.
 LOCALES := $(notdir $(patsubst %/,%,$(wildcard resources/lang/*/)))
 
-# Derived from the checkout directory so this file stays byte-identical
-# across the modules. Only feeds the gitignored POT header, never
-# a committed PO header (msgmerge keeps each PO's own Project-Id-Version).
-MODULE_NAME := $(notdir $(CURDIR))
+# The package name from composer.json, without the vendor, so this file stays
+# byte-identical across the modules and does not depend on the checkout
+# directory, which is /app in the CI container. It feeds the POT header, and
+# a versioned POT passes it on to the headers of the PO files.
+MODULE_NAME := $(shell sed -n 's/.*"name": *"[^/"]*\/\([^"]*\)".*/\1/p' composer.json | head -n 1)
 
 POT_FILE  := resources/lang/messages.pot
 PO_FILES  := $(foreach loc,$(LOCALES),resources/lang/$(loc)/messages.po)
