@@ -389,6 +389,17 @@ release-publish:
 		echo "Error: NOTES_FILE=$(NOTES_FILE) does not exist"; \
 		exit 1; \
 	fi
+	# The archive is built from HEAD, so it belongs to the release only when HEAD is the commit that the tag
+	# points at. An archive rebuilt after the checkout moved would be published under the tag of another commit.
+	@tag_commit=$$(git rev-parse --verify --quiet "refs/tags/$(VERSION)^{commit}") || { \
+		echo "Error: the tag $(VERSION) does not exist, nothing was pushed."; \
+		exit 1; \
+	}; \
+	if [ "$$(git rev-parse HEAD)" != "$$tag_commit" ]; then \
+		echo "Error: HEAD is not the commit that the tag $(VERSION) points at, so the archive would not match the tag."; \
+		echo "Check out the tagged commit, rebuild the archive there with 'make dist' and run 'make dist-smoke', nothing was pushed."; \
+		exit 1; \
+	fi
 	@echo -e "${FYELLOW}[publish]${FRESET} Pushing to GitHub..."
 	# Name the release tag explicitly and switch off implicit tag following. --tags
 	# and push.followTags would also publish other local tags, and the immutable-tags

@@ -65,7 +65,7 @@ final class ReleasePublishTest extends TestCase
 
         file_put_contents($this->workDir . '/module/webtrees-fan-chart.zip', 'archive');
 
-        $this->installStub('git', "#!/bin/sh\nexit 0\n");
+        $this->installPushRecordingGit('main');
     }
 
     protected function tearDown(): void
@@ -196,6 +196,45 @@ final class ReleasePublishTest extends TestCase
 
         self::assertNotSame(0, $status);
         self::assertStringContainsString('webtrees-fan-chart.zip', $output);
+        self::assertStringContainsString('on the tagged commit 9.9.9', $output);
+        self::assertStringContainsString('make dist-smoke', $output);
+        self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
+        self::assertFileDoesNotExist($this->workDir . '/pushed');
+    }
+
+    /**
+     * An archive that was built on another commit than the tagged one is not published, because it would carry the
+     * tag of a different commit.
+     */
+    #[Test]
+    public function failsBeforeThePushWhenHeadIsNotTheTaggedCommit(): void
+    {
+        $this->installPushRecordingGit('main', 'aaa111', 'bbb222');
+        $this->installStub('gh', "#!/bin/sh\necho stub\n");
+
+        [$status, $output] = $this->publish();
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('HEAD is not the commit that the tag 9.9.9 points at', $output);
+        self::assertStringContainsString('make dist-smoke', $output);
+        self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
+        self::assertFileDoesNotExist($this->workDir . '/pushed');
+        self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
+    }
+
+    /**
+     * Without the release tag nothing is pushed, because there is no commit to compare HEAD with.
+     */
+    #[Test]
+    public function failsBeforeThePushWhenTheTagDoesNotExist(): void
+    {
+        $this->installPushRecordingGit('main', 'aaa111', null);
+        $this->installStub('gh', "#!/bin/sh\necho stub\n");
+
+        [$status, $output] = $this->publish();
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('the tag 9.9.9 does not exist', $output);
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
         self::assertFileDoesNotExist($this->workDir . '/pushed');
     }
@@ -308,16 +347,27 @@ final class ReleasePublishTest extends TestCase
     /**
      * Installs a git stub that records every push and reports the given branch as checked out. The short form of the
      * ref answers with the ambiguous name that git prints when a tag has the name of the branch, so only a check of
-     * the full ref passes for main.
+     * the full ref passes for main. HEAD and the release tag point at the given commits, and a null tag commit
+     * stands for a tag that does not exist.
+     *
+     * @param string      $branch     The branch that is checked out
+     * @param string      $headCommit The commit that HEAD points at
+     * @param string|null $tagCommit  The commit that the release tag points at, or null without the tag
      */
-    private function installPushRecordingGit(string $branch): void
-    {
+    private function installPushRecordingGit(
+        string $branch,
+        string $headCommit = 'c0ffee',
+        ?string $tagCommit = 'c0ffee',
+    ): void {
+        $tagAnswer = $tagCommit === null ? 'exit 1' : "echo '$tagCommit'";
+
         $this->installStub(
             'git',
             "#!/bin/sh\n"
             . "case \"\$1\" in\n"
             . "  push) echo \"\$*\" >> \"$this->workDir/pushed\"; exit 0 ;;\n"
             . "  symbolic-ref) case \"\$*\" in *--quiet*) exit 0 ;; *--short*) echo 'heads/$branch' ;; *) echo 'refs/heads/$branch' ;; esac; exit 0 ;;\n"
+            . "  rev-parse) case \"\$*\" in *refs/tags/*) $tagAnswer ;; *) echo '$headCommit' ;; esac; exit 0 ;;\n"
             . "  *) exit 0 ;;\n"
             . "esac\n"
         );
