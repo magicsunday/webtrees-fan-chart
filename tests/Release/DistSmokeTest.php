@@ -40,6 +40,8 @@ final class DistSmokeTest extends TestCase
 {
     private const string BASE_VIEWS = 'vendor/magicsunday/webtrees-module-base/resources/views/';
 
+    private const string BASE_SOURCES = 'vendor/magicsunday/webtrees-module-base/src/';
+
     private string $workDir = '';
 
     protected function setUp(): void
@@ -110,6 +112,38 @@ final class DistSmokeTest extends TestCase
             'Error: required prefix has no entries in zip: ' . self::BASE_VIEWS . $view . '.phtml',
             $output
         );
+        self::assertStringNotContainsString('dist-smoke passed', $output);
+    }
+
+    /**
+     * A required file that is missing from the file list of the archive fails the smoke test.
+     */
+    #[Test]
+    #[DataProvider('requiredFiles')]
+    public function rejectsAnArchiveWithoutARequiredFile(string $file): void
+    {
+        $this->buildArchive([], [$file]);
+
+        [$status, $output] = $this->smoke();
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('Error: required file missing from zip: ' . $file, $output);
+        self::assertStringNotContainsString('dist-smoke passed', $output);
+    }
+
+    /**
+     * A required prefix without any entry in the archive fails the smoke test with the message of the prefix.
+     */
+    #[Test]
+    #[DataProvider('requiredPrefixes')]
+    public function rejectsAnArchiveWithoutARequiredPrefix(string $entry, string $prefix): void
+    {
+        $this->buildArchive([], [$entry]);
+
+        [$status, $output] = $this->smoke();
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('Error: required prefix has no entries in zip: ' . $prefix, $output);
         self::assertStringNotContainsString('dist-smoke passed', $output);
     }
 
@@ -225,6 +259,34 @@ final class DistSmokeTest extends TestCase
         return [
             'root'         => ['tsconfig.json'],
             'subdirectory' => ['resources/tsconfig.json'],
+        ];
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function requiredFiles(): array
+    {
+        return [
+            'module entry point' => ['module.php'],
+            'license'            => ['LICENSE'],
+        ];
+    }
+
+    /**
+     * Provides the one entry whose omission leaves a required prefix without entries, with the prefix that the
+     * check names.
+     *
+     * @return array<string, array{string, string}>
+     */
+    public static function requiredPrefixes(): array
+    {
+        return [
+            'versioned bundle' => ['resources/js/fan-chart-1.min.js', 'resources/js/fan-chart-[0-9]'],
+            'contracts'        => [self::BASE_SOURCES . 'Contract/Entry.php', self::BASE_SOURCES . 'Contract/'],
+            'models'           => [self::BASE_SOURCES . 'Model/Entry.php', self::BASE_SOURCES . 'Model/'],
+            'modules'          => [self::BASE_SOURCES . 'Module/Entry.php', self::BASE_SOURCES . 'Module/'],
+            'processors'       => [self::BASE_SOURCES . 'Processor/Entry.php', self::BASE_SOURCES . 'Processor/'],
         ];
     }
 

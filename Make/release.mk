@@ -124,7 +124,7 @@ release-check:
 		echo "Error: HEAD is detached. Check out the release branch first (typically 'main')."; \
 		exit 1; \
 	fi
-	@if [ "$$(git symbolic-ref --short HEAD)" != main ]; then \
+	@if [ "$$(git symbolic-ref HEAD)" != refs/heads/main ]; then \
 		echo "Error: releases are made from 'main' only, because the publish and bump targets push 'main'."; \
 		echo "Check out 'main' first."; \
 		exit 1; \
@@ -382,7 +382,7 @@ export NOTES_RAW := $(value NOTES)
 ## see which asset to download (and not the auto-generated "Source code (zip)").
 release-publish:
 	@if [ ! -f $(MODULE_NAME).zip ]; then \
-		echo "Error: $(MODULE_NAME).zip not found. Run 'make dist' first, nothing was pushed."; \
+		echo "Error: $(MODULE_NAME).zip not found. Run 'make dist' on the tagged commit $(VERSION), then 'make dist-smoke', nothing was pushed."; \
 		exit 1; \
 	fi
 	@if [ -n "$(NOTES_FILE)" ] && [ ! -f "$(NOTES_FILE)" ]; then \

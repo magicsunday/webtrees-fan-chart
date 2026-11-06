@@ -211,7 +211,8 @@ final class ReleasePublishTest extends TestCase
         [$status, $output] = $this->check();
 
         self::assertNotSame(0, $status);
-        self::assertStringContainsString("'main'", $output);
+        self::assertStringContainsString("Error: releases are made from 'main' only", $output);
+        self::assertStringNotContainsString('HEAD is detached', $output);
         self::assertStringNotContainsString('Release checks passed', $output);
     }
 
@@ -305,7 +306,9 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
-     * Installs a git stub that records every push and reports the given branch as checked out.
+     * Installs a git stub that records every push and reports the given branch as checked out. The short form of the
+     * ref answers with the ambiguous name that git prints when a tag has the name of the branch, so only a check of
+     * the full ref passes for main.
      */
     private function installPushRecordingGit(string $branch): void
     {
@@ -314,7 +317,7 @@ final class ReleasePublishTest extends TestCase
             "#!/bin/sh\n"
             . "case \"\$1\" in\n"
             . "  push) echo \"\$*\" >> \"$this->workDir/pushed\"; exit 0 ;;\n"
-            . "  symbolic-ref) case \"\$*\" in *--short*) echo '$branch' ;; esac; exit 0 ;;\n"
+            . "  symbolic-ref) case \"\$*\" in *--quiet*) exit 0 ;; *--short*) echo 'heads/$branch' ;; *) echo 'refs/heads/$branch' ;; esac; exit 0 ;;\n"
             . "  *) exit 0 ;;\n"
             . "esac\n"
         );

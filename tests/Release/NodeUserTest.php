@@ -16,10 +16,14 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function array_filter;
+use function array_values;
 use function dirname;
+use function explode;
 use function proc_close;
 use function proc_open;
 use function shell_exec;
+use function str_contains;
 use function stream_get_contents;
 use function sys_get_temp_dir;
 use function trim;
@@ -71,7 +75,8 @@ final class NodeUserTest extends TestCase
      * The lang targets write the catalogues into the checkout, so they run as the numeric user and group of the
      * caller as well. The tooling image carries gettext, PHP and Composer, so no recipe installs a system package,
      * which would fail without root. Each row keeps the prerequisite recipes out of the dry run, so the output
-     * holds the recipe of the target itself and a regression of that one recipe turns the test red.
+     * holds the recipe of the target itself and a regression of that one recipe turns the test red. Every Compose
+     * invocation of the recipe has to carry the identity, so a second invocation as root turns it red as well.
      *
      * @param string       $target  The lang target to simulate
      * @param list<string> $options The make options that keep the prerequisite recipes out of the dry run
@@ -82,11 +87,21 @@ final class NodeUserTest extends TestCase
     {
         [$status, $output] = $this->dryRun($target, $options);
 
+        $invocations = array_values(array_filter(
+            explode("\n", $output),
+            static fn (string $line): bool => str_contains($line, ' run --rm '),
+        ));
+
         self::assertSame(0, $status);
-        self::assertStringContainsString(
-            '--user ' . $this->identity() . ' -e HOME=/tmp node sh -c',
-            $output
-        );
+        self::assertNotSame([], $invocations);
+
+        foreach ($invocations as $invocation) {
+            self::assertStringContainsString(
+                '--user ' . $this->identity() . ' -e HOME=/tmp node sh -c',
+                $invocation
+            );
+        }
+
         self::assertStringNotContainsString('apk add', $output);
     }
 

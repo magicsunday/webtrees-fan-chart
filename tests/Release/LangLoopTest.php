@@ -27,6 +27,7 @@ use function file_put_contents;
 use function is_file;
 use function json_decode;
 use function mkdir;
+use function preg_match;
 use function proc_close;
 use function proc_open;
 use function stream_get_contents;
@@ -93,7 +94,7 @@ final class LangLoopTest extends TestCase
         [$status] = $this->make($target, $options);
 
         self::assertNotSame(0, $status);
-        self::assertCount(1, $this->calls($failingTool));
+        self::assertSame(['aa'], $this->localesOf($this->calls($failingTool)));
     }
 
     /**
@@ -110,7 +111,7 @@ final class LangLoopTest extends TestCase
         [$status] = $this->make($target, $options);
 
         self::assertSame(0, $status);
-        self::assertCount(2, $this->calls($failingTool));
+        self::assertSame(['aa', 'bb'], $this->localesOf($this->calls($failingTool)));
     }
 
     /**
@@ -202,6 +203,7 @@ final class LangLoopTest extends TestCase
     {
         return [
             'lang-merge'   => ['lang-merge', 'msgmerge', []],
+            'merge attrib' => ['lang-merge', 'msgattrib', []],
             'lang-compile' => ['lang-compile', 'msgfmt', ['-o', 'lang-resolve-fuzzy']],
         ];
     }
@@ -222,6 +224,27 @@ final class LangLoopTest extends TestCase
             );
             chmod($this->workDir . '/bin/' . $tool, 0o755);
         }
+    }
+
+    /**
+     * Returns the locales that the given calls processed, in call order, read from the catalogue path of each call.
+     *
+     * @param list<string> $calls The recorded arguments of the calls
+     *
+     * @return list<string> The locale of each call
+     */
+    private function localesOf(array $calls): array
+    {
+        $locales = [];
+
+        foreach ($calls as $call) {
+            self::assertSame(1, preg_match('#resources/lang/([^/]+)/messages\.po#', $call, $match), $call);
+            self::assertArrayHasKey(1, $match);
+
+            $locales[] = $match[1];
+        }
+
+        return $locales;
     }
 
     /**
