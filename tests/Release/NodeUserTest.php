@@ -91,6 +91,31 @@ final class NodeUserTest extends TestCase
     }
 
     /**
+     * The lang stages form a dependency line, so extract runs before merge, merge before the fuzzy resolver and
+     * the resolver before compile, also under a parallel make. Sibling prerequisites would let the stages overlap.
+     */
+    #[Test]
+    public function runsTheLangStagesInOrderUnderAParallelMake(): void
+    {
+        [$status, $output] = $this->dryRun('lang-compile', ['--always-make', '--jobs=4']);
+
+        self::assertSame(0, $status);
+
+        $extract = strpos($output, 'xgettext');
+        $merge   = strpos($output, 'msgmerge');
+        $resolve = strpos($output, '.build/bin/resolve-fuzzy');
+        $compile = strpos($output, 'msgfmt');
+
+        self::assertIsInt($extract);
+        self::assertIsInt($merge);
+        self::assertIsInt($resolve);
+        self::assertIsInt($compile);
+        self::assertLessThan($merge, $extract);
+        self::assertLessThan($resolve, $merge);
+        self::assertLessThan($compile, $resolve);
+    }
+
+    /**
      * Provides the lang targets that run a shell recipe in the compose service, with the make options that leave
      * only the recipe of the target in the dry run. The extract target is an alias of the POT file and prints its
      * recipe only when the file is out of date, so the case forces the rebuild.
@@ -103,7 +128,7 @@ final class NodeUserTest extends TestCase
             'lang-extract'       => ['lang-extract', ['--always-make']],
             'lang-merge'         => ['lang-merge', ['-o', 'resources/lang/messages.pot']],
             'lang-resolve-fuzzy' => ['lang-resolve-fuzzy', ['-o', 'resources/lang/messages.pot', '-o', 'lang-merge']],
-            'lang-compile'       => ['lang-compile', []],
+            'lang-compile'       => ['lang-compile', ['-o', 'lang-resolve-fuzzy']],
         ];
     }
 
