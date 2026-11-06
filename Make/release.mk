@@ -144,9 +144,8 @@ release-check:
 	@if [ -d node_modules ] && [ -n "$$(find node_modules ! -uid $$(id -u) -print 2>/dev/null | head -n 1)" ]; then \
 		echo "Error: node_modules contains files not owned by the current user."; \
 		echo "Files that a run as root left behind are the usual cause, and the release"; \
-		echo "build cannot remove them, aborting build-js-fresh mid-way. Give them back"; \
-		echo "to the calling user first:  make fix-owner"; \
-		echo "Files of any other owner are not covered, remove the tree instead:  make clean"; \
+		echo "build cannot remove them, aborting build-js-fresh mid-way. Remove the tree"; \
+		echo "and install it again as the calling user:  make clean && make install"; \
 		exit 1; \
 	fi
 	@if ! gh auth status >/dev/null 2>&1; then \
@@ -526,9 +525,8 @@ release-dry-run:
 	@if [ -d node_modules ] && [ -n "$$(find node_modules ! -uid $$(id -u) -print 2>/dev/null | head -n 1)" ]; then \
 		echo "Error: node_modules contains files not owned by the current user."; \
 		echo "Files that a run as root left behind are the usual cause, and the dry run"; \
-		echo "cannot remove them, aborting build-js-fresh mid-way. Give them back to"; \
-		echo "the calling user first:  make fix-owner"; \
-		echo "Files of any other owner are not covered, remove the tree instead:  make clean"; \
+		echo "cannot remove them, aborting build-js-fresh mid-way. Remove the tree and"; \
+		echo "install it again as the calling user:  make clean && make install"; \
 		exit 1; \
 	fi
 	@$(MAKE) release-bootstrap
