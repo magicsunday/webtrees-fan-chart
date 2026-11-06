@@ -223,8 +223,9 @@ final class ReleasePublishTest extends TestCase
     {
         $this->installReleaseCheckStubs('main');
 
-        [, $output] = $this->check();
+        [$status, $output] = $this->check();
 
+        self::assertSame(0, $status, $output);
         self::assertStringContainsString('Release checks passed for 9.9.9', $output);
     }
 
@@ -260,8 +261,9 @@ final class ReleasePublishTest extends TestCase
         $this->installReleaseCheckStubs('main');
         $this->createNodeModules();
 
-        [, $output] = $this->check();
+        [$status, $output] = $this->check();
 
+        self::assertSame(0, $status, $output);
         self::assertStringContainsString('Release checks passed for 9.9.9', $output);
     }
 
