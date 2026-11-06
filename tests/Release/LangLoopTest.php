@@ -156,7 +156,7 @@ final class LangLoopTest extends TestCase
     private function make(string $target): array
     {
         return $this->execute(
-            ['make', $target, 'COMPOSE_RUN='],
+            ['make', $target, 'COMPOSE_RUN=', 'COMPOSE_RUN_USER='],
             $this->workDir . '/module',
             [
                 'PATH' => $this->workDir . '/bin:/usr/local/bin:/usr/bin:/bin',
