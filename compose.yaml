@@ -1,6 +1,6 @@
 services:
     node:
-        image: node:24-alpine
+        image: ghcr.io/magicsunday/webtrees-docker-module-base:node24
         working_dir: /app
         volumes:
             - ./:/app

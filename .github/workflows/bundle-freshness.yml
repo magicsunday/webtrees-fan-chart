@@ -14,4 +14,4 @@ jobs:
         permissions:
             contents: read
         with:
-            node-image: node:24-alpine
+            node-image: ghcr.io/magicsunday/webtrees-docker-module-base:node24

@@ -38,7 +38,7 @@ lang-extract: $(POT_FILE) ## Extract translatable strings from src/ + resources/
 # the CI diff-gate fires only on real string drift. The trailing `\n"` of
 # the header line is left untouched (the regex stops at the timestamp).
 $(POT_FILE): $(shell find src resources/views -type f \( -name '*.php' -o -name '*.phtml' \) 2>/dev/null)
-	@$(COMPOSE_RUN) sh -c 'apk add --no-cache gettext >/dev/null 2>&1; \
+	@$(COMPOSE_RUN_USER) sh -c 'set -eu; \
 		mkdir -p resources/lang; \
 		xgettext \
 			--language=PHP \
@@ -63,7 +63,7 @@ $(POT_FILE): $(shell find src resources/views -type f \( -name '*.php' -o -name 
 # A reworded msgid is fuzzy-matched and its translation carried over as
 # fuzzy (kept for review), not lost.
 lang-merge: $(POT_FILE) ## Update each locale's PO from the latest POT (drops obsolete entries).
-	@$(COMPOSE_RUN) sh -c 'apk add --no-cache gettext >/dev/null 2>&1; \
+	@$(COMPOSE_RUN_USER) sh -c 'set -eu; \
 		for loc in $(LOCALES); do \
 			po="resources/lang/$$loc/messages.po"; \
 			[ -f "$$po" ] || continue; \
@@ -77,25 +77,16 @@ lang-merge: $(POT_FILE) ## Update each locale's PO from the latest POT (drops ob
 # magicsunday/webtrees-module-base. Every other fuzzy entry stays fuzzy and is
 # listed for a person to judge, consistent with the shared i18n CI check where
 # fuzzy is advisory. A catalogue the resolver refuses fails the recipe.
-# The binary is PHP, so the recipe installs PHP and Composer on demand, like the
-# gettext tools above. The Composer install runs only in a checkout without a
-# vendor directory, which is the CI case, and hands its files back to the owner
-# of the checkout, also when it fails, so the root user of the container leaves
-# nothing behind that blocks a later Composer run on the host. A checkout that
-# has a vendor directory is left alone, it holds the dev packages, and the recipe
-# stops with the command that brings the binary in. Platform checks and security
-# blocking are off, a translation run must not fail on them. The PHP package
-# names follow the PHP release of the Alpine image.
+# The binary is PHP and the tooling image carries PHP and Composer. The Composer
+# install runs only in a checkout without a vendor directory, which is the CI
+# case, as the calling user like every lang recipe. A checkout that has a vendor
+# directory is left alone, it holds the dev packages, and the recipe stops with
+# the command that brings the binary in. Platform checks and security blocking
+# are off, a translation run must not fail on them.
 lang-resolve-fuzzy: lang-merge ## Auto-resolve fuzzy entries that only differ in punctuation, with the shared resolve-fuzzy binary.
-	@$(COMPOSE_RUN) sh -c 'set -eu; \
-		command -v msgmerge >/dev/null 2>&1 || apk add --no-cache gettext >/dev/null 2>&1; \
-		command -v php >/dev/null 2>&1 || { \
-			apk add --no-cache composer php85 php85-ctype php85-curl php85-dom php85-iconv php85-intl php85-mbstring php85-openssl php85-phar php85-simplexml php85-tokenizer php85-xml php85-xmlwriter php85-zip >/dev/null 2>&1; \
-			ln -s /usr/bin/php85 /usr/local/bin/php; \
-		}; \
+	@$(COMPOSE_RUN_USER) sh -c 'set -eu; \
 		[ -x .build/bin/resolve-fuzzy ] || [ -e .build/vendor ] || { \
-			trap "chown -R $$(stat -c %u:%g .) .build composer.lock 2>/dev/null || true" EXIT; \
-			COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_NO_BLOCKING=1 composer install --no-dev --no-interaction --no-progress --no-scripts --no-plugins --ignore-platform-reqs --quiet; \
+			COMPOSER_NO_BLOCKING=1 composer install --no-dev --no-interaction --no-progress --no-scripts --no-plugins --ignore-platform-reqs --quiet; \
 		}; \
 		[ -x .build/bin/resolve-fuzzy ] || { \
 			echo "  ✘ .build/bin/resolve-fuzzy is missing, run composer update magicsunday/webtrees-module-base in the buildbox"; \
@@ -104,7 +95,7 @@ lang-resolve-fuzzy: lang-merge ## Auto-resolve fuzzy entries that only differ in
 		.build/bin/resolve-fuzzy $(POT_FILE) $(PO_FILES)'
 
 lang-compile: ## Compile every messages.po to its sibling messages.mo.
-	@$(COMPOSE_RUN) sh -c 'apk add --no-cache gettext >/dev/null 2>&1; \
+	@$(COMPOSE_RUN_USER) sh -c 'set -eu; \
 		for po in resources/lang/*/messages.po; do \
 			dir=$$(dirname "$$po"); \
 			msgfmt -o "$$dir/messages.mo" "$$po" && \
