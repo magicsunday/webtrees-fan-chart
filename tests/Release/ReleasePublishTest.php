@@ -230,7 +230,8 @@ final class ReleasePublishTest extends TestCase
 
     /**
      * A node_modules tree with a file of another owner is refused before any build starts, and the refusal names
-     * the target that repairs the ownership. The id stub reports a user that owns nothing in the work directory.
+     * the command that removes the tree and installs it again. The id stub reports a user that owns nothing in
+     * the work directory.
      */
     #[Test]
     #[DataProvider('targetsWithTheOwnerGuard')]
@@ -243,9 +244,9 @@ final class ReleasePublishTest extends TestCase
         [$status, $output] = $this->runTarget($target);
 
         self::assertNotSame(0, $status);
-        self::assertStringContainsString('make fix-owner', $output);
+        self::assertStringContainsString('make clean && make install', $output);
         self::assertStringContainsString('usual cause', $output);
-        self::assertStringContainsString('make clean', $output);
+        self::assertStringNotContainsString('fix-owner', $output);
         self::assertStringNotContainsString('unlink-chart-lib', $output);
         self::assertStringNotContainsString('Release checks passed', $output);
     }

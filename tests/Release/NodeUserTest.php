@@ -108,24 +108,6 @@ final class NodeUserTest extends TestCase
     }
 
     /**
-     * The repair target runs as root and changes only files that belong to root to the numeric user and
-     * group of the caller. It changes a symbolic link itself and never the file the link points to, because
-     * a link that points out of the checkout would otherwise hand a foreign file to the caller.
-     */
-    #[Test]
-    public function fixOwnerGivesRootFilesBackToTheCallingUser(): void
-    {
-        [$status, $output] = $this->dryRun('fix-owner');
-
-        self::assertSame(0, $status);
-        self::assertStringContainsString(
-            ' run --rm node find . -xdev -user 0 -exec chown -h ' . $this->identity() . " {} +\n",
-            $output
-        );
-        self::assertStringNotContainsString('--user', $output);
-    }
-
-    /**
      * Provides the targets that write into the checkout with the npm command each of them starts.
      *
      * @return array<string, array{string, string}> The npm command by target name
