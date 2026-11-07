@@ -137,6 +137,23 @@ final class DistSmokeTest extends TestCase
     }
 
     /**
+     * A stamp that is not a full commit id fails the smoke test, whether it is short, not hexadecimal, in capitals
+     * or too long.
+     */
+    #[Test]
+    #[DataProvider('malformedBuildCommits')]
+    public function rejectsAnArchiveWithAMalformedBuildCommit(string $stampText): void
+    {
+        $this->buildArchive([], [], true, $stampText);
+
+        [$status, $output] = $this->smoke();
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('Error: the zip carries no build commit', $output);
+        self::assertStringNotContainsString('dist-smoke passed', $output);
+    }
+
+    /**
      * The stamp target writes the commit of the commit file into the comment of the archive and removes the file,
      * and the archive passes the smoke test afterwards.
      */
@@ -339,6 +356,19 @@ final class DistSmokeTest extends TestCase
     /**
      * @return array<string, array{string}>
      */
+    public static function malformedBuildCommits(): array
+    {
+        return [
+            'short'     => ['c0ffee'],
+            'not hex'   => [str_repeat('g', 40)],
+            'uppercase' => [str_repeat('A', 40)],
+            'too long'  => [str_repeat('a', 41)],
+        ];
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
     public static function requiredFiles(): array
     {
         return [
@@ -438,9 +468,14 @@ final class DistSmokeTest extends TestCase
      * @param array<string, string> $overrides Entries to add or to replace, by path.
      * @param list<string>          $omitted   Entries to leave out of the archive.
      * @param bool                  $stamp     Whether the archive carries the commit that it was built on.
+     * @param string|null           $stampText The text of the stamp, or null for a well-formed commit.
      */
-    private function buildArchive(array $overrides = [], array $omitted = [], bool $stamp = true): void
-    {
+    private function buildArchive(
+        array $overrides = [],
+        array $omitted = [],
+        bool $stamp = true,
+        ?string $stampText = null,
+    ): void {
         $scopedNamespace = 'MagicSunday\\\\FanChartVendor\\\\Webtrees\\\\ModuleBase';
         $base            = 'vendor/magicsunday/webtrees-module-base/';
 
@@ -490,7 +525,13 @@ final class DistSmokeTest extends TestCase
         }
 
         [$status, $output] = $this->execute(
-            ['sh', '-c', 'printf "%s\n" "$0" | zip -q -z "$1"', str_repeat('a', 40), $this->workDir . '/module/webtrees-fan-chart.zip'],
+            [
+                'sh',
+                '-c',
+                'printf "%s\n" "$0" | zip -q -z "$1"',
+                $stampText ?? str_repeat('a', 40),
+                $this->workDir . '/module/webtrees-fan-chart.zip',
+            ],
             $this->workDir . '/stage'
         );
 

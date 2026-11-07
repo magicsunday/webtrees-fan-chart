@@ -250,6 +250,21 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
+     * The clean target removes the commit file that a failed dist leaves behind, together with the archive.
+     */
+    #[Test]
+    public function cleanRemovesTheCommitFileOfAFailedDist(): void
+    {
+        file_put_contents($this->workDir . '/module/webtrees-fan-chart.commit', "c0ffee\n");
+
+        [$status, $output] = $this->runTarget('release-clean');
+
+        self::assertSame(0, $status, $output);
+        self::assertFileDoesNotExist($this->workDir . '/module/webtrees-fan-chart.commit');
+        self::assertFileDoesNotExist($this->workDir . '/module/webtrees-fan-chart.zip');
+    }
+
+    /**
      * Without the release tag nothing is pushed, because there is no commit to compare HEAD with.
      */
     #[Test]
@@ -404,11 +419,21 @@ final class ReleasePublishTest extends TestCase
 
     /**
      * Installs an unzip stub that reports the given commit as the comment of the archive, the way the dist target
-     * stamps it.
+     * stamps it. The stub answers the comment flag only, so a recipe that reads the archive with other flags gets
+     * an error and no commit.
+     *
+     * @param string $commit The commit that the stub reports as the comment of the archive
      */
     private function installArchiveCommit(string $commit): void
     {
-        $this->installStub('unzip', "#!/bin/sh\necho 'Archive:  module.zip'\necho '$commit'\n");
+        $this->installStub(
+            'unzip',
+            "#!/bin/sh\n"
+            . "case \"\$1\" in\n"
+            . "  -z) echo 'Archive:  module.zip'; echo '$commit' ;;\n"
+            . "  *) echo \"unzip: unexpected arguments: \$*\" >&2; exit 2 ;;\n"
+            . "esac\n"
+        );
     }
 
     /**
