@@ -401,9 +401,9 @@ release-publish:
 		echo "Error: NOTES_FILE=$(NOTES_FILE) does not exist"; \
 		exit 1; \
 	fi
-	# The archive is built from HEAD, so it belongs to the release only when HEAD is the commit that the tag
-	# points at and the archive was built on that commit. An archive built on another commit would be published
-	# under the tag of the tagged commit.
+	# The archive is built from the commit that dist resolved at its start. It belongs to the release only when
+	# HEAD is the commit that the tag points at and the archive was built on that commit. An archive built on
+	# another commit would be published under the tag of the tagged commit.
 	@tag_commit=$$(git rev-parse --verify --quiet "refs/tags/$(VERSION)^{commit}") || { \
 		echo "Error: the tag $(VERSION) does not exist, nothing was pushed."; \
 		exit 1; \
@@ -494,7 +494,7 @@ release-bump:
 
 ## Remove leftover release artifacts
 release-clean:
-	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp
+	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp $(MODULE_NAME).commit
 	@rm -f composer.json.tmp package.json.tmp
 
 ## Recover from a failed release-prepare. Removes freshly-built versioned

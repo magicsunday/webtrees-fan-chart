@@ -90,7 +90,7 @@ final class NodeUserTest extends TestCase
 
         $invocations = array_values(array_filter(
             explode("\n", $output),
-            static fn (string $line): bool => str_contains($line, ' run --rm '),
+            static fn (string $line): bool => str_contains($line, ' node sh -c'),
         ));
 
         self::assertSame(0, $status);
@@ -98,7 +98,7 @@ final class NodeUserTest extends TestCase
 
         foreach ($invocations as $invocation) {
             self::assertSame(
-                substr_count($invocation, ' run --rm '),
+                substr_count($invocation, ' node sh -c'),
                 substr_count($invocation, '--user ' . $this->identity() . ' -e HOME=/tmp node sh -c'),
                 $invocation
             );
