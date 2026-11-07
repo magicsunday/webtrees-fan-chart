@@ -17,6 +17,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function array_filter;
+use function array_unique;
 use function array_values;
 use function chmod;
 use function dirname;
@@ -27,8 +28,10 @@ use function file_put_contents;
 use function is_file;
 use function json_decode;
 use function mkdir;
+use function preg_match_all;
 use function proc_close;
 use function proc_open;
+use function reset;
 use function stream_get_contents;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -93,7 +96,7 @@ final class LangLoopTest extends TestCase
         [$status] = $this->make($target, $options);
 
         self::assertNotSame(0, $status);
-        self::assertCount(1, $this->calls($failingTool));
+        self::assertSame(['aa'], $this->localesOf($this->calls($failingTool)));
     }
 
     /**
@@ -110,7 +113,7 @@ final class LangLoopTest extends TestCase
         [$status] = $this->make($target, $options);
 
         self::assertSame(0, $status);
-        self::assertCount(2, $this->calls($failingTool));
+        self::assertSame(['aa', 'bb'], $this->localesOf($this->calls($failingTool)));
     }
 
     /**
@@ -202,6 +205,7 @@ final class LangLoopTest extends TestCase
     {
         return [
             'lang-merge'   => ['lang-merge', 'msgmerge', []],
+            'merge attrib' => ['lang-merge', 'msgattrib', []],
             'lang-compile' => ['lang-compile', 'msgfmt', ['-o', 'lang-resolve-fuzzy']],
         ];
     }
@@ -222,6 +226,36 @@ final class LangLoopTest extends TestCase
             );
             chmod($this->workDir . '/bin/' . $tool, 0o755);
         }
+    }
+
+    /**
+     * Returns the locales that the given calls processed, in call order, read from the catalogue paths of each call.
+     * A call has to read a source catalogue, and every catalogue path of it, the source and the compiled one, has
+     * to name the same locale, so a call that reads one locale and writes another turns the test red.
+     *
+     * @param list<string> $calls The recorded arguments of the calls
+     *
+     * @return list<string> The locale of each call
+     */
+    private function localesOf(array $calls): array
+    {
+        $locales = [];
+
+        foreach ($calls as $call) {
+            self::assertMatchesRegularExpression('#resources/lang/[^/]+/messages\.po#', $call);
+            self::assertGreaterThan(0, preg_match_all('#resources/lang/([^/]+)/messages\.(?:po|mo)#', $call, $matches), $call);
+            $unique = array_unique($matches[1]);
+
+            self::assertCount(1, $unique, $call);
+
+            $locale = reset($unique);
+
+            self::assertIsString($locale, $call);
+
+            $locales[] = $locale;
+        }
+
+        return $locales;
     }
 
     /**
