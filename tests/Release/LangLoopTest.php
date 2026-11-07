@@ -17,6 +17,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function array_filter;
+use function array_unique;
 use function array_values;
 use function chmod;
 use function dirname;
@@ -27,9 +28,10 @@ use function file_put_contents;
 use function is_file;
 use function json_decode;
 use function mkdir;
-use function preg_match;
+use function preg_match_all;
 use function proc_close;
 use function proc_open;
+use function reset;
 use function stream_get_contents;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -227,7 +229,9 @@ final class LangLoopTest extends TestCase
     }
 
     /**
-     * Returns the locales that the given calls processed, in call order, read from the catalogue path of each call.
+     * Returns the locales that the given calls processed, in call order, read from the catalogue paths of each call.
+     * A call has to read a source catalogue, and every catalogue path of it, the source and the compiled one, has
+     * to name the same locale, so a call that reads one locale and writes another turns the test red.
      *
      * @param list<string> $calls The recorded arguments of the calls
      *
@@ -238,10 +242,17 @@ final class LangLoopTest extends TestCase
         $locales = [];
 
         foreach ($calls as $call) {
-            self::assertSame(1, preg_match('#resources/lang/([^/]+)/messages\.po#', $call, $match), $call);
-            self::assertArrayHasKey(1, $match);
+            self::assertMatchesRegularExpression('#resources/lang/[^/]+/messages\.po#', $call);
+            self::assertGreaterThan(0, preg_match_all('#resources/lang/([^/]+)/messages\.(?:po|mo)#', $call, $matches), $call);
+            $unique = array_unique($matches[1]);
 
-            $locales[] = $match[1];
+            self::assertCount(1, $unique, $call);
+
+            $locale = reset($unique);
+
+            self::assertIsString($locale, $call);
+
+            $locales[] = $locale;
         }
 
         return $locales;

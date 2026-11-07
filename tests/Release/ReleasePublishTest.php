@@ -20,6 +20,7 @@ use function array_diff;
 use function array_values;
 use function chmod;
 use function dirname;
+use function file_get_contents;
 use function file_put_contents;
 use function is_dir;
 use function is_file;
@@ -66,6 +67,7 @@ final class ReleasePublishTest extends TestCase
         file_put_contents($this->workDir . '/module/webtrees-fan-chart.zip', 'archive');
 
         $this->installPushRecordingGit('main');
+        $this->installArchiveCommit('c0ffee');
     }
 
     protected function tearDown(): void
@@ -117,7 +119,8 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
-     * A working gh reports the publication and removes the archive.
+     * A working gh reports the publication and removes the archive. The tag is annotated, so the push is reached
+     * only when the recipe resolves the tag to the commit that it points at, and the push names main and the tag.
      */
     #[Test]
     public function reportsThePublicationWhenTheReleaseIsCreated(): void
@@ -128,6 +131,10 @@ final class ReleasePublishTest extends TestCase
 
         self::assertSame(0, $status);
         self::assertStringContainsString('RELEASE_PUBLISHED version=9.9.9', $output);
+        self::assertSame(
+            "push --no-follow-tags origin main refs/tags/9.9.9\n",
+            file_get_contents($this->workDir . '/pushed')
+        );
         self::assertFalse(is_file($this->workDir . '/module/webtrees-fan-chart.zip'));
         self::assertSame([], $this->leftoverTemporaryFiles());
     }
@@ -216,6 +223,26 @@ final class ReleasePublishTest extends TestCase
 
         self::assertNotSame(0, $status);
         self::assertStringContainsString('HEAD is not the commit that the tag 9.9.9 points at', $output);
+        self::assertStringContainsString('make dist-smoke', $output);
+        self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
+        self::assertFileDoesNotExist($this->workDir . '/pushed');
+        self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
+    }
+
+    /**
+     * An archive that carries the stamp of another commit is not published, even when HEAD is the tagged commit,
+     * because it was built before the checkout moved.
+     */
+    #[Test]
+    public function failsBeforeThePushWhenTheArchiveWasBuiltOnAnotherCommit(): void
+    {
+        $this->installArchiveCommit('deadbeef');
+        $this->installStub('gh', "#!/bin/sh\necho stub\n");
+
+        [$status, $output] = $this->publish();
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('the archive was not built on the commit that the tag 9.9.9 points at', $output);
         self::assertStringContainsString('make dist-smoke', $output);
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
         self::assertFileDoesNotExist($this->workDir . '/pushed');
@@ -348,7 +375,8 @@ final class ReleasePublishTest extends TestCase
      * Installs a git stub that records every push and reports the given branch as checked out. The short form of the
      * ref answers with the ambiguous name that git prints when a tag has the name of the branch, so only a check of
      * the full ref passes for main. HEAD and the release tag point at the given commits, and a null tag commit
-     * stands for a tag that does not exist.
+     * stands for a tag that does not exist. The tag is annotated, so only a reference that is dereferenced with
+     * ^{commit} answers with the commit, and the plain reference answers with the id of the tag object.
      *
      * @param string      $branch     The branch that is checked out
      * @param string      $headCommit The commit that HEAD points at
@@ -359,7 +387,8 @@ final class ReleasePublishTest extends TestCase
         string $headCommit = 'c0ffee',
         ?string $tagCommit = 'c0ffee',
     ): void {
-        $tagAnswer = $tagCommit === null ? 'exit 1' : "echo '$tagCommit'";
+        $tagAnswer    = $tagCommit === null ? 'exit 1' : "echo '$tagCommit'";
+        $objectAnswer = $tagCommit === null ? 'exit 1' : "echo 'a77ac4ed'";
 
         $this->installStub(
             'git',
@@ -367,10 +396,19 @@ final class ReleasePublishTest extends TestCase
             . "case \"\$1\" in\n"
             . "  push) echo \"\$*\" >> \"$this->workDir/pushed\"; exit 0 ;;\n"
             . "  symbolic-ref) case \"\$*\" in *--quiet*) exit 0 ;; *--short*) echo 'heads/$branch' ;; *) echo 'refs/heads/$branch' ;; esac; exit 0 ;;\n"
-            . "  rev-parse) case \"\$*\" in *refs/tags/*) $tagAnswer ;; *) echo '$headCommit' ;; esac; exit 0 ;;\n"
+            . "  rev-parse) case \"\$*\" in *refs/tags/*{commit}*) $tagAnswer ;; *refs/tags/*) $objectAnswer ;; *) echo '$headCommit' ;; esac; exit 0 ;;\n"
             . "  *) exit 0 ;;\n"
             . "esac\n"
         );
+    }
+
+    /**
+     * Installs an unzip stub that reports the given commit as the comment of the archive, the way the dist target
+     * stamps it.
+     */
+    private function installArchiveCommit(string $commit): void
+    {
+        $this->installStub('unzip', "#!/bin/sh\necho 'Archive:  module.zip'\necho '$commit'\n");
     }
 
     /**

@@ -58,7 +58,7 @@ REQUIRED_TOOLS := git node npm composer jq zip unzip gh sed php
 WEBTREES_CONSTRAINT := ~2.2.0
 
 .PHONY: release release-check release-prepare release-publish release-bump \
-        release-recover dist dist-smoke clean-js release-clean build-js-fresh \
+        release-recover dist dist-stamp dist-smoke clean-js release-clean build-js-fresh \
         release-bootstrap release-dry-run
 
 # release pipeline operates on shared repo state — must run sequentially.
@@ -183,7 +183,10 @@ build-js-fresh:
 ## The symlink guard runs before composer install — composer install would
 ## clobber an active 'make link-base' symlink and produce a stale ZIP.
 dist:
-	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp
+	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp $(MODULE_NAME).commit
+	# The commit is resolved once, so the archive and its stamp name the same commit even when the checkout
+	# moves while the dependencies install.
+	@git rev-parse HEAD > $(MODULE_NAME).commit
 	@if [ -L $(MODULE_BASE_PATH) ]; then \
 		echo "Error: $(MODULE_BASE_PATH) is a symlink (active 'make link-base')."; \
 		echo "Run 'make unlink-base' before 'make dist'."; \
@@ -192,7 +195,7 @@ dist:
 	@rm -rf $(VENDOR_DIR)
 	@echo "  Installing composer runtime dependencies into $(VENDOR_DIR)..."
 	@composer update --no-dev --no-progress --no-interaction --no-security-blocking --ignore-platform-req=php
-	@git archive --prefix=$(MODULE_NAME)/ HEAD --format=tar | tar -x
+	@git archive --prefix=$(MODULE_NAME)/ "$$(cat $(MODULE_NAME).commit)" --format=tar | tar -x
 	@if [ ! -d $(MODULE_BASE_PATH) ]; then \
 		echo "Error: $(MODULE_BASE_PATH) not found after composer install."; \
 		echo "Check composer.json vendor-dir config and the require section for $(MODULE_BASE_PKG)."; \
@@ -225,9 +228,16 @@ dist:
 	fi
 	@cd $(MODULE_NAME) && zip --quiet --recurse-paths -9 ../$(MODULE_NAME).zip.tmp .
 	@mv $(MODULE_NAME).zip.tmp $(MODULE_NAME).zip
+	@$(MAKE) --no-print-directory dist-stamp
 	@zip -T $(MODULE_NAME).zip >/dev/null || { rm -f $(MODULE_NAME).zip; echo "Error: zip integrity check failed"; exit 1; }
 	@rm -rf $(MODULE_NAME)/
 	@echo -e "${FGREEN} ✔${FRESET} $(MODULE_NAME).zip created"
+
+## Write the commit that the archive was built on into the archive comment, so the publish step can tell
+## which commit an archive belongs to. Run by dist, it reads the commit file that dist wrote.
+dist-stamp:
+	@zip --quiet -z $(MODULE_NAME).zip < $(MODULE_NAME).commit
+	@rm -f $(MODULE_NAME).commit
 
 ## Smoke-test the just-built distribution zip. Asserts required entries
 ## are present and forbidden ones absent. Suitable for CI on every push.
@@ -237,6 +247,8 @@ dist-smoke:
 		echo "Error: $(MODULE_NAME).zip not found — run 'make dist' first"; \
 		exit 1; \
 	fi
+	@build_commit=$$(unzip -z $(MODULE_NAME).zip | tail -n 1); \
+	grep -Eq '^[0-9a-f]{40}$$' <<<"$$build_commit" || { echo "Error: the zip carries no build commit, run 'make dist' to stamp it"; exit 1; }
 	@paths=$$(unzip -Z1 $(MODULE_NAME).zip); \
 	for f in module.php LICENSE; do \
 		grep -Fxq "$$f" <<<"$$paths" || { echo "Error: required file missing from zip: $$f"; exit 1; }; \
@@ -390,7 +402,8 @@ release-publish:
 		exit 1; \
 	fi
 	# The archive is built from HEAD, so it belongs to the release only when HEAD is the commit that the tag
-	# points at. An archive rebuilt after the checkout moved would be published under the tag of another commit.
+	# points at and the archive was built on that commit. An archive built on another commit would be published
+	# under the tag of the tagged commit.
 	@tag_commit=$$(git rev-parse --verify --quiet "refs/tags/$(VERSION)^{commit}") || { \
 		echo "Error: the tag $(VERSION) does not exist, nothing was pushed."; \
 		exit 1; \
@@ -398,6 +411,12 @@ release-publish:
 	if [ "$$(git rev-parse HEAD)" != "$$tag_commit" ]; then \
 		echo "Error: HEAD is not the commit that the tag $(VERSION) points at, so the archive would not match the tag."; \
 		echo "Check out the tagged commit, rebuild the archive there with 'make dist' and run 'make dist-smoke', nothing was pushed."; \
+		exit 1; \
+	fi; \
+	archive_commit=$$(unzip -z $(MODULE_NAME).zip | tail -n 1); \
+	if [ "$$archive_commit" != "$$tag_commit" ]; then \
+		echo "Error: the archive was not built on the commit that the tag $(VERSION) points at."; \
+		echo "Rebuild the archive on the tagged commit with 'make dist' and run 'make dist-smoke', nothing was pushed."; \
 		exit 1; \
 	fi
 	@echo -e "${FYELLOW}[publish]${FRESET} Pushing to GitHub..."

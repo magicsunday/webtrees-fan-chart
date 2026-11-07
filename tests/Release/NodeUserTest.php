@@ -25,6 +25,7 @@ use function proc_open;
 use function shell_exec;
 use function str_contains;
 use function stream_get_contents;
+use function substr_count;
 use function sys_get_temp_dir;
 use function trim;
 
@@ -96,8 +97,9 @@ final class NodeUserTest extends TestCase
         self::assertNotSame([], $invocations);
 
         foreach ($invocations as $invocation) {
-            self::assertStringContainsString(
-                '--user ' . $this->identity() . ' -e HOME=/tmp node sh -c',
+            self::assertSame(
+                substr_count($invocation, ' run --rm '),
+                substr_count($invocation, '--user ' . $this->identity() . ' -e HOME=/tmp node sh -c'),
                 $invocation
             );
         }
