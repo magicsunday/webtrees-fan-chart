@@ -392,6 +392,14 @@ export NOTES_RAW := $(value NOTES)
 ##
 ## A standard "Manual installation" warning banner is always prepended so users
 ## see which asset to download (and not the auto-generated "Source code (zip)").
+##
+## Recovery: the branch and the tag are pushed before the release is created, and the
+## immutable-tags ruleset makes a published tag impossible to remove. When the release
+## creation fails afterwards, run the same target again. Pushing the same tag again
+## changes nothing on the remote, the archive is kept until the release exists, and an
+## interrupted upload leaves a draft release without the asset, which the rerun removes
+## before it creates the release. A release that is already published is never touched,
+## the rerun stops there.
 release-publish:
 	@if [ ! -f $(MODULE_NAME).zip ]; then \
 		echo "Error: $(MODULE_NAME).zip not found. Run 'make dist' on the tagged commit $(VERSION), then 'make dist-smoke', nothing was pushed."; \
@@ -448,6 +456,15 @@ release-publish:
 			-f target_commitish=main \
 			--jq '.body' >> "$$notes_tmp"; \
 	fi; \
+	state=$$(gh release view $(VERSION) --json isDraft --jq .isDraft 2>/dev/null) || state=; \
+	case "$$state" in \
+		true) \
+			echo "  Removing the draft that an earlier attempt left behind"; \
+			gh release delete $(VERSION) --yes ;; \
+		false) \
+			echo "Error: the release $(VERSION) is already published, nothing to do."; \
+			exit 1 ;; \
+	esac; \
 	gh release create $(VERSION) \
 		--title "$(VERSION)" \
 		--notes-file "$$notes_tmp" \
