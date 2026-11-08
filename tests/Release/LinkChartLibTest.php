@@ -96,6 +96,8 @@ final class LinkChartLibTest extends TestCase
     {
         mkdir($this->workDir . '/webtrees-chart-lib', 0o777, true);
 
+        file_put_contents($this->workDir . '/webtrees-chart-lib/package.json', '{}');
+
         [$status] = $this->make('link-chart-lib');
 
         self::assertSame(0, $status);
@@ -113,13 +115,14 @@ final class LinkChartLibTest extends TestCase
         mkdir($this->workDir . '/webtrees-chart-lib', 0o777, true);
         mkdir($this->packagePath(), 0o777, true);
 
-        file_put_contents($this->packagePath() . '/package.json', '{}');
+        file_put_contents($this->workDir . '/webtrees-chart-lib/package.json', '{}');
+        file_put_contents($this->packagePath() . '/installed.json', '{}');
 
         [$status] = $this->make('link-chart-lib');
 
         self::assertSame(0, $status);
         self::assertTrue(is_link($this->packagePath()));
-        self::assertFileDoesNotExist($this->packagePath() . '/package.json');
+        self::assertFileDoesNotExist($this->packagePath() . '/installed.json');
     }
 
     /**
@@ -128,6 +131,26 @@ final class LinkChartLibTest extends TestCase
     #[Test]
     public function failsWithoutTheSiblingCloneAndKeepsTheInstalledPackage(): void
     {
+        mkdir($this->packagePath(), 0o777, true);
+
+        file_put_contents($this->packagePath() . '/package.json', '{}');
+
+        [$status, $output] = $this->make('link-chart-lib');
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('Expected sibling clone at ../webtrees-chart-lib', $output);
+        self::assertFalse(is_link($this->packagePath()));
+        self::assertFileExists($this->packagePath() . '/package.json');
+    }
+
+    /**
+     * A sibling directory without the package manifest is no clone, for example the empty directory that a compose
+     * bind mount leaves behind. The target fails and leaves the installed package alone.
+     */
+    #[Test]
+    public function failsWithAnEmptySiblingDirectoryAndKeepsTheInstalledPackage(): void
+    {
+        mkdir($this->workDir . '/webtrees-chart-lib', 0o777, true);
         mkdir($this->packagePath(), 0o777, true);
 
         file_put_contents($this->packagePath() . '/package.json', '{}');
