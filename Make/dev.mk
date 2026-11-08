@@ -51,7 +51,7 @@ unlink-base: .logo ## Remove the module-base dev symlink; print how to restore t
 	fi
 
 link-chart-lib: .logo ## Symlink node_modules/.../webtrees-chart-lib to the sibling dev clone for live editing. Uses a RELATIVE target so the symlink resolves inside the node compose container too.
-	@if [ ! -d "$(CHART_LIB_CLONE)" ]; then \
+	@if [ ! -f "$(CHART_LIB_CLONE)/package.json" ]; then \
 		echo -e "${FRED} ✘${FRESET} Expected sibling clone at $(CHART_LIB_CLONE)"; \
 		exit 1; \
 	fi
