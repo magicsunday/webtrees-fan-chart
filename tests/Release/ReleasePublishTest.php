@@ -17,11 +17,14 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function array_diff;
+use function array_slice;
 use function array_values;
 use function chmod;
 use function dirname;
+use function explode;
 use function file_get_contents;
 use function file_put_contents;
+use function implode;
 use function is_dir;
 use function is_file;
 use function mkdir;
@@ -29,6 +32,7 @@ use function proc_close;
 use function proc_open;
 use function scandir;
 use function shell_exec;
+use function str_starts_with;
 use function stream_get_contents;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -114,6 +118,56 @@ final class ReleasePublishTest extends TestCase
         self::assertNotSame(0, $status);
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
         self::assertFalse(is_file($this->workDir . '/release-created'));
+        self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
+        self::assertSame([], $this->leftoverTemporaryFiles());
+    }
+
+    /**
+     * A tag without a release is the normal case, the release is created and nothing is deleted.
+     */
+    #[Test]
+    public function createsTheReleaseWhenTheTagHasNone(): void
+    {
+        $this->installReleaseStateStub('');
+
+        [$status] = $this->publish();
+
+        self::assertSame(0, $status);
+        self::assertSame(['release view', 'release create'], $this->releaseCalls());
+    }
+
+    /**
+     * An interrupted earlier attempt leaves a draft release without the asset. The rerun removes that draft before
+     * it creates the release, and it keeps the tag, which the immutable-tags ruleset would not let go anyway.
+     */
+    #[Test]
+    public function removesTheDraftOfAnEarlierAttemptBeforeCreatingTheRelease(): void
+    {
+        $this->installReleaseStateStub('true');
+
+        [$status, $output] = $this->publish();
+
+        self::assertSame(0, $status);
+        self::assertStringContainsString('RELEASE_PUBLISHED version=9.9.9', $output);
+        self::assertSame(['release view', 'release delete', 'release create'], $this->releaseCalls());
+        self::assertStringContainsString("release delete 9.9.9 --yes\n", $this->ghCalls());
+        self::assertStringNotContainsString('--cleanup-tag', $this->ghCalls());
+    }
+
+    /**
+     * A release that is already published is never touched, so the rerun stops and keeps the archive.
+     */
+    #[Test]
+    public function stopsWhenTheReleaseIsAlreadyPublished(): void
+    {
+        $this->installReleaseStateStub('false');
+
+        [$status, $output] = $this->publish();
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('already published', $output);
+        self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
+        self::assertSame(['release view'], $this->releaseCalls());
         self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
         self::assertSame([], $this->leftoverTemporaryFiles());
     }
@@ -494,6 +548,55 @@ final class ReleasePublishTest extends TestCase
 
         file_put_contents($this->workDir . '/bin/' . $name, $script);
         chmod($this->workDir . '/bin/' . $name, 0o755);
+    }
+
+    /**
+     * Installs a gh stub that logs every call and answers the lookup of the release of the tag.
+     *
+     * @param string $lookupReply What the lookup prints, an empty string for a tag without a release
+     */
+    private function installReleaseStateStub(string $lookupReply): void
+    {
+        $lookup = $lookupReply === '' ? 'exit 1' : 'echo ' . $lookupReply . '; exit 0';
+
+        $this->installStub(
+            'gh',
+            "#!/bin/sh\n"
+            . "echo \"\$*\" >> \"$this->workDir/gh-calls\"\n"
+            . "if [ \"\$1 \$2\" = 'release view' ]; then " . $lookup . "; fi\n"
+            . "if [ \"\$1\" = release ]; then exit 0; fi\n"
+            . "echo stub\n"
+        );
+    }
+
+    /**
+     * Returns the gh calls that the stub logged.
+     */
+    private function ghCalls(): string
+    {
+        $log = file_get_contents($this->workDir . '/gh-calls');
+
+        self::assertIsString($log);
+
+        return $log;
+    }
+
+    /**
+     * Returns the first two words of every release call of gh, in call order.
+     *
+     * @return list<string>
+     */
+    private function releaseCalls(): array
+    {
+        $calls = [];
+
+        foreach (explode("\n", trim($this->ghCalls())) as $line) {
+            if (str_starts_with($line, 'release ')) {
+                $calls[] = implode(' ', array_slice(explode(' ', $line), 0, 2));
+            }
+        }
+
+        return $calls;
     }
 
     /**
