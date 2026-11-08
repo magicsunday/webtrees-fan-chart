@@ -546,7 +546,8 @@ release-recover:
 ## pushing or publishing, then restore the working tree. Validates exactly the
 ## steps that historically broke a release (toolchain provisioning, the full
 ## ci:test gate, the clean-room rollup build incl. chart-lib dist, the dist zip
-## and its smoke test). No VERSION, gh auth or network needed.
+## and its smoke test). Needs no VERSION and no gh auth, and pushes and publishes
+## nothing. The composer and npm steps use the package registries, so run it online.
 ##   make release-dry-run
 # No release-bootstrap PREREQUISITE: the guards below must abort BEFORE any
 # provisioning work, so a dirty tree / active symlink fails fast. Bootstrap is
