@@ -134,6 +134,8 @@ final class ReleasePublishTest extends TestCase
 
         self::assertSame(0, $status);
         self::assertSame(['release view', 'release create'], $this->releaseCalls());
+        $this->assertLookupAskedForTheDraftStateOfTheTag();
+        $this->assertReleaseCreatedForTheTagWithTheArchive();
     }
 
     /**
@@ -152,6 +154,26 @@ final class ReleasePublishTest extends TestCase
         self::assertSame(['release view', 'release delete', 'release create'], $this->releaseCalls());
         self::assertStringContainsString("release delete 9.9.9 --yes\n", $this->ghCalls());
         self::assertStringNotContainsString('--cleanup-tag', $this->ghCalls());
+        $this->assertLookupAskedForTheDraftStateOfTheTag();
+        $this->assertReleaseCreatedForTheTagWithTheArchive();
+    }
+
+    /**
+     * A draft that cannot be removed stops the target before a release is created. The archive stays for the next
+     * attempt and no notes file is left behind.
+     */
+    #[Test]
+    public function stopsWhenTheDraftOfAnEarlierAttemptCannotBeRemoved(): void
+    {
+        $this->installReleaseStateStub('true', 5);
+
+        [$status, $output] = $this->publish();
+
+        self::assertNotSame(0, $status);
+        self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
+        self::assertSame(['release view', 'release delete'], $this->releaseCalls());
+        self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
+        self::assertSame([], $this->leftoverTemporaryFiles());
     }
 
     /**
@@ -168,6 +190,7 @@ final class ReleasePublishTest extends TestCase
         self::assertStringContainsString('already published', $output);
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
         self::assertSame(['release view'], $this->releaseCalls());
+        $this->assertLookupAskedForTheDraftStateOfTheTag();
         self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
         self::assertSame([], $this->leftoverTemporaryFiles());
     }
@@ -555,7 +578,7 @@ final class ReleasePublishTest extends TestCase
      *
      * @param string $lookupReply What the lookup prints, an empty string for a tag without a release
      */
-    private function installReleaseStateStub(string $lookupReply): void
+    private function installReleaseStateStub(string $lookupReply, int $deleteStatus = 0): void
     {
         $lookup = $lookupReply === '' ? 'exit 1' : 'echo ' . $lookupReply . '; exit 0';
 
@@ -564,8 +587,26 @@ final class ReleasePublishTest extends TestCase
             "#!/bin/sh\n"
             . "echo \"\$*\" >> \"$this->workDir/gh-calls\"\n"
             . "if [ \"\$1 \$2\" = 'release view' ]; then " . $lookup . "; fi\n"
+            . "if [ \"\$1 \$2\" = 'release delete' ]; then exit " . $deleteStatus . "; fi\n"
             . "if [ \"\$1\" = release ]; then exit 0; fi\n"
             . "echo stub\n"
+        );
+    }
+
+    private function assertLookupAskedForTheDraftStateOfTheTag(): void
+    {
+        self::assertStringContainsString("release view 9.9.9 --json isDraft --jq .isDraft\n", $this->ghCalls());
+    }
+
+    /**
+     * The creation names the tag under test and takes the archive as its last argument, so that another tag or
+     * another archive would not pass.
+     */
+    private function assertReleaseCreatedForTheTagWithTheArchive(): void
+    {
+        self::assertMatchesRegularExpression(
+            '/^release create 9\.9\.9 --title 9\.9\.9 --notes-file \S+ --target main webtrees-fan-chart\.zip$/m',
+            $this->ghCalls()
         );
     }
 

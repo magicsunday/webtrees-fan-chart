@@ -399,7 +399,8 @@ export NOTES_RAW := $(value NOTES)
 ## changes nothing on the remote, the archive is kept until the release exists, and an
 ## interrupted upload leaves a draft release without the asset, which the rerun removes
 ## before it creates the release. A release that is already published is never touched,
-## the rerun stops there.
+## the rerun stops there. A lookup that fails counts as no release, so that the first
+## publish of a version, which has no release to find, goes on.
 release-publish:
 	@if [ ! -f $(MODULE_NAME).zip ]; then \
 		echo "Error: $(MODULE_NAME).zip not found. Run 'make dist' on the tagged commit $(VERSION), then 'make dist-smoke', nothing was pushed."; \
