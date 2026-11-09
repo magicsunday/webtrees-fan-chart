@@ -249,6 +249,32 @@ final class LinkChartLibTest extends TestCase
         self::assertStringContainsString('make install', $output);
         self::assertFalse(is_link($this->packagePath()));
         self::assertFileDoesNotExist($this->packagePath());
+        self::assertSame(
+            'compose run --rm --user ' . posix_getuid() . ':' . posix_getgid() . " -e HOME=/tmp node npm install --quiet\n",
+            file_get_contents($this->workDir . '/docker-calls')
+        );
+    }
+
+    /**
+     * A link whose target is gone, as after the sibling clone was deleted, is still a link, so unlink removes it and
+     * installs the package again.
+     */
+    #[Test]
+    public function unlinkRemovesADanglingLinkAndInstallsThePackageAgain(): void
+    {
+        mkdir($this->workDir . '/module/node_modules/@magicsunday', 0o777, true);
+
+        symlink('../../../webtrees-chart-lib', $this->packagePath());
+
+        [$status] = $this->make('unlink-chart-lib');
+
+        self::assertSame(0, $status);
+        self::assertFalse(is_link($this->packagePath()));
+        self::assertSame("restored\n", file_get_contents($this->packagePath() . '/package.json'));
+        self::assertSame(
+            'compose run --rm --user ' . posix_getuid() . ':' . posix_getgid() . " -e HOME=/tmp node npm install --quiet\n",
+            file_get_contents($this->workDir . '/docker-calls')
+        );
     }
 
     /**
