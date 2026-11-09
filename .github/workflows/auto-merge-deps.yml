@@ -7,7 +7,7 @@ permissions: {}
 
 jobs:
     auto-merge:
-        uses: magicsunday/.github/.github/workflows/auto-merge-deps.yml@main
+        uses: magicsunday/.github/.github/workflows/auto-merge-deps.yml@582bcf4d3ac9369214b28c2b84dd6029faecbb7e # main
         permissions:
             contents: write
             pull-requests: write

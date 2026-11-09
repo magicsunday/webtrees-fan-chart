@@ -10,7 +10,7 @@ permissions:
 
 jobs:
     bundle-freshness:
-        uses: magicsunday/.github/.github/workflows/bundle-freshness.yml@main
+        uses: magicsunday/.github/.github/workflows/bundle-freshness.yml@582bcf4d3ac9369214b28c2b84dd6029faecbb7e # main
         permissions:
             contents: read
         with:

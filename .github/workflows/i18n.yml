@@ -10,7 +10,7 @@ permissions:
 
 jobs:
     catalogue:
-        uses: magicsunday/.github/.github/workflows/i18n.yml@main
+        uses: magicsunday/.github/.github/workflows/i18n.yml@582bcf4d3ac9369214b28c2b84dd6029faecbb7e # main
         permissions:
             contents: read
         with:
