@@ -376,8 +376,10 @@ release-prepare: release-check
 
 # The inline note as written, handed to the shell through NOTES_RAW. NOTES itself is
 # unexported in the Makefile, because make expands an exported variable, which would
-# lose a dollar sign in the note and run a $(shell ...) in it.
-export NOTES_RAW := $(value NOTES)
+# lose a dollar sign in the note and run a $(shell ...) in it. A sub-make has no NOTES
+# of the environment, so it keeps the NOTES_RAW it inherited. A top-level run ignores
+# any NOTES_RAW of its environment.
+export NOTES_RAW := $(or $(value NOTES),$(if $(filter-out 0,$(MAKELEVEL)),$(value NOTES_RAW)))
 
 ## Publish: push, create GitHub release with zip.
 ## Pass NOTES_FILE=path for release notes from a file (recommended for multi-line notes).
