@@ -252,6 +252,50 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
+     * An inline note of the environment survives a sub-make that reaches the publish target, dollar signs included.
+     */
+    #[Test]
+    public function passesInlineNotesOfTheEnvironmentThroughASubMake(): void
+    {
+        $this->installRecordingStub();
+
+        file_put_contents(
+            $this->workDir . '/module/sub-make.mk',
+            "include Makefile\n\nvia-sub-make:\n\t@\$(MAKE) -f sub-make.mk release-publish VERSION=9.9.9\n"
+        );
+
+        $notes = 'Cost $HOME-ish and $(id) and `echo INJECTED`';
+
+        [$status] = $this->execute(
+            ['make', '-f', 'sub-make.mk', 'via-sub-make'],
+            $this->workDir . '/module',
+            [
+                'PATH'   => $this->workDir . '/bin:/usr/local/bin:/usr/bin:/bin',
+                'TMPDIR' => $this->workDir . '/tmp',
+                'HOME'   => $this->workDir,
+                'NOTES'  => $notes,
+            ]
+        );
+
+        self::assertSame(0, $status);
+        self::assertStringEndsWith($notes . "\n", $this->recordedNotes());
+    }
+
+    /**
+     * A raw note left in the environment of a top-level run is no release note, the notes are generated.
+     */
+    #[Test]
+    public function ignoresAnInheritedRawNoteOutsideASubMake(): void
+    {
+        $this->installRecordingStub();
+
+        [$status] = $this->publish([], ['NOTES_RAW' => 'stale note']);
+
+        self::assertSame(0, $status);
+        self::assertStringNotContainsString('stale note', $this->recordedNotes());
+    }
+
+    /**
      * Inline notes with dollar signs given on the command line arrive unchanged and make runs nothing from them.
      */
     #[Test]
