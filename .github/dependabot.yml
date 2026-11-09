@@ -5,12 +5,16 @@ version: 2
 # `chore(deps): …` subjects and PR titles the commit-convention gate rejects.
 # A prefix ending in a letter gets a colon appended:
 # "Update dependencies: bump …".
+#
+# Version updates of this repository are proposed by Renovate. The limit of
+# zero silences the version updates of Dependabot, while the entries stay
+# because the consumer config gate reads this file.
 updates:
     -   package-ecosystem: composer
         directory: /
         schedule:
             interval: weekly
-        open-pull-requests-limit: 5
+        open-pull-requests-limit: 0
         cooldown:
             default-days: 7
         commit-message:
@@ -24,7 +28,7 @@ updates:
         directory: /
         schedule:
             interval: weekly
-        open-pull-requests-limit: 5
+        open-pull-requests-limit: 0
         cooldown:
             default-days: 7
             # A cooldown on a git tag pin can make Dependabot propose an
@@ -49,6 +53,7 @@ updates:
         directory: /
         schedule:
             interval: weekly
+        open-pull-requests-limit: 0
         cooldown:
             default-days: 7
         commit-message:
