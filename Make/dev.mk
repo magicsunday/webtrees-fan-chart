@@ -61,7 +61,21 @@ link-chart-lib: .logo ## Symlink node_modules/.../webtrees-chart-lib to the sibl
 	@echo -e "${FGREEN} ✔${FRESET} Symlinked $(CHART_LIB_NODE) → $(CHART_LIB_SIBLING)"
 	@echo -e "${FYELLOW}   Note:${FRESET} npm install will replace this symlink with the registry / git checkout."
 
-unlink-chart-lib: .logo ## Restore node_modules/.../webtrees-chart-lib from npm.
-	@rm -rf $(CHART_LIB_NODE)
-	@$(COMPOSE_RUN_USER) npm install --quiet
-	@echo -e "${FGREEN} ✔${FRESET} Restored $(CHART_LIB_NODE) from npm."
+unlink-chart-lib: .logo ## Remove the chart-lib dev symlink and restore node_modules/.../webtrees-chart-lib from npm.
+	@if [ ! -L "$(CHART_LIB_NODE)" ]; then \
+		if [ -e "$(CHART_LIB_NODE)" ]; then \
+			echo -e "${FYELLOW} ⚠${FRESET} $(CHART_LIB_NODE) is an installed package, not a symlink, leaving it untouched."; \
+		else \
+			echo -e "${FYELLOW} ⚠${FRESET} $(CHART_LIB_NODE) does not exist, nothing to unlink."; \
+		fi; \
+	else \
+		if ! rm -f "$(CHART_LIB_NODE)"; then \
+			echo -e "${FRED} ✘${FRESET} Could not remove $(CHART_LIB_NODE), leaving it as it is."; \
+			exit 1; \
+		fi; \
+		if ! $(COMPOSE_RUN_USER) npm install --quiet; then \
+			echo -e "${FRED} ✘${FRESET} npm install failed after removing the link $(CHART_LIB_NODE). Run make install to retry."; \
+			exit 1; \
+		fi; \
+		echo -e "${FGREEN} ✔${FRESET} Restored $(CHART_LIB_NODE) from npm."; \
+	fi

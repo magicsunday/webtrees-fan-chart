@@ -42,17 +42,18 @@ final class NodeUserTest extends TestCase
     /**
      * A target that writes into the checkout runs npm as the numeric user and group of the caller,
      * so no root-owned file lands in the bind mount. The user, the environment and the service name
-     * follow each other in one piece, because options placed behind the service name would reach npm.
+     * follow each other in one piece, because options placed behind the service name would reach npm. The command
+     * ends its line, or the condition that wraps it, so nothing but that ending follows it.
      */
     #[Test]
     #[DataProvider('writingTargets')]
-    public function runsWritingTargetsAsTheCallingUser(string $target, string $npmCommand): void
+    public function runsWritingTargetsAsTheCallingUser(string $target, string $npmCommand, string $lineEnd): void
     {
         [$status, $output] = $this->dryRun($target);
 
         self::assertSame(0, $status);
         self::assertStringContainsString(
-            '--user ' . $this->identity() . ' -e HOME=/tmp node ' . $npmCommand . "\n",
+            '--user ' . $this->identity() . ' -e HOME=/tmp node ' . $npmCommand . $lineEnd,
             $output
         );
     }
@@ -150,18 +151,19 @@ final class NodeUserTest extends TestCase
     }
 
     /**
-     * Provides the targets that write into the checkout with the npm command each of them starts.
+     * Provides the targets that write into the checkout with the npm command each of them starts and the text that
+     * ends its command line. A target that runs the command inside a condition ends the line differently.
      *
-     * @return array<string, array{string, string}> The npm command by target name
+     * @return array<string, array{string, string, string}> The npm command and the line ending by target name
      */
     public static function writingTargets(): array
     {
         return [
-            'install'          => ['install', 'npm install'],
-            'build'            => ['build', 'npm run prepare'],
-            'watch'            => ['watch', 'npm run watch'],
-            'lint-fix'         => ['lint-fix', 'npm run lint:fix'],
-            'unlink-chart-lib' => ['unlink-chart-lib', 'npm install --quiet'],
+            'install'          => ['install', 'npm install', "\n"],
+            'build'            => ['build', 'npm run prepare', "\n"],
+            'watch'            => ['watch', 'npm run watch', "\n"],
+            'lint-fix'         => ['lint-fix', 'npm run lint:fix', "\n"],
+            'unlink-chart-lib' => ['unlink-chart-lib', 'npm install --quiet', "; then \\\n"],
         ];
     }
 
