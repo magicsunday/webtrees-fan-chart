@@ -40,7 +40,8 @@ use function trim;
 use function unlink;
 
 /**
- * Tests the release-publish target of Make/release.mk against stubbed git and gh commands.
+ * Tests the release-publish target of Make/release.mk against stubbed git and gh commands. The cases that check what
+ * the push steps send to a remote run the real git against a bare remote instead.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -429,6 +430,85 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
+     * Only the branch and the release tag reach the remote. A leftover annotated tag stays local, also when the git
+     * setting that follows tags is on, because that setting and the tags option would publish it as well.
+     */
+    #[Test]
+    public function publishesOnlyTheBranchAndTheReleaseTag(): void
+    {
+        $this->createRepositoryWithRemote();
+        $this->installReleaseStateStub('');
+
+        [$status, $output] = $this->publish();
+
+        self::assertSame(0, $status, $output);
+        self::assertSame(['refs/heads/main', 'refs/tags/9.9.9'], $this->remoteRefs());
+    }
+
+    /**
+     * A version that names no local tag, an empty one included, fails before anything is sent.
+     */
+    #[Test]
+    #[DataProvider('versionsWithoutALocalTag')]
+    public function sendsNothingWhenTheVersionNamesNoLocalTag(string $version): void
+    {
+        $this->createRepositoryWithRemote();
+        $this->installReleaseStateStub('');
+
+        [$status, $output] = $this->publish(['VERSION=' . $version]);
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('the tag ' . $version . ' does not exist, nothing was pushed', $output);
+        self::assertStringNotContainsString('HEAD is not the commit', $output);
+        self::assertSame([], $this->remoteRefs());
+    }
+
+    /**
+     * The development bump publishes the branch alone. The leftover annotated tag and the release tag stay local,
+     * also when the git setting that follows tags is on.
+     */
+    #[Test]
+    public function publishesOnlyTheBranchWhenTheVersionIsBumped(): void
+    {
+        $this->createRepositoryWithRemote();
+        $this->installStub('npm', "#!/bin/sh\nexit 0\n");
+
+        [$status, $output] = $this->runTarget('release-bump');
+
+        self::assertSame(0, $status, $output);
+        self::assertSame(['refs/heads/main'], $this->remoteRefs());
+    }
+
+    /**
+     * A version that is not a release version stops the bump before anything is committed or sent.
+     */
+    #[Test]
+    public function sendsNothingWhenTheBumpVersionIsEmpty(): void
+    {
+        $this->createRepositoryWithRemote();
+        $this->installStub('npm', "#!/bin/sh\nexit 0\n");
+
+        [$status, $output] = $this->runTarget('release-bump', '');
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('VERSION must be semver', $output);
+        self::assertSame([], $this->remoteRefs());
+    }
+
+    /**
+     * Provides the versions for which the module has no local tag.
+     *
+     * @return array<string, array{string}> The version by description
+     */
+    public static function versionsWithoutALocalTag(): array
+    {
+        return [
+            'empty version'         => [''],
+            'version without a tag' => ['7.7.7'],
+        ];
+    }
+
+    /**
      * Provides the targets that refuse a node_modules tree with files of another owner.
      *
      * @return array<string, array{string}> The target name by target name
@@ -463,6 +543,81 @@ final class ReleasePublishTest extends TestCase
         mkdir($this->workDir . '/module/node_modules', 0o777, true);
 
         file_put_contents($this->workDir . '/module/node_modules/package', 'content');
+    }
+
+    /**
+     * Replaces the git stub with the real git and turns the module into a repository with a bare remote. The leftover
+     * annotated tag sits on the first commit, the release tag on HEAD, and the git setting that follows tags is on. The
+     * archive carries the commit that HEAD is on, and the files that the bump target edits are committed.
+     */
+    private function createRepositoryWithRemote(): void
+    {
+        unlink($this->workDir . '/bin/git');
+
+        $module = $this->workDir . '/module';
+
+        $this->git(['init', '--quiet', '--bare', $this->workDir . '/remote.git'], $this->workDir);
+        $this->git(['init', '--quiet', '--initial-branch=main'], $module);
+        $this->git(['config', 'user.name', 'Release Test'], $module);
+        $this->git(['config', 'user.email', 'release-test@example.invalid'], $module);
+        $this->git(['config', 'commit.gpgSign', 'false'], $module);
+        $this->git(['config', 'tag.gpgSign', 'false'], $module);
+        $this->git(['config', 'push.followTags', 'true'], $module);
+        $this->git(['remote', 'add', 'origin', $this->workDir . '/remote.git'], $module);
+
+        mkdir($module . '/src', 0o777, true);
+        mkdir($module . '/resources/js', 0o777, true);
+
+        file_put_contents($module . '/src/Module.php', "<?php\nconst CUSTOM_VERSION = '9.9.9';\n");
+        file_put_contents($module . '/package.json', "{\"version\": \"9.9.9\"}\n");
+        file_put_contents($module . '/package-lock.json', "{}\n");
+        file_put_contents($module . '/composer.json', "{\"require\": {\"fisharebest/webtrees\": \"~2.2.0\"}}\n");
+        file_put_contents($module . '/resources/js/app.js', "bundle\n");
+
+        $this->git(['add', 'src', 'package.json', 'package-lock.json', 'composer.json', 'resources'], $module);
+        $this->git(['commit', '--quiet', '-m', 'First commit'], $module);
+        $this->git(['tag', '-a', '8.8.8', '-m', 'Leftover tag'], $module);
+
+        file_put_contents($module . '/src/Module.php', "<?php\nconst CUSTOM_VERSION = '9.9.9';\n// release\n");
+
+        $this->git(['add', 'src'], $module);
+        $this->git(['commit', '--quiet', '-m', 'Release commit'], $module);
+        $this->git(['tag', '-a', '9.9.9', '-m', 'Release tag'], $module);
+
+        $this->installArchiveCommit($this->git(['rev-parse', 'HEAD'], $module));
+    }
+
+    /**
+     * Runs the real git and fails the test when the command fails.
+     *
+     * @param list<string> $arguments The arguments of the git command
+     * @param string       $directory The directory to run it in
+     *
+     * @return string The trimmed output
+     */
+    private function git(array $arguments, string $directory): string
+    {
+        [$status, $output] = $this->execute(
+            ['git', ...$arguments],
+            $directory,
+            ['PATH' => '/usr/local/bin:/usr/bin:/bin', 'HOME' => $this->workDir]
+        );
+
+        self::assertSame(0, $status, $output);
+
+        return trim($output);
+    }
+
+    /**
+     * Lists the refs that the bare remote holds.
+     *
+     * @return list<string> The ref names in the order of git
+     */
+    private function remoteRefs(): array
+    {
+        $refs = $this->git(['for-each-ref', '--format=%(refname)'], $this->workDir . '/remote.git');
+
+        return $refs === '' ? [] : explode("\n", $refs);
     }
 
     /**
@@ -538,14 +693,15 @@ final class ReleasePublishTest extends TestCase
     /**
      * Runs a release target of the module with the stubs first on the path.
      *
-     * @param string $target The make target to run
+     * @param string $target  The make target to run
+     * @param string $version The version to pass, an empty string for no version
      *
      * @return array{int, string} The exit status and the output of make
      */
-    private function runTarget(string $target): array
+    private function runTarget(string $target, string $version = '9.9.9'): array
     {
         return $this->execute(
-            ['make', $target, 'VERSION=9.9.9'],
+            ['make', $target, 'VERSION=' . $version],
             $this->workDir . '/module',
             [
                 'PATH'   => $this->workDir . '/bin:/usr/local/bin:/usr/bin:/bin',
