@@ -74,7 +74,7 @@ unlink-chart-lib: .logo ## Remove the chart-lib dev symlink and restore node_mod
 			exit 1; \
 		fi; \
 		if ! $(COMPOSE_RUN_USER) npm install --quiet; then \
-			echo -e "${FRED} ✘${FRESET} npm install failed and $(CHART_LIB_NODE) is missing. Run make install to restore it."; \
+			echo -e "${FRED} ✘${FRESET} npm install failed after removing the link $(CHART_LIB_NODE). Run make install to retry."; \
 			exit 1; \
 		fi; \
 		echo -e "${FGREEN} ✔${FRESET} Restored $(CHART_LIB_NODE) from npm."; \
