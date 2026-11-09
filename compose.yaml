@@ -1,6 +1,6 @@
 services:
     node:
-        image: ghcr.io/magicsunday/webtrees-docker-module-base:node24
+        image: ghcr.io/magicsunday/webtrees-docker-module-base:node24@sha256:4925b9a88bcc54da803c45361e2ea4072c4ee2563d763f19477b203212664710
         working_dir: /app
         volumes:
             - ./:/app
