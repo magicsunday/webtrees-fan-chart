@@ -16,7 +16,7 @@ jobs:
         # (not a reusable call) so this job-level skip happens before any
         # permission setup — a reusable call would fail at startup under
         # Dependabot's read-only token.
-        if: github.actor != 'dependabot[bot]' && github.actor != 'github-actions[bot]'
+        if: github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' && github.actor != 'github-actions[bot]'
         runs-on: ubuntu-latest
         permissions:
             issues: write
