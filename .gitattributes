@@ -1,6 +1,6 @@
 # Exclude from distribution archives (composer --prefer-dist, git archive)
 /.coderabbit.yaml      export-ignore
-/.github/              export-ignore
+/.github               export-ignore
 /renovate.json         export-ignore
 /.githooks/            export-ignore
 .gitattributes         export-ignore
