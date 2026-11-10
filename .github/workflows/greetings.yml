@@ -14,9 +14,9 @@ jobs:
         # Greet humans only; skip bot pull requests. A bot's restricted token
         # cannot be granted the write scope, and bots need no welcome. Inlined
         # (not a reusable call) so this job-level skip happens before any
-        # permission setup — a reusable call would fail at startup under
-        # Dependabot's read-only token.
-        if: github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' && github.actor != 'github-actions[bot]'
+        # permission setup, because a reusable call would fail at startup under
+        # the read-only token of a bot.
+        if: github.actor != 'renovate[bot]' && github.actor != 'github-actions[bot]'
         runs-on: ubuntu-latest
         permissions:
             issues: write
