@@ -96,6 +96,22 @@ final class NodeTest extends TestCase
     }
 
     /**
+     * The tooltip of the chart script falls back to the short birth and death entries of the
+     * payload, so both keys must carry their own value.
+     */
+    #[Test]
+    public function theShortBirthAndDeathReachThePayloadUnderTheirOwnKeys(): void
+    {
+        $payload = (new NodeData())
+            ->setBirth('born short')
+            ->setDeath('died short')
+            ->jsonSerialize();
+
+        self::assertSame('born short', $payload['birth']);
+        self::assertSame('died short', $payload['death']);
+    }
+
+    /**
      * The tooltip of the chart script reads the full dates of a person under the keys of the
      * payload, so a renamed key leaves the tooltip with the short date. Each date has a value of
      * its own, so a key that carries the value of another date is found.

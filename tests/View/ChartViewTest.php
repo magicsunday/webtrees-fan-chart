@@ -91,6 +91,21 @@ final class ChartViewTest extends TestCase
     }
 
     /**
+     * The view hands the chart only the options it reads, so the removed export stylesheet option
+     * stays away, while the other options are still written.
+     */
+    #[Test]
+    public function handsNoExportStylesheetOptionToTheChart(): void
+    {
+        $output = $this->render(null);
+
+        self::assertStringNotContainsString('cssFiles', $output);
+        self::assertStringContainsString('labels: {', $output);
+        self::assertStringContainsString('rtl: false,', $output);
+        self::assertStringContainsString('showDetailPanel: false,', $output);
+    }
+
+    /**
      * The panel switch reaches the chart as the server value, which the browser storage cannot
      * override because the server reads the facts only while it is on.
      */
