@@ -52,7 +52,6 @@ const d3 = await import("resources/js/modules/d3");
 
 const person = (xref, generation, parents) => ({
     data: {
-        id: xref,
         xref,
         url: `url-${xref}`,
         updateUrl: `update-${xref}`,

@@ -40,7 +40,6 @@ export const DESCENDANT_GAP_DEG = 10;
  * they read as undefined for unknown ancestors.
  *
  * @typedef {object} PersonData
- * @property {number}      id                      Sequential server-side record number
  * @property {string}      xref                    GEDCOM identifier, empty string for placeholders
  * @property {string}      url                     Link to the webtrees individual page
  * @property {string}      updateUrl               AJAX route that re-centers the chart on this person
@@ -475,7 +474,6 @@ export default class Hierarchy {
     createEmptyNode(generation, sex) {
         return {
             data: {
-                id: 0,
                 xref: "",
                 url: "",
                 updateUrl: "",

@@ -4,7 +4,6 @@ const { default: Hierarchy, SEX_FEMALE, SEX_MALE } = await import("resources/js/
 
 const createIndividual = ({ id = 1, generation = 1, sex = SEX_MALE, parents } = {}) => ({
     data: {
-        id,
         xref: `I${id}`,
         url: `url-${id}`,
         updateUrl: `update-${id}`,
@@ -152,7 +151,6 @@ describe("Hierarchy.initDescendants", () => {
         children = [],
     } = {}) => ({
         data: {
-            id: 2,
             xref,
             url: `url-${xref}`,
             updateUrl: `update-${xref}`,
@@ -171,7 +169,6 @@ describe("Hierarchy.initDescendants", () => {
 
     const createChild = ({ xref = "I3", name = "Child", sex = SEX_MALE } = {}) => ({
         data: {
-            id: 3,
             xref,
             url: `url-${xref}`,
             updateUrl: `update-${xref}`,

@@ -178,8 +178,8 @@ final class DataFacadeTest extends TestCase
         $parents = $serialized['parents'];
 
         self::assertCount(2, $parents);
-        $parentIds = array_map(static fn (Node $node): int => $node->getData()->getId(), $parents);
-        self::assertSame([2, 3], $parentIds);
+        $parentXrefs = array_map(static fn (Node $node): string => $node->getData()->jsonSerialize()['xref'], $parents);
+        self::assertSame(['I2', 'I3'], $parentXrefs);
     }
 
     /**
@@ -514,7 +514,7 @@ final class DataFacadeTest extends TestCase
         $partner     = $rootData['partners'][0];
         $partnerData = $partner->getData()->jsonSerialize();
 
-        self::assertSame(2, $partnerData['id']);
+        self::assertArrayNotHasKey('id', $partnerData);
         self::assertSame(-1, $partnerData['generation']);
         self::assertSame('U', $partnerData['sex']);
 
@@ -525,7 +525,6 @@ final class DataFacadeTest extends TestCase
         $childData = $children[0]->getData()->jsonSerialize();
 
         self::assertSame('I3', $childData['xref']);
-        self::assertSame(3, $childData['id']);
     }
 
     /**
