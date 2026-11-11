@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import { createConfigurationValues } from "../helpers/configuration-values.js";
 
 // Only the request of the update and the creation of its transition are replaced by a recording
 // wrapper. The selections, the transitions and the timers are the real ones of d3, and the chart,
@@ -93,7 +94,9 @@ const ancestors = (generations, generation = 1, prefix = "I") =>
 function createChart(options = {}, datum = ancestors(2)) {
     document.body.innerHTML = '<h1 class="wt-page-title">Original</h1><div id="parent"></div>';
 
-    const configuration = new Configuration({ generations: 2, ...options });
+    const configuration = new Configuration(
+        createConfigurationValues({ generations: 2, ...options }),
+    );
 
     configuration.updateDuration = 20;
 

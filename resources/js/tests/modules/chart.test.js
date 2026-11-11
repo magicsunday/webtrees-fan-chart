@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import { createConfigurationValues } from "../helpers/configuration-values.js";
 
 const { default: Chart } = await import("resources/js/modules/chart");
 const { default: Configuration } = await import("resources/js/modules/configuration");
@@ -85,7 +86,10 @@ const createParent = ({ width, height } = CONTAINER) => {
 };
 
 const createChart = (options = {}, datum = createHierarchyDatum(), size = CONTAINER) => {
-    const chart = new Chart(createParent(size), new Configuration({ generations: 2, ...options }));
+    const chart = new Chart(
+        createParent(size),
+        new Configuration(createConfigurationValues({ generations: 2, ...options })),
+    );
 
     chart.data = datum;
     chart.render();
@@ -356,7 +360,7 @@ describe("Chart", () => {
     });
 
     test("svg throws before render() has been called and is available afterwards", () => {
-        const chart = new Chart(createParent(), new Configuration());
+        const chart = new Chart(createParent(), new Configuration(createConfigurationValues()));
 
         expect(() => chart.svg).toThrow(
             "Chart.svg is not available before render() has been called",
@@ -369,7 +373,7 @@ describe("Chart", () => {
     });
 
     test("convertRemToPixels uses the document root font size", () => {
-        const chart = new Chart(createParent(), new Configuration());
+        const chart = new Chart(createParent(), new Configuration(createConfigurationValues()));
         const getComputedStyleSpy = jest
             .spyOn(window, "getComputedStyle")
             .mockReturnValue({ fontSize: "18px" });
@@ -383,7 +387,10 @@ describe("Chart", () => {
     });
 
     test("draws marriage arcs only for nodes with children inside the displayed generations", () => {
-        const chart = new Chart(createParent(), new Configuration({ generations: 3 }));
+        const chart = new Chart(
+            createParent(),
+            new Configuration(createConfigurationValues({ generations: 3 })),
+        );
         const drawnNodes = [];
         const marriageGroup = {
             empty: () => false,
