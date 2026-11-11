@@ -8,4 +8,7 @@ services:
             # ../webtrees-chart-lib package; rollup must see the target
             # inside the container or it leaves chart-lib external (UMD
             # bundles then break in the browser).
+            # Compose cannot skip a bind mount whose source is missing, so
+            # Docker creates ../webtrees-chart-lib as an empty root-owned
+            # directory when the clone is absent. See AGENTS.md.
             - ../webtrees-chart-lib:/webtrees-chart-lib
