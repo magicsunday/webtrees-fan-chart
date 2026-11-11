@@ -211,7 +211,11 @@ npm run prepare
 ```
 
 ### Running tests
+The JavaScript steps of `composer ci:test` run the tools in `node_modules`, so `npm ci` has to run before it.
 ```shell
+# Install the Node dependencies from the lock file
+npm ci
+
 # JavaScript tests
 npm test
 
