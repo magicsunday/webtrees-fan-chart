@@ -36,7 +36,9 @@ use Illuminate\Database\Schema\Blueprint;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
+use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\FanChart\Test\Support\PayloadToken;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -88,6 +90,7 @@ use const JSON_THROW_ON_ERROR;
 #[UsesClass(Configuration::class)]
 #[UsesClass(Module::class)]
 #[UsesClass(Node::class)]
+#[UsesClass(NodeData::class)]
 final class DataFacadePrivacyTest extends TestCase
 {
     /**
@@ -278,7 +281,7 @@ final class DataFacadePrivacyTest extends TestCase
         $payload = $this->payload($tree, 'I1');
 
         foreach ([...self::PRIVATE_TOKENS, ...self::PUBLIC_TOKENS] as $token) {
-            self::assertStringContainsString($token, $payload, 'The administrator should see ' . $token);
+            PayloadToken::assertPresent($this, $token, $payload, 'The administrator should see ' . $token);
         }
     }
 
@@ -297,11 +300,11 @@ final class DataFacadePrivacyTest extends TestCase
         $payload = $this->asVisitor($tree, 'I1');
 
         foreach (self::PUBLIC_TOKENS as $token) {
-            self::assertStringContainsString($token, $payload, 'The visitor should see ' . $token);
+            PayloadToken::assertPresent($this, $token, $payload, 'The visitor should see ' . $token);
         }
 
         foreach (self::PRIVATE_TOKENS as $token) {
-            self::assertStringNotContainsString($token, $payload, 'The visitor must not see ' . $token);
+            PayloadToken::assertAbsent($this, $token, $payload, 'The visitor must not see ' . $token);
         }
     }
 
@@ -338,7 +341,7 @@ final class DataFacadePrivacyTest extends TestCase
         self::assertStringContainsString('Publicfather', $payload);
 
         foreach (self::PRIVATE_TOKENS as $token) {
-            self::assertStringNotContainsString($token, $payload, 'The stub must not carry ' . $token);
+            PayloadToken::assertAbsent($this, $token, $payload, 'The stub must not carry ' . $token);
         }
     }
 
