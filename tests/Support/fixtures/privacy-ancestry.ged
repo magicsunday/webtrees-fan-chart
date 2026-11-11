@@ -1,0 +1,81 @@
+0 HEAD
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINKED
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Rootline /Publicroot/
+2 GIVN Rootline
+2 SURN Publicroot
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 1900
+2 PLAC Rootbirthplace
+1 DEAT
+2 DATE 1 JAN 1975
+2 PLAC Rootdeathplace
+1 FAMC @F1@
+0 @I2@ INDI
+1 NAME Fatherly /Publicfather/
+2 GIVN Fatherly
+2 SURN Publicfather
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1870
+2 PLAC Fatherbirthplace
+1 DEAT
+2 DATE 1 JAN 1940
+1 FAMS @F1@
+1 FAMC @F2@
+0 @I3@ INDI
+1 NAME Motherly /Confidentialmother/
+2 GIVN Motherly
+2 SURN Confidentialmother
+1 SEX F
+1 RESN confidential
+1 BIRT
+2 DATE 1 JAN 1877
+2 PLAC Hiddenmotherplace
+1 DEAT
+2 DATE 1 JAN 1951
+1 FAMS @F1@
+0 @I4@ INDI
+1 NAME Grandy /Livingfather/
+2 GIVN Grandy
+2 SURN Livingfather
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1931
+2 PLAC Hiddenlivingplace
+1 OBJE @M1@
+1 FAMS @F2@
+0 @I5@ INDI
+1 NAME Grandma /Publicgrandmother/
+2 GIVN Grandma
+2 SURN Publicgrandmother
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 1845
+2 PLAC Grandmabirthplace
+1 DEAT
+2 DATE 1 JAN 1910
+1 FAMS @F2@
+0 @F1@ FAM
+1 HUSB @I2@
+1 WIFE @I3@
+1 CHIL @I1@
+1 MARR
+2 DATE 1 JAN 1896
+2 PLAC Hiddenmarriageplace
+0 @F2@ FAM
+1 HUSB @I4@
+1 WIFE @I5@
+1 CHIL @I2@
+1 MARR
+2 DATE 1 JAN 1953
+2 PLAC Hiddenlivingmarriageplace
+0 @M1@ OBJE
+1 FILE hiddenlivingphoto.jpg
+2 FORM jpg
+3 TYPE photo
+0 TRLR
