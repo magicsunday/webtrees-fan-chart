@@ -36,6 +36,7 @@ use Illuminate\Database\Schema\Blueprint;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
+use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Test\Support\PayloadToken;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -89,6 +90,7 @@ use const JSON_THROW_ON_ERROR;
 #[UsesClass(Configuration::class)]
 #[UsesClass(Module::class)]
 #[UsesClass(Node::class)]
+#[UsesClass(NodeData::class)]
 final class DataFacadePrivacyTest extends TestCase
 {
     /**
