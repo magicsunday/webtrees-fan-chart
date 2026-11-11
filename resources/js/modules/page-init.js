@@ -50,7 +50,7 @@ function initRangeSlider(storage, id, suffix = "") {
  * drift between the two. The stored settings are read from the storage when the URL is built.
  *
  * @param {Storage}  storage         The browser storage of the page
- * @param {{ ajaxUrl: string, defaultShowNicknames?: boolean, defaultDetailedDateGenerations: number }} config The page configuration
+ * @param {{ ajaxUrl: string, defaultShowNicknames?: boolean|undefined, defaultDetailedDateGenerations: number }} config The page configuration
  * @param {boolean}  showDescendants Whether the chart shows the descendants
  *
  * @return {string}
@@ -74,8 +74,16 @@ function buildAjaxUrl(storage, config, showDescendants) {
                 key: "detailedDateGenerations",
                 value: config.defaultDetailedDateGenerations,
             },
-            { key: "showPlaces", value: storage.readBool("showPlaces"), mode: "boolean-1-0" },
-            { key: "showDescendants", value: showDescendants, mode: "boolean-1-or-delete" },
+            {
+                key: "showPlaces",
+                value: storage.readBool("showPlaces"),
+                mode: "boolean-1-0",
+            },
+            {
+                key: "showDescendants",
+                value: showDescendants,
+                mode: "boolean-1-or-delete",
+            },
             {
                 key: "showNicknames",
                 value: storage.readBool("showNicknames", config.defaultShowNicknames ?? null),
