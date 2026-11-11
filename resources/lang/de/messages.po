@@ -403,6 +403,11 @@ msgstr "Zwischen Vollbildmodus und normaler Ansicht umschalten"
 msgid "Tab key"
 msgstr "Tabulatortaste"
 
+#: src/Module.php:269
+msgid "The chart could not be updated. Please try again."
+msgstr ""
+"Das Diagramm konnte nicht aktualisiert werden. Bitte versuche es erneut."
+
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
