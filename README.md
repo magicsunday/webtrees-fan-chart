@@ -26,7 +26,7 @@ dates, places, and images.
 
 
 ## Installation
-Requires **webtrees 2.2** and **PHP 8.3** or later.
+Requires **webtrees 2.2** and **PHP 8.3** or a later PHP 8 release.
 
 ### Manual installation
 
@@ -182,7 +182,7 @@ tree setting for highlight images is switched off.
 
 **The chart does not appear / shows an error**
 - Make sure the module is enabled in the Control Panel under Modules > Charts.
-- Check that your PHP version is 8.3 or later.
+- Check that your PHP version is 8.3 or a later PHP 8 release.
 - Clear your browser cache and reload the page.
 
 **Images are not displayed**
