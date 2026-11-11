@@ -77,7 +77,7 @@
     },
     "require-dev": {
         "infection/infection": "^0.35.8",
-        "magicsunday/coding-standard": "^3.8",
+        "magicsunday/coding-standard": "^3.10.0",
         "phpat/phpat": "^0.12.4",
         "shipmonk/phpstan-rules": "^4.4",
         "spaze/phpstan-disallowed-calls": "^4.13",
