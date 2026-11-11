@@ -79,6 +79,14 @@ jobs:
               if: ${{ always() && steps.install.conclusion == 'success' }}
               run: composer ci:test:js:unit
 
+            # The ignored advisories belong to transitive dependencies of webtrees
+            # that are exact-pinned, so one leg is enough. The shared PHP workflow
+            # does not probe for the script.
+            - id: advisories
+              name: Stale advisory ignores
+              if: ${{ always() && steps.install.conclusion == 'success' }}
+              run: composer ci:test:php:advisories
+
             # Runs LAST: 'make dist' invokes 'composer install --no-dev' which
             # strips the dev packages from .build/vendor, so any later
             # composer-driven step would fail.
