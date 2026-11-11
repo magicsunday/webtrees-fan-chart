@@ -67,10 +67,8 @@
             }
         }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
-        "php": "8.3 - 8.5",
+        "php": ">=8.3 <9",
         "ext-dom": "*",
         "ext-json": "*",
         "fisharebest/webtrees": "~2.2.0",
