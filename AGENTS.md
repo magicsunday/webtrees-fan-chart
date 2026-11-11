@@ -2,7 +2,7 @@
 This repository hosts the webtrees fan chart module — an interactive SVG fan chart of an individual's ancestors using D3.js, installed as a Composer package inside webtrees.
 
 ## Setup/env
-- PHP 8.3 up to but not including 9 with extensions dom and json is required (the constraint is `>=8.3 <9`, the CI matrix states what is tested); composer installs dependencies into .build/vendor and binaries into .build/bin.
+- PHP 8.3 up to but not including 9 with extensions dom and json is required. The constraint is `>=8.3 <9` and the CI matrix states what is tested. Composer installs dependencies into .build/vendor and binaries into .build/bin.
 - Node.js tooling is used for asset builds (rollup). Install dev dependencies via `npm install` when touching frontend resources.
 - All PHP/Node tooling runs inside the webtrees Docker buildbox — never directly on the NAS or in phpfpm:
   ```
@@ -19,7 +19,7 @@ Before adding an entry, check the following. Is the package a direct dependency 
 
 - An advisory that webtrees' exact pin keeps unresolved is ignored by its **advisory ID** under `config.policy.advisories.ignore-id`, so later advisories on the same package keep blocking. Never ignore by package name under `ignore`, because that also hides every later advisory of the package.
 - The reason starts with a prefix that says why the entry exists, followed by the CVE and the condition for removing it. `UPSTREAM-PINNED:` marks a fix that exists publicly but is held back by the exact pin of webtrees. `ACCEPTED:` is reserved for a conscious risk acceptance with a low severity and no attack path in this package.
-- Remove the entry once the supported webtrees range no longer pins an affected version. `composer ci:test:php:advisories` runs `composer audit --format=json` on the installed packages and fails with the ids of every entry that Composer no longer reports as ignored, so a removable entry is noticed. It is part of `composer ci:test` and runs in CI as a step of the `js` job of `.github/workflows/ci.yml`, because the shared `php-quality.yml` workflow does not know it. The check reads the installed packages, so run `composer update` first when the local `.build/vendor` is older than `composer.json`. The script is `scripts/check-stale-advisory-ignores.php` and its test is `tests/Release/StaleAdvisoryIgnoresTest.php`.
+- Remove the entry once the supported webtrees range no longer pins an affected version. `composer ci:test:php:advisories` runs `composer audit --format=json` on the installed packages and fails with the ids of every `ignore-id` entry that is missing from the ignored advisories of the report. An entry has to be the advisory id (PKSA), because the script compares the keys of `ignore-id` with the `advisoryId` values of the report, so an entry keyed by a CVE or a remote id is reported as stale. It is part of `composer ci:test` and runs in CI as a step of the `js` job of `.github/workflows/ci.yml`, because the shared `php-quality.yml` workflow does not know it. The check reads the installed packages, so run `composer update` first when the local `.build/vendor` is older than `composer.json`. The script is `scripts/check-stale-advisory-ignores.php` and its test is `tests/Release/StaleAdvisoryIgnoresTest.php`.
 
 ## Build & tests
 - **`composer ci:test` MUST run before every commit** — catches Biome lint, PHPStan, PHP-CS-Fixer, Rector, PHPUnit, Jest, and jscpd issues before they reach GitHub CI.
