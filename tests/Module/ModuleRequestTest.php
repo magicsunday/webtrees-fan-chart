@@ -233,6 +233,25 @@ final class ModuleRequestTest extends TestCase
     }
 
     /**
+     * The browser finds the container of the chart by an id that the partial generates for each
+     * answer, and it loads the bundle of the module version that the page was built for. A partial
+     * without the id leaves the script without its container, and a wrong bundle name is a script
+     * that does not exist.
+     */
+    #[Test]
+    public function theChartPartialNamesItsContainerAndLoadsTheBundleOfTheModuleVersion(): void
+    {
+        $response = $this->createModule()->handle($this->chartRequest($this->createChartIndividual(), true));
+        $body     = (string) $response->getBody();
+
+        self::assertMatchesRegularExpression('/id="webtrees-fan-chart-container-[0-9a-f]+"/', $body);
+        self::assertMatchesRegularExpression(
+            '/import\("[^"]*js%2Ffan-chart-' . preg_quote(Module::CUSTOM_VERSION, '/') . '\.min\.js[^"]*"\)/',
+            $body
+        );
+    }
+
+    /**
      * The page tells the script which URL loads the chart partial. That URL asks for the partial
      * with the ajax flag and names the person and every setting of the request, so the partial that
      * the script fetches is the chart of the page and not the page shell again.
