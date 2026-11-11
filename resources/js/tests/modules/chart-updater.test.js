@@ -321,6 +321,27 @@ describe("Update", () => {
         expect(callback).toHaveBeenCalledTimes(1);
     });
 
+    test("calls back once when the animations fail after the transition has been scheduled", async () => {
+        const { update } = createChart();
+        const callback = jest.fn();
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+        // The failure reaches the catch handler, which calls back, and the scheduled transition
+        // ends later and would call back a second time without the guard.
+        jest.spyOn(update, "_runUpdateAnimations").mockImplementation(() => {
+            throw new Error("animation failed");
+        });
+        jsonMock.mockResolvedValueOnce({ data: ancestors(2) });
+
+        update.update("/update", jest.fn(), callback);
+
+        // The transition lasts 20 ms, so this is long enough for its end
+        await flush(100);
+
+        expect(errorSpy).toHaveBeenCalled();
+        expect(callback).toHaveBeenCalledTimes(1);
+    });
+
     test("reports a request that a newer update cancelled instead of calling back", async () => {
         const { update } = createChart();
         const callback = jest.fn();

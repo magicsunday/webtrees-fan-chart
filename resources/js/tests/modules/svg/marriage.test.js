@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import { scaleLinear } from "d3-scale";
 
 await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
@@ -12,48 +13,13 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
         cornerRadius: jest.fn().mockReturnThis(),
     })),
     select: jest.fn(),
+    scaleLinear,
 }));
 
 await jest.unstable_mockModule("resources/js/modules/svg/arc", () => ({
     __esModule: true,
     appendArc(parent) {
         parent.append("g").attr("class", "arc").append("path");
-    },
-}));
-
-await jest.unstable_mockModule("resources/js/modules/svg/geometry", () => ({
-    __esModule: true,
-    MATH_DEG2RAD: Math.PI / 180,
-    MATH_RAD2DEG: 180 / Math.PI,
-    default: class {
-        constructor(config) {
-            this._configuration = config;
-        }
-        startAngle() {
-            return 0;
-        }
-        endAngle() {
-            return 1;
-        }
-        innerRadius(depth) {
-            return 50 + depth * 100;
-        }
-        outerRadius(depth) {
-            return 100 + depth * 100;
-        }
-        calcAngle() {
-            return 0;
-        }
-        isPositionFlipped() {
-            return false;
-        }
-        getFontSize(datum) {
-            let fontSize = this._configuration.fontSize;
-            if (datum.depth >= this._configuration.numberOfInnerCircles + 1) {
-                fontSize += 1;
-            }
-            return ((fontSize - datum.depth) * this._configuration.fontScale) / 100.0;
-        }
     },
 }));
 
@@ -128,6 +94,11 @@ const createConfiguration = (overrides = {}) => ({
     fontSize: 22,
     numberOfInnerCircles: 3,
     generations: 6,
+    fanDegree: 180,
+    innerArcHeight: 50,
+    outerArcHeight: 60,
+    centerCircleRadius: 100,
+    circlePadding: 10,
     ...overrides,
 });
 
@@ -195,36 +166,38 @@ describe("Marriage", () => {
         expect(appendedGroups.find((g) => g.className === "name")).toBeUndefined();
     });
 
-    it("calculates font size based on depth and scale", () => {
+    // The marriage arc sits in the gap of the parent generation, so its label is sized like the
+    // generation one deeper. The sizes below are the results of the real geometry.
+    it.each([
+        // Inner circle: (22 - 3) * 100 / 100 for the generation behind depth 2
+        ["an inner generation", 2, 0.5, 19],
+        // Outer circle: depth 5 gets the extra point, (23 - 5) * 100 / 100
+        ["an outer generation", 4, 0.5, 18],
+        // The family of the central person is sized like generation one
+        ["the central person", 0, 0.5, 21],
+        // A negative depth does not shrink below generation one
+        ["a descendant", -2, 0.5, 21],
+    ])("sizes the label of %s like the generation one deeper", (_label, depth, x1, expected) => {
         const svg = createSvgStub();
         const { selection } = createMarriageSelection();
-        const config = createConfiguration({
-            fontSize: 22,
-            fontScale: 100,
-            numberOfInnerCircles: 3,
-        });
-        const datum = createDatum({ depth: 2 });
+        const config = createConfiguration();
+        const datum = createDatum({ depth, x1 });
 
         const marriage = new Marriage(svg, config, new Geometry(config), selection, datum);
 
-        // getFontSize now uses depth+1 internally: (22 - 3) * 100 / 100.0 = 19
-        expect(marriage.getFontSize(datum)).toBe(19);
+        expect(marriage.getFontSize(datum)).toBeCloseTo(expected, 4);
     });
 
-    it("adds 1 to font size for outer circles", () => {
+    it("caps the label of an outer generation to the width of the arc at the next generation", () => {
         const svg = createSvgStub();
         const { selection } = createMarriageSelection();
-        const config = createConfiguration({
-            fontSize: 22,
-            fontScale: 100,
-            numberOfInnerCircles: 3,
-        });
-        const datum = createDatum({ depth: 4 });
+        const config = createConfiguration();
+        const datum = createDatum({ depth: 4, x0: 0, x1: 0.01 });
 
         const marriage = new Marriage(svg, config, new Geometry(config), selection, datum);
 
-        // getFontSize now uses depth+1 internally: depth 5 >= numberOfInnerCircles + 1 (4), so fontSize = 23
-        // (23 - 5) * 100 / 100.0 = 18
-        expect(marriage.getFontSize(datum)).toBe(18);
+        // Depth 5 has the centre radius 345 and the arc spans 1 % of 180 degrees:
+        // 345 * 0.01 * PI * 0.55 / 2 lines. At the radius of depth 4, 285, the result would be 2.46.
+        expect(marriage.getFontSize(datum)).toBeCloseTo(2.9805, 3);
     });
 });

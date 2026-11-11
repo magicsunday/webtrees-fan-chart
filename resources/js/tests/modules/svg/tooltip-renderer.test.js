@@ -215,6 +215,22 @@ describe("TooltipRenderer", () => {
         expect(div.node().querySelector(".image")).toBeNull();
     });
 
+    // The display mode only controls the images in the arcs. The tooltip does not read it, so the
+    // photo stays when the mode is names only and when the mode is images only.
+    it.each([
+        ["names only", { showImages: false, showNames: true }],
+        ["images only", { showImages: true, showNames: false }],
+        ["names and images", { showImages: true, showNames: true }],
+    ])("shows the photo in the tooltip for the display mode %s", (_label, displayMode) => {
+        renderer = build(displayMode);
+        renderer.setTooltipHtml(
+            event,
+            createDatum({ thumbnail: "photo.jpg", silhouette: "silhouette.svg" }),
+        );
+
+        expect(div.node().querySelector(".image img").getAttribute("src")).toBe("photo.jpg");
+    });
+
     it("shows no photo when the thumbnail is the silhouette placeholder", () => {
         renderer.setTooltipHtml(
             event,

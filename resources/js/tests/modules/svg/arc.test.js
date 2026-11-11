@@ -6,7 +6,7 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
 
 const { appendArc } = await import("resources/js/modules/svg/arc");
 
-const createParentSelection = (isNew = false) => {
+const createParentSelection = () => {
     const styles = {};
     const path = {
         attr: jest.fn(function () {
@@ -25,7 +25,6 @@ const createParentSelection = (isNew = false) => {
     };
     const parent = {
         append: jest.fn(() => arcGroup),
-        classed: jest.fn((name) => (name === "new" ? isNew : false)),
     };
 
     return { parent, arcGroup, path, styles };
@@ -33,15 +32,15 @@ const createParentSelection = (isNew = false) => {
 
 describe("appendArc", () => {
     test("sets fill color when provided", () => {
-        const { parent, styles } = createParentSelection(false);
+        const { parent, styles } = createParentSelection();
 
         appendArc(parent, jest.fn(), "#ff0000");
 
         expect(styles.fill).toBe("#ff0000");
     });
 
-    test("sets neither fill nor opacity when not new and no color", () => {
-        const { parent, path } = createParentSelection(false);
+    test("sets no style when no color is given", () => {
+        const { parent, path } = createParentSelection();
 
         appendArc(parent, jest.fn(), null);
 
@@ -49,7 +48,7 @@ describe("appendArc", () => {
     });
 
     test("appends g.arc group with path using arc generator", () => {
-        const { parent, arcGroup } = createParentSelection(false);
+        const { parent, arcGroup } = createParentSelection();
         const arcGenerator = jest.fn();
 
         appendArc(parent, arcGenerator, null);
