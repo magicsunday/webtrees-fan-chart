@@ -47,13 +47,20 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function array_diff;
+use function array_keys;
+use function array_values;
 use function json_decode;
+use function parse_str;
+use function parse_url;
 use function preg_match;
 
 use const JSON_THROW_ON_ERROR;
+use const PHP_URL_QUERY;
 
 /**
  * Drives the request entry points of the module, the page and chart request of handle() and the
@@ -71,6 +78,29 @@ final class ModuleRequestTest extends TestCase
     use ModuleSettingsFixtureTrait;
 
     private const int TREE_ID = 7;
+
+    /**
+     * A value for every setting of the form that the chart URLs carry, each different from the
+     * built-in default of its setting, so a setting that a URL leaves out shows as the default or as
+     * a missing key. The fan degree stays below the ceiling that applies while descendants are shown.
+     */
+    private const array SETTINGS = [
+        'generations'             => '4',
+        'fanDegree'               => '250',
+        'fontScale'               => '120',
+        'hideEmptySegments'       => '0',
+        'showFamilyColors'        => '0',
+        'showPlaces'              => '1',
+        'showParentMarriageDates' => '1',
+        'showImages'              => '1',
+        'showNames'               => '0',
+        'showNicknames'           => '1',
+        'innerArcs'               => '4',
+        'paternalColor'           => '#112233',
+        'maternalColor'           => '#445566',
+        'showDescendants'         => '1',
+        'showDetailPanel'         => '1',
+    ];
 
     /**
      * The tree of the request, which the people of the test belong to.
@@ -204,6 +234,87 @@ final class ModuleRequestTest extends TestCase
     }
 
     /**
+     * The page tells the script which URL loads the chart partial. That URL asks for the partial
+     * with the ajax flag and names the person and every setting of the request, so the partial that
+     * the script fetches is the chart of the page and not the page shell again.
+     */
+    #[Test]
+    public function thePageNamesTheChartPartialInItsAjaxUrl(): void
+    {
+        // The script of the page is pushed onto a stack, which the layout of the test does not print.
+        View::stack('javascript');
+
+        $this->createModule()->handle($this->chartRequest($this->createChartIndividual(), false, self::SETTINGS));
+
+        self::assertSame(
+            1,
+            preg_match('/ajaxUrl:\s+("(?:[^"\\\\]|\\\\.)*")/', View::stack('javascript'), $matches),
+            'the page hands an ajax URL to the script'
+        );
+
+        $url = json_decode($matches[1], true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertIsString($url);
+        self::assertStringStartsWith('/route/webtrees-fan-chart?', $url);
+
+        $query = $this->queryOf($url);
+
+        self::assertSame('1', $query['ajax'] ?? null);
+        self::assertSame('I1', $query['xref'] ?? null);
+        self::assertSame('main', $query['tree'] ?? null);
+
+        foreach (self::SETTINGS as $key => $value) {
+            self::assertSame($value, $query[$key] ?? null, 'the setting ' . $key . ' travels with the URL');
+        }
+
+        self::assertSame(
+            [],
+            array_values(array_diff(array_keys($query), ['ajax', 'xref', 'tree', ...array_keys(self::SETTINGS)])),
+            'the URL carries no setting that the test does not know'
+        );
+    }
+
+    /**
+     * A form post is answered with a redirect to the pretty URL of the person that the post names.
+     * The URL carries the tree, the person and every setting that the post names, so the address bar
+     * shows the chart that was asked for and a reload shows the same chart again.
+     */
+    #[Test]
+    public function aFormPostIsRedirectedToThePrettyUrlOfThePerson(): void
+    {
+        $this->registerIndividual($this->createChartIndividual());
+
+        $request = (new ServerRequest(RequestMethodInterface::METHOD_POST, '/'))
+            ->withAttribute('tree', $this->tree)
+            ->withAttribute('user', self::createStub(UserInterface::class))
+            ->withAttribute('xref', 'I1')
+            ->withParsedBody(['xref' => 'I7', ...self::SETTINGS]);
+
+        $response = $this->createModule()->handle($request);
+
+        self::assertSame(302, $response->getStatusCode());
+
+        $location = $response->getHeaderLine('Location');
+
+        self::assertStringStartsWith('/route/webtrees-fan-chart?', $location);
+
+        $query = $this->queryOf($location);
+
+        self::assertSame('main', $query['tree'] ?? null);
+        self::assertSame('I7', $query['xref'] ?? null, 'the person comes from the body of the post');
+
+        foreach (self::SETTINGS as $key => $value) {
+            self::assertSame($value, $query[$key] ?? null, 'the setting ' . $key . ' is carried over');
+        }
+
+        self::assertSame(
+            [],
+            array_values(array_diff(array_keys($query), ['tree', 'xref', ...array_keys(self::SETTINGS)])),
+            'the URL carries no setting that the test does not know'
+        );
+    }
+
+    /**
      * The update action refuses a visitor while the chart is for members only.
      */
     #[Test]
@@ -251,6 +362,19 @@ final class ModuleRequestTest extends TestCase
 
         self::assertSame('Fan chart of Person I1', $payload['title']);
         self::assertSame('I1', $payload['data']['data']['xref']);
+    }
+
+    /**
+     * Returns the query parameters of a URL.
+     *
+     * @return array<string, string>
+     */
+    private function queryOf(string $url): array
+    {
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+
+        /** @var array<string, string> $query */
+        return $query;
     }
 
     /**
@@ -330,13 +454,15 @@ final class ModuleRequestTest extends TestCase
     /**
      * Builds the GET request of the chart page or of the chart partial for the person that the
      * factory finds, or for no person.
+     *
+     * @param array<string, string> $settings Further query parameters, the settings of the form
      */
-    private function chartRequest(?Individual $individual, bool $ajax): ServerRequestInterface
+    private function chartRequest(?Individual $individual, bool $ajax, array $settings = []): ServerRequestInterface
     {
         $this->registerIndividual($individual);
 
         return $this->request()
-            ->withQueryParams($ajax ? ['ajax' => '1'] : [])
+            ->withQueryParams($ajax ? ['ajax' => '1'] + $settings : $settings)
             ->withAttribute('xref', 'I1');
     }
 
@@ -381,8 +507,9 @@ final class ModuleRequestTest extends TestCase
         $theme->method('stylesheets')->willReturn(['/theme.css']);
 
         RoutingFixture::register([
-            ModuleThemeInterface::class   => $theme,
-            ServerRequestInterface::class => new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            ModuleThemeInterface::class     => $theme,
+            ServerRequestInterface::class   => new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            ResponseFactoryInterface::class => new HttpFactory(),
         ]);
     }
 
