@@ -33,6 +33,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 
 use function ksort;
+use function sort;
 use function view;
 
 /**
@@ -102,6 +103,31 @@ final class ModuleTest extends TestCase
         ]);
 
         self::assertStringContainsString('id="booted-help-popover"', $markup);
+    }
+
+    /**
+     * The chart is reachable on the pretty URL of a person and accepts the form post that the options
+     * form sends to that same URL. A route that moves or that lost the post would break bookmarks,
+     * the links of the chart menu and the options form.
+     */
+    #[Test]
+    public function bootRegistersTheChartRouteForGetAndPost(): void
+    {
+        $routeMap = RoutingFixture::register([ResponseFactoryInterface::class => new HttpFactory()]);
+
+        $module = new Module(self::createStub(ChartService::class), new DataFacade());
+        $module->setName('webtrees-fan-chart');
+        $module->boot();
+
+        $route = $routeMap->getRoute('webtrees-fan-chart');
+
+        self::assertSame('/tree/{tree}/webtrees-fan-chart/{xref}', $route->path);
+
+        $methods = $route->allows;
+
+        sort($methods);
+
+        self::assertSame([RequestMethodInterface::METHOD_GET, RequestMethodInterface::METHOD_POST], $methods);
     }
 
     /**

@@ -33,6 +33,7 @@ use function array_filter;
 use function array_keys;
 use function array_map;
 use function count;
+use function range;
 use function str_contains;
 
 /**
@@ -109,51 +110,82 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Ensures GET requests fall back to configured defaults when parameters are
-     * absent.
+     * Every setting of the chart with the key under which the request carries it, a stored preference
+     * that differs from the built-in default and from the posted value, and what the configuration
+     * returns for each. The key of the preference is the key of the request with the prefix of the
+     * administration, so one row pins both names. The place format is read from the preference only,
+     * so a posted value changes nothing.
+     *
+     * @return array<string, array{string, Closure(Configuration): (bool|int|string|PlaceFormatChoice), string, string, bool|int|string|PlaceFormatChoice, bool|int|string|PlaceFormatChoice}>
+     */
+    public static function settingRoundTripProvider(): array
+    {
+        return [
+            'generations'             => ['generations', static fn (Configuration $configuration): int => $configuration->getGenerations(), '8', '4', 8, 4],
+            'fontScale'               => ['fontScale', static fn (Configuration $configuration): int => $configuration->getFontScale(), '125', '120', 125, 120],
+            'fanDegree'               => ['fanDegree', static fn (Configuration $configuration): int => $configuration->getFanDegree(), '270', '300', 270, 300],
+            'hideEmptySegments'       => ['hideEmptySegments', static fn (Configuration $configuration): bool => $configuration->getHideEmptySegments(), '0', '1', false, true],
+            'showFamilyColors'        => ['showFamilyColors', static fn (Configuration $configuration): bool => $configuration->getShowFamilyColors(), '0', '1', false, true],
+            'showParentMarriageDates' => ['showParentMarriageDates', static fn (Configuration $configuration): bool => $configuration->getShowParentMarriageDates(), '1', '0', true, false],
+            'showPlaces'              => ['showPlaces', static fn (Configuration $configuration): bool => $configuration->getShowPlaces(), '1', '0', true, false],
+            'showImages'              => ['showImages', static fn (Configuration $configuration): bool => $configuration->getShowImages(), '1', '0', true, false],
+            'showNames'               => ['showNames', static fn (Configuration $configuration): bool => $configuration->getShowNames(), '0', '1', false, true],
+            'showNicknames'           => ['showNicknames', static fn (Configuration $configuration): bool => $configuration->getShowNicknames(), '1', '0', true, false],
+            'showDescendants'         => ['showDescendants', static fn (Configuration $configuration): bool => $configuration->getShowDescendants(), '1', '0', true, false],
+            'innerArcs'               => ['innerArcs', static fn (Configuration $configuration): int => $configuration->getInnerArcs(), '4', '1', 4, 1],
+            'hideSvgExport'           => ['hideSvgExport', static fn (Configuration $configuration): bool => $configuration->getHideSvgExport(), '1', '0', true, false],
+            'hidePngExport'           => ['hidePngExport', static fn (Configuration $configuration): bool => $configuration->getHidePngExport(), '1', '0', true, false],
+            'detailedDateGenerations' => ['detailedDateGenerations', static fn (Configuration $configuration): int => $configuration->getDetailedDateGenerations(), '5', '4', 5, 4],
+            'paternalColor'           => ['paternalColor', static fn (Configuration $configuration): string => $configuration->getPaternalColor(), '#aabbcc', '#112233', '#aabbcc', '#112233'],
+            'maternalColor'           => ['maternalColor', static fn (Configuration $configuration): string => $configuration->getMaternalColor(), '#ddeeff', '#445566', '#ddeeff', '#445566'],
+            'placeFormat'             => ['placeFormat', static fn (Configuration $configuration): PlaceFormatChoice => $configuration->getPlaceFormatChoice(), 'levels-2', 'levels-1', PlaceFormatChoice::Levels2, PlaceFormatChoice::Levels2],
+        ];
+    }
+
+    /**
+     * A setting that the request does not carry takes the value that the administration stored.
+     *
+     * @param Closure(Configuration): (bool|int|string|PlaceFormatChoice) $read Reads the setting under test
      */
     #[Test]
-    public function queriesUseDefaultsWhenMissingParameters(): void
-    {
-        $request = new ServerRequest(RequestMethodInterface::METHOD_GET, '/');
+    #[DataProvider('settingRoundTripProvider')]
+    public function aSettingWithoutRequestValueTakesTheStoredPreference(
+        string $key,
+        Closure $read,
+        string $stored,
+        string $posted,
+        bool|int|string|PlaceFormatChoice $fromStored,
+        bool|int|string|PlaceFormatChoice $fromPost,
+    ): void {
+        $configuration = new Configuration(
+            new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            $this->createModuleWithPreferences(['default_' . $key => $stored])
+        );
 
-        $module = $this->createModuleWithPreferences([
-            'default_generations'             => '8',
-            'default_fontScale'               => '125',
-            'default_fanDegree'               => '270',
-            'default_hideEmptySegments'       => '1',
-            'default_showFamilyColors'        => '1',
-            'default_showParentMarriageDates' => '1',
-            'default_showPlaces'              => '1',
-            'default_placeFormat'             => 'levels-2',
-            'default_showImages'              => '1',
-            'default_showNames'               => '0',
-            'default_innerArcs'               => '2',
-            'default_hideSvgExport'           => '1',
-            'default_hidePngExport'           => '1',
-            'default_detailedDateGenerations' => '5',
-            'default_paternalColor'           => '#aabbcc',
-            'default_maternalColor'           => '#ddeeff',
-        ]);
+        self::assertSame($fromStored, $read($configuration));
+    }
 
-        $configuration = new Configuration($request, $module);
+    /**
+     * A value of the posted form wins over the stored preference.
+     *
+     * @param Closure(Configuration): (bool|int|string|PlaceFormatChoice) $read Reads the setting under test
+     */
+    #[Test]
+    #[DataProvider('settingRoundTripProvider')]
+    public function aPostedSettingWinsOverTheStoredPreference(
+        string $key,
+        Closure $read,
+        string $stored,
+        string $posted,
+        bool|int|string|PlaceFormatChoice $fromStored,
+        bool|int|string|PlaceFormatChoice $fromPost,
+    ): void {
+        $configuration = new Configuration(
+            (new ServerRequest(RequestMethodInterface::METHOD_POST, '/'))->withParsedBody([$key => $posted]),
+            $this->createModuleWithPreferences(['default_' . $key => $stored])
+        );
 
-        self::assertSame(8, $configuration->getGenerations());
-        self::assertSame(125, $configuration->getFontScale());
-        self::assertSame(270, $configuration->getFanDegree());
-        self::assertTrue($configuration->getHideEmptySegments());
-        self::assertTrue($configuration->getShowFamilyColors());
-        self::assertTrue($configuration->getShowParentMarriageDates());
-        self::assertTrue($configuration->getShowPlaces());
-        self::assertSame(PlaceFormatChoice::Levels2, $configuration->getPlaceFormatChoice());
-        self::assertTrue($configuration->getShowImages());
-        self::assertFalse($configuration->getShowNames());
-        self::assertSame(2, $configuration->getInnerArcs());
-        self::assertTrue($configuration->getHideSvgExport());
-        self::assertTrue($configuration->getHidePngExport());
-        self::assertSame(5, $configuration->getDetailedDateGenerations());
-        self::assertSame('#aabbcc', $configuration->getPaternalColor());
-        self::assertSame('#ddeeff', $configuration->getMaternalColor());
+        self::assertSame($fromPost, $read($configuration));
     }
 
     /**
@@ -492,79 +524,6 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * Ensures POSTed values are validated against allowed ranges and sanitised.
-     */
-    #[Test]
-    public function postRequestsAreValidatedAgainstRanges(): void
-    {
-        $request = new ServerRequest(
-            RequestMethodInterface::METHOD_POST,
-            '/',
-            [],
-            null,
-            '1.1'
-        );
-
-        $request = $request->withParsedBody([
-            'generations'             => '4',
-            'fontScale'               => '120',
-            'fanDegree'               => '300',
-            'hideEmptySegments'       => '1',
-            'showFamilyColors'        => '1',
-            'showPlaces'              => '1',
-            'placeFormat'             => 'levels-2',
-            'showParentMarriageDates' => '1',
-            'showImages'              => '1',
-            'showNames'               => '0',
-            'innerArcs'               => '1',
-            'hideSvgExport'           => '0',
-            'hidePngExport'           => '1',
-            'detailedDateGenerations' => '4',
-            'paternalColor'           => '#112233',
-            'maternalColor'           => '#445566',
-        ]);
-
-        $module = $this->createModuleWithPreferences([
-            'default_generations'             => '6',
-            'default_fontScale'               => '100',
-            'default_fanDegree'               => '210',
-            'default_hideEmptySegments'       => '0',
-            'default_showFamilyColors'        => '0',
-            'default_showPlaces'              => '0',
-            'default_placeFormat'             => 'levels-1',
-            'default_showParentMarriageDates' => '0',
-            'default_showImages'              => '0',
-            'default_showNames'               => '1',
-            'default_innerArcs'               => '3',
-            'default_hideSvgExport'           => '0',
-            'default_hidePngExport'           => '0',
-            'default_detailedDateGenerations' => '3',
-            'default_paternalColor'           => '#70a9cf',
-            'default_maternalColor'           => '#d06f94',
-        ]);
-
-        $configuration = new Configuration($request, $module);
-
-        self::assertSame(4, $configuration->getGenerations());
-        self::assertSame(120, $configuration->getFontScale());
-        self::assertSame(300, $configuration->getFanDegree());
-        self::assertTrue($configuration->getHideEmptySegments());
-        self::assertTrue($configuration->getShowFamilyColors());
-        self::assertTrue($configuration->getShowPlaces());
-        self::assertSame(PlaceFormatChoice::Levels2, $configuration->getSubmittedPlaceFormatChoice());
-        self::assertSame(PlaceFormatChoice::Levels1, $configuration->getPlaceFormatChoice());
-        self::assertTrue($configuration->getShowParentMarriageDates());
-        self::assertTrue($configuration->getShowImages());
-        self::assertFalse($configuration->getShowNames());
-        self::assertSame(1, $configuration->getInnerArcs());
-        self::assertFalse($configuration->getHideSvgExport());
-        self::assertTrue($configuration->getHidePngExport());
-        self::assertSame(4, $configuration->getDetailedDateGenerations());
-        self::assertSame('#112233', $configuration->getPaternalColor());
-        self::assertSame('#445566', $configuration->getMaternalColor());
-    }
-
-    /**
      * A stored legacy integer preference keeps working after the upgrade: this is
      * every installation that configured the option before the format model
      * existed.
@@ -895,8 +854,13 @@ final class ConfigurationTest extends TestCase
         $fontScale   = static fn (Configuration $configuration): int => $configuration->getFontScale();
         $innerArcs   = static fn (Configuration $configuration): int => $configuration->getInnerArcs();
         $fanDegree   = static fn (Configuration $configuration): int => $configuration->getFanDegree();
+        $detailed    = static fn (Configuration $configuration): int => $configuration->getDetailedDateGenerations();
 
         return [
+            'detailed dates at the minimum'                 => [$detailed, ['detailedDateGenerations' => '0'], 0],
+            'detailed dates below the minimum'              => [$detailed, ['detailedDateGenerations' => '-1'], 4],
+            'detailed dates at the maximum'                 => [$detailed, ['detailedDateGenerations' => '10'], 10],
+            'detailed dates above the maximum'              => [$detailed, ['detailedDateGenerations' => '11'], 4],
             'generations at the minimum'                    => [$generations, ['generations' => '2'], 2],
             'generations below the minimum'                 => [$generations, ['generations' => '1'], 7],
             'generations at the maximum'                    => [$generations, ['generations' => '10'], 10],
@@ -935,14 +899,70 @@ final class ConfigurationTest extends TestCase
         $configuration = new Configuration(
             (new ServerRequest(RequestMethodInterface::METHOD_GET, '/'))->withQueryParams($query),
             $this->createModuleWithPreferences([
-                'default_generations' => '7',
-                'default_fontScale'   => '90',
-                'default_innerArcs'   => '2',
-                'default_fanDegree'   => '200',
+                'default_generations'             => '7',
+                'default_fontScale'               => '90',
+                'default_innerArcs'               => '2',
+                'default_fanDegree'               => '200',
+                'default_detailedDateGenerations' => '4',
             ])
         );
 
         self::assertSame($expected, $read($configuration));
+    }
+
+    /**
+     * The administration offers one choice per number of detailed generations, from none up to the
+     * deepest generation of the chart, and the keys are the values that the setting accepts.
+     */
+    #[Test]
+    public function theDetailedDateChoicesCoverTheWholeRangeOfTheSetting(): void
+    {
+        $configuration = new Configuration(
+            new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            $this->createModuleWithPreferences([])
+        );
+
+        self::assertSame(range(0, Configuration::MAX_GENERATIONS), array_keys($configuration->getDetailedDateGenerationsList()));
+    }
+
+    /**
+     * The toggles of the form that fall back to a module preference, with the key under which the
+     * administration stores it. A toggle that is read under another key stays off while the
+     * preference is on, so the wrong key shows.
+     *
+     * @return array<string, array{string, Closure(Configuration): bool}>
+     */
+    public static function togglePreferenceKeyProvider(): array
+    {
+        return [
+            'show nicknames'   => ['default_showNicknames', static fn (Configuration $configuration): bool => $configuration->getShowNicknames()],
+            'show descendants' => ['default_showDescendants', static fn (Configuration $configuration): bool => $configuration->getShowDescendants()],
+        ];
+    }
+
+    /**
+     * A toggle that the request does not carry takes the value that the administration stored for it.
+     *
+     * @param string                       $preferenceKey The key of the stored preference
+     * @param Closure(Configuration): bool $read          Reads the toggle under test
+     */
+    #[Test]
+    #[DataProvider('togglePreferenceKeyProvider')]
+    public function aToggleWithoutRequestValueTakesTheStoredPreference(string $preferenceKey, Closure $read): void
+    {
+        $withPreference = new Configuration(
+            new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            $this->createModuleWithPreferences([$preferenceKey => '1'])
+        );
+
+        self::assertTrue($read($withPreference));
+
+        $withoutPreference = new Configuration(
+            new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            $this->createModuleWithPreferences([])
+        );
+
+        self::assertFalse($read($withoutPreference), 'the toggle is off until the administration turns it on');
     }
 
     /**

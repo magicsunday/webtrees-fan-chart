@@ -94,4 +94,23 @@ final class NodeTest extends TestCase
         self::assertArrayHasKey('facts', $payload);
         self::assertSame([null, null], $payload['facts']);
     }
+
+    /**
+     * The tooltip of the chart script reads the full dates of a person under the keys of the
+     * payload, so a renamed key leaves the tooltip with the short date. Each date has a value of
+     * its own, so a key that carries the value of another date is found.
+     */
+    #[Test]
+    public function theFullDatesReachThePayloadUnderTheKeysThatTheTooltipReads(): void
+    {
+        $payload = (new NodeData())
+            ->setBirthDateFull('born in full')
+            ->setDeathDateFull('died in full')
+            ->setMarriageDateFull('married in full')
+            ->jsonSerialize();
+
+        self::assertSame('born in full', $payload['birthDateFull']);
+        self::assertSame('died in full', $payload['deathDateFull']);
+        self::assertSame('married in full', $payload['marriageDateFull']);
+    }
 }

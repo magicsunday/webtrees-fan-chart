@@ -494,6 +494,159 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
+     * A family whose partner is unknown but that has visible children keeps a partner arc without a
+     * person, so the children have a place in the chart. The arc is numbered between the root and
+     * the children and carries the unknown sex.
+     */
+    #[Test]
+    public function anUnknownPartnerWithChildrenGetsAnArcOfItsOwn(): void
+    {
+        $tree   = $this->createDescendantTree();
+        $child  = $this->createPerson($tree, 'I3', 'M', '1 JAN 1930', '1 JAN 2010');
+        $family = $this->createDescendantFamily(null, [$child], '');
+
+        $rootData = $this->buildDescendantRoot($tree, $family, [])->jsonSerialize();
+
+        self::assertArrayNotHasKey('unassignedChildren', $rootData, 'the children hang below the partner arc');
+        self::assertArrayHasKey('partners', $rootData);
+        self::assertCount(1, $rootData['partners']);
+
+        $partner     = $rootData['partners'][0];
+        $partnerData = $partner->getData()->jsonSerialize();
+
+        self::assertSame(2, $partnerData['id']);
+        self::assertSame(-1, $partnerData['generation']);
+        self::assertSame('U', $partnerData['sex']);
+
+        $children = $partner->jsonSerialize()['children'] ?? [];
+
+        self::assertCount(1, $children);
+
+        $childData = $children[0]->getData()->jsonSerialize();
+
+        self::assertSame('I3', $childData['xref']);
+        self::assertSame(3, $childData['id']);
+    }
+
+    /**
+     * A family without a partner and without children shows nothing, neither a partner arc nor
+     * unassigned children.
+     */
+    #[Test]
+    public function aFamilyWithoutPartnerAndChildrenIsLeftOut(): void
+    {
+        $tree   = $this->createDescendantTree();
+        $family = $this->createDescendantFamily(null, [], '');
+
+        $rootData = $this->buildDescendantRoot($tree, $family, [])->jsonSerialize();
+
+        self::assertArrayNotHasKey('partners', $rootData);
+        self::assertArrayNotHasKey('unassignedChildren', $rootData);
+    }
+
+    /**
+     * The marriage date of the partner arc is the one of the family that the arc belongs to. The arc
+     * sits next to the root, so its date is formatted like the date of the root, in full while the
+     * innermost generation shows full dates and as the bare year otherwise. A family without a usable
+     * date leaves the field empty.
+     *
+     * @return array<string, array{string, string, string}>
+     */
+    public static function partnerMarriageDateProvider(): array
+    {
+        return [
+            'full date of the innermost generation' => ['1', '1 JAN 1925', '1/1/1925'],
+            'year only without detailed dates'      => ['0', '1 JAN 1925', '1925'],
+            'family without a marriage date'        => ['1', '', ''],
+        ];
+    }
+
+    /**
+     * The partner arc carries the marriage date of its family.
+     */
+    #[Test]
+    #[DataProvider('partnerMarriageDateProvider')]
+    public function thePartnerArcCarriesTheMarriageDateOfItsFamily(
+        string $detailedDateGenerations,
+        string $marriage,
+        string $expected,
+    ): void {
+        $tree   = $this->createDescendantTree();
+        $spouse = $this->createPerson($tree, 'I2', 'F', '1 JAN 1902', '1 JAN 1985');
+        $family = $this->createDescendantFamily($spouse, [], $marriage);
+
+        $rootData = $this->buildDescendantRoot(
+            $tree,
+            $family,
+            ['detailedDateGenerations' => $detailedDateGenerations]
+        )->jsonSerialize();
+
+        $partners = $rootData['partners'] ?? [];
+
+        self::assertCount(1, $partners);
+        self::assertSame($expected, $partners[0]->getData()->jsonSerialize()['marriageDate']);
+        self::assertSame('', $partners[0]->getData()->jsonSerialize()['marriageDateOfParents']);
+    }
+
+    /**
+     * Outer generations without places show the compact lifetime, the generations up to the
+     * configured number show the full lines of birth and death. The compact form is the default,
+     * because no generation is detailed until the administrator asks for it.
+     *
+     * @return array<string, array{string, string, string}>
+     */
+    public static function timespanByGenerationProvider(): array
+    {
+        return [
+            'default has no detailed generation'        => ['0', '1900–1980', '1870–1940'],
+            'the first generation is the only detailed' => ['1', "\u{2605} 1/1/1900\n\u{2020} 1/1/1980", '1870–1940'],
+            'both generations detailed'                 => ['2', "\u{2605} 1/1/1900\n\u{2020} 1/1/1980", "\u{2605} 1/1/1870\n\u{2020} 1/1/1940"],
+        ];
+    }
+
+    /**
+     * The timespan of a person is compact beyond the detailed generations.
+     */
+    #[Test]
+    #[DataProvider('timespanByGenerationProvider')]
+    public function theTimespanIsCompactBeyondTheDetailedGenerations(
+        string $detailedDateGenerations,
+        string $expectedRoot,
+        string $expectedFather,
+    ): void {
+        $tree   = $this->createDescendantTree();
+        $father = $this->createPerson($tree, 'I2', 'M', '1 JAN 1870', '1 JAN 1940');
+        $root   = $this->createPerson(
+            $tree,
+            'I1',
+            'M',
+            '1 JAN 1900',
+            '1 JAN 1980',
+            null,
+            '',
+            '',
+            $this->createParentFamily($father, null)
+        );
+
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
+        $module->method('name')->willReturn('webtrees-fan-chart');
+
+        $rootNode = (new DataFacade())->createTreeStructure(
+            $module,
+            $this->createConfiguration(['detailedDateGenerations' => $detailedDateGenerations]),
+            $root
+        );
+
+        self::assertInstanceOf(Node::class, $rootNode);
+
+        $parents = $rootNode->jsonSerialize()['parents'] ?? [];
+
+        self::assertCount(1, $parents);
+        self::assertSame($expectedRoot, $rootNode->getData()->jsonSerialize()['timespan']);
+        self::assertSame($expectedFather, $parents[0]->getData()->jsonSerialize()['timespan']);
+    }
+
+    /**
      * Without the detail panel the payload carries no facts, so the default chart
      * pays neither their size nor their database work.
      */
@@ -777,6 +930,62 @@ final class DataFacadeTest extends TestCase
     }
 
     /**
+     * Creates the tree of the descendant tests.
+     */
+    private function createDescendantTree(): Tree
+    {
+        $tree = self::createStub(Tree::class);
+        $tree->method('name')->willReturn('main');
+        $tree->method('getPreference')->willReturn('1');
+
+        return $tree;
+    }
+
+    /**
+     * Creates a spouse family of the root without a pointer to a hidden partner.
+     *
+     * @param Individual|null  $spouse   The visible partner, or null for a family without a known partner
+     * @param list<Individual> $children The visible children
+     * @param string           $marriage The GEDCOM marriage date of the family, empty for none
+     */
+    private function createDescendantFamily(?Individual $spouse, array $children, string $marriage): Family
+    {
+        $family = self::createStub(Family::class);
+        $family->method('xref')->willReturn('F1');
+        $family->method('husband')->willReturn(null);
+        $family->method('wife')->willReturn(null);
+        $family->method('spouse')->willReturn($spouse);
+        $family->method('children')->willReturn(new Collection($children));
+        $family->method('getMarriageDate')->willReturn($this->createDate($marriage));
+        $family->method('facts')->willReturn(new Collection());
+
+        return $family;
+    }
+
+    /**
+     * Builds the chart of a root with the given spouse family and returns the node of the root.
+     *
+     * @param array<string, string> $query The request parameters that differ from the default chart
+     */
+    private function buildDescendantRoot(Tree $tree, Family $family, array $query): Node
+    {
+        $root = $this->createPerson($tree, 'I1', 'M', '1 JAN 1900', '1 JAN 1980', $family);
+
+        $module = self::createStubForIntersectionOfInterfaces([ModuleCustomInterface::class, ModuleAssetUrlInterface::class]);
+        $module->method('name')->willReturn('webtrees-fan-chart');
+
+        $rootNode = (new DataFacade())->createTreeStructure(
+            $module,
+            $this->createConfiguration($query + ['showDescendants' => '1']),
+            $root
+        );
+
+        self::assertInstanceOf(Node::class, $rootNode);
+
+        return $rootNode;
+    }
+
+    /**
      * Builds the chart for one root person and returns the data of its node.
      *
      * @param array<string, string> $query The request parameters that differ from the default chart
@@ -861,7 +1070,7 @@ final class DataFacadeTest extends TestCase
     /**
      * Creates the family of two parents.
      */
-    private function createParentFamily(Individual $father, Individual $mother): Family
+    private function createParentFamily(?Individual $father, ?Individual $mother): Family
     {
         $family = self::createStub(Family::class);
         $family->method('husband')->willReturn($father);

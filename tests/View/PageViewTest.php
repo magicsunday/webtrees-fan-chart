@@ -25,6 +25,9 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function array_diff;
+use function array_keys;
+use function array_values;
 use function ob_get_clean;
 use function ob_start;
 use function substr_count;
@@ -56,6 +59,41 @@ final class PageViewTest extends TestCase
             'ajaxUrl:                        "https:\\/\\/example.test\\/ajax?a=\\u003C!--\\u003Cscript\\u003E\\u0026\\u0027\\u0022"',
             $output
         );
+    }
+
+    /**
+     * The options form is posted to the chart route, where the configuration reads the settings
+     * under their request keys. A field whose name is not such a key is submitted and silently
+     * ignored, and the chart then ignores the setting that the visitor changed. The check is one-way
+     * and collects every input, select and textarea with a name inside the form, the person selector,
+     * the sliders, the display mode radios and the checkboxes with their hidden twins. It does not
+     * demand that every request key has a field, because the display mode field stands for the two
+     * switches of the images and the names.
+     */
+    #[Test]
+    public function everyFieldOfTheOptionsFormIsNamedLikeARequestKeyOfTheConfiguration(): void
+    {
+        $xpath = MarkupFixture::xpathOf($this->render());
+        $names = [];
+
+        foreach (MarkupFixture::elements($xpath, '//form[@id="webtrees-fan-chart-form"]//*[self::input or self::select or self::textarea][@name]') as $field) {
+            $names[] = $field->getAttribute('name');
+        }
+
+        $configuration = new Configuration(
+            new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            $this->createModuleWithPreferences([])
+        );
+
+        // The person is read by the route, the display mode stands for the two switches of the images and
+        // the names, and the token belongs to the form post of webtrees.
+        $requestKeys = [...array_keys($configuration->getRouteToggleParams()), 'xref', 'displayMode', '_csrf'];
+
+        foreach (['xref', 'displayMode', 'generations', 'fontScale', 'showDetailPanel'] as $reached) {
+            self::assertContains($reached, $names, 'the collection reaches the field ' . $reached);
+        }
+
+        self::assertSame([], array_values(array_diff($names, $requestKeys)));
     }
 
     /**
