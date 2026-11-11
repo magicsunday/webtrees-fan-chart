@@ -66,7 +66,6 @@ export class FanChart {
      * @param {string}    options.nameAbbreviation
      * @param {boolean}   options.rtl
      * @param {number}    options.innerArcs
-     * @param {string[]}  options.cssFiles
      * @param {NodeDatum} options.data
      */
     constructor(selector, options) {

@@ -23,7 +23,6 @@ use Fisharebest\Webtrees\Http\Exceptions\HttpAccessDeniedException;
 use Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleChartInterface;
-use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Validator;
@@ -503,11 +502,7 @@ final class ModuleRequestTest extends TestCase
      */
     private function registerContainer(): void
     {
-        $theme = self::createStub(ModuleThemeInterface::class);
-        $theme->method('stylesheets')->willReturn(['/theme.css']);
-
         RoutingFixture::register([
-            ModuleThemeInterface::class     => $theme,
             ServerRequestInterface::class   => new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
             ResponseFactoryInterface::class => new HttpFactory(),
         ]);

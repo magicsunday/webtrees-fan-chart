@@ -65,7 +65,7 @@ final class ChartViewTest extends TestCase
 
     /**
      * Every JSON value of the script that can carry text is written with the tag, ampersand and
-     * quote characters as escapes, the labels, the style sheets, the asset URL and the abbreviation
+     * quote characters as escapes, the labels, the asset URL and the abbreviation
      * as well as the chart data. The generated element id is not JSON and stays as it is, as does
      * the integer of the generations.
      */
@@ -77,8 +77,7 @@ final class ChartViewTest extends TestCase
 
         $output = $this->render(
             null,
-            ['labels' => ['zoom' => $hostile, 'move' => '&'], 'nameAbbreviation' => $hostile],
-            [$hostile]
+            ['labels' => ['zoom' => $hostile, 'move' => '&'], 'nameAbbreviation' => $hostile]
         );
 
         self::assertStringNotContainsString('<!--', $output);
@@ -86,7 +85,6 @@ final class ChartViewTest extends TestCase
         self::assertStringContainsString('asset=1\\u0026hash=2', $output);
         self::assertStringContainsString('"zoom":"' . $escaped . '"', $output);
         self::assertStringContainsString('"move":"\\u0026"', $output);
-        self::assertStringContainsString('cssFiles: ["' . $escaped . '"]', $output);
         self::assertStringContainsString('nameAbbreviation: "' . $escaped . '"', $output);
         self::assertStringContainsString('-container-abc', $output);
         self::assertMatchesRegularExpression('/opts\.generations \?\? \d+;/', $output);
@@ -105,7 +103,7 @@ final class ChartViewTest extends TestCase
         self::assertStringNotContainsString('opts.showDetailPanel', $output);
 
         // The value is the one of the configuration, not a constant of the view
-        $enabled = $this->render(null, [], [], ['default_showDetailPanel' => '1']);
+        $enabled = $this->render(null, [], ['default_showDetailPanel' => '1']);
 
         self::assertStringContainsString('showDetailPanel: true,', $enabled);
     }
@@ -116,13 +114,11 @@ final class ChartViewTest extends TestCase
      *
      * @param Node|null             $chartData         The chart data tree
      * @param array<string, mixed>  $chartParamsChange Values that replace the chart parameters
-     * @param list<string>          $stylesheets       The style sheets of the SVG export
      * @param array<string, string> $preferences       The module preferences of the test
      */
     private function render(
         ?Node $chartData,
         array $chartParamsChange = [],
-        array $stylesheets = [],
         array $preferences = [],
     ): string {
         $javascript    = 'https://example.test/fan-chart.js?asset=1&hash=2';
@@ -138,8 +134,7 @@ final class ChartViewTest extends TestCase
             'labels'           => ['zoom' => 'Zoom', 'move' => 'Move'],
             ...$chartParamsChange,
         ];
-        $exportStylesheets = $stylesheets;
-        $data              = $chartData;
+        $data = $chartData;
 
         View::stack('javascript');
 

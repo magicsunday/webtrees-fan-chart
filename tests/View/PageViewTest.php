@@ -211,16 +211,15 @@ final class PageViewTest extends TestCase
             new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
             $this->createModuleWithPreferences([])
         );
-        $title             = 'Fan chart';
-        $moduleName        = ViewFixture::MODULE_NAME;
-        $individual        = self::createStub(Individual::class);
-        $tree              = self::createStub(Tree::class);
-        $chartParams       = [];
-        $id                = [];
-        $exportStylesheets = [];
-        $javascript        = 'https://example.test/fan-chart-page.js';
-        $stylesheets       = [];
-        $ajaxUrl           = $url;
+        $title       = 'Fan chart';
+        $moduleName  = ViewFixture::MODULE_NAME;
+        $individual  = self::createStub(Individual::class);
+        $tree        = self::createStub(Tree::class);
+        $chartParams = [];
+        $id          = [];
+        $javascript  = 'https://example.test/fan-chart-page.js';
+        $stylesheets = [];
+        $ajaxUrl     = $url;
 
         View::stack('styles');
         View::stack('javascript');
