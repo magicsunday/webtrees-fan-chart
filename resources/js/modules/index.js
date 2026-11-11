@@ -26,6 +26,16 @@ import { DetailPanel } from "@magicsunday/webtrees-chart-lib/chart-core";
 const detailPanels = new WeakMap();
 
 /**
+ * Controls the lifetime of the document and screen orientation listeners of the chart that was
+ * built last. The listeners belong to the page and not to the chart, so a chart that replaces
+ * another one ends the listeners of the old chart and the old chart is no longer reachable
+ * through them.
+ *
+ * @type {AbortController|null}
+ */
+let pageListeners = null;
+
+/**
  * Top-level entry point for the fan chart. Wires together the Configuration,
  * Chart, and DOM event listeners, then performs the initial draw.
  *
@@ -151,22 +161,37 @@ export class FanChart {
      * @private
      */
     addEventListeners() {
+        // The listeners of an earlier chart on this page end here
+        pageListeners?.abort();
+        pageListeners = new AbortController();
+
+        const { signal } = pageListeners;
+
         // Listen for fullscreen change event
-        document.addEventListener("fullscreenchange", () => {
-            if (document.fullscreenElement) {
-                // Add attribute to the body element to indicate fullscreen state
-                document.body.setAttribute("fullscreen", "");
-            } else {
-                document.body.removeAttribute("fullscreen");
-            }
+        document.addEventListener(
+            "fullscreenchange",
+            () => {
+                if (document.fullscreenElement) {
+                    // Add attribute to the body element to indicate fullscreen state
+                    document.body.setAttribute("fullscreen", "");
+                } else {
+                    document.body.removeAttribute("fullscreen");
+                }
 
-            this._chart.updateViewBox();
-        });
+                this._chart.updateViewBox();
+            },
+            { signal },
+        );
 
-        // Listen for orientation change event
-        screen.orientation.addEventListener("change", () => {
-            this._chart.updateViewBox();
-        });
+        // Listen for orientation change event. Browsers without the Screen Orientation API have
+        // no screen.orientation.
+        screen.orientation?.addEventListener(
+            "change",
+            () => {
+                this._chart.updateViewBox();
+            },
+            { signal },
+        );
     }
 
     /**

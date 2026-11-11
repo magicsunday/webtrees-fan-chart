@@ -226,6 +226,66 @@ describe("FanChart", () => {
     });
 });
 
+describe("FanChart page listeners", () => {
+    const markup =
+        '<div id="chart"></div><button id="centerButton"></button>' +
+        '<button id="exportPNG"></button><button id="exportSVG"></button>';
+
+    let originalOrientation;
+
+    beforeEach(() => {
+        document.body.innerHTML = markup;
+        chartInstances.length = 0;
+        panels.length = 0;
+        originalOrientation = Object.getOwnPropertyDescriptor(screen, "orientation");
+    });
+
+    afterEach(() => {
+        Object.defineProperty(screen, "orientation", originalOrientation);
+    });
+
+    it("lets a fullscreen change reach only the chart that was built last", () => {
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions());
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions());
+
+        const [stale, live] = chartInstances;
+
+        document.dispatchEvent(new Event("fullscreenchange"));
+
+        expect(stale.updateViewBox).not.toHaveBeenCalled();
+        expect(live.updateViewBox).toHaveBeenCalledTimes(1);
+    });
+
+    it("lets an orientation change reach only the chart that was built last", () => {
+        const orientation = new EventTarget();
+        Object.defineProperty(screen, "orientation", { configurable: true, value: orientation });
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions());
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions());
+
+        const [stale, live] = chartInstances;
+
+        orientation.dispatchEvent(new Event("change"));
+
+        expect(stale.updateViewBox).not.toHaveBeenCalled();
+        expect(live.updateViewBox).toHaveBeenCalledTimes(1);
+    });
+
+    it("builds a chart where the screen orientation API is missing", () => {
+        Object.defineProperty(screen, "orientation", { configurable: true, value: undefined });
+
+        expect(() => new FanChart("#chart", createOptions())).not.toThrow();
+
+        document.dispatchEvent(new Event("fullscreenchange"));
+
+        expect(chartInstances[0].updateViewBox).toHaveBeenCalledTimes(1);
+    });
+});
+
 describe("FanChart detail panel", () => {
     beforeEach(() => {
         document.body.innerHTML = "";
