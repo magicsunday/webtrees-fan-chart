@@ -45,6 +45,55 @@ function initRangeSlider(storage, id, suffix = "") {
 }
 
 /**
+ * Builds the AJAX URL of the chart from the current state of the browser storage. The initial
+ * load of the page and the reload of the descendants switch both use it, so a parameter cannot
+ * drift between the two. The stored settings are read from the storage when the URL is built.
+ *
+ * @param {Storage}  storage         The browser storage of the page
+ * @param {{ ajaxUrl: string, defaultShowNicknames?: boolean, defaultDetailedDateGenerations: number }} config The page configuration
+ * @param {boolean}  showDescendants Whether the chart shows the descendants
+ *
+ * @return {string}
+ */
+function buildAjaxUrl(storage, config, showDescendants) {
+    return buildChartAjaxUrl(config.ajaxUrl, {
+        query: [
+            {
+                key: "generations",
+                value:
+                    storage.read("generations") ??
+                    /** @type {HTMLInputElement|null} */ (document.getElementById("generations"))
+                        ?.value ??
+                    null,
+            },
+            {
+                // Admin-only preference with no client-side control, so always use the server
+                // default and never a possibly stale localStorage value left by an older module
+                // version that had a slider. It is not a client override, so the chartOptions
+                // global does not carry it either.
+                key: "detailedDateGenerations",
+                value: config.defaultDetailedDateGenerations,
+            },
+            { key: "showPlaces", value: storage.readBool("showPlaces"), mode: "boolean-1-0" },
+            { key: "showDescendants", value: showDescendants, mode: "boolean-1-or-delete" },
+            {
+                key: "showNicknames",
+                value: storage.readBool("showNicknames", config.defaultShowNicknames ?? null),
+                mode: "boolean-1-0",
+            },
+            {
+                // The server reads the facts of the panel only while its switch is on, so the
+                // stored state of the checkbox, which the form shows, has to reach the server
+                // with the request. It is not published in the chartOptions global.
+                key: "showDetailPanel",
+                value: storage.readBool("showDetailPanel"),
+                mode: "boolean-1-0",
+            },
+        ],
+    });
+}
+
+/**
  * Initialises the fan chart page: restores form values from localStorage, sets
  * up event listeners for interactive form elements, builds the initial AJAX
  * URL, and triggers the first chart data load.
@@ -209,42 +258,7 @@ export function initPage(config) {
     // chart.phtml reads chartOptions from it.
     setChartOptionsGlobal("WebtreesFanChart", chartOptions);
 
-    const ajaxUrl = buildChartAjaxUrl(config.ajaxUrl, {
-        query: [
-            {
-                key: "generations",
-                value:
-                    storage.read("generations") ??
-                    /** @type {HTMLInputElement|null} */ (document.getElementById("generations"))
-                        ?.value ??
-                    null,
-            },
-            {
-                // Admin-only preference with no client-side control, so always
-                // use the server default — never a (possibly stale) localStorage
-                // value left by an older module version that had a slider. Kept
-                // out of the published chartOptions global (it is not a client
-                // override). The toggle-rebuild path below resolves it the same way.
-                key: "detailedDateGenerations",
-                value: config.defaultDetailedDateGenerations,
-            },
-            { key: "showPlaces", value: chartOptions.showPlaces, mode: "boolean-1-0" },
-            {
-                key: "showDescendants",
-                value: Boolean(chartOptions.showDescendants),
-                mode: "boolean-1-or-delete",
-            },
-            { key: "showNicknames", value: chartOptions.showNicknames, mode: "boolean-1-0" },
-            {
-                // The server reads the facts of the panel only while its switch is on, so the
-                // stored state of the checkbox, which the form shows, has to reach the server
-                // with the request. It is not published in the chartOptions global.
-                key: "showDetailPanel",
-                value: storage.readBool("showDetailPanel"),
-                mode: "boolean-1-0",
-            },
-        ],
-    });
+    const ajaxUrl = buildAjaxUrl(storage, config, Boolean(chartOptions.showDescendants));
     setChartAjaxUrl("fan-chart-url", ajaxUrl);
     syncHelpMode(HELP_MODE_WITHOUT_PANEL);
 
@@ -288,37 +302,7 @@ export function initPage(config) {
             );
 
             const container = document.getElementById("fan-chart-url");
-            const newUrl = buildChartAjaxUrl(config.ajaxUrl, {
-                query: [
-                    {
-                        key: "generations",
-                        value:
-                            storage.read("generations") ??
-                            /** @type {HTMLInputElement|null} */ (
-                                document.getElementById("generations")
-                            )?.value ??
-                            null,
-                    },
-                    {
-                        // Admin-only preference — always the server default, never
-                        // a stale localStorage value (see the initial URL build above).
-                        key: "detailedDateGenerations",
-                        value: config.defaultDetailedDateGenerations,
-                    },
-                    { key: "showPlaces", value: storage.read("showPlaces"), mode: "boolean-1-0" },
-                    { key: "showDescendants", value: checked, mode: "boolean-1-or-delete" },
-                    {
-                        key: "showNicknames",
-                        value: storage.read("showNicknames") ?? config.defaultShowNicknames,
-                        mode: "boolean-1-0",
-                    },
-                    {
-                        key: "showDetailPanel",
-                        value: storage.readBool("showDetailPanel"),
-                        mode: "boolean-1-0",
-                    },
-                ],
-            });
+            const newUrl = buildAjaxUrl(storage, config, checked);
 
             setChartAjaxUrl("fan-chart-url", newUrl);
             syncHelpMode(HELP_MODE_WITHOUT_PANEL);
