@@ -56,6 +56,12 @@
     font-size: unset;
     display: flex;
     flex: auto;
+    flex-wrap: wrap;
+}
+
+/* The notice of a failed update takes a row of its own above the chart */
+.webtrees-fan-chart-container .fan-chart-update-notice {
+    flex: 0 0 100%;
 }
 
 .webtrees-fan-chart-container .rtl {
