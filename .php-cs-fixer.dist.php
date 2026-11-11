@@ -31,6 +31,7 @@ return $factory($header)
                 'node_modules',
             ])
             ->in([
+                __DIR__ . '/scripts/',
                 __DIR__ . '/src/',
                 __DIR__ . '/tests/',
                 __DIR__ . '/resources/views/',

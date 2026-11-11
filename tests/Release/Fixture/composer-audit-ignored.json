@@ -1,0 +1,130 @@
+{
+    "advisories": [],
+    "ignored-advisories": {
+        "guzzlehttp/guzzle": [
+            {
+                "advisoryId": "PKSA-gcrk-3vtt-1r14",
+                "packageName": "guzzlehttp/guzzle",
+                "affectedVersions": ">=8.0.0,<8.0.1|<7.15.2",
+                "title": "Guzzle: Noncanonical host can bypass host-based checks",
+                "cve": "CVE-2026-69246",
+                "link": "https://github.com/advisories/GHSA-v5mv-p594-2x33",
+                "reportedAt": "2026-08-03T21:07:26+00:00",
+                "sources": [
+                    {
+                        "name": "GitHub",
+                        "remoteId": "GHSA-v5mv-p594-2x33"
+                    }
+                ],
+                "severity": "high",
+                "ignoreReason": "UPSTREAM-PINNED: guzzlehttp/guzzle CVE-2026-69246, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version."
+            }
+        ],
+        "league/commonmark": [
+            {
+                "advisoryId": "PKSA-m2dq-1fhr-29b1",
+                "packageName": "league/commonmark",
+                "affectedVersions": ">=1.3.0,<=2.10.1",
+                "title": "league/commonmark: DisallowedRawHtml bypassed when a disallowed tag name ends the raw-HTML literal",
+                "cve": null,
+                "link": "https://github.com/advisories/GHSA-97jj-33gv-5xf9",
+                "reportedAt": "2026-09-30T15:36:33+00:00",
+                "sources": [
+                    {
+                        "name": "GitHub",
+                        "remoteId": "GHSA-97jj-33gv-5xf9"
+                    }
+                ],
+                "severity": "medium",
+                "ignoreReason": "UPSTREAM-PINNED: league/commonmark advisory without a CVE, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version."
+            }
+        ],
+        "league/flysystem": [
+            {
+                "advisoryId": "PKSA-w9tt-7782-78jx",
+                "packageName": "league/flysystem",
+                "affectedVersions": "<=3.35.2",
+                "title": "Flysystem: WhitespacePathNormalizer's control-character (CorruptedPathDetected) check is bypassed by malformed UTF-8 in the path, affecting every adapter",
+                "cve": "CVE-2026-102601",
+                "link": "https://github.com/advisories/GHSA-cxf4-7mrp-vvpr",
+                "reportedAt": "2026-09-29T18:10:14+00:00",
+                "sources": [
+                    {
+                        "name": "GitHub",
+                        "remoteId": "GHSA-cxf4-7mrp-vvpr"
+                    }
+                ],
+                "severity": "low",
+                "ignoreReason": "UPSTREAM-PINNED: league/flysystem CVE-2026-102601, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version."
+            }
+        ],
+        "symfony/cache": [
+            {
+                "advisoryId": "PKSA-z7t6-zt6p-wtng",
+                "packageName": "symfony/cache",
+                "affectedVersions": ">=2.0.0,<3.0.0|>=3.0.0,<4.0.0|>=4.0.0,<5.0.0|>=5.0.0,<5.1.0|>=5.1.0,<5.2.0|>=5.2.0,<5.3.0|>=5.3.0,<5.4.0|>=5.4.0,<5.4.52|>=6.0.0,<6.1.0|>=6.1.0,<6.2.0|>=6.2.0,<6.3.0|>=6.3.0,<6.4.0|>=6.4.0,<6.4.40|>=7.0.0,<7.1.0|>=7.1.0,<7.2.0|>=7.2.0,<7.3.0|>=7.3.0,<7.4.0|>=7.4.0,<7.4.12|>=8.0.0,<8.0.12",
+                "title": "CVE-2026-45073: SQL Injection in PdoAdapter::doClear() via Unsanitized $prefix",
+                "cve": "CVE-2026-45073",
+                "link": "https://symfony.com/cve-2026-45073",
+                "reportedAt": "2026-05-20T08:00:00+00:00",
+                "sources": [
+                    {
+                        "name": "GitHub",
+                        "remoteId": "GHSA-6qh9-h6wf-jgqc"
+                    },
+                    {
+                        "name": "FriendsOfPHP/security-advisories",
+                        "remoteId": "symfony/cache/CVE-2026-45073.yaml"
+                    }
+                ],
+                "severity": "medium",
+                "ignoreReason": "UPSTREAM-PINNED: symfony/cache CVE-2026-45073, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version."
+            }
+        ],
+        "symfony/expression-language": [
+            {
+                "advisoryId": "PKSA-vq1j-sc3k-jzzk",
+                "packageName": "symfony/expression-language",
+                "affectedVersions": ">=2.4.0,<3.0.0|>=3.0.0,<4.0.0|>=4.0.0,<5.0.0|>=5.0.0,<5.1.0|>=5.1.0,<5.2.0|>=5.2.0,<5.3.0|>=5.3.0,<5.4.0|>=5.4.0,<5.4.54|>=6.0.0,<6.1.0|>=6.1.0,<6.2.0|>=6.2.0,<6.3.0|>=6.3.0,<6.4.0|>=6.4.0,<6.4.48|>=7.0.0,<7.1.0|>=7.1.0,<7.2.0|>=7.2.0,<7.3.0|>=7.3.0,<7.4.0|>=7.4.0,<7.4.21|>=8.0.0,<8.1.0|>=8.1.0,<8.1.9",
+                "title": "CVE-2026-109449: Unbounded Nesting in the Expression Parser Lets Untrusted Expressions Crash the Process",
+                "cve": "CVE-2026-109449",
+                "link": "https://symfony.com/cve-2026-109449",
+                "reportedAt": "2026-10-14T08:00:00+00:00",
+                "sources": [
+                    {
+                        "name": "FriendsOfPHP/security-advisories",
+                        "remoteId": "symfony/expression-language/CVE-2026-109449.yaml"
+                    }
+                ],
+                "severity": null,
+                "ignoreReason": "UPSTREAM-PINNED: symfony/expression-language CVE-2026-109449, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version."
+            }
+        ],
+        "symfony/mailer": [
+            {
+                "advisoryId": "PKSA-28rh-rzzn-djk4",
+                "packageName": "symfony/mailer",
+                "affectedVersions": ">=2.0.0,<3.0.0|>=3.0.0,<4.0.0|>=4.0.0,<5.0.0|>=5.0.0,<5.1.0|>=5.1.0,<5.2.0|>=5.2.0,<5.3.0|>=5.3.0,<5.4.0|>=5.4.0,<5.4.52|>=6.0.0,<6.1.0|>=6.1.0,<6.2.0|>=6.2.0,<6.3.0|>=6.3.0,<6.4.0|>=6.4.0,<6.4.40|>=7.0.0,<7.1.0|>=7.1.0,<7.2.0|>=7.2.0,<7.3.0|>=7.3.0,<7.4.0|>=7.4.0,<7.4.12|>=8.0.0,<8.0.12",
+                "title": "CVE-2026-45068: Argument Injection in SendmailTransport via Dash-Prefixed Recipient Address",
+                "cve": "CVE-2026-45068",
+                "link": "https://symfony.com/cve-2026-45068",
+                "reportedAt": "2026-05-20T08:00:00+00:00",
+                "sources": [
+                    {
+                        "name": "GitHub",
+                        "remoteId": "GHSA-xx3c-qf5g-hc39"
+                    },
+                    {
+                        "name": "FriendsOfPHP/security-advisories",
+                        "remoteId": "symfony/mailer/CVE-2026-45068.yaml"
+                    }
+                ],
+                "severity": "medium",
+                "ignoreReason": "UPSTREAM-PINNED: symfony/mailer CVE-2026-45068, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version."
+            }
+        ]
+    },
+    "abandoned": [],
+    "filter": [],
+    "cooldown": []
+}
