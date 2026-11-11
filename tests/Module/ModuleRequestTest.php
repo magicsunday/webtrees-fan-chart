@@ -236,7 +236,8 @@ final class ModuleRequestTest extends TestCase
      * The browser finds the container of the chart by an id that the partial generates for each
      * answer, and it loads the bundle of the module version that the page was built for. A partial
      * without the id leaves the script without its container, and a wrong bundle name is a script
-     * that does not exist.
+     * that does not exist. The script reads the labels and the text direction of the chart parameters
+     * from the same answer.
      */
     #[Test]
     public function theChartPartialNamesItsContainerAndLoadsTheBundleOfTheModuleVersion(): void
@@ -245,6 +246,8 @@ final class ModuleRequestTest extends TestCase
         $body     = (string) $response->getBody();
 
         self::assertMatchesRegularExpression('/id="webtrees-fan-chart-container-[0-9a-f]+"/', $body);
+        self::assertMatchesRegularExpression('/labels: \{"[a-zA-Z]+":"[^"]+"/', $body);
+        self::assertStringContainsString('rtl: false,', $body);
         self::assertMatchesRegularExpression(
             '/import\("[^"]*js%2Ffan-chart-' . preg_quote(Module::CUSTOM_VERSION, '/') . '\.min\.js[^"]*"\)/',
             $body
