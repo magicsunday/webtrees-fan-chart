@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:144
+#: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -39,7 +39,7 @@ msgstr "自動（根據族譜的姓氏傳統）"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:115
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Center chart on this person"
 msgstr ""
 
@@ -126,11 +126,11 @@ msgstr "匯出為 PNG"
 msgid "Export as SVG"
 msgstr "匯出為 SVG"
 
-#: src/Module.php:132 src/Module.php:244
+#: src/Module.php:130 src/Module.php:241
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:241 src/Module/ChartTrait.php:46
+#: src/Module.php:238 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -160,7 +160,7 @@ msgstr ""
 msgid "Hide empty segments"
 msgstr "隱藏空白扇段"
 
-#: resources/views/modules/fan-chart/page.phtml:82
+#: resources/views/modules/fan-chart/page.phtml:81
 msgid "Hide more options"
 msgstr "隱藏更多選項"
 
@@ -185,7 +185,7 @@ msgid ""
 "descendants are not yet available."
 msgstr "僅當弧段足夠寬時才顯示圖片。後代的圖片尚不可用。"
 
-#: resources/views/modules/fan-chart/page.phtml:43
+#: resources/views/modules/fan-chart/page.phtml:42
 msgid "Individual"
 msgstr ""
 
@@ -227,7 +227,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "移動圖表"
 
-#: src/Module.php:268
+#: src/Module.php:265
 msgid "Move the view with two fingers"
 msgstr "用兩個手指移動視圖"
 
@@ -235,7 +235,7 @@ msgstr "用兩個手指移動視圖"
 msgid "Name abbreviation when space is tight"
 msgstr "空間不足時的姓名縮寫方式"
 
-#: resources/views/modules/fan-chart/page.phtml:113
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "No details are available for this person."
 msgstr ""
 
@@ -243,7 +243,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "內圈層數"
 
-#: resources/views/modules/fan-chart/page.phtml:114
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "Open individual page"
 msgstr ""
 
@@ -289,7 +289,7 @@ msgstr "為該人重新載入圖表"
 msgid "Right-click"
 msgstr "右鍵點擊"
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -331,7 +331,7 @@ msgstr "顯示說明"
 msgid "Show images only"
 msgstr "僅顯示圖片"
 
-#: resources/views/modules/fan-chart/page.phtml:81
+#: resources/views/modules/fan-chart/page.phtml:80
 msgid "Show more options"
 msgstr "顯示更多選項"
 
@@ -383,7 +383,7 @@ msgstr "切換全螢幕與一般檢視"
 msgid "Tab key"
 msgstr ""
 
-#: src/Module.php:269
+#: src/Module.php:266
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
@@ -392,7 +392,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:267
+#: src/Module.php:264
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "按住Ctrl鍵滾動鼠標滾輪放大縮小"
 
@@ -408,7 +408,7 @@ msgstr "放大/縮小"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "close"
 msgstr ""
 
@@ -416,7 +416,7 @@ msgstr ""
 msgid "save"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:70
+#: resources/views/modules/fan-chart/page.phtml:69
 msgctxt "webtrees-fan-chart"
 msgid "view"
 msgstr ""
