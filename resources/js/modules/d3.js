@@ -8,7 +8,6 @@
 /*
 https://github.com/d3/d3-fetch
 https://github.com/d3/d3-hierarchy
-https://github.com/d3/d3-path
 https://github.com/d3/d3-scale
 https://github.com/d3/d3-selection
 https://github.com/d3/d3-shape
@@ -24,14 +23,9 @@ export {
     partition,
 } from "d3-hierarchy";
 
-export { path } from "d3-path";
-
 export { scaleLinear } from "d3-scale";
 
-export {
-    select,
-    selectAll,
-} from "d3-selection";
+export { select } from "d3-selection";
 
 export { timeout } from "d3-timer";
 
@@ -39,4 +33,4 @@ export { arc } from "d3-shape";
 
 export { transition } from "d3-transition";
 
-export * from "d3-zoom";
+export { zoomIdentity } from "d3-zoom";

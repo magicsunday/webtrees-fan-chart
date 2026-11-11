@@ -23,7 +23,6 @@ use Fisharebest\Webtrees\Http\Exceptions\HttpAccessDeniedException;
 use Fisharebest\Webtrees\Http\Exceptions\HttpNotFoundException;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleChartInterface;
-use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Validator;
@@ -231,6 +230,28 @@ final class ModuleRequestTest extends TestCase
         self::assertStringContainsString('webtrees-fan-chart-container-', $body);
         self::assertStringContainsString('"xref":"I1"', $body);
         self::assertStringNotContainsString('webtrees-fan-chart-form', $body, 'the partial has no page shell around it');
+    }
+
+    /**
+     * The browser finds the container of the chart by an id that the partial generates for each
+     * answer, and it loads the bundle of the module version that the page was built for. A partial
+     * without the id leaves the script without its container, and a wrong bundle name is a script
+     * that does not exist. The script reads the labels and the text direction of the chart parameters
+     * from the same answer.
+     */
+    #[Test]
+    public function theChartPartialNamesItsContainerAndLoadsTheBundleOfTheModuleVersion(): void
+    {
+        $response = $this->createModule()->handle($this->chartRequest($this->createChartIndividual(), true));
+        $body     = (string) $response->getBody();
+
+        self::assertMatchesRegularExpression('/id="webtrees-fan-chart-container-[0-9a-f]+"/', $body);
+        self::assertMatchesRegularExpression('/labels: \{"[a-zA-Z]+":"[^"]+"/', $body);
+        self::assertStringContainsString('rtl: false,', $body);
+        self::assertMatchesRegularExpression(
+            '/import\("[^"]*js%2Ffan-chart-' . preg_quote(Module::CUSTOM_VERSION, '/') . '\.min\.js[^"]*"\)/',
+            $body
+        );
     }
 
     /**
@@ -503,11 +524,7 @@ final class ModuleRequestTest extends TestCase
      */
     private function registerContainer(): void
     {
-        $theme = self::createStub(ModuleThemeInterface::class);
-        $theme->method('stylesheets')->willReturn(['/theme.css']);
-
         RoutingFixture::register([
-            ModuleThemeInterface::class     => $theme,
             ServerRequestInterface::class   => new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
             ResponseFactoryInterface::class => new HttpFactory(),
         ]);

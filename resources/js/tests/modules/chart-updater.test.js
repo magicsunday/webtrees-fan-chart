@@ -14,7 +14,6 @@ await jest.unstable_mockModule("resources/js/modules/d3", async () => {
     return {
         __esModule: true,
         ...(await import("d3-hierarchy")),
-        ...(await import("d3-path")),
         ...(await import("d3-scale")),
         ...(await import("d3-selection")),
         ...(await import("d3-shape")),
@@ -52,7 +51,6 @@ const d3 = await import("resources/js/modules/d3");
 
 const person = (xref, generation, parents) => ({
     data: {
-        id: xref,
         xref,
         url: `url-${xref}`,
         updateUrl: `update-${xref}`,

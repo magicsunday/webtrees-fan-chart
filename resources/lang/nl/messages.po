@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:144
+#: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -39,7 +39,7 @@ msgstr "Automatisch (op basis van de achternaamtraditie van de stamboom)"
 msgid "Automatic (from the tree configuration)"
 msgstr "Automatisch (op basis van de stamboomconfiguratie)"
 
-#: resources/views/modules/fan-chart/page.phtml:115
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Center chart on this person"
 msgstr "Diagram centreren op deze persoon"
 
@@ -131,11 +131,11 @@ msgstr "Exporteren als PNG"
 msgid "Export as SVG"
 msgstr "Exporteren als SVG"
 
-#: src/Module.php:132 src/Module.php:244
+#: src/Module.php:130 src/Module.php:241
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:241 src/Module/ChartTrait.php:46
+#: src/Module.php:238 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -165,7 +165,7 @@ msgstr ""
 msgid "Hide empty segments"
 msgstr "Verberg lege segmenten"
 
-#: resources/views/modules/fan-chart/page.phtml:82
+#: resources/views/modules/fan-chart/page.phtml:81
 msgid "Hide more options"
 msgstr "Minder opties"
 
@@ -196,7 +196,7 @@ msgstr ""
 "Afbeeldingen worden alleen getoond als het boogsegment breed genoeg is. "
 "Afbeeldingen voor nakomelingen zijn nog niet beschikbaar."
 
-#: resources/views/modules/fan-chart/page.phtml:43
+#: resources/views/modules/fan-chart/page.phtml:42
 msgid "Individual"
 msgstr ""
 
@@ -239,7 +239,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Diagram verplaatsen"
 
-#: src/Module.php:268
+#: src/Module.php:265
 msgid "Move the view with two fingers"
 msgstr "Verplaats de weergave met twee vingers"
 
@@ -247,7 +247,7 @@ msgstr "Verplaats de weergave met twee vingers"
 msgid "Name abbreviation when space is tight"
 msgstr "Afkorting van naam bij beperkte ruimte"
 
-#: resources/views/modules/fan-chart/page.phtml:113
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "No details are available for this person."
 msgstr "Er zijn geen gegevens beschikbaar voor deze persoon."
 
@@ -255,7 +255,7 @@ msgstr "Er zijn geen gegevens beschikbaar voor deze persoon."
 msgid "Number of inner levels"
 msgstr "Aantal binnenste niveaus"
 
-#: resources/views/modules/fan-chart/page.phtml:114
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "Open individual page"
 msgstr "Persoonspagina openen"
 
@@ -303,7 +303,7 @@ msgstr "Diagram voor die persoon herladen"
 msgid "Right-click"
 msgstr "Rechtsklik"
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Select a person in the chart to see the details here."
 msgstr "Selecteer een persoon in de grafiek om hier de gegevens te bekijken."
 
@@ -347,7 +347,7 @@ msgstr "Toon Help"
 msgid "Show images only"
 msgstr "Toon alleen afbeeldingen"
 
-#: resources/views/modules/fan-chart/page.phtml:81
+#: resources/views/modules/fan-chart/page.phtml:80
 msgid "Show more options"
 msgstr "Meer opties"
 
@@ -403,7 +403,7 @@ msgstr "Schakelen tussen volledig scherm en normale weergave"
 msgid "Tab key"
 msgstr ""
 
-#: src/Module.php:269
+#: src/Module.php:266
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
@@ -412,7 +412,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:267
+#: src/Module.php:264
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Gebruik Ctrl + scroll om in te zoomen op de weergave"
 
@@ -428,7 +428,7 @@ msgstr "In-/uitzoomen"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "close"
 msgstr ""
 
@@ -436,7 +436,7 @@ msgstr ""
 msgid "save"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:70
+#: resources/views/modules/fan-chart/page.phtml:69
 msgctxt "webtrees-fan-chart"
 msgid "view"
 msgstr ""

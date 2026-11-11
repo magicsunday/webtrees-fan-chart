@@ -53,11 +53,11 @@ final class NodeTest extends TestCase
     public function aNodeWithRelativesCarriesEachListUnderItsOwnKey(): void
     {
         $facts    = [new FactView('BIRT', 'Birth', '1900', 'Berlin', 'Berlin, Germany', ''), null];
-        $node     = new Node((new NodeData())->setId(1)->setFacts($facts));
-        $parent   = new Node((new NodeData())->setId(2));
-        $partner  = new Node((new NodeData())->setId(3)->setSex('F'));
-        $child    = new Node((new NodeData())->setId(4));
-        $unplaced = new Node((new NodeData())->setId(5));
+        $node     = new Node((new NodeData())->setXref('I1')->setFacts($facts));
+        $parent   = new Node((new NodeData())->setXref('I2'));
+        $partner  = new Node((new NodeData())->setXref('I3')->setSex('F'));
+        $child    = new Node((new NodeData())->setXref('I4'));
+        $unplaced = new Node((new NodeData())->setXref('I5'));
 
         $node
             ->addParent($parent)
@@ -93,6 +93,22 @@ final class NodeTest extends TestCase
 
         self::assertArrayHasKey('facts', $payload);
         self::assertSame([null, null], $payload['facts']);
+    }
+
+    /**
+     * The tooltip of the chart script falls back to the short birth and death entries of the
+     * payload, so both keys must carry their own value.
+     */
+    #[Test]
+    public function theShortBirthAndDeathReachThePayloadUnderTheirOwnKeys(): void
+    {
+        $payload = (new NodeData())
+            ->setBirth('born short')
+            ->setDeath('died short')
+            ->jsonSerialize();
+
+        self::assertSame('born short', $payload['birth']);
+        self::assertSame('died short', $payload['death']);
     }
 
     /**

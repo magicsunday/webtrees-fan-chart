@@ -95,7 +95,6 @@ const createOptions = (overrides = {}) => ({
         fontScale: 1,
         innerArcs: 0,
     }),
-    cssFiles: [],
     data: [],
     ...overrides,
 });
@@ -140,10 +139,8 @@ describe("FanChart", () => {
             '<div id="chart"></div><button id="centerButton"></button>' +
             '<button id="exportPNG"></button><button id="exportSVG"></button>';
 
-        const cssFiles = ["fan.css"];
-
         // eslint-disable-next-line no-new
-        new FanChart("#chart", createOptions({ cssFiles }));
+        new FanChart("#chart", createOptions());
 
         const chart = chartInstances[0];
 

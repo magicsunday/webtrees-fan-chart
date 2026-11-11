@@ -21,7 +21,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:144
+#: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -41,7 +41,7 @@ msgstr "Automatiskt (baserat på trädets efternamnstradition)"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:115
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Center chart on this person"
 msgstr ""
 
@@ -132,11 +132,11 @@ msgstr "Exportera som PNG"
 msgid "Export as SVG"
 msgstr "Exportera som SVG"
 
-#: src/Module.php:132 src/Module.php:244
+#: src/Module.php:130 src/Module.php:241
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:241 src/Module/ChartTrait.php:46
+#: src/Module.php:238 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -166,7 +166,7 @@ msgstr ""
 msgid "Hide empty segments"
 msgstr "Göm tomma segment"
 
-#: resources/views/modules/fan-chart/page.phtml:82
+#: resources/views/modules/fan-chart/page.phtml:81
 msgid "Hide more options"
 msgstr "Göm fler alternativ"
 
@@ -193,7 +193,7 @@ msgstr ""
 "Bilder visas bara om bågsegmentet är tillräckligt brett. Bilder för "
 "ättlingar är ännu inte tillgängliga."
 
-#: resources/views/modules/fan-chart/page.phtml:43
+#: resources/views/modules/fan-chart/page.phtml:42
 msgid "Individual"
 msgstr ""
 
@@ -235,7 +235,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Flytta diagrammet"
 
-#: src/Module.php:268
+#: src/Module.php:265
 msgid "Move the view with two fingers"
 msgstr "Flytta vyn med två fingrar"
 
@@ -243,7 +243,7 @@ msgstr "Flytta vyn med två fingrar"
 msgid "Name abbreviation when space is tight"
 msgstr "Namnförkortning när utrymmet är begränsat"
 
-#: resources/views/modules/fan-chart/page.phtml:113
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "No details are available for this person."
 msgstr ""
 
@@ -251,7 +251,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "Antal inre nivåer"
 
-#: resources/views/modules/fan-chart/page.phtml:114
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "Open individual page"
 msgstr ""
 
@@ -299,7 +299,7 @@ msgstr "Ladda om diagrammet för den personen"
 msgid "Right-click"
 msgstr "Högerklicka"
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -343,7 +343,7 @@ msgstr "Visa hjälp"
 msgid "Show images only"
 msgstr "Visa bara bilder"
 
-#: resources/views/modules/fan-chart/page.phtml:81
+#: resources/views/modules/fan-chart/page.phtml:80
 msgid "Show more options"
 msgstr "Visa fler alternativ"
 
@@ -396,7 +396,7 @@ msgstr "Växla mellan helskärm och normal vy"
 msgid "Tab key"
 msgstr ""
 
-#: src/Module.php:269
+#: src/Module.php:266
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
@@ -405,7 +405,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:267
+#: src/Module.php:264
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Använd Ctrl + rullen för att zooma in vyn"
 
@@ -421,7 +421,7 @@ msgstr "Zooma in/ut"
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "close"
 msgstr ""
 
@@ -429,7 +429,7 @@ msgstr ""
 msgid "save"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:70
+#: resources/views/modules/fan-chart/page.phtml:69
 msgctxt "webtrees-fan-chart"
 msgid "view"
 msgstr ""
