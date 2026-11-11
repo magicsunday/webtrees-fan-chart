@@ -131,8 +131,8 @@ Flat layout — every file is fan-chart-specific glue. Reusable base classes (St
 - **`d3.js`** — D3 facade re-exporting only the d3 sub-packages used by the chart (selection, transition, zoom, hierarchy, scale, etc.).
 
 ### Views (`resources/views/`)
-- **`fan-chart/page.phtml`** — Form + AJAX container, and the shared toolbar style. Loads `fan-chart-page.min.js` and calls `WebtreesFanChart.initPage({ ajaxUrl, defaults… })`.
-- **`fan-chart/chart.phtml`** — AJAX response: `<script type="module">` with `import()` to load ES module bundle. Reads user overrides from `WebtreesFanChart.chartOptions ?? PHP defaults`.
+- **`modules/fan-chart/page.phtml`** — Form + AJAX container, and the shared toolbar style. Loads `fan-chart-page.min.js` and calls `WebtreesFanChart.initPage({ ajaxUrl, defaults… })`.
+- **`modules/fan-chart/chart.phtml`** — AJAX response: `<script type="module">` with `import()` to load ES module bundle. Reads user overrides from `WebtreesFanChart.chartOptions ?? PHP defaults`.
 
 ### Data-relevant config parameters
 The server builds the base of the initial AJAX route (`Module::getAjaxRoute()`), the update route of a node (`DataFacade::getUpdateRoute()`) and the redirect after a form post. All three spread `Configuration::getRouteToggleParams()`, so a setting that these routes carry is added to that list. The page script (`page-init.js`) overrides some query keys of the AJAX URL on the client, and `buildAjaxUrl()` there builds the URL for the first load and for the reload of the descendants switch alike, reading the stored settings from the storage when it runs. `generations`, `showPlaces`, `showDescendants` and `showNicknames` come from the form and the storage, `detailedDateGenerations` from the server default. A setting that the page changes after load is added there as well.
