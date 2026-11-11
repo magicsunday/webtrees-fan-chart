@@ -289,6 +289,184 @@ describe("showDescendants change handler", () => {
     });
 });
 
+/**
+ * Reads the AJAX URL that the page has set after the descendants switch ran, which is the URL of
+ * the reload path. The initial URL is read with getAjaxUrl() before the switch is used.
+ */
+function reloadAjaxUrl(checked = false) {
+    const checkbox = document.getElementById("showDescendants-1");
+
+    checkbox.checked = checked;
+    checkbox.dispatchEvent(new Event("change"));
+
+    return getAjaxUrl();
+}
+
+describe("AJAX URL parameters on the initial path and the reload path", () => {
+    const paths = [
+        ["initial URL", (config) => (initPage(config), getAjaxUrl())],
+        ["reload URL", (config) => (initPage(config), reloadAjaxUrl())],
+    ];
+
+    describe.each(paths)("%s", (_name, buildUrl) => {
+        it("sends showNicknames=1 for a stored true", () => {
+            seedStorage({ showNicknames: true });
+
+            expect(buildUrl(defaultConfig).searchParams.get("showNicknames")).toBe("1");
+        });
+
+        it("sends showNicknames=0 for a stored false", () => {
+            seedStorage({ showNicknames: false });
+
+            expect(
+                buildUrl({ ...defaultConfig, defaultShowNicknames: true }).searchParams.get(
+                    "showNicknames",
+                ),
+            ).toBe("0");
+        });
+
+        it("takes showNicknames from the page default while the storage has none", () => {
+            expect(
+                buildUrl({ ...defaultConfig, defaultShowNicknames: true }).searchParams.get(
+                    "showNicknames",
+                ),
+            ).toBe("1");
+        });
+
+        it("omits showNicknames while neither the storage nor the page has a value", () => {
+            expect(buildUrl(defaultConfig).searchParams.has("showNicknames")).toBe(false);
+        });
+
+        it("sends the stored generations", () => {
+            seedStorage({ generations: "8" });
+
+            expect(buildUrl(defaultConfig).searchParams.get("generations")).toBe("8");
+        });
+
+        it("falls back to the generations slider while the storage has none", () => {
+            setupDom({ generations: "7" });
+
+            expect(buildUrl(defaultConfig).searchParams.get("generations")).toBe("7");
+        });
+
+        it("sends showPlaces=1 for a stored true", () => {
+            seedStorage({ showPlaces: true });
+
+            expect(buildUrl(defaultConfig).searchParams.get("showPlaces")).toBe("1");
+        });
+
+        it("sends showPlaces=0 for a stored false", () => {
+            seedStorage({ showPlaces: false });
+
+            expect(buildUrl(defaultConfig).searchParams.get("showPlaces")).toBe("0");
+        });
+
+        it("sends showDetailPanel=1 for a stored true", () => {
+            seedStorage({ showDetailPanel: true });
+
+            expect(buildUrl(defaultConfig).searchParams.get("showDetailPanel")).toBe("1");
+        });
+
+        it("sends the admin default detailedDateGenerations", () => {
+            seedStorage({ detailedDateGenerations: "5" });
+
+            expect(
+                buildUrl({ ...defaultConfig, defaultDetailedDateGenerations: 3 }).searchParams.get(
+                    "detailedDateGenerations",
+                ),
+            ).toBe("3");
+        });
+    });
+
+    it("sends showDescendants=1 on the initial URL when the page default is on", () => {
+        // The server renders the checkbox ticked for the default
+        setupDom({ descendants: true });
+        initPage({ ...defaultConfig, defaultShowDescendants: true });
+
+        expect(getAjaxUrl().searchParams.get("showDescendants")).toBe("1");
+    });
+
+    it("sends showDescendants=1 on the reload URL when the switch is ticked", () => {
+        initPage(defaultConfig);
+
+        expect(reloadAjaxUrl(true).searchParams.get("showDescendants")).toBe("1");
+    });
+
+    it("leaves showDescendants out of the reload URL when the switch is cleared", () => {
+        setupDom({ descendants: true });
+        initPage({ ...defaultConfig, defaultShowDescendants: true });
+
+        expect(reloadAjaxUrl(false).searchParams.has("showDescendants")).toBe(false);
+    });
+});
+
+describe("display mode and fan degree handling", () => {
+    const addDisplayModes = () => {
+        document.body.insertAdjacentHTML(
+            "beforeend",
+            ["both", "names", "images"]
+                .map(
+                    (mode) =>
+                        `<input type="radio" name="displayMode" id="displayMode-${mode}" value="${mode}">`,
+                )
+                .join(""),
+        );
+    };
+
+    it("restores the stored display mode into its radio button", () => {
+        addDisplayModes();
+        seedStorage({ displayMode: "images" });
+
+        initPage(defaultConfig);
+
+        expect(document.getElementById("displayMode-images").checked).toBe(true);
+        expect(document.getElementById("displayMode-names").checked).toBe(false);
+    });
+
+    it.each([
+        ["both", true, true],
+        ["names", true, false],
+        ["images", false, true],
+    ])("syncs showNames and showImages for the display mode %s", (mode, names, images) => {
+        addDisplayModes();
+        initPage(defaultConfig);
+
+        const radio = document.getElementById(`displayMode-${mode}`);
+
+        radio.checked = true;
+        radio.dispatchEvent(new Event("input", { bubbles: true }));
+
+        expect(storedValues()).toMatchObject({
+            displayMode: mode,
+            showNames: names,
+            showImages: images,
+        });
+    });
+
+    it("derives the published showNames and showImages from the stored display mode", () => {
+        addDisplayModes();
+        seedStorage({ displayMode: "names", showNames: false, showImages: true });
+
+        initPage(defaultConfig);
+
+        expect(window.WebtreesFanChart.chartOptions ?? window.WebtreesFanChart).toMatchObject({
+            showNames: true,
+            showImages: false,
+        });
+    });
+
+    it("keeps the raw fan degree in step with the slider", () => {
+        initPage(defaultConfig);
+
+        const slider = document.getElementById("fanDegree");
+
+        slider.value = "300";
+        slider.dispatchEvent(new Event("input", { bubbles: true }));
+
+        expect(storedValues().fanDegreeRaw).toBe("300");
+    });
+});
+
 describe("chartOptions namespace", () => {
     it("attaches chartOptions to WebtreesFanChart global", () => {
         initPage(defaultConfig);
