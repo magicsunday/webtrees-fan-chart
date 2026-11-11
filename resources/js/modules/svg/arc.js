@@ -11,9 +11,8 @@
 
 /**
  * Appends a <g class="arc"><path></g> structure to the given parent selection.
- * For elements entering the chart (CSS class "new"), opacity starts at nearly
- * zero so the Update transition can fade them in. For existing elements with a
- * family color, the fill is applied immediately via inline style.
+ * When a family color is given, the fill is applied via inline style, otherwise
+ * the default CSS fill stays.
  *
  * @param {Selection<any, any, any, any>} parent       The parent D3 selection (person or marriage <g>)
  * @param {Function}                       arcGenerator A configured d3.arc() generator
