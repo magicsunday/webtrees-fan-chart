@@ -127,6 +127,7 @@ describe("Configuration", () => {
             expect(new Configuration(passed)[property]).toStrictEqual(passed[option]);
         });
 
+        // Guards against JavaScript defaults returning for options that the server owns.
         it.each([
             "hideEmptySegments",
             "showFamilyColors",
@@ -151,15 +152,19 @@ describe("Configuration", () => {
             },
         );
 
-        it.each(["generations", "fanDegree", "innerArcs"])(
-            "keeps %s a finite number when the value is not one",
-            (option) => {
-                const configuration = new Configuration(
-                    createConfigurationValues({ [option]: "not a number" }),
-                );
-                const property = option === "innerArcs" ? "numberOfInnerCircles" : option;
+        // The number a validated option takes when its value is not a finite number.
+        it.each([
+            ["generations", "generations", 6],
+            ["fanDegree", "fanDegree", 210],
+            ["innerArcs", "numberOfInnerCircles", 3],
+        ])(
+            "falls back for %s when the value is not a finite number",
+            (option, property, fallback) => {
+                for (const value of ["not a number", undefined, Number.POSITIVE_INFINITY]) {
+                    const values = createConfigurationValues({ [option]: value });
 
-                expect(Number.isFinite(configuration[property])).toBe(true);
+                    expect(new Configuration(values)[property]).toBe(fallback);
+                }
             },
         );
     });
