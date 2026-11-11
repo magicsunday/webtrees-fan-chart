@@ -2,16 +2,23 @@
 This repository hosts the webtrees fan chart module — an interactive SVG fan chart of an individual's ancestors using D3.js, installed as a Composer package inside webtrees.
 
 ## Setup/env
+### Generic setup
 - PHP 8.3+ with extensions dom and json is required; composer installs dependencies into .build/vendor and binaries into .build/bin.
-- Node.js tooling is used for asset builds (rollup). Install dev dependencies via `npm install` when touching frontend resources.
-- All PHP/Node tooling runs inside the webtrees Docker buildbox — never directly on the NAS or in phpfpm:
+- `composer ci:test` needs both dependency sets. Install the PHP dependencies with `composer install` and the Node dependencies with `npm ci` (or `make install`), because the JavaScript steps and `composer ci:test:php:cpd` run the tools in `node_modules`. Node.js tooling is also used for asset builds (rollup).
+- The checks need PHP, Composer and Node. Run them with a local toolchain or in the buildbox, the `ghcr.io/magicsunday/webtrees-buildbox:<PHP version>` image of the `webtrees-docker` project, which ships all three. `composer -d <path of the module inside the container> ci:test` runs them from outside the module directory.
+- JS bundles are built with `make build` (or `npm run prepare` with a local Node.js), and `make install` installs the Node dependencies. The `make` targets that run npm use the `node` service of `compose.yaml`, so they need Docker and nothing else.
+- `compose.yaml` bind-mounts the sibling clone `../webtrees-chart-lib` into the `node` service for every `docker compose run`, because the chart-lib dev symlink of `make link-chart-lib` has to resolve inside the container. Compose has no way to skip a bind mount whose source is missing (`create_host_path: false` makes the run fail instead), so Docker creates the missing `../webtrees-chart-lib` as a root-owned empty directory next to the checkout. It is harmless and unused as long as the dev symlink is not active. Remove it with `rmdir`, which the owner of the checkout may do because the parent directory is theirs, before cloning the real chart-lib there, because `make link-chart-lib` refuses a directory without `package.json`.
+- After JS changes, always verify in the browser via Playwright before claiming success.
+
+### Layout of the NAS checkout
+- This checkout sits at `/volume2/docker/webtrees/app/vendor/magicsunday/webtrees-fan-chart`, inside the `webtrees-docker` project that provides the buildbox. All PHP/Node tooling runs inside that buildbox — never directly on the NAS or in phpfpm:
   ```
   cd /volume2/docker/webtrees && make bash
   cd app/vendor/magicsunday/webtrees-fan-chart
   ```
-- JS bundles are built via the node Docker container from the module directory: `make install`, `make build`.
+  or, without an interactive shell: `cd /volume2/docker/webtrees && docker compose run --rm buildbox composer -d /var/webtrees/app/vendor/magicsunday/webtrees-fan-chart ci:test`.
+- The sibling clones (`../webtrees-chart-lib`, `../webtrees-module-base`) are the neighbours of this checkout under `app/vendor/magicsunday/`.
 - After PHP or JS changes visible in the browser: `docker restart webtrees-phpfpm-1`.
-- After JS changes, always verify in the browser via Playwright before claiming success.
 
 ### Convention for new advisory ignores
 
