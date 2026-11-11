@@ -20,6 +20,8 @@ use function array_filter;
 use function array_values;
 use function dirname;
 use function explode;
+use function preg_match_all;
+use function preg_quote;
 use function proc_close;
 use function proc_open;
 use function shell_exec;
@@ -110,27 +112,40 @@ final class NodeUserTest extends TestCase
 
     /**
      * The lang stages form a dependency line, so extract runs before merge, merge before the fuzzy resolver and
-     * the resolver before compile, also under a parallel make. Sibling prerequisites would let the stages overlap.
+     * the resolver before compile, also under a parallel make. Sibling prerequisites would let the stages overlap,
+     * and a dry run cannot show that, because it prints the recipes in the order the prerequisites are listed. So
+     * the test reads the prerequisites from the make database, where each stage has exactly its predecessor.
      */
     #[Test]
-    public function runsTheLangStagesInOrderUnderAParallelMake(): void
+    public function chainsTheLangStagesAsADependencyLine(): void
     {
-        [$status, $output] = $this->dryRun('lang-compile', ['--always-make', '--jobs=4']);
+        [$status, $output] = $this->dryRun('lang-compile', ['--print-data-base']);
 
         self::assertSame(0, $status);
 
-        $extract = strpos($output, 'xgettext');
-        $merge   = strpos($output, 'msgmerge');
-        $resolve = strpos($output, '.build/bin/resolve-fuzzy');
-        $compile = strpos($output, 'msgfmt');
+        $prerequisites = [];
 
-        self::assertIsInt($extract);
-        self::assertIsInt($merge);
-        self::assertIsInt($resolve);
-        self::assertIsInt($compile);
-        self::assertLessThan($merge, $extract);
-        self::assertLessThan($resolve, $merge);
-        self::assertLessThan($compile, $resolve);
+        foreach (['lang-compile', 'lang-resolve-fuzzy', 'lang-merge', 'lang-extract'] as $stage) {
+            self::assertSame(
+                1,
+                preg_match_all('/^' . preg_quote($stage, '/') . ': ([^=\n]*)$/m', $output, $matches),
+                $stage
+            );
+
+            self::assertArrayHasKey(0, $matches[1]);
+
+            $prerequisites[$stage] = $matches[1][0];
+        }
+
+        self::assertSame(
+            [
+                'lang-compile'       => 'lang-resolve-fuzzy',
+                'lang-resolve-fuzzy' => 'lang-merge',
+                'lang-merge'         => 'lang-extract',
+                'lang-extract'       => 'resources/lang/messages.pot',
+            ],
+            $prerequisites
+        );
     }
 
     /**
