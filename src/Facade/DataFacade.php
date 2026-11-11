@@ -255,7 +255,7 @@ final class DataFacade
 
     /**
      * Creates a minimal NodeData for an unknown partner (no Individual record).
-     * Only sets id, generation, and sex.
+     * Only sets generation and sex.
      *
      * @param int $generation The generation depth (typically -1)
      *
