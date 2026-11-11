@@ -406,4 +406,78 @@ describe("Update", () => {
         expect(arc.classList.contains("update")).toBe(false);
         expect(arc.contains(content)).toBe(true);
     });
+
+    describe("notice of a failed update", () => {
+        const failedText = "The chart could not be updated.";
+
+        const notices = () => [...document.querySelectorAll('[role="alert"]')];
+
+        const failWith = async (update, error) => {
+            jest.spyOn(console, "error").mockImplementation(() => {});
+            jsonMock.mockRejectedValueOnce(error);
+
+            await new Promise((resolve) => {
+                update.update("/update", jest.fn(), resolve);
+            });
+        };
+
+        test.each([
+            ["an HTTP error", new Error("500 Internal Server Error")],
+            ["a response that is not JSON", new SyntaxError("Unexpected token < in JSON")],
+            ["an access denial", new Error("403 Forbidden")],
+        ])("tells the user about %s and keeps the chart usable", async (_kind, error) => {
+            const { update } = createChart({
+                labels: { zoom: "", move: "", updateFailed: failedText },
+            });
+            const arcs = document.querySelectorAll("g.person").length;
+
+            await failWith(update, error);
+
+            expect(notices()).toHaveLength(1);
+            expect(notices()[0].textContent).toBe(failedText);
+            // The notice sits above the chart and the previous chart is still drawn
+            expect(notices()[0].nextElementSibling).toBe(document.querySelector("svg"));
+            expect(document.querySelectorAll("g.person")).toHaveLength(arcs);
+        });
+
+        test("shows one notice however often updates fail in a row", async () => {
+            const { update } = createChart({
+                labels: { zoom: "", move: "", updateFailed: failedText },
+            });
+
+            await failWith(update, new Error("500 Internal Server Error"));
+            await failWith(update, new Error("500 Internal Server Error"));
+
+            expect(notices()).toHaveLength(1);
+        });
+
+        test("removes the notice when the next update succeeds", async () => {
+            const { update } = createChart({
+                labels: { zoom: "", move: "", updateFailed: failedText },
+            });
+
+            await failWith(update, new Error("500 Internal Server Error"));
+            expect(notices()).toHaveLength(1);
+
+            await runUpdate(update, { data: ancestors(2), title: "Updated" });
+
+            expect(notices()).toHaveLength(0);
+        });
+
+        test("shows no notice for a request that a newer update superseded", async () => {
+            const { update } = createChart({
+                labels: { zoom: "", move: "", updateFailed: failedText },
+            });
+            const aborted = new Error("aborted");
+
+            aborted.name = "AbortError";
+            jsonMock.mockRejectedValueOnce(aborted);
+
+            await new Promise((resolve) => {
+                update.update("/update", jest.fn(), jest.fn(), resolve);
+            });
+
+            expect(notices()).toHaveLength(0);
+        });
+    });
 });

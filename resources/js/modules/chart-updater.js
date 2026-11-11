@@ -12,6 +12,7 @@ import Marriage from "./svg/marriage.js";
 import FamilyColor from "./svg/family-color.js";
 import { applyFamilyColorMode, isDrawnPerson, isMarriageParent } from "./draw-rules.js";
 import { motionDuration } from "./motion.js";
+import { clearUpdateNotice, showUpdateNotice } from "./update-notice.js";
 
 /**
  * @import { Transition } from "d3-transition"
@@ -108,6 +109,8 @@ export default class ChartUpdater {
             .then((data) => {
                 this._fetchController = null;
 
+                clearUpdateNotice(this._svg);
+
                 this._updatePageTitle(data);
 
                 // Initialize the new loaded data
@@ -146,6 +149,8 @@ export default class ChartUpdater {
                 this._fetchController = null;
 
                 console.error("Fan chart update failed:", error);
+
+                showUpdateNotice(this._svg, this._configuration.labels.updateFailed ?? "");
 
                 // Clean up stale CSS classes left by a partial update. This has to happen
                 // before the callback runs the cleanup of a finished update, which removes the

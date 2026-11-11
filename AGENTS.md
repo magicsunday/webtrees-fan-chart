@@ -148,6 +148,7 @@ The server builds the base of the initial AJAX route (`Module::getAjaxRoute()`),
 - **Unique clipPath IDs**: monotonic `clipIdCounter` (in `svg/person.js`) prevents collisions during D3 transitions; `Date.now()` is too coarse when transitions overlap.
 - **Overlay independence**: Overlay popup always shows images/places regardless of form toggle states.
 - **One updater per chart**: `Chart` keeps a single `ChartUpdater`, so a newer update aborts the pending request of the older one through the `AbortController` of the updater. A superseded update calls `onSuperseded` instead of its callback, and the chart releases the count in `_runningUpdates` there, because only a callback that rebinds the chart does that otherwise.
+- **Failed update notice**: a failed update (HTTP error, an access denial or a response that is not JSON) puts a `role="alert"` element with the translated `labels.updateFailed` text directly above the svg and leaves the previous chart in place. `update-notice.js` reuses one element and the next successful update removes it. The text comes from the PHP chart parameters, so a new label reaches the page through `chart.phtml`.
 - **Once-guard callback**: `endAll` + `.catch()` share a `callbackFired` flag to prevent double-invocation of `updateDone`.
 - **D3 interrupt handling**: `endAll` listens to both `"end"` and `"interrupt"` events so the callback fires even when transitions are cancelled.
 

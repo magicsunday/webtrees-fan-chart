@@ -46,7 +46,7 @@ export default class Configuration {
 
     /**
      * @param {object}   options
-     * @param {{ zoom: string, move: string }} [options.labels] The zoom and move hint texts of the overlay
+     * @param {{ zoom: string, move: string, updateFailed?: string }} [options.labels] The zoom and move hint texts of the overlay and the notice of a failed update
      * @param {number}   [options.generations=6]
      * @param {number}   [options.fanDegree=210]
      * @param {number}   [options.fontScale=100]
