@@ -193,6 +193,7 @@ Pipeline (`make release X.Y.Z`):
 - `Object.prototype.hasOwnProperty.call()` instead of direct `.hasOwnProperty()` for prototype-pollution safety.
 
 ## Security
+- The workflows of this repository call the reusable workflows of the `magicsunday/.github` repository at `@main`. A change on `main` of that repository therefore takes effect here without a review in this repository. That is an accepted risk, because both repositories belong to the same account and the same choice applies to every module that uses the shared workflows, so a pin would have to be decided and bumped there. The documented usage of the shared workflows is `@main` as well. The risk is kept small elsewhere, since external actions are pinned by commit SHA and every workflow declares its permissions at the top.
 - Do not commit secrets or PII; rely on secret managers and keep .build outputs out of version control.
 
 ## PR/commit checklist
