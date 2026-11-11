@@ -16,13 +16,15 @@ use PHPUnit\Framework\TestCase;
 use function ctype_digit;
 use function preg_match;
 use function preg_quote;
+use function preg_replace;
 use function str_contains;
 
 /**
  * Looks for a value in the JSON text of a chart payload. A numeric value such as a year only counts
  * as a whole number, because the payload also holds asset URLs with a numeric hash parameter that
- * can contain the digits of a year inside a longer number. Any other value is a plain substring
- * search.
+ * can contain the digits of a year inside a longer number, and a JSON unicode escape does not count
+ * as digits. Any other value is a
+ * plain substring search.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -49,7 +51,11 @@ final class PayloadToken
             return str_contains($payload, $token);
         }
 
-        return preg_match('/(?<!\d)' . preg_quote($token, '/') . '(?!\d)/', $payload) === 1;
+        // A JSON unicode escape ends in hex digits, so it would glue itself to a year that follows it
+        // (a dash between two years is written as one). A space keeps the boundary of the year.
+        $text = preg_replace('/\\\\u[0-9a-fA-F]{4}/', ' ', $payload) ?? $payload;
+
+        return preg_match('/(?<!\d)' . preg_quote($token, '/') . '(?!\d)/', $text) === 1;
     }
 
     /**

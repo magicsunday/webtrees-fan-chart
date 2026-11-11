@@ -40,6 +40,9 @@ final class PayloadTokenTest extends TestCase
         yield 'year before a dash' => ['{"timespan":"1896-1950"}', '1896'];
         yield 'year after a dash' => ['{"timespan":"1850-1896"}', '1896'];
         yield 'year next to a hash that does not hold it' => ['{"url":"a.png?hash=1794418966","birth":"1896"}', '1896'];
+        yield 'year after an escaped en dash' => ['{"timespan":"1850\u20131896"}', '1896'];
+        yield 'year before an escaped en dash' => ['{"timespan":"1896\u20131950"}', '1896'];
+        yield 'year after an escaped en dash next to a hash' => ['{"hash":"1794418966","timespan":"1850\u20131896"}', '1896'];
         yield 'name' => ['{"name":"Livingfather"}', 'Livingfather'];
         yield 'name inside a longer word' => ['{"name":"Livingfathers"}', 'Livingfather'];
     }
@@ -56,6 +59,8 @@ final class PayloadTokenTest extends TestCase
         yield 'year at the end of a longer number' => ['{"hash":"12341896"}', '1896'];
         yield 'year inside a longer number' => ['{"hash":"1234189656"}', '1896'];
         yield 'name' => ['{"name":"Publicfather"}', 'Livingfather'];
+        yield 'year glued to a longer number after an escaped en dash' => ['{"timespan":"1850\u201318961"}', '1896'];
+        yield 'year inside a hash next to an escaped en dash' => ['{"timespan":"1850\u20131900","hash":"1794418966"}', '1896'];
         yield 'empty payload' => ['', '1896'];
     }
 
