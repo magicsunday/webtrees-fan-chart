@@ -79,9 +79,9 @@ jobs:
               if: ${{ always() && steps.install.conclusion == 'success' }}
               run: composer ci:test:js:unit
 
-            # The check reads the installed dependency set, which does not depend
-            # on the PHP version, so it runs on this one leg only. The shared PHP
-            # workflow does not probe for it.
+            # The ignored advisories belong to transitive dependencies of webtrees
+            # that are exact-pinned, so one leg is enough. The shared PHP workflow
+            # does not probe for the script.
             - id: advisories
               name: Stale advisory ignores
               if: ${{ always() && steps.install.conclusion == 'success' }}
