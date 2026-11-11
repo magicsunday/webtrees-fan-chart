@@ -12,14 +12,15 @@ declare(strict_types=1);
 namespace MagicSunday\Webtrees\FanChart\Scripts;
 
 /*
- * Fails when an advisory id in config.policy.advisories.ignore-id of composer.json no longer matches an installed
- * package, so that an entry that has become removable is noticed.
+ * Fails when an entry of config.policy.advisories.ignore-id of composer.json is missing from the ignored advisories
+ * of the audit report, so that an entry that has become removable is noticed.
  *
  * Usage: php check-stale-advisory-ignores.php <composer.json> <audit.json>
  *
  * The audit file is the output of `composer audit --format=json`. Composer lists the advisories that an ignore
- * entry suppresses under "ignored-advisories", grouped by package, and only for packages that are installed in an
- * affected version. An ignored id that is missing from that list is stale.
+ * entry suppresses under "ignored-advisories", grouped by package. The keys of ignore-id are compared with the
+ * "advisoryId" values of that list, so an entry has to be an advisory id (PKSA-...). An entry keyed by a CVE or a
+ * remote id never matches and is reported as stale.
  *
  * Exit status: 0 when every ignored id still applies, 1 when at least one is stale, 2 when an input cannot be read.
  */
@@ -33,6 +34,7 @@ use function file_get_contents;
 use function fwrite;
 use function implode;
 use function is_array;
+use function is_file;
 use function is_string;
 use function json_decode;
 use function sort;
@@ -47,7 +49,7 @@ use const STDERR;
  */
 function readJsonFile(string $path): array
 {
-    $contents = @file_get_contents($path);
+    $contents = is_file($path) ? file_get_contents($path) : false;
 
     if ($contents === false) {
         fwrite(STDERR, "Cannot read $path\n");

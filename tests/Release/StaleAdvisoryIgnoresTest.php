@@ -20,8 +20,10 @@ use function file_get_contents;
 use function file_put_contents;
 use function json_decode;
 use function json_encode;
+use function mkdir;
 use function proc_close;
 use function proc_open;
+use function rmdir;
 use function stream_get_contents;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -44,10 +46,15 @@ use const PHP_BINARY;
 final class StaleAdvisoryIgnoresTest extends TestCase
 {
     /**
+     * Temporary files that a test created and that tearDown removes again.
+     *
      * @var list<string>
      */
     private array $temporaryFiles = [];
 
+    /**
+     * Removes the temporary files of the test.
+     */
     protected function tearDown(): void
     {
         foreach ($this->temporaryFiles as $file) {
@@ -119,16 +126,47 @@ final class StaleAdvisoryIgnoresTest extends TestCase
     #[Test]
     public function readsAnIgnoreListThatHoldsPlainIds(): void
     {
-        $composerJson = $this->temporaryFile(json_encode(
-            ['config' => ['policy' => ['advisories' => ['ignore-id' => ['PKSA-gcrk-3vtt-1r14', 'PKSA-stale-0000-0000']]]]],
-            JSON_THROW_ON_ERROR,
-        ));
+        $ignoreList = ['PKSA-gcrk-3vtt-1r14', 'PKSA-stale-0000-0000'];
+
+        $composerJson = $this->temporaryFile(
+            json_encode(
+                ['config' => ['policy' => ['advisories' => ['ignore-id' => $ignoreList]]]],
+                JSON_THROW_ON_ERROR,
+            ),
+        );
 
         [$status, $output] = $this->check($composerJson, $this->fixture('composer-audit-ignored.json'));
 
         self::assertSame(1, $status);
         self::assertStringContainsString('PKSA-stale-0000-0000', $output);
         self::assertStringNotContainsString('PKSA-gcrk-3vtt-1r14', $output);
+    }
+
+    /**
+     * A path that does not exist is a failure with status 2 for either input, and the output names the path.
+     */
+    #[Test]
+    public function failsWhenAnInputFileCannotBeRead(): void
+    {
+        $directory = tempnam(sys_get_temp_dir(), 'stale-ignores-dir-');
+        self::assertIsString($directory);
+
+        unlink($directory);
+        mkdir($directory);
+
+        $missing = $directory . '/missing.json';
+
+        try {
+            [$statusManifest, $outputManifest] = $this->check($missing, $this->fixture('composer-audit-ignored.json'));
+            [$statusAudit, $outputAudit]       = $this->check($this->composerJson(), $missing);
+        } finally {
+            rmdir($directory);
+        }
+
+        self::assertSame(2, $statusManifest);
+        self::assertStringContainsString('Cannot read ' . $missing, $outputManifest);
+        self::assertSame(2, $statusAudit);
+        self::assertStringContainsString('Cannot read ' . $missing, $outputAudit);
     }
 
     /**
@@ -164,11 +202,17 @@ final class StaleAdvisoryIgnoresTest extends TestCase
         return $this->temporaryFile(json_encode($manifest, JSON_THROW_ON_ERROR));
     }
 
+    /**
+     * Returns the path of a fixture file next to this test.
+     */
     private function fixture(string $name): string
     {
         return __DIR__ . '/Fixture/' . $name;
     }
 
+    /**
+     * Writes the contents to a new temporary file and returns its path.
+     */
     private function temporaryFile(string $contents): string
     {
         $path = tempnam(sys_get_temp_dir(), 'stale-ignores-');
