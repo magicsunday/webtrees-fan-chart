@@ -1,4 +1,5 @@
 import { describe, expect, jest, test } from "@jest/globals";
+import { createConfigurationValues } from "../helpers/configuration-values.js";
 
 // Only the request of the update is replaced. The selections, the transition and the timers are the
 // real ones of d3, so the chart and its updater run as they do in the browser.
@@ -53,7 +54,10 @@ function buildChart() {
     const root = d3.select(document.querySelector("svg"));
     const visual = d3.select(document.querySelector("g.visual"));
     const hierarchyData = [];
-    const chart = new Chart(d3.select("#parent"), new Configuration({ updateDuration: 0 }));
+    const chart = new Chart(
+        d3.select("#parent"),
+        new Configuration(createConfigurationValues({ updateDuration: 0 })),
+    );
 
     chart._svg = {
         visual,

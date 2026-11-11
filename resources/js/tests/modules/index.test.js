@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import { createConfigurationValues } from "../helpers/configuration-values.js";
 
 const eventHandlers = new Map();
 
@@ -87,17 +88,13 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/chart-core", () 
 const { FanChart } = await import("resources/js/modules/index");
 
 const createOptions = (overrides = {}) => ({
-    labels: [],
-    generations: 1,
-    fanDegree: 180,
-    fontScale: 1,
-    hideEmptySegments: false,
-    showFamilyColors: false,
-    showParentMarriageDates: false,
-    showImages: false,
-    showSilhouettes: false,
-    rtl: false,
-    innerArcs: 0,
+    ...createConfigurationValues({
+        labels: [],
+        generations: 1,
+        fanDegree: 180,
+        fontScale: 1,
+        innerArcs: 0,
+    }),
     cssFiles: [],
     data: [],
     ...overrides,

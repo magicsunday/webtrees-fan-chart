@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import { createConfigurationValues } from "../helpers/configuration-values.js";
 
 const { default: Chart } = await import("resources/js/modules/chart");
 const { default: Configuration } = await import("resources/js/modules/configuration");
@@ -138,7 +139,7 @@ describe("A real chart with the detail panel", () => {
             .nodes();
         const chart = new Chart(
             d3.select("#parent"),
-            new Configuration({ showDetailPanel, ...options }),
+            new Configuration(createConfigurationValues({ showDetailPanel, ...options })),
         );
 
         chart._svg = { visual, select: (selector) => visual.select(selector) };

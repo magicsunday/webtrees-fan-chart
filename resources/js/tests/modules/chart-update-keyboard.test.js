@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import { createConfigurationValues } from "../helpers/configuration-values.js";
 
 // The animated update is covered elsewhere. A stand-in records how the chart starts it.
 const updates = [];
@@ -52,7 +53,10 @@ function buildRealChart(nodes) {
         .append("g")
         .attr("class", "person")
         .nodes();
-    const chart = new Chart(d3.select("#parent"), new Configuration({ showDetailPanel: true }));
+    const chart = new Chart(
+        d3.select("#parent"),
+        new Configuration(createConfigurationValues({ showDetailPanel: true })),
+    );
 
     chart._svg = { visual, select: (selector) => visual.select(selector) };
 

@@ -22,8 +22,8 @@ function toFiniteNumber(value, fallback = 0) {
 
 /**
  * Holds all runtime settings for the fan chart (arc counts, font sizes, feature
- * flags, colors) and exposes them through typed getters and setters. Default
- * values are applied when options are omitted or non-finite.
+ * flags, colors) and exposes them through typed getters and setters. The values
+ * come from the server, which owns every default.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -31,61 +31,51 @@ function toFiniteNumber(value, fallback = 0) {
  */
 export default class Configuration {
     /**
-     * Default color for the paternal lineage.
+     * The server passes a value for every option on the real path, so this class holds no
+     * defaults of its own. An option that is left out stays undefined, except for the numbers
+     * that are validated, which fall back to a finite value.
      *
-     * @type {string}
-     */
-    static PATERNAL_COLOR_DEFAULT = "#70a9cf";
-
-    /**
-     * Default color for the maternal lineage.
-     *
-     * @type {string}
-     */
-    static MATERNAL_COLOR_DEFAULT = "#d06f94";
-
-    /**
      * @param {object}   options
-     * @param {{ zoom: string, move: string, updateFailed?: string }} [options.labels] The zoom and move hint texts of the overlay and the notice of a failed update
-     * @param {number}   [options.generations=6]
-     * @param {number}   [options.fanDegree=210]
-     * @param {number}   [options.fontScale=100]
-     * @param {boolean}  [options.hideEmptySegments=false]
-     * @param {boolean}  [options.showFamilyColors=false]
-     * @param {boolean}  [options.showPlaces=false]
-     * @param {boolean}  [options.showParentMarriageDates=false]
-     * @param {boolean}  [options.showImages=false]
-     * @param {boolean}  [options.showNames=true]
-     * @param {boolean}  [options.showSilhouettes=false]
-     * @param {boolean}  [options.showDescendants=false]
-     * @param {boolean}  [options.showDetailPanel=false] Whether a click selects a person for the detail panel
-     * @param {boolean}  [options.rtl=false]
-     * @param {number}   [options.innerArcs=4]
-     * @param {string}   [options.paternalColor]
-     * @param {string}   [options.maternalColor]
-     * @param {string}   [options.nameAbbreviation="GIVEN"] One of "GIVEN" or "SURNAME". Resolved server-side from the tree's SURNAME_TRADITION when admin sets it to AUTO.
+     * @param {{ zoom: string, move: string, updateFailed?: string }} options.labels The zoom and move hint texts of the overlay and the notice of a failed update
+     * @param {number}   options.generations
+     * @param {number}   options.fanDegree
+     * @param {number}   options.fontScale
+     * @param {boolean}  options.hideEmptySegments
+     * @param {boolean}  options.showFamilyColors
+     * @param {boolean}  options.showPlaces
+     * @param {boolean}  options.showParentMarriageDates
+     * @param {boolean}  options.showImages
+     * @param {boolean}  options.showNames
+     * @param {boolean}  options.showSilhouettes
+     * @param {boolean}  options.showDescendants
+     * @param {boolean}  options.showDetailPanel Whether a click selects a person for the detail panel
+     * @param {boolean}  options.rtl
+     * @param {number}   options.innerArcs
+     * @param {string}   options.paternalColor
+     * @param {string}   options.maternalColor
+     * @param {string}   options.nameAbbreviation One of "GIVEN" or "SURNAME". Resolved server-side from the tree's SURNAME_TRADITION when admin sets it to AUTO.
      */
     constructor({
-        labels = { zoom: "", move: "" },
-        generations = 6,
-        fanDegree = 210,
-        fontScale = 100,
-        hideEmptySegments = false,
-        showFamilyColors = false,
-        showPlaces = false,
-        showParentMarriageDates = false,
-        showImages = false,
-        showNames = true,
-        showSilhouettes = false,
-        showDescendants = false,
-        showDetailPanel = false,
-        rtl = false,
-        innerArcs = 4,
-        paternalColor = Configuration.PATERNAL_COLOR_DEFAULT,
-        maternalColor = Configuration.MATERNAL_COLOR_DEFAULT,
-        nameAbbreviation = "GIVEN",
-    } = {}) {
-        // Default number of generations to display
+        labels,
+        generations,
+        fanDegree,
+        fontScale,
+        hideEmptySegments,
+        showFamilyColors,
+        showPlaces,
+        showParentMarriageDates,
+        showImages,
+        showNames,
+        showSilhouettes,
+        showDescendants,
+        showDetailPanel,
+        rtl,
+        innerArcs,
+        paternalColor,
+        maternalColor,
+        nameAbbreviation,
+    }) {
+        // Number of generations to display
         this._generations = toFiniteNumber(generations, 6);
 
         // Padding in pixel between each generation circle
@@ -97,7 +87,7 @@ export default class Configuration {
         this.cornerRadius = 0;
 
         // Number of circles, large enough to print text along an arc path
-        this._numberOfInnerCircles = toFiniteNumber(innerArcs, 4);
+        this._numberOfInnerCircles = toFiniteNumber(innerArcs, 3);
 
         // Radius of the innermost circle
         this.centerCircleRadius = 115;
@@ -114,7 +104,7 @@ export default class Configuration {
         // Left/Right padding of the text (used with truncation)
         this.textPadding = 8;
 
-        // Default font size, color and scaling
+        // Base font size and scaling
         this._fontSize = 22;
         this._fontScale = fontScale;
 
@@ -129,7 +119,7 @@ export default class Configuration {
         // Duration of update animation if clicked on a person
         this.updateDuration = 1250;
 
-        // Default degrees of the fan chart
+        // Degrees of the fan chart
         this._fanDegree = toFiniteNumber(fanDegree, 210);
 
         this._showDescendants = showDescendants;
