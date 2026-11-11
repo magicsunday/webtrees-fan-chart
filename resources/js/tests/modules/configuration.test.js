@@ -167,5 +167,9 @@ describe("Configuration", () => {
                 }
             },
         );
+
+        it("cannot be built without the values of the server", () => {
+            expect(() => new Configuration()).toThrow();
+        });
     });
 });
