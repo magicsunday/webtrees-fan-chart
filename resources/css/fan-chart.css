@@ -302,6 +302,15 @@ div.tooltip .place td {
     display: none;
 }
 
+/* The svg fills the screen in fullscreen mode, so the notice floats above it and takes no row */
+[fullscreen] .webtrees-fan-chart-container .fan-chart-update-notice {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
+
 [fullscreen] .webtrees-fan-chart-container {
     min-height: 100dvh;
     max-height: 100dvh;
