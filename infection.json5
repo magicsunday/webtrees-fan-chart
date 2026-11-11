@@ -18,6 +18,14 @@
     // default or a call order. No `maxTimeouts` limit either, because the timeout count
     // varies with machine load.
     "mutators": {
-        "@default": true
+        "@default": true,
+        // The labels of the chart parameters are literal texts that the page reads, and the
+        // testing policy of AGENTS.md excludes a test that only pins a label. Removing an
+        // entry of that array is therefore answered here and not with a test of its value.
+        "ArrayItemRemoval": {
+            "ignore": [
+                "MagicSunday\\Webtrees\\FanChart\\Module::getChartParameters"
+            ]
+        }
     }
 }

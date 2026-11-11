@@ -48,7 +48,7 @@ export class FanChart {
      * @param {string} selector The CSS selector of the container element to render the chart into
      * @param {object} options  Configuration values passed from the server-rendered page
      *
-     * @param {{ zoom: string, move: string }} options.labels The zoom and move hint texts of the overlay
+     * @param {{ zoom: string, move: string, updateFailed: string }} options.labels The zoom and move hint texts of the overlay and the notice of a failed update
      * @param {number}    options.generations
      * @param {number}    options.fanDegree
      * @param {number}    options.fontScale

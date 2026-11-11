@@ -56,6 +56,12 @@
     font-size: unset;
     display: flex;
     flex: auto;
+    flex-wrap: wrap;
+}
+
+/* The notice of a failed update takes a row of its own above the chart */
+.webtrees-fan-chart-container .fan-chart-update-notice {
+    flex: 0 0 100%;
 }
 
 .webtrees-fan-chart-container .rtl {
@@ -294,6 +300,15 @@ div.tooltip .place td {
 
 [fullscreen] .webtrees-fan-fullscreen-container #exportSVG {
     display: none;
+}
+
+/* The svg fills the screen in fullscreen mode, so the notice floats above it below the toolbar and takes no row */
+[fullscreen] .webtrees-fan-chart-container .fan-chart-update-notice {
+    position: absolute;
+    top: 3rem;
+    left: 0;
+    right: 0;
+    z-index: 1;
 }
 
 [fullscreen] .webtrees-fan-chart-container {

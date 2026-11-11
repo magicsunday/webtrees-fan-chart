@@ -383,6 +383,10 @@ msgstr "切換全螢幕與一般檢視"
 msgid "Tab key"
 msgstr ""
 
+#: src/Module.php:269
+msgid "The chart could not be updated. Please try again."
+msgstr ""
+
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."

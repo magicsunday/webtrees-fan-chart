@@ -264,8 +264,9 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
                 ->resolve($individual->tree()->getPreference('SURNAME_TRADITION'))
                 ->value,
             'labels' => [
-                'zoom' => I18N::translate('Use Ctrl + scroll to zoom in the view'),
-                'move' => I18N::translate('Move the view with two fingers'),
+                'zoom'         => I18N::translate('Use Ctrl + scroll to zoom in the view'),
+                'move'         => I18N::translate('Move the view with two fingers'),
+                'updateFailed' => I18N::translate('The chart could not be updated. Please try again.'),
             ],
         ];
     }

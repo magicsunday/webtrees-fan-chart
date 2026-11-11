@@ -59,6 +59,7 @@ function buildChart() {
         visual,
         div: { property: jest.fn() },
         defs: { get: () => root.select("defs") },
+        node: () => root.node(),
         select: (selector) => root.select(selector),
         selectAll: (selector) => root.selectAll(selector),
         transition: () => ({ duration: () => ({ attr: () => ({}) }) }),
