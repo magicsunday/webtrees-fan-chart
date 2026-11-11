@@ -33,6 +33,7 @@ use function array_filter;
 use function array_keys;
 use function array_map;
 use function count;
+use function range;
 use function str_contains;
 
 /**
@@ -895,8 +896,13 @@ final class ConfigurationTest extends TestCase
         $fontScale   = static fn (Configuration $configuration): int => $configuration->getFontScale();
         $innerArcs   = static fn (Configuration $configuration): int => $configuration->getInnerArcs();
         $fanDegree   = static fn (Configuration $configuration): int => $configuration->getFanDegree();
+        $detailed    = static fn (Configuration $configuration): int => $configuration->getDetailedDateGenerations();
 
         return [
+            'detailed dates at the minimum'                 => [$detailed, ['detailedDateGenerations' => '0'], 0],
+            'detailed dates below the minimum'              => [$detailed, ['detailedDateGenerations' => '-1'], 4],
+            'detailed dates at the maximum'                 => [$detailed, ['detailedDateGenerations' => '10'], 10],
+            'detailed dates above the maximum'              => [$detailed, ['detailedDateGenerations' => '11'], 4],
             'generations at the minimum'                    => [$generations, ['generations' => '2'], 2],
             'generations below the minimum'                 => [$generations, ['generations' => '1'], 7],
             'generations at the maximum'                    => [$generations, ['generations' => '10'], 10],
@@ -935,14 +941,70 @@ final class ConfigurationTest extends TestCase
         $configuration = new Configuration(
             (new ServerRequest(RequestMethodInterface::METHOD_GET, '/'))->withQueryParams($query),
             $this->createModuleWithPreferences([
-                'default_generations' => '7',
-                'default_fontScale'   => '90',
-                'default_innerArcs'   => '2',
-                'default_fanDegree'   => '200',
+                'default_generations'             => '7',
+                'default_fontScale'               => '90',
+                'default_innerArcs'               => '2',
+                'default_fanDegree'               => '200',
+                'default_detailedDateGenerations' => '4',
             ])
         );
 
         self::assertSame($expected, $read($configuration));
+    }
+
+    /**
+     * The administration offers one choice per number of detailed generations, from none up to the
+     * deepest generation of the chart, and the keys are the values that the setting accepts.
+     */
+    #[Test]
+    public function theDetailedDateChoicesCoverTheWholeRangeOfTheSetting(): void
+    {
+        $configuration = new Configuration(
+            new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            $this->createModuleWithPreferences([])
+        );
+
+        self::assertSame(range(0, Configuration::MAX_GENERATIONS), array_keys($configuration->getDetailedDateGenerationsList()));
+    }
+
+    /**
+     * The toggles of the form that fall back to a module preference, with the key under which the
+     * administration stores it. A toggle that is read under another key stays off while the
+     * preference is on, so the wrong key shows.
+     *
+     * @return array<string, array{string, Closure(Configuration): bool}>
+     */
+    public static function togglePreferenceKeyProvider(): array
+    {
+        return [
+            'show nicknames'   => ['default_showNicknames', static fn (Configuration $configuration): bool => $configuration->getShowNicknames()],
+            'show descendants' => ['default_showDescendants', static fn (Configuration $configuration): bool => $configuration->getShowDescendants()],
+        ];
+    }
+
+    /**
+     * A toggle that the request does not carry takes the value that the administration stored for it.
+     *
+     * @param string                       $preferenceKey The key of the stored preference
+     * @param Closure(Configuration): bool $read          Reads the toggle under test
+     */
+    #[Test]
+    #[DataProvider('togglePreferenceKeyProvider')]
+    public function aToggleWithoutRequestValueTakesTheStoredPreference(string $preferenceKey, Closure $read): void
+    {
+        $withPreference = new Configuration(
+            new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            $this->createModuleWithPreferences([$preferenceKey => '1'])
+        );
+
+        self::assertTrue($read($withPreference));
+
+        $withoutPreference = new Configuration(
+            new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            $this->createModuleWithPreferences([])
+        );
+
+        self::assertFalse($read($withoutPreference), 'the toggle is off until the administration turns it on');
     }
 
     /**
