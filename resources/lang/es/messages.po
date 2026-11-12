@@ -236,7 +236,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Mover el diagrama"
 
-#: src/Module.php:265
+#: src/Module.php:264
 msgid "Move the view with two fingers"
 msgstr "Mueve la vista con dos dedos"
 
@@ -399,7 +399,7 @@ msgstr "Cambiar entre pantalla completa y vista normal"
 msgid "Tab key"
 msgstr ""
 
-#: src/Module.php:266
+#: src/Module.php:265
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
@@ -412,7 +412,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:264
+#: src/Module.php:263
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Use Ctrl + scroll para acercar la vista"
 

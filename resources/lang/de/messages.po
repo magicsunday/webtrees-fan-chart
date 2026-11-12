@@ -239,7 +239,7 @@ msgstr "Zwischen den Personen wechseln"
 msgid "Move the chart"
 msgstr "Diagramm verschieben"
 
-#: src/Module.php:265
+#: src/Module.php:264
 msgid "Move the view with two fingers"
 msgstr "Verschieben der Ansicht mit zwei Fingern"
 
@@ -403,7 +403,7 @@ msgstr "Zwischen Vollbildmodus und normaler Ansicht umschalten"
 msgid "Tab key"
 msgstr "Tabulatortaste"
 
-#: src/Module.php:266
+#: src/Module.php:265
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 "Das Diagramm konnte nicht aktualisiert werden. Bitte versuche es erneut."
@@ -417,7 +417,7 @@ msgstr "Die Darstellung betrifft nur die Bögen, nicht den Tooltip."
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:264
+#: src/Module.php:263
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Verwende Strg+Scrollen zum Zoomen der Ansicht"
 

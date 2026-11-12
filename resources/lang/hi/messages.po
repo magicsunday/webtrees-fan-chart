@@ -232,7 +232,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "चार्ट को स्थानांतरित करें"
 
-#: src/Module.php:265
+#: src/Module.php:264
 msgid "Move the view with two fingers"
 msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
 
@@ -391,7 +391,7 @@ msgstr "पूर्ण स्क्रीन और सामान्य द�
 msgid "Tab key"
 msgstr ""
 
-#: src/Module.php:266
+#: src/Module.php:265
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
@@ -404,7 +404,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:264
+#: src/Module.php:263
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Ctrl + Scroll से ज़ूम इन करें"
 

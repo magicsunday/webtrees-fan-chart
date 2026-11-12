@@ -233,7 +233,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Di chuyển biểu đồ"
 
-#: src/Module.php:265
+#: src/Module.php:264
 msgid "Move the view with two fingers"
 msgstr "Di chuyển tầm nhìn bằng hai ngón tay"
 
@@ -393,7 +393,7 @@ msgstr "Chuyển giữa toàn màn hình và xem bình thường"
 msgid "Tab key"
 msgstr ""
 
-#: src/Module.php:266
+#: src/Module.php:265
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
@@ -406,7 +406,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:264
+#: src/Module.php:263
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Kết hợp Ctrl + scroll để thu phóng biểu đồ"
 

@@ -243,7 +243,7 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
 
     /**
      * Returns the static chart parameters passed to the JavaScript initialiser
-     * — RTL direction flag, image/silhouette visibility, name-abbreviation
+     * — RTL direction flag, the tooltip silhouette flag, name-abbreviation
      * strategy (resolved from the tree's surname tradition), and localised UI
      * labels.
      *
@@ -255,7 +255,6 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
     {
         return [
             'rtl'                    => I18N::direction() === 'rtl',
-            'showImages'             => $this->showImages($individual),
             'showTooltipSilhouettes' => $this->showTooltipSilhouettes($individual),
             'nameAbbreviation'       => $this->configuration->getNameAbbreviation()
                 ->resolve($individual->tree()->getPreference('SURNAME_TRADITION'))
@@ -293,20 +292,6 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
                 ...$this->configuration->getRouteToggleParams(),
             ]
         );
-    }
-
-    /**
-     * Returns true when highlight images are enabled for the tree and the
-     * individual is visible.
-     *
-     * @param Individual $individual
-     *
-     * @return bool
-     */
-    private function showImages(Individual $individual): bool
-    {
-        return $individual->canShow()
-            && ($individual->tree()->getPreference('SHOW_HIGHLIGHT_IMAGES') === '1');
     }
 
     /**

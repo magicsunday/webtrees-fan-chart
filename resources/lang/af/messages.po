@@ -234,7 +234,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Skuif die diagram"
 
-#: src/Module.php:265
+#: src/Module.php:264
 msgid "Move the view with two fingers"
 msgstr "Beweeg die aansig met twee vingers"
 
@@ -395,7 +395,7 @@ msgstr "Wissel tussen volskerm en normale aansig"
 msgid "Tab key"
 msgstr ""
 
-#: src/Module.php:266
+#: src/Module.php:265
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
@@ -408,7 +408,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:264
+#: src/Module.php:263
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Gebruik Ctrl + rol om te vergroot"
 
