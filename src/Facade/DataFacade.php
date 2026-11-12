@@ -11,12 +11,17 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Facade;
 
+use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Date;
+use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Fact;
+use Fisharebest\Webtrees\Factories\FamilyFactory;
 use Fisharebest\Webtrees\Family;
+use Fisharebest\Webtrees\Gedcom;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Tree;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
@@ -35,7 +40,13 @@ use MagicSunday\Webtrees\ModuleBase\Support\CompactDateFormat;
 use MagicSunday\Webtrees\ModuleBase\Support\Locale\IsoCountryMap;
 use MagicSunday\Webtrees\ModuleBase\Support\TextDirection;
 
+use function array_chunk;
+use function array_unique;
+use function array_values;
 use function html_entity_decode;
+use function in_array;
+use function is_string;
+use function preg_match_all;
 use function strip_tags;
 
 use const ENT_QUOTES;
@@ -53,6 +64,13 @@ use const ENT_QUOTES;
 final class DataFacade
 {
     use ModuleAwareDataFacadeTrait;
+
+    /**
+     * The most values that one preload statement binds. A generation of the ancestor tree
+     * doubles with each step, so a lookup of a whole generation in one statement would
+     * reach the placeholder ceiling of the database on a deep and complete pedigree.
+     */
+    private const int PRELOAD_CHUNK_SIZE = 250;
 
     /**
      * The configuration instance. Initialized by createTreeStructure() on each
@@ -95,6 +113,8 @@ final class DataFacade
         $this->compactDateFormat = CompactDateFormat::forLocale(I18N::languageTag());
         $this->factResolver      = null;
 
+        $this->preloadAncestors($individual);
+
         $rootNode = $this->buildTreeStructure($individual);
 
         if (($rootNode instanceof Node) && $this->configuration->getShowDescendants()) {
@@ -102,6 +122,162 @@ final class DataFacade
         }
 
         return $rootNode;
+    }
+
+    /**
+     * Loads the records of the ancestor tree one generation at a time, before the walk reads
+     * them, so that the walk finds every family and every parent in the record cache of
+     * webtrees and sends no statement of its own. Without it the walk reads one family and
+     * its members per person, and the statements grow with the number of people instead of
+     * the number of generations.
+     *
+     * The chart reads the parent family of every person up to the last generation, for the
+     * marriage of the parents, so the families of that generation are loaded too. Nothing
+     * beyond it is read.
+     *
+     * @param Individual $individual The root individual (generation 1)
+     */
+    private function preloadAncestors(Individual $individual): void
+    {
+        $generationPeople = [$individual];
+
+        for ($generation = 1; $generation <= $this->configuration->getGenerations(); ++$generation) {
+            $generationPeople = $this->preloadParentFamilies($individual->tree(), $generationPeople);
+        }
+    }
+
+    /**
+     * Loads the parent families of the given people and the people in them with a few chunked
+     * statements, and returns those parents, which are the next generation.
+     *
+     * The records go into the record cache of webtrees under the key that its own record
+     * factory reads. A family with a pending change is left out, because the factory decides
+     * on its own what an editor sees of it, so it is loaded on demand as it always was.
+     *
+     * @param Tree             $tree   The tree of the people
+     * @param list<Individual> $people The people of one generation
+     *
+     * @return list<Individual> The parents of the people
+     */
+    private function preloadParentFamilies(Tree $tree, array $people): array
+    {
+        // The record text is read directly. The facts of a person would resolve the family of every
+        // FAMC fact on their own, one statement each, before the families are in the cache.
+        $familyXrefs = [];
+
+        foreach ($people as $person) {
+            preg_match_all('/\n1 FAMC @(' . Gedcom::REGEX_XREF . ')@/', $person->gedcom(), $match);
+
+            foreach ($match[1] as $familyXref) {
+                $familyXrefs[] = $familyXref;
+            }
+        }
+
+        $familyXrefs = array_values(array_unique($familyXrefs));
+
+        // The rows are kept as a list of pairs. A numeric xref as an array key would turn into an
+        // integer and no longer fit the string parameter of the record factory.
+        $families = [];
+
+        foreach (array_chunk($familyXrefs, self::PRELOAD_CHUNK_SIZE) as $chunk) {
+            $rows = DB::table('families')
+                ->where('f_file', '=', $tree->id())
+                ->whereIn('f_id', $chunk)
+                ->get();
+
+            foreach ($rows as $row) {
+                // These checks narrow the untyped query row to text for the static analysis and cost
+                // nothing. They are no case to look for. A row that does not hold text is left to the
+                // record factory.
+                if (
+                    !is_string($row->f_id)
+                    || !is_string($row->f_gedcom)
+                ) {
+                    continue;
+                }
+
+                $families[] = [
+                    'xref'   => $row->f_id,
+                    'gedcom' => $row->f_gedcom,
+                ];
+            }
+        }
+
+        $parentXrefs = [];
+
+        foreach ($families as $family) {
+            preg_match_all('/\n1 (?:HUSB|WIFE) @(' . Gedcom::REGEX_XREF . ')@/', $family['gedcom'], $match);
+
+            foreach ($match[1] as $parentXref) {
+                $parentXrefs[] = $parentXref;
+            }
+        }
+
+        // The parents go into the cache before their families, because the construction of a
+        // family reads them from there.
+        $parents = [];
+
+        foreach (array_chunk(array_values(array_unique($parentXrefs)), self::PRELOAD_CHUNK_SIZE) as $chunk) {
+            $rows = DB::table('individuals')
+                ->where('i_file', '=', $tree->id())
+                ->whereIn('i_id', $chunk)
+                ->get()
+                ->map(Registry::individualFactory()->mapper($tree));
+
+            foreach ($rows as $parent) {
+                $parents[] = $parent;
+            }
+        }
+
+        $pendingXrefs = $this->pendingFamilyXrefs($tree, $familyXrefs);
+
+        foreach ($families as $family) {
+            if (in_array($family['xref'], $pendingXrefs, true)) {
+                continue;
+            }
+
+            Registry::cache()->array()->remember(
+                FamilyFactory::class . $family['xref'] . '@' . $tree->id(),
+                static fn (): Family => Registry::familyFactory()->new($family['xref'], $family['gedcom'], null, $tree),
+            );
+        }
+
+        return $parents;
+    }
+
+    /**
+     * Returns the xrefs of the given families that have a pending change. Only an editor sees
+     * pending changes, so everybody else gets an empty list without a statement.
+     *
+     * @param Tree         $tree        The tree of the families
+     * @param list<string> $familyXrefs The xrefs to look up
+     *
+     * @return list<string> The xrefs of the families with a pending change
+     */
+    private function pendingFamilyXrefs(Tree $tree, array $familyXrefs): array
+    {
+        $pendingXrefs = [];
+
+        foreach (array_chunk($familyXrefs, self::PRELOAD_CHUNK_SIZE) as $chunk) {
+            if (!Auth::isEditor($tree)) {
+                return [];
+            }
+
+            $xrefs = DB::table('change')
+                ->where('gedcom_id', '=', $tree->id())
+                ->where('status', '=', 'pending')
+                ->whereIn('xref', $chunk)
+                ->pluck('xref');
+
+            foreach ($xrefs as $xref) {
+                // Narrows the untyped query value to text for the static analysis, at no cost.
+                if (is_string($xref)) {
+                    $pendingXrefs[] = $xref;
+                }
+            }
+        }
+
+        return $pendingXrefs;
     }
 
     /**
