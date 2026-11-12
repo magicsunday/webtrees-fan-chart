@@ -5,11 +5,9 @@
  * LICENSE file that was distributed with this source code.
  */
 
-import * as d3 from "../d3.js";
 import { MATH_RAD2DEG } from "./geometry.js";
 
 /**
- * @import { Selection } from "d3-selection"
  * @import Configuration from "../configuration.js"
  * @import Geometry from "./geometry.js"
  * @import { HierarchyNode } from "../hierarchy.js"
@@ -57,6 +55,72 @@ export const TEXT_SLOT = {
     DATE_LINE_1: { index: 3 },
     DATE_LINE_2: { index: 4 },
 };
+
+/**
+ * The kinds of line a label of an outer arc or of the center circle is made of.
+ * Labels are built in this order: the names, then the alternative name, then
+ * the dates.
+ *
+ * @typedef {"name" | "alt" | "date"} LineKind
+ */
+
+/**
+ * The kinds of line of a label.
+ *
+ * @type {{ NAME: LineKind, ALT: LineKind, DATE: LineKind }}
+ */
+export const LINE_KIND = {
+    NAME: "name",
+    ALT: "alt",
+    DATE: "date",
+};
+
+/**
+ * The spacing of the lines of a label in units of the font size, shared by the
+ * labels along an arc and by the labels of the outer arcs. Lines of the names
+ * and of the dates sit closer together than two groups.
+ */
+const NAME_LINE_SPACING = 1.1;
+const DATE_LINE_SPACING = 1.0;
+const GROUP_SPACING = 1.5;
+
+/** The spacing between two groups of an outer label with at most three lines. */
+const COMPACT_GROUP_SPACING = 1.0;
+
+/**
+ * Stacks lines one below the other. Every line sits a line height below the
+ * previous one, and a line that starts another group than the previous line
+ * sits a group gap further down. The first line counts as following a line of
+ * the group of the names.
+ *
+ * @param {LineKind[]}                lineKinds  The kinds of the lines, from top to bottom
+ * @param {number}                    lineHeight The distance between two lines of one group in px
+ * @param {number}                    groupGap   The extra distance between two groups in px
+ * @param {(kind: LineKind) => LineKind} groupOf Maps a kind of line to the group it belongs to
+ * @param {number}                    startY     The position of the first line before a group gap in px
+ *
+ * @return {number[]} The position of every line in px
+ */
+function stackLines(lineKinds, lineHeight, groupGap, groupOf, startY) {
+    /** @type {number[]} */
+    const positions = [];
+    let currentY = startY;
+    let previousGroup = LINE_KIND.NAME;
+
+    lineKinds.forEach((kind) => {
+        const group = groupOf(kind);
+
+        if (group !== previousGroup) {
+            currentY += groupGap;
+        }
+
+        positions.push(currentY);
+        currentY += lineHeight;
+        previousGroup = group;
+    });
+
+    return positions;
+}
 
 /**
  * The layout of the labels of one arc: which label style an arc gets, where the
@@ -204,9 +268,9 @@ export default class ArcLabelLayout {
             this._geometry.outerRadius(datum.depth) - this._geometry.innerRadius(datum.depth);
         const fontPercent = (fontSize / arcHeight) * 100;
 
-        let intraNameSpacing = fontPercent * 1.1;
-        let intraDateSpacing = fontPercent * 1.0;
-        let interGroupSpacing = fontPercent * 1.5;
+        let intraNameSpacing = fontPercent * NAME_LINE_SPACING;
+        let intraDateSpacing = fontPercent * DATE_LINE_SPACING;
+        let interGroupSpacing = fontPercent * GROUP_SPACING;
 
         // Total vertical extent of all groups using group-specific spacing
         let totalHeight = 0;
@@ -380,36 +444,36 @@ export default class ArcLabelLayout {
         return availableWidth;
     }
     /**
-     * Calculates angular offsets for outer text elements using the same
+     * Calculates angular offsets for the lines of an outer label using the same
      * semantic grouping as calculateSlotPositions: names form one tight group,
      * dates another, with a wider gap between groups. Positions are returned as
      * degree offsets from the arc center, vertically centered within the
      * available angular span.
      *
-     * @param {HierarchyNode}                 datum        The D3 data object
-     * @param {Selection<any, any, any, any>} textElements The text elements to position
+     * @param {HierarchyNode} datum     The D3 data object
+     * @param {LineKind[]}    lineKinds The kinds of the lines of the label, from top to bottom
      *
-     * @return {number[]} Angular offset in degrees for each text element
+     * @return {number[]} Angular offset in degrees for each line
      */
-    calculateOuterSlotPositions(datum, textElements) {
-        // Build element groups: [names...], [dates...]
-        /** @type {{ items: unknown[], isDate: boolean }} */
+    calculateOuterSlotPositions(datum, lineKinds) {
+        // Build line groups: [names...], [dates...]
+        /** @type {{ items: LineKind[], isDate: boolean }} */
         const nameGroup = { items: [], isDate: false };
         const groups = [nameGroup];
         // The group dates are appended to, always the last one in groups
         let lastGroup = nameGroup;
 
-        textElements.each(function () {
-            if (d3.select(this).classed("date")) {
+        lineKinds.forEach((kind) => {
+            if (kind === LINE_KIND.DATE) {
                 // Start a new group for the first date
                 if (lastGroup.items.length > 0 && !lastGroup.isDate) {
                     lastGroup = { items: [], isDate: true };
                     groups.push(lastGroup);
                 }
 
-                lastGroup.items.push(this);
+                lastGroup.items.push(kind);
             } else {
-                nameGroup.items.push(this);
+                nameGroup.items.push(kind);
             }
         });
 
@@ -420,9 +484,9 @@ export default class ArcLabelLayout {
         const degPerPixel = MATH_RAD2DEG / centerRadius;
 
         const totalItems = groups.reduce((sum, g) => sum + g.items.length, 0);
-        const intraNameGapPx = fontSize * 1.1;
-        const intraDateGapPx = fontSize * 1.0;
-        const interGapPx = fontSize * (totalItems <= 3 ? 1.0 : 1.5);
+        const intraNameGapPx = fontSize * NAME_LINE_SPACING;
+        const intraDateGapPx = fontSize * DATE_LINE_SPACING;
+        const interGapPx = fontSize * (totalItems <= 3 ? COMPACT_GROUP_SPACING : GROUP_SPACING);
 
         let intraNameGapDeg = intraNameGapPx * degPerPixel;
         let intraDateGapDeg = intraDateGapPx * degPerPixel;
@@ -475,5 +539,109 @@ export default class ArcLabelLayout {
         });
 
         return positions;
+    }
+
+    /**
+     * Calculates the vertical offset of every line of the label of the center
+     * circle. Without an image the lines are centered around the middle of the
+     * circle, grouped as names, alternative name and dates. With an image the
+     * lines start below the image, and the image and the lines together are
+     * centered, with the alternative name counting as a name.
+     *
+     * @param {HierarchyNode} datum     The D3 data object
+     * @param {LineKind[]}    lineKinds The kinds of the lines of the label, from top to bottom
+     *
+     * @return {number[]} The vertical offset in px for each line
+     */
+    calculateCenterSlotOffsets(datum, lineKinds) {
+        const fontSize = this._geometry.getFontSize(datum);
+        const innerLineHeight = fontSize * 0.95;
+
+        if (this._imageSize > 0) {
+            // Image present: use absolute positioning to center image + text block.
+            // Tight spacing within groups (name/date), larger gap between groups.
+            const imageGap = 6;
+            const groupGap = fontSize * 0.45;
+
+            // Only include group gap when both names and dates are present
+            const hasNames = lineKinds.some((kind) => kind !== LINE_KIND.DATE);
+            const hasDates = lineKinds.includes(LINE_KIND.DATE);
+            const actualGroupGap = hasNames && hasDates ? groupGap : 0;
+            const textHeight = lineKinds.length * innerLineHeight + actualGroupGap;
+            const totalHeight = this._imageSize + imageGap + textHeight;
+
+            return stackLines(
+                lineKinds,
+                innerLineHeight,
+                groupGap,
+                (kind) => (kind === LINE_KIND.DATE ? LINE_KIND.DATE : LINE_KIND.NAME),
+                -(totalHeight / 2) + this._imageSize + imageGap + innerLineHeight / 2,
+            );
+        }
+
+        // No image: center the text block vertically using
+        // grouped spacing (same logic as image case)
+        const interGroupGap = fontSize * 0.5;
+        const positions = stackLines(lineKinds, innerLineHeight, interGroupGap, (kind) => kind, 0);
+
+        // Center the mean of all positions at 0, with a small
+        // downward shift to compensate for baseline rendering offset
+        const mean = positions.reduce((sum, position) => sum + position, 0) / positions.length;
+        const baselineShift = fontSize * 0.2;
+
+        return positions.map((position) => position - mean + baselineShift);
+    }
+
+    /**
+     * Returns the transform of one line of an outer label. The line is rotated
+     * to the angular center of the arc, shifted by its angular offset within the
+     * label, and moved out to the radius of the arc.
+     *
+     * @param {HierarchyNode} datum           The D3 data object
+     * @param {number}        angularPosition The angular offset of the line in degrees, from calculateOuterSlotPositions()
+     *
+     * @return {string}
+     */
+    calculateOuterTransform(datum, angularPosition) {
+        const offsetRotate = (angularPosition * this._configuration.fontScale) / 100.0;
+        const dx = datum.x1 - datum.x0;
+        let angle;
+        let flipped;
+
+        if (datum.depth < 0) {
+            // Descendant outer labels: use childScale for angle,
+            // flip at 180° so left-side text reads outward like
+            // right-side text (independent of isPositionFlipped
+            // which always returns true for inner arc-path labels)
+            const midFrac = datum.x0 + dx / 2;
+            const childScale = this._geometry.childScale;
+            const midRad = childScale ? childScale(midFrac) : 0;
+
+            angle = midRad * MATH_RAD2DEG;
+            flipped = midRad <= Math.PI;
+        } else {
+            // Ancestor nodes: use ancestor scale
+            angle = this._geometry.scale(datum.x0 + dx / 2) * MATH_RAD2DEG;
+            flipped = angle > 0;
+        }
+
+        let rotate = angle - offsetRotate * (flipped ? -1 : 1);
+        let translate =
+            this._geometry.centerRadius(datum.depth) - this._configuration.colorArcWidth / 2.0;
+
+        // Compensate for text baseline: convert a perpendicular pixel
+        // shift into an angular offset at the given radius
+        const radius = this._geometry.centerRadius(datum.depth);
+        const baselinePx = this._geometry.getFontSize(datum) * 0.1;
+        const baselineAngle = (baselinePx / radius) * MATH_RAD2DEG;
+
+        if (flipped) {
+            rotate -= 90 - baselineAngle;
+        } else {
+            translate = -translate;
+            rotate += 90 - baselineAngle;
+        }
+
+        return `rotate(${rotate}) translate(${translate})`;
     }
 }

@@ -6,8 +6,8 @@
  */
 
 import * as d3 from "../d3.js";
-import Geometry, { MATH_RAD2DEG } from "./geometry.js";
-import ArcLabelLayout, { TEXT_SLOT } from "./arc-label-layout.js";
+import Geometry from "./geometry.js";
+import ArcLabelLayout, { LINE_KIND, TEXT_SLOT } from "./arc-label-layout.js";
 import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees-chart-lib/infra";
 import { createAlternativeNamesData, createNamesData } from "./name-parts.js";
 import { getTextMetrics } from "./text-metrics.js";
@@ -18,8 +18,23 @@ import { getTextMetrics } from "./text-metrics.js";
  * @import Configuration from "../configuration.js"
  * @import { HierarchyNode } from "../hierarchy.js"
  * @import { LabelElementData } from "./name-parts.js"
- * @import { SlotPosition, SlotPositions, TextSlot } from "./arc-label-layout.js"
+ * @import { LineKind, SlotPosition, SlotPositions, TextSlot } from "./arc-label-layout.js"
  */
+
+/**
+ * Returns the kind of line that a <text> element of a label stands for.
+ *
+ * @param {Selection<any, any, any, any>} element The <text> element
+ *
+ * @return {LineKind}
+ */
+function getLineKind(element) {
+    if (element.classed("date")) {
+        return LINE_KIND.DATE;
+    }
+
+    return element.classed("wt-chart-box-name-alt") ? LINE_KIND.ALT : LINE_KIND.NAME;
+}
 
 /**
  * Generates all text elements for a single person arc: first names, last names,
@@ -47,7 +62,6 @@ export default class Text {
         this._configuration = configuration;
         this._geometry = geometry || new Geometry(this._configuration);
         this._layout = new ArcLabelLayout(this._configuration, this._geometry, imageSize);
-        this._imageSize = imageSize;
         this._metrics = getTextMetrics(this._svg, this._geometry);
     }
 
@@ -486,11 +500,11 @@ export default class Text {
     }
 
     /**
-     * Positions all <text> elements within the label group. For the center node
-     * (depth 0), stacks them vertically using dy offsets, accounting for a
-     * thumbnail image above the text when present. For outer arcs, applies a
-     * rotate+translate transform to align each line with the segment's angular
-     * center using semantic group spacing (see calculateOuterSlotPositions).
+     * Positions all <text> elements within the label group. The layout decides
+     * where every line goes. For the center node (depth 0) it stacks the lines
+     * vertically, and the lines are set with dy offsets. For outer arcs it
+     * aligns each line with the angular center of the segment, and the lines are
+     * set with a rotate and translate transform.
      *
      * @param {Selection<any, any, any, any>} parent The label <g> element whose <text> children to position
      * @param {HierarchyNode}                 datum  The D3 partition datum
@@ -498,154 +512,38 @@ export default class Text {
      * @private
      */
     transformOuterText(parent, datum) {
-        const that = this;
+        const layout = this._layout;
         const textElements = parent.selectAll("text");
-        const countElements = textElements.size();
+        /** @type {LineKind[]} */
+        const lineKinds = [];
+
+        textElements.each(function () {
+            lineKinds.push(getLineKind(d3.select(this)));
+        });
 
         // Center person: vertical stacking via dy.
         if (datum.depth === 0) {
-            const fontSize = that._geometry.getFontSize(datum);
-            const imageSize = that._imageSize;
+            const offsets = layout.calculateCenterSlotOffsets(datum, lineKinds);
 
-            if (imageSize > 0) {
-                // Image present: use absolute positioning to center image + text block.
-                // Tight spacing within groups (name/date), larger gap between groups.
-                const imageGap = 6;
-                const innerLineHeight = fontSize * 0.95;
-                const groupGap = fontSize * 0.45;
-
-                // Only include group gap when both names and dates are present
-                let hasNames = false;
-                let hasDates = false;
-
-                textElements.each(function () {
-                    if (d3.select(this).classed("date")) {
-                        hasDates = true;
-                    } else {
-                        hasNames = true;
-                    }
-                });
-
-                const actualGroupGap = hasNames && hasDates ? groupGap : 0;
-                const textHeight = countElements * innerLineHeight + actualGroupGap;
-                const totalHeight = imageSize + imageGap + textHeight;
-
-                let currentY = -(totalHeight / 2) + imageSize + imageGap + innerLineHeight / 2;
-                let prevIsDate = false;
-
-                textElements.each(function () {
-                    const isDate = d3.select(this).classed("date");
-
-                    // Add group gap when switching from names to dates
-                    if (isDate && !prevIsDate) {
-                        currentY += groupGap;
-                    }
-
-                    d3.select(this).attr("dy", `${currentY}px`);
-
-                    currentY += innerLineHeight;
-                    prevIsDate = isDate;
-                });
-            } else {
-                // No image: center the text block vertically using
-                // grouped spacing (same logic as image case)
-                const innerLineHeight = fontSize * 0.95;
-                const interGroupGap = fontSize * 0.5;
-
-                // First pass: compute raw positions
-                /** @type {number[]} */
-                const positions = [];
-                let currentY = 0;
-                let prevGroup = "name";
-
-                textElements.each(function () {
-                    const el = d3.select(this);
-                    let currentGroup;
-
-                    if (el.classed("date")) {
-                        currentGroup = "date";
-                    } else if (el.classed("wt-chart-box-name-alt")) {
-                        currentGroup = "alt";
-                    } else {
-                        currentGroup = "name";
-                    }
-
-                    if (currentGroup !== prevGroup) {
-                        currentY += interGroupGap;
-                    }
-
-                    positions.push(currentY);
-                    currentY += innerLineHeight;
-                    prevGroup = currentGroup;
-                });
-
-                // Center the mean of all positions at 0, with a small
-                // downward shift to compensate for baseline rendering offset
-                const mean = positions.reduce((sum, p) => sum + p, 0) / positions.length;
-                const baselineShift = fontSize * 0.2;
-
-                // Both passes walk the same selection, one position per element
-                textElements.each(function (_ignore, i) {
-                    const position = /** @type {number} */ (positions[i]);
-
-                    d3.select(this).attr("dy", `${position - mean + baselineShift}px`);
-                });
-            }
+            textElements.each(function (_ignore, i) {
+                d3.select(this).attr("dy", `${offsets[i]}px`);
+            });
 
             return;
         }
 
         // Outer labels: use semantic group spacing (same logic as inner
         // labels in calculateSlotPositions) but in angular degrees.
-        const angularPositions = this._layout.calculateOuterSlotPositions(datum, textElements);
+        const angularPositions = layout.calculateOuterSlotPositions(datum, lineKinds);
 
         // calculateOuterSlotPositions() returns one offset per text element
         textElements.each(function (_ignore, i) {
             const angularPosition = /** @type {number} */ (angularPositions[i]);
-            const offsetRotate = (angularPosition * that._configuration.fontScale) / 100.0;
 
-            d3.select(this).attr("transform", () => {
-                const dx = datum.x1 - datum.x0;
-                let angle;
-                let flipped;
-
-                if (datum.depth < 0) {
-                    // Descendant outer labels: use childScale for angle,
-                    // flip at 180° so left-side text reads outward like
-                    // right-side text (independent of isPositionFlipped
-                    // which always returns true for inner arc-path labels)
-                    const midFrac = datum.x0 + dx / 2;
-                    const childScale = that._geometry.childScale;
-                    const midRad = childScale ? childScale(midFrac) : 0;
-
-                    angle = midRad * MATH_RAD2DEG;
-                    flipped = midRad <= Math.PI;
-                } else {
-                    // Ancestor nodes: use ancestor scale
-                    angle = that._geometry.scale(datum.x0 + dx / 2) * MATH_RAD2DEG;
-                    flipped = angle > 0;
-                }
-
-                let rotate = angle - offsetRotate * (flipped ? -1 : 1);
-                let translate =
-                    that._geometry.centerRadius(datum.depth) -
-                    that._configuration.colorArcWidth / 2.0;
-
-                // Compensate for text baseline: convert a perpendicular pixel
-                // shift into an angular offset at the given radius
-                const radius = that._geometry.centerRadius(datum.depth);
-                const baselinePx = that._geometry.getFontSize(datum) * 0.1;
-                const baselineAngle = (baselinePx / radius) * MATH_RAD2DEG;
-
-                if (flipped) {
-                    rotate -= 90 - baselineAngle;
-                } else {
-                    translate = -translate;
-                    rotate += 90 - baselineAngle;
-                }
-
-                return `rotate(${rotate}) translate(${translate})`;
-            });
+            d3.select(this).attr(
+                "transform",
+                layout.calculateOuterTransform(datum, angularPosition),
+            );
         });
     }
 }
