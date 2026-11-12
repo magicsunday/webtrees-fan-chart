@@ -39,6 +39,7 @@ use function array_map;
 use function array_merge;
 use function count;
 use function implode;
+use function in_array;
 use function intdiv;
 use function json_decode;
 use function json_encode;
@@ -267,6 +268,44 @@ final class DataFacadeQueryCountTest extends TestCase
     }
 
     /**
+     * Only the parents of a family are the next generation, not its children. A sibling of a person
+     * is a child of the same family, so if the siblings took part in the next generation the family of
+     * the person would be looked up again, once for every generation. Every family is bound by a lookup
+     * once.
+     */
+    #[Test]
+    public function everyFamilyIsLookedUpOnce(): void
+    {
+        $tree = $this->importPedigree(3, true);
+
+        Registry::cache(new CacheFactory());
+        Auth::logout();
+
+        $families = [];
+
+        foreach (range(1, (2 ** self::DEPTH) - 1) as $person) {
+            $families[] = $this->familyXref($person);
+        }
+
+        $bound = [];
+
+        foreach ($this->statements($tree, 5) as $statement) {
+            if (!str_contains($statement['query'], 'from "wt_families"')) {
+                continue;
+            }
+
+            foreach ($statement['bindings'] as $binding) {
+                if (in_array($binding, $families, true)) {
+                    $bound[] = $binding;
+                }
+            }
+        }
+
+        self::assertNotSame([], $bound);
+        self::assertSame($bound, array_values(array_unique($bound)));
+    }
+
+    /**
      * A person without a parent family has nothing to preload, so the request sends no lookup of
      * families, of people by a list of xrefs or of pending families, for an administrator, an editor
      * and a visitor alike.
@@ -336,6 +375,8 @@ final class DataFacadeQueryCountTest extends TestCase
      *
      * @param int $family  The person whose parent family holds the child
      * @param int $sibling The number of the child within the family, starting at one
+     *
+     * @return string The xref of the child
      */
     private function siblingXref(int $family, int $sibling): string
     {
