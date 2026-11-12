@@ -31,7 +31,7 @@ const ALLOWED_VALUES = new Map([
 /**
  * Copies the child nodes of a parsed node into the target. An element of the allowlist is created
  * anew in the document of the target with its allowed attributes, so no node of the parsed document
- * is adopted. Any other element is replaced by its text, a comment or processing instruction is
+ * is adopted. Any other element in the body is replaced by its text, a comment or processing instruction is
  * dropped.
  *
  * @param {Node} source The parsed node whose children are copied

@@ -104,6 +104,13 @@ describe("setInlineMarkup", () => {
         expect(span.hasAttribute(name)).toBe(false);
     });
 
+    it("drops a comment and keeps the text around it", () => {
+        const target = render("Jane<!-- hidden --> Doe");
+
+        expect(target.textContent).toBe("Jane Doe");
+        expect(target.innerHTML).not.toContain("hidden");
+    });
+
     it("renders an empty string as an empty element", () => {
         expect(render("").childNodes).toHaveLength(0);
     });
