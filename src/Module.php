@@ -313,8 +313,9 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
      * Returns true when the tooltip may show the silhouette of a person without a
      * highlight image. Like the image of a person in webtrees core it follows the
      * tree preference for silhouettes alone, so it is independent of the rule for
-     * the images in the arcs. The chart action has already refused a person the
-     * viewer may not see.
+     * the images in the arcs. A person the viewer may not see carries no
+     * silhouette URL, because the image processor checks that the person can be
+     * shown.
      *
      * @param Individual $individual
      *

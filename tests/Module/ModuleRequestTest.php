@@ -255,8 +255,8 @@ final class ModuleRequestTest extends TestCase
     }
 
     /**
-     * The silhouette in the tooltip follows the tree preference for silhouettes and the visibility of
-     * the person, whether or not the tree shows highlight images.
+     * The silhouette in the tooltip follows the tree preference for silhouettes, whether or not the
+     * tree shows highlight images.
      *
      * @return array<string, array{string, string, string}>
      */
