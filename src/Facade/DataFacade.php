@@ -62,11 +62,6 @@ final class DataFacade
     private Configuration $configuration;
 
     /**
-     * The incremental node identifier.
-     */
-    private int $nodeId = 0;
-
-    /**
      * The locale-aware compact date format for the current request. Resolved once in
      * createTreeStructure() and reused for every node — the active locale does not
      * change within a request, and CompactDateFormat::forLocale() parses an ICU
@@ -97,7 +92,6 @@ final class DataFacade
     ): ?Node {
         $this->setModule($module);
         $this->configuration     = $configuration;
-        $this->nodeId            = 0;
         $this->compactDateFormat = CompactDateFormat::forLocale(I18N::languageTag());
         $this->factResolver      = null;
 
@@ -261,7 +255,7 @@ final class DataFacade
 
     /**
      * Creates a minimal NodeData for an unknown partner (no Individual record).
-     * Only sets id, generation, and sex.
+     * Only sets generation and sex.
      *
      * @param int $generation The generation depth (typically -1)
      *
@@ -270,7 +264,6 @@ final class DataFacade
     private function createEmptyPartnerNode(int $generation): NodeData
     {
         return (new NodeData())
-            ->setId(++$this->nodeId)
             ->setGeneration($generation)
             ->setSex('U');
     }
@@ -307,7 +300,6 @@ final class DataFacade
 
         $treeData = new NodeData();
         $treeData
-            ->setId(++$this->nodeId)
             ->setGeneration($generation)
             ->setXref($individual->xref())
             ->setUrl($individual->url())

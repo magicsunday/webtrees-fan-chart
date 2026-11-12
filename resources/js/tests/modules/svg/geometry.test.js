@@ -1,35 +1,3 @@
-import { jest } from "@jest/globals";
-
-const scaleLinearMock = jest.fn(() => {
-    let domain = [0, 1];
-    let range = [0, 1];
-
-    const scale = (value) => {
-        const [domainStart, domainEnd] = domain;
-        const [rangeStart, rangeEnd] = range;
-        const t = (value - domainStart) / (domainEnd - domainStart);
-
-        return rangeStart + (rangeEnd - rangeStart) * t;
-    };
-
-    scale.range = (values) => {
-        range = values;
-        return scale;
-    };
-
-    scale.domain = (values) => {
-        domain = values;
-        return scale;
-    };
-
-    return scale;
-});
-
-await jest.unstable_mockModule("resources/js/modules/d3", () => ({
-    __esModule: true,
-    scaleLinear: scaleLinearMock,
-}));
-
 const { default: Geometry, MATH_DEG2RAD } = await import("resources/js/modules/svg/geometry");
 const { default: DescendantLayout } = await import("resources/js/modules/descendant-layout");
 
@@ -60,10 +28,6 @@ describe("Geometry", () => {
         padDistance: 0,
         colorArcWidth: 20,
         ...overrides,
-    });
-
-    beforeEach(() => {
-        scaleLinearMock.mockClear();
     });
 
     it("reads the compact children flag from the descendant layout", () => {
@@ -288,6 +252,45 @@ describe("Geometry", () => {
         // same value as the full-width node above. This is what
         // smallestChildFraction is for.
         expect(geometry.getFontSize({ depth: -2, x0: 0.4, x1: 0.6 })).toBeCloseTo(1.3823, 4);
+    });
+
+    // The width cap of the outer labels. The radii follow from createConfiguration, the centre radius
+    // of depth d >= 3 is 110 + 30 * (d - 3), and a narrow arc of 1 % of the half circle makes the cap
+    // bind. The cap is (arc width * factor) / lines, so two lines below depth 7 and one line from there on.
+    const createCapGeometry = () =>
+        new Geometry(
+            createConfiguration({ fontSize: 22, fontScale: 100 }),
+            createLayout({ childScale: (v) => v * Math.PI }),
+        );
+
+    it.each([
+        // 0.01 * PI * 200 * 0.55 / 2 lines
+        ["two lines at depth 6", 6, 1.7279],
+        // 0.01 * PI * 230 * 0.55 / 1 line
+        ["one line at depth 7", 7, 3.9741],
+        // 0.01 * PI * 260 * 0.55 / 1 line
+        ["one line below depth 7", 8, 4.4925],
+    ])("caps an outer ancestor label with %s", (_label, depth, expected) => {
+        expect(createCapGeometry().getFontSize({ depth, x0: 0, x1: 0.01 })).toBeCloseTo(
+            expected,
+            3,
+        );
+    });
+
+    it("caps an outer ancestor label with the factor of an ancestor", () => {
+        // 0.2 * PI * 110 * 0.55 / 2 lines, the uncapped size is (23 - 3) = 20
+        expect(createCapGeometry().getFontSize({ depth: 3, x0: 0, x1: 0.2 })).toBeCloseTo(
+            19.0066,
+            3,
+        );
+    });
+
+    it("caps a partner label with the narrower factor of a partner", () => {
+        // 0.5 * PI * 65 * 0.35 / 2 lines, the uncapped size is (22 - 1) = 21
+        expect(createCapGeometry().getFontSize({ depth: -1, x0: 0, x1: 0.5 })).toBeCloseTo(
+            17.8683,
+            3,
+        );
     });
 
     it("mirrors innerRadius symmetrically for negative and positive depths", () => {

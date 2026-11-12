@@ -27,30 +27,6 @@ import { motionDuration } from "./motion.js";
 const MIN_PADDING = 1; // Minimum padding around view box in "rem"
 
 /**
- * Returns the text that a person arc shows, one line per text element. The tspans carry the
- * visible text, a title next to them is only the tooltip of the same text.
- *
- * @param {unknown} node The person element
- *
- * @return {string} The visible lines joined by a space, empty if the arc shows no text
- */
-function visibleText(node) {
-    if (!(node instanceof Element)) {
-        return "";
-    }
-
-    return Array.from(node.querySelectorAll("text"))
-        .map((text) =>
-            Array.from(text.querySelectorAll("tspan"))
-                .map((tspan) => tspan.textContent ?? "")
-                .join(" ")
-                .trim(),
-        )
-        .filter((line) => line !== "")
-        .join(" ");
-}
-
-/**
  * Orchestrates the full fan chart lifecycle: builds the SVG, populates person
  * and marriage arc groups from hierarchical data, draws separator lines between
  * family branches, and delegates AJAX-driven updates with animated transitions.
@@ -90,6 +66,11 @@ export default class Chart {
         this._keyboardFocusXref = null;
         /** @type {Element|null} */
         this._keyboardFocusSource = null;
+
+        // One updater serves every update of the chart, so a newer update can cancel the request of
+        // the one that it supersedes.
+        /** @type {ChartUpdater|null} */
+        this._updater = null;
     }
 
     /**
@@ -571,14 +552,6 @@ export default class Chart {
             that._selection.makeOperable(d3.select(this), datum, (_data, byKeyboard) =>
                 that.personClick(null, datum, byKeyboard),
             );
-
-            // The library names the arc with the bare name, but the accessible name has to
-            // contain the text that the arc shows (WCAG 2.5.3)
-            const label = visibleText(this);
-
-            if (label !== "") {
-                d3.select(this).attr("aria-label", label);
-            }
         });
 
         // Set available on marriage arcs that have content
@@ -772,12 +745,16 @@ export default class Chart {
             .attr("aria-current", null);
         this._runningUpdates += 1;
 
-        const updater = new ChartUpdater(this.svg, this._configuration, this._hierarchy);
+        this._updater ??= new ChartUpdater(this.svg, this._configuration, this._hierarchy);
 
-        updater.update(
+        this._updater.update(
             url,
             () => this.redrawOverlayLayers(),
             () => this.bindClickEventListener(),
+            // A superseded update never draws, so it no longer counts as running.
+            () => {
+                this._runningUpdates = Math.max(0, this._runningUpdates - 1);
+            },
         );
     }
 

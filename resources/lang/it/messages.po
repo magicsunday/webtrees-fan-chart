@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:144
+#: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -39,7 +39,7 @@ msgstr "Automatico (in base alla tradizione dei cognomi dell'albero)"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Center chart on this person"
 msgstr ""
 
@@ -67,11 +67,11 @@ msgstr ""
 "Colora gli archi per ramo familiare. Ogni coppia condivide lo stesso colore, "
 "derivato dai colori base scelti."
 
-#: resources/views/modules/fan-chart/config.phtml:25
+#: resources/views/modules/fan-chart/config.phtml:26
 msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:85
+#: resources/views/modules/fan-chart/config.phtml:86
 msgid ""
 "Controls which name part shrinks first when an arc is too narrow for the "
 "full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
@@ -86,7 +86,7 @@ msgstr ""
 msgid "Ctrl + scroll"
 msgstr "Ctrl + scorrimento"
 
-#: resources/views/modules/fan-chart/config.phtml:108
+#: resources/views/modules/fan-chart/config.phtml:109
 msgid "Date precision"
 msgstr "Precisione delle date"
 
@@ -132,11 +132,11 @@ msgstr "Esporta come PNG"
 msgid "Export as SVG"
 msgstr "Esporta come SVG"
 
-#: src/Module.php:132 src/Module.php:244
+#: src/Module.php:130 src/Module.php:241
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:241 src/Module/ChartTrait.php:46
+#: src/Module.php:238 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -153,7 +153,8 @@ msgstr "Dimensione dei caratteri"
 msgid "Full place name"
 msgstr "Nome completo del luogo"
 
-#: resources/views/modules/fan-chart/config.phtml:51
+#: resources/views/modules/fan-chart/config.phtml:52
+msgctxt "webtrees-fan-chart"
 msgid "General"
 msgstr ""
 
@@ -169,15 +170,15 @@ msgstr "Nascondi i settori vuoti"
 msgid "Hide more options"
 msgstr "Nascondi opzioni"
 
-#: resources/views/modules/fan-chart/config.phtml:65
+#: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
 msgstr "Nascondi il pulsante di esportazione PNG"
 
-#: resources/views/modules/fan-chart/config.phtml:56
+#: resources/views/modules/fan-chart/config.phtml:57
 msgid "Hide the SVG export button"
 msgstr "Nascondi il pulsante di esportazione SVG"
 
-#: resources/views/modules/fan-chart/config.phtml:102
+#: resources/views/modules/fan-chart/config.phtml:103
 msgid ""
 "How much of each place is shown in chart arcs — the full name, only the "
 "lowest levels, or the place combined with its country as a name or country "
@@ -222,7 +223,7 @@ msgstr "Due livelli più bassi"
 msgid "Maternal"
 msgstr "Materno"
 
-#: resources/views/modules/fan-chart/config.phtml:25
+#: resources/views/modules/fan-chart/config.phtml:26
 msgid "Modules"
 msgstr ""
 
@@ -234,15 +235,15 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Sposta il diagramma"
 
-#: src/Module.php:268
+#: src/Module.php:265
 msgid "Move the view with two fingers"
 msgstr "Spostare la vista"
 
-#: resources/views/modules/fan-chart/config.phtml:74
+#: resources/views/modules/fan-chart/config.phtml:75
 msgid "Name abbreviation when space is tight"
 msgstr "Abbreviazione del nome quando lo spazio è ridotto"
 
-#: resources/views/modules/fan-chart/page.phtml:110
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "No details are available for this person."
 msgstr ""
 
@@ -250,7 +251,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "Numero di livelli interni"
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "Open individual page"
 msgstr ""
 
@@ -283,7 +284,7 @@ msgstr ""
 msgid "Place and country code (3 letters)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:91
+#: resources/views/modules/fan-chart/config.phtml:92
 msgid "Place detail"
 msgstr "Dettaglio del luogo"
 
@@ -299,7 +300,7 @@ msgstr "Ricarica il diagramma per quella persona"
 msgid "Right-click"
 msgstr "Clic destro"
 
-#: resources/views/modules/fan-chart/page.phtml:109
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -319,7 +320,7 @@ msgstr ""
 msgid "Show family colors"
 msgstr "Mostra colori familiari"
 
-#: resources/views/modules/fan-chart/config.phtml:119
+#: resources/views/modules/fan-chart/config.phtml:120
 msgid ""
 "Show full dates (birth, marriage, death) for early generations. Later "
 "generations show year only. Marriage dates are hidden from generation 9. "
@@ -396,12 +397,16 @@ msgstr "Passa dalla modalità a schermo intero alla visualizzazione normale"
 msgid "Tab key"
 msgstr ""
 
+#: src/Module.php:266
+msgid "The chart could not be updated. Please try again."
+msgstr ""
+
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:267
+#: src/Module.php:264
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Usare Ctrl + scorrimento per ingrandire la vista"
 
@@ -413,18 +418,19 @@ msgstr "Solo anni"
 msgid "Zoom in/out"
 msgstr "Ingrandisci/Riduci"
 
-#: resources/views/modules/fan-chart/config.phtml:134
+#: resources/views/modules/fan-chart/config.phtml:135
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:108
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "close"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:129
+#: resources/views/modules/fan-chart/config.phtml:130
 msgid "save"
 msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:69
+msgctxt "webtrees-fan-chart"
 msgid "view"
 msgstr ""

@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import { createConfigurationValues } from "../helpers/configuration-values.js";
 
 const eventHandlers = new Map();
 
@@ -87,18 +88,13 @@ await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/chart-core", () 
 const { FanChart } = await import("resources/js/modules/index");
 
 const createOptions = (overrides = {}) => ({
-    labels: [],
-    generations: 1,
-    fanDegree: 180,
-    fontScale: 1,
-    hideEmptySegments: false,
-    showFamilyColors: false,
-    showParentMarriageDates: false,
-    showImages: false,
-    showSilhouettes: false,
-    rtl: false,
-    innerArcs: 0,
-    cssFiles: [],
+    ...createConfigurationValues({
+        labels: [],
+        generations: 1,
+        fanDegree: 180,
+        fontScale: 1,
+        innerArcs: 0,
+    }),
     data: [],
     ...overrides,
 });
@@ -143,10 +139,8 @@ describe("FanChart", () => {
             '<div id="chart"></div><button id="centerButton"></button>' +
             '<button id="exportPNG"></button><button id="exportSVG"></button>';
 
-        const cssFiles = ["fan.css"];
-
         // eslint-disable-next-line no-new
-        new FanChart("#chart", createOptions({ cssFiles }));
+        new FanChart("#chart", createOptions());
 
         const chart = chartInstances[0];
 
@@ -223,6 +217,66 @@ describe("FanChart", () => {
         expect(chart.updateViewBox).toHaveBeenCalledTimes(1);
 
         orientationListenerSpy.mockRestore();
+    });
+});
+
+describe("FanChart page listeners", () => {
+    const markup =
+        '<div id="chart"></div><button id="centerButton"></button>' +
+        '<button id="exportPNG"></button><button id="exportSVG"></button>';
+
+    let originalOrientation;
+
+    beforeEach(() => {
+        document.body.innerHTML = markup;
+        chartInstances.length = 0;
+        panels.length = 0;
+        originalOrientation = Object.getOwnPropertyDescriptor(screen, "orientation");
+    });
+
+    afterEach(() => {
+        Object.defineProperty(screen, "orientation", originalOrientation);
+    });
+
+    it("lets a fullscreen change reach only the chart that was built last", () => {
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions());
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions());
+
+        const [stale, live] = chartInstances;
+
+        document.dispatchEvent(new Event("fullscreenchange"));
+
+        expect(stale.updateViewBox).not.toHaveBeenCalled();
+        expect(live.updateViewBox).toHaveBeenCalledTimes(1);
+    });
+
+    it("lets an orientation change reach only the chart that was built last", () => {
+        const orientation = new EventTarget();
+        Object.defineProperty(screen, "orientation", { configurable: true, value: orientation });
+
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions());
+        // eslint-disable-next-line no-new
+        new FanChart("#chart", createOptions());
+
+        const [stale, live] = chartInstances;
+
+        orientation.dispatchEvent(new Event("change"));
+
+        expect(stale.updateViewBox).not.toHaveBeenCalled();
+        expect(live.updateViewBox).toHaveBeenCalledTimes(1);
+    });
+
+    it("builds a chart where the screen orientation API is missing", () => {
+        Object.defineProperty(screen, "orientation", { configurable: true, value: undefined });
+
+        expect(() => new FanChart("#chart", createOptions())).not.toThrow();
+
+        document.dispatchEvent(new Event("fullscreenchange"));
+
+        expect(chartInstances[0].updateViewBox).toHaveBeenCalledTimes(1);
     });
 });
 

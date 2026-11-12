@@ -1,0 +1,17 @@
+{
+    "name": "fixture/module",
+    "config": {
+        "policy": {
+            "advisories": {
+                "ignore-id": {
+                    "PKSA-gcrk-3vtt-1r14": "UPSTREAM-PINNED: guzzlehttp/guzzle CVE-2026-69246, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version.",
+                    "PKSA-m2dq-1fhr-29b1": "UPSTREAM-PINNED: league/commonmark advisory without a CVE, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version.",
+                    "PKSA-w9tt-7782-78jx": "UPSTREAM-PINNED: league/flysystem CVE-2026-102601, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version.",
+                    "PKSA-z7t6-zt6p-wtng": "UPSTREAM-PINNED: symfony/cache CVE-2026-45073, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version.",
+                    "PKSA-vq1j-sc3k-jzzk": "UPSTREAM-PINNED: symfony/expression-language CVE-2026-109449, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version.",
+                    "PKSA-28rh-rzzn-djk4": "UPSTREAM-PINNED: symfony/mailer CVE-2026-45068, fixed in a public release but exact-pinned below it by every fisharebest/webtrees 2.2.x release. Transitive dependency of the required fisharebest/webtrees, the module ships none. Remove once the supported webtrees range no longer pins an affected version."
+                }
+            }
+        }
+    }
+}

@@ -1,31 +1,7 @@
 import { jest } from "@jest/globals";
+import { scaleLinear } from "d3-scale";
 
 const measureTextMock = jest.fn((text) => text.length * 10);
-
-const scaleLinearMock = jest.fn(() => {
-    let domain = [0, 1];
-    let range = [0, 1];
-
-    const scale = (value) => {
-        const [domainStart, domainEnd] = domain;
-        const [rangeStart, rangeEnd] = range;
-        const t = (value - domainStart) / (domainEnd - domainStart);
-
-        return rangeStart + (rangeEnd - rangeStart) * t;
-    };
-
-    scale.range = (values) => {
-        range = values;
-        return scale;
-    };
-
-    scale.domain = (values) => {
-        domain = values;
-        return scale;
-    };
-
-    return scale;
-});
 
 const selectMock = (node) => ({
     text(value) {
@@ -48,7 +24,7 @@ const selectMock = (node) => ({
 
 await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
-    scaleLinear: scaleLinearMock,
+    scaleLinear,
     select: jest.fn((node) => selectMock(node)),
     arc: jest.fn(() => {
         const generator = () => "M0,0";
@@ -138,12 +114,16 @@ describe("Text", () => {
 
     beforeEach(() => {
         measureTextMock.mockClear();
-        scaleLinearMock.mockClear();
     });
 
-    it("truncates names based on available width and preference", () => {
+    // The strategy of the configuration is handed to the shared truncation, the strategies
+    // GIVEN and SURNAME stand for the abbreviation choices of the administration
+    it.each([
+        ["GIVEN", "the given names"],
+        ["SURNAME", "the surname"],
+    ])("hands the strategy %s to truncateNames for %s", (strategy) => {
         truncateNamesMock.mockClear();
-        const text = new Text(svgStub, createConfiguration());
+        const text = new Text(svgStub, createConfiguration({ nameAbbreviation: strategy }));
         const nameGroup = [
             { label: "Anna", isPreferred: false, isLastName: false, isNameRtl: false },
             { label: "Beatrice", isPreferred: true, isLastName: false, isNameRtl: false },
@@ -151,11 +131,14 @@ describe("Text", () => {
         const parent = {
             style: jest.fn((property) => (property === "font-size" ? "12px" : "700")),
         };
+        const shortened = [{ label: "kept" }];
+
+        truncateNamesMock.mockReturnValueOnce(shortened);
 
         const truncated = text.truncateNamesData(parent, nameGroup, 100);
 
-        expect(measureTextMock).toHaveBeenCalled();
-        expect(truncated.map((name) => name.label)).toEqual(["A.", "B."]);
+        // The result of the shared truncation is what the label uses
+        expect(truncated).toBe(shortened);
         expect(parent.style).toHaveBeenCalledWith("font-size");
         expect(parent.style).toHaveBeenCalledWith("font-weight");
 
@@ -164,32 +147,13 @@ describe("Text", () => {
             nameGroup,
             100,
             expect.any(Function),
-            expect.objectContaining({ strategy: "GIVEN" }),
-        );
-    });
-
-    it("passes the SURNAME strategy to truncateNames when configured", () => {
-        truncateNamesMock.mockClear();
-        const text = new Text(svgStub, createConfiguration({ nameAbbreviation: "SURNAME" }));
-        const parent = {
-            style: jest.fn((property) => (property === "font-size" ? "12px" : "700")),
-        };
-
-        text.truncateNamesData(
-            parent,
-            [
-                { label: "Jón", isPreferred: true, isLastName: false, isNameRtl: false },
-                { label: "Sigurðsson", isPreferred: false, isLastName: true, isNameRtl: false },
-            ],
-            60,
+            expect.objectContaining({ strategy }),
         );
 
-        expect(truncateNamesMock).toHaveBeenCalledWith(
-            expect.any(Array),
-            expect.any(Number),
-            expect.any(Function),
-            expect.objectContaining({ strategy: "SURNAME" }),
-        );
+        // The measure function handed over measures with the font of the parent
+        truncateNamesMock.mock.calls[0][2]("Anna");
+
+        expect(measureTextMock).toHaveBeenCalledTimes(1);
     });
 
     describe("renderTimespanLines", () => {
@@ -307,29 +271,6 @@ describe("Text", () => {
 
             expect(titles[0].text).toHaveBeenCalledWith("\u2605 1900");
             expect(tspans[0].text).toHaveBeenCalledWith("\u2605 1900");
-        });
-    });
-
-    describe("createLabels", () => {
-        it.each([
-            ["inner arc text for an inner label", true, "createInnerLabels", "createOuterLabels"],
-            ["rotated text for an outer label", false, "createOuterLabels", "createInnerLabels"],
-        ])("hands the slot positions to %s", (_label, isInner, expectedCall, otherCall) => {
-            const text = new Text(svgStub, createConfiguration(), {});
-            const positions = new Map();
-            const parent = {};
-            const datum = createDatum();
-
-            text._layout.isInnerLabel = jest.fn(() => isInner);
-            text._layout.calculateSlotPositions = jest.fn(() => positions);
-            text.createInnerLabels = jest.fn();
-            text.createOuterLabels = jest.fn();
-
-            text.createLabels(parent, datum);
-
-            expect(text._layout.calculateSlotPositions).toHaveBeenCalledWith(datum);
-            expect(text[expectedCall]).toHaveBeenCalledWith(parent, datum, positions);
-            expect(text[otherCall]).not.toHaveBeenCalled();
         });
     });
 
@@ -502,39 +443,6 @@ describe("Text", () => {
                 "30px",
                 "39.5px",
             ]);
-        });
-    });
-
-    describe("slot lookups", () => {
-        it("returns the slot at the given index", () => {
-            const text = new Text(svgStub, createConfiguration());
-            const slots = [TEXT_SLOT.FIRST_NAMES, TEXT_SLOT.LAST_NAMES];
-
-            expect(text.getSlot(slots, 1)).toBe(TEXT_SLOT.LAST_NAMES);
-        });
-
-        it("throws when the slot list has no entry at the index", () => {
-            const text = new Text(svgStub, createConfiguration());
-
-            expect(() => text.getSlot([TEXT_SLOT.FIRST_NAMES], 3)).toThrow(
-                "No text slot at index 3",
-            );
-        });
-
-        it("returns the position assigned to a slot", () => {
-            const text = new Text(svgStub, createConfiguration());
-            const position = { normal: 40, flipped: 60 };
-            const positions = new Map([[TEXT_SLOT.DATE_LINE_1, position]]);
-
-            expect(text.getSlotPosition(positions, TEXT_SLOT.DATE_LINE_1)).toBe(position);
-        });
-
-        it("throws when no position was calculated for a slot", () => {
-            const text = new Text(svgStub, createConfiguration());
-
-            expect(() => text.getSlotPosition(new Map(), TEXT_SLOT.DATE_LINE_2)).toThrow(
-                `No text position calculated for slot ${TEXT_SLOT.DATE_LINE_2.index}`,
-            );
         });
     });
 

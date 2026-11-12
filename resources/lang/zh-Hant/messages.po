@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:144
+#: src/Module.php:142
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -39,7 +39,7 @@ msgstr "自動（根據族譜的姓氏傳統）"
 msgid "Automatic (from the tree configuration)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:112
+#: resources/views/modules/fan-chart/page.phtml:114
 msgid "Center chart on this person"
 msgstr ""
 
@@ -66,11 +66,11 @@ msgid ""
 msgstr ""
 "按家族分支為弧形著色。每對夫婦共享相同的顏色，由所選的基礎顏色派生而來。"
 
-#: resources/views/modules/fan-chart/config.phtml:25
+#: resources/views/modules/fan-chart/config.phtml:26
 msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:85
+#: resources/views/modules/fan-chart/config.phtml:86
 msgid ""
 "Controls which name part shrinks first when an arc is too narrow for the "
 "full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
@@ -83,7 +83,7 @@ msgstr ""
 msgid "Ctrl + scroll"
 msgstr "Ctrl + 捲動"
 
-#: resources/views/modules/fan-chart/config.phtml:108
+#: resources/views/modules/fan-chart/config.phtml:109
 msgid "Date precision"
 msgstr "日期精確度"
 
@@ -126,11 +126,11 @@ msgstr "匯出為 PNG"
 msgid "Export as SVG"
 msgstr "匯出為 SVG"
 
-#: src/Module.php:132 src/Module.php:244
+#: src/Module.php:130 src/Module.php:241
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:241 src/Module/ChartTrait.php:46
+#: src/Module.php:238 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -147,7 +147,8 @@ msgstr "字體大小"
 msgid "Full place name"
 msgstr "完整地名"
 
-#: resources/views/modules/fan-chart/config.phtml:51
+#: resources/views/modules/fan-chart/config.phtml:52
+msgctxt "webtrees-fan-chart"
 msgid "General"
 msgstr ""
 
@@ -163,15 +164,15 @@ msgstr "隱藏空白扇段"
 msgid "Hide more options"
 msgstr "隱藏更多選項"
 
-#: resources/views/modules/fan-chart/config.phtml:65
+#: resources/views/modules/fan-chart/config.phtml:66
 msgid "Hide the PNG export button"
 msgstr "隱藏 PNG 匯出按鈕"
 
-#: resources/views/modules/fan-chart/config.phtml:56
+#: resources/views/modules/fan-chart/config.phtml:57
 msgid "Hide the SVG export button"
 msgstr "隱藏 SVG 匯出按鈕"
 
-#: resources/views/modules/fan-chart/config.phtml:102
+#: resources/views/modules/fan-chart/config.phtml:103
 msgid ""
 "How much of each place is shown in chart arcs — the full name, only the "
 "lowest levels, or the place combined with its country as a name or country "
@@ -214,7 +215,7 @@ msgstr "最低兩個層級"
 msgid "Maternal"
 msgstr "母系"
 
-#: resources/views/modules/fan-chart/config.phtml:25
+#: resources/views/modules/fan-chart/config.phtml:26
 msgid "Modules"
 msgstr ""
 
@@ -226,15 +227,15 @@ msgstr ""
 msgid "Move the chart"
 msgstr "移動圖表"
 
-#: src/Module.php:268
+#: src/Module.php:265
 msgid "Move the view with two fingers"
 msgstr "用兩個手指移動視圖"
 
-#: resources/views/modules/fan-chart/config.phtml:74
+#: resources/views/modules/fan-chart/config.phtml:75
 msgid "Name abbreviation when space is tight"
 msgstr "空間不足時的姓名縮寫方式"
 
-#: resources/views/modules/fan-chart/page.phtml:110
+#: resources/views/modules/fan-chart/page.phtml:112
 msgid "No details are available for this person."
 msgstr ""
 
@@ -242,7 +243,7 @@ msgstr ""
 msgid "Number of inner levels"
 msgstr "內圈層數"
 
-#: resources/views/modules/fan-chart/page.phtml:111
+#: resources/views/modules/fan-chart/page.phtml:113
 msgid "Open individual page"
 msgstr ""
 
@@ -272,7 +273,7 @@ msgstr ""
 msgid "Place and country code (3 letters)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:91
+#: resources/views/modules/fan-chart/config.phtml:92
 msgid "Place detail"
 msgstr "地點詳情"
 
@@ -288,7 +289,7 @@ msgstr "為該人重新載入圖表"
 msgid "Right-click"
 msgstr "右鍵點擊"
 
-#: resources/views/modules/fan-chart/page.phtml:109
+#: resources/views/modules/fan-chart/page.phtml:111
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
@@ -308,7 +309,7 @@ msgstr ""
 msgid "Show family colors"
 msgstr "顯示家族顏色"
 
-#: resources/views/modules/fan-chart/config.phtml:119
+#: resources/views/modules/fan-chart/config.phtml:120
 msgid ""
 "Show full dates (birth, marriage, death) for early generations. Later "
 "generations show year only. Marriage dates are hidden from generation 9. "
@@ -382,12 +383,16 @@ msgstr "切換全螢幕與一般檢視"
 msgid "Tab key"
 msgstr ""
 
+#: src/Module.php:266
+msgid "The chart could not be updated. Please try again."
+msgstr ""
+
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:267
+#: src/Module.php:264
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "按住Ctrl鍵滾動鼠標滾輪放大縮小"
 
@@ -399,18 +404,19 @@ msgstr "僅顯示年份"
 msgid "Zoom in/out"
 msgstr "放大/縮小"
 
-#: resources/views/modules/fan-chart/config.phtml:134
+#: resources/views/modules/fan-chart/config.phtml:135
 msgid "cancel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/page.phtml:108
+#: resources/views/modules/fan-chart/page.phtml:110
 msgid "close"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:129
+#: resources/views/modules/fan-chart/config.phtml:130
 msgid "save"
 msgstr ""
 
 #: resources/views/modules/fan-chart/page.phtml:69
+msgctxt "webtrees-fan-chart"
 msgid "view"
 msgstr ""

@@ -1,613 +1,177 @@
 import { jest } from "@jest/globals";
+import { createConfigurationValues } from "../helpers/configuration-values.js";
 
+// Only the request of the update and the creation of its transition are replaced by a recording
+// wrapper. The selections, the transitions and the timers are the real ones of d3, and the chart,
+// its hierarchy and its svg are real as well, so the updater runs as it does in the browser.
 const jsonMock = jest.fn();
-const transitionInstances = [];
+// The durations that the updater sets on the transitions it creates, in call order
+const durations = [];
 
-class TransitionStub {
-    constructor() {
-        this.handlers = { start: [], end: [], interrupt: [] };
-        this.registered = 0;
-        this.durationValue = null;
-    }
+await jest.unstable_mockModule("resources/js/modules/d3", async () => {
+    const { transition } = await import("d3-transition");
 
-    duration(value) {
-        this.durationValue = value;
+    return {
+        __esModule: true,
+        ...(await import("d3-hierarchy")),
+        ...(await import("d3-scale")),
+        ...(await import("d3-selection")),
+        ...(await import("d3-shape")),
+        ...(await import("d3-timer")),
+        ...(await import("d3-transition")),
+        ...(await import("d3-zoom")),
+        json: jsonMock,
+        transition: (...args) => {
+            const created = transition(...args);
+            const setDuration = created.duration;
 
-        return this;
-    }
+            created.duration = function (value) {
+                durations.push(value);
 
-    on(event, handler) {
-        this.handlers[event].push(handler);
-
-        return this;
-    }
-
-    call(callback, ...args) {
-        callback(this, ...args);
-
-        return this;
-    }
-
-    register(count = 1) {
-        // Fire start handlers immediately during registration,
-        // mimicking D3's scheduling that starts transitions before
-        // the next macrotask (so endAll's setTimeout fallback
-        // sees activeCount > 0 for non-empty selections)
-        for (let i = 0; i < count; i++) {
-            this.handlers.start.forEach((handler) => handler());
-        }
-
-        this.registered += count;
-    }
-
-    complete() {
-        for (let index = 0; index < this.registered; index += 1) {
-            this.handlers.end.forEach((handler) => handler());
-        }
-    }
-}
-
-const transitionMock = jest.fn(() => {
-    const instance = new TransitionStub();
-
-    transitionInstances.push(instance);
-
-    return instance;
-});
-
-const timeoutMock = jest.fn((callback) => {
-    Promise.resolve().then(() => callback());
-});
-
-const selectMock = jest.fn((target) => target?.__selection ?? null);
-
-await jest.unstable_mockModule("resources/js/modules/d3", () => ({
-    __esModule: true,
-    json: jsonMock,
-    select: selectMock,
-    timeout: timeoutMock,
-    transition: transitionMock,
-}));
-
-const personConstructor = jest.fn(() => ({}));
-
-await jest.unstable_mockModule("resources/js/modules/svg/person", () => ({
-    __esModule: true,
-    default: personConstructor,
-}));
-
-const marriageConstructor = jest.fn(() => ({}));
-
-await jest.unstable_mockModule("resources/js/modules/svg/marriage", () => ({
-    __esModule: true,
-    default: marriageConstructor,
-}));
-
-const { default: Update } = await import("resources/js/modules/chart-updater");
-const { default: DescendantLayout } = await import("resources/js/modules/descendant-layout");
-
-const flushPromises = () =>
-    new Promise((resolve) => {
-        setTimeout(resolve, 0);
-    });
-
-class PersonSelection {
-    constructor(id, available = false) {
-        this.id = id;
-        this.data = null;
-        this.svg = null;
-        this.classes = { available };
-        this.children = {
-            arc: { removed: false, styles: {}, attrStyle: undefined },
-            name: { old: false, styles: {}, removed: false },
-            color: { old: false, styles: {}, removed: false },
-            image: { old: false, styles: {}, removed: false },
-            title: { old: false, removed: false },
-        };
-        this.eventCalls = [];
-        this.domElement = { __selection: this };
-    }
-
-    datum() {
-        return this.data;
-    }
-
-    classed(name, value) {
-        if (value === undefined) {
-            return Boolean(this.classes[name]);
-        }
-
-        this.classes[name] = value;
-
-        return this;
-    }
-
-    on(event, handler) {
-        this.eventCalls.push({ event, handler });
-
-        return this;
-    }
-
-    select() {
-        return {
-            style: () => {},
-            empty: () => true,
-        };
-    }
-
-    selectAll(selector) {
-        return this.svg.createChildSelection(selector, [this]);
-    }
-}
-
-class ChildSelection {
-    constructor(targets, svg) {
-        this.targets = targets;
-        this.svg = svg;
-    }
-
-    classed(name, value) {
-        this.targets.forEach(({ person, type }) => {
-            if (name === "old") {
-                person.children[type].old = value;
-            }
-        });
-
-        return this;
-    }
-
-    style(name, value) {
-        const styleValue = typeof value === "function" ? value() : value;
-
-        this.targets.forEach(({ person, type }) => {
-            person.children[type].styles[name] = styleValue;
-        });
-
-        return this;
-    }
-
-    filter(predicate) {
-        const filtered = this.targets.filter(({ person }) => {
-            if (typeof predicate === "function") {
-                return predicate.call(person.domElement);
-            }
-
-            return true;
-        });
-
-        return new ChildSelection(filtered, this.svg);
-    }
-
-    empty() {
-        return this.targets.length === 0;
-    }
-
-    attr(name, value) {
-        const attrValue = typeof value === "function" ? value() : value;
-
-        this.targets.forEach(({ person }) => {
-            if (name === "style") {
-                person.children.arc.attrStyle = attrValue;
-            }
-        });
-
-        return this;
-    }
-
-    each(callback) {
-        this.targets.forEach(({ person, type }) => {
-            const arcPathEl = {
-                closest: () => person.domElement,
-                __selection: {
-                    transition: (t) => {
-                        t.register(1);
-
-                        const chain = {
-                            style: (name, value) => {
-                                const resolved = typeof value === "function" ? value() : value;
-                                person.children[type].styles[name] = resolved;
-                                return chain;
-                            },
-                        };
-
-                        return chain;
-                    },
-                    select: () => ({
-                        style: (name, value) => {
-                            person.children[type].styles[name] = value;
-                        },
-                    }),
-                },
+                return setDuration.call(this, value);
             };
 
-            callback.call(arcPathEl);
-        });
-
-        return this;
-    }
-
-    selectAll(selector) {
-        return this.svg.createChildSelection(
-            selector,
-            this.targets.map(({ person }) => person),
-        );
-    }
-
-    remove() {
-        this.targets.forEach(({ person, type }) => {
-            if (type === "arc") {
-                person.children.arc.removed = true;
-            } else {
-                person.children[type].removed = true;
-                person.children[type].old = false;
-            }
-        });
-
-        return this;
-    }
-
-    transition(transition) {
-        transition.register(this.targets.length);
-
-        return {
-            style: (name, value) => {
-                const resolved = typeof value === "function" ? value() : value;
-
-                this.targets.forEach(({ person, type }) => {
-                    person.children[type].styles[name] = resolved;
-                });
-
-                return this;
-            },
-        };
-    }
-}
-
-class PersonGroupSelection {
-    constructor(persons, svg, eventLog) {
-        this.persons = persons;
-        this.svg = svg;
-        this.eventLog = eventLog;
-    }
-
-    classed(name, value) {
-        this.persons.forEach((person) => person.classed(name, value));
-
-        return this;
-    }
-
-    on(event, handler) {
-        this.eventLog.push({ event, handler });
-        this.persons.forEach((person) => person.on(event, handler));
-
-        return this;
-    }
-
-    data(nodes, key) {
-        this.persons = nodes.map((datum) => {
-            const id = key(datum);
-
-            if (!this.svg.personById.has(id)) {
-                this.svg.personById.set(id, new PersonSelection(id));
-            }
-
-            const person = this.svg.personById.get(id);
-
-            person.data = datum;
-            person.svg = this.svg;
-
-            return person;
-        });
-
-        return this;
-    }
-
-    each(callback) {
-        const allNodes = this.persons.map((person) => person.domElement);
-
-        this.persons.forEach((person, index) => {
-            callback.call(person.domElement, person.data, index, allNodes);
-        });
-
-        return this;
-    }
-
-    filter(predicate) {
-        const filtered = this.persons.filter((person) => {
-            if (typeof predicate === "function") {
-                return predicate.call(person.domElement, person.data);
-            }
-
-            return true;
-        });
-
-        return new PersonGroupSelection(filtered, this.svg, this.eventLog);
-    }
-
-    // Used by the production code's enter().filter().append("g").attr().each()
-    // chain. The enter() set is empty in these tests (all persons go through
-    // update or exit), so append/attr are pure pass-throughs and the trailing
-    // each() iterates over zero persons.
-    append() {
-        return this;
-    }
-
-    attr() {
-        return this;
-    }
-
-    select(selector) {
-        return this.selectAll(selector);
-    }
-
-    selectAll(selector) {
-        return this.svg.createChildSelection(selector, this.persons);
-    }
-
-    exit() {
-        return new PersonGroupSelection([], this.svg, this.eventLog);
-    }
-
-    enter() {
-        return new PersonGroupSelection([], this.svg, this.eventLog);
-    }
-
-    remove() {
-        return this;
-    }
-}
-
-class SvgStub {
-    constructor(persons = []) {
-        this.personById = new Map(persons.map((person) => [person.id, person]));
-        this.eventLog = [];
-        this.div = { property: jest.fn() };
-        // jest.fn so chart-updater tests can assert that the
-        // family-colors class is (re-)applied on every recenter.
-        this.visualClassedCalls = [];
-        const stub = this;
-        this.visual = {
-            classed: jest.fn(function (name, value) {
-                stub.visualClassedCalls.push({ name, value });
-                return this;
-            }),
-        };
-        this.defs = {
-            get: () => ({
-                selectAll: () => ({
-                    each: () => ({}),
-                }),
-            }),
-        };
-    }
-
-    get() {
-        return {
-            selectAll: () => ({
-                each: () => ({}),
-            }),
-        };
-    }
-
-    select(selector) {
-        // select("g.personGroup") returns an object with selectAll that
-        // returns a PersonGroupSelection (which has data/each/exit/enter).
-        if (selector.includes("personGroup") || selector.includes("marriageGroup")) {
-            return this;
-        }
-
-        return this.selectAll(selector);
-    }
-
-    selectAll(selector) {
-        const hasPersonSelector = selector.includes("g.person");
-        const hasMarriageSelector = selector.includes("g.marriage");
-        const hasSeparatorSelector = selector.includes("g.separatorGroup");
-        const hasChildSelector = /g\.arc|g\.name|g\.color|g\.image|title/.test(selector);
-
-        // Image clip-path, marriage and separator selectors return empty selections
-        if (selector.includes("image[clip-path]") || hasMarriageSelector || hasSeparatorSelector) {
-            return new ChildSelection([], this);
-        }
-
-        if (hasPersonSelector && hasChildSelector) {
-            const persons = this.filterPersons(selector);
-
-            return this.createChildSelection(selector, persons);
-        }
-
-        if (hasPersonSelector) {
-            const persons = this.filterPersons(selector);
-
-            return new PersonGroupSelection(persons, this, this.eventLog);
-        }
-
-        return this.createChildSelection(selector, Array.from(this.personById.values()));
-    }
-
-    filterPersons(selector) {
-        const selectors = selector.split(",").map((item) => item.trim());
-        const matches = new Set();
-        let hasFilters = false;
-
-        selectors.forEach((item) => {
-            const requiresRemove = item.includes(".remove") && !item.includes(":not(.remove)");
-            const requiresUpdate = item.includes(".update");
-            const requiresNew = item.includes(".new");
-            const requiresAvail = item.includes(".available");
-            const excludesRemove = item.includes(":not(.remove)");
-
-            hasFilters =
-                hasFilters ||
-                requiresRemove ||
-                requiresUpdate ||
-                requiresNew ||
-                requiresAvail ||
-                excludesRemove;
-
-            this.personById.forEach((person) => {
-                if (requiresRemove && !person.classes.remove) {
-                    return;
-                }
-
-                if (requiresUpdate && !person.classes.update) {
-                    return;
-                }
-
-                if (requiresNew && !person.classes.new) {
-                    return;
-                }
-
-                if (requiresAvail && !person.classes.available) {
-                    return;
-                }
-
-                if (excludesRemove && person.classes.remove) {
-                    return;
-                }
-
-                matches.add(person);
-            });
-        });
-
-        if (matches.size > 0) {
-            return Array.from(matches);
-        }
-
-        return hasFilters ? [] : Array.from(this.personById.values());
-    }
-
-    createChildSelection(selector, persons) {
-        const selectors = selector.split(",").map((item) => item.trim());
-        const targets = [];
-
-        selectors.forEach((item) => {
-            const type = (() => {
-                if (item.includes("g.name")) {
-                    return "name";
-                }
-
-                if (item.includes("g.color")) {
-                    return "color";
-                }
-
-                if (item.includes("g.image")) {
-                    return "image";
-                }
-
-                if (item.includes("g.arc path") || item.includes("g.arc")) {
-                    return "arc";
-                }
-
-                return "title";
-            })();
-            const requiresOld = item.includes(".old") && !item.includes(":not(.old)");
-            const excludesOld = item.includes(":not(.old)");
-
-            persons.forEach((person) => {
-                const isOld = person.children[type]?.old ?? false;
-
-                if (requiresOld && !isOld) {
-                    return;
-                }
-
-                if (excludesOld && isOld) {
-                    return;
-                }
-
-                targets.push({ person, type });
-            });
-        });
-
-        return new ChildSelection(targets, this);
-    }
-}
-
-class HierarchyStub {
-    constructor() {
-        this.nodes = [];
-        this.initCalls = [];
-        this.descendantLayout = new DescendantLayout();
-    }
-
-    init(data) {
-        this.initCalls.push(data);
-        this.nodes = data;
-    }
-}
-
-const createNodes = () => [
-    { id: "1", data: { data: { xref: "I1" } } },
-    { id: "2", data: { data: { xref: "" } } },
-    { id: "3", data: { data: { xref: "I3" } } },
-];
-
-const createSvgWithPersons = (availableIds = []) => {
-    const persons = createNodes().map(
-        (node) => new PersonSelection(node.id, availableIds.includes(node.id)),
+            return created;
+        },
+    };
+});
+
+// jsdom lays nothing out, so the chart gets the measures that a browser would
+globalThis.SVGElement.prototype.getBBox = () => ({ x: -210, y: -130, width: 420, height: 260 });
+globalThis.SVGElement.prototype.getComputedTextLength = () => 0;
+globalThis.HTMLCanvasElement.prototype.getContext = () => ({
+    font: "",
+    measureText: (text) => ({ width: text.length * 6 }),
+});
+
+const { default: Chart } = await import("resources/js/modules/chart");
+const { default: Update } = await import("resources/js/modules/chart-updater");
+const { default: Configuration } = await import("resources/js/modules/configuration");
+const d3 = await import("resources/js/modules/d3");
+
+const person = (xref, generation, parents) => ({
+    data: {
+        xref,
+        url: `url-${xref}`,
+        updateUrl: `update-${xref}`,
+        generation,
+        name: `Person ${xref}`,
+        firstNames: ["Person"],
+        lastNames: [xref],
+        preferredName: `Person ${xref}`,
+        alternativeName: "",
+        isAltRtl: false,
+        sex: "M",
+        timespan: "",
+        marriageDateOfParents: "",
+    },
+    ...(parents ? { parents } : {}),
+});
+
+/**
+ * Builds the ancestors of a person with every parent known.
+ *
+ * @param {number} generations The number of generations, the person itself included
+ * @param {number} generation  The generation of the person that is built
+ * @param {string} prefix      The prefix of the xref of this branch
+ */
+const ancestors = (generations, generation = 1, prefix = "I") =>
+    generation === generations
+        ? person(prefix, generation)
+        : person(prefix, generation, [
+              ancestors(generations, generation + 1, `${prefix}1`),
+              ancestors(generations, generation + 1, `${prefix}2`),
+          ]);
+
+/**
+ * Renders a real chart and hands back the updater of its svg and hierarchy.
+ *
+ * @param {object} options The options of the configuration
+ * @param {object} datum   The data of the chart that is drawn first
+ */
+function createChart(options = {}, datum = ancestors(2)) {
+    document.body.innerHTML = '<h1 class="wt-page-title">Original</h1><div id="parent"></div>';
+
+    const configuration = new Configuration(
+        createConfigurationValues({ generations: 2, ...options }),
     );
 
-    return new SvgStub(persons);
-};
+    configuration.updateDuration = 20;
 
-const defaultConfiguration = (overrides = {}) => ({
-    hideEmptySegments: false,
-    showFamilyColors: false,
-    showNames: true,
-    showParentMarriageDates: false,
-    generations: 6,
-    updateDuration: 100,
-    ...overrides,
-});
+    const chart = new Chart(d3.select("#parent"), configuration);
+
+    chart.data = datum;
+    chart.render();
+
+    return {
+        chart,
+        configuration,
+        update: new Update(chart.svg, configuration, chart._hierarchy),
+    };
+}
+
+/**
+ * Runs an update and resolves once its callback ran.
+ *
+ * @param {Update} update The updater
+ * @param {object} answer The answer of the server
+ */
+function runUpdate(update, answer) {
+    jsonMock.mockResolvedValueOnce(answer);
+
+    return new Promise((resolve) => {
+        const redrawOverlays = jest.fn();
+        const callback = jest.fn(() => resolve({ redrawOverlays, callback }));
+
+        update.update("/update", redrawOverlays, callback);
+    });
+}
+
+const flush = (milliseconds = 0) =>
+    new Promise((resolve) => {
+        setTimeout(resolve, milliseconds);
+    });
+
+const lifecycleClasses = () =>
+    [...document.querySelectorAll("g.person, g.marriage")].flatMap((element) =>
+        ["new", "update", "remove"].filter((name) => element.classList.contains(name)),
+    );
 
 beforeEach(() => {
     jsonMock.mockReset();
-    timeoutMock.mockClear();
-    transitionMock.mockClear();
-    transitionInstances.length = 0;
-    personConstructor.mockClear();
-    marriageConstructor.mockClear();
-    selectMock.mockClear();
+    durations.length = 0;
     document.title = "";
-    document.body.innerHTML = "";
+});
+
+afterEach(() => {
+    delete window.matchMedia;
+    jest.restoreAllMocks();
 });
 
 describe("Update", () => {
-    test("removes existing handlers before fetching and updates titles", async () => {
-        const svg = createSvgWithPersons(["1"]);
-        const hierarchy = new HierarchyStub();
-        const configuration = defaultConfiguration();
-        const update = new Update(svg, configuration, hierarchy);
-        const titleHtml = "<strong>Updated</strong>";
-        const callback = jest.fn();
+    test("takes the handlers from the persons before it fetches and sets the titles", async () => {
+        const { update, chart } = createChart();
+        const element = document.querySelector("g.person");
 
-        document.body.innerHTML = '<h1 class="wt-page-title">Original</h1>';
+        expect(d3.select(element).on("click")).toBeInstanceOf(Function);
 
-        jsonMock.mockResolvedValueOnce({
-            data: createNodes(),
-            title: titleHtml,
-        });
+        const done = runUpdate(update, { data: ancestors(2), title: "<strong>Updated</strong>" });
 
-        update.update("/update", jest.fn(), callback);
+        // The request has not been answered yet
+        expect(d3.select(element).on("click")).toBeUndefined();
+        expect(d3.select(element).on("mouseover")).toBeUndefined();
+        expect(d3.select(element).on("mouseout")).toBeUndefined();
 
-        expect(svg.eventLog).toEqual([
-            { event: "click", handler: null },
-            { event: "mouseover", handler: null },
-            { event: "mouseout", handler: null },
-        ]);
+        await done;
 
-        await flushPromises();
-
-        expect(document.querySelector(".wt-page-title").innerHTML).toBe(titleHtml);
+        expect(document.querySelector(".wt-page-title").innerHTML).toBe("<strong>Updated</strong>");
         expect(document.title).toBe("Updated");
-        expect(hierarchy.initCalls[0]).toEqual(createNodes());
+        expect(chart._hierarchy.nodes).toHaveLength(3);
     });
 
     test("leaves the tab title empty when the title of the response has no text", async () => {
-        const svg = createSvgWithPersons(["1"]);
-        const update = new Update(svg, defaultConfiguration(), new HierarchyStub());
+        const { update } = createChart();
 
-        document.body.innerHTML = '<h1 class="wt-page-title">Original</h1>';
         document.title = "Before";
 
         // A browser lays the detached element out as nothing and gives an empty text, jsdom has no
@@ -618,13 +182,7 @@ describe("Update", () => {
         });
 
         try {
-            jsonMock.mockResolvedValueOnce({
-                data: createNodes(),
-                title: '<img src="x.png" alt="">',
-            });
-
-            update.update("/update", jest.fn(), jest.fn());
-            await flushPromises();
+            await runUpdate(update, { data: ancestors(2), title: '<img src="x.png" alt="">' });
 
             expect(document.title).toBe("");
         } finally {
@@ -632,309 +190,316 @@ describe("Update", () => {
         }
     });
 
-    test("runs the update without a transition when the user prefers reduced motion", async () => {
-        window.matchMedia = jest.fn(() => ({ matches: true }));
+    // The duration of the transition is the configured one, and none while the user asks for
+    // less motion
+    test.each([
+        ["without the preference for less motion", false, 20],
+        ["when the user prefers reduced motion", true, 0],
+    ])("runs the transition %s", async (_label, reduced, duration) => {
+        window.matchMedia = jest.fn(() => ({ matches: reduced }));
 
-        try {
-            const svg = createSvgWithPersons(["1"]);
-            const update = new Update(svg, defaultConfiguration(), new HierarchyStub());
+        const { update } = createChart();
 
-            jsonMock.mockResolvedValueOnce({ data: createNodes() });
+        await runUpdate(update, { data: ancestors(2) });
 
-            update.update("/update", jest.fn(), jest.fn());
-            await flushPromises();
-            await flushPromises();
+        expect(durations).toEqual([duration]);
+    });
 
-            expect(transitionInstances.length).toBeGreaterThan(0);
-            expect(transitionInstances[0].durationValue).toBe(0);
-        } finally {
-            delete window.matchMedia;
+    // A person who is gone from the new chart loses the arc, and a person who comes with the
+    // new chart gets one, while the empty segments are hidden
+    test.each([
+        ["leaves", ["I1", "I2", "I3"], ["I1", "I2", ""], ["I1", "I2"]],
+        ["enters", ["I1", "I2", ""], ["I1", "I2", "I3"], ["I1", "I2", "I3"]],
+    ])("re-centers on a chart where a person %s", async (_label, before, after, expected) => {
+        const chartOf = ([root, father, mother]) =>
+            person(root, 1, [person(father, 2), person(mother, 2)]);
+        const { update } = createChart({ hideEmptySegments: true }, chartOf(before));
+
+        await runUpdate(update, { data: chartOf(after) });
+
+        const drawn = [...document.querySelectorAll("g.person")]
+            .filter((element) => element.querySelector("g.arc") !== null)
+            .map((element) => d3.select(element).datum().data.data.xref)
+            .sort();
+
+        expect(drawn).toEqual([...expected].sort());
+    });
+
+    test("draws the arcs of the descendants with the layout of the new hierarchy", async () => {
+        const { update } = createChart({ showDescendants: true });
+        const root = {
+            ...ancestors(2),
+            partners: [{ ...person("P1", -1), children: [person("C1", -2)] }],
+        };
+
+        await runUpdate(update, { data: root });
+
+        const partnerArc = document.querySelector("g.person g.arc path[d]");
+
+        expect(document.querySelectorAll("g.person")).toHaveLength(5);
+        expect(partnerArc).not.toBeNull();
+
+        for (const path of document.querySelectorAll("g.person g.arc path")) {
+            expect(path.getAttribute("d")).not.toContain("NaN");
         }
     });
 
-    test("runs the update with the configured duration without that preference", async () => {
-        const svg = createSvgWithPersons(["1"]);
-        const update = new Update(svg, defaultConfiguration(), new HierarchyStub());
-
-        jsonMock.mockResolvedValueOnce({ data: createNodes() });
-
-        update.update("/update", jest.fn(), jest.fn());
-        await flushPromises();
-        await flushPromises();
-
-        expect(transitionInstances[0].durationValue).toBe(100);
-    });
-
-    test("builds the arcs with the descendant layout of the hierarchy", async () => {
-        const svg = createSvgWithPersons(["1"]);
-        const hierarchy = new HierarchyStub();
-        const childScale = (fraction) => fraction * Math.PI;
-        const configuration = defaultConfiguration({ showParentMarriageDates: true });
-        const update = new Update(svg, configuration, hierarchy);
-
-        hierarchy.descendantLayout.childScale = childScale;
-        jsonMock.mockResolvedValueOnce({ data: createNodes() });
-
-        update.update("/update", jest.fn(), jest.fn());
-        await flushPromises();
-        await flushPromises();
-
-        const geometries = [...personConstructor.mock.calls, ...marriageConstructor.mock.calls].map(
-            (call) => call[2],
+    test("classifies the marriage arcs of the persons that have parents in the new chart", async () => {
+        const { update, chart } = createChart(
+            { generations: 3, showParentMarriageDates: true },
+            ancestors(3),
         );
 
-        expect(personConstructor).toHaveBeenCalled();
-        expect(geometries.length).toBeGreaterThan(0);
+        // The mother of the center is unknown in the new chart, so her marriage arc has no
+        // known child any more
+        const root = ancestors(3);
 
-        for (const geometry of geometries) {
-            expect(geometry.childScale).toBe(childScale);
-        }
-    });
-
-    test("enters only the records that the draw rules keep", () => {
-        const nodes = [
-            { id: "1", depth: 1, data: { data: { xref: "I1" } } },
-            { id: "2", depth: 1, data: { data: { xref: "" } } },
-            { id: "3", depth: -1, data: { data: { xref: "" } } },
-        ];
-        const entered = [];
-        const created = {
-            attr: () => created,
-            each: () => created,
-        };
-        const exiting = {
-            classed: () => exiting,
-            selectAll: () => exiting,
-        };
-        const join = {
-            each: () => join,
-            exit: () => exiting,
-            enter: () => ({
-                filter: (predicate) => {
-                    entered.push(...nodes.filter(predicate));
-
-                    return { append: () => created };
-                },
-            }),
-        };
-        const svg = { select: () => ({ selectAll: () => ({ data: () => join }) }) };
-        const hierarchy = new HierarchyStub();
-        const update = new Update(
-            svg,
-            defaultConfiguration({ hideEmptySegments: true }),
-            hierarchy,
-        );
-
-        hierarchy.nodes = nodes;
-
-        update._classifyPersonElements();
-
-        expect(entered.map((node) => node.id)).toEqual(["1", "3"]);
-    });
-
-    test("classifies marriage arcs only for nodes with children inside the displayed generations", () => {
-        const received = [];
-        const svg = {
-            selectAll: () => ({
-                data: (nodes) => {
-                    received.push(...nodes);
-
-                    return { each: () => ({}) };
-                },
-            }),
-        };
-        const hierarchy = new HierarchyStub();
-        const update = new Update(
-            svg,
-            defaultConfiguration({ showParentMarriageDates: true, generations: 6 }),
-            hierarchy,
-        );
-
-        hierarchy.nodes = [
-            { id: "a", depth: 0, children: [{}] },
-            { id: "b", depth: 5, children: [{}] },
-            { id: "c", depth: 1 },
-        ];
-
+        root.parents[1] = person("", 2);
+        chart._hierarchy.init(root);
         update._classifyMarriageElements();
 
-        expect(received.map((node) => node.id)).toEqual(["a"]);
-    });
-
-    test("classifies the marriage arcs with the descendant layout of the hierarchy", () => {
-        const marriageSelection = {
-            classed: (_name, value) => (value === undefined ? false : marriageSelection),
-            selectAll: () => marriageSelection,
-        };
-        const element = { __selection: marriageSelection };
-        const svg = {
-            selectAll: () => ({
-                data: (nodes) => ({
-                    each: (callback) => nodes.forEach((node, i) => callback(node, i, [element])),
-                }),
-            }),
-        };
-        const hierarchy = new HierarchyStub();
-        const childScale = (fraction) => fraction * Math.PI;
-        const update = new Update(
-            svg,
-            defaultConfiguration({ showParentMarriageDates: true }),
-            hierarchy,
+        const classes = Object.fromEntries(
+            [...document.querySelectorAll("g.marriage")].map((element) => [
+                element.id,
+                ["new", "update", "remove"].filter((name) => element.classList.contains(name)),
+            ]),
         );
+        const [rootNode, , motherNode] = chart._hierarchy.nodes;
 
-        hierarchy.descendantLayout.childScale = childScale;
-        hierarchy.nodes = [{ id: "m", depth: 0, children: [{ data: { data: { xref: "I2" } } }] }];
-
-        update._classifyMarriageElements();
-
-        expect(marriageConstructor).toHaveBeenCalledTimes(1);
-        expect(marriageConstructor.mock.calls[0][2].childScale).toBe(childScale);
+        expect(classes[`marriage-${rootNode.id}`]).toEqual(["new"]);
+        expect(classes[`marriage-${motherNode.id}`]).toEqual(["remove"]);
     });
 
-    test("toggles family-colors class on visual on every successful recenter", async () => {
-        const svg = createSvgWithPersons(["1"]);
-        const hierarchy = new HierarchyStub();
-        const configuration = defaultConfiguration({ showFamilyColors: true });
-        const update = new Update(svg, configuration, hierarchy);
+    // The chart carries the mark of the family colors exactly while the configuration shows them
+    test.each([
+        ["shown", true],
+        ["hidden", false],
+    ])("marks the chart after an update while the family colors are %s", async (_label, shown) => {
+        const { update } = createChart({ showFamilyColors: shown });
+        const visual = document.querySelector("svg > g");
 
-        jsonMock.mockResolvedValueOnce({ data: createNodes() });
-        update.update("/update", jest.fn(), jest.fn());
-        await flushPromises();
+        visual.classList.toggle("family-colors", !shown);
 
-        expect(svg.visualClassedCalls).toContainEqual({
-            name: "family-colors",
-            value: true,
-        });
+        await runUpdate(update, { data: ancestors(2) });
+
+        expect(visual.classList.contains("family-colors")).toBe(shown);
     });
 
-    test("re-syncs family-colors class on visual after a fetch failure", async () => {
-        const svg = createSvgWithPersons(["1"]);
-        const hierarchy = new HierarchyStub();
-        const configuration = defaultConfiguration({ showFamilyColors: true });
-        const update = new Update(svg, configuration, hierarchy);
+    test("marks the chart for the family colors after a request that failed", async () => {
+        const { update } = createChart({ showFamilyColors: true });
+        const visual = document.querySelector("svg > g");
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
+        visual.classList.remove("family-colors");
         jsonMock.mockRejectedValueOnce(new Error("network down"));
-        // Silence the expected console.error noise from the catch branch.
-        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-        update.update("/update", jest.fn(), jest.fn());
-        await flushPromises();
-
-        expect(svg.visualClassedCalls).toContainEqual({
-            name: "family-colors",
-            value: true,
+        await new Promise((resolve) => {
+            update.update("/update", jest.fn(), resolve);
         });
 
-        errorSpy.mockRestore();
+        expect(visual.classList.contains("family-colors")).toBe(true);
+        expect(errorSpy).toHaveBeenCalled();
     });
 
-    test("assigns classes based on data and applies transition styles", async () => {
-        const svg = createSvgWithPersons(["1"]);
-        const hierarchy = new HierarchyStub();
-        const configuration = defaultConfiguration();
-        const update = new Update(svg, configuration, hierarchy);
-        const callback = jest.fn();
+    test("calls back once after the transition has finished and the update is cleaned up", async () => {
+        const { update, chart } = createChart();
+        const tooltip = chart.svg.div;
 
-        jsonMock.mockResolvedValueOnce({
-            data: createNodes(),
-        });
+        tooltip.property("active", true);
 
-        update.update("/update", jest.fn(), callback);
-        await flushPromises();
+        const { callback } = await runUpdate(update, { data: ancestors(2) });
 
-        // Drain endAll's setTimeout fallback while transitions are still
-        // active so it correctly sees activeCount > 0 and does nothing.
-        await flushPromises();
+        // Nothing is left of the update when the callback is called
+        expect(lifecycleClasses()).toEqual([]);
+        expect(document.querySelectorAll("g.content.old")).toHaveLength(0);
+        expect(document.querySelectorAll("g.person.available")).toHaveLength(0);
+        expect(tooltip.property("active")).toBe(false);
 
-        const [transition] = transitionInstances;
-
-        // The mock data-join classifies all nodes via each(). Person "1"
-        // (xref="I1") is non-empty, "2" (xref="") is empty → remove,
-        // "3" (xref="I3") is non-empty. Since the mock doesn't track
-        // "available" state, both "1" and "3" are classified as "new".
-        const persons = Array.from(svg.personById.values());
-
-        // Verify nodes were processed by the data-join
-        expect(persons.map((p) => p.id)).toEqual(["1", "2", "3"]);
-
-        // Each node's data was bound by the mock data-join
-        expect(persons[0].data.data.data.xref).toBe("I1");
-        expect(persons[1].data.data.data.xref).toBe("");
-        expect(persons[2].data.data.data.xref).toBe("I3");
-
-        // Note: Class assignment (new/remove/update) is verified visually via
-        // Playwright tests. The D3 data-join mock does not fully replicate the
-        // selectAll().data().each() chain that sets these classes in production.
-
-        if (transition) {
-            transition.complete();
-        }
-
-        await flushPromises();
+        // Both the end of the transition and the fallback of the update would call it
+        await flush(100);
 
         expect(callback).toHaveBeenCalledTimes(1);
     });
 
-    test("hides empty segments and cleans up after transitions", async () => {
-        const svg = createSvgWithPersons(["1", "2"]);
-        const hierarchy = new HierarchyStub();
-        const configuration = defaultConfiguration({ hideEmptySegments: true });
-        const update = new Update(svg, configuration, hierarchy);
-        const callback = jest.fn();
-
-        jsonMock.mockResolvedValueOnce({
-            data: createNodes(),
-        });
-
-        update.update("/update", jest.fn(), callback);
-        await flushPromises();
-
-        // Drain endAll's setTimeout fallback while transitions are still
-        // active so it correctly sees activeCount > 0 and does nothing.
-        await flushPromises();
-
-        // The transition may or may not be created depending on mock depth.
-        // If created, complete it; otherwise the endAll fallback fires.
-        const [transition] = transitionInstances;
-
-        if (transition) {
-            transition.complete();
-        }
-
-        await flushPromises();
-
-        // Verify the updateDone lifecycle completed (timeout for style cleanup was scheduled)
-        expect(timeoutMock).toHaveBeenCalledTimes(1);
-
-        // Verify the data-join processed the nodes
-        const persons = Array.from(svg.personById.values());
-
-        expect(persons.length).toBeGreaterThan(0);
-
-        expect(callback).toHaveBeenCalledTimes(1);
-
-        // Verify tooltip active state is reset after update
-        expect(svg.div.property).toHaveBeenCalledWith("active", false);
-    });
-
-    test("restores interactivity and cleans CSS classes on fetch error", async () => {
-        const svg = createSvgWithPersons(["1"]);
-        const hierarchy = new HierarchyStub();
-        const configuration = defaultConfiguration();
-        const update = new Update(svg, configuration, hierarchy);
+    test("calls back once when the animations fail after the transition has been scheduled", async () => {
+        const { update } = createChart();
         const callback = jest.fn();
         const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
+        // The failure reaches the catch handler, which calls back, and the scheduled transition
+        // ends later and would call back a second time without the guard.
+        jest.spyOn(update, "_runUpdateAnimations").mockImplementation(() => {
+            throw new Error("animation failed");
+        });
+        jsonMock.mockResolvedValueOnce({ data: ancestors(2) });
+
+        update.update("/update", jest.fn(), callback);
+
+        // The transition lasts 20 ms, so this is long enough for its end
+        await flush(100);
+
+        expect(errorSpy).toHaveBeenCalled();
+        expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    test("reports a request that a newer update cancelled instead of calling back", async () => {
+        const { update } = createChart();
+        const callback = jest.fn();
+        const onSuperseded = jest.fn();
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+        jsonMock.mockRejectedValueOnce(
+            new DOMException("The operation was aborted.", "AbortError"),
+        );
+
+        update.update("/update", jest.fn(), callback, onSuperseded);
+        await flush();
+
+        expect(onSuperseded).toHaveBeenCalledTimes(1);
+        expect(callback).not.toHaveBeenCalled();
+        expect(errorSpy).not.toHaveBeenCalled();
+    });
+
+    test("does not report a superseded request when the request fails for another reason", async () => {
+        const { update } = createChart();
+        const callback = jest.fn();
+        const onSuperseded = jest.fn();
+
+        jest.spyOn(console, "error").mockImplementation(() => {});
         jsonMock.mockRejectedValueOnce(new Error("network error"));
 
-        update.update("https://example.com/update", jest.fn(), callback);
+        update.update("/update", jest.fn(), callback, onSuperseded);
+        await flush();
 
-        await new Promise((resolve) => setTimeout(resolve, 0));
-        await Promise.resolve();
+        expect(callback).toHaveBeenCalledTimes(1);
+        expect(onSuperseded).not.toHaveBeenCalled();
+    });
+
+    test("cancels its own pending request when it starts the next update", () => {
+        const { update } = createChart();
+        const signals = [];
+
+        jsonMock.mockImplementation((_url, init) => {
+            signals.push(init.signal);
+
+            return new Promise(() => {});
+        });
+
+        update.update("/first", jest.fn(), jest.fn());
+        update.update("/second", jest.fn(), jest.fn());
+
+        expect(signals.map((signal) => signal.aborted)).toEqual([true, false]);
+    });
+
+    test("restores interactivity and cleans the lifecycle classes after a failed request", async () => {
+        const { update } = createChart();
+        const callback = jest.fn();
+        const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+        // A partial update left marks on the arcs
+        document.querySelector("g.person").classList.add("new", "update", "remove");
+        jsonMock.mockRejectedValueOnce(new Error("network error"));
+
+        update.update("/update", jest.fn(), callback);
+        await flush();
 
         expect(callback).toHaveBeenCalledTimes(1);
         expect(errorSpy).toHaveBeenCalledWith("Fan chart update failed:", expect.any(Error));
+        expect(lifecycleClasses()).toEqual([]);
+    });
 
-        errorSpy.mockRestore();
+    test("keeps the previous content of an arc that a failed update had already marked", async () => {
+        const { update } = createChart();
+        const arc = document.querySelector("g.person");
+        const content = arc.querySelector("g.content");
+
+        // The update marked the arc as updated and its content as the old one before it failed
+        arc.classList.add("update");
+        content.classList.add("old");
+        jest.spyOn(console, "error").mockImplementation(() => {});
+        jsonMock.mockRejectedValueOnce(new Error("network error"));
+
+        await new Promise((resolve) => {
+            update.update("/update", jest.fn(), resolve);
+        });
+
+        // The marks are gone before the cleanup of a finished update runs, so that cleanup does
+        // not take the previous content away from the arc
+        expect(arc.classList.contains("update")).toBe(false);
+        expect(arc.contains(content)).toBe(true);
+    });
+
+    describe("notice of a failed update", () => {
+        const failedText = "The chart could not be updated.";
+
+        const notices = () => [...document.querySelectorAll('[role="alert"]')];
+
+        const failWith = async (update, error) => {
+            jest.spyOn(console, "error").mockImplementation(() => {});
+            jsonMock.mockRejectedValueOnce(error);
+
+            await new Promise((resolve) => {
+                update.update("/update", jest.fn(), resolve);
+            });
+        };
+
+        test.each([
+            ["an HTTP error", new Error("500 Internal Server Error")],
+            ["a response that is not JSON", new SyntaxError("Unexpected token < in JSON")],
+            ["an access denial", new Error("403 Forbidden")],
+        ])("tells the user about %s and keeps the chart usable", async (_kind, error) => {
+            const { update } = createChart({
+                labels: { zoom: "", move: "", updateFailed: failedText },
+            });
+            const arcs = document.querySelectorAll("g.person").length;
+
+            await failWith(update, error);
+
+            expect(notices()).toHaveLength(1);
+            expect(notices()[0].textContent).toBe(failedText);
+            // The notice sits above the chart and the previous chart is still drawn
+            expect(notices()[0].nextElementSibling).toBe(document.querySelector("svg"));
+            expect(document.querySelectorAll("g.person")).toHaveLength(arcs);
+        });
+
+        test("shows one notice however often updates fail in a row", async () => {
+            const { update } = createChart({
+                labels: { zoom: "", move: "", updateFailed: failedText },
+            });
+
+            await failWith(update, new Error("500 Internal Server Error"));
+            await failWith(update, new Error("500 Internal Server Error"));
+
+            expect(notices()).toHaveLength(1);
+        });
+
+        test("removes the notice when the next update succeeds", async () => {
+            const { update } = createChart({
+                labels: { zoom: "", move: "", updateFailed: failedText },
+            });
+
+            await failWith(update, new Error("500 Internal Server Error"));
+            expect(notices()).toHaveLength(1);
+
+            await runUpdate(update, { data: ancestors(2), title: "Updated" });
+
+            expect(notices()).toHaveLength(0);
+        });
+
+        test("shows no notice for a request that a newer update superseded", async () => {
+            const { update } = createChart({
+                labels: { zoom: "", move: "", updateFailed: failedText },
+            });
+            const aborted = new Error("aborted");
+
+            aborted.name = "AbortError";
+            jsonMock.mockRejectedValueOnce(aborted);
+
+            await new Promise((resolve) => {
+                update.update("/update", jest.fn(), jest.fn(), resolve);
+            });
+
+            expect(notices()).toHaveLength(0);
+        });
     });
 });

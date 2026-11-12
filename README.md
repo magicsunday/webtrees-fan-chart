@@ -26,7 +26,7 @@ dates, places, and images.
 
 
 ## Installation
-Requires **webtrees 2.2** and **PHP 8.3** or later.
+Requires **webtrees 2.2** and **PHP 8.3** or a later PHP 8 release.
 
 ### Manual installation
 
@@ -139,7 +139,7 @@ Click **Show more options** to access additional settings:
 
 | Option | Description |
 |--------|-------------|
-| **Display mode** | Choose between "Show names and images", "Show names only", or "Show images only". Images are only shown if the arc segment is wide enough. |
+| **Display mode** | Choose between "Show names and images", "Show names only", or "Show images only". Images are only shown if the arc segment is wide enough. The mode only controls the images in the arcs. The tooltip and the details panel do not depend on it, so a photo stays in the tooltip with "Show names only". |
 | **Show descendants** | Shows partners and children as arcs below the ancestor section. The fan size is limited to 180-270 degrees when enabled. |
 | **Hide empty segments** | Hides chart segments for missing ancestors. |
 | **Show places** | Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail (full name or lowest 1-3 hierarchy levels). |
@@ -182,7 +182,7 @@ tree setting for highlight images is switched off.
 
 **The chart does not appear / shows an error**
 - Make sure the module is enabled in the Control Panel under Modules > Charts.
-- Check that your PHP version is 8.3 or later.
+- Check that your PHP version is 8.3 or a later PHP 8 release.
 - Clear your browser cache and reload the page.
 
 **Images are not displayed**
@@ -211,7 +211,11 @@ npm run prepare
 ```
 
 ### Running tests
+The JavaScript steps of `composer ci:test` run the tools in `node_modules`, so `npm ci` has to run before it.
 ```shell
+# Install the Node dependencies from the lock file
+npm ci
+
 # JavaScript tests
 npm test
 

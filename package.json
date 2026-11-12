@@ -1,6 +1,6 @@
 {
     "name": "webtrees-fan-chart",
-    "version": "3.7.2-dev",
+    "version": "3.8.1-dev",
     "description": "This modules provides an SVG ancestor fan chart for the [webtrees](https://www.webtrees.net) genealogy application.",
     "keywords": [
         "webtrees",
@@ -19,7 +19,7 @@
     "scripts": {
         "prepare": "rollup --config rollup.config.js",
         "watch": "rollup --watch --config rollup.config.js",
-        "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
+        "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js",
         "test:coverage": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
         "test:watch": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
         "lint": "biome lint --error-on-warnings resources/js/modules/",
@@ -29,13 +29,12 @@
         "typecheck": "tsc --noEmit -p tsconfig.json"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.6.2",
-        "@magicsunday/coding-standard": "github:magicsunday/coding-standard#3.8.0",
+        "@biomejs/biome": "2.6.4",
+        "@magicsunday/coding-standard": "github:magicsunday/coding-standard#3.10.0",
         "@rollup/plugin-node-resolve": "^16.0",
         "@rollup/plugin-terser": "^1.0",
         "@types/d3-fetch": "^3.0.7",
         "@types/d3-hierarchy": "^3.1.7",
-        "@types/d3-path": "^3.1.1",
         "@types/d3-scale": "^4.0.9",
         "@types/d3-selection": "^3.0.12",
         "@types/d3-shape": "^3.2.0",
@@ -45,7 +44,6 @@
         "@types/jest": "^30.0.0",
         "d3-fetch": "^3.0",
         "d3-hierarchy": "^3.0",
-        "d3-path": "^3.0",
         "d3-scale": "^4.0",
         "d3-selection": "^3.0",
         "d3-shape": "^3.0",
@@ -55,11 +53,11 @@
         "jest": "^30.5",
         "jest-environment-jsdom": "^30.5",
         "jscpd": "5.4.2",
-        "rollup": "^4.64",
+        "rollup": "^4.66",
         "rollup-plugin-license": "^3.0",
         "typescript": "^7.0.2"
     },
     "dependencies": {
-        "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#1.23.0"
+        "@magicsunday/webtrees-chart-lib": "github:magicsunday/webtrees-chart-lib#1.24.3"
     }
 }

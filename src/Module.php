@@ -24,7 +24,6 @@ use Fisharebest\Webtrees\Module\FanChartModule;
 use Fisharebest\Webtrees\Module\ModuleChartInterface;
 use Fisharebest\Webtrees\Module\ModuleConfigInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
-use Fisharebest\Webtrees\Module\ModuleThemeInterface;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\ChartService;
 use Fisharebest\Webtrees\Validator;
@@ -36,7 +35,6 @@ use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Traits\ModuleCustomTrait;
 use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
 use Override;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -64,7 +62,7 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
 
     public const string CUSTOM_AUTHOR = 'Rico Sonntag';
 
-    public const string CUSTOM_VERSION = '3.7.2-dev';
+    public const string CUSTOM_VERSION = '3.8.1-dev';
 
     /**
      * Webtrees renders this URL as the "For more information, see …" link
@@ -202,12 +200,11 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
             return $this->viewResponse(
                 $this->name() . '::modules/fan-chart/chart',
                 [
-                    'id'                => uniqid(),
-                    'data'              => $this->dataFacade->createTreeStructure($this, $this->configuration, $individual),
-                    'configuration'     => $this->configuration,
-                    'chartParams'       => $this->getChartParameters($individual),
-                    'exportStylesheets' => $this->getExportStylesheets(),
-                    'javascript'        => $this->assetUrl('js/fan-chart-' . self::CUSTOM_VERSION . '.min.js'),
+                    'id'            => uniqid(),
+                    'data'          => $this->dataFacade->createTreeStructure($this, $this->configuration, $individual),
+                    'configuration' => $this->configuration,
+                    'chartParams'   => $this->getChartParameters($individual),
+                    'javascript'    => $this->assetUrl('js/fan-chart-' . self::CUSTOM_VERSION . '.min.js'),
                 ]
             );
         }
@@ -264,8 +261,9 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
                 ->resolve($individual->tree()->getPreference('SURNAME_TRADITION'))
                 ->value,
             'labels' => [
-                'zoom' => I18N::translate('Use Ctrl + scroll to zoom in the view'),
-                'move' => I18N::translate('Move the view with two fingers'),
+                'zoom'         => I18N::translate('Use Ctrl + scroll to zoom in the view'),
+                'move'         => I18N::translate('Move the view with two fingers'),
+                'updateFailed' => I18N::translate('The chart could not be updated. Please try again.'),
             ],
         ];
     }
@@ -369,23 +367,5 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
             $this->assetUrl('css/fan-chart.css'),
             $this->assetUrl('css/svg.css'),
         ];
-    }
-
-    /**
-     * Returns the stylesheets that must be inlined during SVG/PNG export — the
-     * active webtrees theme sheets plus the module's SVG-specific stylesheet.
-     *
-     * @return array<string>
-     *
-     * @throws ContainerExceptionInterface
-     */
-    private function getExportStylesheets(): array
-    {
-        /** @var ModuleThemeInterface $currentTheme */
-        $currentTheme  = Registry::container()->get(ModuleThemeInterface::class);
-        $stylesheets   = $currentTheme->stylesheets();
-        $stylesheets[] = $this->assetUrl('css/svg.css');
-
-        return $stylesheets;
     }
 }

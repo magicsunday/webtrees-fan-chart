@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import { createConfigurationValues } from "../helpers/configuration-values.js";
 
 // The animated update is covered elsewhere. A stand-in records how the chart starts it.
 const updates = [];
@@ -11,8 +12,8 @@ await jest.unstable_mockModule("resources/js/modules/chart-updater", () => ({
             this.hierarchy = hierarchy;
         }
 
-        update(url, redrawOverlays, callback) {
-            updates.push({ url, redrawOverlays, callback });
+        update(url, redrawOverlays, callback, onSuperseded) {
+            updates.push({ url, redrawOverlays, callback, onSuperseded, updater: this });
         }
     },
 }));
@@ -52,7 +53,10 @@ function buildRealChart(nodes) {
         .append("g")
         .attr("class", "person")
         .nodes();
-    const chart = new Chart(d3.select("#parent"), new Configuration({ showDetailPanel: true }));
+    const chart = new Chart(
+        d3.select("#parent"),
+        new Configuration(createConfigurationValues({ showDetailPanel: true })),
+    );
 
     chart._svg = { visual, select: (selector) => visual.select(selector) };
 
@@ -168,12 +172,48 @@ describe("Chart update with the detail panel", () => {
         chart.update("/chart/I2");
         chart.update("/chart/I3");
         chart.restoreFocus();
-        updates[0].callback();
+
+        // The newer update cancels the request of the older one. That one draws nothing and never
+        // calls its callback, it only reports that it was superseded.
+        updates[0].onSuperseded();
 
         expect(document.activeElement).not.toBe(elements[0]);
 
         updates[1].callback();
 
         expect(document.activeElement).toBe(elements[0]);
+    });
+
+    test("keeps holding the focus back for a running update after a late superseded report", () => {
+        const first = node("I1");
+        const { chart, elements } = buildRealChart([first]);
+
+        chart.detailPanel = { select: jest.fn() };
+        chart.bindClickEventListener();
+        chart.personClick(null, first);
+        chart.update("/chart/I2");
+        updates[0].callback();
+
+        // A superseded report for an update that has already finished must not push the count of
+        // running updates below zero, or the next update would not be counted.
+        updates[0].onSuperseded();
+        chart.update("/chart/I3");
+        chart.restoreFocus();
+
+        expect(document.activeElement).not.toBe(elements[0]);
+
+        updates[1].callback();
+
+        expect(document.activeElement).toBe(elements[0]);
+    });
+
+    test("runs overlapping updates through one updater, so that the newer one can cancel the older", () => {
+        const { chart } = buildRealChart([node("I1")]);
+
+        chart.update("/chart/I2");
+        chart.update("/chart/I3");
+
+        expect(updates).toHaveLength(2);
+        expect(updates[1].updater).toBe(updates[0].updater);
     });
 });

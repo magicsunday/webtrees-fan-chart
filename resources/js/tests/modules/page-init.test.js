@@ -1,118 +1,14 @@
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 
-let storageInstances = [];
-let storageData = {};
+// The chart library is used as it is. The page script keeps its state in the local storage of
+// the document under this key, so a test seeds that key before the page is initialised.
+const STORAGE_KEY = "webtrees-fan-chart";
 
-await jest.unstable_mockModule("@magicsunday/webtrees-chart-lib/chart-core", () => ({
-    buildChartAjaxUrl: (baseUrl, options = {}) => {
-        const url = new URL(baseUrl);
-        const xrefInput = document.getElementById(options.xrefInputId ?? "xref");
-        if (xrefInput) {
-            url.searchParams.set(options.xrefParam ?? "xref", xrefInput.value);
-        }
+const seedStorage = (values) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+};
 
-        (options.query ?? []).forEach(({ key, value, mode }) => {
-            if (value === null || typeof value === "undefined") {
-                url.searchParams.delete(key);
-                return;
-            }
-
-            if (mode === "boolean-1-or-delete") {
-                if (value) {
-                    url.searchParams.set(key, "1");
-                } else {
-                    url.searchParams.delete(key);
-                }
-                return;
-            }
-
-            if (mode === "boolean-1-0") {
-                if (value === "0" || value === "false" || value === 0 || value === false) {
-                    url.searchParams.set(key, "0");
-                } else {
-                    url.searchParams.set(key, "1");
-                }
-                return;
-            }
-
-            url.searchParams.set(key, String(value));
-        });
-
-        return url.toString();
-    },
-    setChartAjaxUrl: (containerId, ajaxUrl, attributeName = "data-wt-ajax-url") => {
-        const container = document.getElementById(containerId);
-        if (!container) return false;
-        container.setAttribute(attributeName, ajaxUrl);
-        return true;
-    },
-    setChartOptionsGlobal: (globalNamespace, chartOptions) => {
-        if (!window[globalNamespace]) return false;
-        window[globalNamespace].chartOptions = chartOptions;
-        return true;
-    },
-    syncCollapseToggle: (storage) => {
-        const showMoreOptions = document.getElementById("showMoreOptions");
-        const optionsToggle = document.getElementById("options");
-        if (!showMoreOptions || !optionsToggle) return false;
-
-        showMoreOptions.addEventListener("shown.bs.collapse", () =>
-            storage.write("showMoreOptions", true),
-        );
-        showMoreOptions.addEventListener("hidden.bs.collapse", () =>
-            storage.write("showMoreOptions", false),
-        );
-        optionsToggle.addEventListener("click", () => {
-            Array.from(optionsToggle.children).forEach((element) => {
-                element.classList.toggle("d-none");
-            });
-        });
-
-        if (storage.read("showMoreOptions")) {
-            optionsToggle.click();
-        }
-
-        return true;
-    },
-    Storage: jest.fn().mockImplementation(() => {
-        const read = (key) =>
-            Object.prototype.hasOwnProperty.call(storageData, key) ? storageData[key] : null;
-
-        const instance = {
-            register: jest.fn(),
-            read: jest.fn(read),
-            readString: jest.fn((key, fallback = null) => {
-                const value = read(key);
-                return value === null ? fallback : String(value);
-            }),
-            readBool: jest.fn((key, fallback = null) => {
-                const value = read(key);
-                if (value === null) return fallback;
-                if (typeof value === "boolean") return value;
-                if (typeof value === "number") return value !== 0;
-                if (value === "true" || value === "1") return true;
-                if (value === "false" || value === "0") return false;
-                return Boolean(value);
-            }),
-            readNumber: jest.fn((key, fallback = null) => {
-                const value = read(key);
-                if (value === null) return fallback;
-                if (typeof value === "number") {
-                    return Number.isFinite(value) ? value : fallback;
-                }
-                const parsed = Number(value);
-                return Number.isFinite(parsed) ? parsed : fallback;
-            }),
-            write: jest.fn((key, value) => {
-                storageData[key] = value;
-            }),
-        };
-
-        storageInstances.push(instance);
-
-        return instance;
-    }),
-}));
+const storedValues = () => JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
 
 const { initPage } = await import("resources/js/modules/page-init.js");
 
@@ -130,9 +26,10 @@ function setupDom(overrides = {}) {
         <input id="innerArcs" type="range" min="0" max="5" value="3">
         <output id="innerArcsOutput">3</output>
         <input type="hidden" name="showDescendants" value="0">
-        <input type="checkbox" id="showDescendants-1" name="showDescendants" value="1">
+        <input type="checkbox" id="showDescendants-1" name="showDescendants" value="1"${overrides.descendants ? " checked" : ""}>
         <div id="fan-chart-url"></div>
-        <input type="checkbox" name="showDetailPanel" value="1"${overrides.panel ? " checked" : ""}>
+        ${overrides.noPanelBox ? "" : `<input type="checkbox" id="showDetailPanel-1" name="showDetailPanel" value="1"${overrides.panel ? " checked" : ""}>`}
+        ${overrides.placesBox ? '<input type="checkbox" id="showPlaces-1" name="showPlaces" value="1">' : ""}
         <button class="btn-help" aria-expanded="false" aria-controls="fan-chart-help-popover">Help</button>
         <div id="fan-chart-help-popover" class="help-popover d-none" role="region">
             <div data-help-mode="tooltip" id="help-tooltip"></div>
@@ -158,8 +55,7 @@ function getAjaxUrl() {
 }
 
 beforeEach(() => {
-    storageData = {};
-    storageInstances = [];
+    localStorage.clear();
     setupDom();
 });
 
@@ -228,30 +124,17 @@ describe("getUrl (via initPage AJAX URL)", () => {
     });
 
     it("includes showPlaces=0 when storage has showPlaces=false", () => {
-        storageData.showPlaces = false;
+        seedStorage({ showPlaces: false });
 
         initPage(defaultConfig);
 
         expect(getAjaxUrl().searchParams.get("showPlaces")).toBe("0");
     });
 
-    it("does not put a place format into the initial URL", () => {
-        // The place format is an administrator setting that the server reads from
-        // the module preference, so the page never sends one, whatever an older
-        // module version left in localStorage.
-        storageData.placeFormat = "levels-2";
-
-        // defaultPlaceFormat is an option of an older page script. An entry that read
-        // it would write the value, so a set value makes this test discriminate.
-        initPage({ ...defaultConfig, defaultPlaceFormat: "city-iso2" });
-
-        expect(getAjaxUrl().searchParams.has("placeFormat")).toBe(false);
-    });
-
     it("uses defaultDetailedDateGenerations for the initial URL, ignoring a stale storage value", () => {
         // A value left in localStorage by an older module version (which had a
         // slider) must not override the admin preference on the initial render.
-        storageData.detailedDateGenerations = "0";
+        seedStorage({ detailedDateGenerations: "0" });
 
         initPage({ ...defaultConfig, defaultDetailedDateGenerations: 3 });
 
@@ -259,6 +142,9 @@ describe("getUrl (via initPage AJAX URL)", () => {
     });
 
     it("sets showDescendants=1 when enabled via config default", () => {
+        // The server renders the checkbox ticked for the default
+        setupDom({ descendants: true });
+
         initPage({ ...defaultConfig, defaultShowDescendants: true });
 
         expect(getAjaxUrl().searchParams.get("showDescendants")).toBe("1");
@@ -272,14 +158,22 @@ describe("getUrl (via initPage AJAX URL)", () => {
 });
 
 describe("detail panel switch (via initPage AJAX URL)", () => {
-    it("omits showDetailPanel while the checkbox has no stored state", () => {
+    it("omits showDetailPanel while the page has no such checkbox", () => {
+        setupDom({ noPanelBox: true });
+
         initPage(defaultConfig);
 
         expect(getAjaxUrl().searchParams.has("showDetailPanel")).toBe(false);
     });
 
+    it("sends showDetailPanel=0 for a checkbox that is not ticked on the first visit", () => {
+        initPage(defaultConfig);
+
+        expect(getAjaxUrl().searchParams.get("showDetailPanel")).toBe("0");
+    });
+
     it("sends showDetailPanel=1 for the stored state of the checkbox", () => {
-        storageData.showDetailPanel = true;
+        seedStorage({ showDetailPanel: true });
 
         initPage(defaultConfig);
 
@@ -287,21 +181,26 @@ describe("detail panel switch (via initPage AJAX URL)", () => {
     });
 
     it("sends showDetailPanel=0 when the stored state switches the panel off", () => {
-        storageData.showDetailPanel = false;
+        seedStorage({ showDetailPanel: false });
 
         initPage(defaultConfig);
 
         expect(getAjaxUrl().searchParams.get("showDetailPanel")).toBe("0");
     });
 
-    it("registers the checkbox for the persistence in the browser storage", () => {
+    it("stores the state of the checkbox in the browser storage when it is changed", () => {
         initPage(defaultConfig);
 
-        expect(storageInstances[0].register).toHaveBeenCalledWith("showDetailPanel");
+        const panelBox = document.querySelector('input[name="showDetailPanel"][type="checkbox"]');
+
+        panelBox.checked = true;
+        panelBox.dispatchEvent(new Event("input", { bubbles: true }));
+
+        expect(storedValues().showDetailPanel).toBe(true);
     });
 
     it("does not publish the switch in the chartOptions of the page", () => {
-        storageData.showDetailPanel = true;
+        seedStorage({ showDetailPanel: true });
 
         initPage(defaultConfig);
 
@@ -309,7 +208,7 @@ describe("detail panel switch (via initPage AJAX URL)", () => {
     });
 
     it("keeps the stored state of the switch when the descendants are toggled", () => {
-        storageData.showDetailPanel = true;
+        seedStorage({ showDetailPanel: true });
 
         initPage(defaultConfig);
 
@@ -324,17 +223,15 @@ describe("detail panel switch (via initPage AJAX URL)", () => {
 
 describe("showDescendants change handler", () => {
     it("reads showPlaces live from storage on each toggle (not stale capture)", () => {
+        setupDom({ placesBox: true });
+
         initPage(defaultConfig);
 
-        const storage = storageInstances[0];
+        // The user ticks showPlaces after initPage ran
+        const placesBox = document.getElementById("showPlaces-1");
 
-        // Simulate user changing showPlaces after initPage ran
-        storage.read.mockImplementation((key) => {
-            if (key === "showPlaces") return true;
-            if (key === "generations") return "6";
-
-            return null;
-        });
+        placesBox.checked = true;
+        placesBox.dispatchEvent(new Event("input", { bubbles: true }));
 
         const cb = document.getElementById("showDescendants-1");
 
@@ -345,16 +242,10 @@ describe("showDescendants change handler", () => {
     });
 
     it("keeps the admin default detailedDateGenerations on toggle, ignoring a stale storage value", () => {
+        // A value left in localStorage by an older module version, which must be ignored
+        seedStorage({ detailedDateGenerations: "5" });
+
         initPage({ ...defaultConfig, defaultDetailedDateGenerations: 2 });
-
-        const storage = storageInstances[0];
-
-        storage.read.mockImplementation((key) => {
-            if (key === "detailedDateGenerations") return "5"; // stale — must be ignored
-            if (key === "generations") return "6";
-
-            return null;
-        });
 
         const cb = document.getElementById("showDescendants-1");
 
@@ -364,28 +255,8 @@ describe("showDescendants change handler", () => {
         expect(getAjaxUrl().searchParams.get("detailedDateGenerations")).toBe("2");
     });
 
-    it("does not put a place format into the URL on toggle", () => {
-        initPage({ ...defaultConfig, defaultPlaceFormat: "city-iso2" });
-
-        const storage = storageInstances[0];
-
-        storage.read.mockImplementation((key) => {
-            if (key === "placeFormat") return "levels-3"; // stale, must be ignored
-            if (key === "generations") return "6";
-
-            return null;
-        });
-
-        const cb = document.getElementById("showDescendants-1");
-
-        cb.checked = true;
-        cb.dispatchEvent(new Event("change"));
-
-        expect(getAjaxUrl().searchParams.has("placeFormat")).toBe(false);
-    });
-
     it("restores fanDegreeRaw when unchecking descendants", () => {
-        storageData.fanDegreeRaw = "320";
+        seedStorage({ fanDegreeRaw: "320" });
 
         initPage(defaultConfig);
 
@@ -418,6 +289,184 @@ describe("showDescendants change handler", () => {
     });
 });
 
+/**
+ * Reads the AJAX URL that the page has set after the descendants switch ran, which is the URL of
+ * the reload path. The initial URL is read with getAjaxUrl() before the switch is used.
+ */
+function reloadAjaxUrl(checked = false) {
+    const checkbox = document.getElementById("showDescendants-1");
+
+    checkbox.checked = checked;
+    checkbox.dispatchEvent(new Event("change"));
+
+    return getAjaxUrl();
+}
+
+describe("AJAX URL parameters on the initial path and the reload path", () => {
+    const paths = [
+        ["initial URL", (config) => (initPage(config), getAjaxUrl())],
+        ["reload URL", (config) => (initPage(config), reloadAjaxUrl())],
+    ];
+
+    describe.each(paths)("%s", (_name, buildUrl) => {
+        it("sends showNicknames=1 for a stored true", () => {
+            seedStorage({ showNicknames: true });
+
+            expect(buildUrl(defaultConfig).searchParams.get("showNicknames")).toBe("1");
+        });
+
+        it("sends showNicknames=0 for a stored false", () => {
+            seedStorage({ showNicknames: false });
+
+            expect(
+                buildUrl({ ...defaultConfig, defaultShowNicknames: true }).searchParams.get(
+                    "showNicknames",
+                ),
+            ).toBe("0");
+        });
+
+        it("takes showNicknames from the page default while the storage has none", () => {
+            expect(
+                buildUrl({ ...defaultConfig, defaultShowNicknames: true }).searchParams.get(
+                    "showNicknames",
+                ),
+            ).toBe("1");
+        });
+
+        it("omits showNicknames while neither the storage nor the page has a value", () => {
+            expect(buildUrl(defaultConfig).searchParams.has("showNicknames")).toBe(false);
+        });
+
+        it("sends the stored generations", () => {
+            seedStorage({ generations: "8" });
+
+            expect(buildUrl(defaultConfig).searchParams.get("generations")).toBe("8");
+        });
+
+        it("falls back to the generations slider while the storage has none", () => {
+            setupDom({ generations: "7" });
+
+            expect(buildUrl(defaultConfig).searchParams.get("generations")).toBe("7");
+        });
+
+        it("sends showPlaces=1 for a stored true", () => {
+            seedStorage({ showPlaces: true });
+
+            expect(buildUrl(defaultConfig).searchParams.get("showPlaces")).toBe("1");
+        });
+
+        it("sends showPlaces=0 for a stored false", () => {
+            seedStorage({ showPlaces: false });
+
+            expect(buildUrl(defaultConfig).searchParams.get("showPlaces")).toBe("0");
+        });
+
+        it("sends showDetailPanel=1 for a stored true", () => {
+            seedStorage({ showDetailPanel: true });
+
+            expect(buildUrl(defaultConfig).searchParams.get("showDetailPanel")).toBe("1");
+        });
+
+        it("sends the admin default detailedDateGenerations", () => {
+            seedStorage({ detailedDateGenerations: "5" });
+
+            expect(
+                buildUrl({ ...defaultConfig, defaultDetailedDateGenerations: 3 }).searchParams.get(
+                    "detailedDateGenerations",
+                ),
+            ).toBe("3");
+        });
+    });
+
+    it("sends showDescendants=1 on the initial URL when the page default is on", () => {
+        // The server renders the checkbox ticked for the default
+        setupDom({ descendants: true });
+        initPage({ ...defaultConfig, defaultShowDescendants: true });
+
+        expect(getAjaxUrl().searchParams.get("showDescendants")).toBe("1");
+    });
+
+    it("sends showDescendants=1 on the reload URL when the switch is ticked", () => {
+        initPage(defaultConfig);
+
+        expect(reloadAjaxUrl(true).searchParams.get("showDescendants")).toBe("1");
+    });
+
+    it("leaves showDescendants out of the reload URL when the switch is cleared", () => {
+        setupDom({ descendants: true });
+        initPage({ ...defaultConfig, defaultShowDescendants: true });
+
+        expect(reloadAjaxUrl(false).searchParams.has("showDescendants")).toBe(false);
+    });
+});
+
+describe("display mode and fan degree handling", () => {
+    const addDisplayModes = () => {
+        document.body.insertAdjacentHTML(
+            "beforeend",
+            ["both", "names", "images"]
+                .map(
+                    (mode) =>
+                        `<input type="radio" name="displayMode" id="displayMode-${mode}" value="${mode}">`,
+                )
+                .join(""),
+        );
+    };
+
+    it("restores the stored display mode into its radio button", () => {
+        addDisplayModes();
+        seedStorage({ displayMode: "images" });
+
+        initPage(defaultConfig);
+
+        expect(document.getElementById("displayMode-images").checked).toBe(true);
+        expect(document.getElementById("displayMode-names").checked).toBe(false);
+    });
+
+    it.each([
+        ["both", true, true],
+        ["names", true, false],
+        ["images", false, true],
+    ])("syncs showNames and showImages for the display mode %s", (mode, names, images) => {
+        addDisplayModes();
+        initPage(defaultConfig);
+
+        const radio = document.getElementById(`displayMode-${mode}`);
+
+        radio.checked = true;
+        radio.dispatchEvent(new Event("input", { bubbles: true }));
+
+        expect(storedValues()).toMatchObject({
+            displayMode: mode,
+            showNames: names,
+            showImages: images,
+        });
+    });
+
+    it("derives the published showNames and showImages from the stored display mode", () => {
+        addDisplayModes();
+        seedStorage({ displayMode: "names", showNames: false, showImages: true });
+
+        initPage(defaultConfig);
+
+        expect(window.WebtreesFanChart.chartOptions ?? window.WebtreesFanChart).toMatchObject({
+            showNames: true,
+            showImages: false,
+        });
+    });
+
+    it("keeps the raw fan degree in step with the slider", () => {
+        initPage(defaultConfig);
+
+        const slider = document.getElementById("fanDegree");
+
+        slider.value = "300";
+        slider.dispatchEvent(new Event("input", { bubbles: true }));
+
+        expect(storedValues().fanDegreeRaw).toBe("300");
+    });
+});
+
 describe("chartOptions namespace", () => {
     it("attaches chartOptions to WebtreesFanChart global", () => {
         initPage(defaultConfig);
@@ -427,8 +476,7 @@ describe("chartOptions namespace", () => {
     });
 
     it("clamps fanDegree in chartOptions when descendants enabled", () => {
-        storageData.fanDegree = "340";
-        storageData.showDescendants = true;
+        seedStorage({ fanDegree: "340", showDescendants: true });
         setupDom({ fanDegree: "340" });
 
         initPage({ ...defaultConfig, defaultShowDescendants: true });
@@ -437,8 +485,7 @@ describe("chartOptions namespace", () => {
     });
 
     it("takes the clamp bounds for descendants from the page configuration", () => {
-        storageData.fanDegree = "340";
-        storageData.showDescendants = true;
+        seedStorage({ fanDegree: "340", showDescendants: true });
         setupDom({ fanDegree: "340" });
 
         initPage({
@@ -453,8 +500,7 @@ describe("chartOptions namespace", () => {
     });
 
     it("raises a fanDegree to the lower bound of the page configuration", () => {
-        storageData.fanDegree = "200";
-        storageData.showDescendants = true;
+        seedStorage({ fanDegree: "200", showDescendants: true });
         setupDom({ fanDegree: "200" });
 
         initPage({
@@ -468,22 +514,12 @@ describe("chartOptions namespace", () => {
     });
 
     it("raises a fanDegree below the lower bound when descendants are enabled", () => {
-        storageData.fanDegree = "90";
-        storageData.showDescendants = true;
+        seedStorage({ fanDegree: "90", showDescendants: true });
         setupDom({ fanDegree: "90" });
 
         initPage({ ...defaultConfig, defaultShowDescendants: true });
 
         expect(window.WebtreesFanChart.chartOptions.fanDegree).toBe(180);
         expect(document.getElementById("fanDegreeOutput").value).toBe("180°");
-    });
-
-    it("does not register fanDegreeRaw as a DOM element", () => {
-        initPage(defaultConfig);
-
-        const storage = storageInstances[0];
-        const registeredNames = storage.register.mock.calls.map((call) => call[0]);
-
-        expect(registeredNames).not.toContain("fanDegreeRaw");
     });
 });

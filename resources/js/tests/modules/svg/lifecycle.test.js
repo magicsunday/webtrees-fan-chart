@@ -10,31 +10,13 @@ function createMockElement(classes = {}) {
 }
 
 describe("classifyElement", () => {
-    it("detects new elements", () => {
-        const el = createMockElement({ new: true });
-        const result = classifyElement(el);
-
-        expect(result).toEqual({ isNew: true, isUpdate: false, isRemove: false });
-    });
-
-    it("detects update elements", () => {
-        const el = createMockElement({ update: true });
-        const result = classifyElement(el);
-
-        expect(result).toEqual({ isNew: false, isUpdate: true, isRemove: false });
-    });
-
-    it("detects remove elements", () => {
-        const el = createMockElement({ remove: true });
-        const result = classifyElement(el);
-
-        expect(result).toEqual({ isNew: false, isUpdate: false, isRemove: true });
-    });
-
-    it("returns all false for unclassified elements", () => {
-        const el = createMockElement();
-        const result = classifyElement(el);
-
-        expect(result).toEqual({ isNew: false, isUpdate: false, isRemove: false });
+    // One row per class a person arc can carry during an update, and one without any
+    it.each([
+        ["a new element", { new: true }, { isNew: true, isUpdate: false, isRemove: false }],
+        ["an update element", { update: true }, { isNew: false, isUpdate: true, isRemove: false }],
+        ["a remove element", { remove: true }, { isNew: false, isUpdate: false, isRemove: true }],
+        ["an unclassified element", {}, { isNew: false, isUpdate: false, isRemove: false }],
+    ])("classifies %s", (_label, classes, expected) => {
+        expect(classifyElement(createMockElement(classes))).toEqual(expected);
     });
 });

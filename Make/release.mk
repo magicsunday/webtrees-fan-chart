@@ -42,13 +42,23 @@ MODULE_BASE_PATH := $(VENDOR_DIR)/$(MODULE_BASE_PKG)
 # (see GitHub issues #194, #196). Must be unique per module.
 SCOPE_NS         := FanChartVendor
 
+# Per-module name of the view namespace that the bundled module-base registers.
+# webtrees keeps one registration per name and the last module to boot wins, so
+# a shared name lets a module with an older bundle remove the shared views of
+# another one. Must be unique per module.
+SCOPE_VIEW_NS    := webtrees-module-base-fan-chart
+
 # Accept both 'make release 3.1.0' (goal form) and 'make release VERSION=3.1.0'.
 VERSION ?= $(filter-out release release-% dist,$(MAKECMDGOALS))
 
 REQUIRED_TOOLS := git node npm composer jq zip unzip gh sed php
 
+# The webtrees constraint of composer.json, written by release-prepare and again by
+# release-bump so the release commit and the development bump cannot differ.
+WEBTREES_CONSTRAINT := ~2.2.0
+
 .PHONY: release release-check release-prepare release-publish release-bump \
-        release-recover dist dist-smoke clean-js release-clean build-js-fresh \
+        release-recover dist dist-stamp dist-smoke clean-js release-clean build-js-fresh \
         release-bootstrap release-dry-run
 
 # release pipeline operates on shared repo state — must run sequentially.
@@ -114,6 +124,11 @@ release-check:
 		echo "Error: HEAD is detached. Check out the release branch first (typically 'main')."; \
 		exit 1; \
 	fi
+	@if [ "$$(git symbolic-ref HEAD)" != refs/heads/main ]; then \
+		echo "Error: releases are made from 'main' only, because the publish and bump targets push 'main'."; \
+		echo "Check out 'main' first."; \
+		exit 1; \
+	fi
 	@if [ -L $(MODULE_BASE_PATH) ]; then \
 		echo "Error: $(MODULE_BASE_PATH) is a symlink (active 'make link-base')."; \
 		echo "Run 'make unlink-base' before releasing — a symlinked vendor copy"; \
@@ -128,10 +143,9 @@ release-check:
 	fi
 	@if [ -d node_modules ] && [ -n "$$(find node_modules ! -uid $$(id -u) -print 2>/dev/null | head -n 1)" ]; then \
 		echo "Error: node_modules contains files not owned by the current user."; \
-		echo "A prior 'make unlink-chart-lib' run from the host (root in the compose"; \
-		echo "container) can leave root-owned files that the release build cannot"; \
-		echo "remove, aborting build-js-fresh mid-way. Clear them as root first:"; \
-		echo "  docker run --rm -v \"\$$PWD\":/m alpine rm -rf /m/node_modules"; \
+		echo "Files that a run as root left behind are the usual cause, and the release"; \
+		echo "build cannot remove them, aborting build-js-fresh mid-way. Remove the tree"; \
+		echo "and install it again as the calling user:  make clean && make install"; \
 		exit 1; \
 	fi
 	@if ! gh auth status >/dev/null 2>&1; then \
@@ -169,7 +183,10 @@ build-js-fresh:
 ## The symlink guard runs before composer install — composer install would
 ## clobber an active 'make link-base' symlink and produce a stale ZIP.
 dist:
-	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp
+	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp $(MODULE_NAME).commit
+	# The commit is resolved once, so the archive and its stamp name the same commit even when the checkout
+	# moves while the dependencies install.
+	@git rev-parse HEAD > $(MODULE_NAME).commit
 	@if [ -L $(MODULE_BASE_PATH) ]; then \
 		echo "Error: $(MODULE_BASE_PATH) is a symlink (active 'make link-base')."; \
 		echo "Run 'make unlink-base' before 'make dist'."; \
@@ -178,7 +195,7 @@ dist:
 	@rm -rf $(VENDOR_DIR)
 	@echo "  Installing composer runtime dependencies into $(VENDOR_DIR)..."
 	@composer update --no-dev --no-progress --no-interaction --no-security-blocking --ignore-platform-req=php
-	@git archive --prefix=$(MODULE_NAME)/ HEAD --format=tar | tar -x
+	@git archive --prefix=$(MODULE_NAME)/ "$$(cat $(MODULE_NAME).commit)" --format=tar | tar -x
 	@if [ ! -d $(MODULE_BASE_PATH) ]; then \
 		echo "Error: $(MODULE_BASE_PATH) not found after composer install."; \
 		echo "Check composer.json vendor-dir config and the require section for $(MODULE_BASE_PKG)."; \
@@ -197,6 +214,11 @@ dist:
 		-e 's|MagicSunday\\\\Webtrees\\\\ModuleBase|MagicSunday\\\\$(SCOPE_NS)\\\\Webtrees\\\\ModuleBase|g' \
 		-e 's|MagicSunday\\Webtrees\\ModuleBase|MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase|g' \
 		{} +
+	@echo "  Scoping module-base view namespace to $(SCOPE_VIEW_NS)..."
+	@sed -i -e "s|'webtrees-module-base'|'$(SCOPE_VIEW_NS)'|" \
+		$(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php
+	@grep -qF "'$(SCOPE_VIEW_NS)'" $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php \
+		|| { echo "Error: view namespace of the bundled SharedViews.php was not scoped"; exit 1; }
 	@hits=$$(find $(MODULE_NAME) -type f \( -name '*.php' -o -name '*.phtml' \) -print0 \
 	    | xargs -0 grep -lE 'MagicSunday\\Webtrees\\ModuleBase' 2>/dev/null); \
 	if [ -n "$$hits" ]; then \
@@ -206,9 +228,16 @@ dist:
 	fi
 	@cd $(MODULE_NAME) && zip --quiet --recurse-paths -9 ../$(MODULE_NAME).zip.tmp .
 	@mv $(MODULE_NAME).zip.tmp $(MODULE_NAME).zip
+	@$(MAKE) --no-print-directory dist-stamp
 	@zip -T $(MODULE_NAME).zip >/dev/null || { rm -f $(MODULE_NAME).zip; echo "Error: zip integrity check failed"; exit 1; }
 	@rm -rf $(MODULE_NAME)/
 	@echo -e "${FGREEN} ✔${FRESET} $(MODULE_NAME).zip created"
+
+## Write the commit that the archive was built on into the archive comment, so the publish step can tell
+## which commit an archive belongs to. Run by dist, it reads the commit file that dist wrote.
+dist-stamp:
+	@zip --quiet -z $(MODULE_NAME).zip < $(MODULE_NAME).commit
+	@rm -f $(MODULE_NAME).commit
 
 ## Smoke-test the just-built distribution zip. Asserts required entries
 ## are present and forbidden ones absent. Suitable for CI on every push.
@@ -218,6 +247,8 @@ dist-smoke:
 		echo "Error: $(MODULE_NAME).zip not found — run 'make dist' first"; \
 		exit 1; \
 	fi
+	@build_commit=$$(unzip -z $(MODULE_NAME).zip | tail -n 1); \
+	grep -Eq '^[0-9a-f]{40}$$' <<<"$$build_commit" || { echo "Error: the zip carries no build commit, run 'make dist' to stamp it"; exit 1; }
 	@paths=$$(unzip -Z1 $(MODULE_NAME).zip); \
 	for f in module.php LICENSE; do \
 		grep -Fxq "$$f" <<<"$$paths" || { echo "Error: required file missing from zip: $$f"; exit 1; }; \
@@ -228,7 +259,9 @@ dist-smoke:
 		vendor/magicsunday/webtrees-module-base/src/Model/ \
 		vendor/magicsunday/webtrees-module-base/src/Module/ \
 		vendor/magicsunday/webtrees-module-base/src/Processor/ \
-		vendor/magicsunday/webtrees-module-base/resources/views/ \
+		vendor/magicsunday/webtrees-module-base/resources/views/detail-panel.phtml \
+		vendor/magicsunday/webtrees-module-base/resources/views/help-popover.phtml \
+		vendor/magicsunday/webtrees-module-base/resources/views/toolbar-style.phtml \
 	; do \
 		grep -qE "^$$prefix" <<<"$$paths" || { echo "Error: required prefix has no entries in zip: $$prefix"; exit 1; }; \
 	done; \
@@ -244,13 +277,16 @@ dist-smoke:
 	if grep -qE '^\.githooks/' <<<"$$paths"; then \
 		echo "Error: .githooks/ found in zip"; exit 1; \
 	fi; \
+	if grep -qE '^deptrac\.ya?ml$$' <<<"$$paths"; then \
+		echo "Error: deptrac.yaml found in zip"; exit 1; \
+	fi; \
 	if grep -qE '(^|/)tsconfig\.json$$' <<<"$$paths"; then \
 		echo "Error: tsconfig.json found in zip"; exit 1; \
 	fi
 	@module=$$(unzip -p $(MODULE_NAME).zip module.php); \
 	grep -qF 'MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase' <<<"$$module" \
 		|| { echo "Error: module.php in zip is missing prefixed namespace ($(SCOPE_NS))"; exit 1; }; \
-	if grep -qF 'MagicSunday\\Webtrees\\ModuleBase' <<<"$$module"; then \
+	if grep -qE 'MagicSunday\\{1,2}Webtrees\\{1,2}ModuleBase' <<<"$$module"; then \
 		echo "Error: module.php in zip still contains unprefixed MagicSunday\\Webtrees\\ModuleBase"; \
 		exit 1; \
 	fi
@@ -271,7 +307,18 @@ dist-smoke:
 		files=$$(find "$$tmp/vendor/magicsunday/webtrees-module-base/src/$$d" -name '*.php' -print 2>/dev/null); \
 		[ -n "$$files" ] \
 			|| { echo "Error: bundled module-base src/$$d has no PHP files in extracted zip"; exit 1; }; \
-	done
+	done; \
+	for v in detail-panel help-popover toolbar-style; do \
+		[ -s "$$tmp/vendor/magicsunday/webtrees-module-base/resources/views/$$v.phtml" ] \
+			|| { echo "Error: bundled module-base view $$v is missing or empty in extracted zip"; exit 1; }; \
+	done; \
+	shared_views="$$tmp/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php"; \
+	grep -qF "'$(SCOPE_VIEW_NS)'" "$$shared_views" \
+		|| { echo "Error: bundled SharedViews.php does not register the scoped view namespace ($(SCOPE_VIEW_NS))"; exit 1; }; \
+	if grep -qF "'webtrees-module-base'" "$$shared_views"; then \
+		echo "Error: bundled SharedViews.php still registers the unscoped view namespace"; \
+		exit 1; \
+	fi
 	@echo -e "${FGREEN} ✔${FRESET} dist-smoke passed: $(MODULE_NAME).zip extracts to a well-formed module"
 
 # Atomic JSON edit with cleanup on failure + post-write assertion. Usage:
@@ -307,7 +354,7 @@ release-prepare: release-check
 	@echo -e "${FYELLOW}[2/6]${FRESET} Updating versions to $(VERSION)..."
 	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(VERSION)'/","CUSTOM_VERSION = '$(VERSION)'")
 	@$(call jq_edit,package.json,.version = $$v,--arg v "$(VERSION)",.version == $$v)
-	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0",.require["fisharebest/webtrees"] == $$v)
+	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "$(WEBTREES_CONSTRAINT)",.require["fisharebest/webtrees"] == $$v)
 	@echo -e "${FYELLOW}[3/6]${FRESET} Cleaning + rebuilding JavaScript bundles..."
 	# --ignore-scripts is required: npm 11 fires the package's "prepare" hook
 	# even on --package-lock-only, but devDeps (rollup) aren't installed yet,
@@ -322,25 +369,77 @@ release-prepare: release-check
 	@$(MAKE) dist
 	@$(MAKE) dist-smoke
 	@echo -e "${FYELLOW}[6/6]${FRESET} Tagging $(VERSION)..."
-	@git tag $(VERSION)
+	# Signed annotated tag with a message. Without -m git opens an editor, which
+	# cannot run in the buildbox, and -s fails the step if the signature fails.
+	@git tag -a -s $(VERSION) -m "$(VERSION)"
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) prepared"
+
+# The inline note as written, handed to the shell through NOTES_RAW. NOTES itself is
+# unexported in the Makefile, because make expands an exported variable, which would
+# lose a dollar sign in the note and run a $(shell ...) in it. A sub-make has no NOTES
+# of the environment, so it keeps the NOTES_RAW it inherited. A top-level run ignores
+# any NOTES_RAW of its environment.
+export NOTES_RAW := $(or $(value NOTES),$(if $(filter-out 0,$(MAKELEVEL)),$(value NOTES_RAW)))
 
 ## Publish: push, create GitHub release with zip.
 ## Pass NOTES_FILE=path for release notes from a file (recommended for multi-line notes).
 ## Pass NOTES="..." for a short inline note, or omit both for auto-generated notes.
+## Once make has received the inline note, backticks, quotes and dollar signs arrive in
+## the release as written, and neither make nor the shell runs anything from it. Quote
+## the note with single quotes in the calling shell, which evaluates a command
+## substitution inside double quotes before make sees it. Make drops leading whitespace
+## of a note given on the command line, so use NOTES_FILE or the environment for it.
 ## Example: make release 3.1.1 NOTES_FILE=/tmp/release-notes.md
 ## Example: make release 3.1.1 NOTES="Bug fix release"
 ##
 ## A standard "Manual installation" warning banner is always prepended so users
 ## see which asset to download (and not the auto-generated "Source code (zip)").
+##
+## Recovery: the branch and the tag are pushed before the release is created, and the
+## immutable-tags ruleset makes a published tag impossible to remove. When the release
+## creation fails afterwards, run the same target again. Pushing the same tag again
+## changes nothing on the remote, the archive is kept until the release exists, and an
+## interrupted upload leaves a draft release without the asset, which the rerun removes
+## before it creates the release. A release that is already published is never touched,
+## the rerun stops there. A lookup that fails counts as no release, so that the first
+## publish of a version, which has no release to find, goes on.
 release-publish:
+	@if [ ! -f $(MODULE_NAME).zip ]; then \
+		echo "Error: $(MODULE_NAME).zip not found. Run 'make dist' on the tagged commit $(VERSION), then 'make dist-smoke', nothing was pushed."; \
+		exit 1; \
+	fi
 	@if [ -n "$(NOTES_FILE)" ] && [ ! -f "$(NOTES_FILE)" ]; then \
 		echo "Error: NOTES_FILE=$(NOTES_FILE) does not exist"; \
 		exit 1; \
 	fi
+	# The archive is built from the commit that dist resolved at its start. It belongs to the release only when
+	# HEAD is the commit that the tag points at and the archive was built on that commit. An archive built on
+	# another commit would be published under the tag of the tagged commit.
+	@tag_commit=$$(git rev-parse --verify --quiet "refs/tags/$(VERSION)^{commit}") || { \
+		echo "Error: the tag $(VERSION) does not exist, nothing was pushed."; \
+		exit 1; \
+	}; \
+	if [ "$$(git rev-parse HEAD)" != "$$tag_commit" ]; then \
+		echo "Error: HEAD is not the commit that the tag $(VERSION) points at, so the archive would not match the tag."; \
+		echo "Check out the tagged commit, rebuild the archive there with 'make dist' and run 'make dist-smoke', nothing was pushed."; \
+		exit 1; \
+	fi; \
+	archive_commit=$$(unzip -z $(MODULE_NAME).zip | tail -n 1); \
+	if [ "$$archive_commit" != "$$tag_commit" ]; then \
+		echo "Error: the archive was not built on the commit that the tag $(VERSION) points at."; \
+		echo "Rebuild the archive on the tagged commit with 'make dist' and run 'make dist-smoke', nothing was pushed."; \
+		exit 1; \
+	fi
 	@echo -e "${FYELLOW}[publish]${FRESET} Pushing to GitHub..."
-	@git push origin main --tags
-	@notes_tmp=$$(mktemp); \
+	# Name the release tag explicitly and switch off implicit tag following. --tags
+	# and push.followTags would also publish other local tags, and the immutable-tags
+	# ruleset makes a published tag impossible to remove.
+	@git push --no-follow-tags origin main refs/tags/$(VERSION)
+	# Stop at the first failing command and remove the notes file on every exit, so a
+	# failed gh call fails the target instead of being masked by the cleanup.
+	@set -e; \
+	notes_tmp=$$(mktemp); \
+	trap 'rm -f "$$notes_tmp"' EXIT; \
 	{ \
 		echo "> [!IMPORTANT]"; \
 		echo "> **Manual / FTP installation:** download the asset **\`$(MODULE_NAME).zip\`** from the **Assets** section below — *not* the GitHub-generated **\"Source code (zip)\"**. The \"Source code\" archives don't include the bundled vendor library and will fail with \`Interface … not found\` when uploaded to \`modules_v4/\`."; \
@@ -349,9 +448,9 @@ release-publish:
 	if [ -n "$(NOTES_FILE)" ]; then \
 		echo "  Notes: from file $(NOTES_FILE)"; \
 		cat "$(NOTES_FILE)" >> "$$notes_tmp"; \
-	elif [ -n "$(NOTES)" ]; then \
+	elif [ -n "$$NOTES_RAW" ]; then \
 		echo "  Notes: inline"; \
-		printf '%s\n' "$(NOTES)" >> "$$notes_tmp"; \
+		printf '%s\n' "$$NOTES_RAW" >> "$$notes_tmp"; \
 	else \
 		echo "  Notes: auto-generated by GitHub"; \
 		repo=$$(gh repo view --json nameWithOwner --jq '.nameWithOwner'); \
@@ -360,12 +459,20 @@ release-publish:
 			-f target_commitish=main \
 			--jq '.body' >> "$$notes_tmp"; \
 	fi; \
+	state=$$(gh release view $(VERSION) --json isDraft --jq .isDraft 2>/dev/null) || state=; \
+	case "$$state" in \
+		true) \
+			echo "  Removing the draft that an earlier attempt left behind"; \
+			gh release delete $(VERSION) --yes ;; \
+		false) \
+			echo "Error: the release $(VERSION) is already published, nothing to do."; \
+			exit 1 ;; \
+	esac; \
 	gh release create $(VERSION) \
 		--title "$(VERSION)" \
 		--notes-file "$$notes_tmp" \
 		--target main \
-		$(MODULE_NAME).zip; \
-	rm -f "$$notes_tmp"
+		$(MODULE_NAME).zip
 	@echo "RELEASE_PUBLISHED version=$(VERSION)"
 	@rm -f $(MODULE_NAME).zip
 	@echo -e "${FGREEN} ✔${FRESET} Release $(VERSION) published"
@@ -393,17 +500,21 @@ release-bump:
 	@echo -e "${FYELLOW}[bump]${FRESET} Bumping to $(NEXT)-dev..."
 	@$(call sed_edit,src/Module.php,"s/CUSTOM_VERSION = '.*'/CUSTOM_VERSION = '$(NEXT)-dev'/","CUSTOM_VERSION = '$(NEXT)-dev'")
 	@$(call jq_edit,package.json,.version = $$v,--arg v "$(NEXT)-dev",.version == $$v)
-	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "~2.2.0",.require["fisharebest/webtrees"] == $$v)
+	@$(call jq_edit,composer.json,.require["fisharebest/webtrees"] = $$v,--arg v "$(WEBTREES_CONSTRAINT)",.require["fisharebest/webtrees"] == $$v)
+	# --ignore-scripts is required: npm 11 fires the package's "prepare" hook
+	# even on --package-lock-only, but devDeps (rollup) aren't installed yet,
+	# so the prepare script crashes with "rollup: not found". The actual build
+	# happens in build-js-fresh below, which runs npm ci first.
 	@npm install --package-lock-only --no-audit --no-fund --ignore-scripts
 	@$(MAKE) build-js-fresh
 	@git add src/Module.php package.json composer.json package-lock.json resources/js/
 	@git commit -m "Bump version to $(NEXT)-dev"
-	@git push origin main
+	@git push --no-follow-tags origin main
 	@echo -e "${FGREEN} ✔${FRESET} Version bumped to $(NEXT)-dev"
 
 ## Remove leftover release artifacts
 release-clean:
-	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp
+	@rm -rf $(MODULE_NAME)/ $(MODULE_NAME).zip $(MODULE_NAME).zip.tmp $(MODULE_NAME).commit
 	@rm -f composer.json.tmp package.json.tmp
 
 ## Recover from a failed release-prepare. Removes freshly-built versioned
@@ -438,7 +549,8 @@ release-recover:
 ## pushing or publishing, then restore the working tree. Validates exactly the
 ## steps that historically broke a release (toolchain provisioning, the full
 ## ci:test gate, the clean-room rollup build incl. chart-lib dist, the dist zip
-## and its smoke test). No VERSION, gh auth or network needed.
+## and its smoke test). Needs no VERSION and no gh auth, and pushes and publishes
+## nothing. The composer and npm steps use the package registries, so run it online.
 ##   make release-dry-run
 # No release-bootstrap PREREQUISITE: the guards below must abort BEFORE any
 # provisioning work, so a dirty tree / active symlink fails fast. Bootstrap is
@@ -463,10 +575,9 @@ release-dry-run:
 	fi
 	@if [ -d node_modules ] && [ -n "$$(find node_modules ! -uid $$(id -u) -print 2>/dev/null | head -n 1)" ]; then \
 		echo "Error: node_modules contains files not owned by the current user."; \
-		echo "A prior 'make unlink-chart-lib' run from the host (root in the compose"; \
-		echo "container) can leave root-owned files that build-js-fresh's 'rm -rf"; \
-		echo "node_modules' cannot remove, aborting the dry run mid-way. Clear them"; \
-		echo "as root first:  docker run --rm -v \"\$$PWD\":/m alpine rm -rf /m/node_modules"; \
+		echo "Files that a run as root left behind are the usual cause, and the dry run"; \
+		echo "cannot remove them, aborting build-js-fresh mid-way. Remove the tree and"; \
+		echo "install it again as the calling user:  make clean && make install"; \
 		exit 1; \
 	fi
 	@$(MAKE) release-bootstrap

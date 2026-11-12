@@ -1,6 +1,7 @@
 # Exclude from distribution archives (composer --prefer-dist, git archive)
 /.coderabbit.yaml      export-ignore
-/.github/              export-ignore
+/.github               export-ignore
+/renovate.json         export-ignore
 /.githooks/            export-ignore
 .gitattributes         export-ignore
 .gitignore             export-ignore
@@ -12,6 +13,7 @@
 /assets/              export-ignore
 /biome.json            export-ignore
 /compose.yaml          export-ignore
+/deptrac.yaml          export-ignore
 /dev/                  export-ignore
 /infection.json5       export-ignore
 /jest.config.mjs       export-ignore
@@ -23,6 +25,7 @@
 /phpstan-baseline.neon export-ignore
 /phpunit.xml           export-ignore
 /rector.php            export-ignore
+/scripts/              export-ignore
 /resources/js/modules/ export-ignore
 /resources/js/tests/   export-ignore
 /rollup.config.js      export-ignore

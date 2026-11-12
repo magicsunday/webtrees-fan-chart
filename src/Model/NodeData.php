@@ -26,11 +26,6 @@ use MagicSunday\Webtrees\ModuleBase\Model\FactView;
 final class NodeData implements JsonSerializable
 {
     /**
-     * The unique ID of the individual.
-     */
-    private int $id = 0;
-
-    /**
      * The XREF of the individual.
      */
     private string $xref = '';
@@ -183,18 +178,6 @@ final class NodeData implements JsonSerializable
      * @var list<FactView|null>
      */
     private array $facts = [];
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): NodeData
-    {
-        $this->id = $id;
-
-        return $this;
-    }
 
     public function setXref(string $xref): NodeData
     {
@@ -430,12 +413,11 @@ final class NodeData implements JsonSerializable
     }
 
     /**
-     * Serialises all chart-relevant fields to an array. The facts are appended as
-     * the last key and only when the list is not empty, so a chart without the
-     * detail panel keeps its payload unchanged.
+     * Serialises all chart-relevant fields to an array. The facts are included
+     * only when the list is not empty, so a chart without the detail panel keeps
+     * its payload unchanged.
      *
      * @return array{
-     *     id: int,
      *     xref: string,
      *     url: string,
      *     updateUrl: string,
@@ -469,7 +451,6 @@ final class NodeData implements JsonSerializable
     public function jsonSerialize(): array
     {
         $data = [
-            'id'                    => $this->id,
             'xref'                  => $this->xref,
             'url'                   => $this->url,
             'updateUrl'             => $this->updateUrl,

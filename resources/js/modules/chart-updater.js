@@ -12,6 +12,7 @@ import Marriage from "./svg/marriage.js";
 import FamilyColor from "./svg/family-color.js";
 import { applyFamilyColorMode, isDrawnPerson, isMarriageParent } from "./draw-rules.js";
 import { motionDuration } from "./motion.js";
+import { clearUpdateNotice, showUpdateNotice } from "./update-notice.js";
 
 /**
  * @import { Transition } from "d3-transition"
@@ -75,11 +76,12 @@ export default class ChartUpdater {
      * @param {string}   url            The JSON endpoint for the new center individual
      * @param {Function} redrawOverlays Called before transition ends to redraw separator lines
      * @param {Function} callback       Called after all transitions finish and DOM is cleaned up
+     * @param {Function} onSuperseded   Called instead of the callback when a newer update cancelled the request of this one
      */
-    update(url, redrawOverlays, callback) {
+    update(url, redrawOverlays, callback, onSuperseded = () => {}) {
         // Abort any in-flight request from a previous update call so only
-        // the latest navigation is processed. The aborted request's catch
-        // block checks for AbortError and silently discards it.
+        // the latest navigation is processed. The catch block of the aborted
+        // request reports it through onSuperseded and does not call the callback.
         if (this._fetchController) {
             this._fetchController.abort();
         }
@@ -106,6 +108,8 @@ export default class ChartUpdater {
         /** @type {Promise<ChartResponse>} */ (d3.json(url, { signal }))
             .then((data) => {
                 this._fetchController = null;
+
+                clearUpdateNotice(this._svg);
 
                 this._updatePageTitle(data);
 
@@ -134,9 +138,11 @@ export default class ChartUpdater {
                 this._runUpdateAnimations(transition);
             })
             .catch((error) => {
-                // A superseded request was intentionally aborted — discard silently
+                // A superseded request was intentionally aborted. Report it, draw nothing
                 // and leave the DOM in whatever state the newer update is building.
                 if (error?.name === "AbortError") {
+                    onSuperseded();
+
                     return;
                 }
 
@@ -144,7 +150,12 @@ export default class ChartUpdater {
 
                 console.error("Fan chart update failed:", error);
 
-                // Clean up stale CSS classes left by a partial update
+                showUpdateNotice(this._svg, this._configuration.labels.updateFailed ?? "");
+
+                // Clean up stale CSS classes left by a partial update. This has to happen
+                // before the callback runs the cleanup of a finished update, which removes the
+                // old content of every arc that still carries a lifecycle class. Without it a
+                // failed update would take the previous content away from the arcs.
                 this._svg
                     .selectAll("g.person, g.marriage")
                     .classed("new", false)

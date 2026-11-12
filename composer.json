@@ -1,6 +1,6 @@
 {
     "name": "magicsunday/webtrees-fan-chart",
-    "description": "SVG ancestor fan chart module for the webtrees genealogy application \u2014 interactive D3.js visualization with zoom, export and up to 10 generations.",
+    "description": "SVG ancestor fan chart module for the webtrees genealogy application — interactive D3.js visualization with zoom, export and up to 10 generations.",
     "license": "GPL-3.0-or-later",
     "type": "webtrees-module",
     "keywords": [
@@ -67,19 +67,17 @@
             }
         }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
-        "php": "8.3 - 8.5",
+        "php": ">=8.3 <9",
         "ext-dom": "*",
         "ext-json": "*",
         "fisharebest/webtrees": "~2.2.0",
-        "magicsunday/webtrees-module-base": "^3.6.0",
+        "magicsunday/webtrees-module-base": "^3.10.0",
         "magicsunday/webtrees-module-installer-plugin": "^2.0"
     },
     "require-dev": {
         "infection/infection": "^0.35.8",
-        "magicsunday/coding-standard": "^3.8",
+        "magicsunday/coding-standard": "^3.10.0",
         "phpat/phpat": "^0.12.4",
         "shipmonk/phpstan-rules": "^4.4",
         "spaze/phpstan-disallowed-calls": "^4.13",
@@ -126,6 +124,9 @@
         "ci:test:php:infection": [
             "XDEBUG_MODE=coverage infection --threads=max --no-progress --no-interaction"
         ],
+        "ci:test:php:infection:changed": [
+            "XDEBUG_MODE=coverage GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=diff.renames GIT_CONFIG_VALUE_0=false infection --threads=max --no-progress --no-interaction --git-diff-lines --min-covered-msi=80 --ignore-msi-with-no-mutations"
+        ],
         "ci:test:js:lint": [
             "npm run lint"
         ],
@@ -136,7 +137,7 @@
             "npm run typecheck"
         ],
         "ci:test:js:unit": [
-            "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests"
+            "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js"
         ],
         "ci:test": [
             "@ci:test:php:lint",
@@ -148,9 +149,14 @@
             "@ci:test:php:cpd",
             "@ci:test:php:templates",
             "@ci:test:php:deptrac",
+            "@ci:test:php:advisories",
             "@ci:test:php:unit",
             "@ci:test:js:unit",
             "@ci:test:php:cgl"
+        ],
+        "ci:test:php:advisories": [
+            "@composer audit --format=json > .build/composer-audit.json",
+            "@php scripts/check-stale-advisory-ignores.php composer.json .build/composer-audit.json"
         ],
         "ci:test:php:templates": [
             "check-consumer-config.php ."
