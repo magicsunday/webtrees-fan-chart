@@ -160,7 +160,7 @@ msgstr ""
 msgid "Generations"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:78
+#: resources/views/modules/fan-chart/form/display.phtml:79
 msgid "Hide empty segments"
 msgstr "Skjul tomme segmenter"
 
@@ -183,7 +183,7 @@ msgid ""
 "code. Users toggle place visibility on/off in the chart form."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:59
+#: resources/views/modules/fan-chart/form/display.phtml:60
 msgid ""
 "Images are only shown if the arc segment is wide enough. Images for "
 "descendants are not yet available."
@@ -257,7 +257,7 @@ msgstr ""
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:71
+#: resources/views/modules/fan-chart/form/display.phtml:72
 msgid ""
 "Partners and children are shown as arcs below the ancestor section. The fan "
 "size is limited to 180–270 degrees when enabled."
@@ -301,7 +301,7 @@ msgstr "Høyreklikk"
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:65
+#: resources/views/modules/fan-chart/form/display.phtml:66
 msgid "Show descendants"
 msgstr "Vis etterkommere"
 
@@ -396,6 +396,10 @@ msgstr ""
 
 #: src/Module.php:266
 msgid "The chart could not be updated. Please try again."
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid "The display option only affects the arcs, not the tooltip."
 msgstr ""
 
 #: src/Module/ConfigTrait.php:151

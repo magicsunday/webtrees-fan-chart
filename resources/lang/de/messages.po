@@ -161,7 +161,7 @@ msgstr "Allgemein"
 msgid "Generations"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:78
+#: resources/views/modules/fan-chart/form/display.phtml:79
 msgid "Hide empty segments"
 msgstr "Verberge leere Segmente"
 
@@ -188,7 +188,7 @@ msgstr ""
 "ausgeschrieben oder als Ländercode. Anwender schalten die Anzeige der Orte "
 "im Diagrammformular ein bzw. aus."
 
-#: resources/views/modules/fan-chart/form/display.phtml:59
+#: resources/views/modules/fan-chart/form/display.phtml:60
 msgid ""
 "Images are only shown if the arc segment is wide enough. Images for "
 "descendants are not yet available."
@@ -263,7 +263,7 @@ msgstr "Personenseite öffnen"
 msgid "Open the individual page or center the chart on the person"
 msgstr "Personenseite öffnen oder das Diagramm auf die Person zentrieren"
 
-#: resources/views/modules/fan-chart/form/display.phtml:71
+#: resources/views/modules/fan-chart/form/display.phtml:72
 msgid ""
 "Partners and children are shown as arcs below the ancestor section. The fan "
 "size is limited to 180–270 degrees when enabled."
@@ -307,7 +307,7 @@ msgstr "Rechtsklick"
 msgid "Select a person in the chart to see the details here."
 msgstr "Person im Diagramm auswählen, um hier die Details anzuzeigen."
 
-#: resources/views/modules/fan-chart/form/display.phtml:65
+#: resources/views/modules/fan-chart/form/display.phtml:66
 msgid "Show descendants"
 msgstr "Nachkommen anzeigen"
 
@@ -407,6 +407,10 @@ msgstr "Tabulatortaste"
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 "Das Diagramm konnte nicht aktualisiert werden. Bitte versuche es erneut."
+
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid "The display option only affects the arcs, not the tooltip."
+msgstr "Die Darstellung betrifft nur die Bögen, nicht den Tooltip."
 
 #: src/Module/ConfigTrait.php:151
 #, php-format
