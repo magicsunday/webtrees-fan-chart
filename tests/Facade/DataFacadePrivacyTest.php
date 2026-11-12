@@ -11,40 +11,27 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test\Facade;
 
-use Aura\Router\RouterContainer;
 use Fisharebest\Webtrees\Auth;
-use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Factories\CacheFactory;
-use Fisharebest\Webtrees\Gedcom;
-use Fisharebest\Webtrees\GuestUser;
-use Fisharebest\Webtrees\Http\Routes\WebRoutes;
-use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\ChartService;
-use Fisharebest\Webtrees\Services\GedcomImportService;
-use Fisharebest\Webtrees\Services\MigrationService;
-use Fisharebest\Webtrees\Services\TreeService;
-use Fisharebest\Webtrees\Services\UserService;
 use Fisharebest\Webtrees\Session;
 use Fisharebest\Webtrees\Site;
 use Fisharebest\Webtrees\Tree;
-use Fisharebest\Webtrees\Webtrees;
 use GuzzleHttp\Psr7\ServerRequest;
-use Illuminate\Database\Schema\Blueprint;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Test\Support\PayloadToken;
+use MagicSunday\Webtrees\FanChart\Test\Support\RealTreeFixtureTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
 use function file_get_contents;
@@ -52,7 +39,6 @@ use function file_put_contents;
 use function is_dir;
 use function json_encode;
 use function mkdir;
-use function preg_split;
 use function rmdir;
 use function sys_get_temp_dir;
 use function uniqid;
@@ -93,6 +79,8 @@ use const JSON_THROW_ON_ERROR;
 #[UsesClass(NodeData::class)]
 final class DataFacadePrivacyTest extends TestCase
 {
+    use RealTreeFixtureTrait;
+
     /**
      * Values that exist only on private people, the confidential deceased mother (I3), the living
      * grandfather (I4) and the marriage records that list them. Every one is shown to the
@@ -153,50 +141,7 @@ final class DataFacadePrivacyTest extends TestCase
     {
         parent::setUp();
 
-        Site::$preferences = [];
-        (new Webtrees())->bootstrap();
-        I18N::init('en-US', true);
-
-        DB::connect(
-            driver: DB::SQLITE,
-            host: '',
-            port: '',
-            database: ':memory:',
-            username: '',
-            password: '',
-            prefix: 'wt_',
-            key: '',
-            certificate: '',
-            ca: '',
-            verify_certificate: false,
-        );
-
-        $migrationService = new MigrationService();
-        $migrationService->updateSchema('\Fisharebest\Webtrees\Schema', 'WT_SCHEMA_VERSION', Webtrees::SCHEMA_VERSION);
-        $migrationService->seedDatabase();
-
-        I18N::init('en-US');
-        (new Gedcom())->registerTags(Registry::elementFactory(), true);
-
-        $routerContainer = new RouterContainer('/');
-        (new WebRoutes())->load($routerContainer->getMap());
-        Registry::container()->set(RouterContainer::class, $routerContainer);
-
-        $requestFactory = Registry::container()->get(ServerRequestFactoryInterface::class);
-        self::assertInstanceOf(ServerRequestFactoryInterface::class, $requestFactory);
-
-        Registry::container()->set(
-            ServerRequestInterface::class,
-            $requestFactory
-                ->createServerRequest('GET', 'https://webtrees.test/index.php')
-                ->withAttribute('base_url', 'https://webtrees.test')
-                ->withAttribute('client-ip', '127.0.0.1')
-                ->withAttribute('user', new GuestUser())
-        );
-
-        $admin = (new UserService())->create('admin', 'Admin', 'admin@example.test', 'secret');
-        $admin->setPreference(UserInterface::PREF_IS_ADMINISTRATOR, '1');
-        Auth::login($admin);
+        $this->bootRealWebtrees();
 
         // The media file of the living person has to exist, because the image of a person is only
         // referenced when its file is there.
@@ -238,35 +183,6 @@ final class DataFacadePrivacyTest extends TestCase
         $this->restoreMinimalDatabase();
 
         parent::tearDown();
-    }
-
-    /**
-     * Replaces the real schema by the minimal in-memory database that the other tests of the suite
-     * expect, which holds the module settings only and has no foreign keys. The settings fixture of
-     * the module base boots that database once per process and then reuses the global connection,
-     * so the connection of this test must not outlive it.
-     */
-    private function restoreMinimalDatabase(): void
-    {
-        DB::connect(
-            driver: DB::SQLITE,
-            host: '',
-            port: '',
-            database: ':memory:',
-            username: '',
-            password: '',
-            prefix: '',
-            key: '',
-            certificate: '',
-            ca: '',
-            verify_certificate: false,
-        );
-
-        DB::connection()->getSchemaBuilder()->create('module_setting', static function (Blueprint $table): void {
-            $table->string('module_name');
-            $table->string('setting_name');
-            $table->string('setting_value');
-        });
     }
 
     /**
@@ -419,33 +335,7 @@ final class DataFacadePrivacyTest extends TestCase
      */
     private function importTree(): Tree
     {
-        $gedcom  = file_get_contents(__DIR__ . '/../Support/fixtures/privacy-ancestry.ged');
-        $service = new GedcomImportService();
-        $tree    = (new TreeService($service))->create('privacy', 'privacy');
-
-        foreach (
-            [
-                'individuals' => 'i_file',
-                'families'    => 'f_file',
-                'other'       => 'o_file',
-                'name'        => 'n_file',
-                'dates'       => 'd_file',
-                'places'      => 'p_file',
-                'placelinks'  => 'pl_file',
-                'link'        => 'l_file',
-                'media'       => 'm_file',
-                'media_file'  => 'm_file',
-            ] as $table => $column
-        ) {
-            DB::table($table)->where($column, '=', $tree->id())->delete();
-        }
-
-        $records = preg_split('/\n(?=0)/', (string) $gedcom);
-        self::assertIsArray($records);
-
-        foreach ($records as $record) {
-            $service->importRecord($record, $tree, false);
-        }
+        $tree = $this->importGedcom((string) file_get_contents(__DIR__ . '/../Support/fixtures/privacy-ancestry.ged'), 'privacy');
 
         $tree->setPreference('HIDE_LIVE_PEOPLE', '1');
         $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);
