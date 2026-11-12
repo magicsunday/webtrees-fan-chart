@@ -393,7 +393,7 @@ final class ModuleRequestTest extends TestCase
     #[Test]
     public function theUpdateActionAnswersWithAPlainTextTitleNextToTheMarkupOne(): void
     {
-        $name = '<span class="NAME" dir="auto" translate="no">Jane &amp; <span class="SURN">&lt;b&gt;Doe</span></span>';
+        $name = '<span class="NAME" dir="auto" translate="no">Jane &amp; <span class="SURN">&lt;b&gt;O&#039;Doe</span> <q class="wt-nickname">&quot;Jay&quot;</q></span>';
 
         $response = $this->createModule()->getUpdateAction(
             $this->updateRequest($this->createChartIndividual($name))
@@ -403,7 +403,7 @@ final class ModuleRequestTest extends TestCase
         $payload = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertSame('Fan chart of ' . $name, $payload['title']);
-        self::assertSame('Fan chart of Jane & <b>Doe', $payload['titleText']);
+        self::assertSame('Fan chart of Jane & <b>O\'Doe "Jay"', $payload['titleText']);
     }
 
     /**
