@@ -290,7 +290,10 @@ describe("ArcLabelLayout", () => {
             );
 
             // The first date sits in the still empty group of the names
-            expect(positions[1] - positions[0]).toBeCloseTo(10 * (MATH_RAD2DEG / 100));
+            const degPerPixel = MATH_RAD2DEG / 100;
+
+            expect(positions[0]).toBeCloseTo(-5 * degPerPixel);
+            expect(positions[1]).toBeCloseTo(5 * degPerPixel);
         });
 
         it("puts a single line on the center of the arc", () => {
@@ -327,6 +330,10 @@ describe("ArcLabelLayout", () => {
             expect(offsetsOf(40, [LINE_KIND.NAME, LINE_KIND.ALT, LINE_KIND.DATE])).toEqual([
                 11.25, 20.75, 34.75,
             ]);
+        });
+
+        it("counts an alternative name without a name as a name for the group gap below an image", () => {
+            expect(offsetsOf(40, [LINE_KIND.ALT, LINE_KIND.DATE])).toEqual([16, 30]);
         });
 
         it("makes room for the group gap below an image only with names and dates", () => {
@@ -380,6 +387,23 @@ describe("ArcLabelLayout", () => {
 
             // A line on a flipped label moves against the sign of the offset
             expect(shifted - unshifted).toBeCloseTo(4 * 1.5, 6);
+        });
+
+        it("treats an ancestor at the very top as not flipped", () => {
+            const transform = createTransformLayout({ scale: () => 0 }).calculateOuterTransform(
+                { depth: 3, x0: 0.4, x1: 0.6 },
+                0,
+            );
+
+            expect(transform).toMatch(/ translate\(-90\)$/);
+        });
+
+        it("flips a descendant whose arc middle is at half a turn", () => {
+            const transform = createTransformLayout({
+                childScale: () => Math.PI,
+            }).calculateOuterTransform({ depth: -2, x0: 0.4, x1: 0.6 }, 0);
+
+            expect(transform).toMatch(/ translate\(90\)$/);
         });
 
         it("takes the angle of a descendant from the child scale", () => {

@@ -316,15 +316,14 @@ describe("Person image size", () => {
             data: { data: { ...baseDatum.data.data, thumbnail: "thumb.jpg" } },
         };
 
-        new Person(
-            { div },
-            { ...imageConfiguration, showNames: true },
-            arc(),
-            personSelection,
-            datum,
-        );
+        const svg = { div };
+        const configuration = { ...imageConfiguration, showNames: true };
+        const geometry = arc();
 
-        expect(textConstructor.mock.calls.at(-1)?.[3]).toBe(40);
+        new Person(svg, configuration, geometry, personSelection, datum);
+
+        // The label shares the geometry of the render pass, which the font cache is keyed on
+        expect(textConstructor).toHaveBeenLastCalledWith(svg, configuration, geometry, 40);
         expect(textCreateLabels).toHaveBeenCalledWith(expect.anything(), datum);
         expect(Person.prototype.addImageToPerson).toHaveBeenCalledWith(
             expect.anything(),
