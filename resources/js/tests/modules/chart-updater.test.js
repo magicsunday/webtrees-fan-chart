@@ -155,7 +155,11 @@ describe("Update", () => {
 
         expect(d3.select(element).on("click")).toBeInstanceOf(Function);
 
-        const done = runUpdate(update, { data: ancestors(2), title: "<strong>Updated</strong>" });
+        const done = runUpdate(update, {
+            data: ancestors(2),
+            title: 'Fan chart of <span class="NAME" dir="auto" translate="no">Updated</span>',
+            titleText: "Fan chart of Updated",
+        });
 
         // The request has not been answered yet
         expect(d3.select(element).on("click")).toBeUndefined();
@@ -164,30 +168,50 @@ describe("Update", () => {
 
         await done;
 
-        expect(document.querySelector(".wt-page-title").innerHTML).toBe("<strong>Updated</strong>");
-        expect(document.title).toBe("Updated");
+        expect(document.querySelector(".wt-page-title").innerHTML).toBe(
+            'Fan chart of <span class="NAME" dir="auto" translate="no">Updated</span>',
+        );
+        expect(document.title).toBe("Fan chart of Updated");
         expect(chart._hierarchy.nodes).toHaveLength(3);
     });
 
-    test("leaves the tab title empty when the title of the response has no text", async () => {
+    test("creates no element from a hostile name in the heading and takes the tab title from the plain text", async () => {
+        const { update } = createChart();
+        const hostile = '<img src=x onerror="window.hostileRan = true">';
+
+        await runUpdate(update, {
+            data: ancestors(2),
+            title: `Fan chart of <span class="NAME">${hostile}</span>`,
+            titleText: `Fan chart of ${hostile}`,
+        });
+
+        const heading = document.querySelector(".wt-page-title");
+
+        expect(heading.querySelector("img")).toBeNull();
+        expect(heading.querySelectorAll("*")).toHaveLength(1);
+        expect(heading.textContent).toBe("Fan chart of ");
+        expect(document.title).toBe(`Fan chart of ${hostile}`);
+        expect(window.hostileRan).toBeUndefined();
+    });
+
+    test("does not derive the tab title from the markup of the heading", async () => {
         const { update } = createChart();
 
         document.title = "Before";
 
-        // A browser lays the detached element out as nothing and gives an empty text, jsdom has no
-        // innerText at all. The stand-in returns a text, so the title may only come from textContent.
-        Object.defineProperty(HTMLElement.prototype, "innerText", {
-            configurable: true,
-            get: () => "from innerText",
-        });
+        await runUpdate(update, { data: ancestors(2), title: "<b>Markup</b>", titleText: "Plain" });
 
-        try {
-            await runUpdate(update, { data: ancestors(2), title: '<img src="x.png" alt="">' });
+        expect(document.title).toBe("Plain");
+    });
 
-            expect(document.title).toBe("");
-        } finally {
-            delete HTMLElement.prototype.innerText;
-        }
+    test("leaves the tab title alone when the response carries no plain text title", async () => {
+        const { update } = createChart();
+
+        document.title = "Before";
+
+        await runUpdate(update, { data: ancestors(2), title: "<b>Markup</b>" });
+
+        expect(document.title).toBe("Before");
     });
 
     // The duration of the transition is the configured one, and none while the user asks for
@@ -481,7 +505,7 @@ describe("Update", () => {
             await failWith(update, new Error("500 Internal Server Error"));
             expect(notices()).toHaveLength(1);
 
-            await runUpdate(update, { data: ancestors(2), title: "Updated" });
+            await runUpdate(update, { data: ancestors(2), title: "Updated", titleText: "Updated" });
 
             expect(notices()).toHaveLength(0);
         });
