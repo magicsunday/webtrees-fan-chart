@@ -10,6 +10,7 @@ import Geometry, { MATH_RAD2DEG } from "./geometry.js";
 import ArcLabelLayout, { TEXT_SLOT } from "./arc-label-layout.js";
 import { measureText, truncateNames, truncateToFit } from "@magicsunday/webtrees-chart-lib/infra";
 import { createAlternativeNamesData, createNamesData } from "./name-parts.js";
+import { getTextMetrics } from "./text-metrics.js";
 
 /**
  * @import { Selection } from "d3-selection"
@@ -47,6 +48,7 @@ export default class Text {
         this._geometry = geometry || new Geometry(this._configuration);
         this._layout = new ArcLabelLayout(this._configuration, this._geometry, imageSize);
         this._imageSize = imageSize;
+        this._metrics = getTextMetrics(this._svg, this._geometry);
     }
 
     /**
@@ -324,8 +326,8 @@ export default class Text {
     }
 
     /**
-     * Reads the current font-size and font-weight from the parent element and
-     * delegates to truncateNames() with those metrics.
+     * Takes the font-size and font-weight of the parent element from the metrics
+     * of the render pass and delegates to truncateNames() with them.
      *
      * @param {Selection<any, any, any, any>} parent         The <text> or <textPath> element whose font metrics to use
      * @param {LabelElementData[]}            names          The name parts to truncate
@@ -336,8 +338,7 @@ export default class Text {
      * @private
      */
     truncateNamesData(parent, names, availableWidth) {
-        const fontSize = parent.style("font-size");
-        const fontWeight = parent.style("font-weight");
+        const { fontSize, fontWeight } = this._metrics.getFont(parent);
 
         return /** @type {LabelElementData[]} */ (
             truncateNames(
@@ -350,8 +351,8 @@ export default class Text {
     }
 
     /**
-     * Returns the pixel width of text rendered in the SVG's current font family
-     * at the given size and weight. Delegates to the shared canvas-based
+     * Returns the pixel width of text rendered in the SVG's font family, which
+     * the metrics of the render pass read once, at the given size and weight. Delegates to the shared canvas-based
      * measure utility.
      *
      * @param {string} text
@@ -363,7 +364,7 @@ export default class Text {
      * @private
      */
     measureText(text, fontSize, fontWeight = "400") {
-        const fontFamily = this._svg.style("font-family");
+        const fontFamily = this._metrics.getFontFamily();
 
         return measureText(text, fontFamily, fontSize, String(fontWeight));
     }

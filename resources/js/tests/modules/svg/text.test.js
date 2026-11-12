@@ -129,6 +129,7 @@ describe("Text", () => {
             { label: "Beatrice", isPreferred: true, isLastName: false, isNameRtl: false },
         ];
         const parent = {
+            node: () => document.createElementNS("http://www.w3.org/2000/svg", "text"),
             style: jest.fn((property) => (property === "font-size" ? "12px" : "700")),
         };
         const shortened = [{ label: "kept" }];
@@ -154,6 +155,32 @@ describe("Text", () => {
         truncateNamesMock.mock.calls[0][2]("Anna");
 
         expect(measureTextMock).toHaveBeenCalledTimes(1);
+        expect(measureTextMock).toHaveBeenCalledWith("Anna", "Arial", "12px", "700");
+    });
+
+    // Reading a style of a label that was just created makes the browser calculate the style of the
+    // whole tree again, so the reads must not grow with the number of labels of a pass
+    it("reads the font of the labels of a pass once for all of them", () => {
+        const svg = { style: jest.fn(() => "Arial") };
+        const geometry = {};
+        const fontReads = jest.fn((property) => (property === "font-size" ? "12px" : "700"));
+        const nameGroup = [
+            { label: "Anna", isPreferred: false, isLastName: false, isNameRtl: false },
+        ];
+
+        for (let index = 0; index < 20; ++index) {
+            const parent = {
+                node: () => document.createElementNS("http://www.w3.org/2000/svg", "text"),
+                style: fontReads,
+            };
+            const text = new Text(svg, createConfiguration(), geometry);
+
+            text.truncateNamesData(parent, nameGroup, 100);
+        }
+
+        expect(svg.style).toHaveBeenCalledTimes(1);
+        expect(fontReads).toHaveBeenCalledTimes(2);
+        expect(measureTextMock).toHaveBeenCalledTimes(20);
     });
 
     describe("renderTimespanLines", () => {
