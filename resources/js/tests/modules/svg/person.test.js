@@ -21,10 +21,15 @@ await jest.unstable_mockModule("resources/js/modules/d3", () => ({
 }));
 
 const textCreateLabels = jest.fn();
+const textConstructor = jest.fn();
 
 await jest.unstable_mockModule("resources/js/modules/svg/text", () => ({
     __esModule: true,
     default: class {
+        constructor(...args) {
+            textConstructor(...args);
+        }
+
         createLabels = textCreateLabels;
     },
 }));
@@ -53,17 +58,6 @@ await jest.unstable_mockModule("resources/js/modules/svg/geometry", () => ({
         }
         getFontSize() {
             return 14;
-        }
-    },
-}));
-
-const addLabelMock = jest.fn(() => ({}));
-
-await jest.unstable_mockModule("resources/js/modules/svg/label-renderer", () => ({
-    __esModule: true,
-    default: class {
-        addLabel(...args) {
-            return addLabelMock(...args);
         }
     },
 }));
@@ -282,6 +276,7 @@ describe("Person image size", () => {
     };
 
     const arc = ({ inner = 100, outer = 200, width = 400, degrees = 30 } = {}) => ({
+        getFontSize: () => 14,
         innerRadius: () => inner,
         outerRadius: () => outer,
         arcWidth: () => width,
@@ -321,6 +316,30 @@ describe("Person image size", () => {
             data: { data: { ...baseDatum.data.data, thumbnail: "thumb.jpg" } },
         };
 
+        const svg = { div };
+        const configuration = { ...imageConfiguration, showNames: true };
+        const geometry = arc();
+
+        new Person(svg, configuration, geometry, personSelection, datum);
+
+        // The label shares the geometry of the render pass, which the font cache is keyed on
+        expect(textConstructor).toHaveBeenLastCalledWith(svg, configuration, geometry, 40);
+        expect(textCreateLabels).toHaveBeenCalledWith(expect.anything(), datum);
+        expect(Person.prototype.addImageToPerson).toHaveBeenCalledWith(
+            expect.anything(),
+            datum,
+            true,
+            40,
+        );
+        expect(datum.data.data).not.toHaveProperty("imageSize");
+    });
+
+    it("builds the label in a group that carries the depth-scaled font size", () => {
+        const { personSelection } = createPersonSelection();
+        const { div } = createDivSelection();
+        const content = personSelection.append();
+        const datum = { ...baseDatum, depth: 1 };
+
         new Person(
             { div },
             { ...imageConfiguration, showNames: true },
@@ -329,14 +348,10 @@ describe("Person image size", () => {
             datum,
         );
 
-        expect(addLabelMock).toHaveBeenCalledWith(expect.anything(), datum, 40);
-        expect(Person.prototype.addImageToPerson).toHaveBeenCalledWith(
-            expect.anything(),
-            datum,
-            true,
-            40,
-        );
-        expect(datum.data.data).not.toHaveProperty("imageSize");
+        expect(content.append).toHaveBeenCalledWith("g");
+        expect(content.attr).toHaveBeenCalledWith("class", "wt-chart-box-name name");
+        expect(content.style).toHaveBeenCalledWith("font-size", "14px");
+        expect(textCreateLabels).toHaveBeenCalledWith(content, datum);
     });
 
     it("tells the label there is no image and places none when the arc spans too few degrees", () => {
@@ -356,7 +371,7 @@ describe("Person image size", () => {
             datum,
         );
 
-        expect(addLabelMock).toHaveBeenCalledWith(expect.anything(), datum, 0);
+        expect(textConstructor.mock.calls.at(-1)?.[3]).toBe(0);
         expect(Person.prototype.addImageToPerson).not.toHaveBeenCalled();
     });
 

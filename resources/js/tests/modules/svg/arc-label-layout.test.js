@@ -1,35 +1,17 @@
 import { jest } from "@jest/globals";
 import { scaleLinear } from "d3-scale";
 
-const selectMock = (node) => ({
-    text(value) {
-        if (typeof value === "undefined") {
-            return node.textContent;
-        }
-
-        node.textContent = value;
-        return this;
-    },
-    classed(name) {
-        return (node.classes ?? []).includes(name);
-    },
-    attr(name, value) {
-        node.attrs = { ...node.attrs, [name]: typeof value === "function" ? value() : value };
-
-        return this;
-    },
-});
-
 await jest.unstable_mockModule("resources/js/modules/d3", () => ({
     __esModule: true,
     scaleLinear,
-    select: jest.fn((node) => selectMock(node)),
 }));
 
 const { default: Geometry } = await import("resources/js/modules/svg/geometry");
-const { default: ArcLabelLayout, TEXT_SLOT } = await import(
-    "resources/js/modules/svg/arc-label-layout"
-);
+const {
+    default: ArcLabelLayout,
+    LINE_KIND,
+    TEXT_SLOT,
+} = await import("resources/js/modules/svg/arc-label-layout");
 
 const createConfiguration = (overrides = {}) => ({
     numberOfInnerCircles: 2,
@@ -242,15 +224,7 @@ describe("ArcLabelLayout", () => {
 
         // Two name lines and one date line, at a font size of 10 px on a
         // centre radius of 100 px.
-        const createLayoutElements = () => {
-            const nodes = [{ classes: [] }, { classes: [] }, { classes: ["date"] }];
-
-            return {
-                each(callback) {
-                    nodes.forEach((node) => callback.call(node));
-                },
-            };
-        };
+        const lineKinds = [LINE_KIND.NAME, LINE_KIND.NAME, LINE_KIND.DATE];
 
         const createLayout = (angularWidthDeg) =>
             new ArcLabelLayout(createConfiguration(), {
@@ -262,7 +236,7 @@ describe("ArcLabelLayout", () => {
         it("spaces the lines by the font size when the arc is wide enough", () => {
             const positions = createLayout(100).calculateOuterSlotPositions(
                 createDatum({ depth: 4 }),
-                createLayoutElements(),
+                lineKinds,
             );
 
             const degPerPixel = MATH_RAD2DEG / 100;
@@ -279,11 +253,172 @@ describe("ArcLabelLayout", () => {
         it("compresses the lines into 85 percent of a narrow arc", () => {
             const positions = createLayout(10).calculateOuterSlotPositions(
                 createDatum({ depth: 4 }),
-                createLayoutElements(),
+                lineKinds,
             );
 
             expect(positions[0]).toBeCloseTo(-4.25);
             expect(positions[2]).toBeCloseTo(4.25);
+        });
+
+        it("keeps an alternative name in the group of the names", () => {
+            const positions = createLayout(100).calculateOuterSlotPositions(
+                createDatum({ depth: 4 }),
+                [LINE_KIND.NAME, LINE_KIND.ALT, LINE_KIND.DATE],
+            );
+
+            const nameGap = 11 * (MATH_RAD2DEG / 100);
+
+            expect(positions[1] - positions[0]).toBeCloseTo(nameGap);
+        });
+
+        it("widens the gap between the groups once the label has more than three lines", () => {
+            const positions = createLayout(100).calculateOuterSlotPositions(
+                createDatum({ depth: 4 }),
+                [LINE_KIND.NAME, LINE_KIND.NAME, LINE_KIND.DATE, LINE_KIND.DATE],
+            );
+
+            const degPerPixel = MATH_RAD2DEG / 100;
+
+            expect(positions[2] - positions[1]).toBeCloseTo(15 * degPerPixel);
+            expect(positions[3] - positions[2]).toBeCloseTo(10 * degPerPixel);
+        });
+
+        it("sets the second date apart as a group when the label has no name", () => {
+            const positions = createLayout(100).calculateOuterSlotPositions(
+                createDatum({ depth: 4 }),
+                [LINE_KIND.DATE, LINE_KIND.DATE],
+            );
+
+            // The first date sits in the still empty group of the names
+            const degPerPixel = MATH_RAD2DEG / 100;
+
+            expect(positions[0]).toBeCloseTo(-5 * degPerPixel);
+            expect(positions[1]).toBeCloseTo(5 * degPerPixel);
+        });
+
+        it("puts a single line on the center of the arc", () => {
+            expect(
+                createLayout(100).calculateOuterSlotPositions(createDatum({ depth: 4 }), [
+                    LINE_KIND.NAME,
+                ]),
+            ).toEqual([-0]);
+        });
+    });
+
+    describe("calculateCenterSlotOffsets", () => {
+        // A font size of 10 px gives a line height of 9.5 px
+        const createCenterLayout = (imageSize) =>
+            new ArcLabelLayout(createConfiguration(), { getFontSize: () => 10 }, imageSize);
+
+        const offsetsOf = (imageSize, lineKinds) =>
+            createCenterLayout(imageSize).calculateCenterSlotOffsets(
+                createDatum({ depth: 0 }),
+                lineKinds,
+            );
+
+        it("centers the lines around the middle of the circle with a small shift down", () => {
+            expect(offsetsOf(0, [LINE_KIND.NAME, LINE_KIND.NAME])).toEqual([-2.75, 6.75]);
+        });
+
+        it("sets the alternative name and the dates apart as groups without an image", () => {
+            expect(
+                offsetsOf(0, [LINE_KIND.NAME, LINE_KIND.ALT, LINE_KIND.DATE, LINE_KIND.DATE]),
+            ).toEqual([-18.5, -4, 10.5, 20]);
+        });
+
+        it("counts the alternative name as a name below an image", () => {
+            expect(offsetsOf(40, [LINE_KIND.NAME, LINE_KIND.ALT, LINE_KIND.DATE])).toEqual([
+                11.25, 20.75, 34.75,
+            ]);
+        });
+
+        it("counts an alternative name without a name as a name for the group gap below an image", () => {
+            expect(offsetsOf(40, [LINE_KIND.ALT, LINE_KIND.DATE])).toEqual([16, 30]);
+        });
+
+        it("makes room for the group gap below an image only with names and dates", () => {
+            const namesOnly = offsetsOf(40, [LINE_KIND.NAME, LINE_KIND.NAME]);
+            const withDates = offsetsOf(40, [LINE_KIND.NAME, LINE_KIND.DATE]);
+
+            // The text block is shorter without the gap, so it starts lower
+            expect(namesOnly[0]).toBe(18.25);
+            expect(withDates[0]).toBeLessThan(namesOnly[0]);
+        });
+
+        it("returns no offset for a label without lines", () => {
+            expect(offsetsOf(0, [])).toEqual([]);
+            expect(offsetsOf(40, [])).toEqual([]);
+        });
+    });
+
+    describe("calculateOuterTransform", () => {
+        const radiansToDegrees = 180 / Math.PI;
+
+        const createTransformLayout = (geometry, overrides = {}) =>
+            new ArcLabelLayout(createConfiguration(overrides), {
+                centerRadius: () => 100,
+                getFontSize: () => 10,
+                ...geometry,
+            });
+
+        const rotationOf = (transform) => Number(/^rotate\((-?[\d.e-]+)\)/.exec(transform)?.[1]);
+
+        it("rotates an ancestor on the right half outward and moves it out by the arc radius", () => {
+            const layout = createTransformLayout({ scale: () => Math.PI / 2 });
+            const transform = layout.calculateOuterTransform({ depth: 3, x0: 0.4, x1: 0.6 }, 0);
+
+            expect(transform).toMatch(/ translate\(90\)$/);
+            expect(rotationOf(transform)).toBeCloseTo(0.1 * radiansToDegrees * 0.1, 6);
+        });
+
+        it("turns an ancestor on the left half the other way and moves it to the other side", () => {
+            const layout = createTransformLayout({ scale: () => -Math.PI / 2 });
+            const transform = layout.calculateOuterTransform({ depth: 3, x0: 0.4, x1: 0.6 }, 0);
+
+            expect(transform).toMatch(/ translate\(-90\)$/);
+            expect(rotationOf(transform)).toBeCloseTo(-0.1 * radiansToDegrees * 0.1, 6);
+        });
+
+        it("scales the angular offset of the line by the font scale", () => {
+            const layout = createTransformLayout({ scale: () => Math.PI / 2 }, { fontScale: 150 });
+            const datum = { depth: 3, x0: 0.4, x1: 0.6 };
+            const unshifted = rotationOf(layout.calculateOuterTransform(datum, 0));
+            const shifted = rotationOf(layout.calculateOuterTransform(datum, 4));
+
+            // A line on a flipped label moves against the sign of the offset
+            expect(shifted - unshifted).toBeCloseTo(4 * 1.5, 6);
+        });
+
+        it("treats an ancestor at the very top as not flipped", () => {
+            const transform = createTransformLayout({ scale: () => 0 }).calculateOuterTransform(
+                { depth: 3, x0: 0.4, x1: 0.6 },
+                0,
+            );
+
+            expect(transform).toMatch(/ translate\(-90\)$/);
+        });
+
+        it("flips a descendant whose arc middle is at half a turn", () => {
+            const transform = createTransformLayout({
+                childScale: () => Math.PI,
+            }).calculateOuterTransform({ depth: -2, x0: 0.4, x1: 0.6 }, 0);
+
+            expect(transform).toMatch(/ translate\(90\)$/);
+        });
+
+        it("takes the angle of a descendant from the child scale", () => {
+            const layout = createTransformLayout({ childScale: (fraction) => fraction * Math.PI });
+            const transform = layout.calculateOuterTransform({ depth: -2, x0: 0.4, x1: 0.6 }, 0);
+
+            // The middle of the arc is at a quarter turn, which is on the flipped side
+            expect(rotationOf(transform)).toBeCloseTo(90 - (90 - 0.1 * radiansToDegrees * 0.1), 6);
+        });
+
+        it("starts a descendant at the top when the sector has no child scale", () => {
+            const layout = createTransformLayout({ childScale: null });
+            const transform = layout.calculateOuterTransform({ depth: -2, x0: 0.4, x1: 0.6 }, 0);
+
+            expect(rotationOf(transform)).toBeCloseTo(-90 + 0.1 * radiansToDegrees * 0.1, 6);
         });
     });
 
