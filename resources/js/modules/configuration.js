@@ -46,7 +46,7 @@ export default class Configuration {
      * @param {boolean}  options.showParentMarriageDates
      * @param {boolean}  options.showImages
      * @param {boolean}  options.showNames
-     * @param {boolean}  options.showSilhouettes
+     * @param {boolean}  options.showTooltipSilhouettes
      * @param {boolean}  options.showDescendants
      * @param {boolean}  options.showDetailPanel Whether a click selects a person for the detail panel
      * @param {boolean}  options.rtl
@@ -66,7 +66,7 @@ export default class Configuration {
         showParentMarriageDates,
         showImages,
         showNames,
-        showSilhouettes,
+        showTooltipSilhouettes,
         showDescendants,
         showDetailPanel,
         rtl,
@@ -114,7 +114,7 @@ export default class Configuration {
         this._showParentMarriageDates = showParentMarriageDates;
         this._showImages = showImages;
         this._showNames = showNames;
-        this._showSilhouettes = showSilhouettes;
+        this._showTooltipSilhouettes = showTooltipSilhouettes;
 
         // Duration of update animation if clicked on a person
         this.updateDuration = 1250;
@@ -229,12 +229,14 @@ export default class Configuration {
 
     /**
      * When true, a sex-specific silhouette icon is shown in the tooltip for
-     * individuals who have no thumbnail photo.
+     * individuals who have no thumbnail photo. The server sets it from the tree
+     * preference for silhouettes alone, so it is independent of the display
+     * mode and of the rule for the images in the arcs.
      *
      * @return {boolean}
      */
-    get showSilhouettes() {
-        return this._showSilhouettes;
+    get showTooltipSilhouettes() {
+        return this._showTooltipSilhouettes;
     }
 
     /**

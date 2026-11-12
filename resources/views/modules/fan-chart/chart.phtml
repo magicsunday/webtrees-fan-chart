@@ -93,7 +93,7 @@ import(<?php echo json_encode($javascript, $jsonFlags); ?>).then(({ FanChart }) 
             },
 
             showDetailPanel: <?php echo json_encode($configuration->getShowDetailPanel(), $jsonFlags); ?>,
-            showSilhouettes: <?php echo json_encode($chartParams['showSilhouettes'], $jsonFlags); ?>,
+            showTooltipSilhouettes: <?php echo json_encode($chartParams['showTooltipSilhouettes'], $jsonFlags); ?>,
             nameAbbreviation: <?php echo json_encode($chartParams['nameAbbreviation'], $jsonFlags); ?>,
             data: <?php echo json_encode($data, $jsonFlags); ?>
         }

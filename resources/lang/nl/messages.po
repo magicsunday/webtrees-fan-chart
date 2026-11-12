@@ -161,7 +161,7 @@ msgstr ""
 msgid "Generations"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:78
+#: resources/views/modules/fan-chart/form/display.phtml:79
 msgid "Hide empty segments"
 msgstr "Verberg lege segmenten"
 
@@ -188,7 +188,7 @@ msgstr ""
 "naam of als landcode. Gebruikers kunnen de plaatsweergave in- of "
 "uitschakelen in het diagramformulier."
 
-#: resources/views/modules/fan-chart/form/display.phtml:59
+#: resources/views/modules/fan-chart/form/display.phtml:60
 msgid ""
 "Images are only shown if the arc segment is wide enough. Images for "
 "descendants are not yet available."
@@ -239,7 +239,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Diagram verplaatsen"
 
-#: src/Module.php:265
+#: src/Module.php:264
 msgid "Move the view with two fingers"
 msgstr "Verplaats de weergave met twee vingers"
 
@@ -263,7 +263,7 @@ msgstr "Persoonspagina openen"
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:71
+#: resources/views/modules/fan-chart/form/display.phtml:72
 msgid ""
 "Partners and children are shown as arcs below the ancestor section. The fan "
 "size is limited to 180–270 degrees when enabled."
@@ -307,7 +307,7 @@ msgstr "Rechtsklik"
 msgid "Select a person in the chart to see the details here."
 msgstr "Selecteer een persoon in de grafiek om hier de gegevens te bekijken."
 
-#: resources/views/modules/fan-chart/form/display.phtml:65
+#: resources/views/modules/fan-chart/form/display.phtml:66
 msgid "Show descendants"
 msgstr "Nakomelingen tonen"
 
@@ -403,8 +403,12 @@ msgstr "Schakelen tussen volledig scherm en normale weergave"
 msgid "Tab key"
 msgstr ""
 
-#: src/Module.php:266
+#: src/Module.php:265
 msgid "The chart could not be updated. Please try again."
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid "The display option only affects the arcs, not the tooltip."
 msgstr ""
 
 #: src/Module/ConfigTrait.php:151
@@ -412,7 +416,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:264
+#: src/Module.php:263
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Gebruik Ctrl + scroll om in te zoomen op de weergave"
 

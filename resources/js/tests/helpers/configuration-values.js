@@ -26,7 +26,7 @@ export function createConfigurationValues(overrides = {}) {
         showParentMarriageDates: false,
         showImages: false,
         showNames: true,
-        showSilhouettes: false,
+        showTooltipSilhouettes: false,
         showDescendants: false,
         showDetailPanel: false,
         rtl: false,

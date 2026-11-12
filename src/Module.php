@@ -243,7 +243,7 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
 
     /**
      * Returns the static chart parameters passed to the JavaScript initialiser
-     * — RTL direction flag, image/silhouette visibility, name-abbreviation
+     * — RTL direction flag, the tooltip silhouette flag, name-abbreviation
      * strategy (resolved from the tree's surname tradition), and localised UI
      * labels.
      *
@@ -254,10 +254,9 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
     private function getChartParameters(Individual $individual): array
     {
         return [
-            'rtl'              => I18N::direction() === 'rtl',
-            'showImages'       => $this->showImages($individual),
-            'showSilhouettes'  => $this->showSilhouettes($individual),
-            'nameAbbreviation' => $this->configuration->getNameAbbreviation()
+            'rtl'                    => I18N::direction() === 'rtl',
+            'showTooltipSilhouettes' => $this->showTooltipSilhouettes($individual),
+            'nameAbbreviation'       => $this->configuration->getNameAbbreviation()
                 ->resolve($individual->tree()->getPreference('SURNAME_TRADITION'))
                 ->value,
             'labels' => [
@@ -296,32 +295,20 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
     }
 
     /**
-     * Returns true when highlight images are enabled for the tree and the
-     * individual is visible.
+     * Returns true when the tooltip may show the silhouette of a person without a
+     * highlight image. Like the image of a person in webtrees core it follows the
+     * tree preference for silhouettes alone, so it is independent of the rule for
+     * the images in the arcs. A person the viewer may not see carries no
+     * silhouette URL, because the image processor checks that the person can be
+     * shown.
      *
      * @param Individual $individual
      *
      * @return bool
      */
-    private function showImages(Individual $individual): bool
+    private function showTooltipSilhouettes(Individual $individual): bool
     {
-        return $individual->canShow()
-            && ($individual->tree()->getPreference('SHOW_HIGHLIGHT_IMAGES') === '1');
-    }
-
-    /**
-     * Returns true when silhouette placeholders should be shown as a fallback
-     * when the individual has no highlight image. Requires showImages() to also
-     * be true.
-     *
-     * @param Individual $individual
-     *
-     * @return bool
-     */
-    private function showSilhouettes(Individual $individual): bool
-    {
-        return $this->showImages($individual)
-            && ($individual->tree()->getPreference('USE_SILHOUETTE') === '1');
+        return $individual->tree()->getPreference('USE_SILHOUETTE') === '1';
     }
 
     /**

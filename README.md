@@ -139,7 +139,7 @@ Click **Show more options** to access additional settings:
 
 | Option | Description |
 |--------|-------------|
-| **Display mode** | Choose between "Show names and images", "Show names only", or "Show images only". Images are only shown if the arc segment is wide enough. The mode only controls the images in the arcs. The tooltip and the details panel do not depend on it, so a photo stays in the tooltip with "Show names only". |
+| **Display mode** | Choose between "Show names and images", "Show names only", or "Show images only". Images are only shown if the arc segment is wide enough. The mode only controls the images in the arcs. The tooltip and the details panel do not depend on it, so a photo stays in the tooltip with "Show names only". The silhouette of a person without a photo in the tooltip follows the tree setting for silhouettes alone, like the images of webtrees itself. |
 | **Show descendants** | Shows partners and children as arcs below the ancestor section. The fan size is limited to 180-270 degrees when enabled. |
 | **Hide empty segments** | Hides chart segments for missing ancestors. |
 | **Show places** | Displays birth and death places in the chart arcs where space allows. For descendants with many children, places are automatically suppressed. Choose the level of detail (full name or lowest 1-3 hierarchy levels). |
