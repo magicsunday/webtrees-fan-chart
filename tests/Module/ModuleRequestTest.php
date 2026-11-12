@@ -293,6 +293,40 @@ final class ModuleRequestTest extends TestCase
     }
 
     /**
+     * The surname tradition of the tree decides which part of a name the script abbreviates first
+     * when the module setting is automatic, and only the Icelandic tradition abbreviates the
+     * surname.
+     *
+     * @return array<string, array{string, string}>
+     */
+    public static function nameAbbreviationProvider(): array
+    {
+        return [
+            'icelandic tradition' => ['icelandic', 'SURNAME'],
+            'paternal tradition'  => ['paternal', 'GIVEN'],
+        ];
+    }
+
+    /**
+     * The chart partial hands the script the name abbreviation strategy that the surname tradition
+     * of the tree resolves to.
+     */
+    #[Test]
+    #[DataProvider('nameAbbreviationProvider')]
+    public function theChartPartialHandsTheResolvedNameAbbreviationToTheScript(
+        string $surnameTradition,
+        string $expected,
+    ): void {
+        $this->tree = $this->createTree([
+            'SURNAME_TRADITION' => $surnameTradition,
+        ]);
+
+        $response = $this->createModule()->handle($this->chartRequest($this->createChartIndividual(), true));
+
+        self::assertStringContainsString('nameAbbreviation: "' . $expected . '"', (string) $response->getBody());
+    }
+
+    /**
      * The page tells the script which URL loads the chart partial. That URL asks for the partial
      * with the ajax flag and names the person and every setting of the request, so the partial that
      * the script fetches is the chart of the page and not the page shell again.
