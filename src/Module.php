@@ -254,10 +254,10 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
     private function getChartParameters(Individual $individual): array
     {
         return [
-            'rtl'              => I18N::direction() === 'rtl',
-            'showImages'       => $this->showImages($individual),
-            'showSilhouettes'  => $this->showSilhouettes($individual),
-            'nameAbbreviation' => $this->configuration->getNameAbbreviation()
+            'rtl'                    => I18N::direction() === 'rtl',
+            'showImages'             => $this->showImages($individual),
+            'showTooltipSilhouettes' => $this->showTooltipSilhouettes($individual),
+            'nameAbbreviation'       => $this->configuration->getNameAbbreviation()
                 ->resolve($individual->tree()->getPreference('SURNAME_TRADITION'))
                 ->value,
             'labels' => [
@@ -310,18 +310,19 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
     }
 
     /**
-     * Returns true when silhouette placeholders should be shown as a fallback
-     * when the individual has no highlight image. Requires showImages() to also
-     * be true.
+     * Returns true when the tooltip may show the silhouette of a person without a
+     * highlight image. Like the image of a person in webtrees core it follows the
+     * tree preference for silhouettes alone, so it is independent of the rule for
+     * the images in the arcs. The chart action has already refused a person the
+     * viewer may not see.
      *
      * @param Individual $individual
      *
      * @return bool
      */
-    private function showSilhouettes(Individual $individual): bool
+    private function showTooltipSilhouettes(Individual $individual): bool
     {
-        return $this->showImages($individual)
-            && ($individual->tree()->getPreference('USE_SILHOUETTE') === '1');
+        return $individual->tree()->getPreference('USE_SILHOUETTE') === '1';
     }
 
     /**

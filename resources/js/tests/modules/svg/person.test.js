@@ -204,7 +204,7 @@ describe("Person tooltips", () => {
                 hideEmptySegments: false,
                 isDrawn: () => true,
                 showImages: true,
-                showSilhouettes: true,
+                showTooltipSilhouettes: true,
             },
             {},
             personSelection,
@@ -248,7 +248,7 @@ describe("Person tooltips", () => {
                 hideEmptySegments: false,
                 isDrawn: () => true,
                 showImages: true,
-                showSilhouettes: true,
+                showTooltipSilhouettes: true,
             },
             {},
             personSelection,
@@ -403,6 +403,27 @@ describe("Person image size", () => {
     it("sizes the centre image from the centre circle regardless of the arc angle", () => {
         expect(renderPerson(0, arc({ width: 5, degrees: 1 }))).toBe(64);
     });
+
+    // The arc image follows the display mode and the thumbnail of the person, the tooltip
+    // silhouette option has no say in it.
+    it.each([
+        ["on", true],
+        ["off", false],
+    ])(
+        "sizes the arc image from the display mode when the tooltip silhouette is %s",
+        (_label, tooltip) => {
+            expect(
+                renderPerson(1, arc(), { ...imageConfiguration, showTooltipSilhouettes: tooltip }),
+            ).toBe(80);
+            expect(
+                renderPerson(1, arc(), {
+                    ...imageConfiguration,
+                    showImages: false,
+                    showTooltipSilhouettes: tooltip,
+                }),
+            ).toBeNull();
+        },
+    );
 });
 
 describe("Person.addImageToPerson", () => {
@@ -509,7 +530,7 @@ describe("Person interactions", () => {
                 hideEmptySegments: false,
                 isDrawn: () => true,
                 showImages: true,
-                showSilhouettes: true,
+                showTooltipSilhouettes: true,
             },
             {},
             personSelection,

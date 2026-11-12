@@ -42,7 +42,7 @@ describe("TooltipRenderer", () => {
         document.body.appendChild(host);
         div = d3.select(host);
 
-        return new TooltipRenderer({ div }, { showSilhouettes: false, ...configuration });
+        return new TooltipRenderer({ div }, { showTooltipSilhouettes: false, ...configuration });
     };
 
     beforeEach(() => {
@@ -98,7 +98,7 @@ describe("TooltipRenderer", () => {
             },
         };
 
-        new TooltipRenderer({ div: stub }, { showSilhouettes: false }).setTooltipHtml(
+        new TooltipRenderer({ div: stub }, { showTooltipSilhouettes: false }).setTooltipHtml(
             event,
             createDatum({ name: HOSTILE }),
         );
@@ -179,7 +179,7 @@ describe("TooltipRenderer", () => {
     });
 
     it("escapes the silhouette source when silhouettes are enabled", () => {
-        renderer = build({ showSilhouettes: true });
+        renderer = build({ showTooltipSilhouettes: true });
         renderer.setTooltipHtml(event, createDatum({ silhouette: `x" onerror="alert(1)` }));
 
         const image = div.node().querySelector(".image-silhouette img");
@@ -200,7 +200,7 @@ describe("TooltipRenderer", () => {
         ["a page without a background colour", "", false],
     ])("marks the silhouette for %s", (_label, background, isDark) => {
         jest.spyOn(window, "getComputedStyle").mockReturnValue({ backgroundColor: background });
-        renderer = build({ showSilhouettes: true });
+        renderer = build({ showTooltipSilhouettes: true });
         renderer.setTooltipHtml(event, createDatum({ silhouette: "silhouette.svg" }));
 
         const image = div.node().querySelector(".image-silhouette");
@@ -230,6 +230,34 @@ describe("TooltipRenderer", () => {
 
         expect(div.node().querySelector(".image img").getAttribute("src")).toBe("photo.jpg");
     });
+
+    // The tooltip silhouette follows its own option and not the display mode of the arcs.
+    it.each([
+        ["names only", { showImages: false, showNames: true }],
+        ["images only", { showImages: true, showNames: false }],
+        ["names and images", { showImages: true, showNames: true }],
+    ])("shows the silhouette in the tooltip for the display mode %s", (_label, displayMode) => {
+        renderer = build({ ...displayMode, showTooltipSilhouettes: true });
+        renderer.setTooltipHtml(event, createDatum({ silhouette: "silhouette.svg" }));
+
+        expect(div.node().querySelector(".image-silhouette img").getAttribute("src")).toBe(
+            "silhouette.svg",
+        );
+    });
+
+    it.each([
+        ["names only", { showImages: false, showNames: true }],
+        ["images only", { showImages: true, showNames: false }],
+        ["names and images", { showImages: true, showNames: true }],
+    ])(
+        "shows no silhouette in the tooltip for the display mode %s when it is off",
+        (_label, displayMode) => {
+            renderer = build({ ...displayMode, showTooltipSilhouettes: false });
+            renderer.setTooltipHtml(event, createDatum({ silhouette: "silhouette.svg" }));
+
+            expect(div.node().querySelector(".image")).toBeNull();
+        },
+    );
 
     it("shows no photo when the thumbnail is the silhouette placeholder", () => {
         renderer.setTooltipHtml(

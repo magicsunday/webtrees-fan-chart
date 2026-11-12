@@ -143,10 +143,10 @@ final class ChartViewTest extends TestCase
         );
         $id          = 'abc';
         $chartParams = [
-            'rtl'              => false,
-            'showSilhouettes'  => true,
-            'nameAbbreviation' => 'GIVEN',
-            'labels'           => ['zoom' => 'Zoom', 'move' => 'Move'],
+            'rtl'                    => false,
+            'showTooltipSilhouettes' => true,
+            'nameAbbreviation'       => 'GIVEN',
+            'labels'                 => ['zoom' => 'Zoom', 'move' => 'Move'],
             ...$chartParamsChange,
         ];
         $data = $chartData;

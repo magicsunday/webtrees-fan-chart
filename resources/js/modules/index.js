@@ -56,7 +56,7 @@ export class FanChart {
      * @param {boolean}   options.showFamilyColors
      * @param {boolean}   options.showParentMarriageDates
      * @param {boolean}   options.showImages
-     * @param {boolean}   options.showSilhouettes
+     * @param {boolean}   options.showTooltipSilhouettes
      * @param {boolean}   options.showPlaces
      * @param {boolean}   options.showNames
      * @param {boolean}   options.showDescendants

@@ -255,6 +255,44 @@ final class ModuleRequestTest extends TestCase
     }
 
     /**
+     * The silhouette in the tooltip follows the tree preference for silhouettes and the visibility of
+     * the person, whether or not the tree shows highlight images.
+     *
+     * @return array<string, array{string, string, string}>
+     */
+    public static function tooltipSilhouetteProvider(): array
+    {
+        return [
+            'silhouettes on, highlight images on'   => ['1', '1', 'true'],
+            'silhouettes on, highlight images off'  => ['0', '1', 'true'],
+            'silhouettes off, highlight images on'  => ['1', '0', 'false'],
+            'silhouettes off, highlight images off' => ['0', '0', 'false'],
+        ];
+    }
+
+    /**
+     * The chart partial hands the script the tooltip rule as an option of its own, so the display
+     * mode and the tree preference for highlight images do not decide whether the tooltip shows a
+     * silhouette.
+     */
+    #[Test]
+    #[DataProvider('tooltipSilhouetteProvider')]
+    public function theChartPartialHandsTheTooltipSilhouetteRuleToTheScript(
+        string $highlightImages,
+        string $silhouettes,
+        string $expected,
+    ): void {
+        $this->tree = $this->createTree([
+            'SHOW_HIGHLIGHT_IMAGES' => $highlightImages,
+            'USE_SILHOUETTE'        => $silhouettes,
+        ]);
+
+        $response = $this->createModule()->handle($this->chartRequest($this->createChartIndividual(), true));
+
+        self::assertStringContainsString('showTooltipSilhouettes: ' . $expected . ',', (string) $response->getBody());
+    }
+
+    /**
      * The page tells the script which URL loads the chart partial. That URL asks for the partial
      * with the ajax flag and names the person and every setting of the request, so the partial that
      * the script fetches is the chart of the page and not the page shell again.
