@@ -28,12 +28,10 @@ use function implode;
 use function is_dir;
 use function is_file;
 use function mkdir;
-use function proc_close;
-use function proc_open;
+use function preg_quote;
 use function scandir;
 use function shell_exec;
 use function str_starts_with;
-use function stream_get_contents;
 use function sys_get_temp_dir;
 use function tempnam;
 use function trim;
@@ -50,10 +48,23 @@ use function unlink;
 #[CoversNothing]
 final class ReleasePublishTest extends TestCase
 {
+    /**
+     * Runs the commands of the scratch copy.
+     */
+    private ProcessRunner $processRunner;
+
+    /**
+     * The package name of the module, read from its parameter file.
+     */
+    private string $moduleName = '';
+
     private string $workDir = '';
 
     protected function setUp(): void
     {
+        $this->processRunner = new ProcessRunner();
+        $this->moduleName    = ModuleParameters::moduleName();
+
         $base = tempnam(sys_get_temp_dir(), 'release-publish-');
         self::assertIsString($base);
 
@@ -67,9 +78,9 @@ final class ReleasePublishTest extends TestCase
 
         $root = dirname(__DIR__, 2);
 
-        $this->execute(['cp', '-R', $root . '/Makefile', $root . '/Make', $this->workDir . '/module/'], $this->workDir);
+        $this->processRunner->execute(['cp', '-R', $root . '/Makefile', $root . '/Make', $this->workDir . '/module/'], $this->workDir);
 
-        file_put_contents($this->workDir . '/module/webtrees-fan-chart.zip', 'archive');
+        file_put_contents($this->workDir . '/module/' . $this->moduleName . '.zip', 'archive');
 
         $this->installPushRecordingGit('main');
         $this->installArchiveCommit('c0ffee');
@@ -77,7 +88,7 @@ final class ReleasePublishTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->execute(['rm', '-rf', $this->workDir], sys_get_temp_dir());
+        $this->processRunner->execute(['rm', '-rf', $this->workDir], sys_get_temp_dir());
     }
 
     /**
@@ -97,7 +108,7 @@ final class ReleasePublishTest extends TestCase
 
         self::assertNotSame(0, $status);
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
-        self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
+        self::assertFileExists($this->workDir . '/module/' . $this->moduleName . '.zip');
         self::assertSame([], $this->leftoverTemporaryFiles());
     }
 
@@ -119,7 +130,7 @@ final class ReleasePublishTest extends TestCase
         self::assertNotSame(0, $status);
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
         self::assertFalse(is_file($this->workDir . '/release-created'));
-        self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
+        self::assertFileExists($this->workDir . '/module/' . $this->moduleName . '.zip');
         self::assertSame([], $this->leftoverTemporaryFiles());
     }
 
@@ -175,7 +186,7 @@ final class ReleasePublishTest extends TestCase
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
         self::assertSame(['release view', 'release delete'], $this->releaseCalls());
         self::assertStringContainsString("release delete 9.9.9 --yes\n", $this->ghCalls());
-        self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
+        self::assertFileExists($this->workDir . '/module/' . $this->moduleName . '.zip');
         self::assertSame([], $this->leftoverTemporaryFiles());
     }
 
@@ -194,7 +205,7 @@ final class ReleasePublishTest extends TestCase
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
         self::assertSame(['release view'], $this->releaseCalls());
         $this->assertLookupAskedForTheDraftStateOfTheTag();
-        self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
+        self::assertFileExists($this->workDir . '/module/' . $this->moduleName . '.zip');
         self::assertSame([], $this->leftoverTemporaryFiles());
     }
 
@@ -215,7 +226,7 @@ final class ReleasePublishTest extends TestCase
             "push --no-follow-tags origin main refs/tags/9.9.9\n",
             file_get_contents($this->workDir . '/pushed')
         );
-        self::assertFalse(is_file($this->workDir . '/module/webtrees-fan-chart.zip'));
+        self::assertFalse(is_file($this->workDir . '/module/' . $this->moduleName . '.zip'));
         self::assertSame([], $this->leftoverTemporaryFiles());
     }
 
@@ -266,7 +277,7 @@ final class ReleasePublishTest extends TestCase
 
         $notes = 'Cost $HOME-ish and $(id) and `echo INJECTED`';
 
-        [$status] = $this->execute(
+        [$status] = $this->processRunner->execute(
             ['make', '-f', 'sub-make.mk', 'via-sub-make'],
             $this->workDir . '/module',
             [
@@ -321,12 +332,12 @@ final class ReleasePublishTest extends TestCase
         $this->installPushRecordingGit('main');
         $this->installStub('gh', "#!/bin/sh\necho stub\n");
 
-        unlink($this->workDir . '/module/webtrees-fan-chart.zip');
+        unlink($this->workDir . '/module/' . $this->moduleName . '.zip');
 
         [$status, $output] = $this->publish();
 
         self::assertNotSame(0, $status);
-        self::assertStringContainsString('webtrees-fan-chart.zip', $output);
+        self::assertStringContainsString($this->moduleName . '.zip', $output);
         self::assertStringContainsString('on the tagged commit 9.9.9', $output);
         self::assertStringContainsString('make dist-smoke', $output);
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
@@ -350,7 +361,7 @@ final class ReleasePublishTest extends TestCase
         self::assertStringContainsString('make dist-smoke', $output);
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
         self::assertFileDoesNotExist($this->workDir . '/pushed');
-        self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
+        self::assertFileExists($this->workDir . '/module/' . $this->moduleName . '.zip');
     }
 
     /**
@@ -370,7 +381,7 @@ final class ReleasePublishTest extends TestCase
         self::assertStringContainsString('make dist-smoke', $output);
         self::assertStringNotContainsString('RELEASE_PUBLISHED', $output);
         self::assertFileDoesNotExist($this->workDir . '/pushed');
-        self::assertFileExists($this->workDir . '/module/webtrees-fan-chart.zip');
+        self::assertFileExists($this->workDir . '/module/' . $this->moduleName . '.zip');
     }
 
     /**
@@ -379,13 +390,13 @@ final class ReleasePublishTest extends TestCase
     #[Test]
     public function cleanRemovesTheCommitFileOfAFailedDist(): void
     {
-        file_put_contents($this->workDir . '/module/webtrees-fan-chart.commit', "c0ffee\n");
+        file_put_contents($this->workDir . '/module/' . $this->moduleName . '.commit', "c0ffee\n");
 
         [$status, $output] = $this->runTarget('release-clean');
 
         self::assertSame(0, $status, $output);
-        self::assertFileDoesNotExist($this->workDir . '/module/webtrees-fan-chart.commit');
-        self::assertFileDoesNotExist($this->workDir . '/module/webtrees-fan-chart.zip');
+        self::assertFileDoesNotExist($this->workDir . '/module/' . $this->moduleName . '.commit');
+        self::assertFileDoesNotExist($this->workDir . '/module/' . $this->moduleName . '.zip');
     }
 
     /**
@@ -490,7 +501,32 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
-     * A version that names no local tag, an empty one included, fails before anything is sent.
+     * A version that does not have the release format stops the publish before anything is sent and before a release
+     * is created, also when a tag of that name sits on HEAD. An empty version has no tag to name.
+     */
+    #[Test]
+    #[DataProvider('malformedVersions')]
+    public function refusesAMalformedVersionBeforeAnythingIsSent(string $version): void
+    {
+        $this->createRepositoryWithRemote();
+        $this->installReleaseStateStub('');
+
+        if ($version !== '') {
+            $this->git(['tag', '-a', $version, '-m', 'Malformed tag'], $this->workDir . '/module');
+        }
+
+        [$status, $output] = $this->publish(['VERSION=' . $version]);
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('VERSION must be semver', $output);
+        self::assertStringNotContainsString('does not exist', $output);
+        self::assertStringNotContainsString('Pushing to GitHub', $output);
+        self::assertSame([], $this->remoteRefs());
+        self::assertFalse(is_file($this->workDir . '/gh-calls'));
+    }
+
+    /**
+     * A version that names no local tag fails before anything is sent.
      */
     #[Test]
     #[DataProvider('versionsWithoutALocalTag')]
@@ -540,6 +576,52 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
+     * A version without the release format stops the check, and the message names the format.
+     */
+    #[Test]
+    #[DataProvider('malformedNonEmptyVersions')]
+    public function releaseCheckRefusesAMalformedVersion(string $version): void
+    {
+        $this->installReleaseCheckStubs('main');
+
+        [$status, $output] = $this->runTarget('release-check', $version);
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('VERSION must be semver', $output);
+        self::assertStringNotContainsString('Release checks passed', $output);
+    }
+
+    /**
+     * A version without the release format stops the bump before anything is committed or sent.
+     */
+    #[Test]
+    #[DataProvider('malformedNonEmptyVersions')]
+    public function releaseBumpRefusesAMalformedVersion(string $version): void
+    {
+        $this->createRepositoryWithRemote();
+        $this->installStub('npm', "#!/bin/sh\nexit 0\n");
+
+        [$status, $output] = $this->runTarget('release-bump', $version);
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('VERSION must be semver', $output);
+        self::assertSame([], $this->remoteRefs());
+    }
+
+    /**
+     * Provides the versions that are not empty and do not have the release format.
+     *
+     * @return array<string, array{string}> The version by description
+     */
+    public static function malformedNonEmptyVersions(): array
+    {
+        return array_filter(
+            self::malformedVersions(),
+            static fn (array $case): bool => $case[0] !== '',
+        );
+    }
+
+    /**
      * Provides the versions for which the module has no local tag.
      *
      * @return array<string, array{string}> The version by description
@@ -547,8 +629,24 @@ final class ReleasePublishTest extends TestCase
     public static function versionsWithoutALocalTag(): array
     {
         return [
-            'empty version'         => [''],
             'version without a tag' => ['7.7.7'],
+        ];
+    }
+
+    /**
+     * Provides versions that do not have the release format.
+     *
+     * @return array<string, array{string}> The version by description
+     */
+    public static function malformedVersions(): array
+    {
+        return [
+            'empty version'       => [''],
+            'v prefix'            => ['v9.9.9'],
+            'pre-release suffix'  => ['9.9.9-rc1'],
+            'v prefix and suffix' => ['v9.9.9-rc1'],
+            'two numbers'         => ['9.9'],
+            'four numbers'        => ['9.9.9.9'],
         ];
     }
 
@@ -615,7 +713,7 @@ final class ReleasePublishTest extends TestCase
         file_put_contents($module . '/src/Module.php', "<?php\nconst CUSTOM_VERSION = '9.9.9';\n");
         file_put_contents($module . '/package.json', "{\"version\": \"9.9.9\"}\n");
         file_put_contents($module . '/package-lock.json', "{}\n");
-        file_put_contents($module . '/composer.json', "{\"require\": {\"fisharebest/webtrees\": \"~2.2.0\"}}\n");
+        file_put_contents($module . '/composer.json', "{\"require\": {\"fisharebest/webtrees\": \"~0.0.0\"}}\n");
         file_put_contents($module . '/resources/js/app.js', "bundle\n");
 
         $this->git(['add', 'src', 'package.json', 'package-lock.json', 'composer.json', 'resources'], $module);
@@ -641,7 +739,7 @@ final class ReleasePublishTest extends TestCase
      */
     private function git(array $arguments, string $directory): string
     {
-        [$status, $output] = $this->execute(
+        [$status, $output] = $this->processRunner->execute(
             ['git', ...$arguments],
             $directory,
             ['PATH' => '/usr/local/bin:/usr/bin:/bin', 'HOME' => $this->workDir]
@@ -744,7 +842,7 @@ final class ReleasePublishTest extends TestCase
      */
     private function runTarget(string $target, string $version = '9.9.9'): array
     {
-        return $this->execute(
+        return $this->processRunner->execute(
             ['make', $target, 'VERSION=' . $version],
             $this->workDir . '/module',
             [
@@ -811,7 +909,7 @@ final class ReleasePublishTest extends TestCase
     private function assertReleaseCreatedForTheTagWithTheArchive(): void
     {
         self::assertMatchesRegularExpression(
-            '/^release create 9\.9\.9 --title 9\.9\.9 --notes-file .+ --target main webtrees-fan-chart\.zip$/m',
+            '/^release create 9\.9\.9 --title 9\.9\.9 --notes-file .+ --target main ' . preg_quote($this->moduleName . '.zip', '/') . '$/m',
             $this->ghCalls()
         );
     }
@@ -885,7 +983,7 @@ final class ReleasePublishTest extends TestCase
      */
     private function publish(array $arguments = [], array $environment = []): array
     {
-        return $this->execute(
+        return $this->processRunner->execute(
             ['make', 'release-publish', 'VERSION=9.9.9', ...$arguments],
             $this->workDir . '/module',
             [
@@ -895,34 +993,5 @@ final class ReleasePublishTest extends TestCase
                 ...$environment,
             ]
         );
-    }
-
-    /**
-     * @param list<string>          $command
-     * @param array<string, string> $environment
-     *
-     * @return array{int, string}
-     */
-    private function execute(array $command, string $workingDirectory, array $environment = ['PATH' => '/usr/local/bin:/usr/bin:/bin']): array
-    {
-        $process = proc_open(
-            $command,
-            [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
-            $pipes,
-            $workingDirectory,
-            $environment
-        );
-
-        self::assertIsResource($process);
-
-        $standardOutput = $pipes[1] ?? null;
-        $standardError  = $pipes[2] ?? null;
-
-        self::assertIsResource($standardOutput);
-        self::assertIsResource($standardError);
-
-        $output = stream_get_contents($standardOutput) . stream_get_contents($standardError);
-
-        return [proc_close($process), $output];
     }
 }

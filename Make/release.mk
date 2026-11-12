@@ -30,35 +30,43 @@
 
 #### Release
 
-MODULE_NAME      := webtrees-fan-chart
+# MODULE_NAME, SCOPE_NS, WEBTREES_CONSTRAINT, CHART_LIB_MARKER and SHARED_VIEWS come from
+# Make/module.mk, which the Makefile reads before this file.
 JS_NAME          := $(patsubst webtrees-%,%,$(MODULE_NAME))
 VENDOR_DIR       := .build/vendor
 MODULE_BASE_PKG  := magicsunday/webtrees-module-base
 MODULE_BASE_PATH := $(VENDOR_DIR)/$(MODULE_BASE_PKG)
 
-# Per-module namespace prefix injected into the bundled module-base classes
-# at dist time. Prevents PHP autoloader collisions when multiple magicsunday
+# The version of the module base that dist records and dist-smoke checks. The deferred assignment keeps the double
+# dollar, which make turns into the end anchor of the regular expression.
+MODULE_BASE_VERSION_PATTERN = ^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$$
+
+# The release version that release-check, release-publish and release-bump accept. The deferred assignment keeps the
+# double dollar, which make turns into the end anchor of the regular expression.
+RELEASE_VERSION_PATTERN = ^[0-9]+\.[0-9]+\.[0-9]+$$
+RELEASE_VERSION_ERROR   = Error: VERSION must be semver (e.g. 3.1.0, no v prefix, no suffix)
+
+# SCOPE_NS is the per-module namespace prefix injected into the bundled module-base
+# classes at dist time. It prevents PHP autoloader collisions when multiple magicsunday
 # chart modules at different versions register the same shared namespace
 # (see GitHub issues #194, #196). Must be unique per module.
-SCOPE_NS         := FanChartVendor
 
 # Per-module name of the view namespace that the bundled module-base registers.
 # webtrees keeps one registration per name and the last module to boot wins, so
 # a shared name lets a module with an older bundle remove the shared views of
-# another one. Must be unique per module.
-SCOPE_VIEW_NS    := webtrees-module-base-fan-chart
+# another one. Derived from the module name, so it is unique per module.
+SCOPE_VIEW_NS    := webtrees-module-base-$(JS_NAME)
 
 # Accept both 'make release 3.1.0' (goal form) and 'make release VERSION=3.1.0'.
 VERSION ?= $(filter-out release release-% dist,$(MAKECMDGOALS))
 
 REQUIRED_TOOLS := git node npm composer jq zip unzip gh sed php
 
-# The webtrees constraint of composer.json, written by release-prepare and again by
-# release-bump so the release commit and the development bump cannot differ.
-WEBTREES_CONSTRAINT := ~2.2.0
+# WEBTREES_CONSTRAINT is written to composer.json by release-prepare and again by
+# release-bump, so the release commit and the development bump cannot differ.
 
 .PHONY: release release-check release-prepare release-publish release-bump \
-        release-recover dist dist-stamp dist-smoke clean-js release-clean build-js-fresh \
+        release-recover dist dist-stamp dist-smoke dist-base-version clean-js release-clean build-js-fresh \
         release-bootstrap release-dry-run
 
 # release pipeline operates on shared repo state — must run sequentially.
@@ -77,7 +85,7 @@ release-bootstrap:
 		echo -e "${FYELLOW}[bootstrap]${FRESET} Restoring dev toolchain ($(VENDOR_DIR))..."; \
 		composer install --no-interaction --no-progress; \
 	fi
-	@if [ ! -f node_modules/@magicsunday/webtrees-chart-lib/dist/webtrees-chart-lib-infra.es.js ]; then \
+	@if [ ! -f node_modules/@magicsunday/webtrees-chart-lib/dist/$(CHART_LIB_MARKER) ]; then \
 		echo -e "${FYELLOW}[bootstrap]${FRESET} Installing node deps + building chart-lib dist (npm ci)..."; \
 		npm ci; \
 	fi
@@ -108,8 +116,8 @@ release-check:
 		echo "   or:  make release VERSION=3.1.0"; \
 		exit 1; \
 	fi
-	@if ! echo "$(VERSION)" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$$'; then \
-		echo "Error: VERSION must be semver (e.g. 3.1.0 — no v prefix, no suffix)"; \
+	@if ! echo "$(VERSION)" | grep -qE '$(RELEASE_VERSION_PATTERN)'; then \
+		echo "$(RELEASE_VERSION_ERROR)"; \
 		exit 1; \
 	fi
 	@if [ -n "$$(git status --porcelain --untracked-files=no)" ]; then \
@@ -194,7 +202,7 @@ dist:
 	fi
 	@rm -rf $(VENDOR_DIR)
 	@echo "  Installing composer runtime dependencies into $(VENDOR_DIR)..."
-	@composer update --no-dev --no-progress --no-interaction --no-security-blocking --ignore-platform-req=php
+	@composer update --no-dev --no-progress --no-interaction --ignore-platform-req=php
 	@git archive --prefix=$(MODULE_NAME)/ "$$(cat $(MODULE_NAME).commit)" --format=tar | tar -x
 	@if [ ! -d $(MODULE_BASE_PATH) ]; then \
 		echo "Error: $(MODULE_BASE_PATH) not found after composer install."; \
@@ -203,10 +211,13 @@ dist:
 	fi
 	@mkdir -p $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base
 	@cp -rL $(MODULE_BASE_PATH)/src $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/src
+ifneq ($(strip $(SHARED_VIEWS)),)
 	@mkdir -p $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/resources
 	@cp -rL $(MODULE_BASE_PATH)/resources/views $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/resources/views
+endif
 	@cp -L $(MODULE_BASE_PATH)/LICENSE $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/LICENSE
-	@echo "  Bundled $(MODULE_BASE_PKG) (src, shared views and LICENSE only) into vendor/"
+	@echo "  Bundled $(MODULE_BASE_PKG) (src, LICENSE and the shared views of SHARED_VIEWS) into vendor/"
+	@$(MAKE) --no-print-directory dist-base-version
 	@find $(MODULE_NAME)/vendor -name composer.json -delete
 	@rm -f $(MODULE_NAME)/composer.json
 	@echo "  Scoping module-base namespace with prefix $(SCOPE_NS)..."
@@ -214,11 +225,13 @@ dist:
 		-e 's|MagicSunday\\\\Webtrees\\\\ModuleBase|MagicSunday\\\\$(SCOPE_NS)\\\\Webtrees\\\\ModuleBase|g' \
 		-e 's|MagicSunday\\Webtrees\\ModuleBase|MagicSunday\\$(SCOPE_NS)\\Webtrees\\ModuleBase|g' \
 		{} +
+ifneq ($(strip $(SHARED_VIEWS)),)
 	@echo "  Scoping module-base view namespace to $(SCOPE_VIEW_NS)..."
 	@sed -i -e "s|'webtrees-module-base'|'$(SCOPE_VIEW_NS)'|" \
 		$(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php
 	@grep -qF "'$(SCOPE_VIEW_NS)'" $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php \
 		|| { echo "Error: view namespace of the bundled SharedViews.php was not scoped"; exit 1; }
+endif
 	@hits=$$(find $(MODULE_NAME) -type f \( -name '*.php' -o -name '*.phtml' \) -print0 \
 	    | xargs -0 grep -lE 'MagicSunday\\Webtrees\\ModuleBase' 2>/dev/null); \
 	if [ -n "$$hits" ]; then \
@@ -239,6 +252,15 @@ dist-stamp:
 	@zip --quiet -z $(MODULE_NAME).zip < $(MODULE_NAME).commit
 	@rm -f $(MODULE_NAME).commit
 
+## Write the version that composer resolved for the bundled module base into the bundled copy, so the archive
+## says which module base it carries. Run by dist, it reads the composer metadata of the build and stops when
+## that holds no release version of the module base.
+dist-base-version:
+	@version=$$(jq -r --arg package '$(MODULE_BASE_PKG)' 'first(.packages[] | select(.name == $$package) | .version) // empty' $(VENDOR_DIR)/composer/installed.json); \
+	[[ "$$version" =~ $(MODULE_BASE_VERSION_PATTERN) ]] \
+		|| { echo "Error: no well-formed version of the module base $(MODULE_BASE_PKG) in $(VENDOR_DIR)/composer/installed.json"; exit 1; }; \
+	printf '%s\n' "$$version" > $(MODULE_NAME)/vendor/$(MODULE_BASE_PKG)/VERSION
+
 ## Smoke-test the just-built distribution zip. Asserts required entries
 ## are present and forbidden ones absent. Suitable for CI on every push.
 ##   make dist && make dist-smoke
@@ -249,6 +271,9 @@ dist-smoke:
 	fi
 	@build_commit=$$(unzip -z $(MODULE_NAME).zip | tail -n 1); \
 	grep -Eq '^[0-9a-f]{40}$$' <<<"$$build_commit" || { echo "Error: the zip carries no build commit, run 'make dist' to stamp it"; exit 1; }
+	@base_version=$$(unzip -p $(MODULE_NAME).zip vendor/$(MODULE_BASE_PKG)/VERSION 2>/dev/null); \
+	[[ "$$base_version" =~ $(MODULE_BASE_VERSION_PATTERN) ]] \
+		|| { echo "Error: the zip carries no well-formed module base version, run 'make dist' to record it"; exit 1; }
 	@paths=$$(unzip -Z1 $(MODULE_NAME).zip); \
 	for f in module.php LICENSE; do \
 		grep -Fxq "$$f" <<<"$$paths" || { echo "Error: required file missing from zip: $$f"; exit 1; }; \
@@ -259,9 +284,7 @@ dist-smoke:
 		vendor/magicsunday/webtrees-module-base/src/Model/ \
 		vendor/magicsunday/webtrees-module-base/src/Module/ \
 		vendor/magicsunday/webtrees-module-base/src/Processor/ \
-		vendor/magicsunday/webtrees-module-base/resources/views/detail-panel.phtml \
-		vendor/magicsunday/webtrees-module-base/resources/views/help-popover.phtml \
-		vendor/magicsunday/webtrees-module-base/resources/views/toolbar-style.phtml \
+		$(foreach view,$(SHARED_VIEWS),vendor/magicsunday/webtrees-module-base/resources/views/$(view).phtml) \
 	; do \
 		grep -qE "^$$prefix" <<<"$$paths" || { echo "Error: required prefix has no entries in zip: $$prefix"; exit 1; }; \
 	done; \
@@ -308,16 +331,18 @@ dist-smoke:
 		[ -n "$$files" ] \
 			|| { echo "Error: bundled module-base src/$$d has no PHP files in extracted zip"; exit 1; }; \
 	done; \
-	for v in detail-panel help-popover toolbar-style; do \
-		[ -s "$$tmp/vendor/magicsunday/webtrees-module-base/resources/views/$$v.phtml" ] \
-			|| { echo "Error: bundled module-base view $$v is missing or empty in extracted zip"; exit 1; }; \
-	done; \
-	shared_views="$$tmp/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php"; \
-	grep -qF "'$(SCOPE_VIEW_NS)'" "$$shared_views" \
-		|| { echo "Error: bundled SharedViews.php does not register the scoped view namespace ($(SCOPE_VIEW_NS))"; exit 1; }; \
-	if grep -qF "'webtrees-module-base'" "$$shared_views"; then \
-		echo "Error: bundled SharedViews.php still registers the unscoped view namespace"; \
-		exit 1; \
+	if [ -n "$(strip $(SHARED_VIEWS))" ]; then \
+		for v in $(SHARED_VIEWS); do \
+			[ -s "$$tmp/vendor/magicsunday/webtrees-module-base/resources/views/$$v.phtml" ] \
+				|| { echo "Error: bundled module-base view $$v is missing or empty in extracted zip"; exit 1; }; \
+		done; \
+		shared_views="$$tmp/vendor/magicsunday/webtrees-module-base/src/View/SharedViews.php"; \
+		grep -qF "'$(SCOPE_VIEW_NS)'" "$$shared_views" \
+			|| { echo "Error: bundled SharedViews.php does not register the scoped view namespace ($(SCOPE_VIEW_NS))"; exit 1; }; \
+		if grep -qF "'webtrees-module-base'" "$$shared_views"; then \
+			echo "Error: bundled SharedViews.php still registers the unscoped view namespace"; \
+			exit 1; \
+		fi; \
 	fi
 	@echo -e "${FGREEN} ✔${FRESET} dist-smoke passed: $(MODULE_NAME).zip extracts to a well-formed module"
 
@@ -404,6 +429,10 @@ export NOTES_RAW := $(or $(value NOTES),$(if $(filter-out 0,$(MAKELEVEL)),$(valu
 ## the rerun stops there. A lookup that fails counts as no release, so that the first
 ## publish of a version, which has no release to find, goes on.
 release-publish:
+	@if ! echo "$(VERSION)" | grep -qE '$(RELEASE_VERSION_PATTERN)'; then \
+		echo "$(RELEASE_VERSION_ERROR), nothing was pushed."; \
+		exit 1; \
+	fi
 	@if [ ! -f $(MODULE_NAME).zip ]; then \
 		echo "Error: $(MODULE_NAME).zip not found. Run 'make dist' on the tagged commit $(VERSION), then 'make dist-smoke', nothing was pushed."; \
 		exit 1; \
@@ -492,8 +521,8 @@ release-publish:
 ##    the post-release dev bump is missing — same recovery as case 1, the
 ##    release itself is unaffected and stays valid).
 release-bump:
-	@if [ -z "$(VERSION)" ] || ! echo "$(VERSION)" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$$'; then \
-		echo "Error: VERSION must be semver (e.g. 3.1.0)"; \
+	@if ! echo "$(VERSION)" | grep -qE '$(RELEASE_VERSION_PATTERN)'; then \
+		echo "$(RELEASE_VERSION_ERROR)"; \
 		exit 1; \
 	fi
 	@$(eval NEXT := $(shell echo "$(VERSION)" | awk -F. '{print $$1"."$$2"."$$3+1}'))
