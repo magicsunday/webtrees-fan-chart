@@ -41,6 +41,7 @@ use MagicSunday\Webtrees\ModuleBase\Support\Locale\IsoCountryMap;
 use MagicSunday\Webtrees\ModuleBase\Support\TextDirection;
 
 use function array_chunk;
+use function array_flip;
 use function array_unique;
 use function array_values;
 use function html_entity_decode;
@@ -50,6 +51,7 @@ use function preg_match_all;
 use function strip_tags;
 
 use const ENT_QUOTES;
+use const PREG_SET_ORDER;
 
 /**
  * Assembles the nested Node tree passed to the JavaScript chart renderer.
@@ -203,29 +205,45 @@ final class DataFacade
             }
         }
 
+        // The visibility check of a family reads every member of it, the children as well, so all of
+        // them are loaded. Only the parents are the next generation of the chart.
+        $memberXrefs = [];
         $parentXrefs = [];
 
         foreach ($families as $family) {
-            preg_match_all('/\n1 (?:HUSB|WIFE) @(' . Gedcom::REGEX_XREF . ')@/', $family['gedcom'], $match);
+            preg_match_all(
+                '/\n1 (HUSB|WIFE|CHIL) @(' . Gedcom::REGEX_XREF . ')@/',
+                $family['gedcom'],
+                $matches,
+                PREG_SET_ORDER
+            );
 
-            foreach ($match[1] as $parentXref) {
-                $parentXrefs[] = $parentXref;
+            foreach ($matches as $match) {
+                $memberXrefs[] = $match[2];
+
+                if ($match[1] !== 'CHIL') {
+                    $parentXrefs[] = $match[2];
+                }
             }
         }
 
-        // The parents go into the cache before their families, because the construction of a
-        // family reads them from there.
+        $parentLookup = array_flip($parentXrefs);
+
+        // The members go into the cache before their families, because the construction of a family
+        // reads them from there.
         $parents = [];
 
-        foreach (array_chunk(array_values(array_unique($parentXrefs)), self::PRELOAD_CHUNK_SIZE) as $chunk) {
+        foreach (array_chunk(array_values(array_unique($memberXrefs)), self::PRELOAD_CHUNK_SIZE) as $chunk) {
             $rows = DB::table('individuals')
                 ->where('i_file', '=', $tree->id())
                 ->whereIn('i_id', $chunk)
                 ->get()
                 ->map(Registry::individualFactory()->mapper($tree));
 
-            foreach ($rows as $parent) {
-                $parents[] = $parent;
+            foreach ($rows as $member) {
+                if (isset($parentLookup[$member->xref()])) {
+                    $parents[] = $member;
+                }
             }
         }
 

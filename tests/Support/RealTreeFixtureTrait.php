@@ -129,6 +129,8 @@ trait RealTreeFixtureTrait
      *
      * @param string $gedcom The GEDCOM text
      * @param string $name   The name and title of the new tree
+     *
+     * @return Tree The new tree with the imported records
      */
     private function importGedcom(string $gedcom, string $name): Tree
     {

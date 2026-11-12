@@ -226,6 +226,9 @@ final class DataFacadeQueryCountTest extends TestCase
             'user_id'    => Auth::id(),
         ]);
 
+        // An ordinary editor, who has no other privilege on the tree, sees the pending change.
+        Auth::login($this->createEditor($tree));
+
         self::assertStringContainsString('Pendingplace', $this->payload($tree, 3));
 
         Registry::cache(new CacheFactory());
@@ -237,6 +240,30 @@ final class DataFacadeQueryCountTest extends TestCase
         foreach ($this->statements($tree, 3) as $statement) {
             self::assertStringNotContainsString('"wt_change"', (string) $statement['query']);
         }
+    }
+
+    /**
+     * The visibility check of a family reads every child of it, so the children of a family are
+     * loaded with the parents in the chunked lookup and not one by one. Only the root person is
+     * looked up on its own, for a visitor of a tree that hides living people.
+     */
+    #[Test]
+    public function theChildrenOfAFamilyAreLoadedWithItsParents(): void
+    {
+        $tree = $this->importPedigree(3, true);
+
+        Registry::cache(new CacheFactory());
+        Auth::logout();
+
+        $singleLookups = 0;
+
+        foreach ($this->statements($tree, 5) as $statement) {
+            if (str_contains($statement['query'], '"i_gedcom" from "wt_individuals" where "i_id" = ?')) {
+                ++$singleLookups;
+            }
+        }
+
+        self::assertLessThanOrEqual(1, $singleLookups);
     }
 
     /**
@@ -254,8 +281,7 @@ final class DataFacadeQueryCountTest extends TestCase
 
         $tree->setPreference('HIDE_LIVE_PEOPLE', '0');
 
-        $editor = (new UserService())->create('editor', 'Editor', 'editor@example.test', 'secret');
-        $tree->setUserPreference($editor, UserInterface::PREF_TREE_ROLE, UserInterface::ROLE_EDITOR);
+        $editor = $this->createEditor($tree);
 
         $viewers = [
             'administrator' => Auth::user(),
@@ -291,10 +317,42 @@ final class DataFacadeQueryCountTest extends TestCase
     }
 
     /**
-     * Imports the complete pedigree. The person n has the parents 2n and 2n+1 in the family that
-     * familyXref() names.
+     * Creates a user who is an editor of the tree and has no other privilege on it.
+     *
+     * @param Tree $tree The tree to make the user an editor of
+     *
+     * @return UserInterface The new editor
      */
-    private function importPedigree(): Tree
+    private function createEditor(Tree $tree): UserInterface
+    {
+        $editor = (new UserService())->create('editor', 'Editor', 'editor@example.test', 'secret');
+        $tree->setUserPreference($editor, UserInterface::PREF_TREE_ROLE, UserInterface::ROLE_EDITOR);
+
+        return $editor;
+    }
+
+    /**
+     * Returns the numeric xref of a further child of a family.
+     *
+     * @param int $family  The person whose parent family holds the child
+     * @param int $sibling The number of the child within the family, starting at one
+     */
+    private function siblingXref(int $family, int $sibling): string
+    {
+        return (string) (100000 + ($family * 10) + $sibling);
+    }
+
+    /**
+     * Imports the complete pedigree. The person n has the parents 2n and 2n+1 in the family that
+     * familyXref() names. Every family holds the given number of further children besides it, who are
+     * siblings of the person in the pedigree.
+     *
+     * @param int  $siblings The number of further children of every family
+     * @param bool $privacy  Whether the tree hides living people. Everybody in the pedigree is dead and so
+     *                       public, but the visibility of a family then depends on all of its members, and the
+     *                       privacy engine sends statements of its own for every record it checks.
+     */
+    private function importPedigree(int $siblings = 0, bool $privacy = false): Tree
     {
         $people   = (2 ** self::DEPTH) - 1;
         $families = (2 ** (self::DEPTH - 1)) - 1;
@@ -308,6 +366,8 @@ final class DataFacadeQueryCountTest extends TestCase
             $lines[] = '1 BIRT';
             $lines[] = '2 DATE ' . (1500 + ($person % 400));
             $lines[] = '2 PLAC Place' . ($person % 11);
+            $lines[] = '1 DEAT';
+            $lines[] = '2 DATE ' . (1950 + ($person % 40));
 
             $lines[] = '1 FAMC @' . $this->familyXref($person) . '@';
 
@@ -327,14 +387,30 @@ final class DataFacadeQueryCountTest extends TestCase
             }
 
             $lines[] = '1 CHIL @' . $family . '@';
+
+            for ($sibling = 1; $sibling <= $siblings; ++$sibling) {
+                $lines[] = '1 CHIL @' . $this->siblingXref($family, $sibling) . '@';
+            }
+        }
+
+        for ($family = 1; $family <= $people; ++$family) {
+            for ($sibling = 1; $sibling <= $siblings; ++$sibling) {
+                $lines[] = '0 @' . $this->siblingXref($family, $sibling) . '@ INDI';
+                $lines[] = '1 NAME Sibling' . $sibling . ' /Family' . ($family % 7) . '/';
+                $lines[] = '1 SEX F';
+                $lines[] = '1 DEAT';
+                $lines[] = '2 DATE 1960';
+                $lines[] = '1 FAMC @' . $this->familyXref($family) . '@';
+            }
         }
 
         $lines[] = '0 TRLR';
 
         $tree = $this->importGedcom(implode("\n", $lines), 'pedigree');
 
-        $tree->setPreference('HIDE_LIVE_PEOPLE', '0');
+        $tree->setPreference('HIDE_LIVE_PEOPLE', $privacy ? '1' : '0');
         $tree->setPreference('SHOW_LIVING_NAMES', (string) Auth::PRIV_PRIVATE);
+        $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);
 
         return $tree;
     }
@@ -456,6 +532,8 @@ final class DataFacadeQueryCountTest extends TestCase
     }
 
     /**
+     * Lists the xrefs of a decoded node and of the parents below it, depth first.
+     *
      * @param array<array-key, mixed> $node A node of the decoded payload
      *
      * @return list<string>
