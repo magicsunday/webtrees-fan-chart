@@ -22,11 +22,8 @@ use function dirname;
 use function explode;
 use function preg_match_all;
 use function preg_quote;
-use function proc_close;
-use function proc_open;
 use function shell_exec;
 use function str_contains;
-use function stream_get_contents;
 use function substr_count;
 use function sys_get_temp_dir;
 use function trim;
@@ -41,6 +38,19 @@ use function trim;
 #[CoversNothing]
 final class NodeUserTest extends TestCase
 {
+    /**
+     * Runs make in the checkout of the module.
+     */
+    private ProcessRunner $processRunner;
+
+    /**
+     * Creates the runner of the make dry runs.
+     */
+    protected function setUp(): void
+    {
+        $this->processRunner = new ProcessRunner();
+    }
+
     /**
      * A target that writes into the checkout runs npm as the numeric user and group of the caller,
      * so no root-owned file lands in the bind mount. The user, the environment and the service name
@@ -220,24 +230,10 @@ final class NodeUserTest extends TestCase
      */
     private function dryRun(string $target, array $options = []): array
     {
-        $process = proc_open(
+        return $this->processRunner->execute(
             ['make', '--dry-run', ...$options, $target],
-            [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
-            $pipes,
             dirname(__DIR__, 2),
             ['PATH' => '/usr/local/bin:/usr/bin:/bin', 'HOME' => sys_get_temp_dir()]
         );
-
-        self::assertIsResource($process);
-
-        $standardOutput = $pipes[1] ?? null;
-        $standardError  = $pipes[2] ?? null;
-
-        self::assertIsResource($standardOutput);
-        self::assertIsResource($standardError);
-
-        $output = stream_get_contents($standardOutput) . stream_get_contents($standardError);
-
-        return [proc_close($process), $output];
     }
 }
