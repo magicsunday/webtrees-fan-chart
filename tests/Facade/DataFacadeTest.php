@@ -20,6 +20,7 @@ use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Place;
 use Fisharebest\Webtrees\Registry;
+use Fisharebest\Webtrees\Services\UserService;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\Validator;
 use GuzzleHttp\Psr7\ServerRequest;
@@ -29,8 +30,6 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
-use MagicSunday\Webtrees\FanChart\Support\MediaPreloader;
-use MagicSunday\Webtrees\FanChart\Support\PendingRecords;
 use MagicSunday\Webtrees\FanChart\Test\Support\IndividualFixtureTrait;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
@@ -55,11 +54,9 @@ use const JSON_THROW_ON_ERROR;
  */
 #[CoversClass(DataFacade::class)]
 #[UsesClass(Configuration::class)]
-#[UsesClass(MediaPreloader::class)]
 #[UsesClass(Module::class)]
 #[UsesClass(Node::class)]
 #[UsesClass(NodeData::class)]
-#[UsesClass(PendingRecords::class)]
 final class DataFacadeTest extends TestCase
 {
     use IndividualFixtureTrait;
@@ -76,7 +73,10 @@ final class DataFacadeTest extends TestCase
         Registry::calendarDateFactory(new CalendarDateFactory());
 
         EnglishLocaleFixture::install();
-        RoutingFixture::register();
+        RoutingFixture::register([
+            // The pending lookup of the media preload asks for the viewer, who is a visitor here.
+            UserService::class => self::createStub(UserService::class),
+        ]);
     }
 
     /**
