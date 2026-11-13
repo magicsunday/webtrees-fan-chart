@@ -212,8 +212,14 @@ dist:
 	@mkdir -p $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base
 	@cp -rL $(MODULE_BASE_PATH)/src $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/src
 ifneq ($(strip $(SHARED_VIEWS)),)
-	@mkdir -p $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/resources
-	@cp -rL $(MODULE_BASE_PATH)/resources/views $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/resources/views
+	@mkdir -p $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/resources/views
+	@for view in $(SHARED_VIEWS); do \
+		[ -f $(MODULE_BASE_PATH)/resources/views/$$view.phtml ] \
+			|| { echo "Error: shared view $$view is missing from $(MODULE_BASE_PATH)/resources/views."; exit 1; }; \
+		cp -L $(MODULE_BASE_PATH)/resources/views/$$view.phtml \
+			$(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/resources/views/$$view.phtml \
+			|| exit 1; \
+	done
 endif
 	@cp -L $(MODULE_BASE_PATH)/LICENSE $(MODULE_NAME)/vendor/magicsunday/webtrees-module-base/LICENSE
 	@echo "  Bundled $(MODULE_BASE_PKG) (src, LICENSE and the shared views of SHARED_VIEWS) into vendor/"
