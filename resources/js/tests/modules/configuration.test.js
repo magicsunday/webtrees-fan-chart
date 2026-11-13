@@ -43,18 +43,6 @@ describe("Configuration", () => {
         expect(configuration.outerArcHeight).toBe(expected.outerArcHeight);
     });
 
-    it("takes the fan degree as given because the server already clamped it", () => {
-        const configuration = new Configuration(
-            createConfigurationValues({
-                labels,
-                fanDegree: 340,
-                showDescendants: true,
-            }),
-        );
-
-        expect(configuration.fanDegree).toBe(340);
-    });
-
     it("shows the detail panel exactly as the server passes the switch", () => {
         expect(
             new Configuration(createConfigurationValues({ showDetailPanel: false }))
@@ -86,7 +74,7 @@ describe("Configuration", () => {
         const passed = createConfigurationValues({
             labels,
             generations: 8,
-            fanDegree: 270,
+            fanDegree: 340,
             fontScale: 130,
             hideEmptySegments: true,
             showFamilyColors: true,
