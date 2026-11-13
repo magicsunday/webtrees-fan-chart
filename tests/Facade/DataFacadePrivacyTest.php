@@ -26,6 +26,8 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\FanChart\Support\MediaPreloader;
+use MagicSunday\Webtrees\FanChart\Support\PendingRecords;
 use MagicSunday\Webtrees\FanChart\Test\Support\PayloadToken;
 use MagicSunday\Webtrees\FanChart\Test\Support\RealTreeFixtureTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -74,9 +76,11 @@ use const JSON_THROW_ON_ERROR;
  */
 #[CoversClass(DataFacade::class)]
 #[UsesClass(Configuration::class)]
+#[UsesClass(MediaPreloader::class)]
 #[UsesClass(Module::class)]
 #[UsesClass(Node::class)]
 #[UsesClass(NodeData::class)]
+#[UsesClass(PendingRecords::class)]
 final class DataFacadePrivacyTest extends TestCase
 {
     use RealTreeFixtureTrait;

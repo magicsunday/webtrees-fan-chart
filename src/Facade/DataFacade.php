@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Facade;
 
-use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Date;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Fact;
@@ -26,6 +25,8 @@ use Fisharebest\Webtrees\Tree;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
+use MagicSunday\Webtrees\FanChart\Support\MediaPreloader;
+use MagicSunday\Webtrees\FanChart\Support\PendingRecords;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Facade\ModuleAwareDataFacadeTrait;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatSpec;
@@ -72,7 +73,7 @@ final class DataFacade
      * doubles with each step, so a lookup of a whole generation in one statement would
      * reach the placeholder ceiling of the database on a deep and complete pedigree.
      */
-    private const int PRELOAD_CHUNK_SIZE = 250;
+    private const int PRELOAD_CHUNK_SIZE = MediaPreloader::CHUNK_SIZE;
 
     /**
      * The configuration instance. Initialized by createTreeStructure() on each
@@ -115,7 +116,7 @@ final class DataFacade
         $this->compactDateFormat = CompactDateFormat::forLocale(I18N::languageTag());
         $this->factResolver      = null;
 
-        $this->preloadAncestors($individual);
+        $this->preloadAncestors($individual, new MediaPreloader());
 
         $rootNode = $this->buildTreeStructure($individual);
 
@@ -137,13 +138,18 @@ final class DataFacade
      * marriage of the parents, so the families of that generation are loaded too. Nothing
      * beyond it is read.
      *
-     * @param Individual $individual The root individual (generation 1)
+     * @param Individual     $individual     The root individual (generation 1)
+     * @param MediaPreloader $mediaPreloader The preload of the media objects of this request
      */
-    private function preloadAncestors(Individual $individual): void
+    private function preloadAncestors(Individual $individual, MediaPreloader $mediaPreloader): void
     {
         $generationPeople = [$individual];
 
         for ($generation = 1; $generation <= $this->configuration->getGenerations(); ++$generation) {
+            // The walk reads the highlight image of every person of the generation, so their media
+            // objects are loaded before it gets there.
+            $mediaPreloader->preload($individual->tree(), $generationPeople);
+
             $generationPeople = $this->preloadParentFamilies($individual->tree(), $generationPeople);
         }
     }
@@ -247,7 +253,7 @@ final class DataFacade
             }
         }
 
-        $pendingXrefs = $this->pendingFamilyXrefs($tree, $familyXrefs);
+        $pendingXrefs = PendingRecords::xrefs($tree, $familyXrefs, self::PRELOAD_CHUNK_SIZE);
 
         foreach ($families as $family) {
             if (in_array($family['xref'], $pendingXrefs, true)) {
@@ -261,41 +267,6 @@ final class DataFacade
         }
 
         return $parents;
-    }
-
-    /**
-     * Returns the xrefs of the given families that have a pending change. Only an editor sees
-     * pending changes, so everybody else gets an empty list without a statement.
-     *
-     * @param Tree         $tree        The tree of the families
-     * @param list<string> $familyXrefs The xrefs to look up
-     *
-     * @return list<string> The xrefs of the families with a pending change
-     */
-    private function pendingFamilyXrefs(Tree $tree, array $familyXrefs): array
-    {
-        $pendingXrefs = [];
-
-        foreach (array_chunk($familyXrefs, self::PRELOAD_CHUNK_SIZE) as $chunk) {
-            if (!Auth::isEditor($tree)) {
-                return [];
-            }
-
-            $xrefs = DB::table('change')
-                ->where('gedcom_id', '=', $tree->id())
-                ->where('status', '=', 'pending')
-                ->whereIn('xref', $chunk)
-                ->pluck('xref');
-
-            foreach ($xrefs as $xref) {
-                // Narrows the untyped query value to text for the static analysis, at no cost.
-                if (is_string($xref)) {
-                    $pendingXrefs[] = $xref;
-                }
-            }
-        }
-
-        return $pendingXrefs;
     }
 
     /**
