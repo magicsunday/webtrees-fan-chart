@@ -269,6 +269,68 @@ final class MediaPreloaderTest extends TestCase
     }
 
     /**
+     * The columns of the link table and of the media table compare case-insensitively on MySQL, so a link
+     * whose spelling differs from the xref of the media object still belongs to it, and a media object that
+     * a private record is linked to stays hidden from a visitor. The link table of the test compares the
+     * target case-insensitively as well.
+     */
+    #[Test]
+    public function aLinkWithAnotherSpellingStillHidesTheMediaObject(): void
+    {
+        DB::connection()->statement('DROP TABLE "wt_link"');
+        DB::connection()->statement(
+            'CREATE TABLE "wt_link" ("l_file" integer not null, "l_from" varchar(20) not null, '
+            . '"l_type" varchar(15) not null, "l_to" varchar(20) collate nocase not null, '
+            . 'primary key ("l_from", "l_file", "l_type", "l_to"))'
+        );
+
+        $this->createIndexDirectory(['one']);
+
+        $tree = $this->importGedcom(
+            implode("\n", [
+                '0 HEAD',
+                '0 @1@ INDI',
+                '1 NAME Public /Person/',
+                '1 DEAT',
+                '2 DATE 1900',
+                '1 OBJE @M1@',
+                '0 @2@ INDI',
+                '1 NAME Private /Person/',
+                '1 RESN confidential',
+                '1 DEAT',
+                '2 DATE 1900',
+                '1 OBJE @m1@',
+                '0 @M1@ OBJE',
+                '1 FILE one.jpg',
+                '2 FORM jpg',
+                '0 TRLR',
+            ]),
+            'spelling',
+        );
+
+        $tree->setPreference('HIDE_LIVE_PEOPLE', '1');
+        $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);
+        $tree->setPreference('SHOW_HIGHLIGHT_IMAGES', '1');
+
+        $asAdministrator = $this->highlightFiles($tree, ['1']);
+
+        self::assertSame(['one.jpg'], $asAdministrator);
+
+        Auth::logout();
+        Registry::cache(new CacheFactory());
+
+        $withoutPreload = $this->highlightFiles($tree, ['1']);
+
+        self::assertSame([null], $withoutPreload);
+
+        Registry::cache(new CacheFactory());
+
+        (new MediaPreloader())->preload($tree, $this->people($tree, ['1']));
+
+        self::assertSame($withoutPreload, $this->highlightFiles($tree, ['1']));
+    }
+
+    /**
      * The rules of the tree that hide a media object from a visitor.
      *
      * @return array<string, array{string|null, string|null}>

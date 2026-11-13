@@ -29,6 +29,7 @@ use function array_unique;
 use function array_values;
 use function in_array;
 use function is_string;
+use function mb_strtolower;
 use function preg_match;
 use function preg_match_all;
 
@@ -44,7 +45,7 @@ use function preg_match_all;
  * pending change is left to the factory, which decides what an editor sees of it. For a visitor the
  * visibility of the media objects is decided in bulk by the rule of the core and stored under the key
  * of the visibility cache of the core. A media object that has a restriction notice of its own is left
- * to the core, and so is every viewer who is an editor or a manager.
+ * to the core, and so is the decision for a viewer who is an editor or a manager.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -210,7 +211,7 @@ final class MediaPreloader
         foreach ($decidable as $object) {
             $visible = !isset($factPrivacy[Media::RECORD_TYPE]) || ($factPrivacy[Media::RECORD_TYPE] >= $accessLevel);
 
-            foreach ($links['byMedia'][$object->xref()] ?? [] as $linkedXref) {
+            foreach ($links['byMedia'][$this->linkKey($object->xref())] ?? [] as $linkedXref) {
                 $record = Registry::gedcomRecordFactory()->make($linkedXref, $tree);
 
                 if (($record instanceof GedcomRecord) && !$record->canShow($accessLevel)) {
@@ -225,6 +226,18 @@ final class MediaPreloader
                 static fn (): bool => $visible,
             );
         }
+    }
+
+    /**
+     * Returns the key under which the links of a media object are grouped. The columns of the link table
+     * and of the media table compare case-insensitively on the databases of webtrees, so the spelling of
+     * a link can differ from the spelling of the xref of its media object.
+     *
+     * @param string $xref The xref of a media object, or the target of a link
+     */
+    private function linkKey(string $xref): string
+    {
+        return mb_strtolower($xref, 'UTF-8');
     }
 
     /**
@@ -262,8 +275,8 @@ final class MediaPreloader
                     continue;
                 }
 
-                $byMedia[$row->l_to][] = $row->l_from;
-                $linked[]              = $row->l_from;
+                $byMedia[$this->linkKey($row->l_to)][] = $row->l_from;
+                $linked[]                              = $row->l_from;
             }
         }
 
