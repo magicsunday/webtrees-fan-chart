@@ -26,10 +26,8 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
-use MagicSunday\Webtrees\FanChart\Support\MediaPreloader;
-use MagicSunday\Webtrees\FanChart\Support\PendingRecords;
 use MagicSunday\Webtrees\FanChart\Test\Support\PayloadToken;
-use MagicSunday\Webtrees\FanChart\Test\Support\RealTreeFixtureTrait;
+use MagicSunday\Webtrees\ModuleBase\Testing\RealTreeFixture;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -76,15 +74,11 @@ use const JSON_THROW_ON_ERROR;
  */
 #[CoversClass(DataFacade::class)]
 #[UsesClass(Configuration::class)]
-#[UsesClass(MediaPreloader::class)]
 #[UsesClass(Module::class)]
 #[UsesClass(Node::class)]
 #[UsesClass(NodeData::class)]
-#[UsesClass(PendingRecords::class)]
 final class DataFacadePrivacyTest extends TestCase
 {
-    use RealTreeFixtureTrait;
-
     /**
      * Values that exist only on private people, the confidential deceased mother (I3), the living
      * grandfather (I4) and the marriage records that list them. Every one is shown to the
@@ -145,7 +139,7 @@ final class DataFacadePrivacyTest extends TestCase
     {
         parent::setUp();
 
-        $this->bootRealWebtrees();
+        RealTreeFixture::boot();
 
         // The media file of the living person has to exist, because the image of a person is only
         // referenced when its file is there.
@@ -184,7 +178,7 @@ final class DataFacadePrivacyTest extends TestCase
         rmdir($this->indexDirectory . 'media');
         rmdir($this->indexDirectory);
 
-        $this->restoreMinimalDatabase();
+        RealTreeFixture::restoreMinimalDatabase();
 
         parent::tearDown();
     }
@@ -363,7 +357,7 @@ final class DataFacadePrivacyTest extends TestCase
      */
     private function importTree(): Tree
     {
-        $tree = $this->importGedcom((string) file_get_contents(__DIR__ . '/../Support/fixtures/privacy-ancestry.ged'), 'privacy');
+        $tree = RealTreeFixture::importGedcom((string) file_get_contents(__DIR__ . '/../Support/fixtures/privacy-ancestry.ged'), 'privacy');
 
         $tree->setPreference('HIDE_LIVE_PEOPLE', '1');
         $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);

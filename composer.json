@@ -72,7 +72,7 @@
         "ext-dom": "*",
         "ext-json": "*",
         "fisharebest/webtrees": "~2.2.0",
-        "magicsunday/webtrees-module-base": "^3.10.0",
+        "magicsunday/webtrees-module-base": "^3.11.0",
         "magicsunday/webtrees-module-installer-plugin": "^2.0"
     },
     "require-dev": {

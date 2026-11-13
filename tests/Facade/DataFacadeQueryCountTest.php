@@ -29,10 +29,9 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
-use MagicSunday\Webtrees\FanChart\Support\MediaPreloader;
-use MagicSunday\Webtrees\FanChart\Support\PendingRecords;
-use MagicSunday\Webtrees\FanChart\Test\Support\RealTreeFixtureTrait;
 use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
+use MagicSunday\Webtrees\ModuleBase\Support\MediaPreloader;
+use MagicSunday\Webtrees\ModuleBase\Testing\RealTreeFixture;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -79,15 +78,11 @@ use const JSON_THROW_ON_ERROR;
  */
 #[CoversClass(DataFacade::class)]
 #[UsesClass(Configuration::class)]
-#[UsesClass(MediaPreloader::class)]
-#[UsesClass(PendingRecords::class)]
 #[UsesClass(Module::class)]
 #[UsesClass(Node::class)]
 #[UsesClass(NodeData::class)]
 final class DataFacadeQueryCountTest extends TestCase
 {
-    use RealTreeFixtureTrait;
-
     /**
      * The number of ancestor generations of the pedigree, which is the most that the chart shows.
      */
@@ -117,7 +112,7 @@ final class DataFacadeQueryCountTest extends TestCase
     {
         parent::setUp();
 
-        $this->bootRealWebtrees();
+        RealTreeFixture::boot();
 
         DB::table('module')->insert(['module_name' => 'webtrees-fan-chart']);
 
@@ -136,7 +131,7 @@ final class DataFacadeQueryCountTest extends TestCase
         Registry::cache(new CacheFactory());
 
         $this->removeMediaFiles();
-        $this->restoreMinimalDatabase();
+        RealTreeFixture::restoreMinimalDatabase();
 
         parent::tearDown();
     }
@@ -335,7 +330,7 @@ final class DataFacadeQueryCountTest extends TestCase
     #[Test]
     public function aPersonWithoutParentsSendsNoPreloadStatement(): void
     {
-        $tree = $this->importGedcom(
+        $tree = RealTreeFixture::importGedcom(
             "0 HEAD\n1 GEDC\n2 VERS 5.5.1\n1 CHAR UTF-8\n0 @1@ INDI\n1 NAME Alone /Person/\n1 SEX M\n0 TRLR",
             'alone',
         );
@@ -625,7 +620,7 @@ final class DataFacadeQueryCountTest extends TestCase
 
         $lines[] = '0 TRLR';
 
-        $tree = $this->importGedcom(implode("\n", $lines), 'pedigree');
+        $tree = RealTreeFixture::importGedcom(implode("\n", $lines), 'pedigree');
 
         $tree->setPreference('HIDE_LIVE_PEOPLE', $privacy ? '1' : '0');
         $tree->setPreference('SHOW_LIVING_NAMES', (string) Auth::PRIV_PRIVATE);

@@ -25,8 +25,6 @@ use Fisharebest\Webtrees\Tree;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
-use MagicSunday\Webtrees\FanChart\Support\MediaPreloader;
-use MagicSunday\Webtrees\FanChart\Support\PendingRecords;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Facade\ModuleAwareDataFacadeTrait;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatSpec;
@@ -39,6 +37,8 @@ use MagicSunday\Webtrees\ModuleBase\Processor\NameProcessor;
 use MagicSunday\Webtrees\ModuleBase\Processor\PlaceProcessor;
 use MagicSunday\Webtrees\ModuleBase\Support\CompactDateFormat;
 use MagicSunday\Webtrees\ModuleBase\Support\Locale\IsoCountryMap;
+use MagicSunday\Webtrees\ModuleBase\Support\MediaPreloader;
+use MagicSunday\Webtrees\ModuleBase\Support\PendingRecords;
 use MagicSunday\Webtrees\ModuleBase\Support\TextDirection;
 
 use function array_chunk;
