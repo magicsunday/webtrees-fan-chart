@@ -242,10 +242,10 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
     }
 
     /**
-     * Returns the static chart parameters passed to the JavaScript initialiser
-     * — RTL direction flag, the tooltip silhouette flag, name-abbreviation
-     * strategy (resolved from the tree's surname tradition), and localised UI
-     * labels.
+     * Returns the static chart parameters passed to the JavaScript initialiser,
+     * which are the RTL direction flag, the tooltip silhouette flag, the
+     * name-abbreviation strategy (resolved from the tree's surname tradition)
+     * and the localised UI labels.
      *
      * @param Individual $individual
      *

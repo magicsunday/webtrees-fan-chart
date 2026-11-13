@@ -405,8 +405,8 @@ describe("Person image size", () => {
     });
 
     // The arc image follows the display mode and the thumbnail of the person, the tooltip
-    // silhouette option has no say in it. This guards the arc rule against a later coupling to
-    // the tooltip option and is not red against the code before the option was separated.
+    // silhouette option has no say in it. This guards the arc rule against a coupling to the
+    // tooltip option.
     it.each([
         ["on", true],
         ["off", false],

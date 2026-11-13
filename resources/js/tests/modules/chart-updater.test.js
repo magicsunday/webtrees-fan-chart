@@ -144,6 +144,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+    delete window.hostileRan;
     delete window.matchMedia;
     jest.restoreAllMocks();
 });
@@ -202,6 +203,16 @@ describe("Update", () => {
         await runUpdate(update, { data: ancestors(2), title: "<b>Markup</b>", titleText: "Plain" });
 
         expect(document.title).toBe("Plain");
+    });
+
+    test("sets an empty plain text title as the tab title", async () => {
+        const { update } = createChart();
+
+        document.title = "Before";
+
+        await runUpdate(update, { data: ancestors(2), title: "<b>Markup</b>", titleText: "" });
+
+        expect(document.title).toBe("");
     });
 
     test("leaves the tab title alone when the response carries no plain text title", async () => {
