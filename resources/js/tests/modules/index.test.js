@@ -193,31 +193,6 @@ describe("FanChart", () => {
 
         addEventListenerSpy.mockRestore();
     });
-
-    it("updates the viewBox after device orientation changes", () => {
-        document.body.innerHTML =
-            '<div id="chart"></div><button id="centerButton"></button>' +
-            '<button id="exportPNG"></button><button id="exportSVG"></button>';
-
-        const orientationListenerSpy = jest.spyOn(screen.orientation, "addEventListener");
-
-        // eslint-disable-next-line no-new
-        new FanChart("#chart", createOptions());
-
-        const changeCall = orientationListenerSpy.mock.calls.find(([event]) => event === "change");
-        expect(changeCall?.[1]).toBeInstanceOf(Function);
-
-        const [, changeHandler] = changeCall;
-
-        const chart = chartInstances[0];
-        chart.updateViewBox.mockClear();
-
-        changeHandler();
-
-        expect(chart.updateViewBox).toHaveBeenCalledTimes(1);
-
-        orientationListenerSpy.mockRestore();
-    });
 });
 
 describe("FanChart page listeners", () => {

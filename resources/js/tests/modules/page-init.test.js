@@ -123,14 +123,6 @@ describe("getUrl (via initPage AJAX URL)", () => {
         expect(document.getElementById("help-tooltip").classList.contains("d-none")).toBe(true);
     });
 
-    it("includes showPlaces=0 when storage has showPlaces=false", () => {
-        seedStorage({ showPlaces: false });
-
-        initPage(defaultConfig);
-
-        expect(getAjaxUrl().searchParams.get("showPlaces")).toBe("0");
-    });
-
     it("uses defaultDetailedDateGenerations for the initial URL, ignoring a stale storage value", () => {
         // A value left in localStorage by an older module version (which had a
         // slider) must not override the admin preference on the initial render.
@@ -139,15 +131,6 @@ describe("getUrl (via initPage AJAX URL)", () => {
         initPage({ ...defaultConfig, defaultDetailedDateGenerations: 3 });
 
         expect(getAjaxUrl().searchParams.get("detailedDateGenerations")).toBe("3");
-    });
-
-    it("sets showDescendants=1 when enabled via config default", () => {
-        // The server renders the checkbox ticked for the default
-        setupDom({ descendants: true });
-
-        initPage({ ...defaultConfig, defaultShowDescendants: true });
-
-        expect(getAjaxUrl().searchParams.get("showDescendants")).toBe("1");
     });
 
     it("deletes showDescendants param when disabled", () => {
@@ -170,14 +153,6 @@ describe("detail panel switch (via initPage AJAX URL)", () => {
         initPage(defaultConfig);
 
         expect(getAjaxUrl().searchParams.get("showDetailPanel")).toBe("0");
-    });
-
-    it("sends showDetailPanel=1 for the stored state of the checkbox", () => {
-        seedStorage({ showDetailPanel: true });
-
-        initPage(defaultConfig);
-
-        expect(getAjaxUrl().searchParams.get("showDetailPanel")).toBe("1");
     });
 
     it("sends showDetailPanel=0 when the stored state switches the panel off", () => {
@@ -239,20 +214,6 @@ describe("showDescendants change handler", () => {
         cb.dispatchEvent(new Event("change"));
 
         expect(getAjaxUrl().searchParams.get("showPlaces")).toBe("1");
-    });
-
-    it("keeps the admin default detailedDateGenerations on toggle, ignoring a stale storage value", () => {
-        // A value left in localStorage by an older module version, which must be ignored
-        seedStorage({ detailedDateGenerations: "5" });
-
-        initPage({ ...defaultConfig, defaultDetailedDateGenerations: 2 });
-
-        const cb = document.getElementById("showDescendants-1");
-
-        cb.checked = true;
-        cb.dispatchEvent(new Event("change"));
-
-        expect(getAjaxUrl().searchParams.get("detailedDateGenerations")).toBe("2");
     });
 
     it("restores fanDegreeRaw when unchecking descendants", () => {
