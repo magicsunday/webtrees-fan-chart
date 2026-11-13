@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Facade;
 
-use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Date;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Fact;
@@ -26,6 +25,7 @@ use Fisharebest\Webtrees\Tree;
 use MagicSunday\Webtrees\FanChart\Configuration;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
+use MagicSunday\Webtrees\FanChart\Support\PendingRecords;
 use MagicSunday\Webtrees\ModuleBase\Contract\ModuleAssetUrlInterface;
 use MagicSunday\Webtrees\ModuleBase\Facade\ModuleAwareDataFacadeTrait;
 use MagicSunday\Webtrees\ModuleBase\Model\PlaceFormatSpec;
@@ -247,7 +247,7 @@ final class DataFacade
             }
         }
 
-        $pendingXrefs = $this->pendingFamilyXrefs($tree, $familyXrefs);
+        $pendingXrefs = PendingRecords::xrefs($tree, $familyXrefs, self::PRELOAD_CHUNK_SIZE);
 
         foreach ($families as $family) {
             if (in_array($family['xref'], $pendingXrefs, true)) {
@@ -261,41 +261,6 @@ final class DataFacade
         }
 
         return $parents;
-    }
-
-    /**
-     * Returns the xrefs of the given families that have a pending change. Only an editor sees
-     * pending changes, so everybody else gets an empty list without a statement.
-     *
-     * @param Tree         $tree        The tree of the families
-     * @param list<string> $familyXrefs The xrefs to look up
-     *
-     * @return list<string> The xrefs of the families with a pending change
-     */
-    private function pendingFamilyXrefs(Tree $tree, array $familyXrefs): array
-    {
-        $pendingXrefs = [];
-
-        foreach (array_chunk($familyXrefs, self::PRELOAD_CHUNK_SIZE) as $chunk) {
-            if (!Auth::isEditor($tree)) {
-                return [];
-            }
-
-            $xrefs = DB::table('change')
-                ->where('gedcom_id', '=', $tree->id())
-                ->where('status', '=', 'pending')
-                ->whereIn('xref', $chunk)
-                ->pluck('xref');
-
-            foreach ($xrefs as $xref) {
-                // Narrows the untyped query value to text for the static analysis, at no cost.
-                if (is_string($xref)) {
-                    $pendingXrefs[] = $xref;
-                }
-            }
-        }
-
-        return $pendingXrefs;
     }
 
     /**
