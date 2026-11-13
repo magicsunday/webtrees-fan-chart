@@ -150,7 +150,7 @@
             "@ci:test:php:templates",
             "@ci:test:php:deptrac",
             "@ci:test:php:advisories",
-            "@ci:test:php:unit",
+            "@ci:test:php:unit:coverage",
             "@ci:test:js:unit",
             "@ci:test:php:cgl"
         ],

@@ -219,7 +219,7 @@ npm ci
 # JavaScript tests
 npm test
 
-# Full PHP + JS quality check
+# Full PHP + JS quality check, the unit tests run under coverage
 composer update
 composer ci:test
 ```
