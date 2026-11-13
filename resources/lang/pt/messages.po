@@ -161,7 +161,7 @@ msgstr ""
 msgid "Generations"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:78
+#: resources/views/modules/fan-chart/form/display.phtml:79
 msgid "Hide empty segments"
 msgstr "Esconder os segmentos vazios"
 
@@ -184,7 +184,7 @@ msgid ""
 "code. Users toggle place visibility on/off in the chart form."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:59
+#: resources/views/modules/fan-chart/form/display.phtml:60
 msgid ""
 "Images are only shown if the arc segment is wide enough. Images for "
 "descendants are not yet available."
@@ -234,7 +234,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Mover o diagrama"
 
-#: src/Module.php:265
+#: src/Module.php:264
 msgid "Move the view with two fingers"
 msgstr "Mover a vista com dois dedos"
 
@@ -258,7 +258,7 @@ msgstr ""
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:71
+#: resources/views/modules/fan-chart/form/display.phtml:72
 msgid ""
 "Partners and children are shown as arcs below the ancestor section. The fan "
 "size is limited to 180–270 degrees when enabled."
@@ -302,7 +302,7 @@ msgstr "Clique com o botão direito do rato"
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:65
+#: resources/views/modules/fan-chart/form/display.phtml:66
 msgid "Show descendants"
 msgstr "Mostrar descendentes"
 
@@ -395,8 +395,12 @@ msgstr "Alternar entre vista em ecrã completo e vista normal"
 msgid "Tab key"
 msgstr ""
 
-#: src/Module.php:266
+#: src/Module.php:265
 msgid "The chart could not be updated. Please try again."
+msgstr ""
+
+#: resources/views/modules/fan-chart/form/display.phtml:59
+msgid "The display option only affects the arcs, not the tooltip."
 msgstr ""
 
 #: src/Module/ConfigTrait.php:151
@@ -404,7 +408,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:264
+#: src/Module.php:263
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Usar Ctrl + roda do rato para aproximar ou afastar"
 

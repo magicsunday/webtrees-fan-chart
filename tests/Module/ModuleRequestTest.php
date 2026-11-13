@@ -255,6 +255,78 @@ final class ModuleRequestTest extends TestCase
     }
 
     /**
+     * The silhouette in the tooltip follows the tree preference for silhouettes, whether or not the
+     * tree shows highlight images.
+     *
+     * @return array<string, array{string, string, string}>
+     */
+    public static function tooltipSilhouetteProvider(): array
+    {
+        return [
+            'silhouettes on, highlight images on'   => ['1', '1', 'true'],
+            'silhouettes on, highlight images off'  => ['0', '1', 'true'],
+            'silhouettes off, highlight images on'  => ['1', '0', 'false'],
+            'silhouettes off, highlight images off' => ['0', '0', 'false'],
+        ];
+    }
+
+    /**
+     * The chart partial hands the script the tooltip rule as an option of its own, so the display
+     * mode and the tree preference for highlight images do not decide whether the tooltip shows a
+     * silhouette.
+     */
+    #[Test]
+    #[DataProvider('tooltipSilhouetteProvider')]
+    public function theChartPartialHandsTheTooltipSilhouetteRuleToTheScript(
+        string $highlightImages,
+        string $silhouettes,
+        string $expected,
+    ): void {
+        $this->tree = $this->createTree([
+            'SHOW_HIGHLIGHT_IMAGES' => $highlightImages,
+            'USE_SILHOUETTE'        => $silhouettes,
+        ]);
+
+        $response = $this->createModule()->handle($this->chartRequest($this->createChartIndividual(), true));
+
+        self::assertStringContainsString('showTooltipSilhouettes: ' . $expected . ',', (string) $response->getBody());
+    }
+
+    /**
+     * The surname tradition of the tree decides which part of a name the script abbreviates first
+     * when the module setting is automatic, and only the Icelandic tradition abbreviates the
+     * surname.
+     *
+     * @return array<string, array{string, string}>
+     */
+    public static function nameAbbreviationProvider(): array
+    {
+        return [
+            'icelandic tradition' => ['icelandic', 'SURNAME'],
+            'paternal tradition'  => ['paternal', 'GIVEN'],
+        ];
+    }
+
+    /**
+     * The chart partial hands the script the name abbreviation strategy that the surname tradition
+     * of the tree resolves to.
+     */
+    #[Test]
+    #[DataProvider('nameAbbreviationProvider')]
+    public function theChartPartialHandsTheResolvedNameAbbreviationToTheScript(
+        string $surnameTradition,
+        string $expected,
+    ): void {
+        $this->tree = $this->createTree([
+            'SURNAME_TRADITION' => $surnameTradition,
+        ]);
+
+        $response = $this->createModule()->handle($this->chartRequest($this->createChartIndividual(), true));
+
+        self::assertStringContainsString('nameAbbreviation: "' . $expected . '"', (string) $response->getBody());
+    }
+
+    /**
      * The page tells the script which URL loads the chart partial. That URL asks for the partial
      * with the ajax flag and names the person and every setting of the request, so the partial that
      * the script fetches is the chart of the page and not the page shell again.
