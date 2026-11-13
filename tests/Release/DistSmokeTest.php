@@ -16,13 +16,23 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function array_diff;
+use function array_filter;
 use function array_key_exists;
+use function array_slice;
+use function array_values;
+use function chmod;
+use function count;
 use function dirname;
+use function explode;
 use function file_get_contents;
 use function file_put_contents;
+use function implode;
 use function is_dir;
 use function json_encode;
 use function mkdir;
+use function posix_geteuid;
+use function sprintf;
 use function str_repeat;
 use function strpos;
 use function substr;
@@ -32,6 +42,7 @@ use function tempnam;
 use function trim;
 use function unlink;
 
+use const FILE_APPEND;
 use const JSON_THROW_ON_ERROR;
 
 /**
@@ -139,6 +150,79 @@ final class DistSmokeTest extends TestCase
             $output
         );
         self::assertStringNotContainsString('dist-smoke passed', $output);
+    }
+
+    /**
+     * The dist target bundles the shared views that the module names and no other view of the module base.
+     */
+    #[Test]
+    public function bundlesOnlyTheConfiguredSharedViews(): void
+    {
+        $configured = ModuleParameters::sharedViews();
+
+        if ($configured === []) {
+            self::markTestSkipped('The module bundles no shared module-base views.');
+        }
+
+        $bundled   = array_slice($configured, 0, 2);
+        $unbundled = array_diff([...$configured, 'unlisted-view'], $bundled);
+
+        [$status, $output] = $this->dist(implode(' ', $bundled), [...$configured, 'unlisted-view']);
+
+        self::assertSame(0, $status, $output);
+
+        $paths = $this->archivePaths();
+
+        foreach ($bundled as $view) {
+            self::assertContains(self::BASE_VIEWS . $view . '.phtml', $paths);
+        }
+
+        foreach ($unbundled as $view) {
+            self::assertNotContains(self::BASE_VIEWS . $view . '.phtml', $paths);
+        }
+    }
+
+    /**
+     * The dist target stops when a configured shared view is missing from the module base, instead of building an
+     * archive that the smoke test would reject afterwards.
+     */
+    #[Test]
+    public function refusesToBundleASharedViewThatTheModuleBaseLacks(): void
+    {
+        $configured = ModuleParameters::sharedViews();
+
+        if ($configured === []) {
+            self::markTestSkipped('The module bundles no shared module-base views.');
+        }
+
+        [$status, $output] = $this->dist(implode(' ', [...$configured, 'absent-view']), $configured);
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('Error: shared view absent-view is missing from', $output);
+        self::assertFileDoesNotExist($this->workDir . '/module/' . $this->moduleName . '.zip');
+    }
+
+    /**
+     * The dist target stops when the copy of a shared view fails, also when the views named after it copy fine, so
+     * that no archive without that view is built.
+     */
+    #[Test]
+    public function refusesToBuildWhenTheCopyOfANonLastSharedViewFails(): void
+    {
+        $configured = ModuleParameters::sharedViews();
+
+        if (count($configured) < 2) {
+            self::markTestSkipped('The module bundles fewer than two shared module-base views.');
+        }
+
+        if (posix_geteuid() === 0) {
+            self::markTestSkipped('A file mode does not block reading as root.');
+        }
+
+        [$status, $output] = $this->dist(implode(' ', $configured), $configured, [$configured[0]]);
+
+        self::assertNotSame(0, $status, $output);
+        self::assertFileDoesNotExist($this->workDir . '/module/' . $this->moduleName . '.zip');
     }
 
     /**
@@ -693,13 +777,7 @@ final class DistSmokeTest extends TestCase
         }
 
         foreach ($files as $path => $content) {
-            $directory = dirname($this->workDir . '/stage/' . $path);
-
-            if (!is_dir($directory)) {
-                mkdir($directory, 0o777, true);
-            }
-
-            file_put_contents($this->workDir . '/stage/' . $path, $content);
+            $this->writeFile($this->workDir . '/stage/' . $path, $content);
         }
 
         [$status, $output] = $this->processRunner->execute(
@@ -751,6 +829,103 @@ final class DistSmokeTest extends TestCase
     private function baseVersionFile(): string
     {
         return $this->workDir . '/module/' . $this->moduleName . '/' . self::BASE . 'VERSION';
+    }
+
+    /**
+     * Runs the dist target for a module whose build tools are stubbed. The module base that the stubbed composer
+     * installs holds the given views, and SHARED_VIEWS names the views that the module configures for this build.
+     *
+     * @param string       $sharedViews The value of SHARED_VIEWS for this build.
+     * @param list<string> $baseViews   The views that the module base ships, by name without extension.
+     * @param list<string> $unreadable  The views that the stubbed composer makes unreadable after it installed them.
+     *
+     * @return array{int, string}
+     */
+    private function dist(string $sharedViews, array $baseViews, array $unreadable = []): array
+    {
+        $fixture = $this->workDir . '/base-fixture';
+        $stubs   = $this->workDir . '/stubs';
+        $module  = $this->workDir . '/module';
+
+        foreach (['Contract', 'Model', 'Module', 'Processor'] as $directory) {
+            $this->writeFile($fixture . '/src/' . $directory . '/Entry.php', "<?php\n");
+        }
+
+        $this->writeFile($fixture . '/src/View/SharedViews.php', "<?php\n\n// 'webtrees-module-base'\n");
+        $this->writeFile($fixture . '/LICENSE', "license\n");
+
+        foreach ($baseViews as $view) {
+            $this->writeFile($fixture . '/resources/views/' . $view . '.phtml', "view\n");
+        }
+
+        $this->writeFile(
+            $stubs . '/composer',
+            sprintf(
+                "#!/bin/sh\nset -e\nmkdir -p .build/vendor/composer .build/vendor/magicsunday\n"
+                . "cp -R '%s' .build/vendor/magicsunday/webtrees-module-base\n"
+                . "printf '%%s' '{\"packages\":[{\"name\":\"magicsunday/webtrees-module-base\",\"version\":\"3.4.0\"}]}'"
+                . " > .build/vendor/composer/installed.json\n",
+                $fixture
+            )
+        );
+
+        foreach ($unreadable as $view) {
+            file_put_contents(
+                $stubs . '/composer',
+                sprintf("chmod 000 '.build/vendor/magicsunday/webtrees-module-base/resources/views/%s.phtml'\n", $view),
+                FILE_APPEND
+            );
+        }
+
+        chmod($stubs . '/composer', 0o755);
+
+        $environment = [
+            'PATH' => $stubs . ':/usr/local/bin:/usr/bin:/bin',
+            'HOME' => $this->workDir,
+        ];
+
+        foreach (
+            [
+                ['git', 'init', '-q'],
+                ['git', 'add', 'Makefile', 'Make'],
+                ['git', '-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-q', '-m', 'Module'],
+            ] as $command
+        ) {
+            [$status, $output] = $this->processRunner->execute($command, $module, $environment);
+
+            self::assertSame(0, $status, $output);
+        }
+
+        return $this->processRunner->execute(['make', 'dist', 'SHARED_VIEWS=' . $sharedViews], $module, $environment);
+    }
+
+    /**
+     * Lists the entries of the archive that the dist target built.
+     *
+     * @return list<string>
+     */
+    private function archivePaths(): array
+    {
+        [$status, $output] = $this->processRunner->execute(
+            ['unzip', '-Z1', $this->workDir . '/module/' . $this->moduleName . '.zip'],
+            $this->workDir . '/module'
+        );
+
+        self::assertSame(0, $status, $output);
+
+        return array_values(array_filter(explode("\n", $output), static fn (string $path): bool => $path !== ''));
+    }
+
+    /**
+     * Writes a file and creates its directory.
+     */
+    private function writeFile(string $path, string $content): void
+    {
+        if (!is_dir(dirname($path))) {
+            mkdir(dirname($path), 0o777, true);
+        }
+
+        file_put_contents($path, $content);
     }
 
     /**
