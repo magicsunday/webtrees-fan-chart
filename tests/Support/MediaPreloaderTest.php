@@ -331,6 +331,32 @@ final class MediaPreloaderTest extends TestCase
     }
 
     /**
+     * A tree that does not hide living people shows its media objects, whatever restriction the tree has
+     * for the type of record, because the core does not look at that restriction then. The preload steps
+     * aside as well.
+     */
+    #[Test]
+    public function aTreeWithoutPrivacyShowsMediaWhateverTheTypeRestriction(): void
+    {
+        $tree = $this->importPrivacyTreeWithRules([['xref' => null, 'tag_type' => 'OBJE', 'resn' => 'confidential']]);
+
+        $tree->setPreference('HIDE_LIVE_PEOPLE', '0');
+
+        Auth::logout();
+        Registry::cache(new CacheFactory());
+
+        $withoutPreload = $this->highlightFiles($tree, ['1']);
+
+        self::assertSame(['one.jpg'], $withoutPreload);
+
+        Registry::cache(new CacheFactory());
+
+        (new MediaPreloader())->preload($tree, $this->people($tree, ['1']));
+
+        self::assertSame($withoutPreload, $this->highlightFiles($tree, ['1']));
+    }
+
+    /**
      * The rules of the tree that hide a media object from a visitor.
      *
      * @return array<string, array{string|null, string|null}>
