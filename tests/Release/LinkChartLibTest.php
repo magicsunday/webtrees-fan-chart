@@ -19,6 +19,7 @@ use function chmod;
 use function dirname;
 use function file_get_contents;
 use function file_put_contents;
+use function function_exists;
 use function is_link;
 use function mkdir;
 use function posix_getgid;
@@ -181,7 +182,7 @@ final class LinkChartLibTest extends TestCase
         self::assertSame("restored\n", file_get_contents($this->packagePath() . '/package.json'));
         self::assertSame('sibling', file_get_contents($this->workDir . '/webtrees-chart-lib/package.json'));
         self::assertSame(
-            'compose run --rm --user ' . posix_getuid() . ':' . posix_getgid() . " -e HOME=/tmp node npm install --quiet\n",
+            $this->installCall(),
             file_get_contents($this->workDir . '/docker-calls')
         );
     }
@@ -237,7 +238,7 @@ final class LinkChartLibTest extends TestCase
         self::assertFalse(is_link($this->packagePath()));
         self::assertFileDoesNotExist($this->packagePath());
         self::assertSame(
-            'compose run --rm --user ' . posix_getuid() . ':' . posix_getgid() . " -e HOME=/tmp node npm install --quiet\n",
+            $this->installCall(),
             file_get_contents($this->workDir . '/docker-calls')
         );
     }
@@ -259,7 +260,7 @@ final class LinkChartLibTest extends TestCase
         self::assertFalse(is_link($this->packagePath()));
         self::assertSame("restored\n", file_get_contents($this->packagePath() . '/package.json'));
         self::assertSame(
-            'compose run --rm --user ' . posix_getuid() . ':' . posix_getgid() . " -e HOME=/tmp node npm install --quiet\n",
+            $this->installCall(),
             file_get_contents($this->workDir . '/docker-calls')
         );
     }
@@ -301,6 +302,19 @@ final class LinkChartLibTest extends TestCase
         self::assertStringContainsString('Expected sibling clone at ../webtrees-chart-lib', $output);
         self::assertFalse(is_link($this->packagePath()));
         self::assertFileExists($this->packagePath() . '/package.json');
+    }
+
+    /**
+     * Returns the call that the stub docker command logs for the install, which runs as the user of the process. Skips
+     * the test when the posix extension is missing, because then the user cannot be determined.
+     */
+    private function installCall(): string
+    {
+        if (!function_exists('posix_getuid') || !function_exists('posix_getgid')) {
+            self::markTestSkipped('The posix extension is missing, so the process user cannot be determined.');
+        }
+
+        return 'compose run --rm --user ' . posix_getuid() . ':' . posix_getgid() . " -e HOME=/tmp node npm install --quiet\n";
     }
 
     /**

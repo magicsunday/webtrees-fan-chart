@@ -27,6 +27,7 @@ use function dirname;
 use function explode;
 use function file_get_contents;
 use function file_put_contents;
+use function function_exists;
 use function implode;
 use function is_dir;
 use function json_encode;
@@ -213,6 +214,10 @@ final class DistSmokeTest extends TestCase
 
         if (count($configured) < 2) {
             self::markTestSkipped('The module bundles fewer than two shared module-base views.');
+        }
+
+        if (!function_exists('posix_geteuid')) {
+            self::markTestSkipped('The posix extension is missing, so the process user cannot be determined.');
         }
 
         if (posix_geteuid() === 0) {
