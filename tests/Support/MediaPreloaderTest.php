@@ -13,12 +13,14 @@ namespace MagicSunday\Webtrees\FanChart\Test\Support;
 
 use Closure;
 use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\DB;
 use Fisharebest\Webtrees\Factories\CacheFactory;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\GedcomImportService;
 use Fisharebest\Webtrees\Services\TreeService;
+use Fisharebest\Webtrees\Services\UserService;
 use Fisharebest\Webtrees\Session;
 use Fisharebest\Webtrees\Site;
 use Fisharebest\Webtrees\Tree;
@@ -183,7 +185,18 @@ final class MediaPreloaderTest extends TestCase
 
         Registry::cache(new CacheFactory());
 
-        (new MediaPreloader())->preload($tree, $this->people($tree, $xrefs));
+        $people  = $this->people($tree, $xrefs);
+        $preload = $this->statementsOf(fn () => (new MediaPreloader())->preload($tree, $people));
+
+        // The people that the links point to are loaded by lists, and the preload asks for none of them
+        // on its own.
+        $singleLookups = array_filter(
+            $preload,
+            static fn (array $statement): bool => str_contains($statement['query'], 'from "wt_families" where "f_id" = ?')
+                || str_contains($statement['query'], 'from "wt_individuals" where "i_id" = ?'),
+        );
+
+        self::assertSame([], $singleLookups);
 
         $links = [];
 
@@ -222,7 +235,7 @@ final class MediaPreloaderTest extends TestCase
     #[DataProvider('mediaRules')]
     public function aVisitorSeesNoMediaThatTheTreeRestricts(?string $xref, ?string $tagType): void
     {
-        $tree  = $this->importPrivacyTreeWithRules([['xref' => $xref, 'tag_type' => $tagType]]);
+        $tree  = $this->importPrivacyTreeWithRules([['xref' => $xref, 'tag_type' => $tagType, 'resn' => 'confidential']]);
         $xrefs = ['1', '9'];
 
         $tree->setPreference('SHOW_HIGHLIGHT_IMAGES', '1');
@@ -240,6 +253,22 @@ final class MediaPreloaderTest extends TestCase
     }
 
     /**
+     * A rule of the tree that shows the media objects to visitors keeps them visible, although it names the
+     * level of a visitor exactly.
+     */
+    #[Test]
+    public function aVisitorSeesMediaThatTheTreeShowsToVisitors(): void
+    {
+        $tree = $this->importPrivacyTreeWithRules([['xref' => null, 'tag_type' => 'OBJE', 'resn' => 'none']]);
+
+        Auth::logout();
+
+        (new MediaPreloader())->preload($tree, $this->people($tree, ['1']));
+
+        self::assertSame(['one.jpg'], $this->highlightFiles($tree, ['1']));
+    }
+
+    /**
      * The rules of the tree that hide a media object from a visitor.
      *
      * @return array<string, array{string|null, string|null}>
@@ -250,6 +279,72 @@ final class MediaPreloaderTest extends TestCase
             'a rule for one media object' => ['8001', null],
             'a rule for the type'         => [null, 'OBJE'],
         ];
+    }
+
+    /**
+     * The record of a member is visible to the member whatever it is linked to, and the core decides that
+     * before it looks at the links. The preload leaves such a media object to the core.
+     */
+    #[Test]
+    public function theMediaObjectOfTheMemberIsLeftToTheCore(): void
+    {
+        $tree = $this->importPrivacyTree();
+
+        $member = (new UserService())->create('member', 'Member', 'member@example.test', 'secret');
+        $tree->setUserPreference($member, UserInterface::PREF_TREE_ROLE, UserInterface::ROLE_MEMBER);
+        $tree->setUserPreference($member, UserInterface::PREF_TREE_ACCOUNT_XREF, '8002');
+        Auth::login($member);
+
+        // The media object 8002 is linked to a person that a member may not see, and it is the record
+        // of the member, so the core shows it.
+        $withoutPreload = $this->highlightFiles($tree, ['2']);
+
+        self::assertSame(['two.jpg'], $withoutPreload);
+
+        Registry::cache(new CacheFactory());
+
+        (new MediaPreloader())->preload($tree, $this->people($tree, ['2']));
+
+        self::assertSame($withoutPreload, $this->highlightFiles($tree, ['2']));
+    }
+
+    /**
+     * An editor sees the pending changes of the records that a media object is linked to, which the preload
+     * does not load for them, so the visibility for an editor stays with the core. Here a pending change
+     * restricts the family that the media object of the person 9 is linked to.
+     */
+    #[Test]
+    public function theVisibilityForAnEditorStaysWithTheCore(): void
+    {
+        $tree = $this->importPrivacyTree();
+
+        $gedcom = DB::table('families')->where('f_id', '=', '9002')->where('f_file', '=', $tree->id())->value('f_gedcom');
+        self::assertIsString($gedcom);
+
+        DB::table('change')->insert([
+            'status'     => 'pending',
+            'gedcom_id'  => $tree->id(),
+            'xref'       => '9002',
+            'old_gedcom' => $gedcom,
+            'new_gedcom' => $gedcom . "\n1 RESN confidential",
+            'user_id'    => Auth::id(),
+        ]);
+
+        $editor = (new UserService())->create('editor', 'Editor', 'editor@example.test', 'secret');
+        $tree->setUserPreference($editor, UserInterface::PREF_TREE_ROLE, UserInterface::ROLE_EDITOR);
+        Auth::login($editor);
+
+        Registry::cache(new CacheFactory());
+
+        $withoutPreload = $this->highlightFiles($tree, ['9']);
+
+        self::assertSame([null], $withoutPreload);
+
+        Registry::cache(new CacheFactory());
+
+        (new MediaPreloader())->preload($tree, $this->people($tree, ['9']));
+
+        self::assertSame($withoutPreload, $this->highlightFiles($tree, ['9']));
     }
 
     /**
@@ -422,8 +517,8 @@ final class MediaPreloaderTest extends TestCase
     /**
      * Imports the tree of importPrivacyTree() with default restriction rules of the tree.
      *
-     * @param list<array{xref: string|null, tag_type: string|null}> $rules The rules, each with the confidential
-     *                                                                     level, for a record or for a type of record
+     * @param list<array{xref: string|null, tag_type: string|null, resn: string}> $rules The rules, each for a
+     *                                                                                   record or for a type of record
      */
     private function importPrivacyTreeWithRules(array $rules): Tree
     {
@@ -521,7 +616,7 @@ final class MediaPreloaderTest extends TestCase
                 'gedcom_id' => $tree->id(),
                 'xref'      => $rule['xref'],
                 'tag_type'  => $rule['tag_type'],
-                'resn'      => 'confidential',
+                'resn'      => $rule['resn'],
             ]);
         }
 

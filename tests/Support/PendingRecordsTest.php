@@ -26,6 +26,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function array_filter;
+use function count;
 use function sort;
 use function str_contains;
 
@@ -81,11 +82,31 @@ final class PendingRecordsTest extends TestCase
         $this->insertChange($tree, '105', 'pending');
         $this->insertChange($tree, '104', 'accepted');
 
+        $connection = DB::connection();
+        $connection->enableQueryLog();
+        $connection->flushQueryLog();
+
         $xrefs = PendingRecords::xrefs($tree, ['101', '102', '103', '104', '105'], 2);
+
+        $log = $connection->getQueryLog();
+        $connection->disableQueryLog();
 
         sort($xrefs);
 
         self::assertSame(['101', '103', '105'], $xrefs);
+
+        $changeStatements = array_filter(
+            $log,
+            static fn (array $entry): bool => str_contains($entry['query'], '"wt_change"'),
+        );
+
+        // Five xrefs in chunks of two are three statements, and each one binds the tree, the status and
+        // the xrefs of its chunk.
+        self::assertCount(3, $changeStatements);
+
+        foreach ($changeStatements as $entry) {
+            self::assertLessThanOrEqual(4, count($entry['bindings']));
+        }
     }
 
     /**
