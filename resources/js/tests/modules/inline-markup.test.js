@@ -81,6 +81,27 @@ describe("setInlineMarkup", () => {
         expect(target.innerHTML).toBe('<span class="NAME">Jane</span>');
     });
 
+    it("keeps an allowed element that sits inside a disallowed one", () => {
+        const target = render('<u><span class="NAME">Jane</span></u>');
+
+        expect(target.innerHTML).toBe('<span class="NAME">Jane</span>');
+    });
+
+    it("drops the content that the parser puts outside the body", () => {
+        const target = render("<title>Hidden title</title>Jane");
+
+        expect(target.textContent).toBe("Jane");
+        expect(target.children).toHaveLength(0);
+    });
+
+    it("drops the content of a template element", () => {
+        const target = render('Jane <template><span class="NAME">Hidden</span></template>Doe');
+
+        expect(target.textContent).toBe("Jane Doe");
+        expect(target.querySelector("template")).toBeNull();
+        expect(target.querySelector("span")).toBeNull();
+    });
+
     it.each(["span", "q", "bdi"])(
         "drops every attribute of %s except class, dir and translate",
         (tag) => {
@@ -124,7 +145,7 @@ describe("setInlineMarkup", () => {
         expect(target.innerHTML).not.toContain("hidden");
     });
 
-    it("renders an empty string as an empty element", () => {
+    it("renders an empty string as no child nodes", () => {
         expect(render("").childNodes).toHaveLength(0);
     });
 });

@@ -262,6 +262,30 @@ final class DataFacadePrivacyTest extends TestCase
     }
 
     /**
+     * The tooltip may show a silhouette once the tree preference for silhouettes is on, and the
+     * silhouette URL is the only carrier of that image. A visitor gets none for a person that the
+     * privacy engine hides, whereas a person that the visitor may see gets one.
+     */
+    #[Test]
+    public function visitorGetsNoSilhouetteUrlForAPrivatePersonWhenSilhouettesAreOn(): void
+    {
+        $tree = $this->importTree();
+
+        $tree->setPreference('USE_SILHOUETTE', '1');
+
+        // The control runs as the administrator, who sees the private person with a silhouette.
+        $administratorData = $this->nodeTree($tree, 'I3')->getData()->jsonSerialize();
+
+        self::assertNotSame('', $administratorData['silhouette']);
+
+        $privateData = $this->asVisitorNode($tree, 'I3')->getData()->jsonSerialize();
+        $publicData  = $this->asVisitorNode($tree, 'I1')->getData()->jsonSerialize();
+
+        self::assertSame('', $privateData['silhouette']);
+        self::assertNotSame('', $publicData['silhouette']);
+    }
+
+    /**
      * Builds the payload as a visitor, after the record cache of the administrator view is gone.
      *
      * @param Tree   $tree The imported tree

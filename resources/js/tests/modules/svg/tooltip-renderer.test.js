@@ -199,12 +199,18 @@ describe("TooltipRenderer", () => {
             event,
             createDatum({
                 name: foreign,
+                silhouette: "silhouette.svg",
                 birthPlace: "https://example.invalid/track.png",
                 deathPlace: foreign,
             }),
         );
 
-        expect(div.node().querySelector("img")).toBeNull();
+        const images = div.node().querySelectorAll("img");
+
+        // The tooltip rendered, and the one image is the silhouette of the server
+        expect(div.node().querySelector(".name").textContent).toBe(foreign);
+        expect(images).toHaveLength(1);
+        expect(images[0].getAttribute("src")).toBe("silhouette.svg");
     });
 
     it("escapes the silhouette source when silhouettes are enabled", () => {
@@ -245,18 +251,20 @@ describe("TooltipRenderer", () => {
     });
 
     // The display mode only controls the images in the arcs. The tooltip does not read it, so the
-    // photo stays when the mode is names only and when the mode is images only.
+    // photo stays when the mode is names only and when the mode is images only. The silhouette
+    // option is on, so the photo wins over a silhouette that is available.
     it.each([
         ["names only", { showImages: false, showNames: true }],
         ["images only", { showImages: true, showNames: false }],
         ["names and images", { showImages: true, showNames: true }],
     ])("shows the photo in the tooltip for the display mode %s", (_label, displayMode) => {
-        renderer = build(displayMode);
+        renderer = build({ ...displayMode, showTooltipSilhouettes: true });
         renderer.setTooltipHtml(
             event,
             createDatum({ thumbnail: "photo.jpg", silhouette: "silhouette.svg" }),
         );
 
+        expect(div.node().querySelectorAll("img")).toHaveLength(1);
         expect(div.node().querySelector(".image img").getAttribute("src")).toBe("photo.jpg");
     });
 
