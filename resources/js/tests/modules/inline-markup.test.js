@@ -81,18 +81,31 @@ describe("setInlineMarkup", () => {
         expect(target.innerHTML).toBe('<span class="NAME">Jane</span>');
     });
 
-    it("drops every attribute except class, dir and translate", () => {
-        const target = render(
-            '<span class="NAME" onclick="window.hostileRan = true" style="position:fixed" id="x" ' +
-                'data-a="1" dir="auto" translate="no">Jane</span>',
-        );
-        const span = target.querySelector("span");
+    it.each(["span", "q", "bdi"])(
+        "drops every attribute of %s except class, dir and translate",
+        (tag) => {
+            const target = render(
+                `<${tag} class="NAME" onclick="window.hostileRan = true" style="position:fixed" id="x" ` +
+                    `data-a="1" dir="auto" translate="no">Jane</${tag}>`,
+            );
+            const element = target.querySelector(tag);
 
-        expect([...span.attributes].map((attribute) => attribute.name).sort()).toEqual([
-            "class",
-            "dir",
-            "translate",
-        ]);
+            expect([...element.attributes].map((attribute) => attribute.name).sort()).toEqual([
+                "class",
+                "dir",
+                "translate",
+            ]);
+        },
+    );
+
+    it.each([
+        ["dir", "ltr"],
+        ["dir", "rtl"],
+        ["translate", "yes"],
+    ])("keeps the %s attribute with the allowed value %s", (name, value) => {
+        const span = render(`<span ${name}="${value}">Jane</span>`).querySelector("span");
+
+        expect(span.getAttribute(name)).toBe(value);
     });
 
     it.each([
