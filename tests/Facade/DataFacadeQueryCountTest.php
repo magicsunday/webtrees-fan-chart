@@ -29,24 +29,37 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\FanChart\Support\MediaPreloader;
+use MagicSunday\Webtrees\FanChart\Support\PendingRecords;
 use MagicSunday\Webtrees\FanChart\Test\Support\RealTreeFixtureTrait;
+use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
+use function array_filter;
 use function array_map;
 use function array_merge;
 use function count;
+use function file_put_contents;
+use function glob;
 use function implode;
 use function in_array;
 use function intdiv;
+use function is_dir;
 use function json_decode;
 use function json_encode;
 use function max;
+use function mkdir;
 use function range;
+use function rmdir;
 use function str_contains;
 use function strval;
+use function sys_get_temp_dir;
+use function uniqid;
+use function unlink;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -66,6 +79,8 @@ use const JSON_THROW_ON_ERROR;
  */
 #[CoversClass(DataFacade::class)]
 #[UsesClass(Configuration::class)]
+#[UsesClass(MediaPreloader::class)]
+#[UsesClass(PendingRecords::class)]
 #[UsesClass(Module::class)]
 #[UsesClass(Node::class)]
 #[UsesClass(NodeData::class)]
@@ -88,6 +103,12 @@ final class DataFacadeQueryCountTest extends TestCase
      * The module of the chart, which the facade reads its settings and its routes from.
      */
     private Module $module;
+
+    /**
+     * The index directory that holds the media files of the pedigree, or an empty string while
+     * the test has none.
+     */
+    private string $indexDirectory = '';
 
     /**
      * Boots webtrees on a real schema and registers the module of the chart.
@@ -114,6 +135,7 @@ final class DataFacadeQueryCountTest extends TestCase
         Site::$preferences = [];
         Registry::cache(new CacheFactory());
 
+        $this->removeMediaFiles();
         $this->restoreMinimalDatabase();
 
         parent::tearDown();
@@ -346,6 +368,146 @@ final class DataFacadeQueryCountTest extends TestCase
     }
 
     /**
+     * The media lookup of a request grows with the number of generations and not with the number of
+     * people, for the administrator and for a visitor, with and without the detail panel. The extra
+     * statements of the media are those that the same request sends beyond the request that has the
+     * highlight images switched off, so nothing but the media is counted. The visitor pays for the
+     * privacy check of every media object and for the records it is linked to.
+     *
+     * @param bool $visitor     Whether a visitor requests the chart and not the administrator
+     * @param bool $detailPanel Whether the detail panel is on
+     */
+    #[Test]
+    #[DataProvider('viewersAndPanels')]
+    public function mediaStatementsGrowWithTheGenerationsAndNotWithThePeople(bool $visitor, bool $detailPanel): void
+    {
+        $tree = $this->importPedigree(0, true, true);
+
+        if ($visitor) {
+            Auth::logout();
+        }
+
+        $tree->setPreference('SHOW_HIGHLIGHT_IMAGES', '');
+        $without = count($this->statements($tree, self::DEPTH, $detailPanel));
+
+        $tree->setPreference('SHOW_HIGHLIGHT_IMAGES', '1');
+        $with = count($this->statements($tree, self::DEPTH, $detailPanel));
+
+        // One media statement of every kind for each chunk of a generation: the media objects, their
+        // pending changes, the links and the records that the links point to.
+        $budget = 0;
+
+        foreach (range(1, self::DEPTH) as $generation) {
+            $budget += 5 * intdiv((2 ** ($generation - 1)) + MediaPreloader::CHUNK_SIZE - 1, MediaPreloader::CHUNK_SIZE);
+        }
+
+        self::assertGreaterThan(0, $with - $without, 'The media of the pedigree are looked up.');
+        self::assertLessThanOrEqual($budget, $with - $without);
+        self::assertLessThan(2 ** self::DEPTH, $with - $without);
+    }
+
+    /**
+     * No media statement binds as many values as a whole generation holds, so a tree of any width stays
+     * below the placeholder ceiling of the database, for the administrator and for a visitor alike.
+     *
+     * @param bool $visitor Whether a visitor requests the chart and not the administrator
+     */
+    #[Test]
+    #[DataProvider('viewers')]
+    public function noMediaStatementBindsAWholeGeneration(bool $visitor): void
+    {
+        $tree = $this->importPedigree(0, true, true);
+
+        if ($visitor) {
+            Auth::logout();
+        }
+
+        $widest = 0;
+
+        foreach ($this->statements($tree, self::DEPTH) as $statement) {
+            if (
+                str_contains($statement['query'], '"wt_media"')
+                || str_contains($statement['query'], '"wt_link"')
+            ) {
+                $widest = max($widest, count($statement['bindings']));
+            }
+        }
+
+        self::assertGreaterThan(0, $widest);
+        self::assertLessThan(self::PLACEHOLDER_BUDGET, $widest);
+    }
+
+    /**
+     * The images of the chart are those that the highlight image of the person yields without any
+     * preload, for the administrator and for a visitor. Half of the people have the file of their image
+     * on disk, so the chart shows a thumbnail for them and the silhouette for the others.
+     *
+     * @param bool $visitor Whether a visitor requests the chart and not the administrator
+     */
+    #[Test]
+    #[DataProvider('viewers')]
+    public function theImagesOfTheChartMatchTheHighlightImageOfEveryPerson(bool $visitor): void
+    {
+        $tree = $this->importPedigree(0, true, true);
+
+        if ($visitor) {
+            Auth::logout();
+        }
+
+        $payload  = $this->imagesInOrder($this->payload($tree, self::DEPTH));
+        $expected = [];
+
+        Registry::cache(new CacheFactory());
+
+        foreach ($this->heapOrder(self::DEPTH) as $person) {
+            $individual = Registry::individualFactory()->make((string) $person, $tree);
+            self::assertInstanceOf(Individual::class, $individual);
+
+            $processor = new ImageProcessor($this->module, $individual);
+
+            $expected[] = [
+                'xref'       => (string) $person,
+                'thumbnail'  => $processor->getHighlightImageUrl(100, 100),
+                'silhouette' => $processor->getSilhouetteUrl(),
+            ];
+        }
+
+        self::assertSame($expected, $payload);
+
+        $thumbnails = array_filter($payload, static fn (array $images): bool => str_contains($images['thumbnail'], 'media-thumbnail'));
+
+        self::assertCount(2 ** (self::DEPTH - 1), $thumbnails, 'Half of the people show a thumbnail.');
+    }
+
+    /**
+     * Pairs every viewer with the state of the detail panel.
+     *
+     * @return array<string, array{bool, bool}>
+     */
+    public static function viewersAndPanels(): array
+    {
+        return [
+            'administrator, panel on'  => [false, true],
+            'administrator, panel off' => [false, false],
+            'visitor, panel on'        => [true, true],
+            'visitor, panel off'       => [true, false],
+        ];
+    }
+
+    /**
+     * Lists the viewers.
+     *
+     * @return array<string, array{bool}>
+     */
+    public static function viewers(): array
+    {
+        return [
+            'administrator' => [false],
+            'visitor'       => [true],
+        ];
+    }
+
+    /**
      * Returns the xref of the family of a person, which is numeric like the xrefs of the people.
      *
      * @param int $person The person whose parents the family holds
@@ -392,8 +554,10 @@ final class DataFacadeQueryCountTest extends TestCase
      * @param bool $privacy  Whether the tree hides living people. Everybody in the pedigree is dead and so
      *                       public, but the visibility of a family then depends on all of its members, and the
      *                       privacy engine sends statements of its own for every record it checks.
+     * @param bool $media    Whether every person has a media object of their own as the highlight image. The
+     *                       file of the image exists for the people with an odd number only.
      */
-    private function importPedigree(int $siblings = 0, bool $privacy = false): Tree
+    private function importPedigree(int $siblings = 0, bool $privacy = false, bool $media = false): Tree
     {
         $people   = (2 ** self::DEPTH) - 1;
         $families = (2 ** (self::DEPTH - 1)) - 1;
@@ -409,6 +573,10 @@ final class DataFacadeQueryCountTest extends TestCase
             $lines[] = '2 PLAC Place' . ($person % 11);
             $lines[] = '1 DEAT';
             $lines[] = '2 DATE ' . (1950 + ($person % 40));
+
+            if ($media) {
+                $lines[] = '1 OBJE @' . $this->mediaXref($person) . '@';
+            }
 
             $lines[] = '1 FAMC @' . $this->familyXref($person) . '@';
 
@@ -445,6 +613,16 @@ final class DataFacadeQueryCountTest extends TestCase
             }
         }
 
+        if ($media) {
+            for ($person = 1; $person <= $people; ++$person) {
+                $lines[] = '0 @' . $this->mediaXref($person) . '@ OBJE';
+                $lines[] = '1 FILE person' . $person . '.jpg';
+                $lines[] = '2 FORM jpg';
+            }
+
+            $this->createMediaFiles($people);
+        }
+
         $lines[] = '0 TRLR';
 
         $tree = $this->importGedcom(implode("\n", $lines), 'pedigree');
@@ -457,14 +635,67 @@ final class DataFacadeQueryCountTest extends TestCase
     }
 
     /**
+     * Returns the xref of the media object of a person, which is numeric like the xrefs of the people.
+     *
+     * @param int $person The person who has the media object as the highlight image
+     */
+    private function mediaXref(int $person): string
+    {
+        return (string) (20000 + $person);
+    }
+
+    /**
+     * Creates the files of the images of the people with an odd number, in the media folder of a data
+     * directory that the tree reads. The other people have a media object whose file is missing.
+     *
+     * @param int $people The number of people of the pedigree
+     */
+    private function createMediaFiles(int $people): void
+    {
+        $this->indexDirectory = sys_get_temp_dir() . '/fan-chart-pedigree-' . uniqid('', true) . '/';
+
+        if (!mkdir($this->indexDirectory . 'media', 0o777, true) && !is_dir($this->indexDirectory . 'media')) {
+            self::fail('The media directory could not be created.');
+        }
+
+        for ($person = 1; $person <= $people; $person += 2) {
+            file_put_contents($this->indexDirectory . 'media/person' . $person . '.jpg', 'image');
+        }
+
+        Site::setPreference('INDEX_DIRECTORY', $this->indexDirectory);
+    }
+
+    /**
+     * Removes the media files and the directories of the test.
+     */
+    private function removeMediaFiles(): void
+    {
+        if ($this->indexDirectory === '') {
+            return;
+        }
+
+        $files = glob($this->indexDirectory . 'media/*');
+
+        foreach (($files === false) ? [] : $files as $file) {
+            unlink($file);
+        }
+
+        rmdir($this->indexDirectory . 'media');
+        rmdir($this->indexDirectory);
+
+        $this->indexDirectory = '';
+    }
+
+    /**
      * Returns the statements of one request on a cold record cache.
      *
      * @param Tree $tree        The imported tree
      * @param int  $generations The number of generations of the chart
+     * @param bool $detailPanel Whether the detail panel is on
      *
      * @return list<array{query: string, bindings: list<string>}>
      */
-    private function statements(Tree $tree, int $generations): array
+    private function statements(Tree $tree, int $generations, bool $detailPanel = true): array
     {
         Registry::cache(new CacheFactory());
 
@@ -472,7 +703,7 @@ final class DataFacadeQueryCountTest extends TestCase
         $connection->enableQueryLog();
         $connection->flushQueryLog();
 
-        $this->nodeTree($tree, $generations);
+        $this->nodeTree($tree, $generations, $detailPanel);
 
         $log = $connection->getQueryLog();
         $connection->disableQueryLog();
@@ -513,15 +744,16 @@ final class DataFacadeQueryCountTest extends TestCase
      *
      * @param Tree $tree        The imported tree
      * @param int  $generations The number of generations of the chart
+     * @param bool $detailPanel Whether the detail panel is on
      */
-    private function nodeTree(Tree $tree, int $generations): Node
+    private function nodeTree(Tree $tree, int $generations, bool $detailPanel = true): Node
     {
         $individual = Registry::individualFactory()->make('1', $tree);
         self::assertInstanceOf(Individual::class, $individual);
 
         $request = (new ServerRequest('GET', '/'))->withQueryParams([
             'generations'     => (string) $generations,
-            'showDetailPanel' => '1',
+            'showDetailPanel' => $detailPanel ? '1' : '0',
             'showPlaces'      => '1',
         ]);
 
@@ -534,6 +766,55 @@ final class DataFacadeQueryCountTest extends TestCase
         self::assertInstanceOf(Node::class, $node);
 
         return $node;
+    }
+
+    /**
+     * Lists the xref and the images of every person of a payload, depth first.
+     *
+     * @param string $payload The JSON payload
+     *
+     * @return list<array{xref: string, thumbnail: string, silhouette: string}>
+     */
+    private function imagesInOrder(string $payload): array
+    {
+        $tree = json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
+        self::assertIsArray($tree);
+
+        return $this->collectImages($tree);
+    }
+
+    /**
+     * Lists the xref and the images of a decoded node and of the parents below it, depth first.
+     *
+     * @param array<array-key, mixed> $node A node of the decoded payload
+     *
+     * @return list<array{xref: string, thumbnail: string, silhouette: string}>
+     */
+    private function collectImages(array $node): array
+    {
+        $data = $node['data'] ?? null;
+        self::assertIsArray($data);
+        self::assertIsString($data['xref'] ?? null);
+        self::assertIsString($data['thumbnail'] ?? null);
+        self::assertIsString($data['silhouette'] ?? null);
+
+        $images = [
+            [
+                'xref'       => $data['xref'],
+                'thumbnail'  => $data['thumbnail'],
+                'silhouette' => $data['silhouette'],
+            ],
+        ];
+
+        $parents = $node['parents'] ?? [];
+        self::assertIsArray($parents);
+
+        foreach ($parents as $parent) {
+            self::assertIsArray($parent);
+            $images = [...$images, ...$this->collectImages($parent)];
+        }
+
+        return $images;
     }
 
     /**

@@ -36,6 +36,7 @@ use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\FanChart\Support\ContextText;
+use MagicSunday\Webtrees\FanChart\Support\MediaPreloader;
 use MagicSunday\Webtrees\FanChart\Support\PendingRecords;
 use MagicSunday\Webtrees\FanChart\Test\Support\IndividualFixtureTrait;
 use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
@@ -72,6 +73,7 @@ use const PHP_URL_QUERY;
 #[UsesClass(Node::class)]
 #[UsesClass(NodeData::class)]
 #[UsesClass(ContextText::class)]
+#[UsesClass(MediaPreloader::class)]
 #[UsesClass(PendingRecords::class)]
 final class ModuleRequestTest extends TestCase
 {
