@@ -29,10 +29,7 @@ use function is_file;
 use function json_decode;
 use function mkdir;
 use function preg_match_all;
-use function proc_close;
-use function proc_open;
 use function reset;
-use function stream_get_contents;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
@@ -50,10 +47,17 @@ use const FILE_SKIP_EMPTY_LINES;
 #[CoversNothing]
 final class LangLoopTest extends TestCase
 {
+    /**
+     * Runs the commands of the scratch copy.
+     */
+    private ProcessRunner $processRunner;
+
     private string $workDir = '';
 
     protected function setUp(): void
     {
+        $this->processRunner = new ProcessRunner();
+
         $base = tempnam(sys_get_temp_dir(), 'lang-loop-');
         self::assertIsString($base);
 
@@ -67,7 +71,7 @@ final class LangLoopTest extends TestCase
 
         $root = dirname(__DIR__, 2);
 
-        $this->execute(
+        $this->processRunner->execute(
             ['cp', '-R', $root . '/Makefile', $root . '/Make', $root . '/composer.json', $this->workDir . '/module/'],
             $this->workDir
         );
@@ -79,7 +83,7 @@ final class LangLoopTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->execute(['rm', '-rf', $this->workDir], sys_get_temp_dir());
+        $this->processRunner->execute(['rm', '-rf', $this->workDir], sys_get_temp_dir());
     }
 
     /**
@@ -157,8 +161,8 @@ final class LangLoopTest extends TestCase
     }
 
     /**
-     * The POT names the module after the package in composer.json, whichever fragment sets the name, and not
-     * after the checkout directory, which is the same in every CI container.
+     * The POT names the module after MODULE_NAME of the parameter file, which is the package name of
+     * composer.json, and not after the checkout directory, which is the same in every CI container.
      */
     #[Test]
     public function namesTheModuleAfterThePackageInComposerJson(): void
@@ -283,7 +287,7 @@ final class LangLoopTest extends TestCase
      */
     private function make(string $target, array $options = []): array
     {
-        return $this->execute(
+        return $this->processRunner->execute(
             ['make', $target, 'COMPOSE_RUN=', 'COMPOSE_RUN_USER=', ...$options],
             $this->workDir . '/module',
             [
@@ -291,34 +295,5 @@ final class LangLoopTest extends TestCase
                 'HOME' => $this->workDir,
             ]
         );
-    }
-
-    /**
-     * @param list<string>          $command
-     * @param array<string, string> $environment
-     *
-     * @return array{int, string}
-     */
-    private function execute(array $command, string $workingDirectory, array $environment = ['PATH' => '/usr/local/bin:/usr/bin:/bin']): array
-    {
-        $process = proc_open(
-            $command,
-            [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
-            $pipes,
-            $workingDirectory,
-            $environment
-        );
-
-        self::assertIsResource($process);
-
-        $standardOutput = $pipes[1] ?? null;
-        $standardError  = $pipes[2] ?? null;
-
-        self::assertIsResource($standardOutput);
-        self::assertIsResource($standardError);
-
-        $output = stream_get_contents($standardOutput) . stream_get_contents($standardError);
-
-        return [proc_close($process), $output];
     }
 }

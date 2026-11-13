@@ -33,7 +33,19 @@ COMPOSE_BIN := $(shell \
 COMPOSE_RUN := $(COMPOSE_BIN) run --rm node
 
 # Includes
--include Make/*.mk
+# The parameter file of the module is read first, so that every shared fragment sees its values
+# whatever the order of the file names. A module without the file stops here.
+$(if $(wildcard Make/module.mk),,$(error Make/module.mk is missing, copy it from module.mk.example of the template and set the values of the module))
+include Make/module.mk
+
+# Parameters that the shared fragments need. SHARED_VIEWS may be empty, but a module has to define it,
+# so that having no shared views is a decision and not a forgotten line.
+REQUIRED_MODULE_PARAMETERS := MODULE_NAME SCOPE_NS WEBTREES_CONSTRAINT CHART_LIB_MARKER SHARED_VIEWS
+
+$(foreach parameter,$(REQUIRED_MODULE_PARAMETERS),$(if $(filter undefined,$(origin $(parameter))),$(error Make/module.mk does not define $(parameter))))
+$(foreach parameter,$(filter-out SHARED_VIEWS,$(REQUIRED_MODULE_PARAMETERS)),$(if $(strip $($(parameter))),,$(error Make/module.mk leaves $(parameter) empty)))
+
+-include $(filter-out Make/module.mk,$(wildcard Make/*.mk))
 -include Make/**/*.mk
 
 # Argument fix workaround

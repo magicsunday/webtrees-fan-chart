@@ -129,6 +129,7 @@ describe("Text", () => {
             { label: "Beatrice", isPreferred: true, isLastName: false, isNameRtl: false },
         ];
         const parent = {
+            node: () => document.createElementNS("http://www.w3.org/2000/svg", "text"),
             style: jest.fn((property) => (property === "font-size" ? "12px" : "700")),
         };
         const shortened = [{ label: "kept" }];
@@ -154,6 +155,32 @@ describe("Text", () => {
         truncateNamesMock.mock.calls[0][2]("Anna");
 
         expect(measureTextMock).toHaveBeenCalledTimes(1);
+        expect(measureTextMock).toHaveBeenCalledWith("Anna", "Arial", "12px", "700");
+    });
+
+    // Reading a style of a label that was just created makes the browser calculate the style of the
+    // whole tree again, so the reads must not grow with the number of labels of a pass
+    it("reads the font of the labels of a pass once for all of them", () => {
+        const svg = { style: jest.fn(() => "Arial") };
+        const geometry = {};
+        const fontReads = jest.fn((property) => (property === "font-size" ? "12px" : "700"));
+        const nameGroup = [
+            { label: "Anna", isPreferred: false, isLastName: false, isNameRtl: false },
+        ];
+
+        for (let index = 0; index < 20; ++index) {
+            const parent = {
+                node: () => document.createElementNS("http://www.w3.org/2000/svg", "text"),
+                style: fontReads,
+            };
+            const text = new Text(svg, createConfiguration(), geometry);
+
+            text.truncateNamesData(parent, nameGroup, 100);
+        }
+
+        expect(svg.style).toHaveBeenCalledTimes(1);
+        expect(fontReads).toHaveBeenCalledTimes(2);
+        expect(measureTextMock).toHaveBeenCalledTimes(20);
     });
 
     describe("renderTimespanLines", () => {
@@ -444,6 +471,28 @@ describe("Text", () => {
                 "39.5px",
             ]);
         });
+
+        it("adds no gap between groups when the stack below the image has only names", () => {
+            expect(dyOf(40, [[], []])).toEqual(["18.25px", "27.75px"]);
+        });
+
+        it("starts the dates of a stack below the image after the group gap even without names", () => {
+            expect(dyOf(40, [["date"], ["date"]])).toEqual(["22.75px", "32.25px"]);
+        });
+
+        it("centers a stack of names without a gap between the lines of the group", () => {
+            expect(dyOf(0, [[], []])).toEqual(["-2.75px", "6.75px"]);
+        });
+
+        it("separates an alternative name from the date even when no name precedes it", () => {
+            expect(dyOf(0, [["wt-chart-box-name-alt"], ["date"]])).toEqual(["-5.25px", "9.25px"]);
+        });
+
+        it("stacks an alternative name in a right-to-left script like any other alternative name", () => {
+            expect(dyOf(0, [[], [], ["wt-chart-box-name-alt", "rtl"], ["date"], ["date"]])).toEqual(
+                dyOf(0, [[], [], ["wt-chart-box-name-alt"], ["date"], ["date"]]),
+            );
+        });
     });
 
     describe("transformOuterText", () => {
@@ -510,6 +559,76 @@ describe("Text", () => {
             // offset of the layout on top of the baseline correction.
             expect(rotations[0]).toBeCloseTo(baselineAngle - lineGap / 2, 6);
             expect(rotations[1]).toBeCloseTo(baselineAngle + lineGap / 2, 6);
+        });
+
+        it("spreads the lines of an ancestor label on the left half by the font scale", () => {
+            const nodes = [
+                { classes: [] },
+                { classes: ["wt-chart-box-name-alt", "rtl"] },
+                { classes: ["date"] },
+            ];
+            const parent = {
+                selectAll: () => ({
+                    size: () => nodes.length,
+                    each(callback) {
+                        nodes.forEach((node, index) => callback.call(node, node, index));
+                    },
+                }),
+            };
+            const text = new Text(svgStub, createConfiguration({ fontScale: 150 }), {
+                scale: () => -Math.PI / 3,
+                centerRadius: () => 100,
+                getFontSize: () => 10,
+                angularWidthDeg: () => 100,
+            });
+
+            text.transformOuterText(parent, { depth: 3, x0: 0.4, x1: 0.6 });
+
+            const rotations = nodes.map((node) =>
+                Number(/^rotate\((-?[\d.e-]+)\) translate\(-90\)$/.exec(node.attrs.transform)?.[1]),
+            );
+
+            // An alternative name belongs to the group of the names, so the
+            // dates are the only lines set apart by the wide gap
+            expect(rotations[0]).toBeCloseTo(38.4511, 3);
+            expect(rotations[1]).toBeCloseTo(28.9973, 3);
+            expect(rotations[2]).toBeCloseTo(20.4029, 3);
+        });
+
+        it("compresses the lines of an ancestor label into a narrow arc", () => {
+            const nodes = [{ classes: [] }, { classes: ["date"] }];
+            const parent = {
+                selectAll: () => ({
+                    size: () => nodes.length,
+                    each(callback) {
+                        nodes.forEach((node, index) => callback.call(node, node, index));
+                    },
+                }),
+            };
+            const text = new Text(svgStub, createConfiguration(), {
+                scale: () => Math.PI / 2,
+                centerRadius: () => 100,
+                getFontSize: () => 10,
+                angularWidthDeg: () => 4,
+            });
+
+            text.transformOuterText(parent, { depth: 3, x0: 0.4, x1: 0.6 });
+
+            const rotations = nodes.map((node) =>
+                Number(/^rotate\((-?[\d.e-]+)\) translate\(90\)$/.exec(node.attrs.transform)?.[1]),
+            );
+
+            // 85 percent of 4 degrees is the span of the two lines
+            expect(rotations[1] - rotations[0]).toBeCloseTo(3.4, 6);
+        });
+
+        it("leaves a descendant label on the right half unflipped", () => {
+            const transform = transformOf(
+                createDescendantText((fraction) => fraction * 3 * Math.PI),
+            );
+
+            // Middle of the arc at three quarters of a turn: 270 + (90 - baseline angle), mirrored translate
+            expect(transform).toMatch(/^rotate\(359\.42\d*\) translate\(-90\)$/);
         });
 
         it("falls back to the top when the descendant sector has no scale", () => {

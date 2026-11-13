@@ -13,11 +13,10 @@
 # without a PO is seeded from the POT by lang-merge.
 LOCALES := $(notdir $(patsubst %/,%,$(wildcard resources/lang/*/)))
 
-# The package name from composer.json, without the vendor, so this file stays
-# byte-identical across the modules and does not depend on the checkout
-# directory, which is /app in the CI container. It feeds the POT header, and
-# a versioned POT passes it on to the headers of the PO files.
-MODULE_NAME := $(shell sed -n 's/.*"name": *"[^/"]*\/\([^"]*\)".*/\1/p' composer.json | head -n 1)
+# MODULE_NAME comes from Make/module.mk, which the Makefile reads before this file,
+# so this file does not depend on the checkout directory, which is /app in the CI
+# container. It feeds the POT header, and a versioned POT passes it on to the headers
+# of the PO files.
 
 POT_FILE  := resources/lang/messages.pot
 PO_FILES  := $(foreach loc,$(LOCALES),resources/lang/$(loc)/messages.po)
@@ -30,7 +29,7 @@ MO_FILES  := $(PO_FILES:.po=.mo)
 # them and no translation tool offers them. The list is the intersection of the
 # core POT files of the releases named in CORE_RELEASES, rebuilt by
 # `lang-core-owned`. A module that wants the list sets CORE_RELEASES in its
-# Makefile, above the include of Make/*.mk. The first release is the floor of the
+# Make/module.mk, which is read before this file. The first release is the floor of the
 # webtrees constraint of composer.json, and a release core ships later is added.
 # A module without the file and without CORE_RELEASES ignores all of this.
 CORE_OWNED    ?= dev/core-owned.pot

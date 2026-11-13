@@ -9,7 +9,7 @@ import * as d3 from "../d3.js";
 import { appendArc } from "./arc.js";
 import { createColorStripArcGenerator, createPersonArcGenerator } from "./arc-factory.js";
 import TooltipRenderer from "./tooltip-renderer.js";
-import LabelRenderer from "./label-renderer.js";
+import Text from "./text.js";
 import { SEX_FEMALE, SEX_MALE } from "../hierarchy.js";
 import { classifyElement } from "./lifecycle.js";
 
@@ -126,12 +126,7 @@ export default class Person {
             const imageSize = this._computeImageSize(datum);
 
             if (this._configuration.showNames) {
-                const labelRenderer = new LabelRenderer(
-                    this._svg,
-                    this._configuration,
-                    this._geometry,
-                );
-                labelRenderer.addLabel(content, datum, imageSize ?? 0);
+                this.addLabelToPerson(content, datum, imageSize ?? 0);
             }
 
             // Place image after text is rendered
@@ -146,6 +141,29 @@ export default class Person {
             const tooltipRenderer = new TooltipRenderer(this._svg, this._configuration);
             tooltipRenderer.bindEvents(person, datum);
         }
+    }
+
+    /**
+     * Appends a <g class="wt-chart-box-name name"> to the person, sets its font
+     * size from the depth-scaled geometry, then lets Text create the lines of
+     * the label inside it.
+     *
+     * @param {Selection<any, any, any, any>} person    The <g class="person"> D3 selection or its content group
+     * @param {HierarchyNode}                 datum     The D3 partition datum
+     * @param {number}                        imageSize The size of the person's image in px that the text makes room for, 0 for no image
+     *
+     * @private
+     */
+    addLabelToPerson(person, datum, imageSize) {
+        const label = person
+            .append("g")
+            .attr("class", "wt-chart-box-name name")
+            .style("font-size", `${this._geometry.getFontSize(datum)}px`);
+
+        new Text(this._svg, this._configuration, this._geometry, imageSize).createLabels(
+            label,
+            datum,
+        );
     }
 
     /**

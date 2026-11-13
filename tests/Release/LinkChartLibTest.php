@@ -23,11 +23,8 @@ use function is_link;
 use function mkdir;
 use function posix_getgid;
 use function posix_getuid;
-use function proc_close;
-use function proc_open;
 use function readlink;
 use function realpath;
-use function stream_get_contents;
 use function symlink;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -44,6 +41,11 @@ use function unlink;
 final class LinkChartLibTest extends TestCase
 {
     /**
+     * Runs the commands of the scratch copy.
+     */
+    private ProcessRunner $processRunner;
+
+    /**
      * Scratch directory that holds the module copy, the sibling clone and the stub docker command.
      */
     private string $workDir = '';
@@ -56,6 +58,8 @@ final class LinkChartLibTest extends TestCase
      */
     protected function setUp(): void
     {
+        $this->processRunner = new ProcessRunner();
+
         $base = tempnam(sys_get_temp_dir(), 'link-chart-lib-');
         self::assertIsString($base);
 
@@ -68,7 +72,7 @@ final class LinkChartLibTest extends TestCase
 
         $root = dirname(__DIR__, 2);
 
-        $this->execute(['cp', '-R', $root . '/Makefile', $root . '/Make', $this->workDir . '/module/'], $this->workDir);
+        $this->processRunner->execute(['cp', '-R', $root . '/Makefile', $root . '/Make', $this->workDir . '/module/'], $this->workDir);
 
         file_put_contents(
             $this->workDir . '/bin/docker',
@@ -96,7 +100,7 @@ final class LinkChartLibTest extends TestCase
      */
     protected function tearDown(): void
     {
-        $this->execute(['rm', '-rf', $this->workDir], sys_get_temp_dir());
+        $this->processRunner->execute(['rm', '-rf', $this->workDir], sys_get_temp_dir());
     }
 
     /**
@@ -142,16 +146,7 @@ final class LinkChartLibTest extends TestCase
     #[Test]
     public function failsWithoutTheSiblingCloneAndKeepsTheInstalledPackage(): void
     {
-        mkdir($this->packagePath(), 0o777, true);
-
-        file_put_contents($this->packagePath() . '/package.json', '{}');
-
-        [$status, $output] = $this->make('link-chart-lib');
-
-        self::assertNotSame(0, $status);
-        self::assertStringContainsString('Expected sibling clone at ../webtrees-chart-lib', $output);
-        self::assertFalse(is_link($this->packagePath()));
-        self::assertFileExists($this->packagePath() . '/package.json');
+        $this->assertLinkIsRefusedAndTheInstalledPackageStays();
     }
 
     /**
@@ -162,16 +157,8 @@ final class LinkChartLibTest extends TestCase
     public function failsWithAnEmptySiblingDirectoryAndKeepsTheInstalledPackage(): void
     {
         mkdir($this->workDir . '/webtrees-chart-lib', 0o777, true);
-        mkdir($this->packagePath(), 0o777, true);
 
-        file_put_contents($this->packagePath() . '/package.json', '{}');
-
-        [$status, $output] = $this->make('link-chart-lib');
-
-        self::assertNotSame(0, $status);
-        self::assertStringContainsString('Expected sibling clone at ../webtrees-chart-lib', $output);
-        self::assertFalse(is_link($this->packagePath()));
-        self::assertFileExists($this->packagePath() . '/package.json');
+        $this->assertLinkIsRefusedAndTheInstalledPackageStays();
     }
 
     /**
@@ -299,6 +286,24 @@ final class LinkChartLibTest extends TestCase
     }
 
     /**
+     * Installs a package, runs the link target and asserts that it fails with the clone message and leaves the package
+     * as it was.
+     */
+    private function assertLinkIsRefusedAndTheInstalledPackageStays(): void
+    {
+        mkdir($this->packagePath(), 0o777, true);
+
+        file_put_contents($this->packagePath() . '/package.json', '{}');
+
+        [$status, $output] = $this->make('link-chart-lib');
+
+        self::assertNotSame(0, $status);
+        self::assertStringContainsString('Expected sibling clone at ../webtrees-chart-lib', $output);
+        self::assertFalse(is_link($this->packagePath()));
+        self::assertFileExists($this->packagePath() . '/package.json');
+    }
+
+    /**
      * Returns the path of the chart-lib package inside the module copy.
      */
     private function packagePath(): string
@@ -313,7 +318,7 @@ final class LinkChartLibTest extends TestCase
      */
     private function make(string $target): array
     {
-        return $this->execute(
+        return $this->processRunner->execute(
             ['make', $target],
             $this->workDir . '/module',
             [
@@ -321,36 +326,5 @@ final class LinkChartLibTest extends TestCase
                 'HOME' => $this->workDir,
             ]
         );
-    }
-
-    /**
-     * Runs a command without a shell and returns its exit status together with the standard output and error.
-     *
-     * @param list<string>          $command
-     * @param array<string, string> $environment
-     *
-     * @return array{int, string}
-     */
-    private function execute(array $command, string $workingDirectory, array $environment = ['PATH' => '/usr/local/bin:/usr/bin:/bin']): array
-    {
-        $process = proc_open(
-            $command,
-            [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
-            $pipes,
-            $workingDirectory,
-            $environment
-        );
-
-        self::assertIsResource($process);
-
-        $standardOutput = $pipes[1] ?? null;
-        $standardError  = $pipes[2] ?? null;
-
-        self::assertIsResource($standardOutput);
-        self::assertIsResource($standardError);
-
-        $output = stream_get_contents($standardOutput) . stream_get_contents($standardError);
-
-        return [proc_close($process), $output];
     }
 }

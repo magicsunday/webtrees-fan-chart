@@ -178,7 +178,7 @@ export default class TooltipRenderer {
             return `<div class="image"><img src="${escapeHtml(thumbnail)}" alt=""></div>`;
         }
 
-        if (this._configuration.showSilhouettes && silhouette !== "") {
+        if (this._configuration.showTooltipSilhouettes && silhouette !== "") {
             const darkClass = isDarkSurface() ? " image-silhouette-dark" : "";
             return `<div class="image image-silhouette${darkClass}"><img src="${escapeHtml(silhouette)}" alt="" /></div>`;
         }
