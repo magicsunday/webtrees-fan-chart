@@ -76,6 +76,7 @@ trait IndividualFixtureTrait
      * @param ArrayObject<int, string>|null $factReads  Receives the tag of every read of the facts of the person
      * @param bool                          $isDead     Whether the person is marked as dead
      * @param bool                          $visible    Whether the viewer may see the person
+     * @param string|null                   $fullName   The HTML that fullName() returns, or null for "Person <xref>"
      *
      * @return Individual&Stub
      */
@@ -93,12 +94,13 @@ trait IndividualFixtureTrait
         ?ArrayObject $factReads = null,
         bool $isDead = false,
         bool $visible = true,
+        ?string $fullName = null,
     ): Individual {
         $person = self::createStub(Individual::class);
         $person->method('xref')->willReturn($xref);
         $person->method('url')->willReturn('/individual/' . $xref);
         $person->method('sex')->willReturn($sex);
-        $person->method('fullName')->willReturn('Person ' . $xref);
+        $person->method('fullName')->willReturn($fullName ?? ('Person ' . $xref));
         $person->method('canShow')->willReturn($visible);
         $person->method('canShowName')->willReturn($visible);
         $person->method('getAllNames')->willReturn($this->buildNameSet('Person', $xref));

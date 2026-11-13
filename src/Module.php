@@ -337,9 +337,12 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
         $individual = Registry::individualFactory()->make($xref, $tree);
         $individual = Auth::checkIndividualAccess($individual, false, true);
 
+        $title = $this->getPageTitle($individual);
+
         return response([
-            'title' => $this->getPageTitle($individual),
-            'data'  => $this->dataFacade->createTreeStructure($this, $this->configuration, $individual),
+            'title'     => $title,
+            'titleText' => html_entity_decode(strip_tags($title), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            'data'      => $this->dataFacade->createTreeStructure($this, $this->configuration, $individual),
         ]);
     }
 

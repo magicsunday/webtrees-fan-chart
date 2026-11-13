@@ -167,6 +167,7 @@ describe("TooltipRenderer", () => {
     });
 
     it("escapes the thumbnail source so it cannot break out of the attribute", () => {
+        renderer = build({ showTooltipSilhouettes: true });
         renderer.setTooltipHtml(
             event,
             createDatum({ thumbnail: `x" onerror="alert(1)`, silhouette: "other.svg" }),
@@ -176,6 +177,34 @@ describe("TooltipRenderer", () => {
 
         expect(image.getAttribute("src")).toBe(`x" onerror="alert(1)`);
         expect(image.hasAttribute("onerror")).toBe(false);
+    });
+
+    it("takes the image URL only from the route that the server built", () => {
+        const route = "/tree/main/mediafile?xref=X1&fact_id=abc&thumbnail=1";
+
+        renderer = build({ showTooltipSilhouettes: true });
+        renderer.setTooltipHtml(event, createDatum({ thumbnail: route, silhouette: "other.svg" }));
+
+        const images = div.node().querySelectorAll("img");
+
+        expect(images).toHaveLength(1);
+        expect(images[0].getAttribute("src")).toBe(route);
+    });
+
+    it("builds no image from a URL that other fields of the person carry", () => {
+        const foreign = '<img src="https://example.invalid/track.png">';
+
+        renderer = build({ showTooltipSilhouettes: true });
+        renderer.setTooltipHtml(
+            event,
+            createDatum({
+                name: foreign,
+                birthPlace: "https://example.invalid/track.png",
+                deathPlace: foreign,
+            }),
+        );
+
+        expect(div.node().querySelector("img")).toBeNull();
     });
 
     it("escapes the silhouette source when silhouettes are enabled", () => {

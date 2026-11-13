@@ -11,6 +11,7 @@ import Person from "./svg/person.js";
 import Marriage from "./svg/marriage.js";
 import FamilyColor from "./svg/family-color.js";
 import { applyFamilyColorMode, isDrawnPerson, isMarriageParent } from "./draw-rules.js";
+import { setInlineMarkup } from "./inline-markup.js";
 import { motionDuration } from "./motion.js";
 import { clearUpdateNotice, showUpdateNotice } from "./update-notice.js";
 
@@ -35,7 +36,9 @@ import { clearUpdateNotice, showUpdateNotice } from "./update-notice.js";
  * The JSON body of the chart AJAX endpoint.
  *
  * @typedef {object} ChartResponse
- * @property {string}    title The rendered page title, may contain HTML markup
+ * @property {string}    title     The rendered page title for the heading, with the inline markup of the
+ *                                 name. Only the elements of inline-markup.js reach the page
+ * @property {string}    [titleText] The same title as plain text, for the browser tab
  * @property {NodeDatum} data  The raw JSON chart data tree
  */
 
@@ -190,13 +193,13 @@ export default class ChartUpdater {
         const pageTitle = document.querySelector(".wt-page-title");
 
         if (pageTitle) {
-            pageTitle.innerHTML = data.title;
+            setInlineMarkup(pageTitle, data.title);
         }
 
-        // Strip HTML tags for the browser tab title
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = data.title;
-        document.title = tempDiv.textContent || "";
+        // The tab title is the plain text of the server and is never derived from the markup
+        if (typeof data.titleText === "string") {
+            document.title = data.titleText;
+        }
     }
 
     /**

@@ -450,11 +450,32 @@ final class ModuleRequestTest extends TestCase
     {
         $response = $this->createModule()->getUpdateAction($this->updateRequest($this->createChartIndividual()));
 
-        /** @var array{title: string, data: array{data: array{xref: string}}} $payload */
+        /** @var array{title: string, titleText: string, data: array{data: array{xref: string}}} $payload */
         $payload = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertSame('Fan chart of Person I1', $payload['title']);
+        self::assertSame('Fan chart of Person I1', $payload['titleText']);
         self::assertSame('I1', $payload['data']['data']['xref']);
+    }
+
+    /**
+     * The heading keeps the markup of the name, and the browser tab gets the same title as plain
+     * text, with the markup removed and the entities of the escaped name decoded.
+     */
+    #[Test]
+    public function theUpdateActionAnswersWithAPlainTextTitleNextToTheMarkupOne(): void
+    {
+        $name = '<span class="NAME" dir="auto" translate="no">Jane &amp; <span class="SURN">&lt;b&gt;O&#039;Doe</span> <q class="wt-nickname">Jay</q></span>';
+
+        $response = $this->createModule()->getUpdateAction(
+            $this->updateRequest($this->createChartIndividual($name))
+        );
+
+        /** @var array{title: string, titleText: string} $payload */
+        $payload = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame('Fan chart of ' . $name, $payload['title']);
+        self::assertSame("Fan chart of Jane & <b>O'Doe Jay", $payload['titleText']);
     }
 
     /**
@@ -521,9 +542,9 @@ final class ModuleRequestTest extends TestCase
     /**
      * Creates a person with everything that the facade reads for the chart.
      */
-    private function createChartIndividual(): Individual
+    private function createChartIndividual(?string $fullName = null): Individual
     {
-        return $this->createPerson($this->tree, 'I1', 'M', '1 JAN 1900', '1 JAN 1980');
+        return $this->createPerson($this->tree, 'I1', 'M', '1 JAN 1900', '1 JAN 1980', fullName: $fullName);
     }
 
     /**
