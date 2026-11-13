@@ -398,6 +398,78 @@ final class MediaPreloaderTest extends TestCase
     }
 
     /**
+     * A member who is no editor is decided at the level of a member, which sees a record that only
+     * members may see, while a visitor does not. The media object that such a record is linked to is
+     * visible to the member and hidden from the visitor, and one that a manager-only record is linked to
+     * is hidden from both.
+     */
+    #[Test]
+    public function aMemberSeesWhatMembersMaySee(): void
+    {
+        $this->createIndexDirectory(['one', 'two', 'three']);
+
+        $person = static fn (int $number, string $restriction, string $media): array => [
+            '0 @' . $number . '@ INDI',
+            '1 NAME Given' . $number . ' /Family/',
+            ...(($restriction === '') ? [] : ['1 RESN ' . $restriction]),
+            '1 DEAT',
+            '2 DATE 1900',
+            '1 OBJE @' . $media . '@',
+        ];
+
+        $tree = $this->importGedcom(
+            implode("\n", [
+                '0 HEAD',
+                ...$person(1, '', '8101'),
+                ...$person(4, '', '8102'),
+                ...$person(5, 'privacy', '8102'),
+                ...$person(6, '', '8103'),
+                ...$person(7, 'confidential', '8103'),
+                '0 @8101@ OBJE',
+                '1 FILE one.jpg',
+                '2 FORM jpg',
+                '0 @8102@ OBJE',
+                '1 FILE two.jpg',
+                '2 FORM jpg',
+                '0 @8103@ OBJE',
+                '1 FILE three.jpg',
+                '2 FORM jpg',
+                '0 TRLR',
+            ]),
+            'members',
+        );
+
+        $tree->setPreference('HIDE_LIVE_PEOPLE', '1');
+        $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);
+        $tree->setPreference('SHOW_HIGHLIGHT_IMAGES', '1');
+
+        $xrefs = ['1', '4', '6'];
+
+        $member = (new UserService())->create('member', 'Member', 'member@example.test', 'secret');
+        $tree->setUserPreference($member, UserInterface::PREF_TREE_ROLE, UserInterface::ROLE_MEMBER);
+        Auth::login($member);
+        Registry::cache(new CacheFactory());
+
+        $withoutPreload = $this->highlightFiles($tree, $xrefs);
+
+        self::assertSame(['one.jpg', 'two.jpg', null], $withoutPreload);
+
+        Registry::cache(new CacheFactory());
+
+        (new MediaPreloader())->preload($tree, $this->people($tree, $xrefs));
+
+        self::assertSame($withoutPreload, $this->highlightFiles($tree, $xrefs));
+
+        // The visitor sees less than the member.
+        Auth::logout();
+        Registry::cache(new CacheFactory());
+
+        (new MediaPreloader())->preload($tree, $this->people($tree, $xrefs));
+
+        self::assertSame(['one.jpg', null, null], $this->highlightFiles($tree, $xrefs));
+    }
+
+    /**
      * The rules of the tree that hide a media object from a visitor.
      *
      * @return array<string, array{string|null, string|null}>
