@@ -6,9 +6,10 @@
  */
 
 /**
- * The elements that webtrees puts around a rendered name, and the attributes that they carry. Every
- * other element and every other attribute is left out, and an attribute value outside its list is
- * left out as well.
+ * The elements that a rendered name may be wrapped in, and the attributes that they carry. The name
+ * markup of an individual holds span and q, and bdi is tolerated as well, since core uses it for the
+ * names of other records. Every other element and every other attribute is left out, and an
+ * attribute value outside its list is left out as well.
  *
  * @type {ReadonlyMap<string, ReadonlySet<string>>}
  */
@@ -31,8 +32,9 @@ const ALLOWED_VALUES = new Map([
 /**
  * Copies the child nodes of a parsed node into the target. An element of the allowlist is created
  * anew in the document of the target with its allowed attributes, so no node of the parsed document
- * is adopted. Any other element in the body is replaced by its text, a comment or processing instruction is
- * dropped.
+ * is adopted. Any other element is replaced by the copies of its own children, so its text stays
+ * and an allowed element nested in it is kept. The content of a template element is not a child
+ * of it and is dropped, and so is a comment or processing instruction.
  *
  * @param {Node} source The parsed node whose children are copied
  * @param {Node} target The node that receives the copies

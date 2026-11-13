@@ -36,10 +36,10 @@ import { clearUpdateNotice, showUpdateNotice } from "./update-notice.js";
  * The JSON body of the chart AJAX endpoint.
  *
  * @typedef {object} ChartResponse
- * @property {string}    title     The rendered page title for the heading, with the inline markup of the
- *                                 name. Only the elements of inline-markup.js reach the page
+ * @property {string}    title       The rendered page title for the heading, with the inline markup of
+ *                                   the name. Only the elements of inline-markup.js reach the page
  * @property {string}    [titleText] The same title as plain text, for the browser tab
- * @property {NodeDatum} data  The raw JSON chart data tree
+ * @property {NodeDatum} data        The raw JSON chart data tree
  */
 
 /**
