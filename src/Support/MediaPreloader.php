@@ -105,11 +105,17 @@ final class MediaPreloader
         $xrefs = [];
 
         foreach ($people as $person) {
-            if (!$person->canShow()) {
+            preg_match_all('/\n1 OBJE @(' . Gedcom::REGEX_XREF . ')@/', $person->gedcom(), $match);
+
+            // A person without a media object needs no visibility check, which can read the families
+            // of the parents before the preload of the families has loaded them.
+            if ($match[1] === []) {
                 continue;
             }
 
-            preg_match_all('/\n1 OBJE @(' . Gedcom::REGEX_XREF . ')@/', $person->gedcom(), $match);
+            if (!$person->canShow()) {
+                continue;
+            }
 
             foreach ($match[1] as $xref) {
                 if (isset($this->requested[$xref])) {
@@ -121,7 +127,7 @@ final class MediaPreloader
             }
         }
 
-        return array_values(array_unique($xrefs));
+        return $xrefs;
     }
 
     /**

@@ -357,6 +357,47 @@ final class MediaPreloaderTest extends TestCase
     }
 
     /**
+     * A person without a date and without a media object has nothing to look up. Whether the viewer may see
+     * such a person depends on the families of its parents, so asking before the media objects are looked
+     * for would read those families, ahead of the preload of the families and for nothing.
+     */
+    #[Test]
+    public function aPersonWithoutMediaIsNotCheckedForVisibility(): void
+    {
+        $tree = $this->importGedcom(
+            implode("\n", [
+                '0 HEAD',
+                '0 @1@ INDI',
+                '1 NAME First /Person/',
+                '1 FAMC @9@',
+                '0 @2@ INDI',
+                '1 NAME Father /Person/',
+                '1 FAMS @9@',
+                '0 @3@ INDI',
+                '1 NAME Mother /Person/',
+                '1 FAMS @9@',
+                '0 @9@ FAM',
+                '1 HUSB @2@',
+                '1 WIFE @3@',
+                '1 CHIL @1@',
+                '0 TRLR',
+            ]),
+            'nodates',
+        );
+
+        $tree->setPreference('HIDE_LIVE_PEOPLE', '1');
+        $tree->setPreference('SHOW_HIGHLIGHT_IMAGES', '1');
+
+        Auth::logout();
+        Registry::cache(new CacheFactory());
+
+        $people     = $this->people($tree, ['1']);
+        $statements = $this->statementsOf(fn () => (new MediaPreloader())->preload($tree, $people));
+
+        self::assertSame([], $statements);
+    }
+
+    /**
      * The rules of the tree that hide a media object from a visitor.
      *
      * @return array<string, array{string|null, string|null}>
