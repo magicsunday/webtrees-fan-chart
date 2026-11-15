@@ -54,8 +54,9 @@ final class PayloadToken
 
         // A JSON escape ends in a letter or hex digits, so it would glue itself to a year that
         // follows it (a dash between years is written as a unicode escape). A space keeps the
-        // boundary of the year.
-        $text = preg_replace('/\\\\(?:u[0-9a-fA-F]{4}|[bfnrt])/', ' ', $payload) ?? $payload;
+        // boundary of the year. An escaped backslash is consumed as a unit, so the letter after
+        // it stays a plain letter.
+        $text = preg_replace('/\\\\(?:\\\\|u[0-9a-fA-F]{4}|[bfnrt])/', ' ', $payload) ?? $payload;
 
         return preg_match('/(?<![0-9A-Za-z])' . preg_quote($token, '/') . '(?![0-9A-Za-z])/', $text) === 1;
     }
