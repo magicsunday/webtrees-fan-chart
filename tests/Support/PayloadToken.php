@@ -21,10 +21,10 @@ use function str_contains;
 
 /**
  * Looks for a value in the JSON text of a chart payload. A numeric value such as a year only counts
- * as a whole number, because the payload also holds asset URLs with a numeric hash parameter that
- * can contain the digits of a year inside a longer number, and a JSON unicode escape does not count
- * as digits. Any other value is a
- * plain substring search.
+ * when no letter or digit touches it, because the payload also holds asset URLs with a signature
+ * in hexadecimal digits and a numeric hash parameter that can contain the digits of a year inside a
+ * longer run of characters, and a JSON escape does not count as a letter or digit. Any other value
+ * is a plain substring search.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -40,7 +40,8 @@ final class PayloadToken
     }
 
     /**
-     * Returns whether the payload holds the token, a numeric token as a whole number only.
+     * Returns whether the payload holds the token, a numeric token only when no letter or digit
+     * touches it.
      *
      * @param string $payload The JSON text
      * @param string $token   The value to look for
@@ -51,11 +52,13 @@ final class PayloadToken
             return str_contains($payload, $token);
         }
 
-        // A JSON unicode escape ends in hex digits, so it would glue itself to a year that follows it
-        // (a dash between two years is written as one). A space keeps the boundary of the year.
-        $text = preg_replace('/\\\\u[0-9a-fA-F]{4}/', ' ', $payload) ?? $payload;
+        // A JSON escape ends in a letter or hex digits, so it would glue itself to a year that
+        // follows it (a dash between years is written as a unicode escape). A space keeps the
+        // boundary of the year. An escaped backslash is consumed as a unit, so the letter after
+        // it stays a plain letter.
+        $text = preg_replace('/\\\\(?:\\\\|u[0-9a-fA-F]{4}|[bfnrt])/', ' ', $payload) ?? $payload;
 
-        return preg_match('/(?<!\d)' . preg_quote($token, '/') . '(?!\d)/', $text) === 1;
+        return preg_match('/(?<![0-9A-Za-z])' . preg_quote($token, '/') . '(?![0-9A-Za-z])/', $text) === 1;
     }
 
     /**

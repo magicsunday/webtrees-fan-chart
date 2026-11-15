@@ -18,8 +18,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests that a numeric token is found as a whole number only, so that the digits of an asset hash
- * never count as a year, while a real year in a field of the payload is still found.
+ * Tests that a numeric token is found only when no letter or digit touches it, so that the digits
+ * of an asset hash or signature never count as a year, while a real year in a field of the payload
+ * is still found.
  *
  * @author  Rico Sonntag <mail@ricosonntag.de>
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
@@ -29,7 +30,8 @@ use PHPUnit\Framework\TestCase;
 final class PayloadTokenTest extends TestCase
 {
     /**
-     * Payloads and the tokens that they hold.
+     * Payloads and the tokens that they hold. The cases span whole numbers next to dashes and
+     * escaped dashes, the digits and letters of a hash or signature beside a year and plain names.
      *
      * @return iterable<string, array{string, string}>
      */
@@ -43,12 +45,22 @@ final class PayloadTokenTest extends TestCase
         yield 'year after an escaped en dash' => ['{"timespan":"1850\u20131896"}', '1896'];
         yield 'year before an escaped en dash' => ['{"timespan":"1896\u20131950"}', '1896'];
         yield 'year after an escaped en dash next to a hash' => ['{"hash":"1794418966","timespan":"1850\u20131896"}', '1896'];
+        yield 'year in brackets' => ['{"timespan":"(1896)"}', '1896'];
+        yield 'year after a space' => ['{"timespan":"1850 1896"}', '1896'];
+        yield 'year after an escaped newline' => ['{"note":"line\n1896"}', '1896'];
+        yield 'year after an escaped tab' => ['{"note":"a\t1896"}', '1896'];
+        yield 'year after an escaped carriage return' => ['{"note":"a\r1896"}', '1896'];
+        yield 'year after an escaped backspace' => ['{"note":"a\b1896"}', '1896'];
+        yield 'year after an escaped form feed' => ['{"note":"a\f1896"}', '1896'];
+        yield 'year after a unicode escape that ends in a hexadecimal letter' => ['{"note":"x\u00ea1896"}', '1896'];
+        yield 'year next to a hexadecimal signature' => ['{"url":"a.png?s=3f1896a9&birth=1896"}', '1896'];
         yield 'name' => ['{"name":"Livingfather"}', 'Livingfather'];
         yield 'name inside a longer word' => ['{"name":"Livingfathers"}', 'Livingfather'];
     }
 
     /**
-     * Payloads and the tokens that they do not hold.
+     * Payloads and the tokens that they do not hold. The cases span the digits and letters of a hash or
+     * signature around a year, numbers that only contain a year and plain names.
      *
      * @return iterable<string, array{string, string}>
      */
@@ -61,6 +73,11 @@ final class PayloadTokenTest extends TestCase
         yield 'name' => ['{"name":"Publicfather"}', 'Livingfather'];
         yield 'year glued to a longer number after an escaped en dash' => ['{"timespan":"1850\u201318961"}', '1896'];
         yield 'year inside a hash next to an escaped en dash' => ['{"timespan":"1850\u20131900","hash":"1794418966"}', '1896'];
+        yield 'year inside letters' => ['{"hash":"a1896b"}', '1896'];
+        yield 'year before a hexadecimal letter' => ['{"hash":"1896f"}', '1896'];
+        yield 'year after a hexadecimal letter' => ['{"hash":"f1896"}', '1896'];
+        yield 'year inside a hexadecimal signature' => ['{"url":"a.png?s=3f1896a9"}', '1896'];
+        yield 'year after an escaped backslash and a letter' => ['{"note":"\\\\n1896"}', '1896'];
         yield 'empty payload' => ['', '1896'];
     }
 
