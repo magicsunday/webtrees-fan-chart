@@ -601,6 +601,11 @@ final class DistSmokeTest extends TestCase
             'padded'          => ["3.4.0 \n"],
             'two lines'       => ["3.4.0\n3.4.1\n"],
             'extra line'      => ["3.4.0\nnote\n"],
+            'zero major'      => ["03.4.0\n"],
+            'zero minor'      => ["3.04.0\n"],
+            'zero patch'      => ["3.4.00\n"],
+            'empty part'      => ["3.4.0-..\n"],
+            'empty mid part'  => ["3.4.0-rc..1\n"],
             'bare suffix'     => ["3.4.0-\n"],
         ];
     }

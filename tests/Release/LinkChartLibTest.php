@@ -292,16 +292,18 @@ final class LinkChartLibTest extends TestCase
      */
     private function assertLinkIsRefusedAndTheInstalledPackageStays(): void
     {
+        $installedContent = '{"name":"installed-package"}';
+
         mkdir($this->packagePath(), 0o777, true);
 
-        file_put_contents($this->packagePath() . '/package.json', '{}');
+        file_put_contents($this->packagePath() . '/package.json', $installedContent);
 
         [$status, $output] = $this->make('link-chart-lib');
 
         self::assertNotSame(0, $status);
         self::assertStringContainsString('Expected sibling clone at ../webtrees-chart-lib', $output);
         self::assertFalse(is_link($this->packagePath()));
-        self::assertFileExists($this->packagePath() . '/package.json');
+        self::assertStringEqualsFile($this->packagePath() . '/package.json', $installedContent);
     }
 
     /**

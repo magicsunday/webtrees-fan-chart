@@ -37,13 +37,15 @@ VENDOR_DIR       := .build/vendor
 MODULE_BASE_PKG  := magicsunday/webtrees-module-base
 MODULE_BASE_PATH := $(VENDOR_DIR)/$(MODULE_BASE_PKG)
 
-# The version of the module base that dist records and dist-smoke checks. The deferred assignment keeps the double
-# dollar, which make turns into the end anchor of the regular expression.
-MODULE_BASE_VERSION_PATTERN = ^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$$
+# The version of the module base that dist records and dist-smoke checks. A numeric component is 0 or starts with a
+# non-zero digit and every pre-release identifier is non-empty. The deferred assignment keeps the double dollar, which
+# make turns into the end anchor of the regular expression.
+MODULE_BASE_VERSION_PATTERN = ^v?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z]+(\.[0-9A-Za-z]+)*)?$$
 
-# The release version that release-check, release-publish and release-bump accept. The deferred assignment keeps the
-# double dollar, which make turns into the end anchor of the regular expression.
-RELEASE_VERSION_PATTERN = ^[0-9]+\.[0-9]+\.[0-9]+$$
+# The release version that release-check, release-publish and release-bump accept, a semantic version without
+# leading zeros. The deferred assignment keeps the double dollar, which make turns into the end anchor of the regular
+# expression.
+RELEASE_VERSION_PATTERN = ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$$
 RELEASE_VERSION_ERROR   = Error: VERSION must be semver (e.g. 3.1.0, no v prefix, no suffix)
 
 # SCOPE_NS is the per-module namespace prefix injected into the bundled module-base
