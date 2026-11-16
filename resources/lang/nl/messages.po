@@ -5,7 +5,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/magicsunday/webtrees-fan-chart/"
 "issues\n"
 "POT-Creation-Date: 1970-01-01 00:00+0000\n"
-"PO-Revision-Date: 2026-10-29 06:19+0100\n"
+"PO-Revision-Date: 2026-11-13 07:47+0100\n"
 "Last-Translator: TheDutchJewel <thedutchjewel@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -53,7 +53,7 @@ msgstr "Klik op een persoon"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Click or Enter on a person"
-msgstr ""
+msgstr "Klik of druk op Enter op een persoon"
 
 #: resources/views/modules/fan-chart/form/colors.phtml:23
 msgid "Colors"
@@ -95,7 +95,7 @@ msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Details panel"
-msgstr ""
+msgstr "Detailspaneel"
 
 #: resources/views/modules/fan-chart/form/display.phtml:23
 msgid "Display"
@@ -161,7 +161,7 @@ msgstr ""
 msgid "Generations"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:79
+#: resources/views/modules/fan-chart/form/display.phtml:78
 msgid "Hide empty segments"
 msgstr "Verberg lege segmenten"
 
@@ -188,7 +188,7 @@ msgstr ""
 "naam of als landcode. Gebruikers kunnen de plaatsweergave in- of "
 "uitschakelen in het diagramformulier."
 
-#: resources/views/modules/fan-chart/form/display.phtml:60
+#: resources/views/modules/fan-chart/form/display.phtml:59
 msgid ""
 "Images are only shown if the arc segment is wide enough. Images for "
 "descendants are not yet available."
@@ -233,13 +233,13 @@ msgstr ""
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Move between the persons"
-msgstr ""
+msgstr "Tussen de personen wisselen"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:28
 msgid "Move the chart"
 msgstr "Diagram verplaatsen"
 
-#: src/Module.php:264
+#: src/Module.php:265
 msgid "Move the view with two fingers"
 msgstr "Verplaats de weergave met twee vingers"
 
@@ -261,9 +261,9 @@ msgstr "Persoonspagina openen"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:26
 msgid "Open the individual page or center the chart on the person"
-msgstr ""
+msgstr "Open de persoonspagina of centreer het diagram op de persoon"
 
-#: resources/views/modules/fan-chart/form/display.phtml:72
+#: resources/views/modules/fan-chart/form/display.phtml:71
 msgid ""
 "Partners and children are shown as arcs below the ancestor section. The fan "
 "size is limited to 180–270 degrees when enabled."
@@ -307,7 +307,7 @@ msgstr "Rechtsklik"
 msgid "Select a person in the chart to see the details here."
 msgstr "Selecteer een persoon in de grafiek om hier de gegevens te bekijken."
 
-#: resources/views/modules/fan-chart/form/display.phtml:66
+#: resources/views/modules/fan-chart/form/display.phtml:65
 msgid "Show descendants"
 msgstr "Nakomelingen tonen"
 
@@ -373,7 +373,7 @@ msgstr "Toon plaatsen"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:25
 msgid "Show the details of the person in the panel"
-msgstr ""
+msgstr "Toon de details van de persoon in het paneel"
 
 #: resources/views/modules/fan-chart/form/details.phtml:59
 msgid ""
@@ -401,22 +401,22 @@ msgstr "Schakelen tussen volledig scherm en normale weergave"
 
 #: resources/views/modules/components/buttonbar/help-button.phtml:24
 msgid "Tab key"
-msgstr ""
+msgstr "Tab-toets"
 
-#: src/Module.php:265
+#: src/Module.php:266
 msgid "The chart could not be updated. Please try again."
-msgstr ""
+msgstr "Het diagram kon niet worden bijgewerkt. Probeer het opnieuw."
 
 #: resources/views/modules/fan-chart/form/display.phtml:59
 msgid "The display option only affects the arcs, not the tooltip."
-msgstr ""
+msgstr "De weergaveoptie heeft alleen invloed op de bogen, niet op de tooltip."
 
 #: src/Module/ConfigTrait.php:151
 #, php-format
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:263
+#: src/Module.php:264
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Gebruik Ctrl + scroll om in te zoomen op de weergave"
 
