@@ -17,6 +17,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
 
 use function array_diff;
 use function array_unique;
@@ -46,7 +47,7 @@ final class SharedViewsBundleTest extends TestCase
     #[Test]
     public function bundlesEverySharedViewThatTheViewsOfTheModuleRender(): void
     {
-        $rendered = self::renderedSharedViews();
+        $rendered = $this->renderedSharedViews();
 
         self::assertNotSame([], $rendered, 'the scan finds the shared views that the module renders');
 
@@ -59,12 +60,16 @@ final class SharedViewsBundleTest extends TestCase
      *
      * @return list<string>
      */
-    private static function renderedSharedViews(): array
+    private function renderedSharedViews(): array
     {
         $directory = dirname(__DIR__, 2) . '/resources/views';
         $names     = [];
 
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+            if (!$file instanceof SplFileInfo) {
+                continue;
+            }
+
             if (!str_ends_with($file->getPathname(), '.phtml')) {
                 continue;
             }
