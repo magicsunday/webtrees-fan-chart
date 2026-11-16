@@ -592,7 +592,38 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
-     * A version without the release format stops the bump before anything is committed or sent.
+     * A version that has the release format is not refused for its format, also when a component is zero or has
+     * several digits.
+     */
+    #[Test]
+    #[DataProvider('validVersions')]
+    public function releaseCheckAcceptsTheFormatOfAValidVersion(string $version): void
+    {
+        $this->installReleaseCheckStubs('main');
+
+        [, $output] = $this->runTarget('release-check', $version);
+
+        self::assertStringNotContainsString('VERSION must be semver', $output);
+    }
+
+    /**
+     * Provides versions that have the release format and are not refused for it.
+     *
+     * @return array<string, array{string}> The version by description
+     */
+    public static function validVersions(): array
+    {
+        return [
+            'zero major'          => ['0.1.1'],
+            'zero minor'          => ['1.0.1'],
+            'zero patch'          => ['1.1.0'],
+            'zero components'     => ['0.0.1'],
+            'several digits each' => ['10.20.30'],
+        ];
+    }
+
+    /**
+     * A version without the release format stops the bump before anything is changed, committed or sent.
      */
     #[Test]
     #[DataProvider('malformedNonEmptyVersions')]
@@ -601,13 +632,15 @@ final class ReleasePublishTest extends TestCase
         $this->createRepositoryWithRemote();
         $this->installStub('npm', "#!/bin/sh\nexit 0\n");
 
-        $headBefore = trim($this->git(['rev-parse', 'HEAD'], $this->workDir . '/module'));
+        $headBefore    = trim($this->git(['rev-parse', 'HEAD'], $this->workDir . '/module'));
+        $changesBefore = $this->git(['status', '--porcelain'], $this->workDir . '/module');
 
         [$status, $output] = $this->runTarget('release-bump', $version);
 
         self::assertNotSame(0, $status);
         self::assertStringContainsString('VERSION must be semver', $output);
         self::assertSame($headBefore, trim($this->git(['rev-parse', 'HEAD'], $this->workDir . '/module')));
+        self::assertSame($changesBefore, $this->git(['status', '--porcelain'], $this->workDir . '/module'));
         self::assertSame([], $this->remoteRefs());
     }
 

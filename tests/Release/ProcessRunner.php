@@ -27,8 +27,16 @@ use function unlink;
  * @license https://opensource.org/licenses/GPL-3.0 GNU General Public License v3.0
  * @link    https://github.com/magicsunday/webtrees-fan-chart/
  */
-final class ProcessRunner
+final readonly class ProcessRunner
 {
+    /**
+     * @param string|null $temporaryDirectory The directory for the capture files, the system directory by default
+     */
+    public function __construct(
+        private ?string $temporaryDirectory = null,
+    ) {
+    }
+
     /**
      * Runs a command without a shell and returns its exit status together with the standard output and error.
      *
@@ -43,8 +51,9 @@ final class ProcessRunner
      */
     public function execute(array $command, string $workingDirectory, array $environment = ['PATH' => '/usr/local/bin:/usr/bin:/bin']): array
     {
-        $outputFile = tempnam(sys_get_temp_dir(), 'release-output-');
-        $errorFile  = tempnam(sys_get_temp_dir(), 'release-error-');
+        $directory  = $this->temporaryDirectory ?? sys_get_temp_dir();
+        $outputFile = tempnam($directory, 'release-output-');
+        $errorFile  = tempnam($directory, 'release-error-');
 
         Assert::assertIsString($outputFile);
         Assert::assertIsString($errorFile);

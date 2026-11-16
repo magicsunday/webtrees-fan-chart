@@ -11,10 +11,17 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test\Release;
 
+use FilesystemIterator;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function bin2hex;
+use function explode;
+use function iterator_count;
+use function mkdir;
+use function random_bytes;
+use function rmdir;
 use function strlen;
 use function sys_get_temp_dir;
 
@@ -63,5 +70,39 @@ final class ProcessRunnerTest extends TestCase
 
         self::assertSame(3, $status);
         self::assertSame('outputerror', $output);
+    }
+
+    /**
+     * The files that capture the output of the child are created in the directory the helper was given and are gone
+     * after the run, also when the child exits with a failure status.
+     */
+    #[Test]
+    public function removesItsCaptureFilesAfterARun(): void
+    {
+        $directory = sys_get_temp_dir() . '/release-runner-' . bin2hex(random_bytes(6));
+
+        mkdir($directory);
+
+        try {
+            [$status, $output] = (new ProcessRunner($directory))->execute(
+                [PHP_BINARY, '-r', 'echo readlink("/proc/self/fd/1"), "\n", readlink("/proc/self/fd/2"); exit(1);'],
+                $directory
+            );
+
+            self::assertSame(1, $status);
+
+            $paths = explode("\n", $output);
+
+            self::assertCount(2, $paths);
+
+            foreach ($paths as $path) {
+                self::assertStringStartsWith($directory . '/', $path);
+                self::assertFileDoesNotExist($path);
+            }
+
+            self::assertSame(0, iterator_count(new FilesystemIterator($directory)));
+        } finally {
+            rmdir($directory);
+        }
     }
 }
