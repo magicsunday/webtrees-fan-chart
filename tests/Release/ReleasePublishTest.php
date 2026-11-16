@@ -592,8 +592,8 @@ final class ReleasePublishTest extends TestCase
     }
 
     /**
-     * A version that has the release format is not refused for its format, also when a component is zero or has
-     * several digits.
+     * A version that has the release format passes the release check, also when a component is zero or has several
+     * digits. The check ends with its success message, so a target that stops before the format check fails the test.
      */
     #[Test]
     #[DataProvider('validVersions')]
@@ -601,8 +601,10 @@ final class ReleasePublishTest extends TestCase
     {
         $this->installReleaseCheckStubs('main');
 
-        [, $output] = $this->runTarget('release-check', $version);
+        [$status, $output] = $this->runTarget('release-check', $version);
 
+        self::assertSame(0, $status);
+        self::assertStringContainsString('Release checks passed for ' . $version, $output);
         self::assertStringNotContainsString('VERSION must be semver', $output);
     }
 

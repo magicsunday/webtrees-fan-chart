@@ -74,7 +74,8 @@ final class ProcessRunnerTest extends TestCase
 
     /**
      * The files that capture the output of the child are created in the directory the helper was given and are gone
-     * after the run, also when the child exits with a failure status.
+     * after the run, also when the child exits with a failure status. The child lists the entries of that directory
+     * while it runs, so the test does not depend on a platform specific view of the open files of a process.
      */
     #[Test]
     public function removesItsCaptureFilesAfterARun(): void
@@ -85,7 +86,7 @@ final class ProcessRunnerTest extends TestCase
 
         try {
             [$status, $output] = (new ProcessRunner($directory))->execute(
-                [PHP_BINARY, '-r', 'echo readlink("/proc/self/fd/1"), "\n", readlink("/proc/self/fd/2"); exit(1);'],
+                [PHP_BINARY, '-r', 'echo implode("\n", glob($argv[1] . "/*")); exit(1);', $directory],
                 $directory
             );
 
