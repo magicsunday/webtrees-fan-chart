@@ -43,7 +43,7 @@ CHART_LIB_MARKER := webtrees-chart-lib-infra.es.js
 # extension. The view namespace is scoped to webtrees-module-base- and the JavaScript
 # name of the module, so it is unique per module. A module without shared views
 # defines the variable empty, the archive then carries the module-base source only.
-SHARED_VIEWS := detail-panel help-popover toolbar-style
+SHARED_VIEWS := center-button checkbox detail-panel help-popover png-export-button svg-export-button toolbar-style
 
 # Optional. The webtrees core releases whose catalogues define the texts that core
 # owns, see Make/lang.mk. Leave the line out when the module keeps no such list.
