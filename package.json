@@ -29,8 +29,8 @@
         "typecheck": "tsc --noEmit -p tsconfig.json"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.6.4",
-        "@magicsunday/coding-standard": "github:magicsunday/coding-standard#3.10.0",
+        "@biomejs/biome": "2.6.6",
+        "@magicsunday/coding-standard": "github:magicsunday/coding-standard#3.11.0",
         "@rollup/plugin-node-resolve": "^16.0",
         "@rollup/plugin-terser": "^1.0",
         "@types/d3-fetch": "^3.0.7",
@@ -52,7 +52,7 @@
         "d3-zoom": "^3.0",
         "jest": "^30.5",
         "jest-environment-jsdom": "^30.5",
-        "jscpd": "5.4.2",
+        "jscpd": "5.4.3",
         "rollup": "^4.66",
         "rollup-plugin-license": "^3.0",
         "typescript": "^7.0.2"
