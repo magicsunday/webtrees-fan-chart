@@ -9,7 +9,9 @@
 
 declare(strict_types=1);
 
+use Fisharebest\Webtrees\I18N;
 use MagicSunday\Webtrees\FanChart\Configuration;
+use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
 
 /**
  * @var Configuration $configuration
@@ -20,15 +22,15 @@ use MagicSunday\Webtrees\FanChart\Configuration;
 <div class="btn-toolbar justify-content-end">
     <div class="btn-group">
         <?php echo view($moduleName . '::modules/components/buttonbar/fullscreen-button'); ?>
-        <?php echo view($moduleName . '::modules/components/buttonbar/center-button'); ?>
+        <?php echo view(SharedViews::NAMESPACE . '::center-button', ['title' => I18N::translate('Re center')]); ?>
     </div>
     <?php if (($configuration->getHidePngExport() === false) || ($configuration->getHideSvgExport() === false)) { ?>
         <div class="btn-group ms-2">
             <?php if ($configuration->getHidePngExport() === false) { ?>
-                <?php echo view($moduleName . '::modules/components/buttonbar/png-export-button'); ?>
+                <?php echo view(SharedViews::NAMESPACE . '::png-export-button', ['title' => I18N::translate('Export as PNG')]); ?>
             <?php } ?>
             <?php if ($configuration->getHideSvgExport() === false) { ?>
-                <?php echo view($moduleName . '::modules/components/buttonbar/svg-export-button'); ?>
+                <?php echo view(SharedViews::NAMESPACE . '::svg-export-button', ['title' => I18N::translate('Export as SVG')]); ?>
             <?php } ?>
         </div>
     <?php } ?>
