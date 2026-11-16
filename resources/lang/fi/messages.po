@@ -55,11 +55,11 @@ msgstr "Napsauta henkilöä"
 msgid "Click or Enter on a person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/colors.phtml:23
+#: resources/views/modules/fan-chart/form/colors.phtml:24
 msgid "Colors"
 msgstr "Värit"
 
-#: resources/views/modules/fan-chart/form/colors.phtml:34
+#: resources/views/modules/fan-chart/form/colors.phtml:35
 msgid ""
 "Colors the arcs by family branch. Each couple shares the same color, derived "
 "from the chosen base colors."
@@ -67,11 +67,11 @@ msgstr ""
 "Värittää kaaret sukuhaaran mukaan. Jokainen pari jakaa saman värin, joka on "
 "johdettu valituista perusväreistä."
 
-#: resources/views/modules/fan-chart/config.phtml:26
+#: resources/views/modules/fan-chart/config.phtml:27
 msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:86
+#: resources/views/modules/fan-chart/config.phtml:87
 msgid ""
 "Controls which name part shrinks first when an arc is too narrow for the "
 "full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
@@ -85,11 +85,11 @@ msgstr ""
 msgid "Ctrl + scroll"
 msgstr "Ctrl + vieritys"
 
-#: resources/views/modules/fan-chart/config.phtml:109
+#: resources/views/modules/fan-chart/config.phtml:110
 msgid "Date precision"
 msgstr "Päivämäärien tarkkuus"
 
-#: resources/views/modules/fan-chart/form/details.phtml:23
+#: resources/views/modules/fan-chart/form/details.phtml:24
 msgid "Details"
 msgstr ""
 
@@ -97,11 +97,11 @@ msgstr ""
 msgid "Details panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:23
+#: resources/views/modules/fan-chart/form/display.phtml:24
 msgid "Display"
 msgstr "Näyttö"
 
-#: resources/views/modules/fan-chart/form/details.phtml:46
+#: resources/views/modules/fan-chart/form/details.phtml:47
 msgid ""
 "Displays birth and death places in the chart arcs where space allows. For "
 "descendants with many children, places are automatically suppressed. The "
@@ -113,7 +113,7 @@ msgstr ""
 "Yksityiskohtien taso ja päivämääräntarkkuus määritetään sivuston laajuisesti "
 "moduulin asetuksissa."
 
-#: resources/views/modules/fan-chart/form/details.phtml:72
+#: resources/views/modules/fan-chart/form/details.phtml:73
 msgid ""
 "Displays the marriage date of each couple in a narrow arc between "
 "generations. When descendants are enabled, also shows the marriage date "
@@ -123,11 +123,11 @@ msgstr ""
 "välissä. Kun jälkeläiset ovat käytössä, näyttää myös keskihenkilön ja hänen "
 "puolisoidensa vihkimispäivän."
 
-#: resources/views/modules/components/buttonbar/png-export-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:30
 msgid "Export as PNG"
 msgstr "Vie PNG-muodossa"
 
-#: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:33
 msgid "Export as SVG"
 msgstr "Vie SVG-muodossa"
 
@@ -152,7 +152,7 @@ msgstr "Fonttikoko"
 msgid "Full place name"
 msgstr "Koko paikannimi"
 
-#: resources/views/modules/fan-chart/config.phtml:52
+#: resources/views/modules/fan-chart/config.phtml:53
 msgctxt "webtrees-fan-chart"
 msgid "General"
 msgstr ""
@@ -161,7 +161,7 @@ msgstr ""
 msgid "Generations"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:79
+#: resources/views/modules/fan-chart/form/display.phtml:80
 msgid "Hide empty segments"
 msgstr "Piilota tyhjät segmentit"
 
@@ -169,22 +169,22 @@ msgstr "Piilota tyhjät segmentit"
 msgid "Hide more options"
 msgstr "Piilota lisävaihtoehdot"
 
-#: resources/views/modules/fan-chart/config.phtml:66
+#: resources/views/modules/fan-chart/config.phtml:67
 msgid "Hide the PNG export button"
 msgstr "Piilota PNG-vientipainike"
 
-#: resources/views/modules/fan-chart/config.phtml:57
+#: resources/views/modules/fan-chart/config.phtml:58
 msgid "Hide the SVG export button"
 msgstr "Piilota SVG-vientipainike"
 
-#: resources/views/modules/fan-chart/config.phtml:103
+#: resources/views/modules/fan-chart/config.phtml:104
 msgid ""
 "How much of each place is shown in chart arcs — the full name, only the "
 "lowest levels, or the place combined with its country as a name or country "
 "code. Users toggle place visibility on/off in the chart form."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:60
+#: resources/views/modules/fan-chart/form/display.phtml:61
 msgid ""
 "Images are only shown if the arc segment is wide enough. Images for "
 "descendants are not yet available."
@@ -196,7 +196,7 @@ msgstr ""
 msgid "Individual"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/details.phtml:34
+#: resources/views/modules/fan-chart/form/details.phtml:35
 msgid ""
 "Inserts the GEDCOM NICK value in quotes between the given names and the "
 "surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behavior "
@@ -219,11 +219,11 @@ msgstr "Kolme alinta tasoa"
 msgid "Lowest two levels"
 msgstr "Kaksi alinta tasoa"
 
-#: resources/views/modules/fan-chart/form/colors.phtml:43
+#: resources/views/modules/fan-chart/form/colors.phtml:44
 msgid "Maternal"
 msgstr "Äidinpuoleinen"
 
-#: resources/views/modules/fan-chart/config.phtml:26
+#: resources/views/modules/fan-chart/config.phtml:27
 msgid "Modules"
 msgstr ""
 
@@ -239,7 +239,7 @@ msgstr "Siirrä kaaviota"
 msgid "Move the view with two fingers"
 msgstr "Siirrä näkymä kahdella sormella"
 
-#: resources/views/modules/fan-chart/config.phtml:75
+#: resources/views/modules/fan-chart/config.phtml:76
 msgid "Name abbreviation when space is tight"
 msgstr "Nimen lyhentäminen, kun tila on rajallinen"
 
@@ -259,7 +259,7 @@ msgstr ""
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:72
+#: resources/views/modules/fan-chart/form/display.phtml:73
 msgid ""
 "Partners and children are shown as arcs below the ancestor section. The fan "
 "size is limited to 180–270 degrees when enabled."
@@ -267,7 +267,7 @@ msgstr ""
 "Puolisot ja lapset näytetään kaarina esivanhempien alapuolella. Viuhkan koko "
 "on rajoitettu 180–270 asteeseen, kun tämä on käytössä."
 
-#: resources/views/modules/fan-chart/form/colors.phtml:39
+#: resources/views/modules/fan-chart/form/colors.phtml:40
 msgid "Paternal"
 msgstr "Isänpuoleinen"
 
@@ -283,11 +283,11 @@ msgstr ""
 msgid "Place and country code (3 letters)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:92
+#: resources/views/modules/fan-chart/config.phtml:93
 msgid "Place detail"
 msgstr "Paikan tarkkuus"
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:25
 msgid "Re center"
 msgstr "Keskitä uudelleen"
 
@@ -303,7 +303,7 @@ msgstr "Napsauta hiiren oikealla painikkeella"
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:66
+#: resources/views/modules/fan-chart/form/display.phtml:67
 msgid "Show descendants"
 msgstr "Näytä jälkeläiset"
 
@@ -311,15 +311,15 @@ msgstr "Näytä jälkeläiset"
 msgid "Show details of a person"
 msgstr "Näytä henkilön tiedot"
 
-#: resources/views/modules/fan-chart/form/details.phtml:53
+#: resources/views/modules/fan-chart/form/details.phtml:54
 msgid "Show details panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/colors.phtml:28
+#: resources/views/modules/fan-chart/form/colors.phtml:29
 msgid "Show family colors"
 msgstr "Näytä sukuvärit"
 
-#: resources/views/modules/fan-chart/config.phtml:120
+#: resources/views/modules/fan-chart/config.phtml:121
 msgid ""
 "Show full dates (birth, marriage, death) for early generations. Later "
 "generations show year only. Marriage dates are hidden from generation 9. "
@@ -339,7 +339,7 @@ msgstr "Näytä tarkat päivämäärät sukupolveen %s asti"
 msgid "Show help"
 msgstr "Näytä ohje"
 
-#: resources/views/modules/fan-chart/form/display.phtml:55
+#: resources/views/modules/fan-chart/form/display.phtml:56
 msgid "Show images only"
 msgstr "Näytä vain kuvat"
 
@@ -347,23 +347,23 @@ msgstr "Näytä vain kuvat"
 msgid "Show more options"
 msgstr "Näytä lisävaihtoehdot"
 
-#: resources/views/modules/fan-chart/form/display.phtml:41
+#: resources/views/modules/fan-chart/form/display.phtml:42
 msgid "Show names and images"
 msgstr "Näytä nimet ja kuvat"
 
-#: resources/views/modules/fan-chart/form/display.phtml:48
+#: resources/views/modules/fan-chart/form/display.phtml:49
 msgid "Show names only"
 msgstr "Näytä vain nimet"
 
-#: resources/views/modules/fan-chart/form/details.phtml:28
+#: resources/views/modules/fan-chart/form/details.phtml:29
 msgid "Show nicknames in display names"
 msgstr "Näytä lempinimet näyttönimissä"
 
-#: resources/views/modules/fan-chart/form/details.phtml:66
+#: resources/views/modules/fan-chart/form/details.phtml:67
 msgid "Show parent marriage dates"
 msgstr "Näytä vanhempien vihkipäivät"
 
-#: resources/views/modules/fan-chart/form/details.phtml:40
+#: resources/views/modules/fan-chart/form/details.phtml:41
 msgid "Show places"
 msgstr "Näytä paikat"
 
@@ -371,7 +371,7 @@ msgstr "Näytä paikat"
 msgid "Show the details of the person in the panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/details.phtml:59
+#: resources/views/modules/fan-chart/form/details.phtml:60
 msgid ""
 "Shows the facts of a person in a side panel when you select a person, "
 "instead of the tooltip on the mouse pointer. The panel can be used with the "
@@ -400,7 +400,7 @@ msgstr ""
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:59
+#: resources/views/modules/fan-chart/form/display.phtml:60
 msgid "The display option only affects the arcs, not the tooltip."
 msgstr ""
 
@@ -421,7 +421,7 @@ msgstr "Vain vuodet"
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
 
-#: resources/views/modules/fan-chart/config.phtml:135
+#: resources/views/modules/fan-chart/config.phtml:136
 msgid "cancel"
 msgstr ""
 
@@ -429,7 +429,7 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:130
+#: resources/views/modules/fan-chart/config.phtml:131
 msgid "save"
 msgstr ""
 

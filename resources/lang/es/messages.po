@@ -55,11 +55,11 @@ msgstr "Hacer clic en una persona"
 msgid "Click or Enter on a person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/colors.phtml:23
+#: resources/views/modules/fan-chart/form/colors.phtml:24
 msgid "Colors"
 msgstr "Colores"
 
-#: resources/views/modules/fan-chart/form/colors.phtml:34
+#: resources/views/modules/fan-chart/form/colors.phtml:35
 msgid ""
 "Colors the arcs by family branch. Each couple shares the same color, derived "
 "from the chosen base colors."
@@ -67,11 +67,11 @@ msgstr ""
 "Colorea los arcos por rama familiar. Cada pareja comparte el mismo color, "
 "derivado de los colores base elegidos."
 
-#: resources/views/modules/fan-chart/config.phtml:26
+#: resources/views/modules/fan-chart/config.phtml:27
 msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:86
+#: resources/views/modules/fan-chart/config.phtml:87
 msgid ""
 "Controls which name part shrinks first when an arc is too narrow for the "
 "full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
@@ -86,11 +86,11 @@ msgstr ""
 msgid "Ctrl + scroll"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:109
+#: resources/views/modules/fan-chart/config.phtml:110
 msgid "Date precision"
 msgstr "Precisión de fechas"
 
-#: resources/views/modules/fan-chart/form/details.phtml:23
+#: resources/views/modules/fan-chart/form/details.phtml:24
 msgid "Details"
 msgstr ""
 
@@ -98,11 +98,11 @@ msgstr ""
 msgid "Details panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:23
+#: resources/views/modules/fan-chart/form/display.phtml:24
 msgid "Display"
 msgstr "Visualización"
 
-#: resources/views/modules/fan-chart/form/details.phtml:46
+#: resources/views/modules/fan-chart/form/details.phtml:47
 msgid ""
 "Displays birth and death places in the chart arcs where space allows. For "
 "descendants with many children, places are automatically suppressed. The "
@@ -114,7 +114,7 @@ msgstr ""
 "se omiten automáticamente. El nivel de detalle y la precisión de la fecha se "
 "configuran a nivel de sitio en los ajustes del módulo."
 
-#: resources/views/modules/fan-chart/form/details.phtml:72
+#: resources/views/modules/fan-chart/form/details.phtml:73
 msgid ""
 "Displays the marriage date of each couple in a narrow arc between "
 "generations. When descendants are enabled, also shows the marriage date "
@@ -124,11 +124,11 @@ msgstr ""
 "generaciones. Cuando los descendientes están activados, también muestra la "
 "fecha de matrimonio entre la persona central y sus cónyuges."
 
-#: resources/views/modules/components/buttonbar/png-export-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:30
 msgid "Export as PNG"
 msgstr "Exportar como PNG"
 
-#: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:33
 msgid "Export as SVG"
 msgstr "Exportar como SVG"
 
@@ -153,7 +153,7 @@ msgstr "Tamaño tipografía"
 msgid "Full place name"
 msgstr "Nombre completo del lugar"
 
-#: resources/views/modules/fan-chart/config.phtml:52
+#: resources/views/modules/fan-chart/config.phtml:53
 msgctxt "webtrees-fan-chart"
 msgid "General"
 msgstr ""
@@ -162,7 +162,7 @@ msgstr ""
 msgid "Generations"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:79
+#: resources/views/modules/fan-chart/form/display.phtml:80
 msgid "Hide empty segments"
 msgstr "Ocultar segmentos vacíos"
 
@@ -170,22 +170,22 @@ msgstr "Ocultar segmentos vacíos"
 msgid "Hide more options"
 msgstr "Ocultar más opciones"
 
-#: resources/views/modules/fan-chart/config.phtml:66
+#: resources/views/modules/fan-chart/config.phtml:67
 msgid "Hide the PNG export button"
 msgstr "Ocultar el botón de exportar a PNG"
 
-#: resources/views/modules/fan-chart/config.phtml:57
+#: resources/views/modules/fan-chart/config.phtml:58
 msgid "Hide the SVG export button"
 msgstr "Ocultar el botón de exportar a SVG"
 
-#: resources/views/modules/fan-chart/config.phtml:103
+#: resources/views/modules/fan-chart/config.phtml:104
 msgid ""
 "How much of each place is shown in chart arcs — the full name, only the "
 "lowest levels, or the place combined with its country as a name or country "
 "code. Users toggle place visibility on/off in the chart form."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:60
+#: resources/views/modules/fan-chart/form/display.phtml:61
 msgid ""
 "Images are only shown if the arc segment is wide enough. Images for "
 "descendants are not yet available."
@@ -197,7 +197,7 @@ msgstr ""
 msgid "Individual"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/details.phtml:34
+#: resources/views/modules/fan-chart/form/details.phtml:35
 msgid ""
 "Inserts the GEDCOM NICK value in quotes between the given names and the "
 "surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behavior "
@@ -220,11 +220,11 @@ msgstr "Tres niveles más bajos"
 msgid "Lowest two levels"
 msgstr "Dos niveles más bajos"
 
-#: resources/views/modules/fan-chart/form/colors.phtml:43
+#: resources/views/modules/fan-chart/form/colors.phtml:44
 msgid "Maternal"
 msgstr "Materno"
 
-#: resources/views/modules/fan-chart/config.phtml:26
+#: resources/views/modules/fan-chart/config.phtml:27
 msgid "Modules"
 msgstr ""
 
@@ -240,7 +240,7 @@ msgstr "Mover el diagrama"
 msgid "Move the view with two fingers"
 msgstr "Mueve la vista con dos dedos"
 
-#: resources/views/modules/fan-chart/config.phtml:75
+#: resources/views/modules/fan-chart/config.phtml:76
 msgid "Name abbreviation when space is tight"
 msgstr "Abreviatura del nombre cuando el espacio es limitado"
 
@@ -260,7 +260,7 @@ msgstr ""
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:72
+#: resources/views/modules/fan-chart/form/display.phtml:73
 msgid ""
 "Partners and children are shown as arcs below the ancestor section. The fan "
 "size is limited to 180–270 degrees when enabled."
@@ -269,7 +269,7 @@ msgstr ""
 "antepasados. El tamaño del abanico se limita a 180–270 grados cuando está "
 "activado."
 
-#: resources/views/modules/fan-chart/form/colors.phtml:39
+#: resources/views/modules/fan-chart/form/colors.phtml:40
 msgid "Paternal"
 msgstr "Paterno"
 
@@ -285,11 +285,11 @@ msgstr ""
 msgid "Place and country code (3 letters)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:92
+#: resources/views/modules/fan-chart/config.phtml:93
 msgid "Place detail"
 msgstr "Detalle del lugar"
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:25
 msgid "Re center"
 msgstr "Volver a centrar"
 
@@ -305,7 +305,7 @@ msgstr "Clic derecho"
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:66
+#: resources/views/modules/fan-chart/form/display.phtml:67
 msgid "Show descendants"
 msgstr "Mostrar descendientes"
 
@@ -313,15 +313,15 @@ msgstr "Mostrar descendientes"
 msgid "Show details of a person"
 msgstr "Mostrar detalles de una persona"
 
-#: resources/views/modules/fan-chart/form/details.phtml:53
+#: resources/views/modules/fan-chart/form/details.phtml:54
 msgid "Show details panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/colors.phtml:28
+#: resources/views/modules/fan-chart/form/colors.phtml:29
 msgid "Show family colors"
 msgstr "Mostrar colores familiares"
 
-#: resources/views/modules/fan-chart/config.phtml:120
+#: resources/views/modules/fan-chart/config.phtml:121
 msgid ""
 "Show full dates (birth, marriage, death) for early generations. Later "
 "generations show year only. Marriage dates are hidden from generation 9. "
@@ -342,7 +342,7 @@ msgstr "Mostrar fechas completas hasta la generación %s"
 msgid "Show help"
 msgstr "Mostrar ayuda"
 
-#: resources/views/modules/fan-chart/form/display.phtml:55
+#: resources/views/modules/fan-chart/form/display.phtml:56
 msgid "Show images only"
 msgstr "Mostrar solo imágenes"
 
@@ -350,23 +350,23 @@ msgstr "Mostrar solo imágenes"
 msgid "Show more options"
 msgstr "Mostrar más opciones"
 
-#: resources/views/modules/fan-chart/form/display.phtml:41
+#: resources/views/modules/fan-chart/form/display.phtml:42
 msgid "Show names and images"
 msgstr "Mostrar nombres e imágenes"
 
-#: resources/views/modules/fan-chart/form/display.phtml:48
+#: resources/views/modules/fan-chart/form/display.phtml:49
 msgid "Show names only"
 msgstr "Mostrar solo nombres"
 
-#: resources/views/modules/fan-chart/form/details.phtml:28
+#: resources/views/modules/fan-chart/form/details.phtml:29
 msgid "Show nicknames in display names"
 msgstr "Mostrar apodos en los nombres mostrados"
 
-#: resources/views/modules/fan-chart/form/details.phtml:66
+#: resources/views/modules/fan-chart/form/details.phtml:67
 msgid "Show parent marriage dates"
 msgstr "Mostrar fechas de matrimonio de los padres"
 
-#: resources/views/modules/fan-chart/form/details.phtml:40
+#: resources/views/modules/fan-chart/form/details.phtml:41
 msgid "Show places"
 msgstr "Mostrar lugares"
 
@@ -374,7 +374,7 @@ msgstr "Mostrar lugares"
 msgid "Show the details of the person in the panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/details.phtml:59
+#: resources/views/modules/fan-chart/form/details.phtml:60
 msgid ""
 "Shows the facts of a person in a side panel when you select a person, "
 "instead of the tooltip on the mouse pointer. The panel can be used with the "
@@ -403,7 +403,7 @@ msgstr ""
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:59
+#: resources/views/modules/fan-chart/form/display.phtml:60
 msgid "The display option only affects the arcs, not the tooltip."
 msgstr ""
 
@@ -424,7 +424,7 @@ msgstr "Solo años"
 msgid "Zoom in/out"
 msgstr "Acercar/Alejar"
 
-#: resources/views/modules/fan-chart/config.phtml:135
+#: resources/views/modules/fan-chart/config.phtml:136
 msgid "cancel"
 msgstr ""
 
@@ -432,7 +432,7 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:130
+#: resources/views/modules/fan-chart/config.phtml:131
 msgid "save"
 msgstr ""
 
