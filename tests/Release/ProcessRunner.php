@@ -13,9 +13,12 @@ namespace MagicSunday\Webtrees\FanChart\Test\Release;
 
 use PHPUnit\Framework\Assert;
 
+use function file_get_contents;
 use function proc_close;
 use function proc_open;
-use function stream_get_contents;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
 
 /**
  * Runs a command without a shell for the release tests that drive make targets in a scratch copy of the module.
@@ -29,6 +32,9 @@ final class ProcessRunner
     /**
      * Runs a command without a shell and returns its exit status together with the standard output and error.
      *
+     * The child writes both streams into temporary files and the files are read after it has exited, so a child that
+     * writes more to one stream than a pipe buffer holds never waits for a reader that waits for the other stream.
+     *
      * @param list<string>          $command          The program and its arguments, run without a shell
      * @param string                $workingDirectory The directory to run it in
      * @param array<string, string> $environment      The environment of the process, only the path by default
@@ -37,24 +43,45 @@ final class ProcessRunner
      */
     public function execute(array $command, string $workingDirectory, array $environment = ['PATH' => '/usr/local/bin:/usr/bin:/bin']): array
     {
-        $process = proc_open(
-            $command,
-            [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
-            $pipes,
-            $workingDirectory,
-            $environment
-        );
+        $outputFile = tempnam(sys_get_temp_dir(), 'release-output-');
+        $errorFile  = tempnam(sys_get_temp_dir(), 'release-error-');
 
-        Assert::assertIsResource($process);
+        Assert::assertIsString($outputFile);
+        Assert::assertIsString($errorFile);
 
-        $standardOutput = $pipes[1] ?? null;
-        $standardError  = $pipes[2] ?? null;
+        try {
+            $process = proc_open(
+                $command,
+                [1 => ['file', $outputFile, 'w'], 2 => ['file', $errorFile, 'w']],
+                $pipes,
+                $workingDirectory,
+                $environment
+            );
 
-        Assert::assertIsResource($standardOutput);
-        Assert::assertIsResource($standardError);
+            Assert::assertIsResource($process);
 
-        $output = stream_get_contents($standardOutput) . stream_get_contents($standardError);
+            $status = proc_close($process);
 
-        return [proc_close($process), $output];
+            return [$status, $this->read($outputFile) . $this->read($errorFile)];
+        } finally {
+            unlink($outputFile);
+            unlink($errorFile);
+        }
+    }
+
+    /**
+     * Reads the content of a file the child wrote.
+     *
+     * @param string $file The path of the file
+     *
+     * @return string The content of the file
+     */
+    private function read(string $file): string
+    {
+        $content = file_get_contents($file);
+
+        Assert::assertIsString($content);
+
+        return $content;
     }
 }

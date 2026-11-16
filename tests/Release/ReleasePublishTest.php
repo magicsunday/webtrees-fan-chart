@@ -601,10 +601,13 @@ final class ReleasePublishTest extends TestCase
         $this->createRepositoryWithRemote();
         $this->installStub('npm', "#!/bin/sh\nexit 0\n");
 
+        $headBefore = trim($this->git(['rev-parse', 'HEAD'], $this->workDir . '/module'));
+
         [$status, $output] = $this->runTarget('release-bump', $version);
 
         self::assertNotSame(0, $status);
         self::assertStringContainsString('VERSION must be semver', $output);
+        self::assertSame($headBefore, trim($this->git(['rev-parse', 'HEAD'], $this->workDir . '/module')));
         self::assertSame([], $this->remoteRefs());
     }
 
@@ -647,6 +650,9 @@ final class ReleasePublishTest extends TestCase
             'v prefix and suffix' => ['v9.9.9-rc1'],
             'two numbers'         => ['9.9'],
             'four numbers'        => ['9.9.9.9'],
+            'leading zero major'  => ['01.2.3'],
+            'leading zero minor'  => ['1.02.3'],
+            'leading zero patch'  => ['1.2.03'],
         ];
     }
 
