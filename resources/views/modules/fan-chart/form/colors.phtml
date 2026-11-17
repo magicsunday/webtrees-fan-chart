@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 use Fisharebest\Webtrees\I18N;
 use MagicSunday\Webtrees\FanChart\Configuration;
+use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
 
 /**
  * @var Configuration $configuration
@@ -23,7 +24,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         <?php echo I18N::translate('Colors'); ?>
     </div>
     <div class="col-sm-9 wt-page-options-value">
-        <?php echo view($moduleName . '::modules/components/checkbox', [
+        <?php echo view(SharedViews::NAMESPACE . '::checkbox', [
             'name'      => 'showFamilyColors',
             'label'     => I18N::translate('Show family colors'),
             'checked'   => $configuration->getShowFamilyColors(),

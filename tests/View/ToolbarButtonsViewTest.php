@@ -11,6 +11,11 @@ declare(strict_types=1);
 
 namespace MagicSunday\Webtrees\FanChart\Test\View;
 
+use Fig\Http\Message\RequestMethodInterface;
+use GuzzleHttp\Psr7\ServerRequest;
+use MagicSunday\Webtrees\FanChart\Configuration;
+use MagicSunday\Webtrees\FanChart\Test\Support\ModuleSettingsFixtureTrait;
+use MagicSunday\Webtrees\FanChart\Test\Support\ViewFixture;
 use MagicSunday\Webtrees\ModuleBase\Testing\EnglishLocaleFixture;
 use MagicSunday\Webtrees\ModuleBase\Testing\MarkupFixture;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -31,18 +36,20 @@ use function ob_start;
 #[CoversNothing]
 final class ToolbarButtonsViewTest extends TestCase
 {
+    use ModuleSettingsFixtureTrait;
+
     /**
-     * Returns the views of the buttons with the source text of their title.
+     * Returns the buttons that the button bar renders through the shared views of the module base, with
+     * the id that the page script looks up and the source text of their title.
      *
      * @return array<string, array{string, string}>
      */
-    public static function buttonTitles(): array
+    public static function sharedButtons(): array
     {
         return [
-            'full screen' => ['fullscreen-button', 'Switch between full screen mode and normal view'],
-            'center'      => ['center-button', 'Re center'],
-            'png export'  => ['png-export-button', 'Export as PNG'],
-            'svg export'  => ['svg-export-button', 'Export as SVG'],
+            'center'     => ['centerButton', 'Re center'],
+            'png export' => ['exportPNG', 'Export as PNG'],
+            'svg export' => ['exportSVG', 'Export as SVG'],
         ];
     }
 
@@ -51,28 +58,60 @@ final class ToolbarButtonsViewTest extends TestCase
      * it is escaped and keeps the translated text as one value.
      */
     #[Test]
-    #[DataProvider('buttonTitles')]
-    public function keepsATranslatedTitleInsideItsAttribute(string $view, string $source): void
+    public function keepsATranslatedTitleOfTheFullScreenButtonInsideItsAttribute(): void
     {
-        $text  = 'Say "more" &amp; <b>less</b>';
-        $xpath = MarkupFixture::xpathOf($this->render($view, [$source => $text]));
+        $source = 'Switch between full screen mode and normal view';
+        $text   = 'Say "more" &amp; <b>less</b>';
+
+        EnglishLocaleFixture::install([$source => $text]);
+
+        ob_start();
+
+        include __DIR__ . '/../../resources/views/modules/components/buttonbar/fullscreen-button.phtml';
+
+        $markup = ob_get_clean();
+
+        self::assertIsString($markup);
+
+        $xpath = MarkupFixture::xpathOf($markup);
 
         self::assertSame($text, MarkupFixture::first($xpath, '//button')->getAttribute('title'));
     }
 
     /**
-     * Renders the view of a button with the given translations.
+     * The button bar translates the title of each shared button in the view of the module, so the
+     * source text stays in the catalogue extraction of the module, and the shared view escapes it.
+     */
+    #[Test]
+    #[DataProvider('sharedButtons')]
+    public function passesTheTranslatedTitleToTheSharedButton(string $id, string $source): void
+    {
+        $text   = 'Say "more" &amp; <b>less</b>';
+        $xpath  = MarkupFixture::xpathOf($this->renderButtonBar([$source => $text]));
+        $button = MarkupFixture::first($xpath, '//button[@id="' . $id . '"]');
+
+        self::assertSame($text, $button->getAttribute('title'));
+    }
+
+    /**
+     * Renders the button bar of the module with the given translations.
      *
-     * @param string                $view     The name of the view in the button bar folder
      * @param array<string, string> $messages The translations by source text
      */
-    private function render(string $view, array $messages): string
+    private function renderButtonBar(array $messages): string
     {
+        ViewFixture::register();
         EnglishLocaleFixture::install($messages);
+
+        $configuration = new Configuration(
+            new ServerRequest(RequestMethodInterface::METHOD_GET, '/'),
+            $this->createModuleWithPreferences([])
+        );
+        $moduleName = ViewFixture::MODULE_NAME;
 
         ob_start();
 
-        include __DIR__ . '/../../resources/views/modules/components/buttonbar/' . $view . '.phtml';
+        include __DIR__ . '/../../resources/views/modules/components/buttonbar.phtml';
 
         $markup = ob_get_clean();
 

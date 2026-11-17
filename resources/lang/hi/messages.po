@@ -55,11 +55,11 @@ msgstr "किसी व्यक्ति पर क्लिक करें"
 msgid "Click or Enter on a person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/colors.phtml:23
+#: resources/views/modules/fan-chart/form/colors.phtml:24
 msgid "Colors"
 msgstr "रंग"
 
-#: resources/views/modules/fan-chart/form/colors.phtml:34
+#: resources/views/modules/fan-chart/form/colors.phtml:35
 msgid ""
 "Colors the arcs by family branch. Each couple shares the same color, derived "
 "from the chosen base colors."
@@ -67,11 +67,11 @@ msgstr ""
 "पारिवारिक शाखा के अनुसार चापों को रंगता है। प्रत्येक जोड़ा एक ही रंग साझा करता है, जो "
 "चुने गए आधार रंगों से प्राप्त होता है।"
 
-#: resources/views/modules/fan-chart/config.phtml:26
+#: resources/views/modules/fan-chart/config.phtml:27
 msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:86
+#: resources/views/modules/fan-chart/config.phtml:87
 msgid ""
 "Controls which name part shrinks first when an arc is too narrow for the "
 "full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
@@ -85,11 +85,11 @@ msgstr ""
 msgid "Ctrl + scroll"
 msgstr "Ctrl + स्क्रॉल"
 
-#: resources/views/modules/fan-chart/config.phtml:109
+#: resources/views/modules/fan-chart/config.phtml:110
 msgid "Date precision"
 msgstr "तारीख सटीकता"
 
-#: resources/views/modules/fan-chart/form/details.phtml:23
+#: resources/views/modules/fan-chart/form/details.phtml:24
 msgid "Details"
 msgstr ""
 
@@ -97,11 +97,11 @@ msgstr ""
 msgid "Details panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:23
+#: resources/views/modules/fan-chart/form/display.phtml:24
 msgid "Display"
 msgstr "प्रदर्शन"
 
-#: resources/views/modules/fan-chart/form/details.phtml:46
+#: resources/views/modules/fan-chart/form/details.phtml:47
 msgid ""
 "Displays birth and death places in the chart arcs where space allows. For "
 "descendants with many children, places are automatically suppressed. The "
@@ -112,7 +112,7 @@ msgstr ""
 "स्थान स्वतः छिपा दिए जाते हैं। विवरण स्तर और दिनांक सटीकता मॉड्यूल सेटिंग्स में साइट-व्यापी "
 "रूप से कॉन्फ़िगर की जाती है।"
 
-#: resources/views/modules/fan-chart/form/details.phtml:72
+#: resources/views/modules/fan-chart/form/details.phtml:73
 msgid ""
 "Displays the marriage date of each couple in a narrow arc between "
 "generations. When descendants are enabled, also shows the marriage date "
@@ -121,11 +121,11 @@ msgstr ""
 "पीढ़ियों के बीच एक संकीर्ण चाप में प्रत्येक जोड़े की विवाह तिथि प्रदर्शित करता है। जब वंशज "
 "सक्षम होते हैं, तो केंद्रीय व्यक्ति और उनके साथियों के बीच विवाह तिथि भी दिखाता है।"
 
-#: resources/views/modules/components/buttonbar/png-export-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:30
 msgid "Export as PNG"
 msgstr "PNG निकालें"
 
-#: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:33
 msgid "Export as SVG"
 msgstr "SVG निकालें"
 
@@ -150,7 +150,7 @@ msgstr "फ़ॉन्ट आकार"
 msgid "Full place name"
 msgstr "पूरा स्थान नाम"
 
-#: resources/views/modules/fan-chart/config.phtml:52
+#: resources/views/modules/fan-chart/config.phtml:53
 msgctxt "webtrees-fan-chart"
 msgid "General"
 msgstr ""
@@ -159,7 +159,7 @@ msgstr ""
 msgid "Generations"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:79
+#: resources/views/modules/fan-chart/form/display.phtml:80
 msgid "Hide empty segments"
 msgstr "खाली खंड छिपाएं"
 
@@ -167,22 +167,22 @@ msgstr "खाली खंड छिपाएं"
 msgid "Hide more options"
 msgstr "अधिक विकल्प छिपाएँ"
 
-#: resources/views/modules/fan-chart/config.phtml:66
+#: resources/views/modules/fan-chart/config.phtml:67
 msgid "Hide the PNG export button"
 msgstr "PNG निर्यात बटन छिपाएँ"
 
-#: resources/views/modules/fan-chart/config.phtml:57
+#: resources/views/modules/fan-chart/config.phtml:58
 msgid "Hide the SVG export button"
 msgstr "SVG निर्यात बटन छिपाएँ"
 
-#: resources/views/modules/fan-chart/config.phtml:103
+#: resources/views/modules/fan-chart/config.phtml:104
 msgid ""
 "How much of each place is shown in chart arcs — the full name, only the "
 "lowest levels, or the place combined with its country as a name or country "
 "code. Users toggle place visibility on/off in the chart form."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:60
+#: resources/views/modules/fan-chart/form/display.phtml:61
 msgid ""
 "Images are only shown if the arc segment is wide enough. Images for "
 "descendants are not yet available."
@@ -194,7 +194,7 @@ msgstr ""
 msgid "Individual"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/details.phtml:34
+#: resources/views/modules/fan-chart/form/details.phtml:35
 msgid ""
 "Inserts the GEDCOM NICK value in quotes between the given names and the "
 "surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behavior "
@@ -216,11 +216,11 @@ msgstr "सबसे निचले तीन स्तर"
 msgid "Lowest two levels"
 msgstr "सबसे निचले दो स्तर"
 
-#: resources/views/modules/fan-chart/form/colors.phtml:43
+#: resources/views/modules/fan-chart/form/colors.phtml:44
 msgid "Maternal"
 msgstr "मातृक"
 
-#: resources/views/modules/fan-chart/config.phtml:26
+#: resources/views/modules/fan-chart/config.phtml:27
 msgid "Modules"
 msgstr ""
 
@@ -236,7 +236,7 @@ msgstr "चार्ट को स्थानांतरित करें"
 msgid "Move the view with two fingers"
 msgstr "दो उंगलियों से दृश्य को स्थानांतरित करें"
 
-#: resources/views/modules/fan-chart/config.phtml:75
+#: resources/views/modules/fan-chart/config.phtml:76
 msgid "Name abbreviation when space is tight"
 msgstr "जब स्थान सीमित हो तो नाम का संक्षिप्तीकरण"
 
@@ -256,7 +256,7 @@ msgstr ""
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:72
+#: resources/views/modules/fan-chart/form/display.phtml:73
 msgid ""
 "Partners and children are shown as arcs below the ancestor section. The fan "
 "size is limited to 180–270 degrees when enabled."
@@ -264,7 +264,7 @@ msgstr ""
 "साथी और बच्चे पूर्वज खंड के नीचे चापों के रूप में दिखाए जाते हैं। सक्षम होने पर पंखे का आकार "
 "180–270 डिग्री तक सीमित है।"
 
-#: resources/views/modules/fan-chart/form/colors.phtml:39
+#: resources/views/modules/fan-chart/form/colors.phtml:40
 msgid "Paternal"
 msgstr "पैतृक"
 
@@ -280,11 +280,11 @@ msgstr ""
 msgid "Place and country code (3 letters)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:92
+#: resources/views/modules/fan-chart/config.phtml:93
 msgid "Place detail"
 msgstr "स्थान विवरण"
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:25
 msgid "Re center"
 msgstr "पुनः केंद्रित करें"
 
@@ -300,7 +300,7 @@ msgstr "राइट-क्लिक"
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:66
+#: resources/views/modules/fan-chart/form/display.phtml:67
 msgid "Show descendants"
 msgstr "वंशज दिखाएँ"
 
@@ -308,15 +308,15 @@ msgstr "वंशज दिखाएँ"
 msgid "Show details of a person"
 msgstr "किसी व्यक्ति का विवरण दिखाएँ"
 
-#: resources/views/modules/fan-chart/form/details.phtml:53
+#: resources/views/modules/fan-chart/form/details.phtml:54
 msgid "Show details panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/colors.phtml:28
+#: resources/views/modules/fan-chart/form/colors.phtml:29
 msgid "Show family colors"
 msgstr "पारिवारिक रंग दिखाएं"
 
-#: resources/views/modules/fan-chart/config.phtml:120
+#: resources/views/modules/fan-chart/config.phtml:121
 msgid ""
 "Show full dates (birth, marriage, death) for early generations. Later "
 "generations show year only. Marriage dates are hidden from generation 9. "
@@ -335,7 +335,7 @@ msgstr "पीढ़ी %s तक पूर्ण तिथियाँ दि�
 msgid "Show help"
 msgstr "मदद दिखाएँ"
 
-#: resources/views/modules/fan-chart/form/display.phtml:55
+#: resources/views/modules/fan-chart/form/display.phtml:56
 msgid "Show images only"
 msgstr "केवल छवियाँ दिखाएँ"
 
@@ -343,23 +343,23 @@ msgstr "केवल छवियाँ दिखाएँ"
 msgid "Show more options"
 msgstr "अधिक विकल्प दिखाएँ"
 
-#: resources/views/modules/fan-chart/form/display.phtml:41
+#: resources/views/modules/fan-chart/form/display.phtml:42
 msgid "Show names and images"
 msgstr "नाम और छवियाँ दिखाएँ"
 
-#: resources/views/modules/fan-chart/form/display.phtml:48
+#: resources/views/modules/fan-chart/form/display.phtml:49
 msgid "Show names only"
 msgstr "केवल नाम दिखाएँ"
 
-#: resources/views/modules/fan-chart/form/details.phtml:28
+#: resources/views/modules/fan-chart/form/details.phtml:29
 msgid "Show nicknames in display names"
 msgstr "प्रदर्शन नामों में उपनाम दिखाएँ"
 
-#: resources/views/modules/fan-chart/form/details.phtml:66
+#: resources/views/modules/fan-chart/form/details.phtml:67
 msgid "Show parent marriage dates"
 msgstr "माता-पिता की विवाह तिथियाँ दिखाएँ"
 
-#: resources/views/modules/fan-chart/form/details.phtml:40
+#: resources/views/modules/fan-chart/form/details.phtml:41
 msgid "Show places"
 msgstr "स्थान दिखाएँ"
 
@@ -367,7 +367,7 @@ msgstr "स्थान दिखाएँ"
 msgid "Show the details of the person in the panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/details.phtml:59
+#: resources/views/modules/fan-chart/form/details.phtml:60
 msgid ""
 "Shows the facts of a person in a side panel when you select a person, "
 "instead of the tooltip on the mouse pointer. The panel can be used with the "
@@ -395,7 +395,7 @@ msgstr ""
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:59
+#: resources/views/modules/fan-chart/form/display.phtml:60
 msgid "The display option only affects the arcs, not the tooltip."
 msgstr ""
 
@@ -416,7 +416,7 @@ msgstr "केवल वर्ष"
 msgid "Zoom in/out"
 msgstr "ज़ूम इन/आउट"
 
-#: resources/views/modules/fan-chart/config.phtml:135
+#: resources/views/modules/fan-chart/config.phtml:136
 msgid "cancel"
 msgstr ""
 
@@ -424,7 +424,7 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:130
+#: resources/views/modules/fan-chart/config.phtml:131
 msgid "save"
 msgstr ""
 

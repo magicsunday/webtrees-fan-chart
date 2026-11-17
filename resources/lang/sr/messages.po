@@ -56,11 +56,11 @@ msgstr "Кликни на особу"
 msgid "Click or Enter on a person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/colors.phtml:23
+#: resources/views/modules/fan-chart/form/colors.phtml:24
 msgid "Colors"
 msgstr "Боје"
 
-#: resources/views/modules/fan-chart/form/colors.phtml:34
+#: resources/views/modules/fan-chart/form/colors.phtml:35
 msgid ""
 "Colors the arcs by family branch. Each couple shares the same color, derived "
 "from the chosen base colors."
@@ -68,11 +68,11 @@ msgstr ""
 "Боји лукове по породичној грани. Сваки пар дели исту боју, изведену из "
 "одабраних основних боја."
 
-#: resources/views/modules/fan-chart/config.phtml:26
+#: resources/views/modules/fan-chart/config.phtml:27
 msgid "Control panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:86
+#: resources/views/modules/fan-chart/config.phtml:87
 msgid ""
 "Controls which name part shrinks first when an arc is too narrow for the "
 "full name. \"Automatic\" uses the tree's surname tradition (Icelandic "
@@ -86,11 +86,11 @@ msgstr ""
 msgid "Ctrl + scroll"
 msgstr "Ctrl + скроловање"
 
-#: resources/views/modules/fan-chart/config.phtml:109
+#: resources/views/modules/fan-chart/config.phtml:110
 msgid "Date precision"
 msgstr "Прецизност датума"
 
-#: resources/views/modules/fan-chart/form/details.phtml:23
+#: resources/views/modules/fan-chart/form/details.phtml:24
 msgid "Details"
 msgstr "Детаљи"
 
@@ -98,11 +98,11 @@ msgstr "Детаљи"
 msgid "Details panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:23
+#: resources/views/modules/fan-chart/form/display.phtml:24
 msgid "Display"
 msgstr "Приказ"
 
-#: resources/views/modules/fan-chart/form/details.phtml:46
+#: resources/views/modules/fan-chart/form/details.phtml:47
 msgid ""
 "Displays birth and death places in the chart arcs where space allows. For "
 "descendants with many children, places are automatically suppressed. The "
@@ -113,7 +113,7 @@ msgstr ""
 "дозвољава. За потомке са много деце места се аутоматски прескачу. Ниво "
 "детаља и прецизност датума подешавају се за цео сајт у поставкама модула."
 
-#: resources/views/modules/fan-chart/form/details.phtml:72
+#: resources/views/modules/fan-chart/form/details.phtml:73
 msgid ""
 "Displays the marriage date of each couple in a narrow arc between "
 "generations. When descendants are enabled, also shows the marriage date "
@@ -123,11 +123,11 @@ msgstr ""
 "потомци омогућени, такође приказује датум венчања између централне особе и "
 "њених партнера."
 
-#: resources/views/modules/components/buttonbar/png-export-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:30
 msgid "Export as PNG"
 msgstr "Извези у PNG"
 
-#: resources/views/modules/components/buttonbar/svg-export-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:33
 msgid "Export as SVG"
 msgstr "Извези као SVG"
 
@@ -152,7 +152,7 @@ msgstr "Величина слова"
 msgid "Full place name"
 msgstr "Пуно име места"
 
-#: resources/views/modules/fan-chart/config.phtml:52
+#: resources/views/modules/fan-chart/config.phtml:53
 msgctxt "webtrees-fan-chart"
 msgid "General"
 msgstr "Опште"
@@ -161,7 +161,7 @@ msgstr "Опште"
 msgid "Generations"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:79
+#: resources/views/modules/fan-chart/form/display.phtml:80
 msgid "Hide empty segments"
 msgstr "Сакриј празне сегменте"
 
@@ -169,22 +169,22 @@ msgstr "Сакриј празне сегменте"
 msgid "Hide more options"
 msgstr "Сакриј још опција"
 
-#: resources/views/modules/fan-chart/config.phtml:66
+#: resources/views/modules/fan-chart/config.phtml:67
 msgid "Hide the PNG export button"
 msgstr "Сакриј дугме за извоз PNG"
 
-#: resources/views/modules/fan-chart/config.phtml:57
+#: resources/views/modules/fan-chart/config.phtml:58
 msgid "Hide the SVG export button"
 msgstr "Сакриј дугме за извоз SVG"
 
-#: resources/views/modules/fan-chart/config.phtml:103
+#: resources/views/modules/fan-chart/config.phtml:104
 msgid ""
 "How much of each place is shown in chart arcs — the full name, only the "
 "lowest levels, or the place combined with its country as a name or country "
 "code. Users toggle place visibility on/off in the chart form."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:60
+#: resources/views/modules/fan-chart/form/display.phtml:61
 msgid ""
 "Images are only shown if the arc segment is wide enough. Images for "
 "descendants are not yet available."
@@ -196,7 +196,7 @@ msgstr ""
 msgid "Individual"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/details.phtml:34
+#: resources/views/modules/fan-chart/form/details.phtml:35
 msgid ""
 "Inserts the GEDCOM NICK value in quotes between the given names and the "
 "surname (e.g. Martin \"Chalky\" White). Mirrors the legacy webtrees behavior "
@@ -218,11 +218,11 @@ msgstr "Најнижа три нивоа"
 msgid "Lowest two levels"
 msgstr "Најнижа два нивоа"
 
-#: resources/views/modules/fan-chart/form/colors.phtml:43
+#: resources/views/modules/fan-chart/form/colors.phtml:44
 msgid "Maternal"
 msgstr "Мајчин"
 
-#: resources/views/modules/fan-chart/config.phtml:26
+#: resources/views/modules/fan-chart/config.phtml:27
 msgid "Modules"
 msgstr ""
 
@@ -238,7 +238,7 @@ msgstr "Помери дијаграм"
 msgid "Move the view with two fingers"
 msgstr "Померите поглед са два прста"
 
-#: resources/views/modules/fan-chart/config.phtml:75
+#: resources/views/modules/fan-chart/config.phtml:76
 msgid "Name abbreviation when space is tight"
 msgstr "Скраћивање имена када је простор ограничен"
 
@@ -258,7 +258,7 @@ msgstr ""
 msgid "Open the individual page or center the chart on the person"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:72
+#: resources/views/modules/fan-chart/form/display.phtml:73
 msgid ""
 "Partners and children are shown as arcs below the ancestor section. The fan "
 "size is limited to 180–270 degrees when enabled."
@@ -266,7 +266,7 @@ msgstr ""
 "Партнери и деца се приказују као лукови испод секције предака. Величина "
 "лепезе је ограничена на 180–270 степени када је омогућено."
 
-#: resources/views/modules/fan-chart/form/colors.phtml:39
+#: resources/views/modules/fan-chart/form/colors.phtml:40
 msgid "Paternal"
 msgstr "Очев"
 
@@ -282,11 +282,11 @@ msgstr ""
 msgid "Place and country code (3 letters)"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:92
+#: resources/views/modules/fan-chart/config.phtml:93
 msgid "Place detail"
 msgstr "Детаљи места"
 
-#: resources/views/modules/components/buttonbar/center-button.phtml:18
+#: resources/views/modules/components/buttonbar.phtml:25
 msgid "Re center"
 msgstr "Ре центар"
 
@@ -302,7 +302,7 @@ msgstr "Десни клик"
 msgid "Select a person in the chart to see the details here."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:66
+#: resources/views/modules/fan-chart/form/display.phtml:67
 msgid "Show descendants"
 msgstr "Прикажи потомке"
 
@@ -310,15 +310,15 @@ msgstr "Прикажи потомке"
 msgid "Show details of a person"
 msgstr "Прикажи детаље о особи"
 
-#: resources/views/modules/fan-chart/form/details.phtml:53
+#: resources/views/modules/fan-chart/form/details.phtml:54
 msgid "Show details panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/colors.phtml:28
+#: resources/views/modules/fan-chart/form/colors.phtml:29
 msgid "Show family colors"
 msgstr "Прикажи породичне боје"
 
-#: resources/views/modules/fan-chart/config.phtml:120
+#: resources/views/modules/fan-chart/config.phtml:121
 msgid ""
 "Show full dates (birth, marriage, death) for early generations. Later "
 "generations show year only. Marriage dates are hidden from generation 9. "
@@ -338,7 +338,7 @@ msgstr "Прикажи пуне датуме до генерације %s"
 msgid "Show help"
 msgstr "Прикажи помоћ"
 
-#: resources/views/modules/fan-chart/form/display.phtml:55
+#: resources/views/modules/fan-chart/form/display.phtml:56
 msgid "Show images only"
 msgstr "Прикажи само слике"
 
@@ -346,23 +346,23 @@ msgstr "Прикажи само слике"
 msgid "Show more options"
 msgstr "Прикажи још опција"
 
-#: resources/views/modules/fan-chart/form/display.phtml:41
+#: resources/views/modules/fan-chart/form/display.phtml:42
 msgid "Show names and images"
 msgstr "Прикажи имена и слике"
 
-#: resources/views/modules/fan-chart/form/display.phtml:48
+#: resources/views/modules/fan-chart/form/display.phtml:49
 msgid "Show names only"
 msgstr "Прикажи само имена"
 
-#: resources/views/modules/fan-chart/form/details.phtml:28
+#: resources/views/modules/fan-chart/form/details.phtml:29
 msgid "Show nicknames in display names"
 msgstr "Прикажи надимке у приказаним именима"
 
-#: resources/views/modules/fan-chart/form/details.phtml:66
+#: resources/views/modules/fan-chart/form/details.phtml:67
 msgid "Show parent marriage dates"
 msgstr "Прикажи датуме склапања брака родитеља"
 
-#: resources/views/modules/fan-chart/form/details.phtml:40
+#: resources/views/modules/fan-chart/form/details.phtml:41
 msgid "Show places"
 msgstr "Прикажи места"
 
@@ -370,7 +370,7 @@ msgstr "Прикажи места"
 msgid "Show the details of the person in the panel"
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/details.phtml:59
+#: resources/views/modules/fan-chart/form/details.phtml:60
 msgid ""
 "Shows the facts of a person in a side panel when you select a person, "
 "instead of the tooltip on the mouse pointer. The panel can be used with the "
@@ -399,7 +399,7 @@ msgstr ""
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
-#: resources/views/modules/fan-chart/form/display.phtml:59
+#: resources/views/modules/fan-chart/form/display.phtml:60
 msgid "The display option only affects the arcs, not the tooltip."
 msgstr ""
 
@@ -420,7 +420,7 @@ msgstr "Само године"
 msgid "Zoom in/out"
 msgstr "Увећај/Умањи"
 
-#: resources/views/modules/fan-chart/config.phtml:135
+#: resources/views/modules/fan-chart/config.phtml:136
 msgid "cancel"
 msgstr ""
 
@@ -428,7 +428,7 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: resources/views/modules/fan-chart/config.phtml:130
+#: resources/views/modules/fan-chart/config.phtml:131
 msgid "save"
 msgstr ""
 

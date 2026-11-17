@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 use Fisharebest\Webtrees\I18N;
 use MagicSunday\Webtrees\FanChart\Configuration;
+use MagicSunday\Webtrees\ModuleBase\View\SharedViews;
 
 /**
  * @var Configuration $configuration
@@ -23,7 +24,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         <?php echo I18N::translate('Details'); ?>
     </div>
     <div class="col-sm-9 wt-page-options-value">
-        <?php echo view($moduleName . '::modules/components/checkbox', [
+        <?php echo view(SharedViews::NAMESPACE . '::checkbox', [
             'name'      => 'showNicknames',
             'label'     => I18N::translate('Show nicknames in display names'),
             'checked'   => $configuration->getShowNicknames(),
@@ -35,7 +36,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         </small>
 
         <div class="mt-3">
-            <?php echo view($moduleName . '::modules/components/checkbox', [
+            <?php echo view(SharedViews::NAMESPACE . '::checkbox', [
                 'name'      => 'showPlaces',
                 'label'     => I18N::translate('Show places'),
                 'checked'   => $configuration->getShowPlaces(),
@@ -48,7 +49,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         </div>
 
         <div class="mt-3">
-            <?php echo view($moduleName . '::modules/components/checkbox', [
+            <?php echo view(SharedViews::NAMESPACE . '::checkbox', [
                 'name'      => 'showDetailPanel',
                 'label'     => I18N::translate('Show details panel'),
                 'checked'   => $configuration->getShowDetailPanel(),
@@ -61,7 +62,7 @@ use MagicSunday\Webtrees\FanChart\Configuration;
         </div>
 
         <div class="mt-3">
-            <?php echo view($moduleName . '::modules/components/checkbox', [
+            <?php echo view(SharedViews::NAMESPACE . '::checkbox', [
                 'name'      => 'showParentMarriageDates',
                 'label'     => I18N::translate('Show parent marriage dates'),
                 'checked'   => $configuration->getShowParentMarriageDates(),
