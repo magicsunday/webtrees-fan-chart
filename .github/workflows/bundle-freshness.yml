@@ -15,3 +15,5 @@ jobs:
             contents: read
         with:
             node-image: ghcr.io/magicsunday/webtrees-docker-module-base:node24@sha256:39fc8641796056a05d6dd5112b181706bad299282b163147e20d4c3b9cce9da7
+        secrets:
+            push_token: ${{ secrets.BUNDLE_PUSH_TOKEN }}
