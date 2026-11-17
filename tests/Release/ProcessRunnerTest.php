@@ -75,18 +75,25 @@ final class ProcessRunnerTest extends TestCase
     /**
      * The files that capture the output of the child are created in the directory the helper was given and are gone
      * after the run, also when the child exits with a failure status. The child lists the entries of that directory
-     * while it runs, so the test does not depend on a platform specific view of the open files of a process.
+     * while it runs, so the test does not depend on a platform specific view of the open files of a process. The
+     * directory name holds square brackets, which a pattern based listing would read as a character class.
      */
     #[Test]
     public function removesItsCaptureFilesAfterARun(): void
     {
-        $directory = sys_get_temp_dir() . '/release-runner-' . bin2hex(random_bytes(6));
+        $directory = sys_get_temp_dir() . '/release-runner-[' . bin2hex(random_bytes(6)) . ']';
 
         mkdir($directory);
 
         try {
             [$status, $output] = (new ProcessRunner($directory))->execute(
-                [PHP_BINARY, '-r', 'echo implode("\n", glob($argv[1] . "/*")); exit(1);', $directory],
+                [
+                    PHP_BINARY,
+                    '-r',
+                    'foreach (new FilesystemIterator($argv[1]) as $file) { $paths[] = $file->getPathname(); } '
+                    . 'echo implode("\n", $paths); exit(1);',
+                    $directory,
+                ],
                 $directory
             );
 
