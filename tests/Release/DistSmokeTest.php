@@ -33,6 +33,7 @@ use function is_dir;
 use function json_encode;
 use function mkdir;
 use function posix_geteuid;
+use function rtrim;
 use function sprintf;
 use function str_repeat;
 use function strpos;
@@ -61,8 +62,14 @@ final class DistSmokeTest extends TestCase
      */
     private const string BASE = 'vendor/magicsunday/webtrees-module-base/';
 
+    /**
+     * The directory of the shared views inside the bundled module base, with the trailing slash.
+     */
     private const string BASE_VIEWS = self::BASE . 'resources/views/';
 
+    /**
+     * The directory of the PHP sources inside the bundled module base, with the trailing slash.
+     */
     private const string BASE_SOURCES = self::BASE . 'src/';
 
     /**
@@ -227,6 +234,7 @@ final class DistSmokeTest extends TestCase
         [$status, $output] = $this->dist(implode(' ', $configured), $configured, [$configured[0]]);
 
         self::assertNotSame(0, $status, $output);
+        self::assertStringContainsString($configured[0] . '.phtml', $output);
         self::assertFileDoesNotExist($this->workDir . '/module/' . $this->moduleName . '.zip');
     }
 
@@ -399,6 +407,7 @@ final class DistSmokeTest extends TestCase
 
         self::assertNotSame(0, $status);
         self::assertStringContainsString('Error: no well-formed version of the module base', $output);
+        self::assertFileDoesNotExist($this->baseVersionFile());
     }
 
     /**
@@ -412,7 +421,7 @@ final class DistSmokeTest extends TestCase
 
         self::assertSame(0, $status, $output);
 
-        $bundled  = strpos($output, 'cp -L .build/vendor/magicsunday/webtrees-module-base/LICENSE');
+        $bundled  = strpos($output, 'cp -L .build/' . self::BASE . 'LICENSE');
         $recorded = strpos($output, '> ' . $this->moduleName . '/' . self::BASE . 'VERSION');
         $packed   = strpos($output, 'zip --quiet --recurse-paths');
 
@@ -849,7 +858,7 @@ final class DistSmokeTest extends TestCase
      * @param list<string> $baseViews   The views that the module base ships, by name without extension.
      * @param list<string> $unreadable  The views that the stubbed composer makes unreadable after it installed them.
      *
-     * @return array{int, string}
+     * @return array{int, string} The exit status and the output of the dist target.
      */
     private function dist(string $sharedViews, array $baseViews, array $unreadable = []): array
     {
@@ -872,7 +881,7 @@ final class DistSmokeTest extends TestCase
             $stubs . '/composer',
             sprintf(
                 "#!/bin/sh\nset -e\nmkdir -p .build/vendor/composer .build/vendor/magicsunday\n"
-                . "cp -R '%s' .build/vendor/magicsunday/webtrees-module-base\n"
+                . "cp -R '%s' .build/" . rtrim(self::BASE, '/') . "\n"
                 . "printf '%%s' '{\"packages\":[{\"name\":\"magicsunday/webtrees-module-base\",\"version\":\"3.4.0\"}]}'"
                 . " > .build/vendor/composer/installed.json\n",
                 $fixture
@@ -882,7 +891,7 @@ final class DistSmokeTest extends TestCase
         foreach ($unreadable as $view) {
             file_put_contents(
                 $stubs . '/composer',
-                sprintf("chmod 000 '.build/vendor/magicsunday/webtrees-module-base/resources/views/%s.phtml'\n", $view),
+                sprintf("chmod 000 '.build/%s%s.phtml'\n", self::BASE_VIEWS, $view),
                 FILE_APPEND
             );
         }
@@ -898,7 +907,19 @@ final class DistSmokeTest extends TestCase
             [
                 ['git', 'init', '-q'],
                 ['git', 'add', 'Makefile', 'Make'],
-                ['git', '-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-q', '-m', 'Module'],
+                [
+                    'git',
+                    '-c',
+                    'user.name=Test',
+                    '-c',
+                    'user.email=test@example.invalid',
+                    '-c',
+                    'commit.gpgsign=false',
+                    'commit',
+                    '-q',
+                    '-m',
+                    'Module',
+                ],
             ] as $command
         ) {
             [$status, $output] = $this->processRunner->execute($command, $module, $environment);
