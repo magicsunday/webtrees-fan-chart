@@ -26,7 +26,7 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
-use MagicSunday\Webtrees\FanChart\Test\Support\PayloadToken;
+use MagicSunday\Webtrees\ModuleBase\Testing\PayloadToken;
 use MagicSunday\Webtrees\ModuleBase\Testing\RealTreeFixture;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -195,7 +195,7 @@ final class DataFacadePrivacyTest extends TestCase
         $payload = $this->payload($tree, 'I1');
 
         foreach ([...self::PRIVATE_TOKENS, ...self::PUBLIC_TOKENS] as $token) {
-            PayloadToken::assertPresent($this, $token, $payload, 'The administrator should see ' . $token);
+            self::assertTrue(PayloadToken::occursIn($payload, $token), 'The administrator should see ' . $token);
         }
     }
 
@@ -214,11 +214,11 @@ final class DataFacadePrivacyTest extends TestCase
         $payload = $this->asVisitor($tree, 'I1');
 
         foreach (self::PUBLIC_TOKENS as $token) {
-            PayloadToken::assertPresent($this, $token, $payload, 'The visitor should see ' . $token);
+            self::assertTrue(PayloadToken::occursIn($payload, $token), 'The visitor should see ' . $token);
         }
 
         foreach (self::PRIVATE_TOKENS as $token) {
-            PayloadToken::assertAbsent($this, $token, $payload, 'The visitor must not see ' . $token);
+            self::assertFalse(PayloadToken::occursIn($payload, $token), 'The visitor must not see ' . $token);
         }
     }
 
@@ -255,7 +255,7 @@ final class DataFacadePrivacyTest extends TestCase
         self::assertStringContainsString('Publicfather', $payload);
 
         foreach (self::PRIVATE_TOKENS as $token) {
-            PayloadToken::assertAbsent($this, $token, $payload, 'The stub must not carry ' . $token);
+            self::assertFalse(PayloadToken::occursIn($payload, $token), 'The stub must not carry ' . $token);
         }
     }
 
