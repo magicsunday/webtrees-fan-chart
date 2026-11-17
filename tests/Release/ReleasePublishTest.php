@@ -17,6 +17,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function array_diff;
+use function array_filter;
 use function array_slice;
 use function array_values;
 use function chmod;
@@ -634,14 +635,14 @@ final class ReleasePublishTest extends TestCase
         $this->createRepositoryWithRemote();
         $this->installStub('npm', "#!/bin/sh\nexit 0\n");
 
-        $headBefore    = trim($this->git(['rev-parse', 'HEAD'], $this->workDir . '/module'));
+        $headBefore    = $this->git(['rev-parse', 'HEAD'], $this->workDir . '/module');
         $changesBefore = $this->git(['status', '--porcelain'], $this->workDir . '/module');
 
         [$status, $output] = $this->runTarget('release-bump', $version);
 
         self::assertNotSame(0, $status);
         self::assertStringContainsString('VERSION must be semver', $output);
-        self::assertSame($headBefore, trim($this->git(['rev-parse', 'HEAD'], $this->workDir . '/module')));
+        self::assertSame($headBefore, $this->git(['rev-parse', 'HEAD'], $this->workDir . '/module'));
         self::assertSame($changesBefore, $this->git(['status', '--porcelain'], $this->workDir . '/module'));
         self::assertSame([], $this->remoteRefs());
     }
