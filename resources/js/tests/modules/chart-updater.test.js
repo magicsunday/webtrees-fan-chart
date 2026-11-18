@@ -370,7 +370,7 @@ describe("Update", () => {
 
         update.update("/update", jest.fn(), callback);
 
-        // The transition lasts 20 ms, so this is long enough for its end
+        // The update duration is set short for these tests, so this wait is long enough for the end of the transition
         await flush(100);
 
         expect(errorSpy).toHaveBeenCalled();
