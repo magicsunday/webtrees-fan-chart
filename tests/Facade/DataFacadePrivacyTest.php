@@ -36,7 +36,6 @@ use RuntimeException;
 
 use function file_get_contents;
 use function file_put_contents;
-use function is_dir;
 use function json_encode;
 use function mkdir;
 use function rmdir;
@@ -127,9 +126,16 @@ final class DataFacadePrivacyTest extends TestCase
         '1910',
     ];
 
+    /**
+     * The module under test, set up with the place format of the stored settings.
+     */
     private Module $module;
 
-    private string $indexDirectory;
+    /**
+     * The index directory of the test with the media file of the living person. It stays empty until setUp()
+     * created the directory, so tearDown() removes nothing before that.
+     */
+    private string $indexDirectory = '';
 
     /**
      * Boots webtrees, builds a fresh schema in memory and logs in an administrator, the way the
@@ -143,14 +149,17 @@ final class DataFacadePrivacyTest extends TestCase
 
         // The media file of the living person has to exist, because the image of a person is only
         // referenced when its file is there.
-        $this->indexDirectory = sys_get_temp_dir() . '/fan-chart-privacy-' . uniqid('', true) . '/';
+        $directory = sys_get_temp_dir() . '/fan-chart-privacy-' . uniqid('', true) . '/';
 
-        if (!mkdir($this->indexDirectory . 'media', 0o777, true) && !is_dir($this->indexDirectory . 'media')) {
+        if (!mkdir($directory . 'media', 0o777, true)) {
             throw new RuntimeException('The media directory could not be created.');
         }
 
-        file_put_contents($this->indexDirectory . 'media/hiddenlivingphoto.jpg', 'image');
-        Site::setPreference('INDEX_DIRECTORY', $this->indexDirectory);
+        file_put_contents($directory . 'media/hiddenlivingphoto.jpg', 'image');
+
+        $this->indexDirectory = $directory;
+
+        Site::setPreference('INDEX_DIRECTORY', $directory);
 
         DB::table('module')->insert(['module_name' => 'webtrees-fan-chart']);
         DB::table('module_setting')->insert([
@@ -173,10 +182,12 @@ final class DataFacadePrivacyTest extends TestCase
         Site::$preferences = [];
         Registry::cache(new CacheFactory());
 
-        unlink($this->indexDirectory . 'media/hiddenlivingphoto.jpg');
+        if ($this->indexDirectory !== '') {
+            unlink($this->indexDirectory . 'media/hiddenlivingphoto.jpg');
 
-        rmdir($this->indexDirectory . 'media');
-        rmdir($this->indexDirectory);
+            rmdir($this->indexDirectory . 'media');
+            rmdir($this->indexDirectory);
+        }
 
         RealTreeFixture::restoreMinimalDatabase();
 
