@@ -123,8 +123,7 @@ final class NodeUserTest extends TestCase
     /**
      * The lang stages form a dependency line, so extract runs before merge, merge before the fuzzy resolver and
      * the resolver before compile, also under a parallel make. Sibling prerequisites would let the stages overlap,
-     * and a dry run cannot show that, because it prints the recipes in the order the prerequisites are listed. So
-     * the test reads the prerequisites from the make database, where each stage has exactly its predecessor.
+     * so the test reads the prerequisites from the make database, where each stage has exactly its predecessor.
      */
     #[Test]
     public function chainsTheLangStagesAsADependencyLine(): void
