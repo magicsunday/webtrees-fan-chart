@@ -24,7 +24,7 @@
         // entry of that array is therefore answered here and not with a test of its value.
         "ArrayItemRemoval": {
             "ignore": [
-                "MagicSunday\\Webtrees\\FanChart\\Module::getChartParameters"
+                "MagicSunday\\Webtrees\\FanChart\\Module::getChartLabels"
             ]
         }
     }

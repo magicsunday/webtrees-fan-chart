@@ -259,11 +259,21 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
             'nameAbbreviation'       => $this->configuration->getNameAbbreviation()
                 ->resolve($individual->tree()->getPreference('SURNAME_TRADITION'))
                 ->value,
-            'labels' => [
-                'zoom'         => I18N::translate('Use Ctrl + scroll to zoom in the view'),
-                'move'         => I18N::translate('Move the view with two fingers'),
-                'updateFailed' => I18N::translate('The chart could not be updated. Please try again.'),
-            ],
+            'labels' => $this->getChartLabels(),
+        ];
+    }
+
+    /**
+     * Returns the texts that the page script shows, keyed by the name that the script reads.
+     *
+     * @return array{zoom: string, move: string, updateFailed: string}
+     */
+    private function getChartLabels(): array
+    {
+        return [
+            'zoom'         => I18N::translate('Use Ctrl + scroll to zoom in the view'),
+            'move'         => I18N::translate('Move the view with two fingers'),
+            'updateFailed' => I18N::translate('The chart could not be updated. Please try again.'),
         ];
     }
 
