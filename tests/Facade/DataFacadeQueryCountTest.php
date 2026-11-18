@@ -41,6 +41,8 @@ use PHPUnit\Framework\TestCase;
 use function array_filter;
 use function array_map;
 use function array_merge;
+use function array_unique;
+use function array_values;
 use function count;
 use function file_put_contents;
 use function glob;
@@ -282,6 +284,45 @@ final class DataFacadeQueryCountTest extends TestCase
         }
 
         self::assertLessThanOrEqual(1, $singleLookups);
+        self::assertNotSame(
+            [],
+            $this->statementsContaining($this->statements($tree, 5), '"i_id" in'),
+            'The parents are loaded by the chunked lookup.',
+        );
+    }
+
+    /**
+     * The statements of the negative checks are found by their spelling, so the same spelling has to match
+     * the real statements of a person with parents. An editor sends the lookup of pending families as well.
+     */
+    #[Test]
+    public function theSpellingsThatTheNegativeChecksLookForMatchTheStatementsOfAPersonWithParents(): void
+    {
+        $tree = $this->importPedigree(3, true);
+
+        Auth::login($this->createEditor($tree));
+
+        $statements = $this->statements($tree, 4);
+
+        foreach (['"wt_families"', '"wt_change"', '"xref" in', '"i_id" in'] as $spelling) {
+            self::assertNotSame([], $this->statementsContaining($statements, $spelling), $spelling);
+        }
+    }
+
+    /**
+     * Picks the statements whose text holds the given spelling.
+     *
+     * @param list<array{query: string, bindings: list<string>}> $statements The statements of a request
+     * @param string                                             $spelling   The text to look for
+     *
+     * @return list<array{query: string, bindings: list<string>}>
+     */
+    private function statementsContaining(array $statements, string $spelling): array
+    {
+        return array_values(array_filter(
+            $statements,
+            static fn (array $statement): bool => str_contains($statement['query'], $spelling),
+        ));
     }
 
     /**

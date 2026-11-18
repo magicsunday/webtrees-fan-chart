@@ -521,6 +521,30 @@ describe("Update", () => {
             expect(notices()).toHaveLength(0);
         });
 
+        test.each([
+            ["an empty label", { zoom: "", move: "", updateFailed: "" }],
+            ["a missing label", { zoom: "", move: "" }],
+        ])("shows no empty notice for %s", async (_kind, labels) => {
+            const { update } = createChart({ labels });
+
+            await failWith(update, new Error("500 Internal Server Error"));
+
+            expect(notices()).toHaveLength(0);
+        });
+
+        test("shows markup in the label as text", async () => {
+            const markup = '<img src="x" onerror="alert(1)"><b>failed</b>';
+            const { update } = createChart({
+                labels: { zoom: "", move: "", updateFailed: markup },
+            });
+
+            await failWith(update, new Error("500 Internal Server Error"));
+
+            expect(notices()).toHaveLength(1);
+            expect(notices()[0].textContent).toBe(markup);
+            expect(notices()[0].children).toHaveLength(0);
+        });
+
         test("shows no notice for a request that a newer update superseded", async () => {
             const { update } = createChart({
                 labels: { zoom: "", move: "", updateFailed: failedText },

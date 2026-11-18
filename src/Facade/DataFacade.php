@@ -69,13 +69,6 @@ final class DataFacade
     use ModuleAwareDataFacadeTrait;
 
     /**
-     * The most values that one preload statement binds. A generation of the ancestor tree
-     * doubles with each step, so a lookup of a whole generation in one statement would
-     * reach the placeholder ceiling of the database on a deep and complete pedigree.
-     */
-    private const int PRELOAD_CHUNK_SIZE = MediaPreloader::CHUNK_SIZE;
-
-    /**
      * The configuration instance. Initialized by createTreeStructure() on each
      * call. Accessing before createTreeStructure() throws "Uninitialized typed
      * property".
@@ -187,7 +180,7 @@ final class DataFacade
         // integer and no longer fit the string parameter of the record factory.
         $families = [];
 
-        foreach (array_chunk($familyXrefs, self::PRELOAD_CHUNK_SIZE) as $chunk) {
+        foreach (array_chunk($familyXrefs, MediaPreloader::CHUNK_SIZE) as $chunk) {
             $rows = DB::table('families')
                 ->where('f_file', '=', $tree->id())
                 ->whereIn('f_id', $chunk)
@@ -239,7 +232,7 @@ final class DataFacade
         // reads them from there.
         $parents = [];
 
-        foreach (array_chunk(array_values(array_unique($memberXrefs)), self::PRELOAD_CHUNK_SIZE) as $chunk) {
+        foreach (array_chunk(array_values(array_unique($memberXrefs)), MediaPreloader::CHUNK_SIZE) as $chunk) {
             $rows = DB::table('individuals')
                 ->where('i_file', '=', $tree->id())
                 ->whereIn('i_id', $chunk)
@@ -253,7 +246,7 @@ final class DataFacade
             }
         }
 
-        $pendingXrefs = PendingRecords::xrefs($tree, $familyXrefs, self::PRELOAD_CHUNK_SIZE);
+        $pendingXrefs = PendingRecords::xrefs($tree, $familyXrefs, MediaPreloader::CHUNK_SIZE);
 
         foreach ($families as $family) {
             if (in_array($family['xref'], $pendingXrefs, true)) {

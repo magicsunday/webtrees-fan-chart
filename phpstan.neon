@@ -24,8 +24,7 @@ parameters:
         # ConfigTrait are the module's own composition of the module-base
         # sharing traits, and ModuleSettingsFixtureTrait and
         # IndividualFixtureTrait are the fixtures that
-        # several test classes share, they build stubs or a real tree through
-        # the test case. All of them are a deliberate house idiom.
+        # several test classes share. All of them are a deliberate house idiom.
         -
             identifier: symplify.forbiddenTrait
             paths:

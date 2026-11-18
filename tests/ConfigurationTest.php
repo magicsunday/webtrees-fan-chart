@@ -166,7 +166,9 @@ final class ConfigurationTest extends TestCase
     }
 
     /**
-     * A value of the posted form wins over the stored preference.
+     * A value of the posted form wins over the stored preference. The place format is the exception, because
+     * it is an administrator setting that a request cannot change, so its row expects the stored value for
+     * the posted one as well.
      *
      * @param Closure(Configuration): (bool|int|string|PlaceFormatChoice) $read Reads the setting under test
      */

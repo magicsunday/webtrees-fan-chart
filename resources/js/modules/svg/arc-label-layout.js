@@ -457,8 +457,8 @@ export default class ArcLabelLayout {
      */
     calculateOuterSlotPositions(datum, lineKinds) {
         // Build line groups: [names...], [dates...]
-        /** @type {{ items: LineKind[], isDate: boolean }} */
-        const nameGroup = { items: [], isDate: false };
+        /** @type {{ count: number, isDate: boolean }} */
+        const nameGroup = { count: 0, isDate: false };
         const groups = [nameGroup];
         // The group dates are appended to, always the last one in groups
         let lastGroup = nameGroup;
@@ -466,14 +466,14 @@ export default class ArcLabelLayout {
         lineKinds.forEach((kind) => {
             if (kind === LINE_KIND.DATE) {
                 // Start a new group for the first date
-                if (lastGroup.items.length > 0 && !lastGroup.isDate) {
-                    lastGroup = { items: [], isDate: true };
+                if (lastGroup.count > 0 && !lastGroup.isDate) {
+                    lastGroup = { count: 0, isDate: true };
                     groups.push(lastGroup);
                 }
 
-                lastGroup.items.push(kind);
+                lastGroup.count += 1;
             } else {
-                nameGroup.items.push(kind);
+                nameGroup.count += 1;
             }
         });
 
@@ -483,7 +483,7 @@ export default class ArcLabelLayout {
         const centerRadius = this._geometry.centerRadius(datum.depth);
         const degPerPixel = MATH_RAD2DEG / centerRadius;
 
-        const totalItems = groups.reduce((sum, g) => sum + g.items.length, 0);
+        const totalItems = groups.reduce((sum, g) => sum + g.count, 0);
         const intraNameGapPx = fontSize * NAME_LINE_SPACING;
         const intraDateGapPx = fontSize * DATE_LINE_SPACING;
         const interGapPx = fontSize * (totalItems <= 3 ? COMPACT_GROUP_SPACING : GROUP_SPACING);
@@ -497,7 +497,7 @@ export default class ArcLabelLayout {
 
         groups.forEach((group, gi) => {
             const intraGap = group.isDate ? intraDateGapDeg : intraNameGapDeg;
-            totalDeg += (group.items.length - 1) * intraGap;
+            totalDeg += (group.count - 1) * intraGap;
 
             if (gi < groups.length - 1) {
                 totalDeg += interGapDeg;
@@ -525,13 +525,13 @@ export default class ArcLabelLayout {
         groups.forEach((group, gi) => {
             const intraGap = group.isDate ? intraDateGapDeg : intraNameGapDeg;
 
-            group.items.forEach((_element, si) => {
+            for (let si = 0; si < group.count; si += 1) {
                 positions.push(currentPos);
 
-                if (si < group.items.length - 1) {
+                if (si < group.count - 1) {
                     currentPos += intraGap;
                 }
-            });
+            }
 
             if (gi < groups.length - 1) {
                 currentPos += interGapDeg;

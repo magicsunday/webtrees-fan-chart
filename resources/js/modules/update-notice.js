@@ -39,6 +39,7 @@ function findNotice(element) {
 export function showUpdateNotice(svg, text) {
     const element = svg.node();
 
+    // A missing label would leave an empty alert box above the chart
     if (element === null || text === "") {
         return;
     }

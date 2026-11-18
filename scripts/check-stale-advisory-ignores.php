@@ -17,10 +17,10 @@ namespace MagicSunday\Webtrees\FanChart\Scripts;
  *
  * Usage: php check-stale-advisory-ignores.php <composer.json> <audit.json>
  *
- * The audit file is the output of `composer audit --format=json`. Composer lists the advisories that an ignore
- * entry suppresses under "ignored-advisories", grouped by package. The keys of ignore-id are compared with the
- * "advisoryId" values of that list, so an entry has to be an advisory id (PKSA-...). An entry keyed by a CVE or a
- * remote id never matches and is reported as stale.
+ * The audit file is the output of `composer audit --format=json`. The script reads the "ignored-advisories" of
+ * that file, grouped by package, and compares the keys of ignore-id with their "advisoryId" values. An entry has
+ * to be an advisory id (PKSA-...), because an entry keyed by a CVE or a remote id never matches and is reported
+ * as stale.
  *
  * Exit status: 0 when every ignored id still applies, 1 when at least one is stale, 2 when an input cannot be read.
  */
@@ -109,7 +109,7 @@ if (count($arguments) !== 3) {
 $manifest = readJsonFile($arguments[1]);
 $audit    = readJsonFile($arguments[2]);
 
-// Composer accepts a map of id to reason as well as a plain list of ids.
+// The ignore-id setting holds either a map of id to reason or a plain list of ids.
 $ignoredIds = [];
 
 foreach (valueAt($manifest, ['config', 'policy', 'advisories', 'ignore-id']) ?? [] as $key => $value) {
