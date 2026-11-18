@@ -11,12 +11,12 @@ This repository hosts the webtrees fan chart module, an interactive SVG fan char
 - After JS changes, always verify in the browser via Playwright before claiming success.
 
 ### Layout of the NAS checkout
-- This checkout sits at `app/vendor/magicsunday/webtrees-fan-chart` inside the `webtrees-docker` project that provides the buildbox. All PHP/Node tooling runs inside that buildbox, never directly on the host or in phpfpm:
+- This checkout sits at `app/vendor/magicsunday/webtrees-fan-chart` inside the `webtrees-docker` project that provides the buildbox. All PHP/Node tooling runs inside that buildbox, never directly on the host or in phpfpm. Start in the checkout, the commands go up to the project root:
   ```
-  cd <webtrees-docker root> && make bash
+  cd ../../../.. && make bash
   cd app/vendor/magicsunday/webtrees-fan-chart
   ```
-  or, without an interactive shell: `cd <webtrees-docker root> && docker compose run --rm buildbox composer -d /var/webtrees/app/vendor/magicsunday/webtrees-fan-chart ci:test`.
+  or, without an interactive shell: `cd ../../../.. && docker compose run --rm buildbox composer -d /var/webtrees/app/vendor/magicsunday/webtrees-fan-chart ci:test`.
 - The sibling clones (`../webtrees-chart-lib`, `../webtrees-module-base`) are the neighbours of this checkout under `app/vendor/magicsunday/`.
 - After PHP or JS changes visible in the browser: `docker restart webtrees-phpfpm-1`.
 
