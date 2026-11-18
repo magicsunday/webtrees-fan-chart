@@ -36,6 +36,7 @@ use RuntimeException;
 
 use function file_get_contents;
 use function file_put_contents;
+use function is_file;
 use function json_encode;
 use function mkdir;
 use function rmdir;
@@ -133,7 +134,8 @@ final class DataFacadePrivacyTest extends TestCase
 
     /**
      * The index directory of the test with the media file of the living person. It stays empty until setUp()
-     * created the directory, so tearDown() removes nothing before that.
+     * created the directory, so tearDown() removes nothing before that. The media file may be missing when
+     * setUp() stopped before it wrote it.
      */
     private string $indexDirectory = '';
 
@@ -155,9 +157,9 @@ final class DataFacadePrivacyTest extends TestCase
             throw new RuntimeException('The media directory could not be created.');
         }
 
-        file_put_contents($directory . 'media/hiddenlivingphoto.jpg', 'image');
-
         $this->indexDirectory = $directory;
+
+        file_put_contents($directory . 'media/hiddenlivingphoto.jpg', 'image');
 
         Site::setPreference('INDEX_DIRECTORY', $directory);
 
@@ -183,7 +185,9 @@ final class DataFacadePrivacyTest extends TestCase
         Registry::cache(new CacheFactory());
 
         if ($this->indexDirectory !== '') {
-            unlink($this->indexDirectory . 'media/hiddenlivingphoto.jpg');
+            if (is_file($this->indexDirectory . 'media/hiddenlivingphoto.jpg')) {
+                unlink($this->indexDirectory . 'media/hiddenlivingphoto.jpg');
+            }
 
             rmdir($this->indexDirectory . 'media');
             rmdir($this->indexDirectory);
