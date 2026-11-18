@@ -91,6 +91,42 @@ describe("TextMetrics", () => {
         expect(metrics.getFont(large).fontSize).toBe("16px");
     });
 
+    test("reads a text and a textPath element apart, although they share class and parents", () => {
+        const metrics = new TextMetrics({ style: jest.fn() });
+        const [text] = createTexts("12px", [""]);
+        const textPath = d3.select(text.node().parentNode).append("textPath").attr("class", "");
+
+        metrics.getFont(text);
+        metrics.getFont(textPath);
+
+        expect(computedStyleMock).toHaveBeenCalledTimes(4);
+    });
+
+    test("reads an element with an inline style of its own apart from one without", () => {
+        const metrics = new TextMetrics({ style: jest.fn() });
+        const [plain, styled] = createTexts("12px", ["", ""]);
+
+        styled.attr("style", "fill: red");
+
+        metrics.getFont(plain);
+        metrics.getFont(styled);
+
+        expect(computedStyleMock).toHaveBeenCalledTimes(4);
+    });
+
+    test("reads elements apart whose ancestors differ in class only", () => {
+        const metrics = new TextMetrics({ style: jest.fn() });
+        const [first] = createTexts("12px", [""]);
+        const [second] = createTexts("12px", [""]);
+
+        d3.select(second.node().parentNode).attr("class", "name other");
+
+        metrics.getFont(first);
+        metrics.getFont(second);
+
+        expect(computedStyleMock).toHaveBeenCalledTimes(4);
+    });
+
     test("reads the font family of the svg once", () => {
         const svg = { style: jest.fn(() => "Arial") };
         const metrics = new TextMetrics(svg);
