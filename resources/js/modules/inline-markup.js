@@ -51,6 +51,8 @@ function copyChildren(source, target) {
             continue;
         }
 
+        // A comment or processing instruction is dropped by its node type. Without this line the
+        // recursion would drop it only because such a node has no children.
         if (child.nodeType !== Node.ELEMENT_NODE) {
             continue;
         }
