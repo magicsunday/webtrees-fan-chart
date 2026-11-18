@@ -304,7 +304,7 @@ final class DataFacadeQueryCountTest extends TestCase
 
         $statements = $this->statements($tree, 4);
 
-        foreach (['"wt_families"', '"xref" in', '"i_id" in'] as $spelling) {
+        foreach (['"wt_families"', '"wt_change"', '"xref" in', '"i_id" in'] as $spelling) {
             self::assertNotSame([], $this->statementsContaining($statements, $spelling), $spelling);
         }
     }
