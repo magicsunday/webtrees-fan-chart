@@ -155,6 +155,22 @@ final class DataFacadeQueryCountTest extends TestCase
 
         self::assertLessThan($families, $deep);
         self::assertLessThan(intdiv($addedPeople, 10), $deep - $shallow);
+
+        // Every extra generation adds a fixed number of statements plus a few for each started chunk
+        // of the people it adds, so a regression in only one early generation is seen as well.
+        $previous = $shallow;
+
+        for ($depth = 6; $depth <= self::DEPTH; ++$depth) {
+            $current = count($this->statements($tree, $depth));
+
+            self::assertLessThanOrEqual(
+                3 + (4 * intdiv(2 ** $depth, MediaPreloader::CHUNK_SIZE)),
+                $current - $previous,
+                'The statements that generation ' . $depth . ' adds exceed the bound'
+            );
+
+            $previous = $current;
+        }
     }
 
     /**
