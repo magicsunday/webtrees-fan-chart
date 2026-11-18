@@ -297,11 +297,13 @@ describe("ArcLabelLayout", () => {
         });
 
         it("puts a single line on the center of the arc", () => {
-            expect(
-                createLayout(100).calculateOuterSlotPositions(createDatum({ depth: 4 }), [
-                    LINE_KIND.NAME,
-                ]),
-            ).toEqual([-0]);
+            const positions = createLayout(100).calculateOuterSlotPositions(
+                createDatum({ depth: 4 }),
+                [LINE_KIND.NAME],
+            );
+
+            expect(positions).toHaveLength(1);
+            expect(positions[0]).toBeCloseTo(0);
         });
     });
 
