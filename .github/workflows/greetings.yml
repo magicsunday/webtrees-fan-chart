@@ -3,6 +3,8 @@ name: Greetings
 on:
     issues:
         types: [opened]
+    # No step checks out the repository or runs code of the pull request, and
+    # the event text never reaches a shell, so this trigger is safe here.
     pull_request_target:  # zizmor: ignore[dangerous-triggers]
         types: [opened]
 
@@ -11,11 +13,9 @@ permissions:
 
 jobs:
     greeting:
-        # Greet humans only; skip bot pull requests. A bot's restricted token
-        # cannot be granted the write scope, and bots need no welcome. Inlined
-        # (not a reusable call) so this job-level skip happens before any
-        # permission setup, because a reusable call would fail at startup under
-        # the read-only token of a bot.
+        # Skip the Renovate and GitHub Actions bots, they need no welcome. The
+        # job is inlined and not a reusable call, so this skip happens before
+        # any permission setup.
         if: github.actor != 'renovate[bot]' && github.actor != 'github-actions[bot]'
         runs-on: ubuntu-latest
         permissions:
@@ -29,8 +29,8 @@ jobs:
                   issue_message: >
                       Thanks for opening your first issue in this project! A
                       maintainer will take a look as soon as possible. For bugs,
-                      a minimal reproduction helps a lot; for feature requests,
-                      a clear use case does.
+                      a minimal reproduction helps a lot. For feature requests,
+                      a clear use case helps.
                   pr_message: >
                       Thanks for your first pull request to this project! Please
                       make sure the project's checks pass before requesting
