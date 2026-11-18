@@ -596,12 +596,12 @@ final class DataFacadeTest extends TestCase
      * configured number show the full lines of birth and death. The compact form is the default,
      * because no generation is detailed until the administrator asks for it.
      *
-     * @return array<string, array{string, string, string}>
+     * @return array<string, array{string|null, string, string}>
      */
     public static function timespanByGenerationProvider(): array
     {
         return [
-            'default has no detailed generation'        => ['0', '1900–1980', '1870–1940'],
+            'default has no detailed generation'        => [null, '1900–1980', '1870–1940'],
             'the first generation is the only detailed' => ['1', "\u{2605} 1/1/1900\n\u{2020} 1/1/1980", '1870–1940'],
             'both generations detailed'                 => ['2', "\u{2605} 1/1/1900\n\u{2020} 1/1/1980", "\u{2605} 1/1/1870\n\u{2020} 1/1/1940"],
         ];
@@ -613,7 +613,7 @@ final class DataFacadeTest extends TestCase
     #[Test]
     #[DataProvider('timespanByGenerationProvider')]
     public function theTimespanIsCompactBeyondTheDetailedGenerations(
-        string $detailedDateGenerations,
+        ?string $detailedDateGenerations,
         string $expectedRoot,
         string $expectedFather,
     ): void {
@@ -636,7 +636,7 @@ final class DataFacadeTest extends TestCase
 
         $rootNode = (new DataFacade())->createTreeStructure(
             $module,
-            $this->createConfiguration(['detailedDateGenerations' => $detailedDateGenerations]),
+            $this->createConfiguration($detailedDateGenerations === null ? [] : ['detailedDateGenerations' => $detailedDateGenerations]),
             $root
         );
 
