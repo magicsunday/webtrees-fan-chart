@@ -26,23 +26,16 @@ use MagicSunday\Webtrees\FanChart\Facade\DataFacade;
 use MagicSunday\Webtrees\FanChart\Model\Node;
 use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
+use MagicSunday\Webtrees\ModuleBase\Testing\MediaDirectory;
 use MagicSunday\Webtrees\ModuleBase\Testing\PayloadToken;
 use MagicSunday\Webtrees\ModuleBase\Testing\RealTreeFixture;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 use function file_get_contents;
-use function file_put_contents;
-use function is_file;
 use function json_encode;
-use function mkdir;
-use function rmdir;
-use function sys_get_temp_dir;
-use function uniqid;
-use function unlink;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -133,11 +126,9 @@ final class DataFacadePrivacyTest extends TestCase
     private Module $module;
 
     /**
-     * The index directory of the test with the media file of the living person. It stays empty until setUp()
-     * created the directory, so tearDown() removes nothing before that. The media file may be missing when
-     * setUp() stopped before it wrote it.
+     * The media folder of the test with the media file of the living person.
      */
-    private string $indexDirectory = '';
+    private MediaDirectory $mediaDirectory;
 
     /**
      * Boots webtrees, builds a fresh schema in memory and logs in an administrator, the way the
@@ -147,21 +138,14 @@ final class DataFacadePrivacyTest extends TestCase
     {
         parent::setUp();
 
+        $this->mediaDirectory = new MediaDirectory();
+
         RealTreeFixture::boot();
 
         // The media file of the living person has to exist, because the image of a person is only
         // referenced when its file is there.
-        $directory = sys_get_temp_dir() . '/fan-chart-privacy-' . uniqid('', true) . '/';
-
-        if (!mkdir($directory . 'media', 0o777, true)) {
-            throw new RuntimeException('The media directory could not be created.');
-        }
-
-        $this->indexDirectory = $directory;
-
-        file_put_contents($directory . 'media/hiddenlivingphoto.jpg', 'image');
-
-        Site::setPreference('INDEX_DIRECTORY', $directory);
+        $this->mediaDirectory->create('fan-chart-privacy-');
+        $this->mediaDirectory->writeFile('hiddenlivingphoto.jpg');
 
         DB::table('module')->insert(['module_name' => 'webtrees-fan-chart']);
         DB::table('module_setting')->insert([
@@ -184,14 +168,7 @@ final class DataFacadePrivacyTest extends TestCase
         Site::$preferences = [];
         Registry::cache(new CacheFactory());
 
-        if ($this->indexDirectory !== '') {
-            if (is_file($this->indexDirectory . 'media/hiddenlivingphoto.jpg')) {
-                unlink($this->indexDirectory . 'media/hiddenlivingphoto.jpg');
-            }
-
-            rmdir($this->indexDirectory . 'media');
-            rmdir($this->indexDirectory);
-        }
+        $this->mediaDirectory->remove();
 
         RealTreeFixture::restoreMinimalDatabase();
 
