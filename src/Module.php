@@ -60,8 +60,14 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
 
     private const string GITHUB_REPO = 'magicsunday/webtrees-fan-chart';
 
+    /**
+     * The name of the module author.
+     */
     public const string CUSTOM_AUTHOR = 'Rico Sonntag';
 
+    /**
+     * The version of the module. It names the bundle file of the chart script.
+     */
     public const string CUSTOM_VERSION = '3.9.1-dev';
 
     /**
