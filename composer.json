@@ -77,7 +77,7 @@
     },
     "require-dev": {
         "infection/infection": "^0.35.8",
-        "magicsunday/coding-standard": "^3.10.0",
+        "magicsunday/coding-standard": "^3.12.0",
         "phpat/phpat": "^0.12.4",
         "shipmonk/phpstan-rules": "^4.4",
         "spaze/phpstan-disallowed-calls": "^4.13",
@@ -156,7 +156,7 @@
         ],
         "ci:test:php:advisories": [
             "@composer audit --format=json > .build/composer-audit.json",
-            "@php scripts/check-stale-advisory-ignores.php composer.json .build/composer-audit.json"
+            "check-stale-advisory-ignores.php composer.json .build/composer-audit.json"
         ],
         "ci:test:php:templates": [
             "check-consumer-config.php ."

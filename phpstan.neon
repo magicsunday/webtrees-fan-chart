@@ -12,7 +12,6 @@ parameters:
     tmpDir: %currentWorkingDirectory%/.build/cache/.phpstan.cache
 
     paths:
-        - %currentWorkingDirectory%/scripts/
         - %currentWorkingDirectory%/src/
         - %currentWorkingDirectory%/tests/
 
