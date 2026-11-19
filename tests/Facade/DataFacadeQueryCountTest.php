@@ -156,7 +156,7 @@ final class DataFacadeQueryCountTest extends TestCase
         self::assertLessThan($families, $deep);
         self::assertLessThan(intdiv($addedPeople, 10), $deep - $shallow);
 
-        // Every extra generation adds a fixed number of statements plus a few for each started chunk
+        // Every extra generation adds a fixed number of statements plus a few for each full chunk
         // of the people it adds, so a regression in only one early generation is seen as well.
         $previous = $shallow;
 
