@@ -31,7 +31,9 @@ use MagicSunday\Webtrees\FanChart\Model\NodeData;
 use MagicSunday\Webtrees\FanChart\Module;
 use MagicSunday\Webtrees\ModuleBase\Processor\ImageProcessor;
 use MagicSunday\Webtrees\ModuleBase\Support\MediaPreloader;
+use MagicSunday\Webtrees\ModuleBase\Testing\MediaDirectory;
 use MagicSunday\Webtrees\ModuleBase\Testing\RealTreeFixture;
+use MagicSunday\Webtrees\ModuleBase\Testing\StatementLog;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -44,23 +46,15 @@ use function array_merge;
 use function array_unique;
 use function array_values;
 use function count;
-use function file_put_contents;
-use function glob;
 use function implode;
 use function in_array;
 use function intdiv;
-use function is_dir;
 use function json_decode;
 use function json_encode;
 use function max;
-use function mkdir;
 use function range;
-use function rmdir;
 use function str_contains;
 use function strval;
-use function sys_get_temp_dir;
-use function uniqid;
-use function unlink;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -102,10 +96,9 @@ final class DataFacadeQueryCountTest extends TestCase
     private Module $module;
 
     /**
-     * The index directory that holds the media files of the pedigree, or an empty string while
-     * the test has none.
+     * The media folder of the pedigree, which holds the files of the images of the people.
      */
-    private string $indexDirectory = '';
+    private MediaDirectory $mediaDirectory;
 
     /**
      * Boots webtrees on a real schema and registers the module of the chart.
@@ -113,6 +106,8 @@ final class DataFacadeQueryCountTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->mediaDirectory = new MediaDirectory();
 
         RealTreeFixture::boot();
 
@@ -132,7 +127,7 @@ final class DataFacadeQueryCountTest extends TestCase
         Site::$preferences = [];
         Registry::cache(new CacheFactory());
 
-        $this->removeMediaFiles();
+        $this->mediaDirectory->remove();
         RealTreeFixture::restoreMinimalDatabase();
 
         parent::tearDown();
@@ -367,24 +362,28 @@ final class DataFacadeQueryCountTest extends TestCase
     }
 
     /**
-     * A person who is a member of two families of the same generation is bound once by the lookup of the members.
+     * A person who is a member of two families of the same generation is bound once by the lookup of the members,
+     * counted over all statements of the request.
      */
     #[Test]
     public function aPersonOfTwoFamiliesOfOneGenerationIsBoundOnce(): void
     {
         $tree = $this->importHalfSiblingPedigree();
 
-        $most = 0;
+        $bound = [];
 
         foreach ($this->statements($tree, 3) as $statement) {
             if (!str_contains($statement['query'], '"i_id" in')) {
                 continue;
             }
 
-            $most = max($most, count(array_filter($statement['bindings'], static fn (string $binding): bool => $binding === 'I4')));
+            $bound = array_merge($bound, array_filter(
+                $statement['bindings'],
+                static fn (string $binding): bool => $binding === 'I4',
+            ));
         }
 
-        self::assertSame(1, $most);
+        self::assertSame(['I4'], $bound);
     }
 
     /**
@@ -436,9 +435,8 @@ final class DataFacadeQueryCountTest extends TestCase
         $tree = RealTreeFixture::importGedcom(
             "0 HEAD\n1 GEDC\n2 VERS 5.5.1\n1 CHAR UTF-8\n0 @1@ INDI\n1 NAME Alone /Person/\n1 SEX M\n0 TRLR",
             'alone',
+            ['HIDE_LIVE_PEOPLE' => '0'],
         );
-
-        $tree->setPreference('HIDE_LIVE_PEOPLE', '0');
 
         $editor = $this->createEditor($tree);
 
@@ -723,13 +721,11 @@ final class DataFacadeQueryCountTest extends TestCase
 
         $lines[] = '0 TRLR';
 
-        $tree = RealTreeFixture::importGedcom(implode("\n", $lines), 'pedigree');
-
-        $tree->setPreference('HIDE_LIVE_PEOPLE', $privacy ? '1' : '0');
-        $tree->setPreference('SHOW_LIVING_NAMES', (string) Auth::PRIV_PRIVATE);
-        $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);
-
-        return $tree;
+        return RealTreeFixture::importGedcom(
+            implode("\n", $lines),
+            'pedigree',
+            $this->viewingPreferences($privacy ? '1' : '0'),
+        );
     }
 
     /**
@@ -740,19 +736,27 @@ final class DataFacadeQueryCountTest extends TestCase
     {
         $lines = ['0 HEAD', '1 GEDC', '2 VERS 5.5.1', '2 FORM LINKED', '1 CHAR UTF-8'];
 
-        foreach ([1 => ['M', 'F1'], 2 => ['M', 'F2'], 3 => ['F', 'F2'], 4 => ['M', 'F4'], 5 => ['F', 'F5']] as $person => [$sex, $parents]) {
+        $people = [
+            1 => ['M', 'F1'],
+            2 => ['M', 'F2'],
+            3 => ['F', 'F2'],
+            4 => ['M', 'F4'],
+            5 => ['F', 'F5'],
+        ];
+
+        foreach ($people as $person => [$sex, $parentFamily]) {
             $lines[] = '0 @' . (($person === 1) ? '1' : ('I' . $person)) . '@ INDI';
             $lines[] = '1 NAME Given' . $person . ' /Family/';
             $lines[] = '1 SEX ' . $sex;
             $lines[] = '1 DEAT';
             $lines[] = '2 DATE 1950';
-            $lines[] = '1 FAMC @' . $parents . '@';
+            $lines[] = '1 FAMC @' . $parentFamily . '@';
 
-            if ($person === 2 || $person === 3) {
+            if (in_array($person, [2, 3], true)) {
                 $lines[] = '1 FAMS @F1@';
             }
 
-            if ($person === 4 || $person === 5) {
+            if (in_array($person, [4, 5], true)) {
                 $lines[] = '1 FAMS @F2@';
             }
         }
@@ -772,13 +776,7 @@ final class DataFacadeQueryCountTest extends TestCase
         $lines[] = '1 CHIL @I5@';
         $lines[] = '0 TRLR';
 
-        $tree = RealTreeFixture::importGedcom(implode("\n", $lines), 'collapse');
-
-        $tree->setPreference('HIDE_LIVE_PEOPLE', '0');
-        $tree->setPreference('SHOW_LIVING_NAMES', (string) Auth::PRIV_PRIVATE);
-        $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);
-
-        return $tree;
+        return RealTreeFixture::importGedcom(implode("\n", $lines), 'collapse', $this->viewingPreferences('0'));
     }
 
     /**
@@ -802,13 +800,23 @@ final class DataFacadeQueryCountTest extends TestCase
             '0 TRLR',
         ];
 
-        $tree = RealTreeFixture::importGedcom(implode("\n", $lines), 'halfsiblings');
+        return RealTreeFixture::importGedcom(implode("\n", $lines), 'halfsiblings', $this->viewingPreferences('0'));
+    }
 
-        $tree->setPreference('HIDE_LIVE_PEOPLE', '0');
-        $tree->setPreference('SHOW_LIVING_NAMES', (string) Auth::PRIV_PRIVATE);
-        $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);
-
-        return $tree;
+    /**
+     * Returns the preferences of a tree that a viewer without a role sees in full, apart from the living people.
+     *
+     * @param string $hideLivePeople The value of the preference that hides the living people, 1 or 0
+     *
+     * @return array{HIDE_LIVE_PEOPLE: string, SHOW_LIVING_NAMES: string, SHOW_DEAD_PEOPLE: string}
+     */
+    private function viewingPreferences(string $hideLivePeople): array
+    {
+        return [
+            'HIDE_LIVE_PEOPLE'  => $hideLivePeople,
+            'SHOW_LIVING_NAMES' => (string) Auth::PRIV_PRIVATE,
+            'SHOW_DEAD_PEOPLE'  => (string) Auth::PRIV_PRIVATE,
+        ];
     }
 
     /**
@@ -829,38 +837,11 @@ final class DataFacadeQueryCountTest extends TestCase
      */
     private function createMediaFiles(int $people): void
     {
-        $this->indexDirectory = sys_get_temp_dir() . '/fan-chart-pedigree-' . uniqid('', true) . '/';
-
-        if (!mkdir($this->indexDirectory . 'media', 0o777, true) && !is_dir($this->indexDirectory . 'media')) {
-            self::fail('The media directory could not be created.');
-        }
+        $this->mediaDirectory->create('fan-chart-pedigree-');
 
         for ($person = 1; $person <= $people; $person += 2) {
-            file_put_contents($this->indexDirectory . 'media/person' . $person . '.jpg', 'image');
+            $this->mediaDirectory->writeFile('person' . $person . '.jpg');
         }
-
-        Site::setPreference('INDEX_DIRECTORY', $this->indexDirectory);
-    }
-
-    /**
-     * Removes the media files and the directories of the test.
-     */
-    private function removeMediaFiles(): void
-    {
-        if ($this->indexDirectory === '') {
-            return;
-        }
-
-        $files = glob($this->indexDirectory . 'media/*');
-
-        foreach (($files === false) ? [] : $files as $file) {
-            unlink($file);
-        }
-
-        rmdir($this->indexDirectory . 'media');
-        rmdir($this->indexDirectory);
-
-        $this->indexDirectory = '';
     }
 
     /**
@@ -876,31 +857,9 @@ final class DataFacadeQueryCountTest extends TestCase
     {
         Registry::cache(new CacheFactory());
 
-        $connection = DB::connection();
-        $connection->enableQueryLog();
-        $connection->flushQueryLog();
-
-        $this->nodeTree($tree, $generations, $detailPanel);
-
-        $log = $connection->getQueryLog();
-        $connection->disableQueryLog();
-
-        $statements = [];
-
-        foreach ($log as $entry) {
-            $bindings = [];
-
-            foreach ($entry['bindings'] as $binding) {
-                $bindings[] = is_scalar($binding) ? (string) $binding : '';
-            }
-
-            $statements[] = [
-                'query'    => $entry['query'],
-                'bindings' => $bindings,
-            ];
-        }
-
-        return $statements;
+        return StatementLog::capture(function () use ($tree, $generations, $detailPanel): void {
+            $this->nodeTree($tree, $generations, $detailPanel);
+        });
     }
 
     /**
