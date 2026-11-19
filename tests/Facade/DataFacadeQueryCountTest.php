@@ -352,10 +352,12 @@ final class DataFacadeQueryCountTest extends TestCase
                 continue;
             }
 
-            $bound = array_merge($bound, array_filter(
+            $matches = array_filter(
                 $statement['bindings'],
                 static fn (string $binding): bool => $binding === 'F2',
-            ));
+            );
+
+            $bound = array_merge($bound, $matches);
         }
 
         self::assertSame(['F2'], $bound);
@@ -377,10 +379,12 @@ final class DataFacadeQueryCountTest extends TestCase
                 continue;
             }
 
-            $bound = array_merge($bound, array_filter(
+            $matches = array_filter(
                 $statement['bindings'],
                 static fn (string $binding): bool => $binding === 'I4',
-            ));
+            );
+
+            $bound = array_merge($bound, $matches);
         }
 
         self::assertSame(['I4'], $bound);
