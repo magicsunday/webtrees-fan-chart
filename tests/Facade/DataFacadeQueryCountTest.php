@@ -363,7 +363,7 @@ final class DataFacadeQueryCountTest extends TestCase
 
     /**
      * A person who is a member of two families of the same generation is bound once by the lookup of the members,
-     * counted over all statements of the request.
+     * counted over all statements of the request that look people up by a list of xrefs.
      */
     #[Test]
     public function aPersonOfTwoFamiliesOfOneGenerationIsBoundOnce(): void
