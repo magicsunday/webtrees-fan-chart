@@ -155,6 +155,22 @@ final class DataFacadeQueryCountTest extends TestCase
 
         self::assertLessThan($families, $deep);
         self::assertLessThan(intdiv($addedPeople, 10), $deep - $shallow);
+
+        // Every extra generation adds a fixed number of statements plus a few for each full chunk
+        // of the people it adds, so a regression in only one early generation is seen as well.
+        $previous = $shallow;
+
+        for ($depth = 6; $depth <= self::DEPTH; ++$depth) {
+            $current = count($this->statements($tree, $depth));
+
+            self::assertLessThanOrEqual(
+                3 + (4 * intdiv(2 ** $depth, MediaPreloader::CHUNK_SIZE)),
+                $current - $previous,
+                'The statements that generation ' . $depth . ' adds exceed the bound'
+            );
+
+            $previous = $current;
+        }
     }
 
     /**
@@ -323,6 +339,52 @@ final class DataFacadeQueryCountTest extends TestCase
             $statements,
             static fn (array $statement): bool => str_contains($statement['query'], $spelling),
         ));
+    }
+
+    /**
+     * A family that is the parent family of two people of one generation, as in a pedigree collapse, is bound
+     * by a lookup once.
+     */
+    #[Test]
+    public function aFamilyThatTwoPeopleShareIsBoundOnce(): void
+    {
+        $tree = $this->importCollapsedPedigree();
+
+        $bound = [];
+
+        foreach ($this->statements($tree, 3) as $statement) {
+            if (!str_contains($statement['query'], 'from "wt_families"')) {
+                continue;
+            }
+
+            $bound = array_merge($bound, array_filter(
+                $statement['bindings'],
+                static fn (string $binding): bool => $binding === 'F2',
+            ));
+        }
+
+        self::assertSame(['F2'], $bound);
+    }
+
+    /**
+     * A person who is a member of two families of the same generation is bound once by the lookup of the members.
+     */
+    #[Test]
+    public function aPersonOfTwoFamiliesOfOneGenerationIsBoundOnce(): void
+    {
+        $tree = $this->importHalfSiblingPedigree();
+
+        $most = 0;
+
+        foreach ($this->statements($tree, 3) as $statement) {
+            if (!str_contains($statement['query'], '"i_id" in')) {
+                continue;
+            }
+
+            $most = max($most, count(array_filter($statement['bindings'], static fn (string $binding): bool => $binding === 'I4')));
+        }
+
+        self::assertSame(1, $most);
     }
 
     /**
@@ -664,6 +726,85 @@ final class DataFacadeQueryCountTest extends TestCase
         $tree = RealTreeFixture::importGedcom(implode("\n", $lines), 'pedigree');
 
         $tree->setPreference('HIDE_LIVE_PEOPLE', $privacy ? '1' : '0');
+        $tree->setPreference('SHOW_LIVING_NAMES', (string) Auth::PRIV_PRIVATE);
+        $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);
+
+        return $tree;
+    }
+
+    /**
+     * Imports the smallest tree with a pedigree collapse. The parents of the root person are full siblings, so
+     * the family of their parents is the parent family of two people of the same generation.
+     */
+    private function importCollapsedPedigree(): Tree
+    {
+        $lines = ['0 HEAD', '1 GEDC', '2 VERS 5.5.1', '2 FORM LINKED', '1 CHAR UTF-8'];
+
+        foreach ([1 => ['M', 'F1'], 2 => ['M', 'F2'], 3 => ['F', 'F2'], 4 => ['M', 'F4'], 5 => ['F', 'F5']] as $person => [$sex, $parents]) {
+            $lines[] = '0 @' . (($person === 1) ? '1' : ('I' . $person)) . '@ INDI';
+            $lines[] = '1 NAME Given' . $person . ' /Family/';
+            $lines[] = '1 SEX ' . $sex;
+            $lines[] = '1 DEAT';
+            $lines[] = '2 DATE 1950';
+            $lines[] = '1 FAMC @' . $parents . '@';
+
+            if ($person === 2 || $person === 3) {
+                $lines[] = '1 FAMS @F1@';
+            }
+
+            if ($person === 4 || $person === 5) {
+                $lines[] = '1 FAMS @F2@';
+            }
+        }
+
+        $lines[] = '0 @F1@ FAM';
+        $lines[] = '1 HUSB @I2@';
+        $lines[] = '1 WIFE @I3@';
+        $lines[] = '1 CHIL @1@';
+        $lines[] = '0 @F2@ FAM';
+        $lines[] = '1 HUSB @I4@';
+        $lines[] = '1 WIFE @I5@';
+        $lines[] = '1 CHIL @I2@';
+        $lines[] = '1 CHIL @I3@';
+        $lines[] = '0 @F4@ FAM';
+        $lines[] = '1 CHIL @I4@';
+        $lines[] = '0 @F5@ FAM';
+        $lines[] = '1 CHIL @I5@';
+        $lines[] = '0 TRLR';
+
+        $tree = RealTreeFixture::importGedcom(implode("\n", $lines), 'collapse');
+
+        $tree->setPreference('HIDE_LIVE_PEOPLE', '0');
+        $tree->setPreference('SHOW_LIVING_NAMES', (string) Auth::PRIV_PRIVATE);
+        $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);
+
+        return $tree;
+    }
+
+    /**
+     * Imports the smallest tree in which one person is a member of two families of the same generation. The
+     * parents of the root person are half siblings with the same father, so his own two families are the parent
+     * families of one generation and both hold him.
+     */
+    private function importHalfSiblingPedigree(): Tree
+    {
+        $lines = [
+            '0 HEAD', '1 GEDC', '2 VERS 5.5.1', '2 FORM LINKED', '1 CHAR UTF-8',
+            '0 @1@ INDI', '1 NAME Given1 /Family/', '1 SEX M', '1 DEAT', '2 DATE 1950', '1 FAMC @F1@',
+            '0 @I2@ INDI', '1 NAME Given2 /Family/', '1 SEX M', '1 DEAT', '2 DATE 1950', '1 FAMC @F2@', '1 FAMS @F1@',
+            '0 @I3@ INDI', '1 NAME Given3 /Family/', '1 SEX F', '1 DEAT', '2 DATE 1950', '1 FAMC @F3@', '1 FAMS @F1@',
+            '0 @I4@ INDI', '1 NAME Given4 /Family/', '1 SEX M', '1 DEAT', '2 DATE 1950', '1 FAMS @F2@', '1 FAMS @F3@',
+            '0 @I5@ INDI', '1 NAME Given5 /Family/', '1 SEX F', '1 DEAT', '2 DATE 1950', '1 FAMS @F2@',
+            '0 @I6@ INDI', '1 NAME Given6 /Family/', '1 SEX F', '1 DEAT', '2 DATE 1950', '1 FAMS @F3@',
+            '0 @F1@ FAM', '1 HUSB @I2@', '1 WIFE @I3@', '1 CHIL @1@',
+            '0 @F2@ FAM', '1 HUSB @I4@', '1 WIFE @I5@', '1 CHIL @I2@',
+            '0 @F3@ FAM', '1 HUSB @I4@', '1 WIFE @I6@', '1 CHIL @I3@',
+            '0 TRLR',
+        ];
+
+        $tree = RealTreeFixture::importGedcom(implode("\n", $lines), 'halfsiblings');
+
+        $tree->setPreference('HIDE_LIVE_PEOPLE', '0');
         $tree->setPreference('SHOW_LIVING_NAMES', (string) Auth::PRIV_PRIVATE);
         $tree->setPreference('SHOW_DEAD_PEOPLE', (string) Auth::PRIV_PRIVATE);
 

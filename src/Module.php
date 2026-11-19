@@ -69,7 +69,7 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
      * inside the "An upgrade is available" notice on the admin home
      * (control-panel.phtml) and on the Modules admin pages. Pointed at the
      * GitHub /releases/latest page so admins who notice an available update
-     * land directly on the release notes — including the "Manual / FTP
+     * land directly on the release notes, including the "Manual / FTP
      * installation" banner and the install-ready asset zip.
      */
     public const string CUSTOM_SUPPORT_URL = 'https://github.com/' . self::GITHUB_REPO . '/releases/latest';
@@ -181,7 +181,7 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
                     self::ROUTE_DEFAULT,
                     [
                         'tree' => $tree->name(),
-                        // xref identifies the individual, not a chart setting — read directly from POST body
+                        // xref identifies the individual and is no chart setting, so it is read directly from the POST body
                         'xref' => Validator::parsedBody($request)->string('xref', ''),
                         ...$this->configuration->getRouteToggleParams(),
                     ]
@@ -259,11 +259,21 @@ final class Module extends FanChartModule implements ModuleAssetUrlInterface, Mo
             'nameAbbreviation'       => $this->configuration->getNameAbbreviation()
                 ->resolve($individual->tree()->getPreference('SURNAME_TRADITION'))
                 ->value,
-            'labels' => [
-                'zoom'         => I18N::translate('Use Ctrl + scroll to zoom in the view'),
-                'move'         => I18N::translate('Move the view with two fingers'),
-                'updateFailed' => I18N::translate('The chart could not be updated. Please try again.'),
-            ],
+            'labels' => $this->getChartLabels(),
+        ];
+    }
+
+    /**
+     * Returns the texts that the page script shows, keyed by the name that the script reads.
+     *
+     * @return array{zoom: string, move: string, updateFailed: string}
+     */
+    private function getChartLabels(): array
+    {
+        return [
+            'zoom'         => I18N::translate('Use Ctrl + scroll to zoom in the view'),
+            'move'         => I18N::translate('Move the view with two fingers'),
+            'updateFailed' => I18N::translate('The chart could not be updated. Please try again.'),
         ];
     }
 
