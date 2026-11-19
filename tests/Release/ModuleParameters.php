@@ -103,7 +103,8 @@ final class ModuleParameters
     /**
      * Reads the value of a parameter from Make/module.mk the way make does. The last assignment with `=`, `:=` or
      * `::=` wins, a `?=` sets the name only when no earlier assignment did, indentation with spaces and a carriage
-     * return at the line end are ignored, and every other line is ignored too. A value carries no comment. A
+     * return at the line end are ignored, and every other line is ignored too. A value carries no comment and stays
+     * on its line. A value that is set on the command line or in the environment of make is not seen, and a
      * parameter whose value is an expression of make, such as the webtrees constraint of a module that derives it,
      * is not read by the tests.
      */

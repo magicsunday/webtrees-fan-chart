@@ -141,6 +141,8 @@ final class NodeUserTest extends TestCase
                 $stage
             );
 
+            // The count above makes the first match exist. Static analysis does not follow that, so this
+            // assertion tells it that the key is there.
             self::assertArrayHasKey(0, $matches[1]);
 
             $prerequisites[$stage] = $matches[1][0];
