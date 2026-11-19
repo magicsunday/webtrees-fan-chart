@@ -464,6 +464,29 @@ final class DataFacadeQueryCountTest extends TestCase
     }
 
     /**
+     * The text 0 of the tree setting that shows the highlight images switches the media lookup off, like the
+     * empty text does, so a request sends the same statements for both and fewer than with the setting on.
+     */
+    #[Test]
+    public function theTextZeroSwitchesTheMediaLookupOffLikeTheEmptyText(): void
+    {
+        $tree = $this->importPedigree(0, true, true);
+
+        $tree->setPreference('SHOW_HIGHLIGHT_IMAGES', '');
+
+        $empty = count($this->statements($tree, self::DEPTH));
+
+        $tree->setPreference('SHOW_HIGHLIGHT_IMAGES', '0');
+        $zero = count($this->statements($tree, self::DEPTH));
+
+        $tree->setPreference('SHOW_HIGHLIGHT_IMAGES', '1');
+        $shown = count($this->statements($tree, self::DEPTH));
+
+        self::assertSame($empty, $zero);
+        self::assertGreaterThan($zero, $shown);
+    }
+
+    /**
      * The media lookup of a request grows with the number of generations and not with the number of
      * people, for the administrator and for a visitor, with and without the detail panel. The extra
      * statements of the media are those that the same request sends beyond the request that has the
