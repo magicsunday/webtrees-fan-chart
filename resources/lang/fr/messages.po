@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:142
+#: src/Module.php:148
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -133,11 +133,11 @@ msgstr "Exporter au format PNG"
 msgid "Export as SVG"
 msgstr "Exporter au format SVG"
 
-#: src/Module.php:130 src/Module.php:241
+#: src/Module.php:136 src/Module.php:247
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:238 src/Module/ChartTrait.php:46
+#: src/Module.php:244 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -237,7 +237,7 @@ msgstr ""
 msgid "Move the chart"
 msgstr "Déplacer le diagramme"
 
-#: src/Module.php:264
+#: src/Module.php:281
 msgid "Move the view with two fingers"
 msgstr "Déplacer la vue avec deux doigts"
 
@@ -400,7 +400,7 @@ msgstr "Basculer entre le plein écran et la vue normale"
 msgid "Tab key"
 msgstr ""
 
-#: src/Module.php:265
+#: src/Module.php:282
 msgid "The chart could not be updated. Please try again."
 msgstr ""
 
@@ -413,7 +413,7 @@ msgstr ""
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:263
+#: src/Module.php:280
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Utiliser Ctrl + molette pour zoomer dans la vue"
 

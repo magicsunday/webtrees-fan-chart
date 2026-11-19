@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources/views\n"
 
-#: src/Module.php:142
+#: src/Module.php:148
 msgid "A fan chart of an individual’s ancestors."
 msgstr ""
 
@@ -131,11 +131,11 @@ msgstr "Exporteren als PNG"
 msgid "Export as SVG"
 msgstr "Exporteren als SVG"
 
-#: src/Module.php:130 src/Module.php:241
+#: src/Module.php:136 src/Module.php:247
 msgid "Fan chart"
 msgstr ""
 
-#: src/Module.php:238 src/Module/ChartTrait.php:46
+#: src/Module.php:244 src/Module/ChartTrait.php:46
 #, php-format
 msgid "Fan chart of %s"
 msgstr ""
@@ -239,7 +239,7 @@ msgstr "Tussen de personen wisselen"
 msgid "Move the chart"
 msgstr "Diagram verplaatsen"
 
-#: src/Module.php:264
+#: src/Module.php:281
 msgid "Move the view with two fingers"
 msgstr "Verplaats de weergave met twee vingers"
 
@@ -403,7 +403,7 @@ msgstr "Schakelen tussen volledig scherm en normale weergave"
 msgid "Tab key"
 msgstr "Tab-toets"
 
-#: src/Module.php:265
+#: src/Module.php:282
 msgid "The chart could not be updated. Please try again."
 msgstr "Het diagram kon niet worden bijgewerkt. Probeer het opnieuw."
 
@@ -416,7 +416,7 @@ msgstr "De weergaveoptie heeft alleen invloed op de bogen, niet op de tooltip."
 msgid "The preferences for the module “%s” have been updated."
 msgstr ""
 
-#: src/Module.php:263
+#: src/Module.php:280
 msgid "Use Ctrl + scroll to zoom in the view"
 msgstr "Gebruik Ctrl + scroll om in te zoomen op de weergave"
 
