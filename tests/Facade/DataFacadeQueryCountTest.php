@@ -827,9 +827,10 @@ final class DataFacadeQueryCountTest extends TestCase
     }
 
     /**
-     * Returns the preferences of a tree that a viewer without a role sees in full, apart from the living people.
+     * Returns the preferences of a tree in which a viewer without a role sees the names of the living and of the
+     * dead people. Whether the living people are hidden is the choice of the caller.
      *
-     * @param string $hideLivePeople The value of the preference that hides the living people, 1 or 0
+     * @param string $hideLivePeople The value of the preference that hides the living people, 1 hides them and 0 shows them
      *
      * @return array{HIDE_LIVE_PEOPLE: string, SHOW_LIVING_NAMES: string, SHOW_DEAD_PEOPLE: string}
      */
