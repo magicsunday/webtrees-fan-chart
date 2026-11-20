@@ -1,0 +1,22 @@
+name: CodeQL
+
+on:
+    push:
+        branches: [main, master]
+    pull_request:
+    schedule:
+        - cron: '41 5 * * 1'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+    codeql:
+        uses: magicsunday/.github/.github/workflows/codeql.yml@main
+        permissions:
+            contents: read
+            actions: read
+            security-events: write
+        with:
+            languages: '["actions","javascript-typescript"]'
