@@ -50,7 +50,7 @@ jobs:
                   php-version: '8.3'
                   tools: composer:v2
 
-            - name: Validate composer.json and composer.lock
+            - name: Validate composer.json
               run: composer validate
 
             - id: install
