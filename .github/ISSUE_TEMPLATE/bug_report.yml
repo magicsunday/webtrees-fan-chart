@@ -1,6 +1,5 @@
 name: Bug report
 description: Report a bug to help us improve the module
-title: "[BUG] "
 labels: ["bug"]
 assignees:
   - magicsunday
@@ -55,16 +54,19 @@ body:
     id: errors
     attributes:
       label: Error messages or screenshots
-      description: |
-        If an error message appears, copy the full text. Screenshots also help.
-
-        **Important:** Please check your browser's developer console (press F12, then click the "Console" tab) for JavaScript errors and paste them here. Many chart issues only show errors in the console, not on the page itself.
+      description: If an error message appears, copy the full text. Screenshots also help.
       placeholder: |
-        Browser console output (F12 > Console):
-        Uncaught TypeError: ...
+        Drag and drop or paste an image here.
+    validations:
+      required: false
 
-        Screenshot:
-        [Drag and drop or paste an image here]
+  - type: textarea
+    id: console
+    attributes:
+      label: Browser console output
+      description: |
+        Many chart problems show up only in the browser console, not on the page. Open the developer tools of your browser, select the "Console" tab, repeat the steps that fail and paste the messages here. Write "none" if the console stays empty.
+      render: shell
     validations:
       required: false
 
@@ -73,7 +75,6 @@ body:
     attributes:
       label: Webtrees version
       description: Which version of webtrees are you using?
-      placeholder: "2.2.5"
     validations:
       required: true
 
@@ -82,7 +83,6 @@ body:
     attributes:
       label: Module version
       description: Which version of the module are you using? (Check the control panel or composer.json)
-      placeholder: "3.0.0"
     validations:
       required: true
 
@@ -117,12 +117,46 @@ body:
   - type: textarea
     id: other-modules
     attributes:
-      label: Other magicsunday/* modules installed
+      label: Other custom modules
       description: |
-        Are any other magicsunday charts (fan-chart, pedigree-chart, descendants-chart) active in this webtrees instance? Each ships its own scoped copy of `webtrees-module-base`, so version drift between modules is sometimes visible only when more than one is installed.
+        List all other custom modules that are active, including themes. Modules can affect each other. The release ZIP of each magicsunday chart bundles its own copy of `webtrees-module-base`, so name their versions too.
       placeholder: |
-        - webtrees-fan-chart 3.6.0
-        - webtrees-pedigree-chart 2.7.0
+        - Module name and version
+    validations:
+      required: false
+
+  - type: input
+    id: theme
+    attributes:
+      label: Theme and palette
+      description: Which theme is active when the problem occurs? Name the colour palette too, if the theme offers one.
+      placeholder: "webtrees, colors (Sage), or the name of a custom theme"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: default-theme
+    attributes:
+      label: Does the problem also occur with the default webtrees theme?
+      options:
+        - "Yes"
+        - "No"
+        - I use the default theme
+        - Not tested
+    validations:
+      required: true
+
+  - type: dropdown
+    id: access
+    attributes:
+      label: How is your site reached?
+      description: A reverse proxy or a hosting setup can add headers that block parts of a page.
+      options:
+        - HTTPS
+        - HTTP
+        - HTTPS behind a reverse proxy
+        - HTTP behind a reverse proxy
+        - Not sure
     validations:
       required: false
 
@@ -130,7 +164,7 @@ body:
     id: browser
     attributes:
       label: Browser and operating system
-      placeholder: "Chrome 125 on Windows 11"
+      placeholder: "Browser name and version, operating system"
     validations:
       required: true
 
@@ -138,7 +172,6 @@ body:
     id: php-version
     attributes:
       label: PHP version
-      placeholder: "8.3"
     validations:
       required: false
 
@@ -163,7 +196,6 @@ body:
       label: Database version
       description: |
         Server version string — e.g. the output of `SELECT VERSION();` or what your hoster shows in its control panel.
-      placeholder: "MariaDB 10.11.6 / MySQL 8.0.36 / SQLite 3.45"
     validations:
       required: false
 
