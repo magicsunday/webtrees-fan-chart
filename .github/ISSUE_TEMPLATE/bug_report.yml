@@ -129,7 +129,7 @@ body:
         id: theme
         attributes:
             label: Theme and palette
-            description: Which theme is active when the problem occurs? Name the colour palette too, if the theme offers one.
+            description: Which theme is active when the problem occurs? Name the color palette too, if the theme offers one.
             placeholder: "webtrees, colors (Sage), or the name of a custom theme"
         validations:
             required: true
