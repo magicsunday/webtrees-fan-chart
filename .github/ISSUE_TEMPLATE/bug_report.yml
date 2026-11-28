@@ -54,7 +54,7 @@ body:
         id: errors
         attributes:
             label: Error messages or screenshots
-            description: If an error message appears, copy the full text. Screenshots also help.
+            description: If an error message appears, copy the full text. Screenshots also help. This issue is public, so hide private data first.
             placeholder: |
                 Drag and drop or paste an image here.
         validations:
@@ -65,7 +65,7 @@ body:
         attributes:
             label: Browser console output
             description: |
-                Many chart problems show up only in the browser console, not on the page. Open the developer tools of your browser, select the "Console" tab, repeat the steps that fail and paste the messages here. Write "none" if the console stays empty.
+                Many chart problems show up only in the browser console, not on the page. Open the developer tools of your browser, select the "Console" tab, repeat the steps that fail and paste the messages here. This issue is public, so remove your site address, tree names and names of people first. Write "none" if the console stays empty.
             render: shell
         validations:
             required: false
@@ -211,7 +211,7 @@ body:
         id: logs
         attributes:
             label: Log files
-            description: Check the webtrees logs or server logs for related entries.
+            description: Check the webtrees logs or server logs for related entries. This issue is public, so remove private data first.
             render: shell
         validations:
             required: false
