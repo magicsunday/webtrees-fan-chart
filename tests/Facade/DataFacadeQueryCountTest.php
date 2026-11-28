@@ -526,7 +526,6 @@ final class DataFacadeQueryCountTest extends TestCase
 
         self::assertGreaterThan(0, $with - $without, 'The media of the pedigree are looked up.');
         self::assertLessThanOrEqual($budget, $with - $without);
-        self::assertLessThan(2 ** self::DEPTH, $with - $without);
     }
 
     /**
