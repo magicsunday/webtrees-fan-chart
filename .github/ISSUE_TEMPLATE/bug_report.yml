@@ -180,7 +180,7 @@ body:
         attributes:
             label: Database engine
             description: |
-                Which database is webtrees configured to use? Some bugs only surface on stricter engines — for example, MySQL 8 and MariaDB 10.5+ enable the `ONLY_FULL_GROUP_BY` SQL mode by default, which rejects queries that other engines accept.
+                Which database is webtrees configured to use? Some bugs only surface on one database engine.
             options:
                 -   MySQL
                 -   MariaDB
