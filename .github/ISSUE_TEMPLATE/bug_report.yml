@@ -82,7 +82,7 @@ body:
         id: module-version
         attributes:
             label: Module version
-            description: Which version of the module are you using? (Check the control panel or composer.json)
+            description: Which version of the module are you using? (Shown in the control panel)
         validations:
             required: true
 
